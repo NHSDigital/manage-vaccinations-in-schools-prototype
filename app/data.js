@@ -36,7 +36,6 @@ const data = {
   clinics,
   defaultBatches: {},
   downloads: {},
-  features: {},
   instructions,
   moves,
   notices,

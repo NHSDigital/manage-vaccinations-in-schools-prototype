@@ -17,7 +17,7 @@ import {
  * @returns {object} Filters
  */
 export default (env) => {
-  const filters = {}
+  const filters = prototypeFilters
 
   /**
    * Remove border from last summary row

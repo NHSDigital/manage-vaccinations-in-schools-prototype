@@ -1,21 +1,3 @@
 {
-  "env": {
-    "USE_AUTH": {
-      "description": "Enable or disable password protection on production.",
-      "value": "true"
-    },
-    "USE_AUTO_STORE_DATA": {
-      "description": "Automatically store form data and send to all views",
-      "value": "true"
-    },
-    "USE_DATABASE_SESSION_STORE": {
-      "description": "Enable PostgreSQL session store.",
-      "value": "true"
-    },
-    "USE_HTTPS": {
-      "description": "Force HTTP to redirect to HTTPS on production",
-      "value": "true"
-    }
-  },
   "addons": ["heroku-postgresql:essential-0"]
 }

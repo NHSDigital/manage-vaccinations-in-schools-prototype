@@ -1,3 +1,5 @@
+import '/nhsuk-prototype-kit/javascripts/send-unchecked-checkboxes.js'
+
 import {
   createAll,
   Button,
