@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { decorate } from 'nhsuk-decorated-components'
 
 import { healthQuestions } from './datasets/health-questions.js'
 import {
@@ -24,6 +25,8 @@ import {
  */
 export default () => {
   const globals = {}
+
+  globals.decorate = decorate
 
   /**
    * Get boolean form field items
@@ -319,7 +322,10 @@ export default () => {
       })
     }
 
-    summaryRows.at(-1).border = false
+    // Remove border from final row
+    if (summaryRows.at(-1)) {
+      summaryRows.at(-1).border = false
+    }
 
     return summaryRows
   }
@@ -376,7 +382,10 @@ export default () => {
       })
     }
 
-    summaryRows.at(-1).border = false
+    // Remove border from final row
+    if (summaryRows.at(-1)) {
+      summaryRows.at(-1).border = false
+    }
 
     return summaryRows
   }
@@ -660,7 +669,9 @@ export default () => {
     }
 
     // Remove border from final row
-    summaryRows.at(-1).border = false
+    if (summaryRows.at(-1)) {
+      summaryRows.at(-1).border = false
+    }
 
     return summaryRows
   }

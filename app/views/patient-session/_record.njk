@@ -70,7 +70,7 @@
 {{ __("patientSession.preScreen.description", { patient: patient }) }}
 {% for question in patientSession.vaccine.preScreenQuestions %}
 - {{ question }}
-{%- endfor %}
+{% endfor %}
 {% endfilter %}
 
   {{ checkboxes({

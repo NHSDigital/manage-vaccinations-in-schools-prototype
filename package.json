@@ -9,9 +9,10 @@
   ],
   "license": "MIT",
   "type": "module",
+  "main": "app.js",
   "scripts": {
     "build": "bin/build.sh",
-    "create-data": "node lib/create-data.js",
+    "create-data": "node --env-file-if-exists=.env lib/create-data.js",
     "postinstall": "npm run create-data",
     "lint": "npm run lint:prettier && npm run lint:js && npm run lint:css",
     "lint:css": "stylelint '**/*.scss'",
@@ -21,20 +22,25 @@
     "lint:js:fix": "eslint '**/*.js' --fix",
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
-    "start": "nhsuk-prototype-rig"
+    "start": "node ."
   },
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
+    "@x-govuk/govuk-prototype-filters": "^2.1.0",
     "@x-govuk/govuk-prototype-wizard": "^0.4.0",
     "accessible-autocomplete": "^3.0.1",
+    "connect-pg-simple": "^10.0.0",
     "countries-and-timezones": "^3.9.0",
     "date-fns": "^4.1.0",
-    "dotenv": "^17.4.2",
-    "express-flash": "^0.0.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "i18n": "^0.15.3",
     "json-as-xlsx": "^2.5.6",
     "lodash": "^4.18.1",
-    "nhsuk-prototype-rig": "^0.8.0",
+    "nhsuk-decorated-components": "^0.6.0",
+    "nhsuk-frontend": "^10.4.2",
+    "nhsuk-prototype-kit": "^8.2.3",
+    "pg": "^8.20.0",
     "response-time": "^2.3.4"
   },
   "devDependencies": {
@@ -49,20 +55,7 @@
     "typed-query-selector": "^2.12.2",
     "typescript": "^6.0.3"
   },
-  "peerDependencies": {
-    "@x-govuk/govuk-prototype-filters": "^2.1.0",
-    "express": "^5.2.1",
-    "nhsuk-frontend": "^10.4.2"
-  },
   "engines": {
     "node": "^24"
-  },
-  "prototype": {
-    "nunjucksPaths": [
-      "./node_modules/govuk-frontend/dist",
-      "./node_modules/@x-govuk/govuk-prototype-components/src"
-    ],
-    "serviceName": "Manage vaccinations in schools",
-    "templateExtension": "njk"
   }
 }

@@ -1,27 +1,75 @@
-{% extends "rig/default.njk" %}
+{% extends "template.njk" %}
 
-{#- App macros -#}
-{% from "_macros/action-list.njk" import appActionList %}
-{% from "_macros/add-another.njk" import appAddAnother %}
-{% from "_macros/button-group.njk" import appButtonGroup with context %}
-{% from "_macros/count.njk" import appCount %}
-{% from "_macros/data-card.njk" import appDataCard with context %}
-{% from "_macros/environment.njk" import appEnvironment %}
-{% from "_macros/event.njk" import appEvent %}
-{% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/search-input.njk" import appSearchInput with context %}
-{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
-{% from "_macros/status.njk" import appStatus %}
-{% from "_macros/timeline.njk" import appTimeline with context %}
-{% from "_macros/sub-navigation.njk" import appSubNavigation %}
+{#- Components -#}
+{%- from "action-link/macro.njk" import actionLink %}
+{%- from "back-link/macro.njk" import backLink %}
+{%- from "breadcrumb/macro.njk" import breadcrumb %}
+{%- from "card/macro.njk" import card %}
+{%- from "contents-list/macro.njk" import contentsList %}
+{%- from "details/macro.njk" import details %}
+{%- from "do-dont-list/macro.njk" import list %}
+{%- from "error-message/macro.njk" import errorMessage %}
+{%- from "error-summary/macro.njk" import errorSummary %}
+{%- from "fieldset/macro.njk" import fieldset %}
+{%- from "footer/macro.njk" import footer %}
+{%- from "header/macro.njk" import header %}
+{%- from "hero/macro.njk" import hero %}
+{%- from "hint/macro.njk" import hint %}
+{%- from "images/macro.njk" import image %}
+{%- from "inset-text/macro.njk" import insetText %}
+{%- from "label/macro.njk" import label %}
+{%- from "notification-banner/macro.njk" import notificationBanner %}
+{%- from "pagination/macro.njk" import pagination %}
+{%- from "panel/macro.njk" import panel with context %}
+{%- from "skip-link/macro.njk" import skipLink %}
+{%- from "summary-list/macro.njk" import summaryList %}
+{%- from "tables/macro.njk" import table %}
+{%- from "tabs/macro.njk" import tabs %}
+{%- from "tag/macro.njk" import tag %}
+{%- from "task-list/macro.njk" import taskList %}
+{%- from "warning-callout/macro.njk" import warningCallout %}
+
+{#- Decorated components -#}
+{%- from "x-nhsuk/decorated/button/macro.njk" import button with context %}
+{%- from "x-nhsuk/decorated/character-count/macro.njk" import characterCount with context %}
+{%- from "x-nhsuk/decorated/checkboxes/macro.njk" import checkboxes with context %}
+{%- from "x-nhsuk/decorated/date-input/macro.njk" import dateInput with context %}
+{%- from "x-nhsuk/decorated/file-upload/macro.njk" import fileUpload with context %}
+{%- from "x-nhsuk/decorated/input/macro.njk" import input with context %}
+{%- from "x-nhsuk/decorated/password-input/macro.njk" import passwordInput with context %}
+{%- from "x-nhsuk/decorated/radios/macro.njk" import radios with context %}
+{%- from "x-nhsuk/decorated/select/macro.njk" import select with context %}
+{%- from "x-nhsuk/decorated/textarea/macro.njk" import textarea with context %}
+
+{#- Application macros -#}
+{%- from "_macros/action-list.njk" import appActionList %}
+{%- from "_macros/add-another.njk" import appAddAnother %}
+{%- from "_macros/button-group.njk" import appButtonGroup with context %}
+{%- from "_macros/count.njk" import appCount %}
+{%- from "_macros/data-card.njk" import appDataCard with context %}
+{%- from "_macros/environment.njk" import appEnvironment %}
+{%- from "_macros/event.njk" import appEvent %}
+{%- from "_macros/heading.njk" import appHeading %}
+{%- from "_macros/search-input.njk" import appSearchInput with context %}
+{%- from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+{%- from "_macros/status.njk" import appStatus %}
+{%- from "_macros/timeline.njk" import appTimeline with context %}
+{%- from "_macros/sub-navigation.njk" import appSubNavigation %}
+
+{% set assetsName = assetsName | default("application") %}
+
+{% block pageTitle -%}
+  {%- if errors === true or (errors | length) %}Error: {% endif -%}
+  {%- if pageName %}{{ pageName }} – {% endif -%}
+  {{ serviceName }} – NHS
+{%- endblock %}
 
 {% block head %}
   {# Prevent NHS numbers from being treated as phone numbers #}
   <meta name="format-detection" content="telephone=no">
 
-  {% set assetsName = assetsName | default("application") %}
-  <link rel="stylesheet" href="/assets/{{ assetsName }}.css" media="all">
-  <script src="/assets/{{ assetsName }}.js" type="module"></script>
+  <link href="/assets/stylesheets/{{ assetsName }}.css" rel="stylesheet" media="all">
+  <script src="/assets/javascripts/{{ assetsName }}.js" type="module"></script>
 {% endblock %}
 
 {% block header %}
@@ -128,9 +176,9 @@
         text: "CIS2 users",
         href: "/users"
       }, {
-        text: "Clear session data",
-        href: "/clear-session-data"
-      } if useAutoStoreData, {
+        text: "Reset data",
+        href: "/reset"
+      }, {
         text: "Design history",
         href: "https://design-history.prevention-services.nhs.uk/manage-vaccinations-in-schools/"
       }]

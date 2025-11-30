@@ -1,5 +1,4 @@
 import express from 'express'
-import flash from 'express-flash'
 
 import { authentication } from './middleware/authentication.js'
 import { enumeration } from './middleware/enumeration.js'
@@ -44,7 +43,7 @@ router.use(performance)
 router.use(enumeration)
 router.use(environment)
 router.use(internationalisation)
-router.use(flash(), authentication, navigation, notification, rollover, team)
+router.use(authentication, navigation, notification, rollover, team)
 router.use(referrer)
 
 router.use('/', homeRoutes)
