@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { PatientStatus } from '../enums.js'
-import { Patient, School } from '../models.js'
+import { School } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { formatYearGroup } from '../utils/string.js'
@@ -18,7 +18,10 @@ export const schoolController = {
   },
 
   readAll(request, response, next) {
-    response.locals.schools = School.findAll(request.session.data)
+    // Combine children with no known school with home-schooled children)
+    response.locals.schools = School.findAll(request.session.data).filter(
+      (school) => school.id !== '888888'
+    )
 
     next()
   },
@@ -93,17 +96,12 @@ export const schoolController = {
   },
 
   readPatients(request, response, next) {
-    const { school_id } = request.params
     const { option, programme_id, q, yearGroup } = request.query
     const { data } = request.session
     const { school } = response.locals
 
-    const patients = Patient.findAll(data).filter(
-      (patient) => patient.school_id === school_id
-    )
-
     // Sort
-    let results = _.sortBy(patients, 'lastName')
+    let results = _.sortBy(school.patients, 'lastName')
 
     // Query
     if (q) {
@@ -207,7 +205,7 @@ export const schoolController = {
 
     // Results
     response.locals.school = school
-    response.locals.patients = patients
+    response.locals.patients = school.patients
     response.locals.results = getResults(results, request.query)
     response.locals.pages = getPagination(results, request.query)
 

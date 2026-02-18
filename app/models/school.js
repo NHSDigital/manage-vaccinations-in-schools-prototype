@@ -31,6 +31,11 @@ export class School extends Location {
     this.site = options?.site
     this.phase = options?.phase
     this.yearGroups = options?.yearGroups || []
+    this.homeOrUnknown = ['888888', '999999'].includes(this.urn)
+
+    if (this.homeOrUnknown) {
+      this.name = 'No known school (including home-schooled children)'
+    }
   }
 
   /**
@@ -62,6 +67,13 @@ export class School extends Location {
    */
   get patients() {
     if (this.context?.patients && this.id) {
+      // Combine children with no known school with home-schooled children)
+      if (this.homeOrUnknown) {
+        return Object.values(this.context?.patients)
+          .filter(({ school_id }) => ['888888', '999999'].includes(school_id))
+          .map((patient) => new Patient(patient, this.context))
+      }
+
       return Object.values(this.context?.patients)
         .filter(({ school_id }) => school_id === this.id)
         .map((patient) => new Patient(patient, this.context))
