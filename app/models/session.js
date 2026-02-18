@@ -641,31 +641,23 @@ export class Session {
   }
 
   /**
-   * Get closing summary
-   *
-   * @returns {object} Closing summary
-   */
-  get closingSummary() {
-    return {
-      noConsentRequest: this.patients.filter(
-        ({ consent }) => consent === ConsentOutcome.NotDelivered
-      ),
-      noConsentResponse: this.patients.filter(
-        ({ consent }) => consent === ConsentOutcome.NoResponse
-      ),
-      couldNotVaccinate: this.patients.filter(
-        ({ report }) => report !== PatientStatus.Vaccinated
-      )
-    }
-  }
-
-  /**
    * Get patient sessions that can be moved to a clinic session
    *
    * @returns {Array<PatientSession>} Patient sessions
    */
   get patientSessionsForClinic() {
     return this.patients.filter(({ report }) => report === PatientStatus.Due)
+  }
+
+  /**
+   * Get next available clinic session
+   *
+   * @returns {Session} Session
+   */
+  get nextProgrammeClinic() {
+    return Session.findAll(this.context).find(
+      (session) => session.type === SessionType.Clinic
+    )
   }
 
   /**

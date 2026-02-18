@@ -1892,26 +1892,16 @@ export const en = {
         lastName: 'Last name'
       }
     },
-    close: {
-      title: 'Close session',
+    inviteToClinic: {
+      title: 'Invite parents to book a clinic appointment',
+      label: 'Send clinic invitations',
+      count:
+        '{count, plural, =0 {No children} one {1 child} other {# children}} were not vaccinated at this school and have not already been invited to a clinic.',
       description:
-        'All sessions for this school have been completed.\n\nWhen you close this session, the following children will be invited to community clinics:',
-      confirm: 'Close session',
-      success: '{{session.name}} has been closed'
-    },
-    closingSummary: {
-      noConsentRequest: {
-        count:
-          '{count, plural, =0 {No children} one {1 child} other {# children}} whose parents did not receive a consent request'
-      },
-      noConsentResponse: {
-        count:
-          '{count, plural, =0 {No children} one {1 child} other {# children}} whose parents did not give a consent response'
-      },
-      couldNotVaccinate: {
-        count:
-          '{count, plural, =0 {No children} one {1 child} other {# children}} who could not be vaccinated'
-      }
+        'You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.\n\nThe next clinic is on %s.',
+      confirm: 'Send clinic invitations',
+      success:
+        '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
     }
   },
   texts: {

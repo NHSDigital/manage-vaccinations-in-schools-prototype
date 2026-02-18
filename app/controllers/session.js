@@ -685,11 +685,11 @@ export const sessionController = {
     response.redirect(session.uri)
   },
 
-  close(request, response) {
+  inviteToClinic(request, response) {
     const { account } = request.app.locals
     const { session_id } = request.params
     const { data } = request.session
-    const { __ } = response.locals
+    const { __mf } = response.locals
 
     // Update session as closed
     const session = Session.update(session_id, { closed: true }, data)
@@ -701,11 +701,13 @@ export const sessionController = {
         programme_ids.some((id) => session.programme_ids.includes(id))
       )
 
+    // Find patients to invite to clinic
+    const patientSessionsForClinic = session.patientSessionsForClinic.map(
+      (patient) => patient.uuid
+    )
+
     // Move patients to clinic
     if (clinic) {
-      const patientSessionsForClinic = session.patientSessionsForClinic.map(
-        (patient) => patient.uuid
-      )
       for (const patientSession of patientSessionsForClinic) {
         const patient = Patient.findOne(patientSession.patient_uuid, data)
         patientSession.removeFromSession({
@@ -716,7 +718,12 @@ export const sessionController = {
       }
     }
 
-    request.flash('success', __(`session.close.success`, { session }))
+    request.flash(
+      'success',
+      __mf(`session.inviteToClinic.success`, {
+        count: patientSessionsForClinic.length
+      })
+    )
 
     response.redirect(session.uri)
   }
