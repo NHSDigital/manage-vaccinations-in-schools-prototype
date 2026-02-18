@@ -1535,6 +1535,17 @@ export const en = {
       yes: 'Yes, I want to add this school',
       no: 'No, I want to add a different school'
     },
+    inviteToClinic: {
+      title: 'Invite parents to book a clinic appointment',
+      label: 'Send clinic invitations',
+      count:
+        '{count, plural, =0 {No children} one {1 child} other {# children}} have not been vaccinated. They have not been invited to a clinic yet.',
+      description:
+        'You can now send clinic booking invitations to their parents.\n\nThe next clinic is on %s.',
+      confirm: 'Send clinic invitations',
+      success:
+        '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
+    },
     patients: {
       label: 'Children',
       title: 'Children'

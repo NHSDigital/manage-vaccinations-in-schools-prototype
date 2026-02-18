@@ -450,5 +450,29 @@ export const schoolController = {
     request.flash('success', __(`school.delete.success`))
 
     response.redirect(referrer)
+  },
+
+  inviteToClinic(request, response) {
+    const { school_id } = request.params
+    const { data } = request.session
+    const { __mf } = response.locals
+
+    const school = School.findOne(school_id, data)
+
+    // Find patients to invite to clinic
+    const patientSessionsForClinic = school.patients.map(
+      (patient) => patient.uuid
+    )
+
+    // TODO: Move patients to clinic
+
+    request.flash(
+      'success',
+      __mf(`school.inviteToClinic.success`, {
+        count: patientSessionsForClinic.length
+      })
+    )
+
+    response.redirect(school.uri)
   }
 }

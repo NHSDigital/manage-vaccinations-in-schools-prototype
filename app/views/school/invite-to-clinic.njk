@@ -1,0 +1,17 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("school.inviteToClinic.title") %}
+{% set confirmButtonText = __("school.inviteToClinic.confirm") %}
+
+{% block form %}
+  {{ appHeading({
+    caption: school.name,
+    title: title
+  }) }}
+
+  {{ __mf("school.inviteToClinic.count", {
+    count: school.patients.length
+  }) | nhsukMarkdown }}
+
+  {{ __("school.inviteToClinic.description", "1 June 2026") | nhsukMarkdown }}
+{% endblock %}

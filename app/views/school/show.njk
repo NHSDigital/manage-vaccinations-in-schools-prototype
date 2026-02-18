@@ -32,7 +32,11 @@
     classes: "nhsuk-button--secondary",
     href: "/uploads/new?type=" + UploadType.School + "&school_id=" + school.id,
     text: __("session.upload-class-list.title")
-  }) if school.id != "888888" and school.id != "999999" }}
+  } if not school.homeOrUnknown else {
+    classes: "nhsuk-button--secondary",
+    href: school.uri + "/invite-to-clinic",
+    text: __("session.inviteToClinic.label")
+  }) }}
 
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
