@@ -66,7 +66,8 @@ export const patientController = {
   },
 
   readAll(request, response, next) {
-    const { option, programme_id, q, yearGroup } = request.query
+    const { invitedToClinic, option, programme_id, q, yearGroup } =
+      request.query
     const { data } = request.session
 
     const programmes = Programme.findAll(data)
@@ -116,6 +117,19 @@ export const patientController = {
         programme_ids.some(
           (programme_id) =>
             patient.programmes[programme_id].status !== PatientStatus.Ineligible
+        )
+      )
+    }
+
+    // Filter by programme clinic invitations
+    if (programme_id && invitedToClinic === 'true') {
+      results = results.filter(
+        (patient) => patient.programmes[programme_id]?.invitedToClinic
+      )
+    } else if (invitedToClinic === 'true') {
+      results = results.filter((patient) =>
+        Object.values(patient.programmes).some(
+          (programme) => programme.invitedToClinic
         )
       )
     }
@@ -196,6 +210,7 @@ export const patientController = {
     }))
 
     // Clean up session data
+    delete data.invitedToClinic
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
@@ -233,6 +248,7 @@ export const patientController = {
 
     // Checkboxes
     for (const key of [
+      'invitedToClinic',
       'option',
       'patientConsent',
       'patientDeferred',

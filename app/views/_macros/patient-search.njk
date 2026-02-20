@@ -62,6 +62,21 @@
       decorate: "programme_id"
     }) if programmeItems }}
 
+    {{ checkboxes({
+      classes: "nhsuk-checkboxes--small",
+      fieldset: {
+        legend: {
+          classes: "nhsuk-fieldset__legend--s",
+          text: __("patient.clinicProgramme_ids.label")
+        }
+      },
+      items: [{
+        text: 'Invited to clinic',
+        value: 'true'
+      }],
+      decorate: "invitedToClinic"
+    }) }}
+
     {% for name, enums in params.checkboxFilters %}
       {{ checkboxes({
         classes: "nhsuk-checkboxes--small",

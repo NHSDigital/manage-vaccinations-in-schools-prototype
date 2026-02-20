@@ -1083,6 +1083,9 @@ export const en = {
     programmes: {
       label: 'Vaccination programmes'
     },
+    clinicProgramme_ids: {
+      label: 'Clinic invitations'
+    },
     status: {
       label: 'Status'
     }
@@ -1539,9 +1542,17 @@ export const en = {
       title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
       count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} have not been vaccinated. They have not been invited to a clinic yet.',
+        '{count, plural, =0 {No children} one {1 child} other {# children}} are due a vaccination for at least 1 programme. They have not been invited to a clinic yet.',
       description:
-        'You can now send clinic booking invitations to their parents.\n\nThe next clinic is on %s.',
+        'You can now send clinic booking invitations to their parents.',
+      programme: 'Which programmes do you want to send invitations for?',
+      flu: '{count, plural, =0 {No children} one {1 child} other {# children}} have not had a flu vaccination',
+      hpv: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had an HPV vaccination',
+      menacwy:
+        '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had an MenACWY vaccination',
+      mmr: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had an MMR vaccination',
+      'td-ipv':
+        '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had a Td/IPV vaccination',
       confirm: 'Send clinic invitations',
       success:
         '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'

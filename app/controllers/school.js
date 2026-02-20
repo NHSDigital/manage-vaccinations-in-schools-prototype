@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { PatientStatus } from '../enums.js'
-import { School } from '../models.js'
+import { Patient, School } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { formatYearGroup } from '../utils/string.js'
@@ -96,7 +96,8 @@ export const schoolController = {
   },
 
   readPatients(request, response, next) {
-    const { option, programme_id, q, yearGroup } = request.query
+    const { invitedToClinic, option, programme_id, q, yearGroup } =
+      request.query
     const { data } = request.session
     const { school } = response.locals
 
@@ -141,6 +142,19 @@ export const schoolController = {
         programme_ids.some(
           (programme_id) =>
             patient.programmes[programme_id].status !== PatientStatus.Ineligible
+        )
+      )
+    }
+
+    // Filter by programme clinic invitations
+    if (programme_id && invitedToClinic === 'true') {
+      results = results.filter(
+        (patient) => patient.programmes[programme_id]?.invitedToClinic
+      )
+    } else if (invitedToClinic === 'true') {
+      results = results.filter((patient) =>
+        Object.values(patient.programmes).some(
+          (programme) => programme.invitedToClinic
         )
       )
     }
@@ -223,6 +237,7 @@ export const schoolController = {
     }))
 
     // Clean up session data
+    delete data.invitedToClinic
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
@@ -252,6 +267,7 @@ export const schoolController = {
 
     // Checkboxes
     for (const key of [
+      'invitedToClinic',
       'option',
       'patientConsent',
       'patientDeferred',
@@ -464,7 +480,14 @@ export const schoolController = {
       (patient) => patient.uuid
     )
 
-    // TODO: Move patients to clinic
+    // Invite parents to book into a clinic
+    for (const patient of school.patients) {
+      const clinicProgramme_ids = request.body.clinicProgramme_ids.filter(
+        (item) => item !== '_unchecked'
+      )
+
+      Patient.update(patient.uuid, { clinicProgramme_ids }, data)
+    }
 
     request.flash(
       'success',

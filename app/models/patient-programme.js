@@ -25,12 +25,14 @@ import {
  * @param {object} options - Options
  * @param {object} [context] - Global context
  * @property {object} [context] - Global context
+ * @property {boolean} [invitedToClinic] - Invited to clinic
  * @property {string} patient_uuid - Patient UUID
  * @property {string} programme_id - Programme ID
  */
 export class PatientProgramme {
   constructor(options, context) {
     this.context = context
+    this.invitedToClinic = options?.invitedToClinic
     this.patient_uuid = options?.patient_uuid
     this.programme_id = options?.programme_id
   }
