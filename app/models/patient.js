@@ -11,6 +11,7 @@ import {
   Parent,
   PatientProgramme,
   PatientSession,
+  Programme,
   Reply,
   Vaccination
 } from '../models.js'
@@ -45,6 +46,7 @@ import {
  * @property {Patient} [pendingChanges] - Pending changes to record values
  * @property {import('../enums.js').ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
+ * @property {Array<string} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<import('./audit-event.js').AuditEvent>} events - Events
  * @property {Array<string>} [reply_uuids] - Reply IDs
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
@@ -71,6 +73,7 @@ export class Patient extends Child {
     this.archiveReasonOther = options?.archiveReasonOther
     this.pendingChanges = options?.pendingChanges || {}
 
+    this.clinicProgramme_ids = options?.clinicProgramme_ids || []
     this.events = options?.events || []
     this.reply_uuids = options?.reply_uuids || []
     this.patientSession_uuids = options?.patientSession_uuids || []
@@ -304,13 +307,20 @@ export class Patient extends Child {
     for (const programme of Object.values(programmesData).filter(
       (programme) => !programme.hidden
     )) {
-      programmes[programme.id] = new PatientProgramme(
+      const patientProgramme = new PatientProgramme(
         {
           patient_uuid: this.uuid,
           programme_id: programme.id
         },
         this.context
       )
+
+      // Patient invited to clinic if invitation needed and invitation sent
+      patientProgramme.invitedToClinic =
+        patientProgramme.inviteToSession &&
+        this.clinicProgramme_ids.includes(programme.id)
+
+      programmes[programme.id] = patientProgramme
     }
 
     return programmes
@@ -449,7 +459,10 @@ export class Patient extends Child {
       archiveReason: formatOther(this.archiveReasonOther, this.archiveReason),
       lastReminderDate: this.lastReminderDate
         ? `Last reminder sent on ${this.lastReminderDate}`
-        : 'No reminders sent'
+        : 'No reminders sent',
+      clinicProgramme_ids: this.clinicProgramme_ids
+        .map((id) => Programme.findOne(id, this.context).nameTag)
+        .join(' ')
     }
   }
 

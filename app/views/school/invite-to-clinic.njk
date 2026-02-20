@@ -14,4 +14,55 @@
   }) | nhsukMarkdown }}
 
   {{ __("school.inviteToClinic.description", "1 June 2026") | nhsukMarkdown }}
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        text: __("school.inviteToClinic.programme"),
+        size: "m"
+      }
+    },
+    items: [{
+      text: ProgrammeType.Flu,
+      value: "flu",
+      hint: {
+        text: __mf("school.inviteToClinic.flu", {
+          count: school.patientsToInviteToSession('flu').length
+        })
+      }
+    } if school.patientsToInviteToSession('flu').length, {
+      text: ProgrammeType.HPV,
+      value: "hpv",
+      hint: {
+        text: __mf("school.inviteToClinic.hpv", {
+          count: school.patientsToInviteToSession('hpv').length
+        })
+      }
+    } if school.patientsToInviteToSession('hpv').length, {
+      text: ProgrammeType.MenACWY,
+      value: "menacwy",
+      hint: {
+        text: __mf("school.inviteToClinic.menacwy", {
+          count: school.patientsToInviteToSession('menacwy').length
+        })
+      }
+    } if school.patientsToInviteToSession('menacwy').length, {
+      text: ProgrammeType.MMR,
+      value: "mmr",
+      hint: {
+        text: __mf("school.inviteToClinic.mmr", {
+          count: school.patientsToInviteToSession('mmr').length
+        })
+      }
+    } if school.patientsToInviteToSession('mmr').length, {
+      text: ProgrammeType.TdIPV,
+      value: "td-ipv",
+      hint: {
+        text: __mf("school.inviteToClinic.td-ipv", {
+          count: school.patientsToInviteToSession('td-ipv').length
+        })
+      }
+    } if school.patientsToInviteToSession('td-ipv').length],
+    decorate: "clinicProgramme_ids"
+  }) }}
 {% endblock %}

@@ -92,6 +92,18 @@ export class School extends Location {
   }
 
   /**
+   * Get school pupils to invite to a (clinic) session
+   *
+   * @param {string} programmeId - Programme ID
+   * @returns {Array<Patient>} Patient records
+   */
+  patientsToInviteToSession(programmeId) {
+    return this.patients.filter(
+      (patient) => patient.programmes[programmeId].inviteToSession
+    )
+  }
+
+  /**
    * Get sessions run at this school
    *
    * @returns {Array<Session>} Sessions

@@ -12,6 +12,7 @@ export default {
     id: '888888',
     urn: '888888',
     name: 'Unknown school',
+    yearGroups: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
     team_id: '001',
     presetNames
   },
@@ -19,6 +20,7 @@ export default {
     id: '999999',
     urn: '999999',
     name: 'Home-schooled',
+    yearGroups: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
     team_id: '001',
     presetNames
   },
