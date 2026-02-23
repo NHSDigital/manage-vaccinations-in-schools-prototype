@@ -1,10 +1,55 @@
 import programmesData from '../datasets/programmes.js'
 import { AcademicYear, DownloadFormat, ProgrammeType } from '../enums.js'
 import { Download, Programme, Team } from '../models.js'
+import { getDateValueDifference } from '../utils/date.js'
+import { getResults, getPagination } from '../utils/pagination.js'
 
 export const downloadController = {
+  readAll(request, response, next) {
+    response.locals.downloads = Download.findAll(request.session.data)
+
+    next()
+  },
+
   list(request, response) {
+    const { type } = request.query
+    const { data } = request.session
+    const { downloads } = response.locals
+
+    let results = downloads
+
+    // Filter by type
+    if (type && type !== 'none') {
+      results = results.filter((download) => download.type === type)
+    }
+
+    // Sort
+    results = results.sort((a, b) =>
+      getDateValueDifference(b.createdAt, a.createdAt)
+    )
+
+    // Results
+    response.locals.results = getResults(results, request.query, 40)
+    response.locals.pages = getPagination(results, request.query, 40)
+
+    // Clean up session data
+    delete data.type
+
     response.render(`download/list`)
+  },
+
+  filterList(request, response) {
+    const params = new URLSearchParams()
+
+    // Radios and text inputs
+    for (const key of ['type']) {
+      const value = request.body[key]
+      if (value) {
+        params.append(key, String(value))
+      }
+    }
+
+    response.redirect(`/downloads?${params}`)
   },
 
   form(request, response) {
