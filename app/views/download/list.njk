@@ -1,0 +1,15 @@
+{% from "interchange/_navigation.njk" import interchangeNavigation with context %}
+
+{% extends "_layouts/form.njk" %}
+
+{% set gridColumns = "full" %}
+{% set hideConfirmButton = true %}
+{% set title = __("download.list.title") %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ interchangeNavigation({
+    view: "downloads"
+  }) }}
+{% endblock %}

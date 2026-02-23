@@ -712,6 +712,11 @@ export const en = {
     }
   },
   download: {
+    label: 'Exports',
+    list: {
+      label: 'Exports',
+      title: 'Exports'
+    },
     new: {
       label: 'Download vaccination report',
       confirm: 'Download vaccination data'
@@ -858,6 +863,14 @@ export const en = {
   home: {
     show: {
       title: 'Home'
+    }
+  },
+  interchange: {
+    label: 'Manage data',
+    list: {
+      label: 'Manage data',
+      title: 'Manage data',
+      description: 'Import and export child and vaccination records'
     }
   },
   notice: {
