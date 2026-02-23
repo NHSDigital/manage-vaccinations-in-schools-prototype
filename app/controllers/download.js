@@ -3,6 +3,10 @@ import { AcademicYear, DownloadFormat, ProgrammeType } from '../enums.js'
 import { Download, Programme, Team } from '../models.js'
 
 export const downloadController = {
+  list(request, response) {
+    response.render(`download/list`)
+  },
+
   form(request, response) {
     const { data } = request.session
 
