@@ -420,12 +420,30 @@ export const patientController = {
     const { data } = request.session
     const { patient } = response.locals
 
+    let presetNames
+    switch (programme_id) {
+      case 'flu':
+        presetNames = SessionPresetName.Flu
+        break
+      case 'hpv':
+        presetNames = SessionPresetName.HPV
+        break
+      case 'menacwy':
+      case 'td-ipv':
+        presetNames = SessionPresetName.Doubles
+        break
+      case 'mmr':
+        presetNames = SessionPresetName.MMR
+        break
+      default:
+    }
+
     const session = Session.create(
       {
         createdBy_uid: account.uid,
         date: today(),
         type: SessionType.Clinic,
-        presetNames: SessionPresetName.Flu,
+        presetNames,
         clinic_id: 'X99999'
       },
       data
