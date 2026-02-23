@@ -109,11 +109,12 @@ export class Download {
    * @returns {string} Name
    */
   get name() {
-    if (this.programme) {
-      return this.programme.name
+    switch (true) {
+      case this.type === DownloadType.Report:
+        return `${this.programme.name} vaccination records`
+      default:
+        return 'Download'
     }
-
-    return 'Download'
   }
 
   /**
@@ -346,7 +347,7 @@ export class Download {
    * @returns {string} URI
    */
   get uri() {
-    return `/reports/${this.programme_id}/download/${this.id}`
+    return `/downloads/${this.id}`
   }
 
   /**

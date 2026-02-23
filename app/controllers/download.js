@@ -5,6 +5,15 @@ import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const downloadController = {
+  read(request, response, next, download_id) {
+    response.locals.download = Download.findOne(
+      download_id,
+      request.session.data
+    )
+
+    next()
+  },
+
   readAll(request, response, next) {
     response.locals.downloads = Download.findAll(request.session.data)
 
@@ -95,8 +104,8 @@ export const downloadController = {
     const { account } = request.app.locals
     const { data } = request.session
 
-    const { type } = request.body.download
-    const programme_id = programmesData[type].id
+    const { programmeType } = request.body.download
+    const programme_id = programmesData[programmeType].id
     const programme = Programme.findOne(programme_id, data)
 
     const createdDownload = Download.create(
@@ -110,6 +119,19 @@ export const downloadController = {
     )
 
     const download = new Download(createdDownload, data)
+
+    // Generate and return file
+    const { buffer, fileName, mimetype } = download.createFile(data)
+
+    response.header('Content-Type', mimetype)
+    response.header('Content-disposition', `attachment; filename=${fileName}`)
+
+    response.end(buffer)
+  },
+
+  download(request, response) {
+    const { data } = request.session
+    const { download } = response.locals
 
     // Generate and return file
     const { buffer, fileName, mimetype } = download.createFile(data)
