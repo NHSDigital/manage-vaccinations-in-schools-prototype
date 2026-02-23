@@ -4,7 +4,8 @@ import { downloadController as download } from '../controllers/download.js'
 
 const router = express.Router({ strict: true })
 
-router.get('/', download.list)
+router.get('/', download.readAll, download.list)
+router.post('/', download.filterList)
 
 router.get('/new', download.form)
 router.post('/new', download.create)
