@@ -36,7 +36,7 @@
     "response-time": "^2.3.3"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.10",
+    "@types/lodash": "^4.17.24",
     "@x-govuk/eslint-config": "^0.0.1",
     "prettier": "^3.1.0",
     "stylelint": "^16.2.1",
