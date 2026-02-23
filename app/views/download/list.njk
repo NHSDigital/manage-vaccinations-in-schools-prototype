@@ -12,4 +12,82 @@
   {{ interchangeNavigation({
     view: "downloads"
   }) }}
+
+  <div class="nhsuk-grid-row">
+    <app-auto-submit class="app-grid-column-filters">
+      {% call card({
+        classes: "app-filters",
+        feature: true,
+        heading: __("download.search.label"),
+        headingLevel: 3
+      }) %}
+        {{ radios({
+          classes: "nhsuk-radios--small",
+          fieldset: {
+            legend: {
+              classes: "nhsuk-fieldset__legend--s",
+              text: __("download.type.label")
+            }
+          },
+          items: radioFilterItems(DownloadType),
+          decorate: "type"
+        }) }}
+
+        {{ appButtonGroup({
+          buttons: [{
+            classes: "nhsuk-button--secondary nhsuk-button--small",
+            text: __("search.confirm"),
+            attributes: {
+              formaction: params.formaction,
+              formmethod: "post",
+              role: "search"
+            }
+          }, {
+            classes: "nhsuk-button--secondary nhsuk-button--small",
+            text: __("search.clear"),
+            href: "/downloads"
+          } if data.type]
+        }) }}
+      {% endcall %}
+    </app-auto-submit>
+
+    <div class="app-grid-column-results">
+      {% if data.type and data.type != "none" %}
+        {% set title = data.type | replace("records", "record exports") %}
+      {% else %}
+        {% set title = "All exports" %}
+      {% endif %}
+
+      {{ appHeading({
+        level: 3,
+        size: "m",
+        title: title,
+        summary: __mf("download.results", {
+          from: results.from,
+          to: results.to,
+          count: results.count
+        }) | safe
+      }) }}
+
+      {% for download in results.page %}
+        {{ summaryList({
+          card: {
+            classes: "app-card--compact",
+            heading: download.name,
+            headingSize: "s",
+            headingLevel: 4,
+            href: download.uri,
+            clickable: true
+          },
+          rows: summaryRows(download, {
+            createdAt: {},
+            createdBy: {},
+            type: {}
+          })
+        }) }}
+      {% endfor %}
+
+      {{ pagination(pages) }}
+    </div>
+  </div>
 {% endblock %}

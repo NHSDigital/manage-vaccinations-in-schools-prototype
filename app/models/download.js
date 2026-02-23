@@ -1,8 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import xlsx from 'json-as-xlsx'
 
-import { DownloadFormat } from '../enums.js'
-import { Programme, Team, Vaccination } from '../models.js'
+import { DownloadFormat, DownloadType } from '../enums.js'
+import { Programme, Team, Vaccination, User } from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -25,6 +25,7 @@ import { formatList } from '../utils/string.js'
  * @property {Date} [endAt] - Date to end report
  * @property {object} [endAt_] - Date to end report (from `dateInput`)
  * @property {DownloadFormat} [format] - Downloaded file format
+ * @property {DownloadType} [type] - Download type
  * @property {string} [programme_id] - Programme ID
  * @property {Array<string>} [team_ids] - Team IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
@@ -41,9 +42,25 @@ export class Download {
     this.endAt = options?.endAt && new Date(options.endAt)
     this.endAt_ = options?.endAt_
     this.format = options?.format || DownloadFormat.CSV
+    this.type = options?.type || DownloadType.Report
     this.programme_id = options?.programme_id
     this.team_ids = options?.team_ids
     this.vaccination_uuids = options?.vaccination_uuids || []
+  }
+
+  /**
+   * Get user who created upload
+   *
+   * @returns {User} User
+   */
+  get createdBy() {
+    try {
+      if (this.createdBy_uid) {
+        return User.findOne(this.createdBy_uid, this.context)
+      }
+    } catch (error) {
+      console.error('Upload.createdBy', error.message)
+    }
   }
 
   /**
@@ -291,6 +308,15 @@ export class Download {
    */
   get formatted() {
     return {
+      createdAt: formatDate(this.createdAt, {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }),
+      createdBy: this.createdBy?.fullName,
       startAt: this.startAt
         ? formatDate(this.startAt, { dateStyle: 'long' })
         : 'Earliest recorded vaccination',
@@ -321,6 +347,19 @@ export class Download {
    */
   get uri() {
     return `/reports/${this.programme_id}/download/${this.id}`
+  }
+
+  /**
+   * Find all
+   *
+   * @param {object} context - Context
+   * @returns {Array<Download>|undefined} Downloads
+   * @static
+   */
+  static findAll(context) {
+    return Object.values(context.downloads).map(
+      (upload) => new Download(upload, context)
+    )
   }
 
   /**

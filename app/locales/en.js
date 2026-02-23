@@ -717,9 +717,20 @@ export const en = {
       label: 'Exports',
       title: 'Exports'
     },
+    search: {
+      label: 'Find export'
+    },
+    results:
+      '{count, plural, =0 {No exports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> export} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> exports}}',
     new: {
       label: 'Download vaccination report',
       confirm: 'Download vaccination data'
+    },
+    createdAt: {
+      label: 'Requested at'
+    },
+    createdBy: {
+      label: 'Requested by'
     },
     startAt: {
       label: 'Get vaccination data from'
@@ -734,6 +745,9 @@ export const en = {
     teams: {
       title: 'Select providers',
       label: 'Providers'
+    },
+    type: {
+      label: 'Type'
     },
     vaccinations: {
       label: 'Records'
@@ -2139,7 +2153,7 @@ export const en = {
         'Use this page to upload and import child, class list and vaccination records.\n\nUpload times can vary. Refresh the page to see the latest status.'
     },
     search: {
-      label: 'Find upload'
+      label: 'Find import'
     },
     results:
       '{count, plural, =0 {No imports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> import} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> imports}}',
