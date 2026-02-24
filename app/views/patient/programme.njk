@@ -26,6 +26,62 @@
     patient: patient
   }) }}
 
+  {% call card({
+    heading: __mf("patientProgramme.vaccinationsGiven.count", {
+      count: patientProgramme.vaccinationsGiven.length
+    }),
+    headingLevel: 3
+  }) %}
+    {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
+
+    {% if patientProgramme.vaccinationsGiven.length %}
+      {% set vaccinationRows = [] %}
+      {% for vaccination in patientProgramme.vaccinationsGiven %}
+        {% set vaccinationRows = vaccinationRows | push([
+          {
+            header: __("vaccination.createdAt.label"),
+            html: vaccination.link.createdAt
+          },
+          {
+            header: __("vaccination.age.label"),
+            text: patient.dob | age(at=vaccination.createdAt)
+          },
+          {
+            header: __("vaccination.programme.label"),
+            html: vaccination.formatted.programmeWithSequence
+          }
+        ]) %}
+      {% endfor %}
+
+      {{ table({
+        id: "vaccinations",
+        responsive: true,
+        head: [
+          { text: __("vaccination.createdAt.label") },
+          { text: __("vaccination.age.label") },
+          { text: __("vaccination.programme.label") }
+        ],
+        rows: vaccinationRows
+      }) }}
+    {% endif %}
+
+    {{ appButtonGroup({
+      buttons: [{
+        classes: "nhsuk-button--secondary",
+        text: __("patientSession.record.title", {
+          programme: patientProgramme.programme
+        }) | safe,
+        attributes: {
+          formaction: patientProgramme.uri + "/record?referrer=" + referrer
+        }
+      }, {
+        classes: "nhsuk-button--secondary",
+        text: __("vaccination.new.alreadyVaccinated.title"),
+        href: patientProgramme.uri + "/new/vaccination"
+      }]
+    }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.eligible }}
+  {% endcall %}
+
   {% if patientProgramme.ttcvVaccinations %}
     {% call card({
       heading: __("patientProgramme.ttcv.label"),
@@ -72,63 +128,6 @@
       }) }}
     {% endcall %}
   {% endif %}
-
-  {% call card({
-    heading: __mf("patientProgramme.vaccinationsGiven.count", {
-      count: patientProgramme.vaccinationsGiven.length
-    }),
-    headingLevel: 3
-  }) %}
-    {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
-
-    {% if patientProgramme.vaccinationsGiven.length %}
-      {% for vaccination in patientProgramme.vaccinationsGiven %}
-        {{ summaryList({
-          card: {
-            classes: "app-card--compact app-card--offset",
-            heading: vaccination.formatted.vaccine_snomed,
-            headingLevel: 4,
-            href: vaccination.uri,
-            clickable: true
-          },
-          rows: summaryRows(vaccination, {
-            outcome: {},
-            vaccine_snomed: {},
-            method: {},
-            site: {},
-            dose: {},
-            sequence: {},
-            batch: {},
-            location: {},
-            identifiedBy: {},
-            suppliedBy: {},
-            createdBy: {},
-            createdAt: {},
-            reportedAt: {},
-            protocol: {},
-            note: {},
-            syncStatus: {}
-          })
-        }) }}
-      {% endfor %}
-    {% endif %}
-
-    {{ appButtonGroup({
-      buttons: [{
-        classes: "nhsuk-button--secondary",
-        text: __("patientSession.record.title", {
-          programme: patientProgramme.programme
-        }) | safe,
-        attributes: {
-          formaction: patientProgramme.uri + "/record?referrer=" + referrer
-        }
-      }, {
-        classes: "nhsuk-button--secondary",
-        text: __("vaccination.new.alreadyVaccinated.title"),
-        href: patientProgramme.uri + "/new/vaccination"
-      }]
-    }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.eligible }}
-  {% endcall %}
 
   {% if patientProgramme.patientSessions.length %}
     {% set patientSessionRows = [] %}
