@@ -76,13 +76,14 @@
             heading: download.name,
             headingSize: "s",
             headingLevel: 4,
-            href: download.uri + "/download",
-            clickable: true
+            href: download.uri + "/download" if download.status == DownloadStatus.Ready,
+            clickable: true if download.status == DownloadStatus.Ready
           },
           rows: summaryRows(download, {
             createdAt: {},
             createdBy: {},
-            type: {}
+            type: {},
+            status: {}
           })
         }) }}
       {% endfor %}

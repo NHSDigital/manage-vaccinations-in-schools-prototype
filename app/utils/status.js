@@ -1,5 +1,6 @@
 import {
   ConsentOutcome,
+  DownloadStatus,
   GillickCompetent,
   InstructionOutcome,
   PatientConsentStatus,
@@ -55,6 +56,28 @@ export function getConsentOutcomeStatus(consent) {
     colour,
     icon,
     text: consent
+  }
+}
+
+/**
+ * Get download status properties
+ *
+ * @param {DownloadStatus} status - Download status
+ * @returns {object} Status properties
+ */
+export function getDownloadStatus(status) {
+  let colour
+  switch (status) {
+    case DownloadStatus.Ready:
+      colour = 'green'
+      break
+    default:
+      colour = 'white'
+  }
+
+  return {
+    colour,
+    text: status
   }
 }
 
