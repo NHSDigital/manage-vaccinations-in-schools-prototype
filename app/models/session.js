@@ -827,23 +827,6 @@ export class Session {
   }
 
   /**
-   * Create file
-   *
-   * @param {object} context - Context
-   * @returns {object} File buffer, name and mime type
-   * @todo Create download using Mavis offline XLSX schema
-   */
-  createFile(context) {
-    const { name } = new Session(this, context)
-
-    return {
-      buffer: Buffer.from(''),
-      fileName: `${name}.csv`,
-      mimetype: 'text/csv'
-    }
-  }
-
-  /**
    * Update
    *
    * @param {string} id - Session ID

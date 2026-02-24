@@ -5,7 +5,7 @@
 {% block content %}
   {{ super() }}
 
-  <form class="nhsuk-grid-row" method="post" novalidate data-validate>
+  <form class="nhsuk-grid-row" action="{{ formAction }}" method="post" novalidate data-validate>
     <div class="nhsuk-grid-column-{{ gridColumns }}">
       {% block form %}
       {% endblock %}

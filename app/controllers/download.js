@@ -102,21 +102,33 @@ export const downloadController = {
 
   create(request, response) {
     const { account } = request.app.locals
+    const { programmeType, session_id, type } = request.body.download
     const { data } = request.session
 
-    const { programmeType } = request.body.download
-    const programme_id = programmesData[programmeType].id
-    const programme = Programme.findOne(programme_id, data)
+    let createdDownload
+    if (type) {
+      createdDownload = Download.create(
+        {
+          createdBy_uid: account.uid,
+          session_id,
+          type
+        },
+        data
+      )
+    } else {
+      const programme_id = programmesData[programmeType].id
+      const programme = Programme.findOne(programme_id, data)
 
-    const createdDownload = Download.create(
-      {
-        ...request.body.download,
-        programme_id,
-        vaccination_uuids: programme.vaccinations.map(({ uuid }) => uuid),
-        createdBy_uid: account.uid
-      },
-      data
-    )
+      createdDownload = Download.create(
+        {
+          ...request.body.download,
+          programme_id,
+          vaccination_uuids: programme.vaccinations.map(({ uuid }) => uuid),
+          createdBy_uid: account.uid
+        },
+        data
+      )
+    }
 
     const download = new Download(createdDownload, data)
 

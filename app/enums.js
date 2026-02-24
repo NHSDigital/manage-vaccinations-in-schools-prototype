@@ -110,7 +110,8 @@ export const DownloadFormat = {
  * @enum {string}
  */
 export const DownloadType = {
-  Report: 'Vaccination records'
+  Report: 'Vaccination records',
+  Session: 'Offline session'
 }
 
 /**
