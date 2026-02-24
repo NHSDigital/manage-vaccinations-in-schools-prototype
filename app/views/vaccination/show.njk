@@ -30,33 +30,6 @@
 
     {{ summaryList({
       card: {
-        heading: __("patient.label"),
-        headingSize: "m",
-        actions: {
-          items: [
-            {
-              text: __("patient.edit.title"),
-              href: vaccination.patient.uri + "/edit?referrer=" + vaccination.uri
-            }
-          ]
-        }
-      },
-      rows: summaryRows(vaccination.patient, {
-        nhsn: {
-          changeLabel: "the child’s NHS number",
-          href: vaccination.uri + "/patients/" + vaccination.patient.nhsn + "/edit/nhsn" if vaccination.patient.hasMissingNhsNumber
-        },
-        fullName: {},
-        dobWithAge: {},
-        gender: {},
-        postalCode: {},
-        school: {},
-        parents: {}
-      })
-    }) }}
-
-    {{ summaryList({
-      card: {
         heading: __("vaccination.show.summary"),
         headingSize: "m",
         actions: {
