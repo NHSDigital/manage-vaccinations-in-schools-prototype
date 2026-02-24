@@ -636,18 +636,6 @@ export const sessionController = {
     response.redirect(paths.next)
   },
 
-  downloadFile(request, response) {
-    const { data } = request.session
-    const { session } = response.locals
-
-    const { buffer, fileName, mimetype } = session.createFile(data)
-
-    response.header('Content-Type', mimetype)
-    response.header('Content-disposition', `attachment; filename=${fileName}`)
-
-    response.end(buffer)
-  },
-
   giveInstructions(request, response) {
     const { account } = request.app.locals
     const { __, session } = response.locals

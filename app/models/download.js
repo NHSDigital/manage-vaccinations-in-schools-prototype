@@ -2,7 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import xlsx from 'json-as-xlsx'
 
 import { DownloadFormat, DownloadType } from '../enums.js'
-import { Programme, Team, Vaccination, User } from '../models.js'
+import { Programme, Session, Team, Vaccination, User } from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -44,6 +44,7 @@ export class Download {
     this.format = options?.format || DownloadFormat.CSV
     this.type = options?.type || DownloadType.Report
     this.programme_id = options?.programme_id
+    this.session_id = options?.session_id
     this.team_ids = options?.team_ids
     this.vaccination_uuids = options?.vaccination_uuids || []
   }
@@ -112,6 +113,8 @@ export class Download {
     switch (true) {
       case this.type === DownloadType.Report:
         return `${this.programme.name} vaccination records`
+      case this.type === DownloadType.Session:
+        return `Offline spreadsheet for ${this.session.name}`
       default:
         return 'Download'
     }
@@ -130,6 +133,19 @@ export class Download {
       }
     } catch (error) {
       console.error('Download.programme', error.message)
+    }
+  }
+
+  /**
+   * Get session
+   *
+   * @returns {Session|undefined} Session
+   */
+  get session() {
+    try {
+      return Session.findOne(this.session_id, this.context)
+    } catch (error) {
+      console.error('Download.session', error.message)
     }
   }
 
