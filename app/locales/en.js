@@ -742,6 +742,9 @@ export const en = {
       title: 'Select file format',
       label: 'File format'
     },
+    status: {
+      label: 'Status'
+    },
     teams: {
       title: 'Select providers',
       label: 'Providers'

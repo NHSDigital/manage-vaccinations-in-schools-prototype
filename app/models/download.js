@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { addSeconds } from 'date-fns'
 import xlsx from 'json-as-xlsx'
 
-import { DownloadFormat, DownloadType } from '../enums.js'
+import { DownloadFormat, DownloadStatus, DownloadType } from '../enums.js'
 import { Programme, Session, Team, Vaccination, User } from '../models.js'
 import {
   convertIsoDateToObject,
@@ -9,7 +10,8 @@ import {
   formatDate,
   today
 } from '../utils/date.js'
-import { formatList } from '../utils/string.js'
+import { getDownloadStatus } from '../utils/status.js'
+import { formatList, formatProgress, formatTag } from '../utils/string.js'
 
 /**
  * @class Vaccination report download
@@ -320,6 +322,23 @@ export class Download {
     return [headers.join(','), ...rows].join('\n')
   }
 
+  get progress() {
+    return 50
+  }
+
+  get status() {
+    if (this.createdAt) {
+      const completedAt = addSeconds(this.createdAt, 30)
+      const now = today()
+
+      if (completedAt < now) {
+        return DownloadStatus.Ready
+      }
+    }
+
+    return DownloadStatus.Processing
+  }
+
   /**
    * Get formatted values
    *
@@ -342,6 +361,10 @@ export class Download {
       endAt: this.endAt
         ? formatDate(this.endAt, { dateStyle: 'long' })
         : 'Latest recorded vaccination',
+      status:
+        this.status === DownloadStatus.Processing
+          ? formatProgress(this.progress)
+          : formatTag(getDownloadStatus(this.status)),
       teams:
         this.teams.length > 0
           ? formatList(this.teams.map(({ name }) => name))
