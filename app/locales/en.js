@@ -2429,7 +2429,7 @@ export const en = {
   vaccination: {
     label: 'Vaccination record',
     show: {
-      summary: 'Vaccination details'
+      summary: 'Vaccination record'
     },
     count:
       '{count, plural, =0 {No vaccination records} one {1 vaccination record} other {# vaccination records}}',
