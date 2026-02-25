@@ -2583,6 +2583,9 @@ export const en = {
       label: 'Site',
       title: 'Which injection site was used?'
     },
+    source: {
+      label: 'Source'
+    },
     ttcv: {
       label: 'Dose'
     },

@@ -49,6 +49,10 @@
           {
             header: __("vaccination.programme.label"),
             html: vaccination.formatted.programmeWithSequence
+          },
+          {
+            header: __("vaccination.source.label"),
+            text: vaccination.source
           }
         ]) %}
       {% endfor %}
@@ -59,7 +63,8 @@
         head: [
           { text: __("vaccination.createdAt.label") },
           { text: __("vaccination.age.label") },
-          { text: __("vaccination.programme.label") }
+          { text: __("vaccination.programme.label") },
+          { text: __("vaccination.source.label") }
         ],
         rows: vaccinationRows
       }) }}
