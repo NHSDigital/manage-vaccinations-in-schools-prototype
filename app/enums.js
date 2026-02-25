@@ -711,6 +711,17 @@ export const VaccinationProtocol = {
  * @readonly
  * @enum {string}
  */
+export const VaccinationSource = {
+  Service: 'Recorded in Mavis',
+  HistoricalUpload: 'Uploaded as a historical vaccination',
+  NhsImmunisationsApi: 'External source such as GP practice',
+  ConsentRefusal: 'Parent reported already vaccinated'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const VaccinationSyncStatus = {
   CannotSync: 'Cannot sync',
   NotSynced: 'Not synced',

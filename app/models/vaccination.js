@@ -11,6 +11,7 @@ import {
   VaccinationOutcome,
   VaccinationProtocol,
   VaccinationSite,
+  VaccinationSource,
   VaccinationSyncStatus,
   VaccineCriteria
 } from '../enums.js'
@@ -71,6 +72,7 @@ import {
  * @property {VaccinationOutcome} [outcome] - Outcome
  * @property {VaccinationMethod} [injectionMethod] - Injection method
  * @property {VaccinationSite} [injectionSite] - Injection site on body
+ * @property {VaccinationSource} [source] - Vaccination reporting source
  * @property {number} [dose] - Dosage (ml)
  * @property {string} [sequence] - Dose sequence
  * @property {string} [protocol] - Protocol
@@ -112,6 +114,7 @@ export class Vaccination {
     ].includes(this.outcome)
     this.injectionMethod = options?.injectionMethod
     this.injectionSite = options?.injectionSite
+    this.source = options?.source || VaccinationSource.Service
     this.dose = this.given ? options?.dose || '' : undefined
     this.sequence = options?.sequence
     this.protocol = this.given
