@@ -31,7 +31,7 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @property {object} [dob_] - Date of birth (from `dateInput`)
  * @property {Date} [dod] - Date of death
  * @property {import('../enums.js).Gender} gender - Gender
- * @property {EthnicGroup)} [ethnicGroup] - Ethnic group
+ * @property {EthnicGroup} [ethnicGroup] - Ethnic group
  * @property {string} [ethnicGroupOther] - Other ethnic group
  * @property {import('../enums.js).EthnicBackground')} [ethnicBackground] - Ethnic background
  * @property {string} [ethnicBackgroundOther] - Other ethnic background
