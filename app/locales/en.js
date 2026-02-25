@@ -1542,17 +1542,17 @@ export const en = {
       title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
       count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} are due a vaccination for at least 1 programme. They have not been invited to a clinic yet.',
+        '{count, plural, =0 {No children} one {1 child} other {# children}} are due a vaccination for at least 1 programme.',
       description:
         'You can now send clinic booking invitations to their parents.',
       programme: 'Which programmes do you want to send invitations for?',
-      flu: '{count, plural, =0 {No children} one {1 child} other {# children}} have not had a flu vaccination',
-      hpv: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had an HPV vaccination',
+      flu: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not been invited to a clinic yet',
+      hpv: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not been invited to a clinic yet',
       menacwy:
-        '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had an MenACWY vaccination',
-      mmr: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had an MMR vaccination',
+        '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not been invited to a clinic yet',
+      mmr: '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not been invited to a clinic yet',
       'td-ipv':
-        '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not had a Td/IPV vaccination',
+        '{count, plural, =0 {No children have} one {1 child has} other {# children have}} not been invited to a clinic yet',
       confirm: 'Send clinic invitations',
       success:
         '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
