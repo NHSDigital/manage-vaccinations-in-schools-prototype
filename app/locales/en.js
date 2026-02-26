@@ -1939,7 +1939,7 @@ export const en = {
       title: 'Record offline',
       description:
         'If the internet connection at the vaccination session is unreliable, you can record offline using a spreadsheet.\n\nYou need to download the blank spreadsheet ahead of the session while you still have internet access.\n\nTo upload a completed spreadsheet, go to the ‘Vaccinations’ area. You also need an internet connection to upload the spreadsheet.',
-      confirm: 'Download spreadsheet',
+      confirm: 'Download offline spreadsheet',
       vaccinator: {
         label: 'Vaccinator',
         firstName: 'First name',
