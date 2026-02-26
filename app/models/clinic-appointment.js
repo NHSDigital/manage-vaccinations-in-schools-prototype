@@ -19,13 +19,13 @@ import { getDateValueDifference } from '../utils/date.js'
  * @property {Date} [dob] - Child date of birth, if not matched to a patient record
  * @property {object} [dob_] - Child date of birth (formatted)
  * @property {ParentalRelationship} [relationship] - Relationship to child
- * @property {string} [otherRelationship] - Other relationship to child
+ * @property {string} [relationshipOther] - Other relationship to child
  * 
- * @property {string} [clinic_id] - Clinic ID
+ * @property {string} [sessionId] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
  * 
- * @property {Array<ProgrammeType>} [programmes] - Programmes signed up for
+ * @property {Array<Programme>} [programmes] - Programmes signed up for
  */
 export class ClinicAppointment {
   constructor(options, context) {
@@ -33,13 +33,13 @@ export class ClinicAppointment {
     this.uuid = options?.uuid || faker.string.uuid()
     this.booking_uuid = options?.booking_uuid
     this.patient_uuid = options?.patient_uuid
-    this.firstName = options?.firstName // ignore if got child ID
-    this.lastName = options?.lastName   // ignore if got child ID
-    this.dob = options?.dob             // ignore if got child ID
+    this.firstName = options?.firstName               // ignore if got child ID
+    this.lastName = options?.lastName                 // ignore if got child ID
+    this.dob = options?.dob && new Date(options.dob)  // ignore if got child ID
     this.dob_ = options?.dob_
     this.relationship = options?.relationship
-    this.otherRelationship = options?.otherRelationship
-    this.clinic_id = options?.clinic_id
+    this.relationshipOther = options?.relationshipOther
+    this.sessionId = options?.sessionId
     this.startAt = options?.slotStart ? new Date(options.slotStart) : undefined
     this.endAt = options?.slotEnd ? new Date(options.slotEnd) : undefined
     this.programmes = options?.programmes || []
@@ -57,6 +57,20 @@ export class ClinicAppointment {
       }
     } catch (error) {
       console.error('ClinicAppointment.patient', error.message)
+    }
+  }
+
+  /**
+   * Get full name of the child booked into this appointment
+   *
+   * @returns {string} Child's full name
+   */
+  get fullName() {
+    const patient = this.patient
+    if (patient) {
+      return `${patient.firstName} ${patient.lastName}`
+    } else {
+      return `${this.firstName} ${this.lastName}`
     }
   }
 
