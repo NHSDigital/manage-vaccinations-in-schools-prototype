@@ -9,7 +9,7 @@ import { ClinicAppointment } from './clinic-appointment.js'
  * 
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic booking UUID
- * @property {string} booking_reference - Booking reference number 
+ * @property {string} bookingReference - Booking reference number 
  * 
  * @property {string} [parentFullName] - Parent full name
  * @property {string} [parentEmail] - Parent email
@@ -22,7 +22,7 @@ export class ClinicBooking {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.booking_reference = options?.booking_reference || `CLN-${faker.string.alphanumeric(8).toUpperCase()}`  // must be a better way to do this
+    this.bookingReference = options?.bookingReference || `CLN-${faker.string.alphanumeric(8).toUpperCase()}`  // must be a better way to do this
 
     this.parentFullName = options?.parentFullName
     this.parentEmail = options?.parentEmail
