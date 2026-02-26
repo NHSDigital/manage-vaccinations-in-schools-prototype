@@ -112,6 +112,7 @@ export const DownloadFormat = {
  */
 export const DownloadType = {
   Report: 'Vaccination records',
+  Moves: 'School moves',
   Session: 'Offline session'
 }
 

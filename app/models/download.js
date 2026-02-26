@@ -111,6 +111,8 @@ export class Download {
    */
   get name() {
     switch (true) {
+      case this.type === DownloadType.Moves:
+        return `School moves (${this.formatted.createdAt})`
       case this.type === DownloadType.Report:
         return `${this.programme.name} vaccination records`
       case this.type === DownloadType.Session:
