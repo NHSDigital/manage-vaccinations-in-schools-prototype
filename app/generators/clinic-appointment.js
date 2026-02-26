@@ -9,12 +9,11 @@ const clinicSlotLength = Number(process.env.CLINIC_SLOT_LENGTH) || 10
 /**
  * Generate fake clinic appointment
  *
- * @param {string} booking_uuid The unique ID of the booking in which this appointment was made
  * @param {Parent} parent The parent of the child being booked in (optional)
  * @param {object} context The other data already defined (sessions, children, etc.)
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
-export function generateClinicAppointment(booking_uuid, parent, context) {
+export function generateClinicAppointment(parent, context) {
   const uuid = faker.string.uuid()
   
   // Child details
@@ -39,12 +38,12 @@ export function generateClinicAppointment(booking_uuid, parent, context) {
   const startAt = addMinutes(clinicSession.date, faker.number.int({ min: 0, max: 60, multipleOf: clinicSlotLength }))
   const endAt = addMinutes(startAt, clinicSlotLength)
 
-  // TODO: replace this with a subset of the programmes being offered at the clinic, but including the primary programme
-  const programmes = clinicSession.programmes()
+  // Have the child signed up for the clinic's primary programme plus a random selection of other programmes
+  const additionalProgrammes = Object.values(context.programmes).filter(p => (p.hidden !== true) && !clinicSession.programmes.includes(p.id) && faker.datatype.boolean(0.2))
+  const programmes = [...clinicSession.programmes, ...additionalProgrammes]
 
   return new ClinicAppointment({
     uuid,
-    booking_uuid,
     patient_uuid,
     firstName,
     lastName,
