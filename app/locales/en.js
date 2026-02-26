@@ -712,9 +712,27 @@ export const en = {
     }
   },
   download: {
+    label: 'Exports',
+    list: {
+      label: 'Exports',
+      title: 'Exports'
+    },
+    search: {
+      label: 'Find export'
+    },
+    results:
+      '{count, plural, =0 {No exports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> export} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> exports}}',
     new: {
       label: 'Download vaccination report',
-      confirm: 'Download vaccination data'
+      confirm: 'Download vaccination data',
+      success:
+        'The records will take some time to download. You will be able to download them soon in [Exports](/downloads)'
+    },
+    createdAt: {
+      label: 'Requested at'
+    },
+    createdBy: {
+      label: 'Requested by'
     },
     startAt: {
       label: 'Get vaccination data from'
@@ -726,9 +744,15 @@ export const en = {
       title: 'Select file format',
       label: 'File format'
     },
+    status: {
+      label: 'Status'
+    },
     teams: {
       title: 'Select providers',
       label: 'Providers'
+    },
+    type: {
+      label: 'Type'
     },
     vaccinations: {
       label: 'Records'
@@ -846,6 +870,14 @@ export const en = {
   home: {
     show: {
       title: 'Home'
+    }
+  },
+  interchange: {
+    label: 'Manage data',
+    list: {
+      label: 'Manage data',
+      title: 'Manage data',
+      description: 'Import and export child and vaccination records'
     }
   },
   notice: {
@@ -1907,7 +1939,7 @@ export const en = {
       title: 'Record offline',
       description:
         'If the internet connection at the vaccination session is unreliable, you can record offline using a spreadsheet.\n\nYou need to download the blank spreadsheet ahead of the session while you still have internet access.\n\nTo upload a completed spreadsheet, go to the ‘Vaccinations’ area. You also need an internet connection to upload the spreadsheet.',
-      confirm: 'Download spreadsheet',
+      confirm: 'Download offline spreadsheet',
       vaccinator: {
         label: 'Vaccinator',
         firstName: 'First name',
@@ -2126,7 +2158,7 @@ export const en = {
         'Use this page to upload and import child, class list and vaccination records.\n\nUpload times can vary. Refresh the page to see the latest status.'
     },
     search: {
-      label: 'Find upload'
+      label: 'Find import'
     },
     results:
       '{count, plural, =0 {No imports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> import} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> imports}}',

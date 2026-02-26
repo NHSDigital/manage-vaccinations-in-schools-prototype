@@ -110,6 +110,25 @@ export const DownloadFormat = {
  * @readonly
  * @enum {string}
  */
+export const DownloadStatus = {
+  Processing: 'Processing',
+  Ready: 'Ready'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const DownloadType = {
+  Report: 'Vaccination records',
+  Moves: 'School moves',
+  Session: 'Offline session'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const EthnicGroup = {
   White: 'White',
   Mixed: 'Mixed or multiple ethnic groups',

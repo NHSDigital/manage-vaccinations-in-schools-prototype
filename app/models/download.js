@@ -1,15 +1,17 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { addSeconds } from 'date-fns'
 import xlsx from 'json-as-xlsx'
 
-import { DownloadFormat } from '../enums.js'
-import { Programme, Team, Vaccination } from '../models.js'
+import { DownloadFormat, DownloadStatus, DownloadType } from '../enums.js'
+import { Programme, Session, Team, Vaccination, User } from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
   formatDate,
   today
 } from '../utils/date.js'
-import { formatList } from '../utils/string.js'
+import { getDownloadStatus } from '../utils/status.js'
+import { formatList, formatProgress, formatTag } from '../utils/string.js'
 
 /**
  * @class Vaccination report download
@@ -25,6 +27,7 @@ import { formatList } from '../utils/string.js'
  * @property {Date} [endAt] - Date to end report
  * @property {object} [endAt_] - Date to end report (from `dateInput`)
  * @property {DownloadFormat} [format] - Downloaded file format
+ * @property {DownloadType} [type] - Download type
  * @property {string} [programme_id] - Programme ID
  * @property {Array<string>} [team_ids] - Team IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
@@ -41,9 +44,26 @@ export class Download {
     this.endAt = options?.endAt && new Date(options.endAt)
     this.endAt_ = options?.endAt_
     this.format = options?.format || DownloadFormat.CSV
+    this.type = options?.type || DownloadType.Report
     this.programme_id = options?.programme_id
+    this.session_id = options?.session_id
     this.team_ids = options?.team_ids
     this.vaccination_uuids = options?.vaccination_uuids || []
+  }
+
+  /**
+   * Get user who created upload
+   *
+   * @returns {User} User
+   */
+  get createdBy() {
+    try {
+      if (this.createdBy_uid) {
+        return User.findOne(this.createdBy_uid, this.context)
+      }
+    } catch (error) {
+      console.error('Upload.createdBy', error.message)
+    }
   }
 
   /**
@@ -92,11 +112,18 @@ export class Download {
    * @returns {string} Name
    */
   get name() {
-    if (this.programme) {
-      return this.programme.name
+    switch (true) {
+      case this.type === DownloadType.Moves:
+        return `School moves (${this.formatted.createdAt})`
+      case this.type === DownloadType.Report:
+        return `${this.programme.name} vaccination records`
+      case this.type === DownloadType.Session && this.session_id:
+        return `Offline spreadsheet for ${this.session.name}`
+      case this.type === DownloadType.Session:
+        return `Offline spreadsheet for no known school (including home-schooled children)`
+      default:
+        return 'Download'
     }
-
-    return 'Download'
   }
 
   /**
@@ -112,6 +139,19 @@ export class Download {
       }
     } catch (error) {
       console.error('Download.programme', error.message)
+    }
+  }
+
+  /**
+   * Get session
+   *
+   * @returns {Session|undefined} Session
+   */
+  get session() {
+    try {
+      return Session.findOne(this.session_id, this.context)
+    } catch (error) {
+      console.error('Download.session', error.message)
     }
   }
 
@@ -284,6 +324,23 @@ export class Download {
     return [headers.join(','), ...rows].join('\n')
   }
 
+  get progress() {
+    return 50
+  }
+
+  get status() {
+    if (this.createdAt) {
+      const completedAt = addSeconds(this.createdAt, 30)
+      const now = today()
+
+      if (completedAt < now) {
+        return DownloadStatus.Ready
+      }
+    }
+
+    return DownloadStatus.Processing
+  }
+
   /**
    * Get formatted values
    *
@@ -291,12 +348,25 @@ export class Download {
    */
   get formatted() {
     return {
+      createdAt: formatDate(this.createdAt, {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }),
+      createdBy: this.createdBy?.fullName,
       startAt: this.startAt
         ? formatDate(this.startAt, { dateStyle: 'long' })
         : 'Earliest recorded vaccination',
       endAt: this.endAt
         ? formatDate(this.endAt, { dateStyle: 'long' })
         : 'Latest recorded vaccination',
+      status:
+        this.status === DownloadStatus.Processing
+          ? formatProgress(this.progress)
+          : formatTag(getDownloadStatus(this.status)),
       teams:
         this.teams.length > 0
           ? formatList(this.teams.map(({ name }) => name))
@@ -320,7 +390,20 @@ export class Download {
    * @returns {string} URI
    */
   get uri() {
-    return `/reports/${this.programme_id}/download/${this.id}`
+    return `/downloads/${this.id}`
+  }
+
+  /**
+   * Find all
+   *
+   * @param {object} context - Context
+   * @returns {Array<Download>|undefined} Downloads
+   * @static
+   */
+  static findAll(context) {
+    return Object.values(context.downloads).map(
+      (upload) => new Download(upload, context)
+    )
   }
 
   /**

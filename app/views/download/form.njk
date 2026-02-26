@@ -1,10 +1,14 @@
 {% extends "_layouts/form.njk" %}
+
+{% set formAction = "/downloads/new?referrer=/reports" %}
 {% set confirmButtonText = __("download.new.confirm") %}
 {% set title = __("download.new.label") %}
+
 {% block form %}
   {{ appHeading({
     title: title
   }) }}
+
   {{ radios({
     formGroup: {
       classes: "nhsuk-u-margin-bottom-8"
@@ -18,6 +22,7 @@
     items: academicYearItems,
     decorate: "download.year"
   }) }}
+
   {{ radios({
     formGroup: {
       classes: "nhsuk-u-margin-bottom-8"
@@ -29,8 +34,9 @@
       }
     },
     items: programmeTypeItems,
-    decorate: "download.type"
+    decorate: "download.programmeType"
   }) }}
+
   {{ dateInput({
     formGroup: {
       classes: "nhsuk-u-margin-bottom-8"
@@ -43,6 +49,7 @@
     },
     decorate: "download.startAt_"
   }) }}
+
   {{ dateInput({
     formGroup: {
       classes: "nhsuk-u-margin-bottom-8"
@@ -55,21 +62,21 @@
     },
     decorate: "download.endAt_"
   }) }}
-  {% if account.role == UserRole.DataConsumer %}
-    {{ checkboxes({
-      formGroup: {
-        classes: "nhsuk-u-margin-bottom-8"
-      },
-      fieldset: {
-        legend: {
-          classes: "nhsuk-fieldset__legend--m",
-          text: __("download.teams.title")
-        }
-      },
-      items: teamItems,
-      decorate: "download.team_ids"
-    }) }}
-  {% endif %}
+
+  {{ checkboxes({
+    formGroup: {
+      classes: "nhsuk-u-margin-bottom-8"
+    },
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("download.teams.title")
+      }
+    },
+    items: teamItems,
+    decorate: "download.team_ids"
+  }) if account.role == UserRole.DataConsumer }}
+
   {{ radios({
     formGroup: {
       classes: "nhsuk-u-margin-bottom-8"

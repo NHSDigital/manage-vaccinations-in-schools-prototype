@@ -1,0 +1,27 @@
+{% from "_macros/heading.njk" import appHeading %}
+{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+
+{% macro interchangeNavigation(params) %}
+  {{ appHeading({
+    title: __("interchange.list.title")
+  }) }}
+
+  {{ appSecondaryNavigation({
+    items: [
+      {
+        text: __("upload.list.label"),
+        href: "/uploads",
+        current: params.view == "uploads"
+      },
+      {
+        text: __("download.list.label"),
+        href: "/downloads",
+        current: params.view == "downloads"
+      }
+    ]
+  }) }}
+
+  <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">
+    {{ __(params.view + "list.title") }}
+  </h2>
+{% endmacro %}
