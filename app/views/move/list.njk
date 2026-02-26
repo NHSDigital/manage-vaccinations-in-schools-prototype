@@ -1,8 +1,10 @@
-{% extends "_layouts/default.njk" %}
+{% extends "_layouts/form.njk" %}
 
+{% set gridColumns = "full" %}
+{% set hideConfirmButton = true %}
 {% set title = __("move.list.title") %}
 
-{% block content %}
+{% block form %}
   {{ super() }}
 
   {{ appHeading({
@@ -16,7 +18,12 @@
     {{ button({
       classes: "nhsuk-button--secondary",
       text: __("move.download.label"),
-      href: "#"
+      value: DownloadType.Moves,
+      decorate: "download.type",
+      attributes: {
+        formaction: "/downloads/new",
+        formmethod: "post"
+      }
     }) }}
   </div>
 
