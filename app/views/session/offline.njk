@@ -2,7 +2,7 @@
 
 {% set title = __("session.offline.title") %}
 {% set confirmButtonText = __("session.offline.confirm") %}
-{% set formAction = "/downloads/new" %}
+{% set formAction = "/downloads/new?referrer=" + session.uri %}
 
 {% block beforeContent %}
   {{ breadcrumb({

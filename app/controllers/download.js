@@ -103,7 +103,8 @@ export const downloadController = {
   create(request, response) {
     const { account } = request.app.locals
     const { programmeType, session_id, type } = request.body.download
-    const { data } = request.session
+    const { data, referrer } = request.session
+    const { __ } = response.locals
 
     let createdDownload
     if (type) {
@@ -132,13 +133,9 @@ export const downloadController = {
 
     const download = new Download(createdDownload, data)
 
-    // Generate and return file
-    const { buffer, fileName, mimetype } = download.createFile(data)
+    request.flash('success', __(`download.new.success`, { download }))
 
-    response.header('Content-Type', mimetype)
-    response.header('Content-disposition', `attachment; filename=${fileName}`)
-
-    response.end(buffer)
+    response.redirect(referrer)
   },
 
   download(request, response) {

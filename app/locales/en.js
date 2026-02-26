@@ -724,7 +724,9 @@ export const en = {
       '{count, plural, =0 {No exports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> export} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> exports}}',
     new: {
       label: 'Download vaccination report',
-      confirm: 'Download vaccination data'
+      confirm: 'Download vaccination data',
+      success:
+        'The records will take some time to download. You will be able to download them soon in [Exports](/downloads)'
     },
     createdAt: {
       label: 'Requested at'
