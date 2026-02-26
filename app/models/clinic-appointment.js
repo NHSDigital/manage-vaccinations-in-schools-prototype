@@ -11,7 +11,6 @@ import { getDateValueDifference } from '../utils/date.js'
  * 
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic appointment UUID
- * @property {string} booking_uuid - Booking UUID
  * 
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {string} [firstName] - Child first name, if not matched to a patient record
@@ -31,7 +30,6 @@ export class ClinicAppointment {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.booking_uuid = options?.booking_uuid
     this.patient_uuid = options?.patient_uuid
     this.firstName = options?.firstName               // ignore if got child ID
     this.lastName = options?.lastName                 // ignore if got child ID
@@ -40,8 +38,8 @@ export class ClinicAppointment {
     this.relationship = options?.relationship
     this.relationshipOther = options?.relationshipOther
     this.sessionId = options?.sessionId
-    this.startAt = options?.slotStart ? new Date(options.slotStart) : undefined
-    this.endAt = options?.slotEnd ? new Date(options.slotEnd) : undefined
+    this.startAt = options?.startAt ? new Date(options.startAt) : undefined
+    this.endAt = options?.endAt ? new Date(options.endAt) : undefined
     this.programmes = options?.programmes || []
   }
 

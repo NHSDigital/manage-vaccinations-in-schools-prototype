@@ -11,10 +11,10 @@ import { generateClinicAppointment } from './clinic-appointment.js'
  */
 export function generateClinicBooking(context) {
   const uuid = faker.string.uuid()
-  const bookingReference = `CLN-${faker.string.alphanumeric(8).toUpperCase()}`
+  const bookingReference = faker.helpers.replaceSymbols('CLN-####-####')
 
   // Make an appointment for the first (and possibly only) child in this booking
-  let appointments = [ generateClinicAppointment(uuid, null, context) ]
+  let appointments = [ generateClinicAppointment(null, context) ]
   const firstAppointment = appointments[0]
 
   // Make the parent match the first child
@@ -32,7 +32,7 @@ export function generateClinicBooking(context) {
   const appointmentCount = faker.datatype.boolean(0.9) ? 1 : faker.number.int({ min: 2, max: 4 })
   if (appointmentCount > 1) {
     appointments = [ firstAppointment, ...Array.from([...Array(appointmentCount - 1)]).map(() => {
-      return generateClinicAppointment(uuid, parent, context)
+      return generateClinicAppointment(parent, context)
     }) ]
   }
 
@@ -44,5 +44,5 @@ export function generateClinicBooking(context) {
     parentPhone,
     sms,
     appointments,
-  })
+  }, context)
 }
