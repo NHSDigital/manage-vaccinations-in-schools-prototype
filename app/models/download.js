@@ -117,8 +117,10 @@ export class Download {
         return `School moves (${this.formatted.createdAt})`
       case this.type === DownloadType.Report:
         return `${this.programme.name} vaccination records`
-      case this.type === DownloadType.Session:
+      case this.type === DownloadType.Session && this.session_id:
         return `Offline spreadsheet for ${this.session.name}`
+      case this.type === DownloadType.Session:
+        return `Offline spreadsheet for no known school (including home-schooled children)`
       default:
         return 'Download'
     }
