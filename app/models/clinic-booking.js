@@ -1,5 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { ClinicAppointment } from './clinic-appointment.js'
+import { ParentalRelationship } from '../enums.js'
+import { generateParent } from '../generators/parent.js'
 
 /**
  * @class ClinicBooking
@@ -16,7 +18,7 @@ import { ClinicAppointment } from './clinic-appointment.js'
  * @property {string} [parentPhone] - Parent phone number
  * @property {boolean} [sms] - Get updates via SMS
   * 
- * @property {Array<ClinicAppointment>} [appointments] - Individual patients' appointments (one parent may book in multiple children under one booking)
+ * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
  */
 export class ClinicBooking {
   constructor(options, context) {
@@ -29,7 +31,56 @@ export class ClinicBooking {
     this.parentPhone = options?.parentPhone
     this.sms = options?.sms || false
 
-    this.appointments = options?.appointments || []
+    this.appointments_ids = options?.appointments_ids || []
+  }
+
+  /**
+   * Add a child's appointment to this booking, setting up parent details and relationship in the process
+   * 
+   * @param {ClinicAppointment} appointment An appointment to make part of this booking
+   */
+  addAppointment(appointment) {
+    this.appointments_ids.push(appointment.uuid)
+
+    // If this is the first appointment, create parent details matching the child’s
+    if (this.appointments_ids.length === 1) {
+      const parent = appointment.patient?.parent1 ?? generateParent(appointment.unmatchedLastName, faker.datatype.boolean(0.5))
+      this.parentFullName = parent.fullName
+      this.parentEmail = parent.email
+      this.parentPhone = parent.tel
+      this.sms = parent.sms
+
+      // Update the appointment with details of the parent's relationship to the child
+      appointment.relationship = parent.relationship
+      appointment.relationshipOther = parent.relationshipOther
+    }
+    else {
+      // If the first child's parental relationship wasn't mum or dad, continue with that parental relationship
+      const firstAppointment = ClinicAppointment.findOne(this.appointments_ids[0], this.context)
+      if (![ParentalRelationship.Mum, ParentalRelationship.Dad].includes(firstAppointment?.relationship)) {
+        // Fosterer, Guardian or Other
+        appointment.relationship = firstAppointment.relationship
+        appointment.relationshipOther = firstAppointment.relationshipOther
+      } else {
+        // Mum or Dad initially, and most likely to stay that way
+        if (faker.datatype.boolean(0.9)) {
+          appointment.relationship = firstAppointment.relationship
+          appointment.relationshipOther = firstAppointment.relationshipOther
+        } else {
+          appointment.relationship = faker.helpers.arrayElement([ParentalRelationship.Fosterer, ParentalRelationship.Guardian, ParentalRelationship.Other])
+          appointment.relationshipOther = appointment.relationship === ParentalRelationship.Other ? "Grandparent" : undefined
+        }
+      }
+    }
+  }
+  
+  /**
+   * Get appointments
+   * 
+   * @returns {Array<ClinicAppointment>} Appointments that are part of this booking
+   */
+  get appointments() {
+    return this.appointments_ids.map(id => ClinicAppointment.findOne(id, this.context))
   }
 
   /**
@@ -92,9 +143,9 @@ export class ClinicBooking {
     // Remove booking context
     delete updatedBooking.context
 
+
     // Delete original booking (with previous UUID)
     delete context.clinicBookings[uuid]
-
     // Update context
     context.clinicBookings[updatedBooking.uuid] = updatedBooking
 
