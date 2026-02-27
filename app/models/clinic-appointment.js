@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Patient } from '../models.js'
+import { Patient, Programme } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 
 /**
@@ -13,34 +13,39 @@ import { getDateValueDifference } from '../utils/date.js'
  * @property {string} uuid - Clinic appointment UUID
  * 
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
- * @property {string} [firstName] - Child first name, if not matched to a patient record
- * @property {string} [lastName] - Child last name, if not matched to a patient record
- * @property {Date} [dob] - Child date of birth, if not matched to a patient record
+ * @property {string} [unmatchedFirstName] - Child first name, if not matched to a patient record
+ * @property {string} [unmatchedLastName] - Child last name, if not matched to a patient record
+ * @property {Date} [unmatchedDob] - Child date of birth, if not matched to a patient record
  * @property {object} [dob_] - Child date of birth (formatted)
+ * 
  * @property {ParentalRelationship} [relationship] - Relationship to child
  * @property {string} [relationshipOther] - Other relationship to child
  * 
- * @property {string} [sessionId] - The ID of the clinic session in which the appointment's booked
+ * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
  * 
- * @property {Array<Programme>} [programmes] - Programmes signed up for
+ * @property {Array<string>} [programme_ids] - IDs of programmes signed up for
  */
 export class ClinicAppointment {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
+
     this.patient_uuid = options?.patient_uuid
-    this.firstName = options?.firstName               // ignore if got child ID
-    this.lastName = options?.lastName                 // ignore if got child ID
-    this.dob = options?.dob && new Date(options.dob)  // ignore if got child ID
+    this.unmatchedFirstName = options?.unmatchedFirstName
+    this.unmatchedLastName = options?.unmatchedLastName
+    this.unmatchedDob = options?.unmatchedDob && new Date(options.unmatchedDob)
     this.dob_ = options?.dob_
+
     this.relationship = options?.relationship
     this.relationshipOther = options?.relationshipOther
-    this.sessionId = options?.sessionId
+
+    this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
     this.endAt = options?.endAt ? new Date(options.endAt) : undefined
-    this.programmes = options?.programmes || []
+
+    this.programme_ids = options?.programme_ids || []
   }
 
   /**
@@ -68,8 +73,17 @@ export class ClinicAppointment {
     if (patient) {
       return `${patient.firstName} ${patient.lastName}`
     } else {
-      return `${this.firstName} ${this.lastName}`
+      return `${this.unmatchedFirstName} ${this.unmatchedLastName}`
     }
+  }
+
+  /**
+   * Get the programmes selected for this appointment
+   * 
+   * @returns {Array<Programme>} Programmes selected for this appointment
+   */
+  get programmes() {
+    return this.programme_ids.map(id => Programme.findOne(id, this.context))
   }
 
   /**
