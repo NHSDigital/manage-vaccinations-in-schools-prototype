@@ -15,6 +15,7 @@ import { accountRoutes } from './routes/account.js'
 import { activityRoutes } from './routes/activity.js'
 import { batchRoutes } from './routes/batch.js'
 import { clinicBookingRoutes } from './routes/clinic-booking.js'
+import { clinicAppointmentRoutes } from './routes/clinic-appointment.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
@@ -49,6 +50,7 @@ router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
 router.use('/activity', activityRoutes)
 router.use('/clinic-bookings', clinicBookingRoutes)
+router.use('/clinic-appointments', clinicAppointmentRoutes)
 router.use('/consents', consentRoutes)
 router.use('/downloads', downloadRoutes)
 router.use('/give-or-refuse-consent', parentRoutes)
