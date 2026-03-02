@@ -9,7 +9,7 @@ import { ClinicBooking } from '../models.js'
  */
 export function generateEmptyClinicBooking(context) {
   const uuid = faker.string.uuid()
-  const bookingReference = faker.helpers.replaceSymbols('CLN-####-####')
+  const bookingReference = ClinicBooking.generateReference()
 
   return new ClinicBooking({
     uuid,
