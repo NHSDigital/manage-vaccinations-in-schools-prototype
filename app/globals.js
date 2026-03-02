@@ -350,7 +350,17 @@ export default () => {
 
     if (!includeContext) {
       const contextlessData = structuredClone(data)
-      delete contextlessData.context
+
+      // Remove context whether data is a single record or a collection of records
+      if (contextlessData.context) {
+        delete contextlessData.context
+      } else {
+        for (const item of Object.values(contextlessData)) {
+          if (item.context) {
+            delete item.context
+          }
+        }
+      }
       data = contextlessData
     }
 
