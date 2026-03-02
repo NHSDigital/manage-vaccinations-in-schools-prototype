@@ -18,6 +18,7 @@ import { consentRoutes } from './routes/consent.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
 import { downloadRoutes } from './routes/download.js'
 import { homeRoutes } from './routes/home.js'
+import { interchangeRoutes } from './routes/interchange.js'
 import { moveRoutes } from './routes/move.js'
 import { noticeRoutes } from './routes/notice.js'
 import { parentRoutes } from './routes/parent.js'
@@ -45,7 +46,9 @@ router.use(referrer)
 router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
 router.use('/consents', consentRoutes)
+router.use('/downloads', downloadRoutes)
 router.use('/give-or-refuse-consent', parentRoutes)
+router.use('/interchange', interchangeRoutes)
 router.use('/moves', moveRoutes)
 router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)

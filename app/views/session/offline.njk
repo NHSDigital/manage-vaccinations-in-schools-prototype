@@ -2,6 +2,7 @@
 
 {% set title = __("session.offline.title") %}
 {% set confirmButtonText = __("session.offline.confirm") %}
+{% set formAction = "/downloads/new?referrer=" + session.uri %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -45,6 +46,18 @@
       label: { text: __("session.offline.vaccinator.lastName") },
       decorate: "lastName",
       value: account.lastName
+    }) }}
+
+    {{ input({
+      type: "hidden",
+      decorate: "download.session_id",
+      value: session.id
+    }) }}
+
+    {{ input({
+      type: "hidden",
+      decorate: "download.type",
+      value: DownloadType.Session
     }) }}
   {% endcall %}
 {% endblock %}

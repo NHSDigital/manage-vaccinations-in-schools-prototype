@@ -64,6 +64,17 @@
         }) | safe
       }) }}
 
+      {{ button({
+        classes: "nhsuk-button--secondary nhsuk-button--small",
+        text: __("session.offline.confirm"),
+        value: DownloadType.Session,
+        decorate: "download.type",
+        attributes: {
+          formaction: "/downloads/new?referrer=" + school.uri,
+          formmethod: "post"
+        }
+      }) if data.invitedToClinic and results.count > 0 }}
+
       {% for patient in results.page %}
         {% set reportStatusHtml -%}
           {%- if data.programme_id %}
