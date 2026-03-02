@@ -726,7 +726,7 @@ export const en = {
       label: 'Download vaccination report',
       confirm: 'Download vaccination data',
       success:
-        'The records will take some time to download. You will be able to download them soon in [Exports](/downloads)'
+        'It will take some time to prepare the records. You’ll be able to download them soon in [Exports](/downloads)'
     },
     createdAt: {
       label: 'Requested at'
