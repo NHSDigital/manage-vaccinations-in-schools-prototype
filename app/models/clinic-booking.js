@@ -24,7 +24,7 @@ export class ClinicBooking {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.bookingReference = options?.bookingReference || `CLN-${faker.string.alphanumeric(8).toUpperCase()}`  // must be a better way to do this
+    this.bookingReference = options?.bookingReference || ClinicBooking.generateReference()
 
     this.parentFullName = options?.parentFullName
     this.parentEmail = options?.parentEmail
@@ -32,6 +32,14 @@ export class ClinicBooking {
     this.sms = options?.sms || false
 
     this.appointments_ids = options?.appointments_ids || []
+  }
+
+  /**
+   * 
+   * @returns Generate a new, random booking reference
+   */
+  static generateReference() {
+    return faker.helpers.replaceSymbols('CLN-####-####')
   }
 
   /**
