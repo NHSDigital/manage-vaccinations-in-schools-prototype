@@ -46,6 +46,6 @@ export const clinicBookingController = {
 
     // request.flash('success', __(`clinicBooking.${decision}.success`, { clinicBooking }))
 
-    response.redirect('/clinicBookings')
+    response.redirect('/clinic-bookings')
   }
 }
