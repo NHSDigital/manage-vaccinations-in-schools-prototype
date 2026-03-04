@@ -6,6 +6,7 @@ import {
   PatientConsentStatus,
   PatientRefusedStatus
 } from './enums.js'
+import { en } from './locales/en.js'
 import { Location, User } from './models.js'
 import { getSessionActivityCount } from './utils/session.js'
 import {
@@ -102,17 +103,54 @@ export default () => {
   }
 
   globals.timelineItems = function (auditEvents) {
-    const { filters } = this.ctx.settings.nunjucksEnv
+    const { nunjucksEnv } = this.ctx.settings
     const timelineItems = []
 
     for (const auditEvent of Object.values(auditEvents)) {
+      const details = []
+
+      // Show email message content if recipient given with email address
+      if (auditEvent.messageRecipient?.email) {
+        details.push({
+          classes: 'app-details--notify-message',
+          summaryText: `Email sent to ${auditEvent.messageRecipient?.email}`,
+          html: formatMarkdown(
+            nunjucksEnv.render(
+              `emails/consent/${auditEvent.messageTemplate}.njk`,
+              auditEvent.messageData
+            )
+          )
+        })
+      }
+
+      // Show email message content if recipient given with telephone number
+      // and text message content provided
+      if (
+        auditEvent.messageRecipient?.tel &&
+        en.texts.consent[auditEvent.messageTemplate]?.text
+      ) {
+        details.push({
+          classes: 'app-details--notify-message',
+          summaryText: `Message sent to ${auditEvent.messageRecipient?.tel}`,
+          html: formatMarkdown(
+            nunjucksEnv.renderString(
+              `${en.texts.consent[auditEvent.messageTemplate].text}`,
+              auditEvent.messageData
+            )
+          )
+        })
+      }
+
       timelineItems.push({
         headingText: formatMarkdown(auditEvent.name),
         isPastItem: auditEvent.isPastEvent,
-        html: auditEvent.formatted?.note,
-        description: filters.safe(
-          auditEvent.formatted.programmes + auditEvent.formatted.createdAtAndBy
-        )
+        html:
+          auditEvent.note &&
+          `<blockquote>${auditEvent.formatted?.note}</blockquote>`,
+        description: nunjucksEnv.filters.safe(
+          auditEvent.formatted.programmes + auditEvent.description
+        ),
+        details
       })
     }
 

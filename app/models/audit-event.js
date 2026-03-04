@@ -1,6 +1,14 @@
 import { isBefore } from 'date-fns'
 
-import { Programme, User } from '../models.js'
+import {
+  Child,
+  Patient,
+  Programme,
+  Session,
+  Team,
+  User,
+  Vaccination
+} from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -25,11 +33,16 @@ import {
  * @property {string} name - Name
  * @property {string} [note] - Note
  * @property {boolean} [pinned] - Pinned
+ * @property {object} [messageRecipient] - Message recipient
+ * @property {string} [messageTemplate] - Message template
  * @property {AuditEventType} [type] - Audit event type
  * @property {string} [outcome] - Outcome for activity type
  * @property {Date} [outcomeAt] - Date outcome invalidates
  * @property {object} [outcomeAt_] - Date outcome invalidates (from `dateInput`)
+ * @property {string} [patient_uuid] - Patient UUID
  * @property {Array<string>} [programme_ids] - Programme IDs
+ * @property {string} [session_id] - Session ID
+ * @property {string} [vaccination_uuid] - Vaccination UUID
  */
 export class AuditEvent {
   constructor(options, context) {
@@ -39,11 +52,17 @@ export class AuditEvent {
     this.name = options.name
     this.note = options.note
     this.pinned = stringToBoolean(options?.pinned)
+    this.messageRecipient = options?.messageRecipient
+    this.messageTemplate = options?.messageTemplate
     this.type = options?.type
     this.outcome = options?.outcome
     this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)
     this.outcomeAt_ = options?.outcomeAt_
+    this.patient_uuid = options?.patient_uuid
     this.programme_ids = options?.programme_ids
+    this.session_id = options?.session_id
+    this.team_id = options?.team_id || '001'
+    this.vaccination_uuid = options?.vaccination_uuid
   }
 
   /**
@@ -58,6 +77,19 @@ export class AuditEvent {
       }
     } catch (error) {
       console.error('Upload.createdBy', error.message)
+    }
+  }
+
+  /**
+   * Get data to pass to message template
+   *
+   * @returns {object} Message data
+   */
+  get messageData() {
+    return {
+      child: new Child(this.patient, this.context),
+      session: this.session,
+      team: this.team
     }
   }
 
@@ -91,6 +123,21 @@ export class AuditEvent {
   }
 
   /**
+   * Get patient
+   *
+   * @returns {Patient|undefined} Patient
+   */
+  get patient() {
+    try {
+      if (this.patient_uuid) {
+        return Patient.findOne(this.patient_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('AuditEvent.patient', error.message)
+    }
+  }
+
+  /**
    * Get programmes event relates to
    *
    * @returns {Array<Programme>} Programmes
@@ -105,6 +152,47 @@ export class AuditEvent {
     return []
   }
 
+  /**
+   * Get session
+   *
+   * @returns {Session|undefined} Session
+   */
+  get session() {
+    try {
+      return Session.findOne(this.session_id, this.context)
+    } catch (error) {
+      console.error('AuditEvent.session', error.message)
+    }
+  }
+
+  /**
+   * Get team
+   *
+   * @returns {Team} Team
+   */
+  get team() {
+    try {
+      return Team.findOne(this.team_id, this.context)
+    } catch (error) {
+      console.error('AuditEvent.team', error.message)
+    }
+  }
+
+  /**
+   * Get vaccination
+   *
+   * @returns {Vaccination|undefined} Vaccination
+   */
+  get vaccination() {
+    try {
+      if (this.vaccination_uuid) {
+        return Vaccination.findOne(this.vaccination_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('AuditEvent.vaccination', error.message)
+    }
+  }
+
   get summary() {
     return {
       createdAtAndBy: this.createdBy
@@ -117,28 +205,38 @@ export class AuditEvent {
   }
 
   /**
+   * Get description - used to show more detailed metadata
+   *
+   * @returns {string} Description
+   */
+  get description() {
+    if (this.vaccination) {
+      return `Vaccination given ${this.vaccination.formatted.createdAt_date} by ${this.vaccination.formatted.createdBy}.<br>Record added to Mavis ${this.formatted.createdAt} by ${this.formatted.createdBy}.`
+    } else if (this.createdBy_uid) {
+      return [this.formatted.createdAt, this.formatted.createdBy].join(` · `)
+    }
+
+    return this.formatted.createdAt
+  }
+
+  /**
    * Get formatted values
    *
    * @returns {object} Formatted values
    */
   get formatted() {
-    const datetime = formatDate(this.createdAt, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    })
-
     return {
       createdAt: formatDate(this.createdAt, { dateStyle: 'long' }),
-      createdAtAndBy: this.createdBy
-        ? [datetime, this.createdBy.fullName].join(` · `)
-        : datetime,
-      datetime,
-      note:
-        this.note && `<blockquote>${formatMarkdown(this.note)}</blockquote>`,
+      createdBy: this.createdBy_uid && this.createdBy.fullName,
+      datetime: formatDate(this.createdAt, {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }),
+      note: this.note && formatMarkdown(this.note),
       outcome: this.outcome && formatTag(getScreenOutcomeStatus(this.outcome)),
       outcomeAt:
         this.outcomeAt && formatDate(this.outcomeAt, { dateStyle: 'long' }),

@@ -17,6 +17,6 @@
     {% if params.auditEvent.formatted.programmes and params.showProgrammes %}
       {{ params.auditEvent.formatted.programmes | safe }}&nbsp;
     {% endif %}
-    {{ params.auditEvent.formatted.createdAtAndBy | safe }}
+    {{ params.auditEvent.description | safe }}
   </p>
 {%- endmacro %}

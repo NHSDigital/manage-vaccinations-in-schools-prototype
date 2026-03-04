@@ -12,3 +12,21 @@
     @include nhsuk-responsive-padding(4, "right");
   }
 }
+
+.app-details--notify-message {
+  .nhsuk-details__text {
+    padding: nhsuk-spacing(4);
+    border: 1px solid $nhsuk-border-colour;
+    background-color: nhsuk-colour("white");
+    font-family: Helvetica, Arial, sans-serif;
+
+    .nhsuk-inset-text {
+      margin-top: 0;
+      border-color: $nhsuk-border-colour;
+
+      @include nhsuk-responsive-padding(2, "bottom");
+      @include nhsuk-responsive-padding(2, "top");
+      @include nhsuk-responsive-margin(4, "bottom");
+    }
+  }
+}

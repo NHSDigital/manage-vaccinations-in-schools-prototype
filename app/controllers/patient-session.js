@@ -6,13 +6,11 @@ import {
   PreScreenQuestion,
   ProgrammeType,
   RegistrationOutcome,
-  ScreenOutcome,
   UserRole,
   VaccinationOutcome,
   VaccineMethod
 } from '../enums.js'
 import {
-  Gillick,
   Instruction,
   PatientSession,
   Programme,
@@ -259,16 +257,11 @@ export const patientSessionController = {
         gillick.updatedAt = today()
       }
 
-      const name = __(`patientSession.gillick.${type}.success`)
-      request.flash('success', name)
+      gillick.createdBy_uid = account.uid
 
-      patientSession.assessGillick(
-        {
-          name,
-          createdBy_uid: account.uid
-        },
-        new Gillick(gillick)
-      )
+      request.flash('success', __(`patientSession.gillick.${type}.success`))
+
+      patientSession.assessGillick(gillick)
 
       // Clean up session data
       delete data.patientSession?.gillick
@@ -304,8 +297,8 @@ export const patientSessionController = {
     const { account } = request.app.locals
     const { __, back, patient, patientSession } = response.locals
 
-    patient.inviteToSession({
-      session: patientSession.session,
+    patient.requestConsent({
+      patientSession,
       createdBy_uid: account.uid
     })
 
@@ -353,10 +346,6 @@ export const patientSessionController = {
     patientSession.recordTriage({
       outcome: triage.outcome,
       outcomeAt_: triage.outcomeAt_,
-      name:
-        triage.outcome === ScreenOutcome.NeedsTriage
-          ? 'Triaged decision: Keep in triage'
-          : `Triaged decision: ${triage.outcome}`,
       note: triage.note,
       createdBy_uid: account.uid
     })

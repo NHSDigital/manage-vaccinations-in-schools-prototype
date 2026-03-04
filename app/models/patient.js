@@ -1,9 +1,15 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
+import activity from '../datasets/activity.js'
 import programmesData from '../datasets/programmes.js'
 import schools from '../datasets/schools.js'
-import { AuditEventType, NoticeType } from '../enums.js'
+import {
+  AuditEventType,
+  NoticeType,
+  NotifyEmailStatus,
+  VaccinationOutcome
+} from '../enums.js'
 import {
   AuditEvent,
   Child,
@@ -26,7 +32,6 @@ import {
   formatOther,
   formatParent,
   formatWithSecondaryText,
-  sentenceCaseProgrammeName,
   stringToBoolean
 } from '../utils/string.js'
 
@@ -237,6 +242,7 @@ export class Patient extends Child {
       .filter(({ type }) =>
         [AuditEventType.Record, AuditEventType.RecordNote].includes(type)
       )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
   }
 
   /**
@@ -549,7 +555,7 @@ export class Patient extends Child {
     if (Object.keys(context.patients).length === 1) {
       for (const [key, value] of Object.entries(updates)) {
         updatedPatient.addEvent({
-          name: `Updated \`${key}\` to **${value}**`,
+          name: activity.patient.updated(key, value),
           type: AuditEventType.Record,
           createdAt: updatedPatient.updatedAt
         })
@@ -590,7 +596,7 @@ export class Patient extends Child {
     const archivedPatient = Patient.update(uuid, archive, context)
 
     archivedPatient.addEvent({
-      name: `Record archived: ${archive.archiveReason}`,
+      name: activity.patient.archived(archive),
       note: archive.archiveReasonOther,
       type: AuditEventType.Record,
       createdBy_uid: archive.createdBy_uid
@@ -602,24 +608,57 @@ export class Patient extends Child {
   /**
    * Add patient to session
    *
-   * @param {import('./patient-session.js').PatientSession} patientSession - Patient session
+   * @param {import('./session.js').Session} session - Session
    */
-  addToSession(patientSession) {
-    this.patientSession_uuids.push(patientSession.uuid)
+  addToSession(session) {
+    this.addEvent({
+      name: activity.session.added(session),
+      createdAt: session.openAt,
+      createdBy_uid: session.createdBy_uid,
+      programme_ids: session.programme_ids
+    })
+  }
+
+  /**
+   * Invite parent to book a clinic appointment
+   *
+   * @param {import('./session.js').Session} session - Clinic session
+   */
+  inviteToClinic(session) {
+    for (const parent of this.parents) {
+      this.addEvent({
+        name: activity.notify['invite-clinic'](parent),
+        messageRecipient: parent,
+        messageTemplate: 'invite-clinic',
+        createdAt: session.openAt,
+        patient_uuid: this.uuid,
+        programme_ids: session.programme_ids,
+        session_id: session.id
+      })
+    }
   }
 
   /**
    * Invite parent to give consent
    *
-   * @param {import('./session.js').Session} session - Session
+   * @param {import('./patient-session.js').PatientSession} patientSession - Patient session
    */
-  inviteToSession(session) {
-    this.addEvent({
-      name: `Added to the ${sentenceCaseProgrammeName(session.name)}`,
-      createdAt: session.openAt,
-      createdBy_uid: session.createdBy_uid,
-      programme_ids: session.programme_ids
-    })
+  requestConsent(patientSession) {
+    this.patientSession_uuids.push(patientSession.uuid)
+
+    for (const parent of this.parents) {
+      if (parent.email && parent.emailStatus === NotifyEmailStatus.Delivered) {
+        this.addEvent({
+          name: activity.notify.invite(parent),
+          messageRecipient: parent,
+          messageTemplate: 'invite',
+          createdAt: patientSession.session.openAt,
+          patient_uuid: this.uuid,
+          programme_ids: patientSession.session.programme_ids,
+          session_id: patientSession.session.id
+        })
+      }
+    }
   }
 
   /**
@@ -632,18 +671,15 @@ export class Patient extends Child {
       return
     }
 
-    const { decision, fullName, invalid, relationship, uuid } = reply
-    const isNew = !this.replies[uuid]
-    const parent = new Parent({ fullName, relationship })
-    const formattedParent = formatParent(parent, false)
+    const isNew = !this.replies[reply.uuid]
 
-    let name = `${decision} by ${formattedParent}`
-    if (invalid) {
-      name = `${decision} by ${formattedParent} marked as invalid`
+    let name
+    if (reply.invalid) {
+      name = activity.consent.invalid(reply)
     } else if (isNew) {
-      name = `${decision} in response from ${formattedParent}`
+      name = activity.consent.created(reply)
     } else {
-      name = `${decision} in updated response from ${formattedParent}`
+      name = activity.consent.updated(reply)
     }
 
     this.reply_uuids.push(reply.uuid)
@@ -663,22 +699,56 @@ export class Patient extends Child {
   recordVaccination(vaccination) {
     this.vaccination_uuids.push(vaccination.uuid)
 
-    let name
-    if (vaccination.given) {
-      name = vaccination.updatedAt
-        ? `Vaccination record for ${vaccination.formatted.vaccine_snomed} updated`
-        : `Vaccinated with ${vaccination.formatted.vaccine_snomed}`
-    } else {
-      name = `Unable to vaccinate: ${vaccination.outcome}`
-    }
-
     this.addEvent({
-      name,
+      name: activity.vaccination.recorded(vaccination),
       note: vaccination.note,
       createdAt: vaccination.updatedAt || vaccination.createdAt,
       createdBy_uid: vaccination.createdBy_uid,
       programme_ids: [vaccination.programme_id]
     })
+
+    let messageTemplate
+    switch (vaccination.outcome) {
+      case VaccinationOutcome.Vaccinated:
+      case VaccinationOutcome.PartVaccinated:
+        messageTemplate = 'vaccination-given'
+        break
+      case VaccinationOutcome.AlreadyVaccinated:
+        messageTemplate = 'vaccination-already-had'
+        break
+      case VaccinationOutcome.Absent:
+      case VaccinationOutcome.DoNotVaccinate:
+      case VaccinationOutcome.Refused:
+      case VaccinationOutcome.Unwell:
+        messageTemplate = 'vaccination-not-administered'
+        break
+      default:
+        messageTemplate = 'vaccination-deleted'
+    }
+
+    for (const parent of this.parents) {
+      this.addEvent({
+        name: activity.notify['vaccination-reminder'](parent),
+        messageRecipient: parent,
+        messageTemplate: 'vaccination-reminder',
+        createdAt: removeDays(vaccination.createdAt, 7),
+        patient_uuid: this.uuid,
+        programme_ids: [vaccination.programme_id],
+        session_id: vaccination.session.id,
+        vaccination_uuid: vaccination.uuid
+      })
+
+      this.addEvent({
+        name: activity.notify[messageTemplate](parent),
+        messageRecipient: parent,
+        messageTemplate,
+        createdAt: vaccination.updatedAt || vaccination.createdAt,
+        patient_uuid: this.uuid,
+        programme_ids: [vaccination.programme_id],
+        session_id: vaccination.session.id,
+        vaccination_uuid: vaccination.uuid
+      })
+    }
   }
 
   /**
@@ -688,9 +758,9 @@ export class Patient extends Child {
    */
   saveNote(event) {
     this.addEvent({
-      type: AuditEventType.RecordNote,
-      name: `${AuditEventType.RecordNote} added`,
+      name: activity.note,
       note: event.note,
+      type: AuditEventType.Record,
       createdBy_uid: event.createdBy_uid
     })
   }

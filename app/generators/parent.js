@@ -42,7 +42,7 @@ export function generateParent(childLastName, isMum) {
   }
 
   // Contact details
-  const phoneNumber = '07### ######'.replace(/#+/g, (m) =>
+  const phoneNumber = '077## 9#####'.replace(/#+/g, (m) =>
     faker.string.numeric(m.length)
   )
   const tel = faker.helpers.maybe(() => phoneNumber, { probability: 0.4 })

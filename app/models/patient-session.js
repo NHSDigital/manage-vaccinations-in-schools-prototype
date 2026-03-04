@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import filters from '@x-govuk/govuk-prototype-filters'
 
+import activity from '../datasets/activity.js'
 import {
   AcademicYear,
   AuditEventType,
@@ -922,8 +923,9 @@ export class PatientSession {
   removeFromSession(event) {
     this.patient.patientSession_uuids =
       this.patient.patientSession_uuids.filter((uuid) => uuid !== this.uuid)
+
     this.patient.addEvent({
-      name: `Removed from the ${this.session.name.replace('Flu', 'flu')}`,
+      name: activity.session.removed(this.session),
       createdBy_uid: event.createdBy_uid,
       programme_ids: this.session.programme_ids
     })
@@ -932,15 +934,16 @@ export class PatientSession {
   /**
    * Assess Gillick competence
    *
-   * @param {object} event - Event
    * @param {Gillick} gillick - gillick
    */
-  assessGillick(event, gillick) {
+  assessGillick(gillick) {
     this.patient.addEvent({
-      name: event.name,
+      name: gillick.updatedAt
+        ? activity.gillick.updated(gillick)
+        : activity.gillick.created(gillick),
       note: gillick.note,
       createdAt: gillick.createdAt,
-      createdBy_uid: event.createdBy_uid,
+      createdBy_uid: gillick.createdBy_uid,
       programme_ids: this.session.programme_ids
     })
 
@@ -954,7 +957,7 @@ export class PatientSession {
    */
   recordTriage(event) {
     this.patient.addEvent({
-      name: event.name,
+      name: activity.triage.decision(event),
       note: event.note,
       outcome: event.outcome,
       outcomeAt_: event.outcomeAt_,
@@ -962,6 +965,33 @@ export class PatientSession {
       createdBy_uid: event.createdBy_uid,
       programme_ids: [this.programme_id]
     })
+
+    let messageTemplate
+    switch (event.outcome) {
+      case ScreenOutcome.DelayVaccination:
+        messageTemplate = 'triage-delay-vaccination'
+        break
+      case ScreenOutcome.DoNotVaccinate:
+        messageTemplate = 'triage-do-not-vaccinate'
+        break
+      case ScreenOutcome.InviteToClinic:
+        messageTemplate = 'triage-invite-to-clinic'
+        break
+      default:
+        messageTemplate = 'triage-vaccinate'
+    }
+
+    for (const parent of this.patient.parents) {
+      this.patient.addEvent({
+        name: activity.notify[messageTemplate](parent),
+        messageRecipient: parent,
+        messageTemplate,
+        createdAt: event.createdAt,
+        patient_uuid: this.uuid,
+        programme_ids: [this.programme_id],
+        session_id: this.session.id
+      })
+    }
   }
 
   /**
@@ -973,7 +1003,7 @@ export class PatientSession {
     this.instruction_uuid = instruction.uuid
 
     this.patient.addEvent({
-      name: 'PSD added',
+      name: activity.psd.added,
       createdAt: instruction.createdAt,
       createdBy_uid: instruction.createdBy_uid,
       programme_ids: [this.programme_id]
@@ -989,19 +1019,11 @@ export class PatientSession {
   registerAttendance(event, register) {
     this.session.updateRegister(this.patient.uuid, register)
 
-    let name
-    switch (register) {
-      case RegistrationOutcome.Present:
-        name = `Registered as attending today’s session at ${this.session.location.name}`
-        break
-      case RegistrationOutcome.Absent:
-        name = `Registered as absent from today’s session at ${this.session.location.name}`
-        break
-      default:
-    }
-
     this.patient.addEvent({
-      name,
+      name:
+        register === RegistrationOutcome.Present
+          ? activity.attendance.present(this.session)
+          : activity.attendance.absent(this.session),
       createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
       programme_ids: this.session.programme_ids
@@ -1015,7 +1037,7 @@ export class PatientSession {
    */
   preScreen(event) {
     this.patient.addEvent({
-      name: 'Completed pre-screening checks',
+      name: activity.preScreen.created,
       note: event.note,
       createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
@@ -1030,8 +1052,7 @@ export class PatientSession {
    */
   saveNote(event) {
     this.patient.addEvent({
-      type: AuditEventType.SessionNote,
-      name: `${AuditEventType.SessionNote} added`,
+      name: activity.note.created(event.type),
       note: event.note,
       pinned: event.pinned,
       createdBy_uid: event.createdBy_uid,
@@ -1040,17 +1061,21 @@ export class PatientSession {
   }
 
   /**
-   * Record sent reminder
+   * Send reminder
    *
    * @param {import('./audit-event.js').AuditEvent} event - Event
    * @param {import('./parent.js').Parent} parent - Parent
    */
   sendReminder(event, parent) {
     this.patient.addEvent({
+      name: activity.notify['vaccination-reminder'](parent),
+      messageRecipient: parent,
+      messageTemplate: 'vaccination-reminder',
       type: AuditEventType.Reminder,
-      name: `Reminder to give consent sent to ${parent.fullName}`,
       createdBy_uid: event.createdBy_uid,
-      programme_ids: this.session.programme_ids
+      patient_uuid: this.patient_uuid,
+      programme_ids: this.session.programme_ids,
+      session_id: this.session.id
     })
   }
 }

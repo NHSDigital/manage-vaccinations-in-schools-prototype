@@ -1,3 +1,4 @@
+{%- from "nhsuk/components/details/macro.njk" import details -%}
 {% macro _timelineItem(params, item) %}
   {% set headingLevel = params.headingLevel if params.headingLevel else 3 %}
   {% set headingBold = "nhsuk-u-font-weight-bold" if item.active else "" %}
@@ -23,6 +24,13 @@
       {% elif item.text %}
         <p class="nhsuk-body">{{ item.text }}</p>
       {% endif %}
+      {% for detail in item.details %}
+        {{ details({
+          classes: detail.classes,
+          summaryText: detail.summaryText,
+          html: detail.html | safe | trim
+        }) }}
+      {% endfor %}
     </div>
   </li>
 {% endmacro %}
