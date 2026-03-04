@@ -159,11 +159,10 @@ export const consentController = {
     )
 
     // Add to session
-    patient.addToSession(patientSession)
+    patient.addToSession(patientSession.session)
 
     // Invite parent to give consent
-    const session = Session.findOne(patientSession.session_id, data)
-    patient.inviteToSession(session)
+    patient.requestConsent(patientSession)
 
     // Link consent with patient record
     consent.linkToPatient(patient)

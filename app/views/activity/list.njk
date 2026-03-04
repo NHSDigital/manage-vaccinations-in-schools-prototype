@@ -1,0 +1,24 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = "Activity log items" %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {{ appHeading({
+        size: "xl",
+        title: title
+      }) }}
+
+      {% for group in activityLog %}
+        {{ appHeading({
+          title: group.title
+        }) }}
+
+        {{ appTimeline({
+          items: timelineItems(group.items)
+        }) }}
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

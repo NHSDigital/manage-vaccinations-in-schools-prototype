@@ -102,6 +102,7 @@ export class PatientProgramme {
       .filter(({ programme_ids }) =>
         programme_ids?.some((id) => this.programme_id === id)
       )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
   }
 
   /**
