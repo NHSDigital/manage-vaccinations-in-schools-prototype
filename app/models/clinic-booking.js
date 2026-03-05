@@ -1,7 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { ClinicAppointment } from './clinic-appointment.js'
-import { ParentalRelationship } from '../enums.js'
-import { generateParent } from '../generators/parent.js'
 
 /**
  * @class ClinicBooking
@@ -13,11 +11,6 @@ import { generateParent } from '../generators/parent.js'
  * @property {string} uuid - Clinic booking UUID
  * @property {string} bookingReference - Booking reference number 
  * 
- * @property {string} [parentFullName] - Parent full name
- * @property {string} [parentEmail] - Parent email
- * @property {string} [parentPhone] - Parent phone number
- * @property {boolean} [sms] - Get updates via SMS
-  * 
  * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
  */
 export class ClinicBooking {
@@ -25,11 +18,6 @@ export class ClinicBooking {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.bookingReference = options?.bookingReference || ClinicBooking.generateReference()
-
-    this.parentFullName = options?.parentFullName
-    this.parentEmail = options?.parentEmail
-    this.parentPhone = options?.parentPhone
-    this.sms = options?.sms || false
 
     this.appointments_ids = options?.appointments_ids || []
   }
@@ -49,37 +37,6 @@ export class ClinicBooking {
    */
   addAppointment(appointment) {
     this.appointments_ids.push(appointment.uuid)
-
-    // If this is the first appointment, create parent details matching the child’s
-    if (this.appointments_ids.length === 1) {
-      const parent = appointment.patient?.parent1 ?? generateParent(appointment.unmatchedLastName, faker.datatype.boolean(0.5))
-      this.parentFullName = parent.fullName
-      this.parentEmail = parent.email
-      this.parentPhone = parent.tel
-      this.sms = parent.sms
-
-      // Update the appointment with details of the parent's relationship to the child
-      appointment.relationship = parent.relationship
-      appointment.relationshipOther = parent.relationshipOther
-    }
-    else {
-      // If the first child's parental relationship wasn't mum or dad, continue with that parental relationship
-      const firstAppointment = ClinicAppointment.findOne(this.appointments_ids[0], this.context)
-      if (![ParentalRelationship.Mum, ParentalRelationship.Dad].includes(firstAppointment?.relationship)) {
-        // Fosterer, Guardian or Other
-        appointment.relationship = firstAppointment.relationship
-        appointment.relationshipOther = firstAppointment.relationshipOther
-      } else {
-        // Mum or Dad initially, and most likely to stay that way
-        if (faker.datatype.boolean(0.9)) {
-          appointment.relationship = firstAppointment.relationship
-          appointment.relationshipOther = firstAppointment.relationshipOther
-        } else {
-          appointment.relationship = faker.helpers.arrayElement([ParentalRelationship.Fosterer, ParentalRelationship.Guardian, ParentalRelationship.Other])
-          appointment.relationshipOther = appointment.relationship === ParentalRelationship.Other ? "Grandparent" : undefined
-        }
-      }
-    }
   }
   
   /**
