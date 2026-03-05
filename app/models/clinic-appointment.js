@@ -113,8 +113,10 @@ export class ClinicAppointment {
     const session = Session.findOne(this.session_id, this.context)
   
     return {
+      nameAndAge: [ this.fullName, this.patient?.age ? `Age ${this.patient.age}` : null].filter(Boolean).join('<br>'),
       location: Object.values(session?.clinic?.location ?? {}).filter(Boolean).join(', '),
       date: session?.formatted.date ?? '',
+      dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot:  `${formattedStartTime} to ${formattedEndTime}`,
       vaccinations: this.programmes.map(programme => programme.name).join(', '),
     }
