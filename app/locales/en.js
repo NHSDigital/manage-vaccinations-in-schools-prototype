@@ -222,6 +222,24 @@ export const en = {
       label: 'Parent'
     }
   },
+  clinicAppointment: {
+    label: 'Appointment details',
+    show: {
+      title: 'Clinic appointment for %s',
+    },
+    location: {
+      label: 'Clinic location'
+    },
+    date: {
+      label: 'Date'
+    },
+    timeSlot: { 
+      label: 'Time'
+    },
+    vaccinations: {
+      label: 'Vaccinations'
+    }
+  },
   consent: {
     label: 'Consent response',
     title: 'Review consent responses',

@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ClinicBooking, Parent, Patient, Programme, Session } from '../models.js'
-import { getDateValueDifference } from '../utils/date.js'
+import { formatDate, getDateValueDifference } from '../utils/date.js'
 
 /**
  * @class ClinicAppointment
@@ -107,24 +107,26 @@ export class ClinicAppointment {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const session = Session.findOne(this.session_id, this.context)
-    const patient = this.patient
+    const formattedStartTime = formatDate(this.startAt, { hour: "numeric", minute: "numeric", hour12: true })
+    const formattedEndTime = formatDate(this.endAt, { hour: "numeric", minute: "numeric", hour12: true })
 
+    const session = Session.findOne(this.session_id, this.context)
+  
     return {
-      fullName: patient ? `${patient.firstName} ${patient.lastName}` : `${this.unmatchedFirstName} ${this.unmatchedLastName}`,
-      nameAndAge: [ patient?.fullName, patient?.age ].join('<br>'),
-      location: session.clinic.formatted.location,
-      dateAndTime: session.formatted.date
+      location: Object.values(session?.clinic?.location ?? {}).filter(Boolean).join(', '),
+      date: session?.formatted.date ?? '',
+      timeSlot:  `${formattedStartTime} to ${formattedEndTime}`,
+      vaccinations: this.programmes.map(programme => programme.name).join(', '),
     }
   }
 
   /**
-   * Get namespace
+   * Get the prefix used for looking up localised strings for this model
    *
    * @returns {string} Namespace
    */
   get ns() {
-    return 'clinic-appointment'
+    return 'clinicAppointment'
   }
 
   /**
