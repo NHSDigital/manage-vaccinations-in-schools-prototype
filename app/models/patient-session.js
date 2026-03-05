@@ -1017,6 +1017,7 @@ export class PatientSession {
     this.patient.addEvent({
       name: 'Completed pre-screening checks',
       note: event.note,
+      createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
       programme_ids: this.session.programme_ids
     })
