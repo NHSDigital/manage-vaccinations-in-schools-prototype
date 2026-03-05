@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Patient, Programme } from '../models.js'
+import { ClinicBooking, Parent, Patient, Programme, Session } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 
 /**
@@ -10,7 +10,8 @@ import { getDateValueDifference } from '../utils/date.js'
  * @param {object} [context] - Context
  * 
  * @property {object} [context] - Context
- * @property {string} uuid - Clinic appointment UUID
+ * @property {string} uuid - Unique ID for this clinic appointment
+ * @property {string} booking_uuid - Unique ID for the booking in which this appointment was made
  * 
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {string} [unmatchedFirstName] - Child first name, if not matched to a patient record
@@ -18,8 +19,7 @@ import { getDateValueDifference } from '../utils/date.js'
  * @property {Date} [unmatchedDob] - Child date of birth, if not matched to a patient record
  * @property {object} [dob_] - Child date of birth (formatted)
  * 
- * @property {ParentalRelationship} [relationship] - Relationship to child
- * @property {string} [relationshipOther] - Other relationship to child
+ * @property {Parent} [parent] - The parent/carer who booked this appointment
  * 
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
@@ -31,6 +31,7 @@ export class ClinicAppointment {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
+    this.booking_uuid = options?.booking_uuid
 
     this.patient_uuid = options?.patient_uuid
     this.unmatchedFirstName = options?.unmatchedFirstName
@@ -38,14 +39,28 @@ export class ClinicAppointment {
     this.unmatchedDob = options?.unmatchedDob && new Date(options.unmatchedDob)
     this.dob_ = options?.dob_
 
-    this.relationship = options?.relationship
-    this.relationshipOther = options?.relationshipOther
+    this.parent = options?.parent && new Parent(options.parent)
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
     this.endAt = options?.endAt ? new Date(options.endAt) : undefined
 
     this.programme_ids = options?.programme_ids || []
+  }
+  
+  /**
+   * Get the booking this appointment belongs to
+   *
+   * @returns {ClinicBooking|undefined} Clinic booking
+   */
+  get clinicBooking() {
+    try {
+      if (this.booking_uuid) {
+        return ClinicBooking.findOne(this.booking_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('ClinicAppointment.clinicBooking', error.message)
+    }
   }
 
   /**
@@ -73,7 +88,7 @@ export class ClinicAppointment {
     if (patient) {
       return `${patient.firstName} ${patient.lastName}`
     } else {
-      return `${this.unmatchedFirstName} ${this.unmatchedLastName}`
+      return 
     }
   }
 
@@ -84,6 +99,23 @@ export class ClinicAppointment {
    */
   get programmes() {
     return this.programme_ids.map(id => Programme.findOne(id, this.context))
+  }
+
+  /**
+   * Get various formatted values for display in the page
+   * 
+   * @returns {object} Formatted values
+   */
+  get formatted() {
+    const session = Session.findOne(this.session_id, this.context)
+    const patient = this.patient
+
+    return {
+      fullName: patient ? `${patient.firstName} ${patient.lastName}` : `${this.unmatchedFirstName} ${this.unmatchedLastName}`,
+      nameAndAge: [ patient?.fullName, patient?.age ].join('<br>'),
+      location: session.clinic.formatted.location,
+      dateAndTime: session.formatted.date
+    }
   }
 
   /**
