@@ -1,1 +1,71 @@
-{{ inspect(clinicBooking) }}
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("clinicBooking.show.title") %}
+
+{% block content %}
+  <div class="nhsuk-u-width-two-thirds">
+    {{ super() }}
+
+    {{ appHeading({
+      title: title
+    }) }}
+
+    <div class="nhsuk-u-reading-width">
+        {{ __("clinicBooking.show.introduction") | nhsukMarkdown }}
+    </div>
+
+    {% for appointment in clinicBooking.appointments %}
+      {{ summaryList({
+        card: {
+          heading: __("clinicBooking.show.appointment.title", loop.index),
+          headingSize: "m"
+        },
+        rows: summaryRows(appointment, {
+          nameAndAge: {},
+          location: {},
+          dateAndTime: {},
+          vaccinations: {}
+        })
+      }) }}
+
+      {# TODO: add extra, visually hidden text to the button to differentiate it from another child's appointment #}
+      {{ button({
+        classes: "nhsuk-button--secondary",
+        text: __("clinicBooking.show.appointment.change.label"),
+        href: "/clinic-appointments/" + appointment.id + "/change"
+      }) }}
+
+      {{ button({
+        classes: "app-button--secondary-warning",
+        text: __("clinicBooking.show.appointment.cancel.label"),
+        href: "/clinic-appointments/" + appointment.id + "/cancel"
+      }) }}
+    {% endfor %}
+
+    {# Parent details #}
+    {{ summaryList({
+      card: {
+        heading: __("clinicBooking.show.parent.title"),
+        headingSize: "m"
+      },
+      rows: summaryRows(clinicBooking.firstParent, {
+        fullName: {},
+        email: {},
+        phone: {},
+        sms: {}
+      })
+    }) }}
+
+    {# TODO: need to figure out what routes I'm going to need for editing, but that can wait till I make the booking journey #}
+    {{ button({
+      classes: "nhsuk-button--secondary",
+      text: __("clinicBooking.show.parent.change.label"),
+      href: "/clinic-appointments/" + appointment.id + "/change"
+    }) }}
+
+    <div class="nhsuk-u-reading-width">
+        {{ __("clinicBooking.show.referenceNumber", clinicBooking.bookingReference) | nhsukMarkdown }}
+    </div>
+
+  </div>
+{% endblock %}
