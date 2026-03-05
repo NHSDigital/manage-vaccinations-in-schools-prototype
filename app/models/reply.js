@@ -447,9 +447,9 @@ export class Reply {
    * @static
    */
   static findAll(context) {
-    return Object.values(context.replies)
-      .map((reply) => new Reply(reply, context))
-      .filter((reply) => !reply?.patient_uuid)
+    return Object.values(context.replies).map(
+      (reply) => new Reply(reply, context)
+    )
   }
 
   /**

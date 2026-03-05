@@ -12,6 +12,7 @@ import { referrer } from './middleware/referrer.js'
 import { rollover } from './middleware/rollover.js'
 import { team } from './middleware/team.js'
 import { accountRoutes } from './routes/account.js'
+import { activityRoutes } from './routes/activity.js'
 import { batchRoutes } from './routes/batch.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
@@ -44,6 +45,7 @@ router.use(referrer)
 
 router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
+router.use('/activity', activityRoutes)
 router.use('/consents', consentRoutes)
 router.use('/give-or-refuse-consent', parentRoutes)
 router.use('/moves', moveRoutes)
