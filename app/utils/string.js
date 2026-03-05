@@ -169,10 +169,19 @@ export function formatWithSecondaryText(text, secondary, breakLine = true) {
  */
 export function formatTag({ text, html, colour, classes }) {
   text = html || text
-  classes = ['nhsuk-tag', classes].join(' ')
+
+  const classAttr = classes ? classes.split(' ') : []
+
+  if (colour && colour === 'transparent') {
+    classAttr.push('app-tag--transparent')
+  } else if (colour) {
+    classAttr.push(`nhsuk-tag--${colour}`)
+  }
+
+  classAttr.unshift('nhsuk-tag')
 
   if (colour) {
-    return `<strong class="${classes} nhsuk-tag--${colour}">${text}</strong>`
+    return `<strong class="${classAttr.join(' ')}">${text}</strong>`
   }
 
   return `<strong class="${classes}">${text}</strong>`
@@ -182,7 +191,7 @@ export function formatProgrammeStatus(programme, status, note) {
   let html = formatTag({
     classes: 'app-tag--attached',
     text: programme.name,
-    colour: 'white'
+    colour: 'transparent'
   })
 
   if (status) {

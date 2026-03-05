@@ -1,13 +1,5 @@
 @use "../vendor/nhsuk-frontend" as *;
 
-.nhsuk-tag {
-  &--transparent {
-    border-color: $nhsuk-text-colour;
-    color: $nhsuk-text-colour;
-    background-color: transparent;
-  }
-}
-
 .nhsuk-tag + .nhsuk-u-secondary-text-colour {
   margin-left: nhsuk-spacing(2);
 
@@ -16,4 +8,10 @@
 
 .app-tag--attached {
   margin-right: -1px;
+}
+
+.app-tag--transparent {
+  border-color: $nhsuk-text-colour;
+  color: $nhsuk-text-colour;
+  background-color: transparent;
 }
