@@ -51,10 +51,9 @@ export const ArchiveRecordReason = {
  */
 export const AuditEventType = {
   Notice: 'Notice',
-  Pinned: 'Pinned session note',
   Reminder: 'Reminder',
   Record: 'Change to child record',
-  RecordNote: 'Note added to child record',
+  RecordNote: 'Child record note',
   SessionNote: 'Session note'
 }
 

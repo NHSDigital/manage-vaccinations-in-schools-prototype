@@ -1,5 +1,4 @@
 import {
-  AuditEventType,
   ConsentOutcome,
   ConsentWindow,
   InstructionOutcome,
@@ -20,7 +19,6 @@ import {
   Vaccination
 } from '../models.js'
 import { today } from '../utils/date.js'
-import { stringToBoolean } from '../utils/string.js'
 
 export const patientSessionController = {
   read(request, response, next, nhsn) {
@@ -378,15 +376,13 @@ export const patientSessionController = {
 
   note(request, response) {
     const { account } = request.app.locals
-    let { note, pinned } = request.body
+    const { note, pinned } = request.body
     const { data } = request.session
     const { __, back, patientSession } = response.locals
 
-    pinned = stringToBoolean(pinned)
-
     patientSession.saveNote({
-      name: pinned ? AuditEventType.Pinned : AuditEventType.SessionNote,
       note,
+      pinned,
       createdBy_uid: account.uid
     })
 

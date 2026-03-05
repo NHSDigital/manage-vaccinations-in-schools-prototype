@@ -180,7 +180,7 @@ export class PatientSession {
   get pinnedNotes() {
     return this.auditEvents
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
-      .filter(({ name }) => name === AuditEventType.Pinned)
+      .filter(({ pinned }) => pinned)
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
@@ -1029,8 +1029,10 @@ export class PatientSession {
    */
   saveNote(event) {
     this.patient.addEvent({
-      name: event.name,
+      type: AuditEventType.SessionNote,
+      name: `${AuditEventType.SessionNote} added`,
       note: event.note,
+      pinned: event.pinned,
       createdBy_uid: event.createdBy_uid,
       programme_ids: this.session.programme_ids
     })

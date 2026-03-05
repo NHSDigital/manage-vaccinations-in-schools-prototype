@@ -11,7 +11,8 @@ import { getScreenOutcomeStatus } from '../utils/status.js'
 import {
   formatTag,
   formatMarkdown,
-  formatWithSecondaryText
+  formatWithSecondaryText,
+  stringToBoolean
 } from '../utils/string.js'
 
 /**
@@ -23,6 +24,7 @@ import {
  * @property {string} [createdBy_uid] - User who created event
  * @property {string} name - Name
  * @property {string} [note] - Note
+ * @property {boolean} [pinned] - Pinned
  * @property {AuditEventType} [type] - Audit event type
  * @property {string} [outcome] - Outcome for activity type
  * @property {Date} [outcomeAt] - Date outcome invalidates
@@ -36,6 +38,7 @@ export class AuditEvent {
     this.createdBy_uid = options?.createdBy_uid
     this.name = options.name
     this.note = options.note
+    this.pinned = stringToBoolean(options?.pinned)
     this.type = options?.type
     this.outcome = options?.outcome
     this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)

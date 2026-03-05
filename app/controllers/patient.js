@@ -2,7 +2,6 @@ import _ from 'lodash'
 
 import {
   ArchiveRecordReason,
-  AuditEventType,
   PatientStatus,
   ProgrammeType,
   SessionPresetName,
@@ -401,7 +400,6 @@ export const patientController = {
     const { __, patient } = response.locals
 
     patient.saveNote({
-      name: AuditEventType.RecordNote,
       note,
       createdBy_uid: account.uid
     })

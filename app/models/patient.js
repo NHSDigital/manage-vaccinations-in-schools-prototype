@@ -234,7 +234,9 @@ export class Patient extends Child {
 
     return events
       .map((auditEvent) => new AuditEvent(auditEvent, this.context))
-      .filter(({ type }) => type === AuditEventType.Record)
+      .filter(({ type }) =>
+        [AuditEventType.Record, AuditEventType.RecordNote].includes(type)
+      )
   }
 
   /**
@@ -686,8 +688,8 @@ export class Patient extends Child {
    */
   saveNote(event) {
     this.addEvent({
-      type: AuditEventType.Record,
-      name: event.name,
+      type: AuditEventType.RecordNote,
+      name: `${AuditEventType.RecordNote} added`,
       note: event.note,
       createdBy_uid: event.createdBy_uid
     })
