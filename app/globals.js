@@ -110,7 +110,9 @@ export default () => {
         headingText: formatMarkdown(auditEvent.name),
         isPastItem: auditEvent.isPastEvent,
         html: auditEvent.formatted?.note,
-        description: filters.safe(auditEvent.formatted.createdAtAndBy)
+        description: filters.safe(
+          auditEvent.formatted.programmes + auditEvent.formatted.createdAtAndBy
+        )
       })
     }
 

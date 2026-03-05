@@ -124,10 +124,19 @@ $_timeline-border-width: 2px;
   }
 
   &__description {
-    padding-top: 0;
+    padding-top: nhsuk-spacing(1);
     color: $nhsuk-secondary-text-colour;
 
-    @include nhsuk-responsive-margin(2, "bottom");
+    @include nhsuk-responsive-margin(3, "bottom");
     @include nhsuk-font-size(16);
+  }
+
+  .nhsuk-tag {
+    border-color: inherit;
+    color: inherit;
+
+    &:last-of-type {
+      margin-right: nhsuk-spacing(2);
+    }
   }
 }
