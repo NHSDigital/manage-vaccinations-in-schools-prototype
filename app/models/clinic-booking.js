@@ -1,5 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { ClinicAppointment } from './clinic-appointment.js'
+import { Parent } from '../models.js'
 
 /**
  * @class ClinicBooking
@@ -49,12 +50,25 @@ export class ClinicBooking {
   }
 
   /**
+   * Get the parent details from the first appointment
+   * 
+   * This is only intended to allow us to present the parent's name, email and so on, but not to
+   * represent the parent's relationship to all the children in this booking, as the relationship
+   * may vary by chiuld.
+   * 
+   * @returns {Parent|undefined} Parent details from the first appointment
+   */
+  get firstParent() {
+    return this.appointments?.[0]?.parent
+  }
+
+  /**
    * Get namespace
    *
    * @returns {string} Namespace
    */
   get ns() {
-    return 'clinicbooking'
+    return 'clinicBooking'
   }
 
   /**

@@ -227,17 +227,45 @@ export const en = {
     show: {
       title: 'Clinic appointment for %s',
     },
+    nameAndAge: {
+      label: 'Child'
+    },
     location: {
       label: 'Clinic location'
     },
     date: {
       label: 'Date'
     },
+    dateAndTime: {
+      label: 'Date and time'
+    },
     timeSlot: { 
       label: 'Time'
     },
     vaccinations: {
       label: 'Vaccinations'
+    }
+  },
+  clinicBooking: {
+    show: {
+      title: 'Manage your booking',
+      introduction: 'Check your appointment details and make changes where needed.',
+      appointment: {
+        title: 'Appointment %s',
+        change: {
+          label: 'Change appointment'
+        },
+        cancel: {
+          label: 'Cancel appointment'
+        }
+      },
+      parent: {
+        title: 'Your details',
+        change: {
+          label: 'Change my details'
+        }
+      },
+      referenceNumber: 'Your booking reference number is: %s'
     }
   },
   consent: {
