@@ -1,9 +1,9 @@
 You’ve given consent for {{ consent.child.fullAndPreferredNames }} to have their {{ session.vaccinationNames.sentenceCase }}.
 
-We don’t currently have any sessions scheduled at your child’s school, but this might change. We’ll be in touch again to let you know if we’re returning to the school. If we’re not, we’ll give you a chance to book into a community clinic.
+We don’t currently have any sessions scheduled at your child’s school, but this might change. We’ll contact you again to let you know if we’re returning to the school. If we’re not, we’ll give you a chance to book into a community clinic.
 
-If {{ consent.child.firstName }}’s health changes in the meantime, or you arrange to have the vaccination elsewhere, please get in touch.
+If {{ consent.child.firstName }}’s health changes in the meantime, or you arrange for them to be vaccinated elsewhere, tell us using the contact details below.
 
-{{ data.team.name }}<br>
-{{ data.team.email }}<br>
-{{ data.team.tel }}
+If you want to withdraw your consent, please phone us.
+
+{% include "emails/consent/_contact-details.njk" %}

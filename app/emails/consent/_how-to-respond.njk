@@ -3,3 +3,9 @@
 > It’s important to let us know whether you do or do not want your child to have {% if session.programmes.length == 1 %}this vaccination{% else %}these vaccinations{% endif %}. It will take less than 5 minutes to respond using the link below.
 
 [Respond to the consent request now]({{ session.consentUrl }}/start)
+
+You need to respond by {{ session.formatted.nextDate }}.
+
+If you do not respond, you’ll get automatic reminders. Responding will stop reminders.
+
+If you cannot use the online form, you can respond over the phone using the contact details below. Replies to this email cannot be accepted as consent.

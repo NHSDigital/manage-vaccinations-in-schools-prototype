@@ -1,4 +1,4 @@
-Our team are coming back to {{ session.location.name }} on {{ session.formatted.nextDate }} to give the {{ session.vaccinationNames.sentenceCase }}.
+We’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }} to give the {{ session.vaccinationNames.sentenceCase }}.
 
 If you want your child to be vaccinated in school, you need to give your consent.
 
@@ -19,8 +19,6 @@ If you want your child to be vaccinated in school, you need to give your consent
 {% endif %}
 
 {% include "emails/consent/_how-to-respond.njk" %}
-
-{% include "emails/consent/_trouble-using-online-form.njk" %}
 
 {% include "emails/consent/_your-data.njk" %}
 
