@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { ClinicAppointment } from './clinic-appointment.js'
 import { Parent } from '../models.js'
+import { SessionPresets } from '../enums.js'
 
 /**
  * @class ClinicBooking
@@ -10,7 +11,8 @@ import { Parent } from '../models.js'
  * 
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic booking UUID
- * @property {string} bookingReference - Booking reference number 
+ * @property {string} bookingReference - Booking reference number
+ * @property {SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
  * 
  * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
  */
@@ -19,8 +21,26 @@ export class ClinicBooking {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.bookingReference = options?.bookingReference || ClinicBooking.generateReference()
+    this.sessionPreset = options?.sessionPreset ?? SessionPresets[0];
 
-    this.appointments_ids = options?.appointments_ids || []
+    this.appointments_ids = options?.appointments_ids ?? []
+  }
+
+  /**
+   * Create a new clinic booking, adding it to the context
+   * 
+   * @param {object} booking 
+   * @param {object} context 
+   * @returns {ClinicBooking} A new clinic booking, added to the context, and possibly with a new UUID
+   */
+  static createInContext(booking, context) {
+    const createdBooking = new ClinicBooking(booking, context)
+
+    // Update context
+    context.clinicBookings = context.clinicBookings || {}
+    context.clinicBookings[createdBooking.uuid] = createdBooking
+
+    return createdBooking
   }
 
   /**
@@ -29,6 +49,15 @@ export class ClinicBooking {
    */
   static generateReference() {
     return faker.helpers.replaceSymbols('CLN-####-####')
+  }
+
+  /**
+   * Get URI of the booking journey
+   *
+   * @returns {string} Parent form URI
+   */
+  get bookingUri() {
+    return `${this.sessionPreset.slug}/${this.uuid}`
   }
 
   /**

@@ -1,0 +1,41 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = false %}
+
+{#
+  We won't have:
+   - a session or session ID
+
+  We will have:
+   - a primary programme ID (or the ID of a session preset, which can represent one or more programmes)
+#}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {# Page title #}
+      {{ appHeading({
+        size: "xl",
+        title: __("clinicBooking.start.title." + primaryProgramme.name)
+      }) }}
+
+      {# Show details of the vaccine(s) in the primary programme #}
+      {% for programme in programmes %}
+        {% if programmes.length != 1 %}
+          <h2 class="nhsuk-heading-m">{{ programme.title }}</h2>
+        {% endif %}
+
+        {{ programme.information.startPage | nhsukMarkdown }}
+
+        {{ link(programme.information.url, __("consent.start.more", { programme: programme })) | nhsukMarkdown }}
+      {% endfor %}
+
+      {# TODO: next here #}
+
+      {# Dump the booking for debugging #}
+      {{ inspect(clinicBookings) }}
+
+      {# Imagine this is the clinic session's children in session page? #}
+    </div>
+  </div>
+{% endblock %}
