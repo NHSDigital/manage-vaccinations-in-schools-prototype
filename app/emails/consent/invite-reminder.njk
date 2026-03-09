@@ -16,7 +16,7 @@ If you’ve already responded to the consent request, you can ignore this messag
 {% include "emails/consent/_about-the-nasal-spray.njk" %}
 {% endif %}
 
-{% if consent.child.school.phase == SchoolPhase.Secondary %}
+{% if child.school.phase == SchoolPhase.Secondary %}
 {% include "emails/consent/_talk-to-your-child.njk" %}
 {% endif %}
 

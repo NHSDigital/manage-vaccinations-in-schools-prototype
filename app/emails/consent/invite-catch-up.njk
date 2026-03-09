@@ -12,7 +12,7 @@ Our records show your child has not had their HPV vaccination. Pupils usually ha
 [Learn more about the {{ programme.vaccineName.sentenceCase }} on GOV.UK]({{ programme.guidance.url }}) ({{ programme.guidance.hint }})
 {% endfor %}
 
-{% if consent.child.school.phase == SchoolPhase.Secondary %}
+{% if child.school.phase == SchoolPhase.Secondary %}
 {% include "emails/consent/_talk-to-your-child.njk" %}
 {% endif %}
 

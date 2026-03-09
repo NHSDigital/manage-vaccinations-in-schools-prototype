@@ -8,13 +8,13 @@ If you want your child to be vaccinated in school, you need to give your consent
 {{ programme.information.description }}
 
 [Find out more about the {{ programme.vaccineName.sentenceCase }} on NHS.UK]({{ programme.information.url }})
-{% endfor %}
 
 {% if programme.type == ProgrammeType.Flu %}
 {% include "emails/consent/_about-the-nasal-spray.njk" %}
 {% endif %}
+{% endfor %}
 
-{% if consent.child.school.phase == SchoolPhase.Secondary %}
+{% if child.school.phase == SchoolPhase.Secondary %}
 {% include "emails/consent/_talk-to-your-child.njk" %}
 {% endif %}
 

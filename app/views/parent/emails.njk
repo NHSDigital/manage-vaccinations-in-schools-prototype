@@ -20,9 +20,9 @@
     name: consent.parent.fullName,
     email: consent.parent.email
   },
-  programme: programme,
-  consent: consent,
-  session: session
+  child: consent.child,
+  session: session,
+  team: data.team
 } %}
 
 {% set defaultTemplate = "invite" %}
@@ -56,7 +56,6 @@
   "Record": [
     "vaccination-reminder",
     "vaccination-given",
-    "vaccination-given-many" if session.programmes.length > 1,
     "vaccination-not-administered",
     "vaccination-already-had",
     "vaccination-deleted"

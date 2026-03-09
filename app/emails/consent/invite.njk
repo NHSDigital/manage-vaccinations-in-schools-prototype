@@ -12,7 +12,7 @@ We’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }
 {%- endfor %}
 {% endif %}
 
-We would like your consent to vaccinate {{ consent.child.firstName }}. You can give this by filling in our online form.
+We would like your consent to vaccinate {{ child.firstName }}. You can give this by filling in our online form.
 
 > Do not reply to this email to tell us your decision. The link to the online consent form is below.
 
@@ -32,11 +32,11 @@ We cannot say on which of the above dates your child will have the vaccination b
 [Find out more about the {{ programme.vaccineName.sentenceCase }} on NHS.UK]({{ programme.information.url }})
 
 You can also find a range of [information about the {{ programme.vaccineName.sentenceCase }} on GOV.UK]({{ programme.guidance.url }}) {{ programme.guidance.hint }}.
-{% endfor %}
 
 {% if programme.type == ProgrammeType.Flu %}
 {% include "emails/consent/_about-the-nasal-spray.njk" %}
 {% endif %}
+{% endfor %}
 
 {% include "emails/consent/_talk-to-your-child.njk" %}
 

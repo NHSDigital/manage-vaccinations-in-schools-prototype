@@ -3,10 +3,9 @@
 {% set caption = __("consent.start.title." + session.presetNames[0]) | safe %}
 
 {% set placeholders = {
-  programme: programme,
-  consent: consent,
-  team: data.team,
-  session: session
+  child: consent.child,
+  session: session,
+  team: data.team
 } %}
 
 {% set defaultTemplate = "invite" %}
