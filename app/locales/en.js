@@ -754,7 +754,7 @@ export const en = {
       },
       'invite-clinic': {
         label: 'Clinic booking',
-        name: 'Booking a clinic appointment for your child’s {{session.vaccinationNames.sentenceCase}}'
+        name: '{{consent.child.firstName}} has still not had their {{session.vaccinationNames.sentenceCase}}'
       },
       'invite-clinic-reminder': {
         label: 'Clinic booking reminder',
@@ -770,49 +770,65 @@ export const en = {
       },
       'consent-given': {
         label: 'Consent given',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
       },
       'consent-given-changed-school': {
         label: 'Consent given (changed school)',
         name: 'Your child’s {{session.vaccinationNames.sentenceCase}}'
       },
-      'consent-conflicts': {
-        label: 'Consent conflicts',
-        name: 'Your child will not have their {{session.vaccinationNames.sentenceCase}}'
-      },
       'consent-refused': {
         label: 'Consent refused',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
       },
       'consent-needs-triage': {
         label: 'Consent needs triage',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
+      },
+      'consent-unknown-contact': {
+        label: 'Consent response from unknown contact',
+        name: 'Different contact details in {{session.vaccinationNames.sentenceCase}} consent response'
       },
       'triage-vaccinate': {
         label: 'Vaccinate',
-        name: 'Your child can have the {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
+        name: 'Your child can have their {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
+      },
+      'triage-vaccinate-second-dose': {
+        label: 'Vaccinate (second dose)',
+        name: '{{consent.child.firstName}} needs another dose of the MMR vaccination'
       },
       'triage-delay-vaccination': {
         label: 'Delay vaccination',
-        name: 'Please book a clinic appointment for your child’s {{session.vaccinationNames.sentenceCase}}'
+        name: 'We are delaying your child’s {{session.vaccinationNames.sentenceCase}}'
+      },
+      'triage-invite-to-clinic': {
+        label: 'Invite to clinic',
+        name: 'Please book a clinic appointment for your child’s vaccination'
       },
       'triage-do-not-vaccinate': {
         label: 'Do not vaccinate',
         name: 'Your child will not have the {{session.vaccinationNames.sentenceCase}} in school'
       },
-      'record-reminder': {
-        label: 'Reminder',
-        name: '{{consent.child.fullName}} will get their {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
+      'vaccination-reminder': {
+        label: 'Session reminder',
+        name: '{{consent.child.fullName}} may get their {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
       },
-      'record-vaccinated': {
+      'vaccination-already-had': {
+        label: 'Vaccination already had',
+        name: 'Cancelled {{session.vaccinationNames.sentenceCase}} appointment for {{consent.child.firstName}}'
+      },
+      'vaccination-deleted': {
+        label: 'Vaccination message sent in error',
+        name: 'Our last email to you was inaccurate'
+      },
+      'vaccination-given': {
         label: 'Vaccinated',
         name: 'Your child had their {{session.vaccinationNames.sentenceCase}} today'
       },
-      'record-vaccinated-many': {
+      'vaccination-given-many': {
         label: 'Vaccinated (many)',
         name: 'Your child had their {{session.vaccinationNames.sentenceCase}} today'
       },
-      'record-could-not-vaccinate': {
+      'vaccination-not-administered': {
         label: 'Could not vaccinate',
         name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
       },
@@ -1972,25 +1988,30 @@ export const en = {
         name: 'Confirmation that consent has been refused',
         text: 'You’ve refused to give consent for {{consent.child.fullName}} to have their {{session.vaccinationNames.sentenceCase}}.\n\nYou can give feedback about the ‘Give or refuse consent’ service by completing our short survey:\n\n<https://feedback.digital.nhs.uk/jfe/form/SV_3fICo6frMvUZX1k>\n\nYour feedback will help us improve the service.'
       },
-      'record-reminder': {
-        label: 'Reminder',
+      'vaccination-reminder': {
+        label: 'Session reminder',
         name: 'Reminder (to go out the day before the vaccination)',
-        text: '{{consent.child.firstName}} will get their {{session.vaccinationNames.sentenceCase}} at school tomorrow ({{session.formatted.nextDate}}). Please make sure they have breakfast and encourage them to wear a short-sleeved shirt.'
+        text: '{{consent.child.firstName}} may get their {{session.vaccinationNames.sentenceCase}} at school on {{session.formatted.nextDate}}.\n\nPlease make sure they have breakfast and encourage them to wear a short-sleeved shirt.\n\nIf {{consent.child.firstName}} is absent or unwell on the day of the vaccination session, contact us to ask about alternative sessions.\n\n{{team.name}}, [{{team.tel}}](#)'
       },
-      'record-reminder-child': {
-        label: 'Reminder (child)',
+      'vaccination-reminder-child': {
+        label: 'Session reminder (child)',
         name: 'Reminder (to go out the day before the vaccination)',
         text: 'You’re due to get your {{session.vaccinationNames.sentenceCase}} at school tomorrow ({{session.formatted.nextDate}}). Please wear a short-sleeved shirt and make sure you eat something before the session.'
       },
-      'record-vaccinated': {
+      'vaccination-already-had': {
+        label: 'Vaccination already had',
+        name: 'Cancelled vaccination appointment',
+        text: 'We are cancelling {{consent.child.firstName}}’s {{session.vaccinationNames.sentenceCase}} at school as our records show {{consent.child.firstName}} was vaccinated at another location today. If this is wrong, contact us. [{{team.tel}}](#)'
+      },
+      'vaccination-given': {
         label: 'Vaccinated',
         name: 'Child has been vaccinated',
-        text: '{{consent.child.firstName}} had their {{session.vaccinationNames.sentenceCase}} at school today. They might have some side effects, including bruising or itching at the injection site, a high temperature, nausea, or pain in the arms, hands, or fingers.\n\nIf you’re concerned, contact your GP in the usual way.'
+        text: '{{consent.child.firstName}} had their {{session.vaccinationNames.sentenceCase}} today. They might have some of the following side effects: bruising or itching at the injection site, a high temperature, nausea, or pain in the arms, hands, or fingers.\n\nIf you’re concerned, contact your GP in the usual way.'
       },
-      'record-could-not-vaccinate': {
+      'vaccination-not-administered': {
         label: 'Could not vaccinate',
         name: 'Child did not get their vaccination despite having consent',
-        text: '{{consent.child.firstName}} did not have their {{session.vaccinationNames.sentenceCase}} at school today. This was because {{reason}}.\n\nIf you’d still like them to be vaccinated on a different date, contact our team by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+        text: '{{consent.child.firstName}} did not have their {{session.vaccinationNames.sentenceCase}} at school today. This was because {{reason}}.\n\nIf you’d still like them to be vaccinated on a different date, contact the local health team by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
       }
     }
   },

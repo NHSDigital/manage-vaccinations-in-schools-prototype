@@ -1,9 +1,7 @@
-Dear {{ consent.parent.fullName }},
-
 You’ve given consent for {{ consent.child.fullAndPreferredNames }} to have their {{ session.vaccinationNames.sentenceCase }} at {{ session.location.name }}.
 
-As you answered ‘yes’ to some of the health questions, we need to check the vaccination is suitable for {{ consent.child.firstName }}. We’ll review your answers and get in touch again soon.
+As you answered ‘yes’ to one or more of the health questions, we need to review your answers so we can decide what’s best for {{ consent.child.firstName }}. We’ll let you know once we’ve done this.
 
-{{ data.team.name }}<br>
-{{ data.team.email }}<br>
-{{ data.team.tel }}
+If you want to withdraw your consent in the meantime, please phone us.
+
+{% include "emails/consent/_contact-details.njk" %}

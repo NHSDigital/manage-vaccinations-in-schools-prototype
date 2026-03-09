@@ -22,8 +22,6 @@
   },
   programme: programme,
   consent: consent,
-  reason: "they were absent from the session",
-  refuser: "James Smith",
   session: session
 } %}
 
@@ -44,19 +42,23 @@
     "consent-already-vaccinated" if programme.type == ProgrammeType.MMR,
     "consent-given",
     "consent-given-changed-school",
-    "consent-conflicts",
     "consent-refused",
-    "consent-needs-triage"
+    "consent-needs-triage",
+    "consent-unknown-contact"
   ],
   "Triage": [
     "triage-vaccinate",
+    "triage-vaccinate-second-dose" if programme.type == ProgrammeType.MMR,
+    "triage-invite-to-clinic",
     "triage-delay-vaccination",
     "triage-do-not-vaccinate"
   ],
   "Record": [
-    "record-reminder",
-    "record-vaccinated",
-    "record-vaccinated-many" if session.programmes.length > 1,
-    "record-could-not-vaccinate"
+    "vaccination-reminder",
+    "vaccination-given",
+    "vaccination-given-many" if session.programmes.length > 1,
+    "vaccination-not-administered",
+    "vaccination-already-had",
+    "vaccination-deleted"
   ]
 } %}

@@ -1,5 +1,3 @@
-Dear {{ consent.parent.fullName }},
-
 {{ consent.child.fullAndPreferredNames }} had their {{ programme.name }} vaccination at {{ session.location.name }} today.{% if consent.child.school.phase == SchoolPhase.Primary %} They were very brave.{% endif %}
 
 We suggest you record the following details {% if consent.child.school.phase == SchoolPhase.Primary %}in their red book (also known as their personal child health record){% else %}somewhere{% endif %}:
@@ -12,7 +10,7 @@ We suggest you record the following details {% if consent.child.school.phase == 
 > Date of vaccination: {{ session.formatted.date }}<br>
 > Batch number: AB1234
 
-## Your child might have some side effects
+## Possible side effects
 
 Your child might have some of the following side effects:
 
@@ -20,6 +18,4 @@ Your child might have some of the following side effects:
 
 If you’re concerned about your child’s reaction to the vaccine, contact your GP in the usual way.
 
-{{ data.team.name }}<br>
-{{ data.team.email }}<br>
-{{ data.team.tel }}
+{% include "emails/consent/_contact-details.njk" %}

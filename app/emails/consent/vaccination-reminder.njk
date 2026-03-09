@@ -1,0 +1,21 @@
+This is a quick reminder that {{ consent.child.fullAndPreferredNames }} may get their {{ session.vaccinationNames.sentenceCase }} at {{ session.location.name }} on {{ session.formatted.nextDate }}.
+
+If you haven’t already told {{ consent.child.firstName }} that they’ll be vaccinated, please let them know what to expect.
+
+If {{ consent.child.firstName }}’s health changes, or you arrange for them to be vaccinated elsewhere, please contact us. You should also contact us to ask about alternative sessions if {{ consent.child.firstName }} is absent or unwell on the day of the vaccination session. You can email {{ data.team.email }} or phone {{ data.team.tel }}.
+
+## Helping the session run smoothly
+
+It’s helpful for your child to wear a short-sleeved shirt on the day of the vaccination to give us easy access to the arm.
+
+It’s also helpful for them to have breakfast, as this reduces the likelihood of fainting.
+
+## Possible side effects
+
+{{ consent.child.firstName }} might have some of the following side effects after their vaccination:
+
+{{ sideEffects | safe }}
+
+If you’re concerned about your child’s reaction, contact your GP in the usual way.
+
+{% include "emails/consent/_contact-details.njk" %}

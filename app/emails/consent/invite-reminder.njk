@@ -1,6 +1,6 @@
-We wrote to you recently about a visit by our team to {{ session.location.name }} on {{ session.formatted.nextDate }}.
+We wrote to you recently to let you know we’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }}.
 
-If you want your child to get the {{ session.vaccinationNames.sentenceCase }}, you need to give consent by {{ session.formatted.closeAt }}.
+> Do not reply to this email to tell us your decision. The link to the online consent form is below.
 
 If you’ve already responded to the consent request, you can ignore this message.
 
@@ -21,8 +21,6 @@ If you’ve already responded to the consent request, you can ignore this messag
 {% endif %}
 
 {% include "emails/consent/_how-to-respond.njk" %}
-
-{% include "emails/consent/_trouble-using-online-form.njk" %}
 
 {% include "emails/consent/_your-data.njk" %}
 
