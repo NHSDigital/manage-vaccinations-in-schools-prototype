@@ -247,6 +247,18 @@ export const en = {
     }
   },
   clinicBooking: {
+    start: {
+      title: {
+        [SessionPresetName.Flu]:
+          'Book an appointment for your child’s flu vaccination',
+        [SessionPresetName.Doubles]:
+          'Book an appointment for the MenACWY and Td/IPV vaccinations',
+        [SessionPresetName.HPV]:
+          'Book an appointment for the HPV vaccination',
+        [SessionPresetName.MMR]:
+          'Book an appointment for an MMR or MMR(V) catch-up vaccination'
+      }
+    },
     show: {
       title: 'Manage your booking',
       introduction: 'Check your appointment details and make changes where needed.',
