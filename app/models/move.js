@@ -130,7 +130,7 @@ export class Move {
    * @static
    */
   static update(uuid, updates, context) {
-    const updatedMove = Object.assign(this, updates)
+    const updatedMove = Object.assign(Move.findOne(uuid, context), updates)
     updatedMove.updatedAt = today()
 
     // Remove move context
