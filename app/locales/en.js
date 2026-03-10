@@ -1149,7 +1149,7 @@ export const en = {
       label: 'Session note'
     },
     patientProgramme: {
-      label: 'View %s record'
+      label: 'View child’s %s record'
     },
     consent: {
       label: 'Consent status',
