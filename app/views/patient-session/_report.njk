@@ -33,4 +33,10 @@
     ],
     rows: vaccinationRows
   }) if patientSession.vaccinationOutcomes | length }}
+
+  {# Actions #}
+  {{ actionLink({
+    text: __("patientSession.patientProgramme.label", programme.nameSentenceCase),
+    href: patient.uri + "/programmes/" + programme.id + "?referrer=" + referrer
+  }) }}
 {% endcall %}
