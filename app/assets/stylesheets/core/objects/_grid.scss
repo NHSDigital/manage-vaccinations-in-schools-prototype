@@ -32,11 +32,11 @@
 .app-grid-column-filters {
   display: block;
 
-  @include nhsuk-grid-column(one-third, $at: large-desktop);
+  @include nhsuk-grid-column(one-third, $at: desktop);
 }
 
 .app-grid-column-results {
-  @include nhsuk-grid-column(two-thirds, $at: large-desktop);
+  @include nhsuk-grid-column(two-thirds, $at: desktop);
 }
 
 .app-grid-column-filters > .nhsuk-card--feature,
