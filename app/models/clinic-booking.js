@@ -1,6 +1,9 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { ClinicAppointment } from './clinic-appointment.js'
-import { Parent } from '../models.js'
+import _ from 'lodash'
+
+import allProgrammesData from '../datasets/programmes.js'
+
+import { ClinicAppointment, Parent, Programme } from '../models.js'
 import { SessionPresets } from '../enums.js'
 
 /**
@@ -14,6 +17,7 @@ import { SessionPresets } from '../enums.js'
  * @property {string} bookingReference - Booking reference number
  * @property {SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
  * 
+ * @property {number} childCount - the number of children that the parent wants to book in in one go
  * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
  */
 export class ClinicBooking {
@@ -23,6 +27,7 @@ export class ClinicBooking {
     this.bookingReference = options?.bookingReference || ClinicBooking.generateReference()
     this.sessionPreset = options?.sessionPreset ?? SessionPresets[0];
 
+    this.childCount = options?.childCount
     this.appointments_ids = options?.appointments_ids ?? []
   }
 
@@ -34,7 +39,7 @@ export class ClinicBooking {
    * @returns {ClinicBooking} A new clinic booking, added to the context, and possibly with a new UUID
    */
   static createInContext(booking, context) {
-    const createdBooking = new ClinicBooking(booking, context)
+    const createdBooking = new ClinicBooking(booking)
 
     // Update context
     context.clinicBookings = context.clinicBookings || {}
@@ -58,6 +63,25 @@ export class ClinicBooking {
    */
   get bookingUri() {
     return `${this.sessionPreset.slug}/${this.uuid}`
+  }
+
+  /**
+   * Get the IDs of the set of programmes that this clinic was set up to serve
+   * 
+   * @returns {Array<string>} the set of Programme objects represented by the session preset
+   */
+  get primaryProgrammeIDs() {
+    return this.sessionPreset.programmeTypes.map(type => allProgrammesData[type].id)
+  }
+
+  /**
+   * Get the set of programmes that this clinic was set up to serve
+   * 
+   * @returns {Array<Programme>} the set of Programme objects represented by the session preset
+   */
+  get primaryProgrammes() {
+    // MAL: is this gonna trip me up, relying on the global context if called from the booking journey?
+    return this.primaryProgrammeIDs.map(id => Programme.findOne(id, this.context))
   }
 
   /**
@@ -89,6 +113,18 @@ export class ClinicBooking {
    */
   get firstParent() {
     return this.appointments?.[0]?.parent
+  }
+
+  /**
+   * Get various formatted values for display in the page
+   * 
+   * @returns {object} Formatted values
+   */
+  get formatted() {
+    return {
+      // TODO: make this work using commas for more than 2 programmes
+      primaryProgramme: this.primaryProgrammes.map(p => p.name).join(' and ')
+    }
   }
 
   /**
@@ -145,15 +181,15 @@ export class ClinicBooking {
    * @static
    */
   static update(uuid, updates, context) {
-    const updatedBooking = Object.assign(this, updates)
-//    updatedBooking.updatedAt = today()
+    const existingBooking = ClinicBooking.findOne(uuid, context)
+    const updatedBooking = _.merge(existingBooking, updates)
 
     // Remove booking context
     delete updatedBooking.context
 
-
     // Delete original booking (with previous UUID)
     delete context.clinicBookings[uuid]
+
     // Update context
     context.clinicBookings[updatedBooking.uuid] = updatedBooking
 

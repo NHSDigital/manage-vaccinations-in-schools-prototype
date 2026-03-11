@@ -1,0 +1,44 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.parentalRelationship.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {%- set fosterCarerHtml = radios({
+    fieldset: {
+      legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label") }
+    },
+    hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
+    items: booleanItems,
+    decorate: "clinicBooking.appointments[child_index].parent.hasParentalResponsibility"
+  }) %}
+
+  {%- set otherHtml = input({
+    label: { text: __("clinicBooking.parentalRelationship.relationshipOther.label") },
+    decorate: "clinicBooking.appointments[child_index].parent.relationshipOther"
+  }) + radios({
+    fieldset: {
+      legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label") }
+    },
+    hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
+    items: booleanItems,
+    decorate: "clinicBooking.appointments[child_index].parent.hasParentalResponsibility"
+  }) %}
+
+  {# Add conditional html for ‘Foster carer’ option #}
+  {% set items = injectConditionalHtml(parentalRelationshipItems, ParentalRelationship.Fosterer, fosterCarerHtml) %}
+
+  {# Add conditional html for ‘Other’ option #}
+  {% set items = injectConditionalHtml(items, ParentalRelationship.Other, otherHtml) %}
+
+  {{ radios({
+    fieldset: {
+      legend: { text: __("clinicBooking.parentalRelationship.relationship.label") }
+    },
+    items: items,
+    decorate: "clinicBooking.appointments[child_index].parent.relationship"
+  }) }}
+{% endblock %}

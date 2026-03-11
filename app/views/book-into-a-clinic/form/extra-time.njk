@@ -1,0 +1,29 @@
+{% extends "_layouts/form.njk" %}
+
+{% set appointment = clinicBooking.appointments[child_index] %}
+{% set firstName = appointment.child.firstName %}
+{% set title = __("clinicBooking.extraTime.title", firstName) %}
+
+{% block form %}
+  {# Ask for a reason if the parent says the child does need extra time #}
+  {%- set yesHtml = input({
+    label: { text: __("clinicBooking.extraTime.reason.label") },
+    decorate: "clinicBooking.appointments[child_index].extraTimeReason"
+  }) %}
+  {% set items = injectConditionalHtml(booleanItems, "Yes", yesHtml) %}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        isPageHeading: true,
+        text: title,
+        size: "l"
+      },
+      hint: {
+        text: __("clinicBooking.extraTime.hint")
+      }
+    },
+    items: items,
+    decorate: "clinicBooking.appointments[child_index].needsExtraTime"
+  }) }}
+{% endblock %}

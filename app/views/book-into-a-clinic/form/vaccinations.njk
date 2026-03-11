@@ -1,0 +1,43 @@
+{% extends "_layouts/form.njk" %}
+
+{% set appointment = clinicBooking.appointments[child_index] %}
+{% set firstName = appointment.child.firstName %}
+{% set title = __("clinicBooking.vaccinations.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {% if appointment.patient %}
+  <p>
+    While this clinic is primarily for {{ clinicBooking.formatted.primaryProgramme }} vaccinations, our records show that
+    {{ firstName }} is also eligible for other vaccinations.
+  </p>
+  {% endif %}
+
+  <p>
+    Select the vaccinations that you agree to {{ firstName }} having in this clinic.
+  </p>
+
+  <p>
+    You can <a href="https://www.nhs.uk/vaccinations/nhs-vaccinations-and-when-to-have-them/">find out more about which
+    vaccinations are due when on NHS.UK</a>.
+  </p>
+
+  {% set programmeOptions = [] %}
+  {% for programme in appointment.eligibleProgrammes %}
+    {# Do I need to add name property to ensure the programme IDs (and not the programme titles) are put into the request body? #}
+    {% set programmeOptions = (programmeOptions.push({ text: programme.title }), programmeOptions) %}
+  {% endfor %}
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        text: title
+      }
+    },
+    items: programmeOptions,
+    decorate: "clinicBooking.appointments[child_index].selected_programme_ids"
+  }) }}
+{% endblock %}

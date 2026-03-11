@@ -1,0 +1,18 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.child.dob.title") %}
+
+{% block form %}
+  {{ dateInput({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          classes: "nhsuk-fieldset__legend--l",
+          title: title
+        })
+      }
+    },
+    hint: { text: __("clinicBooking.child.dob.hint") },
+    decorate: "clinicBooking.appointments[child_index].unmatchedDob_"
+  }) }}
+{% endblock %}

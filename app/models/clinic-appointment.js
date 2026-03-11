@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import _ from 'lodash'
 
 import { ClinicBooking, Parent, Patient, Programme, Session } from '../models.js'
-import { formatDate, getDateValueDifference } from '../utils/date.js'
+import { convertIsoDateToObject, convertObjectToIsoDate, formatDate, getDateValueDifference } from '../utils/date.js'
 
 /**
  * @class ClinicAppointment
@@ -17,15 +18,16 @@ import { formatDate, getDateValueDifference } from '../utils/date.js'
  * @property {string} [unmatchedFirstName] - Child first name, if not matched to a patient record
  * @property {string} [unmatchedLastName] - Child last name, if not matched to a patient record
  * @property {Date} [unmatchedDob] - Child date of birth, if not matched to a patient record
- * @property {object} [dob_] - Child date of birth (formatted)
- * 
+ * @property {object} [unmatchedDob_] - Child date of birth, if not matched to a patient record (for use with decorate)
+ * @property {Boolean} needsExtraTime - Does the child need extra time for their vaccinations?
+ * @property {string} [extraTimeReason] - The reason why the child needs extra time for their appointment
  * @property {Parent} [parent] - The parent/carer who booked this appointment
  * 
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
  * 
- * @property {Array<string>} [programme_ids] - IDs of programmes signed up for
+ * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  */
 export class ClinicAppointment {
   constructor(options, context) {
@@ -37,7 +39,10 @@ export class ClinicAppointment {
     this.unmatchedFirstName = options?.unmatchedFirstName
     this.unmatchedLastName = options?.unmatchedLastName
     this.unmatchedDob = options?.unmatchedDob && new Date(options.unmatchedDob)
-    this.dob_ = options?.dob_
+    this.unmatchedDob_ = options?.unmatchedDob_
+
+    this.needsExtraTime = options?.needsExtraTime
+    this.extraTimeReason = options?.extraTimeReason
 
     this.parent = options?.parent && new Parent(options.parent)
 
@@ -45,7 +50,7 @@ export class ClinicAppointment {
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
     this.endAt = options?.endAt ? new Date(options.endAt) : undefined
 
-    this.programme_ids = options?.programme_ids || []
+    this.selected_programme_ids = options?.selected_programme_ids || []
   }
   
   /**
@@ -88,7 +93,27 @@ export class ClinicAppointment {
     if (patient) {
       return `${patient.firstName} ${patient.lastName}`
     } else {
-      return 
+      return `${this.unmatchedFirstName} ${this.unmatchedLastName}`
+    }
+  }
+
+  /**
+   * Get date of birth for `dateInput`
+   *
+   * @returns {object|undefined} `dateInput` object
+   */
+  get unmatchedDob_() {
+    return convertIsoDateToObject(this.unmatchedDob)
+  }
+
+  /**
+   * Set date of birth from `dateInput`
+   *
+   * @param {object} object - dateInput object
+   */
+  set unmatchedDob_(object) {
+    if (object) {
+      this.unmatchedDob = convertObjectToIsoDate(object)
     }
   }
 
@@ -97,8 +122,41 @@ export class ClinicAppointment {
    * 
    * @returns {Array<Programme>} Programmes selected for this appointment
    */
-  get programmes() {
-    return this.programme_ids.map(id => Programme.findOne(id, this.context))
+  get selectedProgrammes() {
+    return ClinicAppointment.#getProgrammesFromIDs(this.selected_programme_ids, this.context)
+  }
+
+  /**
+   * Get the programmes for which this child is eligible
+   * 
+   * @returns {Array<Programme>} The programmes from which the parent is able to choose
+   */
+  get eligibleProgrammes() {
+    const patient = this.patient
+    if (!patient) {
+      return this.clinicBooking?.primaryProgrammes
+    }
+
+    const primary_programme_ids = this.clinicBooking?.primaryProgrammeIDs
+    
+    // TODO: work out which vaccinations the matched child is eligible for
+    let catchup_programme_ids = []
+
+    let eligible_programme_ids = new Set(primary_programme_ids)
+    eligible_programme_ids = eligible_programme_ids.union(new Set(catchup_programme_ids))
+
+    return ClinicAppointment.#getProgrammesFromIDs([...eligible_programme_ids], this.context)
+  }
+
+  /**
+   * Convert an array of programme IDs to actual programme objects
+   * 
+   * @param {Array<string>} programmeIDs 
+   * @param {object} context 
+   * @returns 
+   */
+  static #getProgrammesFromIDs(programmeIDs, context) {
+    return programmeIDs.map(id => Programme.findOne(id, context))
   }
 
   /**
@@ -118,7 +176,7 @@ export class ClinicAppointment {
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot:  `${formattedStartTime} to ${formattedEndTime}`,
-      vaccinations: this.programmes.map(programme => programme.name).join(', '),
+      vaccinations: this.selectedProgrammes.map(programme => programme.name).join(', '),
     }
   }
 
@@ -177,7 +235,7 @@ export class ClinicAppointment {
    * @static
    */
   static update(uuid, updates, context) {
-    const updatedAppointment = Object.assign(this, updates)
+    const updatedAppointment = _.merge(ClinicAppointment.findOne(uuid, context), updates)
 //    updatedAppointment.updatedAt = today()
 
     // Remove appointment context
