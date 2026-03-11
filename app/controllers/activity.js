@@ -184,7 +184,7 @@ export const activityController = {
         items: [
           auditEvent({
             name: activity.patient.archived({
-              archiveReason: ArchiveRecordReason.Other
+              archiveReason: ArchiveRecordReason.Duplicate
             }),
             note: 'A brief note about why child record was archived.',
             createdBy_uid
@@ -260,15 +260,13 @@ export const activityController = {
             name: activity.vaccination.recorded(vaccinationGiven),
             note: 'A brief note about the vaccination session.',
             createdBy_uid,
-            programme_ids: [vaccinationGiven.programme_id],
-            vaccination_uuid: vaccinationGiven.uuid
+            programme_ids: [vaccinationGiven.programme_id]
           }),
           auditEvent({
             name: activity.vaccination.recorded(vaccinationNotGiven),
             note: 'A brief note about the vaccination session.',
             createdBy_uid,
-            programme_ids: [vaccinationNotGiven.programme_id],
-            vaccination_uuid: vaccinationNotGiven.uuid
+            programme_ids: [vaccinationNotGiven.programme_id]
           }),
           auditEvent({
             name: activity.vaccination.added,
