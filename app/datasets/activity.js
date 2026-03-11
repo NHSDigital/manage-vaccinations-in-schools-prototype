@@ -20,7 +20,7 @@ export default {
   },
   gillick: {
     created: (gillick) => gillick.competent,
-    updated: (gillick) => gillick.competent.replace('assessed', 'reassessed')
+    updated: (gillick) => gillick.competent?.replace('assessed', 'reassessed')
   },
   note: {
     created: (type) => `${type} added`
