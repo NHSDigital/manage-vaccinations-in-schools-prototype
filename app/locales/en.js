@@ -257,6 +257,76 @@ export const en = {
           'Book an appointment for the HPV vaccination',
         [SessionPresetName.MMR]:
           'Book an appointment for an MMR or MMR(V) catch-up vaccination'
+      },
+      confirm: {
+        title: 'Book an appointment',
+        buttonText: 'Start now'
+      },
+      otherMethods: {
+        title: 'Other ways to book an appointment',
+        description: 
+          'The quickest way to book an appointment is online, using this service. This will take less than 5 minutes.\n\nIf you cannot use the service, you can book an appointment by phoning %s.'
+      }
+    },
+    childCount: {
+      title: 'How many children do you need to book appointments for?',
+      description:
+        'If you have more than one child invited to a clinic, you can book appointments for all of them.',
+      children: {
+        label: 'Number of children',
+        hint: 'For example, if you have twins needing vaccination, enter 2'
+      }
+    },
+    child: {
+      title: {
+        plural: 'What is your %s child’s name?',
+        singular: 'What is your child’s name?'
+      },
+      label: 'Child',
+      summary: 'About your child',
+      description:
+        'Give the name on your child’s birth certificate. If it’s changed, give the name held by your child’s GP.',
+      firstName: {
+        label: 'First name',
+        hint: 'Or given name'
+      },
+      lastName: {
+        label: 'Last name',
+        hint: 'Or family name'
+      },
+      hasPreferredName: {
+        label: 'Do they use a different name in school?',
+        yes: 'Yes',
+        no: 'No'
+      },
+      preferredFirstName: {
+        label: 'Preferred first name'
+      },
+      preferredLastName: {
+        label: 'Preferred last name'
+      },
+    },
+    parentalRelationship: {
+      title: 'What is your relationship to %s?',
+      hasParentalResponsibility: {
+        label: 'Do you have parental responsibility?',
+        hint: 'This means you have legal rights and duties relating to the child'
+      },
+      relationshipOther: {
+        label: 'Relationship to the child'
+      },
+      relationship: {
+        label: 'Relationship to child'
+      }
+    },
+    vaccinations: {
+      title: 'Do you agree to %s having the following vaccinations?'
+    },
+    extraTime: {
+      title: 'Does %s need extra time for their vaccination?',
+      hint: 'For example, they need longer than usual because they’re anxious about injections',
+      reason: {
+        label: 'Reason for needing extra time'
       }
     },
     show: {
