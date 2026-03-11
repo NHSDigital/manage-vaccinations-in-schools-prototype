@@ -1,0 +1,51 @@
+{% extends "_layouts/form.njk" %}
+
+{% if (clinicBooking.childCount > 1) %}
+  {% set title = __("clinicBooking.child.title.plural", (child_index + 1) | ordinal) %}
+{% else %}
+  {% set title = __("clinicBooking.child.title.singular") %}
+{% endif %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: __("clinicBooking.childCount.caption", child_index, clinicBooking.childCount) if clinicBooking.childCount > 1
+  }) }}
+
+  {{ __("clinicBooking.child.description") | nhsukMarkdown }}
+
+  {{ input({
+    label: { text: __("clinicBooking.child.firstName.label") },
+    hint: { text: __("clinicBooking.child.firstName.hint") },
+    decorate: "clinicBooking.appointments[child_index].firstName"
+  }) }}
+
+  {{ input({
+    label: { text: __("clinicBooking.child.lastName.label") },
+    hint: { text: __("clinicBooking.child.lastName.hint") },
+    decorate: "clinicBooking.appointments[child_index].lastName"
+  }) }}
+
+  {#
+  {{ radios({
+    fieldset: {
+      legend: { text: __("clinicBooking.child.hasPreferredName.label") }
+    },
+    items: [{
+      text: __("clinicBooking.child.hasPreferredName.yes"),
+      conditional: {
+        html: input({
+          label: { text: __("clinicBooking.child.preferredFirstName.label") + " (optional)" },
+          decorate: "clinicBooking.appointments[child_index].preferredFirstName"
+        }) + input({
+          label: { text: __("clinicBooking.child.preferredLastName.label") + " (optional)" },
+          decorate: "clinicBooking.appointments[child_index].preferredLastName"
+        })
+      }
+    }, {
+      text: __("clinicBooking.child.hasPreferredName.no")
+    }],
+    decorate: "child.preferred-name-choice"
+  }) }}
+    #}
+{% endblock %}

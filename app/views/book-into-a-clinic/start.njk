@@ -2,40 +2,38 @@
 
 {% set title = false %}
 
-{#
-  We won't have:
-   - a session or session ID
-
-  We will have:
-   - a primary programme ID (or the ID of a session preset, which can represent one or more programmes)
-#}
-
 {% block content %}
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      {# Page title #}
       {{ appHeading({
         size: "xl",
-        title: __("clinicBooking.start.title." + primaryProgramme.name)
+        title: __("clinicBooking.start.title." + sessionPreset.name)
       }) }}
 
-      {# Show details of the vaccine(s) in the primary programme #}
-      {% for programme in programmes %}
-        {% if programmes.length != 1 %}
-          <h2 class="nhsuk-heading-m">{{ programme.title }}</h2>
-        {% endif %}
+      <p>
+        If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.
+      </p>
+      
+      {# TODO: change the use of sessionPreset.name here to a more public-facing name. For example, present "MenACWY and Td/IPC" instead of "Doubles" #}
+      <p>
+        Clinics have recently been set up to offer {{ sessionPreset.name }} vaccinations, but your child may be able to catch up on any outstanding
+        vaccinations during their appointment.
+      </p>
 
-        {{ programme.information.startPage | nhsukMarkdown }}
+      <h2 class="nhsuk-heading-m">
+        {{ __("clinicBooking.start.confirm.title") }}
+      </h2>
 
-        {{ link(programme.information.url, __("consent.start.more", { programme: programme })) | nhsukMarkdown }}
-      {% endfor %}
+      {{ button({
+        text: __("clinicBooking.start.confirm.buttonText"),
+        href: "/book-into-a-clinic/" + sessionPreset.slug + "/new"
+      }) }}
 
-      {# TODO: next here #}
+      <h3 class="nhsuk-heading-s">
+        {{ __("clinicBooking.start.otherMethods.title") }}
+      </h3>
 
-      {# Dump the booking for debugging #}
-      {{ inspect(clinicBookings) }}
-
-      {# Imagine this is the clinic session's children in session page? #}
+      {{ __("clinicBooking.start.otherMethods.description", bookingPhoneNumber) | nhsukMarkdown }}
     </div>
   </div>
 {% endblock %}
