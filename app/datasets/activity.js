@@ -1,4 +1,4 @@
-import { ScreenOutcome } from '../enums.js'
+import { InstructionOutcome, PatientStatus, ScreenOutcome } from '../enums.js'
 import { lowerCaseFirst } from '../utils/string.js'
 
 export default {
@@ -29,11 +29,11 @@ export default {
     invite: (parent) =>
       `Consent request sent to ${parent.fullNameAndRelationship}`,
     'invite-reminder': (parent) =>
-      `Reminder to give or refuse consent sent to ${parent.fullNameAndRelationship}`,
+      `Consent reminder sent to ${parent.fullNameAndRelationship}`,
     'invite-clinic': (parent) =>
-      `Invitation to book a clinic appointment sent to ${parent.fullNameAndRelationship}`,
+      `Clinic invitation sent to ${parent.fullNameAndRelationship}`,
     'invite-clinic-reminder': (parent) =>
-      `Reminder to book a clinic appointment sent to ${parent.fullNameAndRelationship}`,
+      `Clinic invitation reminder sent to ${parent.fullNameAndRelationship}`,
     'consent-given': (parent) =>
       `Confirmation of consent given sent to ${parent.fullNameAndRelationship}`,
     'consent-given-changed-school': (parent) =>
@@ -57,16 +57,17 @@ export default {
     'vaccination-reminder': (parent) =>
       `Session reminder sent to ${parent.fullNameAndRelationship}`,
     'vaccination-given': (parent) =>
-      `Confirmation of vaccination sent to ${parent.fullNameAndRelationship}`,
+      `Confirmation the vaccination was given sent to ${parent.fullNameAndRelationship}`,
     'vaccination-not-administered': (parent) =>
-      `Confirmation of vaccination not given sent to ${parent.fullNameAndRelationship}`,
+      `Confirmation the vaccination was not given sent to ${parent.fullNameAndRelationship}`,
     'vaccination-already-had': (parent) =>
-      `Confirmation of vaccination discovered since consent sent to ${parent.fullNameAndRelationship}`,
+      `Confirmation previous vaccination discovered since consent sent to ${parent.fullNameAndRelationship}`,
     'vaccination-deleted': (parent) =>
-      `Apology for sending an incorrect message sent to ${parent.fullNameAndRelationship}`
+      `Apology for incorrect message sent to ${parent.fullNameAndRelationship}`
   },
   patient: {
-    archived: (archive) => `Record archived: ${archive.archiveReason}`,
+    archived: (archive) =>
+      `Record archived: ${lowerCaseFirst(archive.archiveReason)}`,
     expired:
       'Consent, health information, triage outcome and PSD status expired',
     merged: (mergedPatient, patient) =>
@@ -77,7 +78,7 @@ export default {
     created: 'Completed pre-screening checks'
   },
   psd: {
-    added: 'PSD added',
+    added: InstructionOutcome.Given,
     invalidated: 'PSD invalidated'
   },
   session: {
@@ -95,7 +96,7 @@ export default {
     recorded: (vaccination) =>
       vaccination.given
         ? `Vaccinated with ${vaccination.vaccine.brand}`
-        : `Could not vaccinate: ${lowerCaseFirst(vaccination.outcome)}`,
+        : `${PatientStatus.Deferred}: ${lowerCaseFirst(vaccination.outcome)}`,
     uploaded: 'Vaccination record uploaded'
   }
 }

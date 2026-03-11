@@ -734,8 +734,7 @@ export class Patient extends Child {
         createdAt: removeDays(vaccination.createdAt, 7),
         patient_uuid: this.uuid,
         programme_ids: [vaccination.programme_id],
-        session_id: vaccination.session.id,
-        vaccination_uuid: vaccination.uuid
+        session_id: vaccination.session.id
       })
 
       this.addEvent({
