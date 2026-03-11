@@ -1,7 +1,6 @@
 import {
   ConsentOutcome,
   DownloadStatus,
-  GillickCompetent,
   InstructionOutcome,
   PatientConsentStatus,
   PatientStatus,
