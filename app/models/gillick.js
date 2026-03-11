@@ -1,6 +1,5 @@
 import { GillickCompetent } from '../enums.js'
 import { today } from '../utils/date.js'
-import { getGillickCompetenceStatus } from '../utils/status.js'
 import { stringToBoolean } from '../utils/string.js'
 
 /**
@@ -39,17 +38,6 @@ export class Gillick {
       return GillickCompetent.False
     } else if (questions.every((answer) => answer === true)) {
       return GillickCompetent.True
-    }
-  }
-
-  /**
-   * Get formatted values
-   *
-   * @returns {object} Formatted values
-   */
-  get formatted() {
-    return {
-      competent: this.competent && getGillickCompetenceStatus(this.competent)
     }
   }
 

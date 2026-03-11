@@ -118,20 +118,6 @@ export function getPatientConsentStatus(patientConsent) {
 }
 
 /**
- * Get Gillick competency status properties
- *
- * @param {GillickCompetent} competent - Gillick competency
- * @returns {object} Status properties
- */
-export function getGillickCompetenceStatus(competent) {
-  return {
-    colour: competent === GillickCompetent.True ? 'green' : 'red',
-    icon: competent === GillickCompetent.True ? 'tick' : 'cross',
-    text: competent
-  }
-}
-
-/**
  * Get instruction outcome status properties
  *
  * @param {InstructionOutcome|boolean} instruct - Instruction outcome
