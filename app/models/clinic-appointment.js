@@ -27,6 +27,7 @@ import { convertIsoDateToObject, convertObjectToIsoDate, formatDate, getDateValu
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
  * 
+ * @property {Array<string>} [primary_programme_ids] - IDs of programmes signed up for
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  */
 export class ClinicAppointment {
@@ -51,8 +52,35 @@ export class ClinicAppointment {
     this.endAt = options?.endAt ? new Date(options.endAt) : undefined
 
     this.selected_programme_ids = options?.selected_programme_ids || []
+    this.primary_programme_ids = options?.primary_programme_ids || []
   }
   
+  /**
+   * Create a new clinic appointment, adding it to the context
+   * 
+   * @param {object} appointment - an appointment to copy or an object with any subset of its properties
+   * @param {object} context - the context into which we'll add the new appointment
+   * @returns {ClinicAppointment} A new clinic booking, added to the context, and possibly with a new UUID
+   */
+  static createInContext(appointment, context) {
+    const createdAppointment = new ClinicAppointment(appointment)
+
+    // Update context
+    context.clinicAppointments = context.clinicAppointments || {}
+    context.clinicAppointments[createdAppointment.uuid] = createdAppointment
+
+    return createdAppointment
+  }
+
+  /**
+   * Get URI of the booking journey
+   *
+   * @returns {string} Appointment URI
+   */
+  get appointmentUri() {
+    return `${this.uuid}`
+  }
+
   /**
    * Get the booking this appointment belongs to
    *
@@ -137,12 +165,10 @@ export class ClinicAppointment {
       return this.clinicBooking?.primaryProgrammes
     }
 
-    const primary_programme_ids = this.clinicBooking?.primaryProgrammeIDs
-    
     // TODO: work out which vaccinations the matched child is eligible for
     let catchup_programme_ids = []
 
-    let eligible_programme_ids = new Set(primary_programme_ids)
+    let eligible_programme_ids = new Set(this.primary_programme_ids)
     eligible_programme_ids = eligible_programme_ids.union(new Set(catchup_programme_ids))
 
     return ClinicAppointment.#getProgrammesFromIDs([...eligible_programme_ids], this.context)

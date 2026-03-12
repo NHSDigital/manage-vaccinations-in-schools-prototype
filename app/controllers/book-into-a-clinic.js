@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ParentalRelationship, SessionPresets } from '../enums.js'
-import { ClinicBooking, Programme } from '../models.js'
+import { ClinicAppointment, ClinicBooking, Programme } from '../models.js'
 
 import allProgrammesData from '../datasets/programmes.js'
 
@@ -17,9 +17,11 @@ export const bookIntoClinicController = {
     const sessionPreset = SessionPresets.find(preset => preset.slug === session_preset_slug) ?? SessionPresets[0]
     response.locals.sessionPreset = sessionPreset
 
+    // Allow us to list the programmes for which the parent's been invited to book an appointment
     const programmes = sessionPreset.programmeTypes.map(pt => Programme.findOne(allProgrammesData[pt].id, request.session.data))
     response.locals.programmes = programmes
 
+    // Allow us to offer a phone booking if not wanting online
     response.locals.bookingPhoneNumber = request.session.data.teams[0]?.tel ?? faker.helpers.replaceSymbols('01### ######')
 
     next()
@@ -31,9 +33,12 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   redirect(request, response) {
+    console.log('controller.redirect\n  route: ' + request.path)
     const { sessionPreset } = response.locals
 
-    response.redirect(`/book-into-a-clinic/${sessionPreset.slug}/start`)
+    const redirectTo = `${request.baseUrl}/${sessionPreset.slug}/start`
+    console.log('   -> redirect: ' + (redirectTo || '<empty>'))
+    response.redirect(redirectTo)
   },
 
   /**
@@ -60,14 +65,6 @@ export const bookIntoClinicController = {
       data.wizard
     )
 
-    // MAL: will this let me drop the :child_index part of the routes? (It's not in use yet, mind)
-    // Track which child we're entering details for
-    const childIteration = {
-      childIndex: 0,
-      childCount: 1
-    }
-    data.wizard.clinicBookingChildIteration = childIteration
-
     // Redirect to the first page in the booking journey (after the start page, that is)
     const redirectUrl = `${request.baseUrl}/${booking.bookingUri}/new/child-count`
     response.redirect(redirectUrl)
@@ -77,66 +74,72 @@ export const bookIntoClinicController = {
    * Prepare a form-based page of the clinic booking journey.
    * 
    * This includes code to set up radio button groups for various pages (we set them up
-   * regardless of which specific page we're being asked for).
+   * regardless of which specific route we're handling).
    * 
    * @param {*} request 
    * @param {*} response 
    * @param {*} next 
    */
   readForm(request, response, next) {
-    console.log('controller.readForm\n. route: ' + request.path)
-    const { session_preset_slug, booking_uuid, child_index } = request.params
+    console.log('controller.readForm\n  route: ' + request.path)
+    const { session_preset_slug, booking_uuid, appointment_uuid } = request.params
     const { data, referrer } = request.session
 
-    // MAL: do I need to put child_index into response.locals so that the view can use it?
-    // response.locals.child_index = child_index
+    // Create objects on the global context to allow us to check branching conditions, etc.
+    let booking, appointment
+    if (booking_uuid) {
+      booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data?.wizard), data)
+      response.locals.booking = booking
 
-    const booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data?.wizard), data)
-    response.locals.booking = booking
+      if (appointment_uuid) {
+        appointment = new ClinicAppointment((ClinicAppointment.findOne(appointment_uuid, data?.wizard)), data)
+        response.locals.appointment = appointment
+      }
+    }
 
     const journey = {
-      [`/${session_preset_slug}`]: {},
-      [`/${session_preset_slug}/new/child-count`]: {},
+      [`/${session_preset_slug}`]: {},  // is this ever actually used? Suspect not...unless when going back from child-count.
+      [`/${session_preset_slug}/${booking_uuid}/new/child-count`]: {},
       
       // Child journey
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/child`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/dob`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/parental-relationship`]: {
-        [`/${session_preset_slug}/new/${child_index}/vaccination-choice`]: {
-          data: 'booking.appointments[child_index].parent.hasParentalResponsibility',
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/child`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]: {
+        [`/${session_preset_slug}/new/${appointment_uuid}/vaccination-choice`]: {
+          data: 'booking.appointments[appointment_uuid].parent.hasParentalResponsibility',
           value: 'true'
         },
       },
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/parental-responsibility`]: {},  // allow the *booking* to continue, but stress that someone with responsibility must *attend*
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/vaccination-choice`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/extra-time`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/preferred-location`]: {
-        [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/clinic-location`]: {
-          data: 'booking.appointments[child_index].preferredPostCode',
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]: {},  // allow the *booking* to continue, but stress that someone with responsibility must *attend*
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
+        [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
+          data: 'booking.appointments[appointment_uuid].preferredPostCode',
           value: 'true'
         }
       },
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/preferred-location-matches`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/clinic-location`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/clinic-date`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/appointment-time-range`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/appointment-time`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {},
       // Optional sub-journey for child's health questions
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/health-questions`]: {
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/health-questions`]: {
         [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
-          data: 'booking.appointments[child_index].optedIntoHealthQuestions',
+          data: 'booking.appointments[appointment_uuid].optedIntoHealthQuestions',
           value: 'false'
         },
       },
 
       // TODO insert the series of health questions here, merging questions from all of a single child's
       //      selected vaccinations and removing duplicate questions
-      [`/${session_preset_slug}/${booking_uuid}/new/${child_index}/dummy-health-question-journey`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dummy-health-question-journey`]: {},
 
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
         [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: () =>
-          !booking?.appointments[child_index]?.parent?.tel
+          !booking?.appointments[appointment_uuid]?.parent?.tel
       },
       [`/${session_preset_slug}/${booking_uuid}/new/contact-preference`]: {},
 
@@ -166,10 +169,12 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   showForm(request, response) {
-    console.log('controller.showForm\n. route: ' + request.path)
+    console.log('controller.showForm\n  route: ' + request.path)
     const { view } = request.params
 
-    response.render(`book-into-a-clinic/form/${view}`)
+    const viewPath = `book-into-a-clinic/form/${view}`
+    console.log('   -> render: ' + viewPath + '.njk')
+    response.render(viewPath)
   },
 
   /**
@@ -179,16 +184,33 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   updateForm(request, response) {
-    console.log('controller.updateForm\n. route: ' + request.path)
-    const { booking_uuid } = request.params
+    console.log('controller.updateForm\n  route: ' + request.path)
+    const { booking_uuid, appointment_uuid } = request.params
     const { data } = request.session
     const { paths } = response.locals
 
     // MAL: the implication of this line is that all form values that need to be saved *into the model*
-    //      must have a `decorate` property value that starts with 'clinicBooking.'
-    ClinicBooking.update(booking_uuid, request.body.clinicBooking, data.wizard)
+    //      must have a `decorate` property value that starts with 'booking.' or 'appointment.'
+    if (request.body.booking) {
+      ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
+    }
+    if (request.body.appointment) {
+      ClinicAppointment.update(appointment_uuid, request.body.appointment, data.wizard)
+    }
 
-    response.redirect(paths.next)
+    // If we've just set the child count, create the appointment to start the sub-journey and
+    // put its uuid into the routes from this point on
+    let redirectUrl = paths.next
+    if (request.body.booking?.childCount !== undefined) {
+      const booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data.wizard), data)
+      const appointment = ClinicAppointment.createInContext({ primary_programme_ids: booking.primaryProgrammeIDs }, data.wizard)
+
+      const bookingUri = booking.bookingUri
+      redirectUrl = `${request.baseUrl}/${bookingUri}/new/${appointment.appointmentUri}/child`
+    }
+
+    console.log('   -> redirect: ' + (redirectUrl || '<empty>'))
+    response.redirect(redirectUrl)
   },
 
   /**
@@ -198,9 +220,12 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   show(request, response) {
-    console.log('controller.show\n. route: ' + request.path)
+    console.log('controller.show\n  route: ' + request.path)
 
     const view = request.params.view || 'start'
-    response.render(`book-into-a-clinic/${view}`)
+
+    const viewPath = `book-into-a-clinic/${view}`
+    console.log('   -> render: ' + viewPath + '.njk')
+    response.render(viewPath)
   }
 }

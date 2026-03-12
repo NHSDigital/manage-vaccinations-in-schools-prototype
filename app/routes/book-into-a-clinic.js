@@ -11,16 +11,16 @@ router.get(['/:session_preset_slug', '/:session_preset_slug/'], bookIntoClinic.r
 router.get('/:session_preset_slug/new', bookIntoClinic.new)
 
 // TODO
-router.all('/:session_preset_slug/:booking_uuid/new/:child_index/:view', bookIntoClinic.readForm)
+router.all('/:session_preset_slug/:booking_uuid/new/:appointment_uuid/:view', bookIntoClinic.readForm)
 router.all('/:session_preset_slug/:booking_uuid/new/:view', bookIntoClinic.readForm)
 
-router.get('/:session_preset_slug/:booking_uuid/new/:child_index/:view', bookIntoClinic.showForm)
+router.get('/:session_preset_slug/:booking_uuid/new/:appointment_uuid/:view', bookIntoClinic.showForm)
 router.get('/:session_preset_slug/:booking_uuid/new/:view', bookIntoClinic.showForm)
 
-// Not convinced I need this special case for clinic bookings...
+// MAL: Not convinced I need this special case for clinic bookings... unless it's to perform the final 'save'?
 // router.post('/:session_preset_slug/:booking_uuid/new/check-answers', bookIntoClinic.update)
 
-router.post('/:session_preset_slug/:booking_uuid/new/:child_index/:view', bookIntoClinic.updateForm)
+router.post('/:session_preset_slug/:booking_uuid/new/:appointment_uuid/:view', bookIntoClinic.updateForm)
 router.post('/:session_preset_slug/:booking_uuid/new/:view', bookIntoClinic.updateForm)
 
 router.get('/:session_preset_slug{/:view}', bookIntoClinic.show)

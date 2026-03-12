@@ -306,6 +306,10 @@ export const en = {
         label: 'Preferred last name'
       },
     },
+    dob: {
+      title: 'What is %s\'s date of birth?',
+      hint: 'For example, 27 3 2012'
+    },
     parentalRelationship: {
       title: 'What is your relationship to %s?',
       hasParentalResponsibility: {

@@ -1,7 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set appointment = clinicBooking.appointments[child_index] %}
-{% set firstName = appointment.child.firstName %}
+{% set firstName = appointment.unmatchedFirstName %}
 {% set title = __("clinicBooking.vaccinations.title", firstName) %}
 
 {% block form %}
@@ -11,7 +10,7 @@
 
   {% if appointment.patient %}
   <p>
-    While this clinic is primarily for {{ clinicBooking.formatted.primaryProgramme }} vaccinations, our records show that
+    While this clinic is primarily for {{ booking.formatted.primaryProgramme }} vaccinations, our records show that
     {{ firstName }} is also eligible for other vaccinations.
   </p>
   {% endif %}
@@ -27,7 +26,7 @@
 
   {% set programmeOptions = [] %}
   {% for programme in appointment.eligibleProgrammes %}
-    {# Do I need to add name property to ensure the programme IDs (and not the programme titles) are put into the request body? #}
+    {# MAL: where did I copy this from? Do I need to add name property to ensure the programme IDs (and not the programme titles) are put into the request body? #}
     {% set programmeOptions = (programmeOptions.push({ text: programme.title }), programmeOptions) %}
   {% endfor %}
 
@@ -38,6 +37,6 @@
       }
     },
     items: programmeOptions,
-    decorate: "clinicBooking.appointments[child_index].selected_programme_ids"
+    decorate: "appointment.selected_programme_ids"
   }) }}
 {% endblock %}
