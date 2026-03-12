@@ -16,27 +16,27 @@
     {{ input({
       label: { text: __("location.addressLine1.label") },
       autocomplete: "address-line1",
-      decorate: "clinicBooking.appointments[child_index].child.address.addressLine1"
+      decorate: "appointment.child.address.addressLine1"
     }) }}
 
     {{ input({
       label: { text: __("location.addressLine2.label") + " (optional)" },
       autocomplete: "address-line2",
-      decorate: "clinicBooking.appointments[child_index].child.address.addressLine2"
+      decorate: "appointment.child.address.addressLine2"
     }) }}
 
     {{ input({
       classes: "nhsuk-u-width-two-thirds",
       label: { text: __("location.addressLevel1.label") },
       autocomplete: "address-level1",
-      decorate: "clinicBooking.appointments[child_index].child.address.addressLevel1"
+      decorate: "appointment.child.address.addressLevel1"
     }) }}
 
     {{ input({
       classes: "nhsuk-input--width-10",
       label: { text: __("location.postalCode.label") },
       autocomplete: "postal-code",
-      decorate: "clinicBooking.appointments[child_index].child.address.postalCode"
+      decorate: "appointment.child.address.postalCode"
     }) }}
   {% endcall %}
 {% endblock %}
