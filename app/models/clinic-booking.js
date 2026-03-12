@@ -59,7 +59,7 @@ export class ClinicBooking {
   /**
    * Get URI of the booking journey
    *
-   * @returns {string} Parent form URI
+   * @returns {string} Booking journey URI
    */
   get bookingUri() {
     return `${this.sessionPreset.slug}/${this.uuid}`

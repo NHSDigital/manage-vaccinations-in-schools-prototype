@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.parentalRelationship.title") %}
+{% set title = __("clinicBooking.parentalRelationship.title", appointment.unmatchedFirstName) %}
 
 {% block form %}
   {{ appHeading({
@@ -13,19 +13,19 @@
     },
     hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
     items: booleanItems,
-    decorate: "clinicBooking.appointments[child_index].parent.hasParentalResponsibility"
+    decorate: "appointment.parent.hasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
     label: { text: __("clinicBooking.parentalRelationship.relationshipOther.label") },
-    decorate: "clinicBooking.appointments[child_index].parent.relationshipOther"
+    decorate: "appointment.parent.relationshipOther"
   }) + radios({
     fieldset: {
       legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label") }
     },
     hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
     items: booleanItems,
-    decorate: "clinicBooking.appointments[child_index].parent.hasParentalResponsibility"
+    decorate: "appointment.parent.hasParentalResponsibility"
   }) %}
 
   {# Add conditional html for ‘Foster carer’ option #}
@@ -39,6 +39,6 @@
       legend: { text: __("clinicBooking.parentalRelationship.relationship.label") }
     },
     items: items,
-    decorate: "clinicBooking.appointments[child_index].parent.relationship"
+    decorate: "appointment.parent.relationship"
   }) }}
 {% endblock %}

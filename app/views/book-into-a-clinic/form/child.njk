@@ -1,5 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
+{# MAL: investigate replacing this singular/plural stuff with i18n.__n() #}
 {% if (clinicBooking.childCount > 1) %}
   {% set title = __("clinicBooking.child.title.plural", (child_index + 1) | ordinal) %}
 {% else %}
@@ -17,13 +18,13 @@
   {{ input({
     label: { text: __("clinicBooking.child.firstName.label") },
     hint: { text: __("clinicBooking.child.firstName.hint") },
-    decorate: "clinicBooking.appointments[child_index].firstName"
+    decorate: "appointment.unmatchedFirstName"
   }) }}
 
   {{ input({
     label: { text: __("clinicBooking.child.lastName.label") },
     hint: { text: __("clinicBooking.child.lastName.hint") },
-    decorate: "clinicBooking.appointments[child_index].lastName"
+    decorate: "appointment.unmatchedLastName"
   }) }}
 
   {#
