@@ -1,0 +1,43 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("healthQuestions." + key + ".label") %}
+{% set vaccineName = "nasal spray flu" if "Flu" in session.presetNames else "MMR" %} {# CONCERN: need to replace session.presetNames #}
+{% set hint = __("healthQuestions." + key + ".hint", vaccineName) %}
+{% set detailsHint = __("healthQuestions." + key + ".detailsHint") %}
+
+{% block form %}
+  {% call fieldset({
+    legend: {
+      html: appHeading({
+        classes: "nhsuk-fieldset__legend--l",
+        title: title | replace('the child', 'your child')
+      })
+    }
+  }) %}
+    {% if __("healthQuestions." + key + ".options") %}
+    <ul class="nhsuk-list nhsuk-list--bullet">
+      {% for option in __("healthQuestions." + key + ".options") %}
+        <li>{{ option }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {{ radios({
+      hint: { text: hint } if hint,
+      items: [{
+        text: __("clinicBooking.healthAnswers.yes"),
+        conditional: {
+          html: textarea({
+            label: { text: __("clinicBooking.healthAnswers.details") },
+            hint: { text: detailsHint } if detailsHint,
+            decorate: ["appointment", "healthAnswers", key, "details"]
+          })
+        } if not hasSubQuestions
+      },
+      {
+        text: __("clinicBooking.healthAnswers.no")
+      }],
+      decorate: ["appointment", "healthAnswers", key, "answer"]
+    }) }}
+  {% endcall %}
+{% endblock %}

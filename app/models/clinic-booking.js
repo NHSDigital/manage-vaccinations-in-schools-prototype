@@ -116,6 +116,22 @@ export class ClinicBooking {
   }
 
   /**
+   * 
+   */
+  set parentTel(value) {
+    if (value) {
+      this.appointments.forEach(appt => appt.parent.tel = value)
+    }
+  }
+
+  /**
+   * 
+   */
+  get parentTel() {
+    return this.firstParent.tel
+  }
+
+  /**
    * Get various formatted values for display in the page
    * 
    * @returns {object} Formatted values
