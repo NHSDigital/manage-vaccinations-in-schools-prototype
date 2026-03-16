@@ -13,14 +13,14 @@
   {{ radios({
     fieldset: {
       legend: {
-        isPageHeading: true,
-        text: title,
-        size: "l"
-      },
-      hint: {
-        text: __("clinicBooking.extraTime.hint")
+        html: appHeading({
+          classes: "nhsuk-fieldset__legend--l",
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if transaction.childCount > 1
+        })
       }
     },
+    hint: { text: __("clinicBooking.extraTime.hint") },
     items: items,
     decorate: "appointment.needsExtraTime"
   }) }}

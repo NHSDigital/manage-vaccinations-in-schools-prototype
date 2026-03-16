@@ -6,9 +6,11 @@
   {{ radios({
     fieldset: {
       legend: {
-        isPageHeading: true,
-        text: title,
-        size: "l"
+        html: appHeading({
+          classes: "nhsuk-fieldset__legend--l",
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if transaction.childCount > 1
+        })
       }
     },
     hint: { text: __('clinicBooking.clinicLocation.hint') },

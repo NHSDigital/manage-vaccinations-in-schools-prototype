@@ -287,12 +287,11 @@ export const en = {
         hint: 'For example, if you have twins needing vaccination, enter 2'
       }
     },
+    appointment: {
+      caption: "Appointment for %s"
+    },
     child: {
-      title: {
-        plural: 'What is your %s child’s name?',
-        singular: 'What is your child’s name?'
-      },
-      label: 'Child',
+      title: 'What is your child’s name?',
       summary: 'About your child',
       description:
         'Give the name on your child’s birth certificate. If it’s changed, give the name held by your child’s GP.',
