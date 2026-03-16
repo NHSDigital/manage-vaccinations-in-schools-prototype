@@ -121,6 +121,7 @@ export const bookIntoClinicController = {
         appointment = new ClinicAppointment((ClinicAppointment.findOne(appointment_uuid, data?.wizard)), data)
         response.locals.appointment = appointment
         response.locals.firstName = appointment.unmatchedFirstName || "your child"
+        response.locals.fullName = appointment.fullName || undefined
       }
     }
 
@@ -135,7 +136,7 @@ export const bookIntoClinicController = {
       appointment_uuid = booking.appointments_ids[0]
     }
 
-    // Make sure the views have access to information about flow control e.g. "child 1 of 2" type of stuff
+    // Make sure the views have access to information about flow control e.g. for narrowing down a clinic search
     let transaction
     if (data.wizard?.transaction) {
       transaction = data.wizard?.transaction
@@ -284,7 +285,7 @@ export const bookIntoClinicController = {
     // If we've just set the child count, create the appointment to start the sub-journey and
     // put its uuid into the routes from this point on
     // TODO: but what about iterating to subsequent children? Can't help feeling the whole ask-up-front pattern is flawed.
-    if (request.body.transaction?.childCount !== undefined) {
+    if (request.originalUrl.endsWith("/new/child-count")) {
       const booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data.wizard), data)
       const appointment = ClinicAppointment.createInContext({ primary_programme_ids: booking.primaryProgrammeIDs }, data.wizard)
 

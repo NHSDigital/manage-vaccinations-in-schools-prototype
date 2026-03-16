@@ -1,16 +1,10 @@
 {% extends "_layouts/form.njk" %}
 
-{# MAL: investigate replacing this singular/plural stuff with i18n.__n() #}
-{% if (clinicBooking.childCount > 1) %}
-  {% set title = __("clinicBooking.child.title.plural", (child_index + 1) | ordinal) %}
-{% else %}
-  {% set title = __("clinicBooking.child.title.singular") %}
-{% endif %}
+{% set title = __("clinicBooking.child.title") %}
 
 {% block form %}
   {{ appHeading({
-    title: title,
-    caption: __("clinicBooking.childCount.caption", child_index, clinicBooking.childCount) if clinicBooking.childCount > 1
+    title: title
   }) }}
 
   {{ __("clinicBooking.child.description") | nhsukMarkdown }}
