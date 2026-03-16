@@ -451,6 +451,10 @@ export const en = {
       confirm: 'Confirm',
       title: 'Check and confirm'
     },
+    confirmation: {
+      title: "Booking complete",
+      subtitle: "<p>Your reference number:<br><strong>%s</strong></p>"
+    },
     show: {
       title: 'Manage your booking',
       introduction: 'Check your appointment details and make changes where needed.',
