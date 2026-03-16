@@ -152,7 +152,7 @@ export const bookIntoClinicController = {
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]: {
         [`/${session_preset_slug}/new/${appointment_uuid}/vaccination-choice`]: {
-          data: 'apppointment.parent.hasParentalResponsibility',
+          data: 'appointment.parent.hasParentalResponsibility',
           value: 'true'
         },
       },
@@ -191,6 +191,8 @@ export const bookIntoClinicController = {
           value: false
         }
       },
+      // TODO: Currently, `appointment` in this call to getHealthQuestionPaths is null because offer-health-questions is outside the appointment journey
+      //       Should I put the offer into the journey too, and offer per-child, or should I just pass the first appointment on the booking?
       ...getHealthQuestionPaths(`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/`, appointment),
       // TODO: logic to loop back if more than one appointment
 

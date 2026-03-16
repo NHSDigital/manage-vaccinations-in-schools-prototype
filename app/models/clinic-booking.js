@@ -128,7 +128,7 @@ export class ClinicBooking {
    * 
    */
   get parentTel() {
-    return this.firstParent.tel
+    return this.firstParent?.tel
   }
 
   /**
