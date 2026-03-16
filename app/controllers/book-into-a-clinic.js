@@ -188,7 +188,7 @@ export const bookIntoClinicController = {
       [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]: {
         [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {
           data: 'transaction.optedIntoHealthQuestions',
-          value: false
+          value: "false"
         }
       },
       // TODO: Currently, `appointment` in this call to getHealthQuestionPaths is null because offer-health-questions is outside the appointment journey
@@ -263,6 +263,9 @@ export const bookIntoClinicController = {
     const { data } = request.session
     const { paths } = response.locals
 
+    // console.log("data.wizard: " + JSON.stringify(data.wizard, null, 2));
+    // console.log("request.body: " + JSON.stringify(request.body, null, 2));
+    
     // Harvest and store values from forms
     if (request.body.booking) {
       ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
@@ -276,9 +279,11 @@ export const bookIntoClinicController = {
       _.merge(data.wizard.transaction, request.body.transaction)
     }
 
+    let redirectUrl = paths.next
+
     // If we've just set the child count, create the appointment to start the sub-journey and
     // put its uuid into the routes from this point on
-    let redirectUrl = paths.next
+    // TODO: but what about iterating to subsequent children? Can't help feeling the whole ask-up-front pattern is flawed.
     if (request.body.transaction?.childCount !== undefined) {
       const booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data.wizard), data)
       const appointment = ClinicAppointment.createInContext({ primary_programme_ids: booking.primaryProgrammeIDs }, data.wizard)
