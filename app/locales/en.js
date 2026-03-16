@@ -447,6 +447,10 @@ export const en = {
       no: 'No',
       details: 'Give details'
     },
+    'check-answers': {
+      confirm: 'Confirm',
+      title: 'Check and confirm'
+    },
     show: {
       title: 'Manage your booking',
       introduction: 'Check your appointment details and make changes where needed.',
