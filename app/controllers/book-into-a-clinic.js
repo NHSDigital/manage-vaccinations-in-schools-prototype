@@ -198,7 +198,7 @@ export const bookIntoClinicController = {
       // TODO: logic to loop back if more than one appointment
 
       // REMOVE: hard-coded health questions, and update showForm to reset to using generic health-question.njk view
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-immune-system`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-immune-system-hpv`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/health-question-allergy`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/health-question-bleeding`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/health-question-blood-thinning`]: {},
