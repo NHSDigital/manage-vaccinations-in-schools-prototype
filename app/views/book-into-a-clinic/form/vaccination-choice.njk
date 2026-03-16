@@ -4,7 +4,8 @@
 
 {% block form %}
   {{ appHeading({
-    title: title
+    title: title,
+    caption: __("clinicBooking.appointment.caption", fullName) if transaction.childCount > 1
   }) }}
 
   {# MAL: remove the 'or true' here that I'm using to check the primary programme name #}

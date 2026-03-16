@@ -7,7 +7,8 @@
     legend: {
       html: appHeading({
         classes: "nhsuk-fieldset__legend--l",
-        title: title
+        title: title,
+        caption: __("clinicBooking.appointment.caption", fullName) if transaction.childCount > 1
       })
     }
   }) %}
