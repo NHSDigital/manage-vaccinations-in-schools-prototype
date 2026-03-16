@@ -3,15 +3,21 @@
 {% set title = __("clinicBooking.offerHealthQuestions.title") %}
 
 {% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ __("clinicBooking.offerHealthQuestions.bookingReference", booking.bookingReference) | nhsukMarkdown }}
+
+  {{ __("clinicBooking.offerHealthQuestions.beforeYouGo") | nhsukMarkdown }}
+
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          title: title
-        })
+        text: __("clinicBooking.offerHealthQuestions.label"),
+        size: "m"
       }
     },
-    hint: { text: __('clinicBooking.offerHealthQuestions.hint')},
     items: [
     {
       text: __('clinicBooking.offerHealthQuestions.yes'),

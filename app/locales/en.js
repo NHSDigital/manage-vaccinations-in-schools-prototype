@@ -436,9 +436,11 @@ export const en = {
       }
     },
     offerHealthQuestions: {
-      title: 'Do you want to answer some health questions before your appointment?',
-      hint: 'Answering these ahead of the clinic will save time on the day',
-      yes: 'Yes (takes around 2 minutes)',
+      title: 'We\'ve got your vaccination booking request',
+      bookingReference: 'Your booking reference number is: %s',
+      beforeYouGo: "Before you finish using the service, we’d like to ask some questions about your child’s health.\n\nThese questions help us make sure it’s safe to vaccinate. You can answer these questions at the clinic, but responding now will save time on the day.",
+      label: 'Answer the health questions?',
+      yes: 'Yes, answer the health questions now',
       no: 'No, I’ll do it later'
     },
     healthAnswers: {
