@@ -7,6 +7,8 @@ import { ParentalRelationship, SessionPresets } from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Programme } from '../models.js'
 
 import allProgrammesData from '../datasets/programmes.js'
+import { kebabToCamelCase } from '../utils/string.js'
+import { getHealthQuestionPaths } from '../utils/clinic-appointment.js'
 
 export const bookIntoClinicController = {
 
@@ -33,12 +35,9 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   redirect(request, response) {
-    console.log('controller.redirect\n  route: ' + request.path)
     const { sessionPreset } = response.locals
 
-    const redirectTo = `${request.baseUrl}/${sessionPreset.slug}/start`
-    console.log('   -> redirect: ' + (redirectTo || '<empty>'))
-    response.redirect(redirectTo)
+    response.redirect(`${request.baseUrl}/${sessionPreset.slug}/start`)
   },
 
   /**
@@ -48,7 +47,6 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   new(request, response) {
-    console.log('controller.new\n  route: ' + request.path)
     const { data } = request.session
     const { sessionPreset } = response.locals
 
@@ -81,11 +79,39 @@ export const bookIntoClinicController = {
    * @param {*} next 
    */
   readForm(request, response, next) {
-    console.log('controller.readForm\n  route: ' + request.path)
-    const { session_preset_slug, booking_uuid, appointment_uuid } = request.params
+    const { session_preset_slug, booking_uuid } = request.params
+    let appointment_uuid = request.params.appointment_uuid
     const { data, referrer } = request.session
 
+    /** NOTE:
+     * 
+     * The nature of the journey here is complex, as there are two separate sections in which we need to
+     * iterate over children. Or over appointments, if you want to think of it that way (each child has
+     * their own appointment).
+     * 
+     * So, it goes:
+     * - Start page
+     * - How many children?
+     *   - Child name         <-- first page of the per-child appointment journey
+     *   - Child DOB
+     *   - ...
+     *   - Appointment time   <-- final page of the per-child appointment journey; iterate to next child if required
+     * - Parent info
+     * - Health questions?
+     *   - Health question 1  <-- first page of the per-child health question journey
+     *   - ...
+     *   - Health question n  <-- final page of the per-child health question journey; iterate to next child if required
+     * - Check answers
+     * - Confirmation
+     * 
+     * So, at the point where we start the health questions journey, we need to set up the iteration again, overriding
+     * the default paths.next given to us by the wizard() function so that we can re-inject the appointment_uuid into
+     * the path (the "Health questions?" page won't have that parameter).
+     * 
+     * */ 
+
     // Create objects on the global context to allow us to check branching conditions, etc.
+    // And make them available to the view.
     let booking, appointment
     if (booking_uuid) {
       booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data?.wizard), data)
@@ -94,7 +120,26 @@ export const bookIntoClinicController = {
       if (appointment_uuid) {
         appointment = new ClinicAppointment((ClinicAppointment.findOne(appointment_uuid, data?.wizard)), data)
         response.locals.appointment = appointment
+        response.locals.firstName = appointment.unmatchedFirstName || "your child"
       }
+    }
+
+    // If we've already been through the appointment journey (possibly multiple times), get the UUID of the first
+    // appointment should we need to go through each child again for the health questions.
+    // TEMPORARY: just pull the appointment UUID from the first appointment held in wizard data, as I've not got
+    //            round to adding the appointment to the booking yet.
+    if (!appointment_uuid && data?.wizard?.clinicAppointments?.[0]) {
+      appointment_uuid = data.wizard.clinicAppointments[0].uuid
+    }
+    if (!appointment_uuid && booking?.appointments_ids?.length > 0) {
+      appointment_uuid = booking.appointments_ids[0]
+    }
+
+    // Make sure the views have access to information about flow control e.g. "child 1 of 2" type of stuff
+    let transaction
+    if (data.wizard?.transaction) {
+      transaction = data.wizard?.transaction
+      response.locals.transaction = transaction
     }
 
     const journey = {
@@ -104,9 +149,10 @@ export const bookIntoClinicController = {
       // Child journey
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/child`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]: {
         [`/${session_preset_slug}/new/${appointment_uuid}/vaccination-choice`]: {
-          data: 'booking.appointments[appointment_uuid].parent.hasParentalResponsibility',
+          data: 'apppointment.parent.hasParentalResponsibility',
           value: 'true'
         },
       },
@@ -115,41 +161,49 @@ export const bookIntoClinicController = {
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
         [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
-          data: 'booking.appointments[appointment_uuid].preferredPostCode',
-          value: 'true'
+          data: 'transaction.preferredLocation',
+          value: 'NE12 7ET'
         }
       },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {
+        [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
+          data: 'transaction.preferredLocation',
+          value: 'retry'
+        }
+      },
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {},
-      // Optional sub-journey for child's health questions
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/health-questions`]: {
-        [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
-          data: 'booking.appointments[appointment_uuid].optedIntoHealthQuestions',
-          value: 'false'
-        },
-      },
-
-      // TODO insert the series of health questions here, merging questions from all of a single child's
-      //      selected vaccinations and removing duplicate questions
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dummy-health-question-journey`]: {},
+      // TODO: logic to loop back if more than one appointment
 
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
-        [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: () =>
-          !booking?.appointments[appointment_uuid]?.parent?.tel
+        [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]: () =>
+          !booking?.parentTel
       },
       [`/${session_preset_slug}/${booking_uuid}/new/contact-preference`]: {},
 
+      // Health questions (optional)
+      [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]: {
+        [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {
+          data: 'transaction.optedIntoHealthQuestions',
+          value: false
+        }
+      },
+      ...getHealthQuestionPaths(`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/`, appointment),
+      // TODO: logic to loop back if more than one appointment
+
       // Check answers
-      [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {}
+      [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {},
+
+      // Confirmation! \o/
+      [`/${session_preset_slug}/${booking_uuid}/new/confirmation`]: {}
     }
 
     const paths = wizard(journey, request)
     paths.back = referrer || paths.back
-    response.locals.paths = paths
+    response.locals.paths = paths   // used later to redirect in updateForm
 
     // Prepare the radio options for the parental relationship page
     response.locals.parentalRelationshipItems = Object.values(ParentalRelationship)
@@ -169,12 +223,20 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   showForm(request, response) {
-    console.log('controller.showForm\n  route: ' + request.path)
-    const { view } = request.params
+    const { appointment } = response.locals
+    let { view } = request.params
 
-    const viewPath = `book-into-a-clinic/form/${view}`
-    console.log('   -> render: ' + viewPath + '.njk')
-    response.render(viewPath)
+    // All health questions use the same view
+    let key
+    if (view.startsWith('health-question-')) {
+      key = kebabToCamelCase(view.replace('health-question-', ''))
+      view = 'health-question'
+    }
+
+    // Only ask for details if question does not have sub-questions
+    const hasSubQuestions = appointment?.healthQuestionsForSelectedProgrammes[key]?.conditional
+
+    response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
   },
 
   /**
@@ -184,24 +246,27 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   updateForm(request, response) {
-    console.log('controller.updateForm\n  route: ' + request.path)
     const { booking_uuid, appointment_uuid } = request.params
     const { data } = request.session
     const { paths } = response.locals
 
-    // MAL: the implication of this line is that all form values that need to be saved *into the model*
-    //      must have a `decorate` property value that starts with 'booking.' or 'appointment.'
+    // Harvest and store values from forms
     if (request.body.booking) {
       ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
     }
     if (request.body.appointment) {
       ClinicAppointment.update(appointment_uuid, request.body.appointment, data.wizard)
     }
+    if (request.body.transaction) {
+      // MAL: need to key this on the booking_uuid, not just have one transaction object shared by all users
+      data.wizard.transaction = data.wizard.transaction ?? {}
+      _.merge(data.wizard.transaction, request.body.transaction)
+    }
 
     // If we've just set the child count, create the appointment to start the sub-journey and
     // put its uuid into the routes from this point on
     let redirectUrl = paths.next
-    if (request.body.booking?.childCount !== undefined) {
+    if (request.body.transaction?.childCount !== undefined) {
       const booking = new ClinicBooking(ClinicBooking.findOne(booking_uuid, data.wizard), data)
       const appointment = ClinicAppointment.createInContext({ primary_programme_ids: booking.primaryProgrammeIDs }, data.wizard)
 
@@ -209,7 +274,6 @@ export const bookIntoClinicController = {
       redirectUrl = `${request.baseUrl}/${bookingUri}/new/${appointment.appointmentUri}/child`
     }
 
-    console.log('   -> redirect: ' + (redirectUrl || '<empty>'))
     response.redirect(redirectUrl)
   },
 
@@ -220,12 +284,8 @@ export const bookIntoClinicController = {
    * @param {*} response 
    */
   show(request, response) {
-    console.log('controller.show\n  route: ' + request.path)
-
     const view = request.params.view || 'start'
 
-    const viewPath = `book-into-a-clinic/${view}`
-    console.log('   -> render: ' + viewPath + '.njk')
-    response.render(viewPath)
+    response.render(`book-into-a-clinic/${view}`)
   }
 }

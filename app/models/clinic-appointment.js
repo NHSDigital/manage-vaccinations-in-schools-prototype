@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import { ClinicBooking, Parent, Patient, Programme, Session } from '../models.js'
 import { convertIsoDateToObject, convertObjectToIsoDate, formatDate, getDateValueDifference } from '../utils/date.js'
+import vaccines from '../datasets/vaccines.js'
 
 /**
  * @class ClinicAppointment
@@ -29,6 +30,7 @@ import { convertIsoDateToObject, convertObjectToIsoDate, formatDate, getDateValu
  * 
  * @property {Array<string>} [primary_programme_ids] - IDs of programmes signed up for
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
+ * @property {object} [healthAnswers] - Answers to health questions
  */
 export class ClinicAppointment {
   constructor(options, context) {
@@ -53,6 +55,7 @@ export class ClinicAppointment {
 
     this.selected_programme_ids = options?.selected_programme_ids || []
     this.primary_programme_ids = options?.primary_programme_ids || []
+    this.healthAnswers = options?.healthAnswers || {}
   }
   
   /**
@@ -179,10 +182,43 @@ export class ClinicAppointment {
    * 
    * @param {Array<string>} programmeIDs 
    * @param {object} context 
-   * @returns 
+   * @returns {Array<Programme>} Programme objects matching the given IDs
    */
   static #getProgrammesFromIDs(programmeIDs, context) {
-    return programmeIDs.map(id => Programme.findOne(id, context))
+    return programmeIDs.map(id => {
+      const programme = Programme.findOne(id, context)
+      if (!programme) {
+        console.log(`Null programme for ID: ${id}`)
+      }
+      return programme
+    }).filter(Boolean)  // TODO: shouldn't need this filter and it will mask issues; remove when the checkboxes binding is fixed
+  }
+
+  /**
+   * Get health questions to show based on the selected programme(s)
+   * 
+   * Note: this method requires this instance to have a full context
+   *
+   * @returns {Array} Health questions
+   */
+  get healthQuestionsForSelectedProgrammes() {
+    // Work out which vaccines the child could receive
+    // NB: given we don't have information about consent for nasal vs. injection, or for
+    //     gelatine, we can end up asking more questions here than we might need to. :/
+    let vaccinesForSelectedProgrammes = []
+    for (const programme of this.selectedProgrammes) {
+
+      vaccinesForSelectedProgrammes.push(...Object.values(vaccines).filter(v => v.type === programme.type))
+    }
+
+    const questions = new Map()
+    for (const vaccine of vaccinesForSelectedProgrammes) {
+      for (const [key, value] of Object.entries(vaccine.healthQuestions)) {
+        questions.set(key, value)
+      }
+    }
+
+    return Object.fromEntries(questions)
   }
 
   /**

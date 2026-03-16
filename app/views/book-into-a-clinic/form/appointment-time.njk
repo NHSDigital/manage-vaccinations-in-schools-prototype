@@ -1,0 +1,58 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.time.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {#
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.time.clinicSummary.title"),
+      headingSize: "m"
+    },
+    rows: summaryRows(appointment, {
+      location: {},
+      date: {}
+    })
+  }) }}
+  #}
+
+  {# TODO: use ISO formatted date-times for the values here, rather than just times? #}
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.time.times.label")
+      }
+    },
+    items: [
+      {
+        text: '9:00am',
+        value: '0900'
+      },
+      {
+        text: '9:10am',
+        value: '0910'
+      },
+      {
+        text: '9:20am',
+        value: '0920'
+      },
+      {
+        text: '9:30am',
+        value: '0930'
+      },
+      {
+        text: '9:40am',
+        value: '0940'
+      },
+      {
+        text: '9:50am',
+        value: '0950'
+      }
+    ],
+    decorate: "appointment.startAt"
+  }) }}
+{% endblock %}

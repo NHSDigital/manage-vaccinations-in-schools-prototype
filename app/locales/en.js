@@ -258,6 +258,16 @@ export const en = {
         [SessionPresetName.MMR]:
           'Book an appointment for an MMR or MMR(V) catch-up vaccination'
       },
+      primaryProgrammeInSentence: {
+        [SessionPresetName.Flu]:
+          'flu',
+        [SessionPresetName.Doubles]:
+          'MenACWY and Td/IPV',
+        [SessionPresetName.HPV]:
+          'HPV',
+        [SessionPresetName.MMR]:
+          'MMR or MMR(V)'
+      },
       confirm: {
         title: 'Book an appointment',
         buttonText: 'Start now'
@@ -310,6 +320,10 @@ export const en = {
       title: 'What is %s\'s date of birth?',
       hint: 'For example, 27 3 2012'
     },
+    address: {
+      title: 'What is %s\'s home address?',
+      hint: 'Give the child’s primary address. We use this to confirm their identity.'
+    },
     parentalRelationship: {
       title: 'What is your relationship to %s?',
       hasParentalResponsibility: {
@@ -323,8 +337,12 @@ export const en = {
         label: 'Relationship to child'
       }
     },
-    vaccinations: {
-      title: 'Do you agree to %s having the following vaccinations?'
+    vaccinationChoice: {
+      title: 'Do you agree to %s having the following vaccinations?',
+      vaccinations: {
+        label: 'Select the vaccinations that you agree to %s having',
+        hint: 'Each vaccine is given separately'
+      }
     },
     extraTime: {
       title: 'Does %s need extra time for their vaccination?',
@@ -332,6 +350,102 @@ export const en = {
       reason: {
         label: 'Reason for needing extra time'
       }
+    },
+    preferredLocation: {
+      title: 'Find a clinic near where you\'d like %s\'s appointment',
+      location: {
+        label: 'Preferred clinic location',
+        hint: 'Enter a town, city, or postcode'
+      }
+    },
+    preferredLocationMatches: {
+      title: 'We found 3 places that match \'Newcastle\'',
+      hits: {
+        label: 'Choose one of the following:'
+      },
+      tryAgain: 'None of these - try another town, city, or postcode'
+    },
+    clinicLocation: {
+      title: 'Choose a clinic location for %s',
+      hint: 'The following clinics are ordered by distance from NE12 7ET'
+    },
+    clinicDate: {
+      title: 'Choose a clinic date for %s',
+      location: 'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
+      date: {
+        label: 'Clinic date'
+      }
+    },
+    timeRange: {
+      title: 'Choose a time range for %s\'s appointment',
+      clinicSummary: {
+        title: 'Clinic'
+      },
+      ranges: {
+        label: 'Available time ranges'
+      },
+      range: {
+        slotsAvailable: '{count, plural, =0 {No slots remaining} one {1 slot remaining} other {{count} slots remaining}}'
+      }
+    },
+    time: {
+      title: 'Choose an appointment time for %s',
+      clinicSummary: {
+        title: 'Clinic'
+      },
+      times: {
+        label: 'Available appointment times'
+      }
+    },
+    parent: {
+      title: 'About you',
+      fullName: {
+        label: 'Full name'
+      },
+      notify: {
+        label: 'Send notifications'
+      },
+      email: {
+        label: 'Email address',
+        hint: 'We will use this to send you confirmation messages'
+      },
+      tel: {
+        label: 'Phone number',
+        hint: 'Someone from the vaccinations team might call you if they have questions'
+      },
+      sms: {
+        label: "Tick this box if you'd like to get updates by text message"
+      },
+      contactPreference: {
+        title: 'If we need to contact you',
+        label: 'Do you have any communication needs?',
+        yes: 'Yes',
+        no: 'No',
+        description:
+          'Let us know if you have any communication needs you’d like us to be aware of – for example, a hearing or visual impairment.'
+      },
+      contactPreferenceDetails: {
+        label: 'Give details'
+      },
+      relationshipOther: {
+        label: 'Relationship to the child'
+      },
+      hasParentalResponsibility: {
+        label: 'Do you have parental responsibility?',
+        hint: 'This means you have legal rights and duties relating to the child'
+      }
+    },
+    offerHealthQuestions: {
+      title: 'Do you want to answer some health questions before your appointment?',
+      hint: 'Answering these ahead of the clinic will save time on the day',
+      yes: 'Yes (takes around 2 minutes)',
+      no: 'No, I’ll do it later'
+    },
+    healthAnswers: {
+      label: 'Answers to health questions',
+      yes: 'Yes',
+      no: 'No',
+      details: 'Give details'
     },
     show: {
       title: 'Manage your booking',
