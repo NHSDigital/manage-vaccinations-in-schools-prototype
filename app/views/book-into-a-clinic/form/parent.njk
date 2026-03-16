@@ -1,0 +1,40 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.parent.title") %}
+
+{% block form %}
+  {% call fieldset({
+    legend: {
+      text: title,
+      size: "l",
+      isPageHeading: true
+    }
+  }) %}
+
+    {{ input({
+      label: { text: __("clinicBooking.parent.fullName.label") },
+      decorate: "booking.parentFullName"
+    }) }}
+
+    {{ input({
+      label: { text: __("clinicBooking.parent.email.label") },
+      hint: { text: __("clinicBooking.parent.email.hint") },
+      decorate: "booking.parentEmail"
+    }) }}
+
+    {{ input({
+      label: { text: __("clinicBooking.parent.tel.label") + " (optional)" },
+      hint: { text: __("clinicBooking.parent.tel.hint") },
+      decorate: "booking.parentTel"
+    }) }}
+
+    {{ checkboxes({
+      items: [{
+        text: __("clinicBooking.parent.sms.label"),
+        value: true
+      }],
+      decorate: "booking.parentSms"
+    }) }}
+
+  {% endcall %}    
+{% endblock %}

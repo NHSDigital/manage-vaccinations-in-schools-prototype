@@ -1,6 +1,5 @@
 {% extends "_layouts/form.njk" %}
 
-{% set firstName = appointment.unmatchedFirstName %}
 {% set title = __("clinicBooking.extraTime.title", firstName) %}
 
 {% block form %}
@@ -9,7 +8,7 @@
     label: { text: __("clinicBooking.extraTime.reason.label") },
     decorate: "appointment.extraTimeReason"
   }) %}
-  {% set items = injectConditionalHtml(booleanItems, "Yes", yesHtml) %}
+  {% set items = injectConditionalHtml(booleanItems, true, yesHtml) %}
 
   {{ radios({
     fieldset: {

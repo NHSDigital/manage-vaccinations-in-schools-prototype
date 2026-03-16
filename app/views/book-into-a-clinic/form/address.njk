@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.address.title") %}
+{% set title = __("clinicBooking.address.title", firstName) %}
 
 {% block form %}
   {% call fieldset({

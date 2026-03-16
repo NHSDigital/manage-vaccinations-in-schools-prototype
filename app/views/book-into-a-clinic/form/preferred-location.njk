@@ -1,0 +1,15 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.preferredLocation.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ input({
+    label: { text: __("clinicBooking.preferredLocation.location.label") },
+    hint: { text: __("clinicBooking.preferredLocation.location.hint") },
+    decorate: "transaction.preferredLocation"
+  }) }}
+{% endblock %}

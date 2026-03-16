@@ -1,0 +1,26 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.offerHealthQuestions.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title
+        })
+      }
+    },
+    hint: { text: __('clinicBooking.offerHealthQuestions.hint')}
+    items: [
+    {
+      text: __('clinicBooking.offerHealthQuestions.yes'),
+      value: true
+    },
+    {
+      text: __('clinicBooking.offerHealthQuestions.no'),
+      value: false
+    }],
+    decorate: "transaction.optedIntoHealthQuestions"
+  }) }}
+{% endblock %}

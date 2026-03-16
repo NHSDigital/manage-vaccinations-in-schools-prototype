@@ -1,0 +1,25 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.clinicDate.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ __("clinicBooking.clinicDate.location") | nhsukMarkdown }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.clinicDate.date.label")
+      }
+    },
+    items: [
+      { text: 'Tuesday 24 February', value: '124' },
+      { text: 'Wednesday 25 February', value: '125' },
+      { text: 'Monday 2 February', value: '137' }
+    ],
+    decorate: "appointment.session_id"
+  }) }}
+{% endblock %}
