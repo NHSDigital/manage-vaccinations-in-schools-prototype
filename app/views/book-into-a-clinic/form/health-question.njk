@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("healthQuestions." + key + ".label") %}
-{% set vaccineName = "nasal spray flu" if "Flu" in session.presetNames else "MMR" %} {# CONCERN: need to replace session.presetNames #}
+{% set vaccineName = "nasal spray flu" if false else "MMR" %} {# CONCERN: need to replace `"Flu" in session.presetNames` #}
 {% set hint = __("healthQuestions." + key + ".hint", vaccineName) %}
 {% set detailsHint = __("healthQuestions." + key + ".detailsHint") %}
 

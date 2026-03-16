@@ -193,8 +193,19 @@ export const bookIntoClinicController = {
       },
       // TODO: Currently, `appointment` in this call to getHealthQuestionPaths is null because offer-health-questions is outside the appointment journey
       //       Should I put the offer into the journey too, and offer per-child, or should I just pass the first appointment on the booking?
-      ...getHealthQuestionPaths(`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/`, appointment),
+      //...getHealthQuestionPaths(`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/`, appointment),
       // TODO: logic to loop back if more than one appointment
+
+      // REMOVE: hard-coded health questions, and update showForm to reset to using generic health-question.njk view
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-immune-system`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-allergy`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-bleeding`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-blood-thinning`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-previous-reaction`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-recent-men-acwy-vaccination`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/health-question-recent-td-ipv-vaccination`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/impairments`]: {},
+      [`/${session_preset_slug}/${booking_uuid}/new/adjustments`]: {},
 
       // Check answers
       [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {},
@@ -232,7 +243,7 @@ export const bookIntoClinicController = {
     let key
     if (view.startsWith('health-question-')) {
       key = kebabToCamelCase(view.replace('health-question-', ''))
-      view = 'health-question'
+      view = 'health-question'  // TODO: reintroduce 
     }
 
     // Only ask for details if question does not have sub-questions
