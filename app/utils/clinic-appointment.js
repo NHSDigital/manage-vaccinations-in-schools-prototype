@@ -14,6 +14,8 @@ const getHealthQuestionPath = (key, pathPrefix) => {
 export const getHealthQuestionPaths = (pathPrefix, appointment) => {
   // Don't worry about it till we've actually made our first appointment
   if (!appointment) {
+    console.log('getHealthQuestionPaths: no appointment');
+    
     return {}
   }
 
@@ -47,6 +49,8 @@ export const getHealthQuestionPaths = (pathPrefix, appointment) => {
       paths[questionPath] = {}
     }
   })
+
+  console.log(`getHealthQuestionPaths: ${paths.length} questions`);
 
   return paths
 }
