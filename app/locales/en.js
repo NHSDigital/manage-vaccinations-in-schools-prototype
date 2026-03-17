@@ -225,7 +225,7 @@ export const en = {
   clinicAppointment: {
     label: 'Appointment details',
     show: {
-      title: 'Clinic appointment for %s',
+      title: 'Clinic appointment for %s'
     },
     nameAndAge: {
       label: 'Child'
@@ -239,7 +239,7 @@ export const en = {
     dateAndTime: {
       label: 'Date and time'
     },
-    timeSlot: { 
+    timeSlot: {
       label: 'Time'
     },
     vaccinations: {
@@ -253,20 +253,15 @@ export const en = {
           'Book an appointment for your child’s flu vaccination',
         [SessionPresetName.Doubles]:
           'Book an appointment for the MenACWY and Td/IPV vaccinations',
-        [SessionPresetName.HPV]:
-          'Book an appointment for the HPV vaccination',
+        [SessionPresetName.HPV]: 'Book an appointment for the HPV vaccination',
         [SessionPresetName.MMR]:
           'Book an appointment for an MMR or MMR(V) catch-up vaccination'
       },
       primaryProgrammeInSentence: {
-        [SessionPresetName.Flu]:
-          'flu',
-        [SessionPresetName.Doubles]:
-          'MenACWY and Td/IPV',
-        [SessionPresetName.HPV]:
-          'HPV',
-        [SessionPresetName.MMR]:
-          'MMR or MMR(V)'
+        [SessionPresetName.Flu]: 'flu',
+        [SessionPresetName.Doubles]: 'MenACWY and Td/IPV',
+        [SessionPresetName.HPV]: 'HPV',
+        [SessionPresetName.MMR]: 'MMR or MMR(V)'
       },
       confirm: {
         title: 'Book an appointment',
@@ -274,7 +269,7 @@ export const en = {
       },
       otherMethods: {
         title: 'Other ways to book an appointment',
-        description: 
+        description:
           'The quickest way to book an appointment is online, using this service. This will take less than 5 minutes.\n\nIf you cannot use the service, you can book an appointment by phoning %s.'
       }
     },
@@ -288,7 +283,7 @@ export const en = {
       }
     },
     appointment: {
-      caption: "Appointment for %s"
+      caption: 'Appointment for %s'
     },
     child: {
       title: 'What is your child’s name?',
@@ -313,14 +308,14 @@ export const en = {
       },
       preferredLastName: {
         label: 'Preferred last name'
-      },
+      }
     },
     dob: {
-      title: 'What is %s\'s date of birth?',
+      title: "What is %s's date of birth?",
       hint: 'For example, 27 3 2012'
     },
     address: {
-      title: 'What is %s\'s home address?',
+      title: "What is %s's home address?",
       hint: 'Give the child’s primary address. We use this to confirm their identity.'
     },
     parentalRelationship: {
@@ -351,14 +346,14 @@ export const en = {
       }
     },
     preferredLocation: {
-      title: 'Find a clinic near where you\'d like %s\'s appointment',
+      title: "Find a clinic near where you'd like %s's appointment",
       location: {
         label: 'Preferred clinic location',
         hint: 'Enter a town, city, or postcode'
       }
     },
     preferredLocationMatches: {
-      title: 'We found 3 places that match \'Newcastle\'',
+      title: "We found 3 places that match 'Newcastle'",
       hits: {
         label: 'Choose one of the following:'
       },
@@ -370,13 +365,14 @@ export const en = {
     },
     clinicDate: {
       title: 'Choose a clinic date for %s',
-      location: 'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
+      location:
+        'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
       date: {
         label: 'Clinic date'
       }
     },
     timeRange: {
-      title: 'Choose a time range for %s\'s appointment',
+      title: "Choose a time range for %s's appointment",
       clinicSummary: {
         title: 'Clinic'
       },
@@ -384,7 +380,8 @@ export const en = {
         label: 'Available time ranges'
       },
       range: {
-        slotsAvailable: '{count, plural, =0 {No slots remaining} one {1 slot remaining} other {{count} slots remaining}}'
+        slotsAvailable:
+          '{count, plural, =0 {No slots remaining} one {1 slot remaining} other {{count} slots remaining}}'
       }
     },
     time: {
@@ -435,9 +432,10 @@ export const en = {
       }
     },
     offerHealthQuestions: {
-      title: 'We\'ve got your vaccination booking request',
+      title: "We've got your vaccination booking request",
       bookingReference: 'Your booking reference number is: %s',
-      beforeYouGo: "Before you finish using the service, we’d like to ask some questions about your child’s health.\n\nThese questions help us make sure it’s safe to vaccinate. You can answer these questions at the clinic, but responding now will save time on the day.",
+      beforeYouGo:
+        'Before you finish using the service, we’d like to ask some questions about your child’s health.\n\nThese questions help us make sure it’s safe to vaccinate. You can answer these questions at the clinic, but responding now will save time on the day.',
       label: 'Answer the health questions?',
       yes: 'Yes, answer the health questions now',
       no: 'No, I’ll do it later'
@@ -453,12 +451,13 @@ export const en = {
       title: 'Check and confirm'
     },
     confirmation: {
-      title: "Booking complete",
-      subtitle: "<p>Your reference number:<br><strong>%s</strong></p>"
+      title: 'Booking complete',
+      subtitle: '<p>Your reference number:<br><strong>%s</strong></p>'
     },
     show: {
       title: 'Manage your booking',
-      introduction: 'Check your appointment details and make changes where needed.',
+      introduction:
+        'Check your appointment details and make changes where needed.',
       appointment: {
         title: 'Appointment %s',
         change: {
