@@ -120,7 +120,7 @@ export class Download {
       case this.type === DownloadType.Session && this.session_id:
         return `Offline spreadsheet for ${this.session.name}`
       case this.type === DownloadType.Session:
-        return `Offline spreadsheet for no known school (including home-schooled children)`
+        return `Offline spreadsheet for no known school (including home-educated children)`
       default:
         return 'Download'
     }

@@ -425,8 +425,8 @@ export const en = {
         yes: 'Yes, they go to this school',
         no: 'No, they go to a different school'
       },
-      'home-schooled': {
-        title: 'Is your child home-schooled?',
+      'home-educated': {
+        title: 'Is your child home-educated?',
         yes: 'Yes',
         no: 'No, they go to a school'
       },

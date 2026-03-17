@@ -122,7 +122,7 @@ export function generateChild() {
     school_id = faker.helpers.arrayElement(secondarySchools).id
   }
 
-  // Add examples of children who are home-schooled or at an unknown school
+  // Add examples of children who are home-educated or at an unknown school
   if (faker.datatype.boolean(0.01)) {
     school_id = faker.helpers.arrayElement(['888888', '999999'])
   }

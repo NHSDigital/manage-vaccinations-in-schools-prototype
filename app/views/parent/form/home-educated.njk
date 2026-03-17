@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.child.home-schooled.title") %}
+{% set title = __("consent.child.home-educated.title") %}
 
 {% block form %}
   {{ radios({
@@ -13,12 +13,12 @@
       }
     },
     items: [{
-      text: __("consent.child.home-schooled.yes"),
+      text: __("consent.child.home-educated.yes"),
       value: "yes"
     }, {
-      text: __("consent.child.home-schooled.no"),
+      text: __("consent.child.home-educated.no"),
       value: "no"
     }],
-    decorate: "consent.child.homeSchooled"
+    decorate: "consent.child.homeEducated"
   }) }}
 {% endblock %}

@@ -19,7 +19,7 @@ export default {
   '999999': {
     id: '999999',
     urn: '999999',
-    name: 'Home-schooled',
+    name: 'Home-educated',
     yearGroups: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
     team_id: '001',
     presetNames
