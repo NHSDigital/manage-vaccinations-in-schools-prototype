@@ -287,6 +287,7 @@ export const en = {
     },
     child: {
       title: 'What is your child’s name?',
+      caption: 'Appointment for your %s child',
       summary: 'About your child',
       description:
         'Give the name on your child’s birth certificate. If it’s changed, give the name held by your child’s GP.',
