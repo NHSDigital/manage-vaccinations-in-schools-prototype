@@ -9,6 +9,5 @@ router.get('/', clinicBooking.readAll, clinicBooking.list)
 router.param('clinic_booking_uuid', clinicBooking.read)
 
 router.get('/:clinic_booking_uuid', clinicBooking.show)
-router.post('/:clinic_booking_uuid', clinicBooking.update)
 
 export const clinicBookingRoutes = router
