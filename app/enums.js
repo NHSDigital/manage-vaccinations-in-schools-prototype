@@ -350,7 +350,7 @@ export const PatientDueStatus = {
  */
 export const PatientRefusedStatus = {
   Conflict: 'Conflicting consent',
-  Refusal: 'Parent refused'
+  Refusal: 'Consent refused'
 }
 
 /**
@@ -681,7 +681,7 @@ export const VaccinationOutcome = {
   Vaccinated: 'Vaccinated',
   PartVaccinated: 'Partially vaccinated',
   AlreadyVaccinated: 'Already had the vaccine',
-  ConsentRefused: 'Parent refused',
+  ConsentRefused: 'Consent refused',
   Refused: 'Child refused',
   Absent: 'Child absent',
   Unwell: 'Child unwell',
