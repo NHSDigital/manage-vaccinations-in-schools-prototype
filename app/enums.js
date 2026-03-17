@@ -532,9 +532,8 @@ export const ReplyMethod = {
  * @enum {string}
  */
 export const ReplyRefusal = {
-  Gelatine: 'Nasal vaccine contains gelatine',
-  GelatineMMR:
-    'Do not want my child to have the MMR vaccine that contains gelatine',
+  Gelatine: 'I’m concerned the nasal vaccine contains gelatine',
+  GelatineMMR: 'I’m concerned the vaccine contains gelatine',
   AlreadyVaccinated: 'Vaccine already received',
   AlreadyVaccinatedMMR: 'Already had both doses of the MMR vaccine',
   GettingElsewhere: 'Vaccine will be given elsewhere',
