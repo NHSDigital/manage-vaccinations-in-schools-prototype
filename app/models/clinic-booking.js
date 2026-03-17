@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import allProgrammesData from '../datasets/programmes.js'
 import { SessionPresets } from '../enums.js'
-import { ClinicAppointment, Programme } from '../models.js'
+import { ClinicAppointment, Parent, Programme } from '../models.js'
 
 /**
  * @class ClinicBooking
@@ -13,7 +13,7 @@ import { ClinicAppointment, Programme } from '../models.js'
  * @property {string} uuid - Clinic booking UUID
  * @property {string} bookingReference - Booking reference number
  * @property {SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
- * @property {number} childCount - the number of children that the parent wants to book in in one go
+ * @property {Parent} parent - contact details for the parent making the booking; see appointments for parental relationship details
  * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
  */
 export class ClinicBooking {
@@ -23,8 +23,9 @@ export class ClinicBooking {
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
     this.sessionPreset = options?.sessionPreset ?? SessionPresets[0]
+    this.parent =
+      (options?.parent && new Parent(options.parent)) ?? new Parent({})
 
-    this.childCount = options?.childCount
     this.appointments_ids = options?.appointments_ids ?? []
   }
 
@@ -112,35 +113,6 @@ export class ClinicBooking {
     return this.appointments_ids.map((id) =>
       ClinicAppointment.findOne(id, this.context)
     )
-  }
-
-  /**
-   * Get the parent details from the first appointment
-   *
-   * This is only intended to allow us to present the parent's name, email and so on, but not to
-   * represent the parent's relationship to all the children in this booking, as the relationship
-   * may vary by chiuld.
-   *
-   * @returns {Parent|undefined} Parent details from the first appointment
-   */
-  get firstParent() {
-    return this.appointments?.[0]?.parent
-  }
-
-  /**
-   *
-   */
-  set parentTel(value) {
-    if (value) {
-      this.appointments.forEach((appt) => (appt.parent.tel = value))
-    }
-  }
-
-  /**
-   *
-   */
-  get parentTel() {
-    return this.firstParent?.tel
   }
 
   /**

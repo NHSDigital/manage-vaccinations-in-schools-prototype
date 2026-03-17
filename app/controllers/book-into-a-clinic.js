@@ -9,6 +9,7 @@ import { kebabToCamelCase } from '../utils/string.js'
 export const bookIntoClinicController = {
   /**
    * Record the session preset
+   *
    * @param {*} request
    * @param {*} response
    * @param {*} next
@@ -164,7 +165,7 @@ export const bookIntoClinicController = {
         {
           [`/${session_preset_slug}/new/${appointment_uuid}/vaccination-choice`]:
             {
-              data: 'appointment.parent.hasParentalResponsibility',
+              data: 'appointment.parentHasParentalResponsibility',
               value: 'true'
             }
         },
@@ -203,7 +204,7 @@ export const bookIntoClinicController = {
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
         [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]:
-          () => !booking?.parentTel
+          () => !booking?.parent?.tel
       },
       [`/${session_preset_slug}/${booking_uuid}/new/contact-preference`]: {},
 

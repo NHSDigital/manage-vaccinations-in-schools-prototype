@@ -3,33 +3,31 @@ import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
 import { ParentalRelationship, SessionType } from '../enums.js'
-import { ClinicAppointment, Parent } from '../models.js'
+import { ClinicAppointment } from '../models.js'
 import { getAge } from '../utils/date.js'
-
-import { generateParent } from './parent.js'
 
 const clinicSlotLength = Number(process.env.CLINIC_SLOT_LENGTH) || 10
 
 /**
  * Generate fake clinic appointment
  *
- * @param {string} booking_uuid - The UUID of the booking this appointment belongs to
- * @param {Parent|null} parentFromFirstAppointment - The parent from the first appointment created in the same booking, if this appointment is not the first
+ * @param {ClinicBooking} booking - The booking this appointment will belong to
  * @param {object} context - The other data already defined (sessions, children, etc.)
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
-export function generateClinicAppointment(
-  booking_uuid,
-  parentFromFirstAppointment,
-  context
-) {
+export function generateClinicAppointment(booking, context) {
   const uuid = faker.string.uuid()
 
   // Choose a clinic session to book this appointment into
   const clinicSessions = Object.values(context.sessions).filter(
-    (s) => s.type === SessionType.Clinic
+    (s) =>
+      s.type === SessionType.Clinic &&
+      s.presetNames.includes(booking.sessionPreset.name)
   )
   const clinicSession = faker.helpers.arrayElement(clinicSessions)
+  if (!clinicSession) {
+    return null
+  }
   const session_id = clinicSession.id
 
   // Work out the expected age range for children attending this session
@@ -60,55 +58,57 @@ export function generateClinicAppointment(
     ? undefined
     : faker.date.birthdate({ min: minAge, max: maxAge, mode: 'age' })
 
-  // Parent details and relationship
-  let parent
-  if (!parentFromFirstAppointment) {
-    // This is the first appointment for the booking, so we're free to CREATE the parent details
-    if (matchedPatient) {
-      parent =
-        (matchedPatient.parent1 || matchedPatient.parent2) ??
-        generateParent(matchedPatient.lastName, faker.datatype.boolean(0.5))
-    } else {
-      parent = generateParent(unmatchedLastName, faker.datatype.boolean(0.5))
-    }
-  } else {
-    // Copy parent details from the first appointment and possibly adapt the relationship
-    parent = new Parent(parentFromFirstAppointment)
-    parent.uuid = faker.string.uuid()
-
-    // Set up the relationship to the child for this appointment
-    if (
-      [ParentalRelationship.Mum, ParentalRelationship.Dad].includes(
-        parentFromFirstAppointment.relationship
-      )
-    ) {
+  // Set up the relationship to the child for this appointment
+  const parent = booking.parent
+  let parentalRelationship,
+    parentalRelationshipOther,
+    parentHasParentalResponsibility
+  if (parent) {
+    const mumOrDad = [
+      ParentalRelationship.Mum,
+      ParentalRelationship.Dad
+    ].includes(parent.relationship)
+    if (mumOrDad) {
       // Mum or Dad initially, and most likely to stay that way
       if (faker.datatype.boolean(0.1)) {
-        parent.relationship = faker.helpers.arrayElement([
+        parentalRelationship = faker.helpers.arrayElement([
           ParentalRelationship.Fosterer,
           ParentalRelationship.Guardian,
           ParentalRelationship.Other
         ])
-        parent.relationshipOther =
-          parent.relationship === ParentalRelationship.Other
+        parentalRelationshipOther =
+          parentalRelationship === ParentalRelationship.Other
             ? 'Grandparent'
             : undefined
+        parentHasParentalResponsibility = true
       }
     } else {
       // Fosterer, Guardian or Other
-      parent.relationship = parentFromFirstAppointment.relationship
-      parent.relationshipOther = parentFromFirstAppointment.relationshipOther
+      parentalRelationship = parent.relationship
+      parentalRelationshipOther = parent.relationshipOther
+      parentHasParentalResponsibility = parent.hasParentalResponsibility
     }
   }
 
   // Slot details (NB: session date is expected to specify midday)
+  const needsExtraTime = faker.datatype.boolean(0.2)
+  let extraTimeReason
+  if (needsExtraTime) {
+    const phobia = faker.helpers.weightedArrayElement([
+      { value: 'needles', weight: 90 },
+      { value: 'nurses', weight: 8 },
+      { value: 'vaccines', weight: 2 }
+    ])
+    extraTimeReason = `Suffers from anxiety regarding ${phobia}`
+  }
   const startAt = addMinutes(
     clinicSession.date,
     faker.number.int({ min: 0, max: 60, multipleOf: clinicSlotLength })
   )
-  const endAt = addMinutes(startAt, clinicSlotLength)
+  const endAt = addMinutes(startAt, clinicSlotLength * (needsExtraTime ? 2 : 1))
 
   // Have the child signed up for the clinic's primary programme plus a random selection of other programmes
+  const primary_programme_ids = clinicSession.programme_ids
   const additionalProgramme_ids = Object.values(context.programmes)
     .filter((p) => p.hidden !== true)
     .map((p) => p.id)
@@ -116,24 +116,29 @@ export function generateClinicAppointment(
       (id) =>
         !clinicSession.programme_ids.includes(id) && faker.datatype.boolean(0.2)
     )
-  const programme_ids = [
-    ...clinicSession.programme_ids,
+  const selected_programme_ids = [
+    ...primary_programme_ids,
     ...additionalProgramme_ids
   ]
 
   return new ClinicAppointment(
     {
       uuid,
-      booking_uuid,
+      booking_uuid: booking.uuid,
       patient_uuid,
       unmatchedFirstName,
       unmatchedLastName,
       unmatchedDob,
-      parent,
+      needsExtraTime,
+      extraTimeReason,
+      parentalRelationship,
+      parentalRelationshipOther,
+      parentHasParentalResponsibility,
       session_id,
       startAt,
       endAt,
-      programme_ids
+      selected_programme_ids,
+      primary_programme_ids
     },
     context
   )

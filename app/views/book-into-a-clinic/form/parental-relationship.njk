@@ -14,19 +14,19 @@
     },
     hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
     items: booleanItems,
-    decorate: "appointment.parent.hasParentalResponsibility"
+    decorate: "appointment.parentHasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
     label: { text: __("clinicBooking.parentalRelationship.relationshipOther.label") },
-    decorate: "appointment.parent.relationshipOther"
+    decorate: "appointment.parentalRelationshipOther"
   }) + radios({
     fieldset: {
       legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label") }
     },
     hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
     items: booleanItems,
-    decorate: "appointment.parent.hasParentalResponsibility"
+    decorate: "appointment.parentHasParentalResponsibility"
   }) %}
 
   {# Add conditional html for ‘Foster carer’ option #}
@@ -40,6 +40,6 @@
       legend: { text: __("clinicBooking.parentalRelationship.relationship.label") }
     },
     items: items,
-    decorate: "appointment.parent.relationship"
+    decorate: "appointment.parentalRelationship"
   }) }}
 {% endblock %}
