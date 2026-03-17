@@ -76,6 +76,9 @@ export class Reply {
     this.createdBy_uid = options?.createdBy_uid
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.child = options?.child && new Child(options.child)
+    this.confirmed = stringToBoolean(options?.confirmed)
+    this.decision =
+      this.confirmed === true ? ReplyDecision.Refused : options?.decision
     this.ethnicity = stringToBoolean(options?.ethnicity)
     this.parent = options?.parent && new Parent(options.parent)
     this.method = options?.method
@@ -90,10 +93,9 @@ export class Reply {
       this.decision =
         options?.refusalReason === ReplyRefusal.AlreadyVaccinatedMMR
           ? ReplyDecision.AlreadyVaccinated
-          : options?.decision
+          : this.decision
       this.alternative =
         options?.alternative && stringToBoolean(options?.alternative)
-      this.confirmed = stringToBoolean(options?.confirmed)
       this.consultation = stringToBoolean(options?.consultation)
       this.declined = this.decision === ReplyDecision.Declined
       this.given = [
