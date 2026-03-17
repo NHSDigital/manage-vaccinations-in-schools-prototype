@@ -86,12 +86,21 @@ export class ClinicBooking {
   }
 
   /**
-   * Add a child's appointment to this booking, setting up parent details and relationship in the process
+   * Add a child's appointment to this booking
    *
    * @param {ClinicAppointment} appointment - An appointment to make part of this booking
    */
   addAppointment(appointment) {
     this.appointments_ids.push(appointment.uuid)
+  }
+
+  /**
+   * Remove the last appointment added to this booking
+   *
+   * @returns {string} the uuid of the removed appointment
+   */
+  removeLastAppointment() {
+    return this.appointments_ids.pop()
   }
 
   /**

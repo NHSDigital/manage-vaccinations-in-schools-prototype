@@ -2,13 +2,18 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
-import allProgrammesData from '../datasets/programmes.js'
 import { ParentalRelationship, SessionPresets } from '../enums.js'
-import { ClinicAppointment, ClinicBooking, Programme } from '../models.js'
+import { ClinicAppointment, ClinicBooking } from '../models.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
 export const bookIntoClinicController = {
-  // Load the preset into locals
+  /**
+   * Record the session preset
+   * @param {*} request
+   * @param {*} response
+   * @param {*} next
+   * @param {*} session_preset_slug
+   */
   read(request, response, next, session_preset_slug) {
     // Record both the session preset (aka "primary programme" to the parent) and the programme types that comprises
     const sessionPreset =
@@ -16,13 +21,7 @@ export const bookIntoClinicController = {
       SessionPresets[0]
     response.locals.sessionPreset = sessionPreset
 
-    // Allow us to list the programmes for which the parent's been invited to book an appointment
-    const programmes = sessionPreset.programmeTypes.map((pt) =>
-      Programme.findOne(allProgrammesData[pt].id, request.session.data)
-    )
-    response.locals.programmes = programmes
-
-    // Allow us to offer a phone booking if not wanting online
+    // Allow us to offer a phone booking if not wanting online (start.njk)
     response.locals.bookingPhoneNumber =
       request.session.data.teams[0]?.tel ??
       faker.helpers.replaceSymbols('01### ######')
@@ -51,11 +50,6 @@ export const bookIntoClinicController = {
   new(request, response) {
     const { data } = request.session
     const { sessionPreset } = response.locals
-
-    // TODO:
-    //  [X] Add a SessionPreset property to the ClinicBooking model, so that we know what type of session the children have been invited to.
-    //  [ ] Update the generators to make sure things are created right
-    //  [ ] Create enough different clinic sessions of the right types to cover the different presets?
 
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.createInContext(
@@ -128,6 +122,9 @@ export const bookIntoClinicController = {
           data
         )
         response.locals.appointment = appointment
+        response.locals.childNumber =
+          booking.appointments_ids.indexOf(appointment.uuid) + 1
+        response.locals.childCount = booking.appointments_ids.length
         response.locals.firstName =
           appointment.unmatchedFirstName || 'your child'
         response.locals.fullName = appointment.fullName || undefined
@@ -172,7 +169,7 @@ export const bookIntoClinicController = {
             }
         },
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-        {}, // allow the *booking* to continue, but stress that someone with responsibility must *attend*
+        {}, // TODO: allow the *booking* to continue, but stress that someone with responsibility must *attend*
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]:
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]:
@@ -278,7 +275,7 @@ export const bookIntoClinicController = {
     let key
     if (view.startsWith('health-question-')) {
       key = kebabToCamelCase(view.replace('health-question-', ''))
-      view = 'health-question' // TODO: reintroduce
+      view = 'health-question'
     }
 
     // Only ask for details if question does not have sub-questions
@@ -299,10 +296,7 @@ export const bookIntoClinicController = {
     const { data } = request.session
     const { paths } = response.locals
 
-    // console.log("data.wizard: " + JSON.stringify(data.wizard, null, 2));
-    // console.log("request.body: " + JSON.stringify(request.body, null, 2));
-
-    // Harvest and store values from forms
+    // Store values from the posted form
     if (request.body.booking) {
       ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
     }
@@ -319,26 +313,39 @@ export const bookIntoClinicController = {
       _.merge(data.wizard.transaction, request.body.transaction)
     }
 
-    let redirectUrl = paths.next
-
-    // If we've just set the child count, create the appointment to start the sub-journey and
-    // put its uuid into the routes from this point on
-    // TODO: but what about iterating to subsequent children? Can't help feeling the whole ask-up-front pattern is flawed.
+    // If we've just set the child count, create the appointments to start the sub-journey and
+    // put the first uuid into the routes from this point on
     if (request.originalUrl.endsWith('/new/child-count')) {
-      const booking = new ClinicBooking(
-        ClinicBooking.findOne(booking_uuid, data.wizard),
-        data
-      )
-      const appointment = ClinicAppointment.createInContext(
-        { primary_programme_ids: booking.primaryProgrammeIDs },
-        data.wizard
-      )
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      const bookingUri = booking.bookingUri
-      redirectUrl = `${request.baseUrl}/${bookingUri}/new/${appointment.appointmentUri}/child`
+      let desiredCount = Number(data.wizard.transaction.childCount)
+      desiredCount = isNaN(desiredCount) || desiredCount < 1 ? 1 : desiredCount
+      const existingCount = booking.appointments_ids.length
+
+      const childrenToAdd = Math.max(0, desiredCount - existingCount)
+      const childrenToRemove = Math.max(0, existingCount - desiredCount)
+      for (let index = 0; index < childrenToAdd; index++) {
+        const appointment = ClinicAppointment.createInContext(
+          { primary_programme_ids: booking.primaryProgrammeIDs },
+          data.wizard
+        )
+
+        booking.addAppointment(appointment)
+      }
+      for (let index = 0; index < childrenToRemove; index++) {
+        const appointment_uuid = booking.removeLastAppointment()
+        ClinicAppointment.delete(appointment_uuid, data.wizard)
+      }
+
+      // Start the appointment journey for the first child
+      const firstAppointment = booking.appointments[0]
+      response.redirect(
+        `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.appointmentUri}/child`
+      )
+    } else {
+      // Continue to the next page in the journey
+      response.redirect(paths.next)
     }
-
-    response.redirect(redirectUrl)
   },
 
   /**
