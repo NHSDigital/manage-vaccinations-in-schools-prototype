@@ -18,10 +18,7 @@ export const schoolController = {
   },
 
   readAll(request, response, next) {
-    // Combine children with no known school with home-schooled children)
-    response.locals.schools = School.findAll(request.session.data).filter(
-      (school) => school.id !== '888888'
-    )
+    response.locals.schools = School.findAll(request.session.data)
 
     next()
   },
