@@ -30,11 +30,13 @@ import {
  * @property {object} [unmatchedDob_] - Child date of birth, if not matched to a patient record (for use with decorate)
  * @property {Boolean} needsExtraTime - Does the child need extra time for their vaccinations?
  * @property {string} [extraTimeReason] - The reason why the child needs extra time for their appointment
- * @property {Parent} [parent] - The parent/carer who booked this appointment
+ * @property {ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
+ * @property {string} [parentalRelationshipOther] - User-defined parental relationship to the child for this appointment
+ * @property {boolean} [parentHasParentalResponsibility] - Does the parent/carer have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
- * @property {Array<string>} [primary_programme_ids] - IDs of programmes signed up for
+ * @property {Array<string>} [primary_programme_ids] - IDs of primary programmes for this clinic booking
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {object} [healthAnswers] - Answers to health questions
  */
@@ -53,7 +55,10 @@ export class ClinicAppointment {
     this.needsExtraTime = options?.needsExtraTime
     this.extraTimeReason = options?.extraTimeReason
 
-    this.parent = options?.parent && new Parent(options.parent)
+    this.parentalRelationship = options?.parentalRelationship
+    this.parentalRelationshipOther = options?.parentalRelationshipOther
+    this.parentHasParentalResponsibility =
+      options?.parentHasParentalResponsibility
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
@@ -121,16 +126,48 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get a parent object combining the parent's contact details held in the
+   * booking with the parental relationship for this appointment's child
+   */
+  get parent() {
+    const booking = this.clinicBooking
+    if (booking) {
+      const parent = new Parent(booking.parent)
+      return _.merge(parent, {
+        relationship: this.parentalRelationship,
+        relationshipOther: this.parentalRelationshipOther,
+        hasParentalResponsibility: this.parentHasParentalResponsibility
+      })
+    }
+
+    return undefined
+  }
+
+  /**
+   * Get first name of the child booked into this appointment
+   *
+   * @returns {string} Child's first name
+   */
+  get firstName() {
+    return this.patient ? this.patient.firstName : this.unmatchedFirstName
+  }
+
+  /**
+   * Get last name of the child booked into this appointment
+   *
+   * @returns {string} Child's last name
+   */
+  get lastName() {
+    return this.patient ? this.patient.lastName : this.unmatchedLastName
+  }
+
+  /**
    * Get full name of the child booked into this appointment
    *
    * @returns {string} Child's full name
    */
   get fullName() {
-    const patient = this.patient
-    if (patient) {
-      return `${patient.firstName} ${patient.lastName}`
-    }
-    return `${this.unmatchedFirstName} ${this.unmatchedLastName}`
+    return `${this.firstName} ${this.lastName}`
   }
 
   /**

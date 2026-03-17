@@ -13,19 +13,19 @@
 
     {{ input({
       label: { text: __("clinicBooking.parent.fullName.label") },
-      decorate: "booking.parentFullName"
+      decorate: "booking.parent.fullName"
     }) }}
 
     {{ input({
       label: { text: __("clinicBooking.parent.email.label") },
       hint: { text: __("clinicBooking.parent.email.hint") },
-      decorate: "booking.parentEmail"
+      decorate: "booking.parent.email"
     }) }}
 
     {{ input({
       label: { text: __("clinicBooking.parent.tel.label") + " (optional)" },
       hint: { text: __("clinicBooking.parent.tel.hint") },
-      decorate: "booking.parentTel"
+      decorate: "booking.parent.tel"
     }) }}
 
     {{ checkboxes({
@@ -33,7 +33,7 @@
         text: __("clinicBooking.parent.sms.label"),
         value: true
       }],
-      decorate: "booking.parentSms"
+      decorate: "booking.parent.sms"
     }) }}
 
   {% endcall %}    
