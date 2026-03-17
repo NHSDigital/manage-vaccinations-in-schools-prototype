@@ -379,18 +379,22 @@ export const replyController = {
         {
           child: patientSession.patient,
           parent: reply.parent,
-          patient_uuid: patientSession.patient.uuid,
-          session_id: patientSession.session.id,
-          programme_id: patientSession.programme.id,
+          patient_uuid: patientSession.patient_uuid,
+          session_id: patientSession.session_id,
+          programme_id: patientSession.programme_id,
           method: ReplyMethod.Phone
         },
         data.wizard
       )
 
+      const createdReply = new Reply(newReply, data)
+
       // Clean up session data
       delete data.decision
 
-      response.redirect(`${newReply.uri}/new/decision?referrer=${reply.uri}`)
+      response.redirect(
+        `${createdReply.uri}/new/decision?referrer=${reply.uri}`
+      )
     }
   },
 
