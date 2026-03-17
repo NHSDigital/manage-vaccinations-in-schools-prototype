@@ -9,6 +9,5 @@ router.get('/', clinicAppointment.readAll, clinicAppointment.list)
 router.param('clinic_appointment_uuid', clinicAppointment.read)
 
 router.get('/:clinic_appointment_uuid', clinicAppointment.show)
-router.post('/:clinic_appointment_uuid', clinicAppointment.update)
 
 export const clinicAppointmentRoutes = router
