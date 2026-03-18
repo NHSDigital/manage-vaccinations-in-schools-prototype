@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import { ParentalRelationship, SessionPresets } from '../enums.js'
 import { ClinicAppointment, ClinicBooking } from '../models.js'
+import { getAllAppointmentPaths } from '../utils/clinic-appointment.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
 export const bookIntoClinicController = {
@@ -149,50 +150,8 @@ export const bookIntoClinicController = {
       [`/${session_preset_slug}`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/child-count`]: {},
 
-      // Child journey
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/child`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dob`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-        {
-          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]:
-            {
-              data: 'appointment.parentHasParentalResponsibility',
-              value: 'false'
-            }
-        },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]:
-        {
-          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]:
-            {
-              data: 'transaction.preferredLocation',
-              value: 'NE12 7ET'
-            }
-        },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]:
-        {
-          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]:
-            {
-              data: 'transaction.preferredLocation',
-              value: 'retry'
-            }
-        },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-date`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time`]:
-        {},
-      // TODO: logic to loop back if more than one appointment
+      // Appointment journey; once per child
+      ...getAllAppointmentPaths(booking),
 
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
