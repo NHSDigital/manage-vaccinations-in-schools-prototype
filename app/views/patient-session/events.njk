@@ -1,7 +1,8 @@
 {% extends "_layouts/session.njk" %}
 
-{% set title = patient.fullName + " – " + __("patient.events.title") %}
+{% set title = patient.initials + " – " + session.shortName + " – " + __("patient.events.title") %}
 {% set heading = patientSession.patient.fullName %}
+{% set stickyBanner = true %}
 {% set view = "events" %}
 
 {% block beforeContent %}

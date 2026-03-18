@@ -2,9 +2,9 @@
 
 {% extends "_layouts/session.njk" %}
 
-{% set title = session.name + " – " + __("session." + view + ".title") %}
-{% set heading = session.name %}
-{% set caption = session.formatted.yearGroups %}
+{% set title = session.shortName + " – " + __("session." + view + ".title") %}
+{% set heading = session.shortName %}
+{% set caption = session.formatted.date + " – " + session.formatted.yearGroups %}
 
 {% block content %}
   {% if (view == "record") and not session.isActive %}

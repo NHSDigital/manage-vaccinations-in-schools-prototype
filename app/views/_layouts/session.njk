@@ -1,11 +1,11 @@
 {% extends "_layouts/default.njk" %}
 
 {% block main %}
-  <div class="app-session-banner">
+  <div class="app-session-banner"{% if stickyBanner %} data-module="app-sticky"{% endif %}>
     <div class="nhsuk-width-container">
       {% block beforeContent %}{% endblock %}
 
-      <div class="nhsuk-main-wrapper nhsuk-main-wrapper--s">
+      <div class="nhsuk-main-wrapper app-main-wrapper--xs">
         {{ notificationBanner(success) if success }}
         {{ notificationBanner(message) if message }}
 
@@ -18,11 +18,7 @@
         </p>
         {% endif %}
       </div>
-    </div>
-  </div>
 
-  <div class="app-sticky-navigation app-sticky-navigation--reverse" data-module="app-sticky">
-    <div class="nhsuk-width-container">
       {{ appSecondaryNavigation({
         classes: "app-secondary-navigation--reverse",
         items: navigationItems
@@ -31,7 +27,7 @@
   </div>
 
   <div class="nhsuk-width-container">
-    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+    <main class="nhsuk-main-wrapper nhsuk-main-wrapper--s" id="maincontent" role="main">
       <form method="post" novalidate data-validate>
         {% block content %}
         {% endblock %}

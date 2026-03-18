@@ -1,13 +1,14 @@
 {% extends "_layouts/session.njk" %}
 
-{% set title = patient.initials + " – " + session.location.name %}
+{% set title = patient.initials + " – " + session.shortName %}
 {% set heading = patientSession.patient.fullName %}
+{% set stickyBanner = true %}
 
 {% block beforeContent %}
   {{ breadcrumb({
     classes: "nhsuk-breadcrumb--reverse",
     items: [{
-      text: session.name,
+      text: session.shortName,
       href: session.uri
     }, {
       text: __("session." + activity + ".label"),
