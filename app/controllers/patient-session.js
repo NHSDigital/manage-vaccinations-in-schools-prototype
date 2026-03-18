@@ -342,9 +342,6 @@ export const patientSessionController = {
       createdBy_uid: account.uid
     })
 
-    // Update patient session
-    PatientSession.update(patientSession.uuid, patientSession, data)
-
     // Clean up session data
     delete data.triage
 
