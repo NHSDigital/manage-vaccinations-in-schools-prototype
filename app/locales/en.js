@@ -332,6 +332,11 @@ export const en = {
         label: 'Relationship to child'
       }
     },
+    parentalResponsibility: {
+      title: 'You will be unable to give consent',
+      description:
+        'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
+    },
     vaccinationChoice: {
       title: 'Do you agree to %s having the following vaccinations?',
       vaccinations: {
