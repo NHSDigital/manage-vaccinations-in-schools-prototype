@@ -22,16 +22,7 @@
   <div class="nhsuk-grid-row">
     <div class="app-grid-column-patient-record" data-module="app-sticky">
       {{ summaryList({
-        card: {
-          heading: patientSession.patient.fullName,
-          headingClasses: "nhsuk-u-margin-bottom-2",
-          headingLevel: 3,
-          headingSize: "s",
-          href: patient.uri + "?referrer=" + referrer,
-          secondary: true
-        },
-        classes: "app-summary-list--full-width",
-        border: false,
+        classes: "app-summary-list--full-width-at-large-desktop",
         rows: summaryRows(patient, {
           nhsn: {
             changeLabel: "the child’s NHS number",
