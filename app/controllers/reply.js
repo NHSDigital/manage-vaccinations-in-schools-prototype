@@ -15,7 +15,7 @@ import {
   Vaccination
 } from '../models.js'
 import { today } from '../utils/date.js'
-import { hasAnswersNeedingTriage } from '../utils/reply.js'
+import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatParent } from '../utils/string.js'
 import {
   getScreenOutcomesForConsentMethod,
@@ -199,7 +199,7 @@ export const replyController = {
         },
         [`/${reply_uuid}/${type}/notify-parent`]: {},
         [`/${reply_uuid}/${type}/health-answers`]: {
-          [`/${reply_uuid}/${type}/${hasAnswersNeedingTriage(request.session.data.reply?.healthAnswers) ? 'triage' : 'check-answers'}`]: true
+          [`/${reply_uuid}/${type}/${countAnswersNeedingTriage(request.session.data.reply?.healthAnswers) ? 'triage' : 'check-answers'}`]: true
         },
         [`/${reply_uuid}/${type}/refusal-reason`]: {
           [`/${reply_uuid}/${type}/refusal-reason-details`]: {

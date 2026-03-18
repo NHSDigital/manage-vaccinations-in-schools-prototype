@@ -101,21 +101,17 @@
       }) if parent.email or parent.tel }}
     {% endfor %}
   {% endif %}
-
-  {# Health answers #}
-  {% if patientSession.consentHealthAnswers %}
-    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
-
-    {{ appHeading({
-      classes: "nhsuk-u-margin-bottom-2",
-      level: 4,
-      size: "s",
-      title: __("healthAnswers.label")
-    }) }}
-
-    {{ summaryList({
-      classes: "app-summary-list--full-width",
-      rows: healthAnswerRows(patientSession.consentHealthAnswers)
-    }) }}
-  {% endif %}
 {% endcall %}
+
+{# Health answers #}
+{{ summaryList({
+  card: {
+    classes: "nhsuk-card--warning" if patientSession.answersNeedingTriageCount,
+    heading: __mf("healthAnswers.count", {
+      count: patientSession.answersNeedingTriageCount
+    }),
+    headingLevel: 3
+  },
+  classes: "app-summary-list--full-width",
+  rows: healthAnswerRows(patientSession.consentHealthAnswers)
+}) if patientSession.consentHealthAnswers }}

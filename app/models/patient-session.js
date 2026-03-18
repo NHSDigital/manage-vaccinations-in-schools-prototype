@@ -37,7 +37,8 @@ import {
 import {
   getConsentOutcome,
   getConsentHealthAnswers,
-  getConsentRefusalReasons
+  getConsentRefusalReasons,
+  countAnswersNeedingTriage
 } from '../utils/reply.js'
 import {
   getConsentOutcomeStatus,
@@ -612,6 +613,15 @@ export class PatientSession {
    */
   get consentHealthAnswers() {
     return getConsentHealthAnswers(this)
+  }
+
+  /**
+   * At least one answer in consent health answers needs triage
+   *
+   * @returns {number} Number of answers needing triage
+   */
+  get answersNeedingTriageCount() {
+    return countAnswersNeedingTriage(this.consentHealthAnswers)
   }
 
   /**

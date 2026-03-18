@@ -280,7 +280,7 @@ export const getHealthAnswers = (vaccine, healthCondition) => {
  * @returns {string} Triage note
  */
 export const getTriageNote = (healthAnswers, healthCondition) => {
-  if (hasAnswersNeedingTriage(healthAnswers)) {
+  if (countAnswersNeedingTriage(healthAnswers)) {
     return healthConditions[healthCondition].triageNote
   }
 }
@@ -338,19 +338,17 @@ export const getRefusalReason = (type, decision) => {
  * Has health answers needing triage
  *
  * @param {object} healthAnswers - Health answers
- * @returns {boolean} Has health answers needing triage
+ * @returns {number} Number of health answers needing triage
  */
-export const hasAnswersNeedingTriage = (healthAnswers) => {
+export const countAnswersNeedingTriage = (healthAnswers) => {
   if (!healthAnswers) {
-    return false
+    return 0
   }
 
-  // Ignore answer to asthma question, as only its sub-questions get triaged
-  const nonConditionalAnswers = Object.fromEntries(
-    Object.entries(healthAnswers).filter(([key]) => key !== 'asthma')
-  )
+  const ignoredKeys = new Set(['asthma'])
 
-  return Object.values(nonConditionalAnswers).find(
-    (answer) => answer.answer === 'Yes'
-  )
+  return Object.entries(healthAnswers)
+    .filter(([key]) => !ignoredKeys.has(key))
+    .flatMap(([, answer]) => (Array.isArray(answer) ? answer : [answer]))
+    .filter((answer) => answer.answer === 'Yes').length
 }

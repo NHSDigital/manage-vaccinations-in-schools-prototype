@@ -881,7 +881,9 @@ export const en = {
     }
   },
   healthAnswers: {
-    label: 'All answers to health questions'
+    label: 'Answers to health questions',
+    count:
+      'Answers to health questions{count, plural, =0 {} one {, including 1 Yes response} other {, including # Yes responses}}'
   },
   healthQuestions,
   home: {

@@ -1,5 +1,5 @@
 import { Reply } from '../models.js'
-import { hasAnswersNeedingTriage } from '../utils/reply.js'
+import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatLinkWithSecondaryText } from '../utils/string.js'
 
 /**
@@ -10,10 +10,10 @@ export class Consent extends Reply {
   /**
    * Answers in this consent response need triage
    *
-   * @returns {boolean} Answers need triage
+   * @returns {boolean} Has answers needing triage
    */
   get hasAnswersNeedingTriage() {
-    return hasAnswersNeedingTriage(this.healthAnswers)
+    return countAnswersNeedingTriage(this.healthAnswers) > 0
   }
 
   /**

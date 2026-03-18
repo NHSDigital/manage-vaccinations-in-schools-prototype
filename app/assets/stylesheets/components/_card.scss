@@ -180,3 +180,14 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
     }
   }
 }
+
+// Ensure border colour inside warning cards can be seen and matches
+.nhsuk-card--warning {
+  blockquote {
+    border-left-color: nhsuk-colour("black");
+  }
+
+  .nhsuk-summary-list__row {
+    border-color: nhsuk-colour("yellow");
+  }
+}
