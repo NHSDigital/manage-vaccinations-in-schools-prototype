@@ -158,14 +158,12 @@ export const bookIntoClinicController = {
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
         {
-          [`/${session_preset_slug}/new/${appointment_uuid}/vaccination-choice`]:
+          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]:
             {
               data: 'appointment.parentHasParentalResponsibility',
-              value: 'true'
+              value: 'false'
             }
         },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]:
-        {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]:
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]:
