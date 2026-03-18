@@ -197,7 +197,7 @@ export const bookIntoClinicController = {
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
         [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]:
-          () => !booking?.parent?.tel
+          () => !request.session.data.booking?.parent?.tel
       },
       [`/${session_preset_slug}/${booking_uuid}/new/contact-preference`]: {},
 
