@@ -582,6 +582,21 @@ export class Session {
   }
 
   /**
+   * Get short name (without dates)
+   *
+   * @returns {string|undefined} Short name
+   */
+  get shortName() {
+    if (this.clinic) {
+      return `${this.programmeNames.titleCase} community clinic`
+    }
+
+    if (this.location) {
+      return `${this.programmeNames.titleCase} session at ${this.location.name}`
+    }
+  }
+
+  /**
    * Get address
    *
    * @returns {Object} Address

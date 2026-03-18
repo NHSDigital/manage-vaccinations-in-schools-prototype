@@ -1,8 +1,8 @@
 {% extends "_layouts/session.njk" %}
 
-{% set title = session.name %}
+{% set title = session.shortName %}
 {% set heading = title %}
-{% set caption = session.formatted.yearGroups %}
+{% set caption = session.formatted.date + " – " + session.formatted.yearGroups %}
 
 {% block content %}
   {{ warningCallout({

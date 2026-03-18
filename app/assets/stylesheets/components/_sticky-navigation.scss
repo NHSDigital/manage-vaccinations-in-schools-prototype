@@ -34,12 +34,3 @@
     box-shadow: 0 $nhsuk-border-width 0 color.scale(nhsuk-colour("grey-3"), $alpha: -50%);
   }
 }
-
-.app-sticky-navigation--reverse {
-  border-bottom: 0 none;
-  background: nhsuk-shade($nhsuk-brand-colour, 20%);
-
-  .app-secondary-navigation {
-    box-shadow: 0 -1px 0 0 $nhsuk-reverse-border-colour;
-  }
-}

@@ -4,7 +4,7 @@
 [class^="app-grid-column"],
 [class^="nhsuk-grid-column"] {
   &[data-app-sticky-init] {
-    @include nhsuk-media-query($from: desktop) {
+    @include nhsuk-media-query($from: large-desktop) {
       position: sticky;
       top: 0;
     }
@@ -19,11 +19,9 @@
 .app-grid-column-patient-record {
   @include nhsuk-grid-column(one-quarter, $float: right, $at: large-desktop);
 
-  padding-top: 12px;
-
   &[data-app-sticky-init] {
-    @include nhsuk-media-query($from: desktop) {
-      top: #{nhsuk-spacing(9) + nhsuk-spacing(3)};
+    @include nhsuk-media-query($from: large-desktop) {
+      top: #{nhsuk-spacing(9) + nhsuk-spacing(5)};
     }
   }
 }
