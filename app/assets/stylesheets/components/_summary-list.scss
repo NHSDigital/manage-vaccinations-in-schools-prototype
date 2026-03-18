@@ -1,6 +1,6 @@
 @use "../vendor/nhsuk-frontend" as *;
 
-.app-summary-list--full-width {
+@mixin _app-summary-list-full-width {
   .nhsuk-summary-list__row {
     display: block;
     padding-top: nhsuk-spacing(2);
@@ -26,5 +26,15 @@
 
   .nhsuk-summary-list__value {
     padding-top: nhsuk-spacing(1);
+  }
+}
+
+.app-summary-list--full-width {
+  @include _app-summary-list-full-width;
+}
+
+.app-summary-list--full-width-at-large-desktop {
+  @include nhsuk-media-query($from: large-desktop) {
+    @include _app-summary-list-full-width;
   }
 }
