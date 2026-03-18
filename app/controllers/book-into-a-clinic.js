@@ -77,7 +77,7 @@ export const bookIntoClinicController = {
    */
   readForm(request, response, next) {
     const { session_preset_slug, booking_uuid } = request.params
-    let appointment_uuid = request.params.appointment_uuid
+    const appointment_uuid = request.params.appointment_uuid
     const { data, referrer } = request.session
 
     /** NOTE:
@@ -128,19 +128,8 @@ export const bookIntoClinicController = {
         response.locals.childCount = booking.appointments_ids.length
         response.locals.firstName =
           appointment.unmatchedFirstName || 'your child'
-        response.locals.fullName = appointment.fullName || undefined
+        response.locals.fullName = appointment.fullName || 'your child'
       }
-    }
-
-    // If we've already been through the appointment journey (possibly multiple times), get the UUID of the first
-    // appointment should we need to go through each child again for the health questions.
-    // TEMPORARY: just pull the appointment UUID from the first appointment held in wizard data, as I've not got
-    //            round to adding the appointment to the booking yet.
-    if (!appointment_uuid && data?.wizard?.clinicAppointments?.[0]) {
-      appointment_uuid = data.wizard.clinicAppointments[0].uuid
-    }
-    if (!appointment_uuid && booking?.appointments_ids?.length > 0) {
-      appointment_uuid = booking.appointments_ids[0]
     }
 
     // Make sure the views have access to information about flow control e.g. for narrowing down a clinic search
@@ -151,7 +140,7 @@ export const bookIntoClinicController = {
     }
 
     const journey = {
-      [`/${session_preset_slug}`]: {}, // is this ever actually used? Suspect not...unless when going back from child-count.
+      [`/${session_preset_slug}`]: {},
       [`/${session_preset_slug}/${booking_uuid}/new/child-count`]: {},
 
       // Child journey
@@ -169,8 +158,8 @@ export const bookIntoClinicController = {
               value: 'true'
             }
         },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-        {}, // TODO: allow the *booking* to continue, but stress that someone with responsibility must *attend*
+      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]:
+        {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]:
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]:
