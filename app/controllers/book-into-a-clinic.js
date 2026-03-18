@@ -16,7 +16,13 @@ export const bookIntoClinicController = {
    * @param {*} session_preset_slug
    */
   read(request, response, next, session_preset_slug) {
-    // Record both the session preset (aka "primary programme" to the parent) and the programme types that comprises
+    const serviceName = 'Book into a clinic'
+
+    response.locals.assetsName = 'public'
+    response.locals.serviceName = serviceName
+    response.locals.headerOptions = { service: { text: serviceName } }
+
+    // Record the session preset (aka "primary programme" to the parent)
     const sessionPreset =
       SessionPresets.find((preset) => preset.slug === session_preset_slug) ??
       SessionPresets[0]
