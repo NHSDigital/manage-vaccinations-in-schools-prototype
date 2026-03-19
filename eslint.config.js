@@ -6,6 +6,7 @@ export default [
     files: ['**/*.js'],
     rules: {
       camelcase: 'off',
+      'getter-return': 'off',
       'no-continue': 'off'
     }
   },

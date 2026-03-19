@@ -22,7 +22,7 @@ export const teamController = {
     next()
   },
 
-  redirect(request, response, next) {
+  redirect(request, response) {
     const { team_id } = request.params
 
     response.redirect(`${team_id}/contact`)

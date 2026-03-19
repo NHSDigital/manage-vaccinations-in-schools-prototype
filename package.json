@@ -44,7 +44,7 @@
     "stylelint-order": "^7.0.1"
   },
   "engines": {
-    "node": "^22.22"
+    "node": "^24"
   },
   "private": true,
   "type": "module",
@@ -55,5 +55,10 @@
     ],
     "serviceName": "Manage vaccinations in schools",
     "templateExtension": "njk"
+  },
+  "peerDependencies": {
+    "@x-govuk/govuk-prototype-filters": "^2.1.0",
+    "express": "^5.2.1",
+    "nhsuk-frontend": "^10.4.1"
   }
 }

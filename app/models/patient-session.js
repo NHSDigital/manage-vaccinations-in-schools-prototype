@@ -197,7 +197,8 @@ export class PatientSession {
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
-  /** Get parental relationships from valid replies
+  /**
+   * Get parental relationships from valid replies
    *
    * @returns {Array<string>} Parental relationships
    */
@@ -207,7 +208,8 @@ export class PatientSession {
       .flatMap((reply) => reply.relationship || 'Parent or guardian')
   }
 
-  /** Get names of parents who have requested a follow up
+  /**
+   * Get names of parents who have requested a follow up
    *
    * @returns {Array<string>} Parent names and relationships
    */
