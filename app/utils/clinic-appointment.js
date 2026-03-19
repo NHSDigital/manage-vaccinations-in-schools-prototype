@@ -1,5 +1,3 @@
-import { ClinicBooking } from '../models/clinic-booking.js'
-
 import { camelToKebabCase } from './string.js'
 
 /**
