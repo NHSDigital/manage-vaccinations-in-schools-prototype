@@ -4,7 +4,6 @@
 
 {% block form %}
   {{ input({
-    classes: "nhsuk-input--width-2",
     label: {
       classes: "nhsuk-label--l",
       html: appHeading({
@@ -14,6 +13,7 @@
     },
     hint: { text: __("session.reminderWeeks.hint") },
     suffix: "weeks",
+    width: 2,
     decorate: "session.reminderWeeks"
   }) }}
 {% endblock %}

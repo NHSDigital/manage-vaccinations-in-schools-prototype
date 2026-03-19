@@ -5,7 +5,6 @@
   {% set type = "vaccination" if upload.type == UploadType.Report else "child" %}
   {% set archiveChangeset = __("upload.show.partial.decision.archived.label", ArchiveRecordReason.Error) | nl2br %}
   {% set archiveRadios = radios({
-    classes: "nhsuk-radios--small",
     formGroup: {
       classes: "nhsuk-u-margin-bottom-2"
     },
@@ -15,6 +14,7 @@
         text: __("upload.show.partial.decision.title", { patient: patient })
       }
     },
+    small: true,
     items: [{
       text: __("upload.show.partial.decision.ignore.label", type),
       value: "ignore"
@@ -37,7 +37,6 @@
     })
   }) %}
   {% set duplicateRadios = radios({
-    classes: "nhsuk-radios--small",
     formGroup: {
       classes: "nhsuk-u-margin-bottom-2"
     },
@@ -47,6 +46,7 @@
         text: __("upload.show.partial.decision.title", { patient: patient })
       }
     },
+    small: true,
     items: [{
       text: __("upload.show.partial.decision.original.label", type),
       value: "original"

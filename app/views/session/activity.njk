@@ -126,8 +126,8 @@
 
             {{ appButtonGroup({
               buttons: [{
-                classes: "nhsuk-button--small",
                 text: __("patientSession.registration.actions.present.label"),
+                small: true,
                 variant: "secondary",
                 decorate: "patientSession.register",
                 value: RegistrationOutcome.Present,
@@ -137,8 +137,9 @@
                   formmethod: "post"
                 }
               }, {
-                classes: "app-button--secondary-warning nhsuk-button--small",
+                classes: "app-button--secondary-warning",
                 text: __("patientSession.registration.actions.absent.label"),
+                small: true,
                 decorate: "patientSession.register",
                 value: RegistrationOutcome.Absent,
                 attributes: {

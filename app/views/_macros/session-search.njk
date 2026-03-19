@@ -25,57 +25,57 @@
     }) }}
 
     {{ radios({
-      classes: "nhsuk-radios--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("session.academicYear.label")
         }
       },
+      small: true,
       items: academicYearItems,
       decorate: "academicYear"
     }) if academicYearItems }}
 
     {{ checkboxes({
-      classes: "nhsuk-checkboxes--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("programme.label")
         }
       },
+      small: true,
       items: programmeItems,
       decorate: "programme_id"
     })}}
 
     {{ radios({
-      classes: "nhsuk-radios--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("session.status.label")
         }
       },
+      small: true,
       items: radioFilterItems(SessionStatus),
       decorate: "status"
     }) }}
 
     {{ radios({
-      classes: "nhsuk-radios--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("session.type.label")
         }
       },
+      small: true,
       items: radioFilterItems(SessionType),
       decorate: "type"
     }) }}
 
     {{ appButtonGroup({
       buttons: [{
-        classes: "nhsuk-button--small",
         text: __("search.confirm"),
+        small: true,
         variant: "secondary",
         attributes: {
           formaction: params.formaction,
@@ -83,9 +83,9 @@
           role: "search"
         }
       }, {
-        classes: "nhsuk-button--small",
         text: __("search.clear"),
         href: params.clear or "/sessions",
+        small: true,
         variant: "secondary"
       } if data.q or data.programme_id or data.status != "none" or data.type != "none"]
     }) }}

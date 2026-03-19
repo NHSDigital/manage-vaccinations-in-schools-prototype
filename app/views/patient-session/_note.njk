@@ -14,11 +14,11 @@
   }) }}
 
   {{ radios({
-    classes: "nhsuk-radios--inline",
     fieldset: {
       legend: { text: __("event.pinned.title") }
     },
     hint: { text: __("event.pinned.hint") },
+    inline: true,
     items: booleanItems,
     decorate: "pinned"
   }) }}

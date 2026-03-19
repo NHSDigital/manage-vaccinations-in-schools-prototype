@@ -4,7 +4,6 @@
 
 {% block form %}
   {{ input({
-    classes: "nhsuk-input--width-5",
     label: {
       html: appHeading({
         classes: "nhsuk-label--l",
@@ -13,6 +12,7 @@
       })
     },
     suffix: "ml",
+    width: 5,
     decorate: "vaccination.dose"
   }) if vaccination.vaccine.criteria != VaccineCriteria.Intranasal else radios({
     fieldset: {

@@ -22,7 +22,8 @@
         headingLevel: 3
       }) %}
         {{ summaryList({
-          classes: "nhsuk-u-margin-bottom-4 nhsuk-summary-list--no-border app-summary-list--full-width",
+          classes: "nhsuk-u-margin-bottom-4 app-summary-list--full-width",
+          border: false,
           rows: summaryRows(consent.child, {
             fullAndPreferredNames: {
               label: __("consent.child.fullAndPreferredNames.label")

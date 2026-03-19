@@ -20,8 +20,8 @@
   {% set filterButtonGroup %}
     {{ appButtonGroup({
       buttons: [{
-        classes: "nhsuk-button--small",
         text: __("search.confirm"),
+        small: true,
         variant: "secondary",
         attributes: {
           formaction: params.formaction,
@@ -29,9 +29,9 @@
           role: "search"
         }
       }, {
-        classes: "nhsuk-button--small",
         text: __("search.clear"),
         href: params.clear or "/patients",
+        small: true,
         variant: "secondary"
       } if data.q or data.programme or data.yearGroup or data.dob or data.status or data.hasMissingNhsNumber]
     }) }}
@@ -53,25 +53,25 @@
     }) }}
 
     {{ checkboxes({
-      classes: "nhsuk-checkboxes--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("programme.label")
         }
       },
+      small: true,
       items: programmeItems,
       decorate: "programme_id"
     }) if programmeItems }}
 
     {{ checkboxes({
-      classes: "nhsuk-checkboxes--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("patient.clinicProgramme_ids.label")
         }
       },
+      small: true,
       items: [{
         text: 'Invited to clinic',
         value: 'true'
@@ -81,13 +81,13 @@
 
     {% for name, enums in params.checkboxFilters %}
       {{ checkboxes({
-        classes: "nhsuk-checkboxes--small",
         fieldset: {
           legend: {
             classes: "nhsuk-fieldset__legend--s",
             text: __("patientSession." + name + ".label")
           }
         },
+        small: true,
         items: checkboxFilterItems(enums, data[name]),
         decorate: name
       }) if enums }}
@@ -95,20 +95,20 @@
 
     {% for name, enums in params.radioFilters %}
       {{ radios({
-        classes: "nhsuk-radios--small",
         fieldset: {
           legend: {
             classes: "nhsuk-fieldset__legend--s",
             text: __("patientSession." + name + ".label")
           }
         },
+        small: true,
         items: radioFilterItems(enums, data[name]),
         decorate: name
       }) if enums }}
     {% endfor %}
 
     {{ radios({
-      classes: "nhsuk-radios--small",
+      small: true,
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
@@ -125,7 +125,7 @@
         text: PatientStatus.Consent,
         conditional: {
           html: checkboxes({
-            classes: "nhsuk-checkboxes--small",
+            small: true,
             items: enumItems(PatientConsentStatus),
             decorate: "patientConsent"
           })
@@ -134,7 +134,7 @@
         text: PatientStatus.Refused,
         conditional: {
           html: checkboxes({
-            classes: "nhsuk-checkboxes--small",
+            small: true,
             items: enumItems(PatientRefusedStatus),
             decorate: "patientRefused"
           })
@@ -151,7 +151,7 @@
                 text: ProgrammeType.Flu + " vaccine type"
               }
             } if not session,
-            classes: "nhsuk-checkboxes--small",
+            small: true,
             items: enumItems(RecordVaccineCriteria),
             items: [{
               text: RecordVaccineCriteria.AlternativeFluInjectionOnly
@@ -168,7 +168,7 @@
                 text: ProgrammeType.MMR + " vaccine type"
               }
             } if not session,
-            classes: "nhsuk-checkboxes--small",
+            small: true,
             items: [{
               text: RecordVaccineCriteria.NoMMRPreference
             }, {
@@ -181,7 +181,7 @@
         text: PatientStatus.Deferred,
         conditional: {
           html: checkboxes({
-            classes: "nhsuk-checkboxes--small",
+            small: true,
             items: enumItems(PatientDeferredStatus),
             decorate: "patientDeferred"
           })
@@ -192,7 +192,7 @@
         text: PatientStatus.Vaccinated,
         conditional: {
           html: checkboxes({
-            classes: "nhsuk-checkboxes--small",
+            small: true,
             items: enumItems(PatientVaccinatedStatus),
             decorate: "patientVaccinated"
           })
@@ -202,13 +202,13 @@
     }) if not params.hideProgrammeStatuses }}
 
     {{ checkboxes({
-      classes: "nhsuk-checkboxes--small",
       fieldset: {
         legend: {
           classes: "nhsuk-fieldset__legend--s",
           text: __("patient.yearGroup.label")
         }
       },
+      small: true,
       items: yearGroupItems,
       decorate: "yearGroup"
     }) if yearGroupItems }}
@@ -225,13 +225,13 @@
       }) }}
 
       {{ checkboxes({
-        classes: "nhsuk-checkboxes--small",
         fieldset: {
           legend: {
             classes: "nhsuk-fieldset__legend--s",
             text: __("patient.search.showOnly")
           }
         },
+        small: true,
         items: [
           {
             value: "archived",

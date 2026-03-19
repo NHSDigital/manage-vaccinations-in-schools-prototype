@@ -31,15 +31,16 @@
     {{ appButtonGroup({
       buttons: [
         {
-          classes: "nhsuk-button--small",
           text: __("session.edit.title"),
           href: session.uri + "/edit",
+          small: true,
           variant: "secondary"
         },
         {
-          classes: "app-button--secondary-warning nhsuk-button--small",
+          classes: "app-button--secondary-warning",
           text: "Delete",
-          href: session.uri + "/delete"
+          href: session.uri + "/delete",
+          small: true
         } if session.consentWindow != ConsentWindow.Open
       ]
     }) if not session.isCompleted }}
