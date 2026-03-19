@@ -15,6 +15,7 @@ import {
   formatDate,
   getDateValueDifference
 } from '../utils/date.js'
+import { stringToArray, stringToBoolean } from '../utils/string.js'
 
 /**
  * @class ClinicAppointment
@@ -52,7 +53,7 @@ export class ClinicAppointment {
     this.unmatchedDob = options?.unmatchedDob && new Date(options.unmatchedDob)
     this.unmatchedDob_ = options?.unmatchedDob_
 
-    this.needsExtraTime = options?.needsExtraTime
+    this.needsExtraTime = stringToBoolean(options?.needsExtraTime)
     this.extraTimeReason = options?.extraTimeReason
 
     this.parentalRelationship = options?.parentalRelationship
@@ -64,8 +65,14 @@ export class ClinicAppointment {
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
     this.endAt = options?.endAt ? new Date(options.endAt) : undefined
 
-    this.selected_programme_ids = options?.selected_programme_ids || []
-    this.primary_programme_ids = options?.primary_programme_ids || []
+    this.selected_programme_ids =
+      (options?.selected_programme_ids &&
+        stringToArray(options.selected_programme_ids)) ||
+      []
+    this.primary_programme_ids =
+      (options?.primary_programme_ids &&
+        stringToArray(options.primary_programme_ids)) ||
+      []
     this.healthAnswers = options?.healthAnswers || {}
   }
 
@@ -367,11 +374,18 @@ export class ClinicAppointment {
    * @static
    */
   static update(uuid, updates, context) {
+    // Sanitise any _unchecked checkbox values
+    if (updates?.selected_programme_ids) {
+      updates.selected_programme_ids = stringToArray(
+        updates.selected_programme_ids
+      )
+    }
+
+    // Copy updates into the relevant appointment
     const updatedAppointment = _.merge(
       ClinicAppointment.findOne(uuid, context),
       updates
     )
-    //    updatedAppointment.updatedAt = today()
 
     // Remove appointment context
     delete updatedAppointment.context
