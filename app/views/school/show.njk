@@ -29,13 +29,13 @@
   }) }}
 
   {{ button({
-    classes: "nhsuk-button--secondary",
     href: "/uploads/new?type=" + UploadType.School + "&school_id=" + school.id,
-    text: __("session.upload-class-list.title")
+    text: __("session.upload-class-list.title"),
+    variant: "secondary"
   } if not school.homeOrUnknown else {
-    classes: "nhsuk-button--secondary",
     href: school.uri + "/invite-to-clinic",
-    text: __("session.inviteToClinic.label")
+    text: __("session.inviteToClinic.label"),
+    variant: "secondary"
   }) }}
 
   <div class="nhsuk-grid-row">
@@ -65,8 +65,9 @@
       }) }}
 
       {{ button({
-        classes: "nhsuk-button--secondary nhsuk-button--small",
+        classes: "nhsuk-button--small",
         text: __("session.offline.confirm"),
+        variant: "secondary",
         value: DownloadType.Session,
         decorate: "download.type",
         attributes: {

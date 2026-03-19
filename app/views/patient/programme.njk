@@ -72,17 +72,17 @@
 
     {{ appButtonGroup({
       buttons: [{
-        classes: "nhsuk-button--secondary",
         text: __("patientSession.record.title", {
           programme: patientProgramme.programme
         }) | safe,
+        variant: "secondary",
         attributes: {
           formaction: patientProgramme.uri + "/record?referrer=" + referrer
         }
       }, {
-        classes: "nhsuk-button--secondary",
         text: __("vaccination.new.alreadyVaccinated.title"),
-        href: patientProgramme.uri + "/new/vaccination"
+        href: patientProgramme.uri + "/new/vaccination",
+        variant: "secondary"
       }]
     }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.eligible }}
   {% endcall %}
@@ -127,9 +127,9 @@
       }) }}
 
       {{ button({
-        classes: "nhsuk-button--secondary",
         text: __("vaccination.new.alreadyVaccinated.ttcv"),
-        href: patientProgramme.uri + "/new/ttcv"
+        href: patientProgramme.uri + "/new/ttcv",
+        variant: "secondary"
       }) }}
     {% endcall %}
   {% endif %}

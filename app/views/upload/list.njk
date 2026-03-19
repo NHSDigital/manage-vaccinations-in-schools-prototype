@@ -17,9 +17,9 @@
     {{ __("upload.list.introduction") | nhsukMarkdown }}
 
     {{ button({
-      classes: "nhsuk-button--secondary",
       text: __("upload.new.label"),
-      href: "/uploads/new"
+      href: "/uploads/new",
+      variant: "secondary"
     }) }}
   </div>
 
@@ -57,17 +57,19 @@
 
         {{ appButtonGroup({
           buttons: [{
-            classes: "nhsuk-button--secondary nhsuk-button--small",
+            classes: "nhsuk-button--small",
             text: __("search.confirm"),
+            variant: "secondary",
             attributes: {
               formaction: params.formaction,
               formmethod: "post",
               role: "search"
             }
           }, {
-            classes: "nhsuk-button--secondary nhsuk-button--small",
+            classes: "nhsuk-button--small",
             text: __("search.clear"),
-            href: "/uploads"
+            href: "/uploads",
+            variant: "secondary"
           } if data.type or data.status]
         }) }}
       {% endcall %}

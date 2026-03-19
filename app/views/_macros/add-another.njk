@@ -19,8 +19,9 @@
   {% endif %}
   <template id="add-button">
     {{ button({
-      classes: "app-add-another__add nhsuk-button--secondary",
-      text: "Add another " + params.name
+      classes: "app-add-another__add",
+      text: "Add another " + params.name,
+      variant: "secondary"
     }) | indent(4) }}
   </template>
   <template id="delete-button">

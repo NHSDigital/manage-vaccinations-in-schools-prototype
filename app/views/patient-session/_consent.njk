@@ -18,15 +18,15 @@
   {# Actions #}
   {{ appButtonGroup({
     buttons: [{
-      classes: "nhsuk-button--secondary",
       text: __("remind.new.title"),
+      variant: "secondary",
       attributes: {
         formaction: patientSession.uri + "/new/remind",
         formmethod: "post"
       }
     } if options.canRemind, {
-      classes: "nhsuk-button--secondary",
       text: __("patientSession.invite.label"),
+      variant: "secondary",
       attributes: {
         formaction: patientSession.uri + "/new/invite",
         formmethod: "post"

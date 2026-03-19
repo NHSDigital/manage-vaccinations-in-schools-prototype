@@ -55,17 +55,19 @@
 
         {{ appButtonGroup({
           buttons: [{
-            classes: "nhsuk-button--secondary nhsuk-button--small",
+            classes: "nhsuk-button--small",
             text: __("search.confirm"),
+            variant: "secondary",
             attributes: {
               formaction: params.formaction,
               formmethod: "post",
               role: "search"
             }
           }, {
-            classes: "nhsuk-button--secondary nhsuk-button--small",
+            classes: "nhsuk-button--small",
             text: __("search.clear"),
-            href: "/schools"
+            href: "/schools",
+            variant: "secondary"
           } if data.q or data.phase]
         }) }}
       {% endcall %}

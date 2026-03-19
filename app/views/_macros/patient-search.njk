@@ -20,17 +20,19 @@
   {% set filterButtonGroup %}
     {{ appButtonGroup({
       buttons: [{
-        classes: "nhsuk-button--secondary nhsuk-button--small",
+        classes: "nhsuk-button--small",
         text: __("search.confirm"),
+        variant: "secondary",
         attributes: {
           formaction: params.formaction,
           formmethod: "post",
           role: "search"
         }
       }, {
-        classes: "nhsuk-button--secondary nhsuk-button--small",
+        classes: "nhsuk-button--small",
         text: __("search.clear"),
-        href: params.clear or "/patients"
+        href: params.clear or "/patients",
+        variant: "secondary"
       } if data.q or data.programme or data.yearGroup or data.dob or data.status or data.hasMissingNhsNumber]
     }) }}
   {% endset %}

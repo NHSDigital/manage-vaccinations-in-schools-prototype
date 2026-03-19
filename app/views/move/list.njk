@@ -16,9 +16,9 @@
     {{ __("move.list.introduction") | nhsukMarkdown }}
 
     {{ button({
-      classes: "nhsuk-button--secondary",
       text: __("move.download.label"),
       value: DownloadType.Moves,
+      variant: "secondary",
       decorate: "download.type",
       attributes: {
         formaction: "/downloads/new?referrer=/moves",

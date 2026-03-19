@@ -43,14 +43,14 @@
   {{ appButtonGroup({
     buttons: [
       {
-        classes: "nhsuk-button--secondary",
         text: __("session.schedule.title") if session.isUnplanned else __("session.edit.title"),
-        href: session.uri + "/edit"
+        href: session.uri + "/edit",
+        variant: "secondary"
       },
       {
-        classes: "nhsuk-button--secondary",
         text: __("session.inviteToClinic.label"),
-        href: session.uri + "/invite-to-clinic"
+        href: session.uri + "/invite-to-clinic",
+        variant: "secondary"
       } if session.isCompleted
     ],
     links: [{

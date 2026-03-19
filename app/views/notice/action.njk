@@ -16,8 +16,8 @@
 {% block afterForm %}
   {{ appButtonGroup({
     buttons: [{
-      classes: "nhsuk-button--warning",
       text: __("notice.action.confirm", type),
+      variant: "warning",
       attributes: {
         formAction: notice.uri + "/" + type
       }

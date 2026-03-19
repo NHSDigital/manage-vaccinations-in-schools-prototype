@@ -25,9 +25,9 @@
       }) }}
 
       {{ button({
-        classes: "nhsuk-button--secondary",
         text: __("batch.new.label"),
-        href: vaccine.uri + "/batches/new"
+        href: vaccine.uri + "/batches/new",
+        variant: "secondary"
       }) }}
 
       {% set batchRows = [] %}

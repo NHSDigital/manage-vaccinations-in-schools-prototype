@@ -31,9 +31,10 @@
     {{ appButtonGroup({
       buttons: [
         {
-          classes: "nhsuk-button--secondary nhsuk-button--small",
+          classes: "nhsuk-button--small",
           text: __("session.edit.title"),
-          href: session.uri + "/edit"
+          href: session.uri + "/edit",
+          variant: "secondary"
         },
         {
           classes: "app-button--secondary-warning nhsuk-button--small",
@@ -69,9 +70,9 @@
   }) }}
 
   {{ button({
-    classes: "nhsuk-button--secondary",
     text: __("session.new.label"),
-    href: "/sessions/new"
+    href: "/sessions/new",
+    variant: "secondary"
   }) }}
 
   {% if activeSession %}

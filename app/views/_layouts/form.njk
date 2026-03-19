@@ -12,8 +12,8 @@
 
       {% block afterForm %}
         {{ button({
-          classes: confirmButtonClasses,
-          html: confirmButtonText if confirmButtonText else __("form.continue")
+          html: confirmButtonText if confirmButtonText else __("form.continue"),
+          variant: confirmButtonVariant
         }) if not hideConfirmButton }}
       {% endblock %}
     </div>

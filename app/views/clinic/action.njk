@@ -12,8 +12,8 @@
 {% block afterForm %}
   {{ appButtonGroup({
     buttons: [{
-      classes: "nhsuk-button--warning",
       text: __("clinic.action.confirm", type),
+      variant: "warning",
       attributes: {
         formAction: clinic.uri + "/" + type
       }

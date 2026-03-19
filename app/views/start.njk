@@ -27,9 +27,10 @@ Once you log in, you'll be taken to the service your organisation is set up to u
       {% endfilter %}
 
       {{ button({
-        classes: "nhsuk-button--login nhsuk-u-margin-bottom-4",
+        classes: "nhsuk-u-margin-bottom-4",
         html: "Log in with my Care Identity",
-        href: "/account/cis2"
+        href: "/account/cis2",
+        variant: "login"
       }) }}
 
       {{ link("https://manage-care-identities.care-identity-service2.nhs.uk/#/self-service/unlock-authenticator", __("account.cis2.unlock")) | nhsukMarkdown }}
