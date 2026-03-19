@@ -124,12 +124,22 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
 .app-card--compact {
   @include nhsuk-responsive-margin(3, "bottom");
 
+  .nhsuk-card__heading-container {
+    @include nhsuk-responsive-padding(4, "left");
+    @include nhsuk-responsive-padding(4, "right");
+    @include nhsuk-responsive-padding(4, "top");
+  }
+
   .nhsuk-card__heading {
     @include nhsuk-responsive-margin(2, "bottom");
   }
 
   .nhsuk-card__content {
     @include nhsuk-responsive-padding(4);
+  }
+
+  .nhsuk-card__heading-container + .nhsuk-card__content {
+    padding-top: 0;
   }
 
   .nhsuk-button-group .nhsuk-button {
