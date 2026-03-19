@@ -4,6 +4,7 @@ import _ from 'lodash'
 import allProgrammesData from '../datasets/programmes.js'
 import { SessionPresets } from '../enums.js'
 import { ClinicAppointment, Parent, Programme } from '../models.js'
+import { stringToBoolean } from '../utils/string.js'
 
 /**
  * @class ClinicBooking
@@ -182,6 +183,12 @@ export class ClinicBooking {
    * @static
    */
   static update(uuid, updates, context) {
+    // Sanitise any _unchecked checkbox values
+    if (updates?.parent?.sms) {
+      updates.parent.sms = stringToBoolean(updates.parent.sms) || false
+    }
+
+    // Copy updates into the relevant booking
     const existingBooking = ClinicBooking.findOne(uuid, context)
     const updatedBooking = _.merge(existingBooking, updates)
 
