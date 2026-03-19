@@ -19,10 +19,11 @@
     classes: "app-search-input",
     afterInput: {
       html: button({
-        classes: "nhsuk-button--small app-button--icon app-search-input__button",
+        classes: "app-button--icon app-search-input__button",
         html: nhsukIcon("search", {
           title: "Search"
-        })
+        }),
+        small: true
       })
     }
   }

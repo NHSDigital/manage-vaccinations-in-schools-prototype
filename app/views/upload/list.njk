@@ -32,33 +32,33 @@
         headingLevel: 3
       }) %}
         {{ radios({
-          classes: "nhsuk-radios--small",
           fieldset: {
             legend: {
               classes: "nhsuk-fieldset__legend--s",
               text: __("upload.type.label")
             }
           },
+          small: true,
           items: radioFilterItems(UploadType),
           decorate: "type"
         }) }}
 
         {{ checkboxes({
-          classes: "nhsuk-checkboxes--small",
           fieldset: {
             legend: {
               classes: "nhsuk-fieldset__legend--s",
               text: __("upload.status.label")
             }
           },
+          small: true,
           items: checkboxFilterItems(UploadStatus),
           decorate: "status"
         }) }}
 
         {{ appButtonGroup({
           buttons: [{
-            classes: "nhsuk-button--small",
             text: __("search.confirm"),
+            small: true,
             variant: "secondary",
             attributes: {
               formaction: params.formaction,
@@ -66,9 +66,9 @@
               role: "search"
             }
           }, {
-            classes: "nhsuk-button--small",
             text: __("search.clear"),
             href: "/uploads",
+            small: true,
             variant: "secondary"
           } if data.type or data.status]
         }) }}

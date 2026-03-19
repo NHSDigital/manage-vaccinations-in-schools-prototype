@@ -35,19 +35,19 @@
       value: false,
       conditional: {
         html: input({
-          classes: "nhsuk-input--width-20",
           label: {
             text: __("patientSession.preScreen.identifiedBy.name.title")
           },
+          width: 20,
           decorate: "patientSession.preScreen.identifiedBy.name"
         }) + input({
-          classes: "nhsuk-input--width-20",
           label: {
             text: __("patientSession.preScreen.identifiedBy.relationship.title")
           },
           hint: {
             text: __("patientSession.preScreen.identifiedBy.relationship.hint")
           },
+          width: 20,
           decorate: "patientSession.preScreen.identifiedBy.relationship"
         })
       }

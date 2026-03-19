@@ -316,7 +316,7 @@ export default () => {
         : keyText
 
       summaryRows.push({
-        classes: undefined,
+        border: undefined,
         key: { text: keyText },
         value: { html },
         ...(edit && {
@@ -333,7 +333,7 @@ export default () => {
       })
     }
 
-    summaryRows.at(-1).classes = 'nhsuk-summary-list__row--no-border'
+    summaryRows.at(-1).border = false
 
     return summaryRows
   }
@@ -584,7 +584,7 @@ export default () => {
           : 'Not provided'
 
         summaryRows.push({
-          classes: '',
+          border: true,
           key: {
             text: label
           },
@@ -607,7 +607,7 @@ export default () => {
     }
 
     // Remove border from final row
-    summaryRows.at(-1).classes = 'nhsuk-summary-list__row--no-border'
+    summaryRows.at(-1).border = false
 
     return summaryRows
   }

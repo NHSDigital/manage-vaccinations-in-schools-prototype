@@ -16,13 +16,13 @@
     formGroup: {
       classes: "nhsuk-u-margin-bottom-7"
     },
-    classes: "nhsuk-input--width-2",
     label: {
       classes: "nhsuk-label--m",
       text: __("team.sessionOpenWeeks.title")
     },
     hint: { text: __("team.sessionOpenWeeks.hint") },
     suffix: "weeks",
+    width: 2,
     decorate: "team.sessionOpenWeeks"
   }) }}
 
@@ -30,24 +30,24 @@
     formGroup: {
       classes: "nhsuk-u-margin-bottom-7"
     },
-    classes: "nhsuk-input--width-2",
     label: {
       classes: "nhsuk-label--m",
       text: __("team.sessionReminderWeeks.title")
     },
     hint: { text: __("team.sessionReminderWeeks.hint") },
     suffix: "weeks",
+    width: 2,
     decorate: "team.sessionReminderWeeks"
   }) }}
 
   {{ radios({
-    classes: "nhsuk-radios--inline",
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
         text: __("team.sessionRegistration.title")
       }
     },
+    inline: true,
     items: booleanItems,
     decorate: "team.sessionRegistration"
   }) }}

@@ -30,33 +30,33 @@
         }) }}
 
         {{ radios({
-          classes: "nhsuk-radios--small",
           fieldset: {
             legend: {
               classes: "nhsuk-fieldset__legend--s",
               text: __("school.phase.label")
             }
           },
+          small: true,
           items: enumItems(SchoolPhase),
           decorate: "phase"
         }) }}
 
         {{ checkboxes({
-          classes: "nhsuk-checkboxes--small",
           fieldset: {
             legend: {
               classes: "nhsuk-fieldset__legend--s",
               text: __("programme.label")
             }
           },
+          small: true,
           items: programmeItems,
           decorate: "programme_id"
         }) if programmeItems }}
 
         {{ appButtonGroup({
           buttons: [{
-            classes: "nhsuk-button--small",
             text: __("search.confirm"),
+            small: true,
             variant: "secondary",
             attributes: {
               formaction: params.formaction,
@@ -64,9 +64,9 @@
               role: "search"
             }
           }, {
-            classes: "nhsuk-button--small",
             text: __("search.clear"),
             href: "/schools",
+            small: true,
             variant: "secondary"
           } if data.q or data.phase]
         }) }}

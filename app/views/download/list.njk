@@ -22,21 +22,21 @@
         headingLevel: 3
       }) %}
         {{ radios({
-          classes: "nhsuk-radios--small",
           fieldset: {
             legend: {
               classes: "nhsuk-fieldset__legend--s",
               text: __("download.type.label")
             }
           },
+          small: true,
           items: radioFilterItems(DownloadType),
           decorate: "type"
         }) }}
 
         {{ appButtonGroup({
           buttons: [{
-            classes: "nhsuk-button--small",
             text: __("search.confirm"),
+            small: true,
             variant: "secondary",
             attributes: {
               formaction: params.formaction,
@@ -44,9 +44,9 @@
               role: "search"
             }
           }, {
-            classes: "nhsuk-button--small",
             text: __("search.clear"),
             href: "/downloads",
+            small: true,
             variant: "secondary"
           } if data.type]
         }) }}

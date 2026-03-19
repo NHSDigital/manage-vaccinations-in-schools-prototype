@@ -60,8 +60,8 @@
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
 
     {% set psdRadiosHtml = radios({
-      classes: "nhsuk-radios--inline",
       fieldset: { legend: { text: __("triage.psd.label") } },
+      inline: true,
       items: booleanItems,
       decorate: "triage.psd"
     }) if account.canPrescribe %}

@@ -12,7 +12,6 @@
     {
       header: __("upload.show.moves.decision.label"),
       html: radios({
-        classes: "nhsuk-radios--small",
         formGroup: {
           classes: "nhsuk-u-margin-bottom-2"
         },
@@ -22,6 +21,7 @@
             text: __("upload.show.moves.decision.title", { patient: patient })
           }
         },
+        small: true,
         items: [{
           text: __("upload.show.moves.decision.accept.label"),
           value: "restore"

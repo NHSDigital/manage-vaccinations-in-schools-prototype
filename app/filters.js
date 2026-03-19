@@ -26,7 +26,7 @@ export default (env) => {
    */
   filters.removeLastSummaryBorder = function (array) {
     if (array && Array.isArray(array) && array.length > 0) {
-      array.at(-1).classes = 'nhsuk-summary-list__row--no-border'
+      array.at(-1).border = false
 
       return array
     }

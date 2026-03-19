@@ -15,10 +15,10 @@
   }) }}
 
   {{ radios({
-    classes: "nhsuk-radios--inline",
     fieldset: {
       legend: { text: __("reply.confirmed.label") }
     },
+    inline: true,
     items: booleanItems,
     decorate: "reply.confirmed"
   }) }}
