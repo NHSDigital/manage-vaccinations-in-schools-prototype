@@ -71,6 +71,12 @@
   .nhsuk-card__content {
     @include nhsuk-responsive-padding(4);
   }
+
+  .nhsuk-button-group .nhsuk-button {
+    @include nhsuk-media-query($from: tablet) {
+      margin-bottom: 0;
+    }
+  }
 }
 
 // Align counts across cards
