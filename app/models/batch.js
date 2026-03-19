@@ -78,7 +78,7 @@ export class Batch {
   /**
    * Get vaccine this batch belongs to
    *
-   * @returns {Vaccine} Vaccine
+   * @returns {Vaccine|undefined} Vaccine
    */
   get vaccine() {
     try {

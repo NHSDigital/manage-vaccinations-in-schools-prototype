@@ -304,7 +304,7 @@ export class PatientSession {
   /**
    * Get related patient sessions
    *
-   * @returns {Array<PatientSession>} Patient sessions
+   * @returns {Array<PatientSession>|undefined} Patient sessions
    */
   get siblingPatientSessions() {
     try {
@@ -443,7 +443,7 @@ export class PatientSession {
   /**
    * Get last recorded vaccination
    *
-   * @returns {import('./vaccination.js').Vaccination} Vaccination
+   * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
    */
   get lastVaccinationOutcome() {
     if (this.vaccinationOutcomes?.length > 0) {

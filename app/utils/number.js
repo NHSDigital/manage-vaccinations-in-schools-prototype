@@ -14,7 +14,7 @@ export function* range(start, end) {
 /**
  * Get ordinal from number
  *
- * @param {*} number - Number, e.g. 1
+ * @param {number} number - Number, e.g. 1
  * @returns {string} Ordinal, e.g. 1st
  */
 export function ordinal(number) {

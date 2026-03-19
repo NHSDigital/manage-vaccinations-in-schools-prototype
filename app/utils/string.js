@@ -29,8 +29,9 @@ export function camelToKebabCase(string) {
 /**
  * Convert string to boolean
  *
- * @param {any} value - Value to test
- * @returns {boolean|any} Boolean
+ * @template T
+ * @param {T} value - Value to test
+ * @returns {boolean|T} Boolean
  */
 export function stringToBoolean(value) {
   // Ensure single checkbox returns boolean not an array with _unchecked
@@ -44,7 +45,8 @@ export function stringToBoolean(value) {
 /**
  * Convert string to array
  *
- * @param {any} value - Value to test
+ * @template T
+ * @param {T} value - Value to test
  * @returns {Array} Array
  */
 export function stringToArray(value) {
@@ -430,7 +432,7 @@ export function formatOther(other, string) {
  * Format vaccine criteria
  *
  * @param {string} string - String
- * @returns {string} Formatted HTML
+ * @returns {string|undefined} Formatted HTML
  */
 export function formatVaccineCriteria(string) {
   if (!string) return
@@ -510,7 +512,7 @@ export function lowerCaseFirst(string) {
  * Get programme names that can be used in a sentence
  *
  * @param {string} string - String to change
- * @returns {string} Sentence cased programme names
+ * @returns {string|undefined} Sentence cased programme names
  */
 export function sentenceCaseProgrammeName(string) {
   if (!string) return

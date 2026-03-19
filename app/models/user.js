@@ -10,7 +10,7 @@ import { formatLink, formatMonospace } from '../utils/string.js'
  * @property {string} [email] - Email address
  * @property {import('../enums.js').UserRole} [role] - User role
  * @property {boolean} [canPrescribe] - Can provide PSD instruction
- * @property {Array<import('../enums.js').VaccineMethod>} - Vaccine methods
+ * @property {Array<import('../enums.js').VaccineMethod>} [vaccineMethods] - Vaccine methods
  * @property {object} [vaccinations] - Vaccination count
  */
 export class User {

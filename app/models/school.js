@@ -95,7 +95,7 @@ export class School extends Location {
   /**
    * Get sessions run at this school
    *
-   * @returns {Array<Session>} Sessions
+   * @returns {Array<Session>|undefined} Sessions
    */
   get sessions() {
     if (this.context) {

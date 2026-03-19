@@ -14,7 +14,7 @@ import { Programme, Team } from '../models.js'
  * @property {string} [addressLevel1] - Address level 1
  * @property {string} [postalCode] - Postcode
  * @property {string} [team_id] - Team ID
- * @property {Array<SessionPresetName>} [presetNames] - Session preset names
+ * @property {Array<import('../enums.js').SessionPresetName>} [presetNames] - Session preset names
  */
 export class Location {
   constructor(options, context) {
@@ -60,7 +60,7 @@ export class Location {
   /**
    * Get team
    *
-   * @returns {Team} Team
+   * @returns {Team|undefined} Team
    */
   get team() {
     try {

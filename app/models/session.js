@@ -58,7 +58,7 @@ import {
  * @property {object} [date_] - Dates (from `dateInput`s)
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
- * @property {string<SessionMMRConsent>} [mmrConsent] - Does session use MMR outbreak comms?
+ * @property {string<import('../enums.js').SessionMMRConsent>} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {boolean} [registration] - Does session have registration?
  *
  *   Clinics only
@@ -463,7 +463,7 @@ export class Session {
   /**
    * Get all vaccine criteria used in session (if more than one)
    *
-   * @returns {Array<RecordVaccineCriteria>} Vaccine criteria
+   * @returns {Array<RecordVaccineCriteria>|undefined} Vaccine criteria
    */
   get vaccineCriteria() {
     const programmeTypes = this.programmes.map((programme) => programme.type)

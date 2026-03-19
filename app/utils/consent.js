@@ -11,7 +11,7 @@ const getHealthQuestionPath = (key, pathPrefix) => {
  *
  * @param {string} pathPrefix - Path prefix
  * @param {import('../models.js').Consent} consent - Consent
- * @returns {object} Health question paths
+ * @returns {object|undefined} Health question paths
  */
 export const getHealthQuestionPaths = (pathPrefix, consent) => {
   if (!consent.decision) {

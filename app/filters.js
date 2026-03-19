@@ -22,7 +22,7 @@ export default (env) => {
    * Remove border from last summary row
    *
    * @param {Array} array - Summary rows
-   * @returns {Array} Summary rows
+   * @returns {Array|undefined} Summary rows
    */
   filters.removeLastSummaryBorder = function (array) {
     if (array && Array.isArray(array) && array.length > 0) {
@@ -70,7 +70,7 @@ export default (env) => {
   /**
    * Ordinal
    *
-   * @param {string} number - Number to get ordinal for
+   * @param {number} number - Number to get ordinal for
    * @returns {string} Ordinal
    */
   filters.ordinal = (number) => {
@@ -138,8 +138,9 @@ export default (env) => {
   /**
    * Push item to array
    *
+   * @template T
    * @param {Array} array - Array
-   * @param {*} item - Item to push
+   * @param {T} item - Item to push
    * @returns {Array} Updated array
    */
   filters.push = (array, item) => {
@@ -166,6 +167,7 @@ export default (env) => {
    *
    * @param {Array} array - Array
    * @param {string} value - Value to check
+   * @returns {boolean} Returns true or false
    */
   filters.includes = (array, value) => {
     return prototypeFilters.arrayOrStringIncludes(array, value)

@@ -23,7 +23,7 @@ import {
  * @property {import('../enums.js').VaccineCriteria} criteria - Criteria
  * @property {import('../enums.js').VaccineMethod} method - Method
  * @property {import('../enums.js').VaccinationProtocol} [delegationProtocol] - Delegation protocol
- * @property {Array<VaccineSideEffect>} sideEffects - Side effects
+ * @property {Array<import('../enums.js').VaccineSideEffect>} sideEffects - Side effects
  * @property {object} healthQuestions - Health questions
  * @property {Array<import('../enums.js').PreScreenQuestion>} preScreenQuestions - Pre-screening questions
  */
@@ -56,7 +56,7 @@ export class Vaccine {
   /**
    * Get vaccine batches
    *
-   * @returns {Array<Batch>} Batches
+   * @returns {Array<Batch>|undefined} Batches
    */
   get batches() {
     try {

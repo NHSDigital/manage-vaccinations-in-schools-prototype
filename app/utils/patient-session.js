@@ -55,7 +55,7 @@ export const getRegistrationOutcome = (patientSession) => {
  * Check if registration is needed prior to recording vaccination
  *
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @returns {boolean} Ready to record outcome
+ * @returns {boolean|undefined} Ready to record outcome
  */
 export const getRecordOutcome = (patientSession) => {
   const { register, report, session } = patientSession
@@ -73,7 +73,7 @@ export const getRecordOutcome = (patientSession) => {
  * Get vaccination (session) outcome
  *
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @returns {VaccinationOutcome} Vaccination (session) outcome
+ * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
  */
 export const getSessionOutcome = (patientSession) => {
   if (patientSession.lastVaccinationOutcome) {

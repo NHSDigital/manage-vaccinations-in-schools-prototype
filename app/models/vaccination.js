@@ -78,7 +78,6 @@ import {
  * @property {string} [protocol] - Protocol
  * @property {boolean} [scheduled] - Vaccination date was on schedule
  * @property {string} [note] - Note
- * @property {string} [country] - Country
  * @property {string} [clinic_id] - Clinic ID
  * @property {string} [school_id] - School ID
  * @property {string} [patient_uuid] - Patient UUID (used outside of a session)
@@ -168,7 +167,7 @@ export class Vaccination {
   /**
    * Get location (name and address)
    *
-   * @returns {object} Location
+   * @returns {object|undefined} Location
    */
   get location() {
     if (this.locationType === LocationType.Home) {
@@ -198,7 +197,7 @@ export class Vaccination {
   /**
    * Get batch
    *
-   * @returns {Batch} Batch
+   * @returns {Batch|undefined} Batch
    */
   get batch() {
     try {
@@ -292,7 +291,7 @@ export class Vaccination {
   /**
    * Get patient session
    *
-   * @returns {PatientSession} Patient session
+   * @returns {PatientSession|undefined} Patient session
    */
   get patientSession() {
     try {
@@ -305,7 +304,7 @@ export class Vaccination {
   /**
    * Get patient
    *
-   * @returns {import('../models.js').Patient} Patient
+   * @returns {import('../models.js').Patient|undefined} Patient
    */
   get patient() {
     if (this.patient_uuid) {
@@ -318,7 +317,7 @@ export class Vaccination {
   /**
    * Get session
    *
-   * @returns {import('../models.js').Session} Session
+   * @returns {import('../models.js').Session|undefined} Session
    */
   get session() {
     if (this.patientSession) {
@@ -329,7 +328,7 @@ export class Vaccination {
   /**
    * Get user who performed vaccination
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get createdBy() {
     try {
@@ -344,7 +343,7 @@ export class Vaccination {
   /**
    * Get user who reported vaccination
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get reportedBy() {
     try {
@@ -359,7 +358,7 @@ export class Vaccination {
   /**
    * Get user who supplied the vaccine
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get suppliedBy() {
     try {
@@ -374,7 +373,7 @@ export class Vaccination {
   /**
    * Get programme
    *
-   * @returns {Programme} Programme
+   * @returns {Programme|undefined} Programme
    */
   get programme() {
     try {

@@ -50,7 +50,7 @@ export class Team {
   /**
    * Get clinics
    *
-   * @returns {Array<Clinic>} Clinics
+   * @returns {Array<Clinic>|undefined} Clinics
    */
   get clinics() {
     try {
@@ -65,7 +65,7 @@ export class Team {
   /**
    * Get schools
    *
-   * @returns {Array<School>} Schools
+   * @returns {Array<School>|undefined} Schools
    */
   get schools() {
     try {

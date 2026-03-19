@@ -74,7 +74,7 @@ export class PatientProgramme {
   /**
    * Year patient is eligible for programme
    *
-   * @returns {number} Year patient becomes eligible for programme
+   * @returns {number|undefined} Year patient becomes eligible for programme
    */
   get year() {
     if (!this.programme) {
@@ -119,7 +119,7 @@ export class PatientProgramme {
   /**
    * Get most recent patient session
    *
-   * @returns {import('./patient-session.js').PatientSession} Patient session
+   * @returns {import('./patient-session.js').PatientSession|undefined} Patient session
    */
   get lastPatientSession() {
     if (this.patientSessions?.length > 0) {
@@ -162,7 +162,7 @@ export class PatientProgramme {
   /**
    * Get last vaccination outcome
    *
-   * @returns {import('./vaccination.js').Vaccination} Vaccination
+   * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
    */
   get lastVaccinationOutcome() {
     if (this.vaccinationOutcomes?.length > 0) {
@@ -204,7 +204,7 @@ export class PatientProgramme {
   /**
    * Get last vaccination outcome
    *
-   * @returns {import('./vaccination.js').Vaccination} Vaccination
+   * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
    */
   get lastVaccinationGiven() {
     if (this.vaccinationsGiven?.length > 0) {

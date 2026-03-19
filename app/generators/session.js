@@ -9,12 +9,12 @@ import { getSessionYearGroups } from '../utils/session.js'
  * Generate fake session
  *
  * @param {import('../enums.js').SessionPreset} preset - Session preset
- * @param {import('../models.js').User} user - User
  * @param {number} academicYear - Academic year
+ * @param {import('../models.js').User} user - User
  * @param {object} options - Options
  * @param {string} [options.clinic_id] - Clinic ID
  * @param {string} [options.school_id] - School URN
- * @returns {Session} Session
+ * @returns {Session|undefined} Session
  */
 export function generateSession(preset, academicYear, user, options) {
   // Don’t generate sessions for inactive session preset

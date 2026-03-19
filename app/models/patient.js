@@ -51,7 +51,7 @@ import {
  * @property {Patient} [pendingChanges] - Pending changes to record values
  * @property {import('../enums.js').ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
- * @property {Array<string} [clinicProgramme_ids] - Clinic programme invitations
+ * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<import('./audit-event.js').AuditEvent>} events - Events
  * @property {Array<string>} [reply_uuids] - Reply IDs
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
@@ -306,7 +306,7 @@ export class Patient extends Child {
   /**
    * Get patient programmes
    *
-   * @returns {Record<string, PatientProgramme>}
+   * @returns {Record<string, PatientProgramme>} Patient programmes
    */
   get programmes() {
     /** @type {Record<string, PatientProgramme>} */

@@ -53,7 +53,7 @@ export class Upload {
   /**
    * Get user who created upload
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get createdBy() {
     try {
@@ -68,7 +68,7 @@ export class Upload {
   /**
    * Get user who approved upload
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get updatedBy() {
     try {
@@ -118,7 +118,7 @@ export class Upload {
   /**
    * Get number of invalid patient records (no vaccination recorded)
    *
-   * @returns {Array<Patient>} Invalid patient records
+   * @returns {Array<Patient>|undefined} Invalid patient records
    */
   get invalid() {
     if (

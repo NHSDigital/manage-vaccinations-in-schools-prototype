@@ -54,7 +54,7 @@ export class Download {
   /**
    * Get user who created upload
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get createdBy() {
     try {
@@ -129,7 +129,7 @@ export class Download {
   /**
    * Get programme
    *
-   * @returns {Programme} Programme
+   * @returns {Programme|undefined} Programme
    */
   get programme() {
     try {

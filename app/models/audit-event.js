@@ -35,7 +35,7 @@ import {
  * @property {boolean} [pinned] - Pinned
  * @property {object} [messageRecipient] - Message recipient
  * @property {string} [messageTemplate] - Message template
- * @property {AuditEventType} [type] - Audit event type
+ * @property {import('../enums.js').AuditEventType} [type] - Audit event type
  * @property {string} [outcome] - Outcome for activity type
  * @property {Date} [outcomeAt] - Date outcome invalidates
  * @property {object} [outcomeAt_] - Date outcome invalidates (from `dateInput`)
@@ -68,7 +68,7 @@ export class AuditEvent {
   /**
    * Get user who created event
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get createdBy() {
     try {
@@ -168,7 +168,7 @@ export class AuditEvent {
   /**
    * Get team
    *
-   * @returns {Team} Team
+   * @returns {Team|undefined} Team
    */
   get team() {
     try {

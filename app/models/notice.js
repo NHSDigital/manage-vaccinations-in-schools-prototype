@@ -27,7 +27,7 @@ export class Notice {
   /**
    * Get patient
    *
-   * @returns {Patient} Patient
+   * @returns {Patient|undefined} Patient
    */
   get patient() {
     try {

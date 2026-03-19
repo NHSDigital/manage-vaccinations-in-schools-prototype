@@ -42,7 +42,7 @@ export const getConsentWindow = (session) => {
  * @param {import('../models.js').Session[]} sessions - Sessions
  * @param {string} [presetName] - Session preset name
  * @param {boolean} [isSchool] - Get school session
- * @returns {object} Consent window key and value
+ * @returns {object|undefined} Consent window key and value
  */
 export const getSessionConsentUrl = (
   sessions,

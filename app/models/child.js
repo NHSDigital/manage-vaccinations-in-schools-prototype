@@ -30,7 +30,7 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @property {Date} [dob] - Date of birth
  * @property {object} [dob_] - Date of birth (from `dateInput`)
  * @property {Date} [dod] - Date of death
- * @property {import('../enums.js).Gender} gender - Gender
+ * @property {import('../enums.js').Gender} gender - Gender
  * @property {EthnicGroup} [ethnicGroup] - Ethnic group
  * @property {string} [ethnicGroupOther] - Other ethnic group
  * @property {import('../enums.js).EthnicBackground')} [ethnicBackground] - Ethnic background
@@ -153,7 +153,7 @@ export class Child {
   /**
    * Get formatted ethnicity (ethnic group and background)
    *
-   * @returns {string} Date of birth and age in years
+   * @returns {string|undefined} Date of birth and age in years
    */
   get ethnicity() {
     if (this.ethnicGroup && this.ethnicBackground !== 'false') {

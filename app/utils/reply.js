@@ -246,7 +246,7 @@ export const getConsentRefusalReasons = (patientSession) => {
  *
  * @param {import('../models.js').Vaccine} vaccine - Vaccine
  * @param {string} healthCondition - Health condition
- * @returns {object} Health answers
+ * @returns {object|undefined} Health answers
  */
 export const getHealthAnswers = (vaccine, healthCondition) => {
   // If no vaccine, we don’t have consent
@@ -277,7 +277,7 @@ export const getHealthAnswers = (vaccine, healthCondition) => {
  *
  * @param {object} healthAnswers - Health answers
  * @param {string} healthCondition - Health condition
- * @returns {string} Triage note
+ * @returns {string|undefined} Triage note
  */
 export const getTriageNote = (healthAnswers, healthCondition) => {
   if (countAnswersNeedingTriage(healthAnswers)) {

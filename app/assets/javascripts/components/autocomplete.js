@@ -71,7 +71,8 @@ export class Autocomplete extends Component {
   /**
    * Selected option
    *
-   * @param {*} value - Current value
+   * @template T
+   * @param {T} value - Current value
    * @param {Array} options - Available options
    * @returns {HTMLOptionElement} Selected option
    */
@@ -85,14 +86,17 @@ export class Autocomplete extends Component {
   /**
    * HTML for suggestion
    *
-   * @param {*} value - Current value
+   * @template T
+   * @param {T} value - Current value
    * @param {Array} options - Available options
    * @returns {string} HTML for suggestion
    */
   suggestion(value, options) {
     const option = options.find(({ name }) => name === value)
     if (option) {
-      const label = option.append ? `${value} – ${option.append}` : value
+      const label = option.append
+        ? `${value} – ${option.append}`
+        : String(value)
       return option.hint
         ? `${label}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
         : label

@@ -210,7 +210,7 @@ export class Reply {
   /**
    * Get user who created reply
    *
-   * @returns {User} User
+   * @returns {User|undefined} User
    */
   get createdBy() {
     try {
@@ -332,7 +332,7 @@ export class Reply {
   /**
    * Get patient
    *
-   * @returns {Patient} Patient
+   * @returns {Patient|undefined} Patient
    */
   get patient() {
     try {
@@ -346,7 +346,7 @@ export class Reply {
   /**
    * Get programme
    *
-   * @returns {Programme} User
+   * @returns {Programme|undefined} User
    */
   get programme() {
     try {
@@ -361,7 +361,7 @@ export class Reply {
   /**
    * Get session
    *
-   * @returns {Session} Session
+   * @returns {Session|undefined} Session
    */
   get session() {
     try {
