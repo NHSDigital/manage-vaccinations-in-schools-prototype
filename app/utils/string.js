@@ -143,7 +143,7 @@ export function formatLinkWithSecondaryText(href, text, secondary) {
  *
  * @param {string} text - Primary text
  * @param {string} [secondary] - Secondary text
- * @param {boolean} [breakLine=true] - Whether to add a line break before secondary text
+ * @param {boolean} [breakLine] - Whether to add a line break before secondary text
  * @returns {string} Formatted HTML
  */
 export function formatWithSecondaryText(text, secondary, breakLine = true) {
@@ -278,7 +278,7 @@ export function formatMillilitres(string) {
  * Format monospaced
  *
  * @param {string|number} string - String
- * @param {boolean} [noWrap=false] - Prevent wrapping
+ * @param {boolean} [noWrap] - Prevent wrapping
  * @returns {string|undefined} Formatted HTML
  */
 export function formatMonospace(string, noWrap = false) {

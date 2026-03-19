@@ -599,7 +599,7 @@ export class Session {
   /**
    * Get address
    *
-   * @returns {Object} Address
+   * @returns {object|undefined} Address
    */
   get address() {
     const type = this.type === SessionType.School ? 'school' : 'clinic'

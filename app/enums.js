@@ -437,7 +437,7 @@ export const SessionMMRConsent = {
 }
 
 /**
- * @typedef {Object} SessionPreset
+ * @typedef {object} SessionPreset
  * @property {SessionPresetName} name - Session preset name
  * @property {boolean} active - Whether preset is active
  * @property {boolean} [adolescent] - Adolescent programme flag

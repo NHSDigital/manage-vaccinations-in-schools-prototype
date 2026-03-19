@@ -30,7 +30,7 @@ export const schoolController = {
   },
 
   new(type) {
-    return (request, response, next) => {
+    return (request, response) => {
       const { data } = request.session
 
       // @ts-ignore

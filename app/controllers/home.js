@@ -2,7 +2,7 @@ import { UserRole } from '../enums.js'
 import { Notice } from '../models.js'
 
 export const homeController = {
-  redirect(request, response, next) {
+  redirect(request, response) {
     const { account } = request.app.locals
 
     if (account.role === UserRole.DataConsumer) {
