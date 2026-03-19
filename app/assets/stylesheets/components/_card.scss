@@ -1,34 +1,84 @@
 @use "sass:color";
 @use "../vendor/nhsuk-frontend" as *;
 
+$_blue-background-colour: nhsuk-tint(nhsuk-colour("blue"), 80%);
+$_blue-border-colour: nhsuk-tint(nhsuk-colour("blue"), 50%);
+$_blue-border-hover-colour: nhsuk-shade(nhsuk-colour("blue"), 10%);
+$_blue-text-colour: nhsuk-shade(nhsuk-colour("blue"), 30%);
+
+$_green-background-colour: nhsuk-tint(nhsuk-colour("green"), 80%);
+$_green-border-colour: nhsuk-tint(nhsuk-colour("green"), 40%);
+$_green-border-hover-colour: nhsuk-shade(nhsuk-colour("green"), 10%);
+$_green-text-colour: nhsuk-shade(nhsuk-colour("green"), 40%);
+
+$_red-background-colour: nhsuk-tint(nhsuk-colour("red"), 80%);
+$_red-border-colour: nhsuk-tint(nhsuk-colour("red"), 50%);
+$_red-border-hover-colour: nhsuk-shade(nhsuk-colour("red"), 10%);
+$_red-text-colour: nhsuk-shade(nhsuk-colour("red"), 50%);
+
+$_orange-background-colour: nhsuk-tint(nhsuk-colour("warm-yellow"), 70%);
+$_orange-border-colour: nhsuk-tint(nhsuk-colour("warm-yellow"), 10%);
+$_orange-border-hover-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 10%);
+$_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
+
 .app-card {
   &--blue {
-    border-color: nhsuk-tint(nhsuk-colour("blue"), 30%);
-    color: nhsuk-shade(nhsuk-colour("blue"), 30%);
-    background-color: nhsuk-tint(nhsuk-colour("blue"), 80%);
+    border-color: $_blue-border-colour;
+    color: $_blue-text-colour;
+    background-color: $_blue-background-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-colour;
 
-    &.nhsuk-card--clickable:active {
-      border-color: nhsuk-shade(nhsuk-colour("blue"), 30%);
+    &.nhsuk-card--clickable:hover,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+      border-color: $_blue-border-hover-colour;
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-hover-colour;
+    }
+
+    &.nhsuk-card--clickable:active,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+      box-shadow: none;
     }
   }
 
   &--green {
-    border-color: nhsuk-tint(nhsuk-colour("green"), 40%);
-    color: nhsuk-shade(nhsuk-colour("green"), 40%);
-    background-color: nhsuk-tint(nhsuk-colour("green"), 80%);
+    border-color: $_green-border-colour;
+    color: $_green-text-colour;
+    background-color: $_green-background-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-colour;
 
-    &.nhsuk-card--clickable:active {
-      border-color: nhsuk-shade(nhsuk-colour("green"), 40%);
+    &.nhsuk-card--clickable:hover,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+      border-color: $_green-border-hover-colour;
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-hover-colour;
+    }
+
+    &.nhsuk-card--clickable:active,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+      box-shadow: none;
     }
   }
 
   &--orange {
-    border-color: nhsuk-shade(nhsuk-colour("warm-yellow"), 10%);
-    color: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
-    background-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 70%);
+    border-color: $_orange-border-colour;
+    color: $_orange-text-colour;
+    background-color: $_orange-background-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-colour;
 
-    &.nhsuk-card--clickable:active {
-      border-color: nhsuk-shade(nhsuk-colour("warm-yellow"), 30%);
+    &.nhsuk-card--clickable:hover,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+      border-color: $_orange-border-hover-colour;
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-hover-colour;
+    }
+
+    &.nhsuk-card--clickable:active,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+      box-shadow: none;
     }
 
     blockquote {
@@ -37,12 +87,22 @@
   }
 
   &--red {
-    border-color: nhsuk-tint(nhsuk-colour("red"), 50%);
-    color: nhsuk-shade(nhsuk-colour("red"), 50%);
-    background-color: nhsuk-tint(nhsuk-colour("red"), 80%);
+    border-color: $_red-border-colour;
+    color: $_red-text-colour;
+    background-color: $_red-background-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-colour;
 
-    &.nhsuk-card--clickable:active {
-      border-color: nhsuk-shade(nhsuk-colour("red"), 50%);
+    &.nhsuk-card--clickable:hover,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+      border-color: $_red-border-hover-colour;
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-hover-colour;
+    }
+
+    &.nhsuk-card--clickable:active,
+    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+      box-shadow: none;
     }
   }
 
