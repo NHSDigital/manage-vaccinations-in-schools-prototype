@@ -14,6 +14,9 @@ import { team } from './middleware/team.js'
 import { accountRoutes } from './routes/account.js'
 import { activityRoutes } from './routes/activity.js'
 import { batchRoutes } from './routes/batch.js'
+import { bookIntoClinicRoutes } from './routes/book-into-a-clinic.js'
+import { clinicAppointmentRoutes } from './routes/clinic-appointment.js'
+import { clinicBookingRoutes } from './routes/clinic-booking.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
@@ -47,6 +50,9 @@ router.use(referrer)
 router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
 router.use('/activity', activityRoutes)
+router.use('/book-into-a-clinic', bookIntoClinicRoutes) // parent-facing clinic booking journey
+router.use('/clinic-bookings', clinicBookingRoutes) // original explorations of clinic booking data
+router.use('/clinic-appointments', clinicAppointmentRoutes)
 router.use('/consents', consentRoutes)
 router.use('/downloads', downloadRoutes)
 router.use('/give-or-refuse-consent', parentRoutes)

@@ -7,6 +7,8 @@ export * from './models/reply.js'
 // Other classes
 export * from './models/audit-event.js'
 export * from './models/clinic.js'
+export * from './models/clinic-appointment.js'
+export * from './models/clinic-booking.js'
 export * from './models/consent.js'
 export * from './models/default-batch.js'
 export * from './models/download.js'

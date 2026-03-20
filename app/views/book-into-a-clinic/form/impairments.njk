@@ -1,0 +1,56 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("consent.child.impairments.title") %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1
+        })
+      }
+    },
+    items: [{
+      text: Impairment.Vision,
+      hint: {
+        text: __("consent.child.impairments.vision.hint")
+      }
+    }, {
+      text: Impairment.Hearing,
+      hint: {
+        text: __("consent.child.impairments.hearing.hint")
+      }
+    }, {
+      text: Impairment.Mobility,
+      hint: {
+        text: __("consent.child.impairments.mobility.hint")
+      }
+    }, {
+      text: Impairment.Memory,
+      hint: {
+        text: __("consent.child.impairments.memory.hint")
+      }
+    }, {
+      text: Impairment.MentalHealth,
+      hint: {
+        text: __("consent.child.impairments.mentalHealth.hint")
+      }
+    }, {
+      text: Impairment.Communicative,
+      hint: {
+        text: __("consent.child.impairments.communicative.hint")
+      }
+    }, {
+      text: Impairment.Other,
+      conditional: {
+        html: input({
+          label: { text: __("consent.child.impairmentsOther.title") },
+          decorate: "consent.child.impairmentsOther"
+        })
+      }
+    }],
+    decorate: "consent.child.impairments"
+  }) }}
+{% endblock %}

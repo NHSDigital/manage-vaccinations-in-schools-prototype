@@ -1,0 +1,26 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.extraTime.title", firstName) %}
+
+{% block form %}
+  {# Ask for a reason if the parent says the child does need extra time #}
+  {%- set yesHtml = input({
+    label: { text: __("clinicBooking.extraTime.reason.label") },
+    decorate: "appointment.extraTimeReason"
+  }) %}
+  {% set items = injectConditionalHtml(booleanItems, true, yesHtml) %}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+        })
+      }
+    },
+    hint: { text: __("clinicBooking.extraTime.hint") },
+    items: items,
+    decorate: "appointment.needsExtraTime"
+  }) }}
+{% endblock %}

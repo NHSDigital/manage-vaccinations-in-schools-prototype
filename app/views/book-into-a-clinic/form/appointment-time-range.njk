@@ -1,0 +1,49 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.timeRange.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+  }) }}
+
+  {#
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.timeRange.clinicSummary.title"),
+      headingSize: "m"
+    },
+    rows: summaryRows(appointment, {
+      location: {},
+      date: {}
+    })
+  }) }}
+  #}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.timeRange.ranges.label")
+      }
+    },
+    items: [
+      {
+        text: '9am to 10am',
+        value: '0900-1000',
+        hint: { text: __mf("clinicBooking.timeRange.range.slotsAvailable", { count: 6 }) }
+      },
+      {
+        text: '10am to 11am',
+        value: "1000-1100",
+        hint: { text: __mf("clinicBooking.timeRange.range.slotsAvailable", { count: 4 }) }
+      },
+      {
+        text: '11am to 12pm (midday)',
+        value: "1100-1200",
+        hint: { text: __mf("clinicBooking.timeRange.range.slotsAvailable", { count: 1 }) }
+      }
+    ],
+    decorate: "transaction.timeRange"
+  }) }}
+{% endblock %}

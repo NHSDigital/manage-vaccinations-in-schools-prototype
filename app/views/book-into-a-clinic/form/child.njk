@@ -1,0 +1,28 @@
+{% extends "_layouts/form.njk" %}
+
+{% if childNumber == 1 %}
+  {% set title = __("clinicBooking.child.title.first") %}
+{% else %}
+  {% set title = __("clinicBooking.child.title.next") %}
+{% endif %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: __("clinicBooking.child.caption", childNumber | ordinal) if childCount > 1
+  }) }}
+
+  {{ __("clinicBooking.child.description") | nhsukMarkdown }}
+
+  {{ input({
+    label: { text: __("clinicBooking.child.firstName.label") },
+    hint: { text: __("clinicBooking.child.firstName.hint") },
+    decorate: "appointment.unmatchedFirstName"
+  }) }}
+
+  {{ input({
+    label: { text: __("clinicBooking.child.lastName.label") },
+    hint: { text: __("clinicBooking.child.lastName.hint") },
+    decorate: "appointment.unmatchedLastName"
+  }) }}
+{% endblock %}

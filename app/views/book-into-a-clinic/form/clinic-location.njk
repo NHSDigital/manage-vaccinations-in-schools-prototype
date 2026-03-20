@@ -1,0 +1,32 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.clinicLocation.title", firstName) %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+        })
+      }
+    },
+    hint: { text: __('clinicBooking.clinicLocation.hint') },
+    items: [
+      { 
+        text: 'Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
+        hint: { text: '0.5 miles away'}
+      },
+      {
+        text: 'Lane End Surgery, 2 Manor Walk, Four Lane Ends, NE7 7XX',
+        hint: { text: '2.4 miles away'}
+      },
+      {
+        text: 'City Library, John Dobson Street, Newcastle upon Tyne, NE1 8AX',
+        hint: { text: '4.7 miles away'}
+      }
+    ],
+    decorate: "transaction.clinicLocation"
+  }) }}
+{% endblock %}

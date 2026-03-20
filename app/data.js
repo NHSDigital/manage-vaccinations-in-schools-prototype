@@ -1,5 +1,7 @@
 import vaccines from './datasets/vaccines.js'
 import batches from '../.data/batches.json' with { type: 'json' }
+import clinicAppointments from '../.data/clinic-appointments.json' with { type: 'json' }
+import clinicBookings from '../.data/clinic-bookings.json' with { type: 'json' }
 import clinics from '../.data/clinics.json' with { type: 'json' }
 import instructions from '../.data/instructions.json' with { type: 'json' }
 import moves from '../.data/moves.json' with { type: 'json' }
@@ -30,6 +32,8 @@ const team = teams['001']
  */
 const data = {
   batches,
+  clinicAppointments,
+  clinicBookings,
   clinics,
   counts: {},
   defaultBatches: {},

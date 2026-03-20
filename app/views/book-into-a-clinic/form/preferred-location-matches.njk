@@ -1,0 +1,36 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.preferredLocationMatches.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: { text: __("clinicBooking.preferredLocationMatches.hits.label") }
+    },
+    items: [{
+      text: 'Newcastle upon Tyne, NE1',
+      value: 'NE1'
+    },
+    {
+      text: 'Newcastle-under-Lyme, ST5',
+      value: 'ST5'
+    },
+    {
+      text: 'Newcastle, SY7',
+      value: 'SY7'
+    },
+    {
+      divider: 'or'
+    },
+    {
+      text: __('clinicBooking.preferredLocationMatches.tryAgain'),
+      value: 'retry'
+    }],
+    decorate: "transaction.preferredLocation"
+  }) }}
+{% endblock %}

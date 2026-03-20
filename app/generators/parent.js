@@ -19,8 +19,9 @@ export function generateParent(childLastName, isMum) {
   const relationship = isMum
     ? ParentalRelationship.Mum
     : faker.helpers.weightedArrayElement([
-        { value: ParentalRelationship.Dad, weight: 3 },
+        { value: ParentalRelationship.Dad, weight: 4 },
         { value: ParentalRelationship.Guardian, weight: 1 },
+        { value: ParentalRelationship.Fosterer, weight: 1 },
         { value: ParentalRelationship.Other, weight: 1 }
       ])
 
@@ -72,7 +73,7 @@ export function generateParent(childLastName, isMum) {
     fullName: `${firstName} ${lastName}`,
     relationship,
     ...(relationship === ParentalRelationship.Other && {
-      relationshipOther: 'Foster parent'
+      relationshipOther: 'Grandparent'
     }),
     ...(email && {
       email,

@@ -443,6 +443,7 @@ export const SessionMMRConsent = {
  * @property {boolean} [adolescent] - Adolescent programme flag
  * @property {Array<ProgrammeType>} programmeTypes - Preset programme types
  * @property {SchoolTerm} term - School term to schedule session
+ * @property {string} slug - URI part unique to this preset, used in clinic booking URIs
  */
 
 /**
@@ -454,27 +455,31 @@ export const SessionPresets = [
     name: SessionPresetName.Flu,
     active: true,
     programmeTypes: [ProgrammeType.Flu],
-    term: SchoolTerm.Autumn
+    term: SchoolTerm.Autumn,
+    slug: 'flu'
   },
   {
     name: SessionPresetName.HPV,
     active: true,
     adolescent: true,
     programmeTypes: [ProgrammeType.HPV],
-    term: SchoolTerm.Spring
+    term: SchoolTerm.Spring,
+    slug: 'hpv'
   },
   {
     name: SessionPresetName.Doubles,
     active: true,
     adolescent: true,
     programmeTypes: [ProgrammeType.MenACWY, ProgrammeType.TdIPV],
-    term: SchoolTerm.Summer
+    term: SchoolTerm.Summer,
+    slug: 'doubles'
   },
   {
     name: SessionPresetName.MMR,
     active: true,
     programmeTypes: [ProgrammeType.MMR],
-    term: SchoolTerm.Spring
+    term: SchoolTerm.Spring,
+    slug: 'mmr'
   }
 ]
 

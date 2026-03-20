@@ -1,0 +1,33 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("clinicBooking.parentalResponsibility.title") %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {{ appHeading({
+        title: title,
+        caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+      }) }}
+
+      {#
+        TODO: offer the choice of saying that someone with parental responsibility will
+        attend the clinic, or that they're happy for the child to self-consent. If they
+        say No to both of those, then abandon this appointment, removing it from the
+        booking and moving to the next child (if there will be one), or possibly abandoning
+        the booking as a whole if this was the only child.
+
+        As it stands, you might have gone through and entered 1 child's details successfully
+        (your biological son/daughter) and then got to a foster child that's blocking you
+        from even completing the booking of the first child's appointment. It's likely rare,
+        but it would be annoying.
+        
+        For now, however, it's simpler for us to ask the parent to talk to an admin and book
+        in that way.
+      #}
+      {{ __("clinicBooking.parentalResponsibility.description", {
+        team: data.team
+      }) | nhsukMarkdown }}
+    </div>
+  </div>
+{% endblock %}
