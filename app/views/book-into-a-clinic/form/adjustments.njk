@@ -1,6 +1,9 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("consent.child.adjustments.title") %}
+{% if childCount > 1 and childNumber < childCount %}
+  {% set confirmButtonText = __("clinicBooking.nextChildButtonText") %}
+{% endif %}
 
 {% block form %}
   {{ checkboxes({
