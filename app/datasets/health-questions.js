@@ -80,7 +80,7 @@ export const healthQuestions = {
   immuneSystemHpv: {
     label:
       'Does the child have a disease or treatment that severely affects their immune system?',
-    hint: 'Children with a severely weakened immune system will need 3 doses of the vaccine, over a 12-month period.',
+    hint: 'Children with a severely weakened immune system will need 3 doses of the HPV vaccine, over a 12-month period.',
     options: false,
     detailsHint: false
   },
