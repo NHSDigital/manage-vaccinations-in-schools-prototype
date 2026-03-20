@@ -287,7 +287,10 @@ export const en = {
       caption: 'Appointment for %s'
     },
     child: {
-      title: 'What is your child’s name?',
+      title: {
+        first: 'What is your child’s name?',
+        next: 'What is your next child’s name?'
+      },
       caption: 'Appointment for your %s child',
       summary: 'About your child',
       description:
@@ -299,17 +302,6 @@ export const en = {
       lastName: {
         label: 'Last name',
         hint: 'Or family name'
-      },
-      hasPreferredName: {
-        label: 'Do they use a different name in school?',
-        yes: 'Yes',
-        no: 'No'
-      },
-      preferredFirstName: {
-        label: 'Preferred first name'
-      },
-      preferredLastName: {
-        label: 'Preferred last name'
       }
     },
     dob: {

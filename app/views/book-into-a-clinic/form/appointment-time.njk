@@ -1,11 +1,14 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("clinicBooking.time.title", firstName) %}
+{% if childCount > 1 and childNumber < childCount %}
+  {% set confirmButtonText = __("clinicBooking.nextChildButtonText") %}
+{% endif %}
 
 {% block form %}
   {{ appHeading({
     title: title,
-    caption: __("clinicBooking.appointment.caption", fullName) if transaction.childCount > 1
+    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
   }) }}
 
   {#
