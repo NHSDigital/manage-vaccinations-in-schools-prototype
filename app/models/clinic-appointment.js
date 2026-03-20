@@ -1,7 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
-import vaccines from '../datasets/vaccines.js'
 import {
   ClinicBooking,
   Parent,
@@ -200,12 +199,13 @@ export class ClinicAppointment {
   /**
    * Get the programmes selected for this appointment
    *
+   * @param {object} programmeContext - the context in which we'll find the programmes
    * @returns {Array<Programme>} Programmes selected for this appointment
    */
-  get selectedProgrammes() {
+  #getSelectedProgrammes(programmeContext) {
     return ClinicAppointment.#getProgrammesFromIDs(
       this.selected_programme_ids,
-      this.context
+      programmeContext ?? this.context
     )
   }
 
@@ -258,19 +258,24 @@ export class ClinicAppointment {
    *
    * Note: this method requires this instance to have a full context
    *
+   * @param {object} programmeContext - the context in which we'll find the programmes
    * @returns {Array} Health questions
    */
-  get healthQuestionsForSelectedProgrammes() {
-    // Work out which vaccines the child could receive
+  getHealthQuestionsForSelectedProgrammes(programmeContext) {
+    // Logic is: programme -> vaccine (matched on programme type) -> health questions
+
     // NB: given we don't have information about consent for nasal vs. injection, or for
     //     gelatine, we can end up asking more questions here than we might need to. :/
     const vaccinesForSelectedProgrammes = []
-    for (const programme of this.selectedProgrammes) {
+    for (const programme of this.#getSelectedProgrammes(programmeContext)) {
       vaccinesForSelectedProgrammes.push(
-        ...Object.values(vaccines).filter((v) => v.type === programme.type)
+        ...Object.values(programmeContext.vaccines).filter(
+          (v) => v.type === programme.type
+        )
       )
     }
 
+    // Collate the questions from the vaccines, making sure we don't duplicate them
     const questions = new Map()
     for (const vaccine of vaccinesForSelectedProgrammes) {
       for (const [key, value] of Object.entries(vaccine.healthQuestions)) {
@@ -313,7 +318,7 @@ export class ClinicAppointment {
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
-      vaccinations: this.selectedProgrammes
+      vaccinations: this.#getSelectedProgrammes(this.context)
         .map((programme) => programme.name)
         .join(', ')
     }

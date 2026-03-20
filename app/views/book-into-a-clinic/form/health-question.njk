@@ -10,7 +10,8 @@
     legend: {
       html: appHeading({
         classes: "nhsuk-fieldset__legend--l",
-        title: title | replace('the child', 'your child')
+        title: title | replace('the child', 'your child'),
+        caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1
       })
     }
   }) %}
