@@ -4,7 +4,10 @@ import _ from 'lodash'
 
 import { ParentalRelationship, SessionPresets } from '../enums.js'
 import { ClinicAppointment, ClinicBooking } from '../models.js'
-import { getAllAppointmentPaths } from '../utils/clinic-appointment.js'
+import {
+  getAllAppointmentPaths,
+  getHealthQuestionPaths
+} from '../utils/clinic-appointment.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
 export const bookIntoClinicController = {
@@ -167,28 +170,15 @@ export const bookIntoClinicController = {
           value: 'false'
         }
       },
-      // TODO: Currently, `appointment` in this call to getHealthQuestionPaths is null because offer-health-questions is outside the appointment journey
-      //       Should I put the offer into the journey too, and offer per-child, or should I just pass the first appointment on the booking?
-      //...getHealthQuestionPaths(`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/`, appointment),
-      // TODO: logic to loop back if more than one appointment
 
-      // REMOVE: hard-coded health questions, and update showForm to reset to using generic health-question.njk view
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-immune-system-hpv`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-allergy`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-bleeding`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-blood-thinning`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-previous-reaction`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-recent-men-acwy-vaccination`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/health-question-recent-td-ipv-vaccination`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/impairments`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/adjustments`]: {},
+      // For each child being booked in, and their selected vaccinations, ask the
+      // relevant health questions and impairments/adjustments questions
+      ...getHealthQuestionPaths(
+        `/${session_preset_slug}/${booking_uuid}/new/`,
+        booking_uuid,
+        data.wizard,
+        data
+      ),
 
       // Check answers
       [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {},
@@ -233,7 +223,9 @@ export const bookIntoClinicController = {
 
     // Only ask for details if question does not have sub-questions
     const hasSubQuestions =
-      appointment?.healthQuestionsForSelectedProgrammes[key]?.conditional
+      appointment?.getHealthQuestionsForSelectedProgrammes(
+        request.session.data
+      )[key]?.conditional
 
     response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
   },
@@ -261,13 +253,11 @@ export const bookIntoClinicController = {
       )
     }
     if (request.body.transaction) {
-      // MAL: need to key this on the booking_uuid, not just have one transaction object shared by all users
       data.wizard.transaction = data.wizard.transaction ?? {}
       _.merge(data.wizard.transaction, request.body.transaction)
     }
 
-    // If we've just set the child count, create the appointments to start the sub-journey and
-    // put the first uuid into the routes from this point on
+    // If we've just set the child count, create the appointments we'll need
     if (request.originalUrl.endsWith('/new/child-count')) {
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 

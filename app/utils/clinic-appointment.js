@@ -1,3 +1,5 @@
+import { ClinicBooking } from '../models.js'
+
 import { camelToKebabCase } from './string.js'
 
 /**
@@ -70,62 +72,79 @@ export const getAllAppointmentPaths = (booking) => {
  * Get the path for a single health question
  *
  * @param {string} key
+ * @param {ClinicAppointment} appointment
  * @param {string} pathPrefix
  * @returns
  */
-const getHealthQuestionPath = (key, pathPrefix) => {
-  return `${pathPrefix}health-question-${camelToKebabCase(key)}`
+const getHealthQuestionPath = (key, appointment, pathPrefix) => {
+  return `${pathPrefix}${appointment.uuid}/health-question-${camelToKebabCase(key)}`
 }
 
 /**
  * Get health question paths for given vaccines
  *
  * @param {string} pathPrefix - Path prefix
- * @param {import('../models.js').ClinicAppointment} appointment - clinic appointment
+ * @param {string} booking_uuid - clinic booking identifier, for access to all appointments
+ * @param {object} bookingContext - the data context holding the booking and appointments
+ * @param {object} programmeContext - the data context holding the programme and vaccine info
  * @returns {object} Health question paths
  */
-export const getHealthQuestionPaths = (pathPrefix, appointment) => {
-  // Don't worry about it till we've actually made our first appointment
-  if (!appointment) {
-    console.log('getHealthQuestionPaths: no appointment')
+export const getHealthQuestionPaths = (
+  pathPrefix,
+  booking_uuid,
+  bookingContext,
+  programmeContext
+) => {
+  const paths = {}
 
-    return {}
+  const booking = ClinicBooking.findOne(booking_uuid, bookingContext)
+  if (!booking) {
+    return paths
   }
 
-  const paths = {}
-  const healthQuestions = Object.entries(
-    appointment.healthQuestionsForSelectedProgrammes
-  )
+  for (const appointment of booking.appointments) {
+    const healthQuestions = Object.entries(
+      appointment.getHealthQuestionsForSelectedProgrammes(programmeContext)
+    )
 
-  healthQuestions.forEach(([key, question], index) => {
-    const questionPath = getHealthQuestionPath(key, pathPrefix)
+    healthQuestions.forEach(([key, question], index) => {
+      const questionPath = getHealthQuestionPath(key, appointment, pathPrefix)
 
-    if (question.conditional) {
-      const nextQuestion = healthQuestions[index + 1]
-      if (nextQuestion) {
-        const forkPath = getHealthQuestionPath(nextQuestion[0], pathPrefix)
+      if (question.conditional) {
+        const nextQuestion = healthQuestions[index + 1]
+        if (nextQuestion) {
+          const forkPath = getHealthQuestionPath(
+            nextQuestion[0],
+            appointment,
+            pathPrefix
+          )
 
-        paths[questionPath] = {
-          [forkPath]: {
-            data: `appointment.healthAnswers.${key}.answer`,
-            value: 'No'
+          paths[questionPath] = {
+            [forkPath]: {
+              data: `appointment.healthAnswers.${key}.answer`,
+              value: 'No'
+            }
           }
+        } else {
+          paths[questionPath] = {}
+        }
+
+        // Add paths for conditional sub-questions
+        for (const subKey of Object.keys(question.conditional)) {
+          const subQuestionPath = getHealthQuestionPath(
+            subKey,
+            appointment,
+            pathPrefix
+          )
+          paths[subQuestionPath] = {}
         }
       } else {
         paths[questionPath] = {}
       }
-
-      // Add paths for conditional sub-questions
-      for (const subKey of Object.keys(question.conditional)) {
-        const subQuestionPath = getHealthQuestionPath(subKey, pathPrefix)
-        paths[subQuestionPath] = {}
-      }
-    } else {
-      paths[questionPath] = {}
-    }
-  })
-
-  console.log(`getHealthQuestionPaths: ${paths.length} questions`)
+    })
+    paths[`${pathPrefix}${appointment.uuid}/impairments`] = {}
+    paths[`${pathPrefix}${appointment.uuid}/adjustments`] = {}
+  }
 
   return paths
 }

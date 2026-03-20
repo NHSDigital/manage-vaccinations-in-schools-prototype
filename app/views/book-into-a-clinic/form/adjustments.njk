@@ -6,9 +6,11 @@
   {{ checkboxes({
     fieldset: {
       legend: {
-        isPageHeading: true,
-        text: title,
-        size: "l"
+        html: appHeading({
+          classes: "nhsuk-fieldset__legend--l",
+          title: title,
+          caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1
+        })
       }
     },
     items: [{

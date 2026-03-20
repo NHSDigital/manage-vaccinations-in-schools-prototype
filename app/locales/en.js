@@ -282,6 +282,7 @@ export const en = {
         hint: 'For example, if you have twins needing vaccination, enter 2'
       }
     },
+    nextChildButtonText: 'Continue to next child',
     appointment: {
       caption: 'Appointment for %s'
     },
@@ -448,6 +449,7 @@ export const en = {
     },
     healthAnswers: {
       label: 'Answers to health questions',
+      caption: 'Health questions for %s',
       yes: 'Yes',
       no: 'No',
       details: 'Give details'
