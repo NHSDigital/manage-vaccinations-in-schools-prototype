@@ -305,11 +305,11 @@ export const en = {
       }
     },
     dob: {
-      title: "What is %s's date of birth?",
+      title: 'What is %s’s date of birth?',
       hint: 'For example, 27 3 2012'
     },
     address: {
-      title: "What is %s's home address?",
+      title: 'What is %s’s home address?',
       hint: 'Give the child’s primary address. We use this to confirm their identity.'
     },
     parentalRelationship: {
@@ -345,18 +345,18 @@ export const en = {
       }
     },
     preferredLocation: {
-      title: "Find a clinic near where you'd like %s's appointment",
+      title: 'Find a clinic near where you’d like %s’s appointment',
       location: {
         label: 'Preferred clinic location',
         hint: 'Enter a town, city, or postcode'
       }
     },
     preferredLocationMatches: {
-      title: "We found 3 places that match 'Newcastle'",
+      title: 'We found 3 places that match “Newcastle”',
       hits: {
         label: 'Choose one of the following:'
       },
-      tryAgain: 'None of these - try another town, city, or postcode'
+      tryAgain: 'None of these — try another town, city, or postcode'
     },
     clinicLocation: {
       title: 'Choose a clinic location for %s',
@@ -371,7 +371,7 @@ export const en = {
       }
     },
     timeRange: {
-      title: "Choose a time range for %s's appointment",
+      title: 'Choose a time range for %s’s appointment',
       clinicSummary: {
         title: 'Clinic'
       },
@@ -409,7 +409,7 @@ export const en = {
         hint: 'Someone from the vaccinations team might call you if they have questions'
       },
       sms: {
-        label: "Tick this box if you'd like to get updates by text message"
+        label: 'Tick this box if you’d like to get updates by text message'
       },
       contactPreference: {
         title: 'If we need to contact you',
@@ -417,7 +417,7 @@ export const en = {
         yes: 'Yes',
         no: 'No',
         description:
-          'Let us know if you have any communication needs you’d like us to be aware of – for example, a hearing or visual impairment.'
+          'Let us know if you have any communication needs you’d like us to be aware of — for example, a hearing or visual impairment.'
       },
       contactPreferenceDetails: {
         label: 'Give details'
@@ -431,7 +431,7 @@ export const en = {
       }
     },
     offerHealthQuestions: {
-      title: "We've got your vaccination booking request",
+      title: 'We’ve got your vaccination booking request',
       bookingReference: 'Your booking reference number is: %s',
       beforeYouGo:
         'Before you finish using the service, we’d like to ask some questions about your child’s health.\n\nThese questions help us make sure it’s safe to vaccinate. You can answer these questions at the clinic, but responding now will save time on the day.',
