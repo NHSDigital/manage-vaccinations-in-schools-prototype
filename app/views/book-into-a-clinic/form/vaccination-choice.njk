@@ -5,37 +5,13 @@
 {% block form %}
   {{ appHeading({
     title: title,
-    caption: __("clinicBooking.appointment.caption", fullName) if transaction.childCount > 1
+    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
   }) }}
-
-  {# MAL: remove the 'or true' here that I'm using to check the primary programme name #}
-  {# {% if appointment.patient or true %}
-    {% set insetTextHtml %}
-      <h3>Catch-up vaccinations</h3>
-      <p>
-        While this clinic is primarily for {{ booking.formatted.primaryProgramme }} vaccinations, our records show that
-        {{ firstName }} is also eligible for other vaccinations.
-      </p>
-    {% endset %}
-
-    {{ insetText({
-      html: insetTextHtml
-    }) }}
-  {% endif %} #}
 
   <p>
     While this clinic is primarily for {{ booking.formatted.primaryProgramme }} vaccinations, our records show that
     {{ firstName }} is also eligible for other vaccinations.
   </p>
-
-  {#
-    REMOVED because it's distracting, risks parents dropping out of the flow, and the new hint text might explain enough
-    to satisfy parents
-  <p>
-    You can <a href="https://www.nhs.uk/vaccinations/nhs-vaccinations-and-when-to-have-them/">find out more about which
-    vaccinations are due when on NHS.UK</a>.
-  </p>
-  #}
 
   {% set programmeOptions = [] %}
   {% for programme in appointment.eligibleProgrammes %}
