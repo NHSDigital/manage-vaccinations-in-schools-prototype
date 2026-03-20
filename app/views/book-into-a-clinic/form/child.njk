@@ -1,6 +1,10 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.child.title") %}
+{% if childNumber == 1 %}
+  {% set title = __("clinicBooking.child.title.first") %}
+{% else %}
+  {% set title = __("clinicBooking.child.title.next") %}
+{% endif %}
 
 {% block form %}
   {{ appHeading({
