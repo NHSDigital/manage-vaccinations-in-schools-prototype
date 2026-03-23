@@ -12,7 +12,9 @@ import { ClinicBooking } from '../models.js'
 export function generateEmptyClinicBooking(context) {
   const uuid = faker.string.uuid()
   const bookingReference = ClinicBooking.generateReference()
-  const sessionPreset = faker.helpers.arrayElement(SessionPresets)
+  const sessionPreset = faker.helpers.arrayElement(
+    SessionPresets.filter((preset) => preset.active)
+  )
 
   return new ClinicBooking(
     {
