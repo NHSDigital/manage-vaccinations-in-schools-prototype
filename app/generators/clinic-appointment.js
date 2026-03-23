@@ -24,6 +24,9 @@ export function generateClinicAppointment(booking, context) {
       s.type === SessionType.Clinic &&
       s.presetNames.includes(booking.sessionPreset.name)
   )
+  if (!clinicSessions.some(Boolean)) {
+    return null
+  }
   const clinicSession = faker.helpers.arrayElement(clinicSessions)
   if (!clinicSession) {
     return null
