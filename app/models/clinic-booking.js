@@ -4,7 +4,7 @@ import _ from 'lodash'
 import allProgrammesData from '../datasets/programmes.js'
 import { SessionPresets } from '../enums.js'
 import { ClinicAppointment, Parent, Programme } from '../models.js'
-import { stringToBoolean } from '../utils/string.js'
+import { formatMonospace, stringToBoolean } from '../utils/string.js'
 
 /**
  * @class ClinicBooking
@@ -124,7 +124,8 @@ export class ClinicBooking {
   get formatted() {
     return {
       // TODO: make this work using commas for more than 2 programmes
-      primaryProgramme: this.primaryProgrammes.map((p) => p.name).join(' and ')
+      primaryProgramme: this.primaryProgrammes.map((p) => p.name).join(' and '),
+      bookingReference: formatMonospace(this.bookingReference, true)
     }
   }
 

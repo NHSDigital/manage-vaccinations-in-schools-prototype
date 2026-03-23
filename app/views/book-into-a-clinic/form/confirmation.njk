@@ -2,7 +2,7 @@
 
 {% set paths = { back: false } %}
 {% set title = __("clinicBooking.confirmation.title") %}
-{% set subtitle = __("clinicBooking.confirmation.subtitle", booking.bookingReference) %}
+{% set subtitle = __("clinicBooking.confirmation.subtitle", booking.formatted.bookingReference) %}
 
 {% block content %}
   <div class="nhsuk-grid-row">
