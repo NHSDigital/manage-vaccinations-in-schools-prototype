@@ -1,6 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMinutes } from 'date-fns'
-import _ from 'lodash'
 
 import { ParentalRelationship, SessionType } from '../enums.js'
 import { ClinicAppointment } from '../models.js'
@@ -11,22 +10,24 @@ const clinicSlotLength = Number(process.env.CLINIC_SLOT_LENGTH) || 10
 /**
  * Generate fake clinic appointment
  *
- * @param {ClinicBooking} booking - The booking this appointment will belong to
+ * @param {import('../models/clinic-booking.js').ClinicBooking} booking - The booking this appointment will belong to
  * @param {object} context - The other data already defined (sessions, children, etc.)
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
 export function generateClinicAppointment(booking, context) {
   const uuid = faker.string.uuid()
 
-  // Choose a clinic session to book this appointment into
+  // Find clinic sessions for this programme
   const clinicSessions = Object.values(context.sessions).filter(
-    (s) =>
-      s.type === SessionType.Clinic &&
-      s.presetNames.includes(booking.sessionPreset.name)
+    (session) =>
+      session.type === SessionType.Clinic &&
+      session.presetNames.includes(booking.sessionPreset.name)
   )
-  if (!clinicSessions.some(Boolean)) {
+  if (!clinicSessions.length) {
     return null
   }
+
+  // Choose a clinic session to book this appointment into
   const clinicSession = faker.helpers.arrayElement(clinicSessions)
   if (!clinicSession) {
     return null
@@ -34,24 +35,28 @@ export function generateClinicAppointment(booking, context) {
   const session_id = clinicSession.id
 
   // Work out the expected age range for children attending this session
-  const yearGroups = _.uniq(
-    clinicSession.programmes.flatMap((p) => p.yearGroups || [])
-  )
-  const ageRanges = yearGroups.map((yg) => ({ min: yg + 4, max: yg + 5 }))
-  const allAgeLimits = ageRanges.flatMap((ar) => [ar.min, ar.max])
-  const minAge = Math.min(allAgeLimits) || 4
-  const maxAge = Math.max(allAgeLimits) || 15
+  const yearGroups = clinicSession.programmes.flatMap((programme) => [
+    ...new Set(programme.yearGroups)
+  ])
+  const minAge = yearGroups.length ? Math.min(...yearGroups) + 4 : 4
+  const maxAge = yearGroups.length ? Math.max(...yearGroups) + 5 : 15
 
-  // Find/create a child of an appropriate age for the chosen clinic and its programmme
+  // Find/create a child of an appropriate age for the chosen clinic and its programme
   let matchedPatient
   if (faker.datatype.boolean(0.9)) {
-    const eligiblePatients = Object.values(context.patients).filter((p) => {
-      const age = getAge(p.dob)
-      return age >= minAge && age <= maxAge
-    })
+    const eligiblePatients = Object.values(context.patients).filter(
+      (patient) => {
+        const age = getAge(patient.dob)
+        return age >= minAge && age <= maxAge
+      }
+    )
+    if (!eligiblePatients.length) {
+      return null
+    }
     matchedPatient = faker.helpers.arrayElement(eligiblePatients)
   }
   const patient_uuid = matchedPatient?.uuid
+
   // Unmatched child details, if required
   const unmatchedFirstName = matchedPatient
     ? undefined
