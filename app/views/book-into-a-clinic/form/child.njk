@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% if childNumber == 1 %}
+{% if childNumber < 2 %}
   {% set title = __("clinicBooking.child.title.first") %}
 {% else %}
   {% set title = __("clinicBooking.child.title.next") %}
