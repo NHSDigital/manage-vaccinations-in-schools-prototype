@@ -7,7 +7,7 @@
     title: title
   }) }}
 
-  {{ __("clinicBooking.offerHealthQuestions.bookingReference", booking.bookingReference) | nhsukMarkdown }}
+  {{ __("clinicBooking.offerHealthQuestions.bookingReference", booking.formatted.bookingReference) | nhsukMarkdown }}
 
   {{ __("clinicBooking.offerHealthQuestions.beforeYouGo") | nhsukMarkdown }}
 
