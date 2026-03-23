@@ -280,14 +280,18 @@ export const bookIntoClinicController = {
         ClinicAppointment.delete(appointment_uuid, data.wizard)
       }
 
-      // Start the appointment journey for the first child
+      // NB: request.session.save was needed to avoid race condition issues on heroku
+      // Flush to session store and start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]
-      response.redirect(
-        `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.appointmentUri}/child`
-      )
+      const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.appointmentUri}/child`
+      request.session.save((err) => {
+        if (!err) response.redirect(firstAppointmentUrl)
+      })
     } else {
-      // Continue to the next page in the journey
-      response.redirect(paths.next)
+      // Flush to session store and continue to the next page in the journey
+      request.session.save((err) => {
+        if (!err) response.redirect(paths.next)
+      })
     }
   },
 
