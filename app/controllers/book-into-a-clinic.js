@@ -134,8 +134,7 @@ export const bookIntoClinicController = {
         response.locals.childNumber =
           booking.appointments_ids.indexOf(appointment.uuid) + 1
         response.locals.childCount = booking.appointments_ids.length
-        response.locals.firstName =
-          appointment.unmatchedFirstName || 'your child'
+        response.locals.firstName = appointment.firstName || 'your child'
         response.locals.fullName = appointment.fullName || 'your child'
       }
     }
@@ -152,7 +151,7 @@ export const bookIntoClinicController = {
       [`/${session_preset_slug}/${booking_uuid}/new/child-count`]: {},
 
       // Appointment journey; once per child
-      ...getAllAppointmentPaths(booking),
+      ...getAllAppointmentPaths(request.session.data, booking),
 
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
@@ -210,7 +209,7 @@ export const bookIntoClinicController = {
    */
   showForm(request, response) {
     const { appointment } = response.locals
-    let { view } = request.params
+    let { booking_uuid, view } = request.params
 
     // All health questions use the same view
     let key
@@ -225,6 +224,50 @@ export const bookIntoClinicController = {
         request.session.data
       )[key]?.conditional
 
+    // Build the options for the selection of a home address address from those already entered
+    if (view === 'address-selection') {
+      const booking = ClinicBooking.findOne(
+        booking_uuid,
+        request.session.data.wizard
+      )
+      const previousAddressItems = booking.appointments
+        .map((appointment) => {
+          if (appointment.child?.address) {
+            const oneLineAddress = Object.values(appointment.child.address)
+              .filter((string) => string)
+              .join(', ')
+            return {
+              text: oneLineAddress,
+              value: appointment.uuid
+            }
+          }
+
+          return null
+        })
+        .filter(Boolean)
+
+      response.locals.previousAddressItems = [
+        ...previousAddressItems,
+        {
+          divider: 'or'
+        },
+        {
+          text: 'Enter a different address',
+          value: 'new'
+        }
+      ]
+    }
+
+    /////////////////////
+    // console.log(`view: ${view}`)
+    // console.log(
+    //   `data.wizard: ${JSON.stringify(request.session.data.wizard, null, 2)}`
+    // )
+    // console.log(
+    //   `data.appointment: ${JSON.stringify(request.session.data.appointment, null, 2)}`
+    // )
+    /////////////////////
+
     response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
   },
 
@@ -235,7 +278,7 @@ export const bookIntoClinicController = {
    * @param {*} response
    */
   updateForm(request, response) {
-    const { booking_uuid, appointment_uuid } = request.params
+    const { booking_uuid, appointment_uuid, view } = request.params
     const { data } = request.session
     const { paths } = response.locals
 
@@ -255,8 +298,10 @@ export const bookIntoClinicController = {
       _.merge(data.wizard.transaction, request.body.transaction)
     }
 
-    // If we've just set the child count, create the appointments we'll need
-    if (request.originalUrl.endsWith('/new/child-count')) {
+    let nextUrl = paths.next
+
+    if (view === 'child-count') {
+      // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
       let desiredCount = Number(data.wizard.transaction.childCount)
@@ -278,19 +323,35 @@ export const bookIntoClinicController = {
         ClinicAppointment.delete(appointment_uuid, data.wizard)
       }
 
-      // NB: request.session.save was needed to avoid race condition issues on heroku
-      // Flush to session store and start the appointment journey for the first child
+      // Start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]
       const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.appointmentUri}/child`
-      request.session.save((err) => {
-        if (!err) response.redirect(firstAppointmentUrl)
-      })
-    } else {
-      // Flush to session store and continue to the next page in the journey
-      request.session.save((err) => {
-        if (!err) response.redirect(paths.next)
-      })
+      nextUrl = firstAppointmentUrl
+    } else if (
+      view === 'address-selection' &&
+      request.body.transaction.previousAddress !== 'new'
+    ) {
+      // We've just selected a previous child's address for the current appointment, so copy
+      // that detail to the child record
+      const previous_appointment_uuid = request.body.transaction.previousAddress
+      const previousAppointment = ClinicAppointment.findOne(
+        previous_appointment_uuid,
+        data.wizard
+      )
+      const currentAppointment = ClinicAppointment.findOne(
+        appointment_uuid,
+        data.wizard
+      )
+
+      if (previousAppointment && currentAppointment) {
+        currentAppointment.child.address = previousAppointment.child.address
+      }
     }
+
+    // NB: request.session.save was needed to avoid race condition issues on heroku
+    request.session.save((err) => {
+      if (!err) response.redirect(nextUrl)
+    })
   },
 
   /**
