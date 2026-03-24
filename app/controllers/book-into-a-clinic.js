@@ -94,7 +94,9 @@ export const bookIntoClinicController = {
      *
      * The nature of the journey here is complex, as there are two separate sections in which we need to
      * iterate over children. Or over appointments, if you want to think of it that way (each child has
-     * their own appointment).
+     * their own appointment). And the second iteration - the health questions - has pages that are
+     * dependent on the answers given during the appointment booking (specifically, the choice of vaccines
+     * per child).
      *
      * So, it goes:
      * - Start page
@@ -104,16 +106,12 @@ export const bookIntoClinicController = {
      *   - ...
      *   - Appointment time   <-- final page of the per-child appointment journey; iterate to next child if required
      * - Parent info
+     * - Check answers
      * - Health questions?
      *   - Health question 1  <-- first page of the per-child health question journey
      *   - ...
      *   - Health question n  <-- final page of the per-child health question journey; iterate to next child if required
-     * - Check answers
      * - Confirmation
-     *
-     * So, at the point where we start the health questions journey, we need to set up the iteration again, overriding
-     * the default paths.next given to us by the wizard() function so that we can re-inject the appointment_uuid into
-     * the path (the "Health questions?" page won't have that parameter).
      *
      * */
 
@@ -163,9 +161,12 @@ export const bookIntoClinicController = {
       },
       [`/${session_preset_slug}/${booking_uuid}/new/contact-preference`]: {},
 
+      // Check answers
+      [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {},
+
       // Health questions (optional)
       [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]: {
-        [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {
+        [`/${session_preset_slug}/${booking_uuid}/new/confirmation`]: {
           data: 'transaction.optedIntoHealthQuestions',
           value: 'false'
         }
@@ -179,9 +180,6 @@ export const bookIntoClinicController = {
         data.wizard,
         data
       ),
-
-      // Check answers
-      [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {},
 
       // Confirmation! \o/
       [`/${session_preset_slug}/${booking_uuid}/new/confirmation`]: {}
