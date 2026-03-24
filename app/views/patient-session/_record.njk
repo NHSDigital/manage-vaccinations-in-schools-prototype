@@ -21,6 +21,7 @@
   {{ radios({
     fieldset: {
       legend: {
+        classes: "nhsuk-u-font-size-22",
         text: __("patientSession.preScreen.selfId.label", {
           patient: patient
         }),
@@ -87,7 +88,7 @@
 
   {{ textarea({
     label: { text: __("patientSession.preScreen.note.label") + " (optional)" },
-    rows: 3,
+    rows: 2,
     decorate: "patientSession.preScreen.note"
   }) }}
 
@@ -140,9 +141,6 @@
       {
         text: __("patientSession.preScreen.ready.yes"),
         value: true,
-        hint: {
-          text: __("patientSession.preScreen.ready.hint")
-        },
         conditional: {
           html: vaccinationSiteHtml
         } if patientSession.vaccine.criteria != VaccineCriteria.Intranasal
@@ -157,9 +155,6 @@
       {
         text: __("patientSession.preScreen.ready.alternative"),
         value: "alternative",
-        hint: {
-          text: __("patientSession.preScreen.ready.hint")
-        },
         conditional: {
           html: vaccinationSiteHtml
         }
