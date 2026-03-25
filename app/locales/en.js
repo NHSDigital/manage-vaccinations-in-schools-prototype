@@ -312,6 +312,10 @@ export const en = {
       title: 'What is %s’s home address?',
       hint: 'Give the child’s primary address. We use this to confirm their identity.'
     },
+    addressSelection: {
+      title: 'What is %s’s home address?',
+      hint: 'Select the child’s primary address. We use this to confirm their identity.'
+    },
     parentalRelationship: {
       title: 'What is your relationship to %s?',
       hasParentalResponsibility: {

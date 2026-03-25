@@ -17,12 +17,12 @@
   {{ input({
     label: { text: __("clinicBooking.child.firstName.label") },
     hint: { text: __("clinicBooking.child.firstName.hint") },
-    decorate: "appointment.unmatchedFirstName"
+    decorate: "appointment.child.firstName"
   }) }}
 
   {{ input({
     label: { text: __("clinicBooking.child.lastName.label") },
     hint: { text: __("clinicBooking.child.lastName.hint") },
-    decorate: "appointment.unmatchedLastName"
+    decorate: "appointment.child.lastName"
   }) }}
 {% endblock %}

@@ -5,10 +5,11 @@ import { camelToKebabCase } from './string.js'
 /**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
  *
+ * @param {object} sessionData - the request.session.data object
  * @param {ClinicBooking} booking - the clinic booking whose appointment journeys we're mapping
  * @returns {object} An object containing all relevants page and forks
  */
-export const getAllAppointmentPaths = (booking) => {
+export const getAllAppointmentPaths = (sessionData, booking) => {
   const booking_uuid = booking.uuid
   const session_preset_slug = booking.sessionPreset.slug
 
@@ -19,6 +20,15 @@ export const getAllAppointmentPaths = (booking) => {
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dob`]:
         {},
+      ...(booking.appointments_ids[0] !== appointment_uuid
+        ? {
+            [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
+              {
+                [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
+                  () => sessionData.transaction.previousAddress !== 'new'
+              }
+          }
+        : {}),
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address`]:
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:

@@ -2,18 +2,14 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
 import {
+  Child,
   ClinicBooking,
   Parent,
   Patient,
   Programme,
   Session
 } from '../models.js'
-import {
-  convertIsoDateToObject,
-  convertObjectToIsoDate,
-  formatDate,
-  getDateValueDifference
-} from '../utils/date.js'
+import { formatDate, getDateValueDifference } from '../utils/date.js'
 import { stringToArray, stringToBoolean } from '../utils/string.js'
 
 /**
@@ -24,10 +20,7 @@ import { stringToArray, stringToBoolean } from '../utils/string.js'
  * @property {string} uuid - Unique ID for this clinic appointment
  * @property {string} booking_uuid - Unique ID for the booking in which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
- * @property {string} [unmatchedFirstName] - Child first name, if not matched to a patient record
- * @property {string} [unmatchedLastName] - Child last name, if not matched to a patient record
- * @property {Date} [unmatchedDob] - Child date of birth, if not matched to a patient record
- * @property {object} [unmatchedDob_] - Child date of birth, if not matched to a patient record (for use with decorate)
+ * @property {import('./child.js').Child} [child] - child details recorded from form input values
  * @property {Boolean} needsExtraTime - Does the child need extra time for their vaccinations?
  * @property {string} [extraTimeReason] - The reason why the child needs extra time for their appointment
  * @property {ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
@@ -47,10 +40,7 @@ export class ClinicAppointment {
     this.booking_uuid = options?.booking_uuid
 
     this.patient_uuid = options?.patient_uuid
-    this.unmatchedFirstName = options?.unmatchedFirstName
-    this.unmatchedLastName = options?.unmatchedLastName
-    this.unmatchedDob = options?.unmatchedDob && new Date(options.unmatchedDob)
-    this.unmatchedDob_ = options?.unmatchedDob_
+    this.child = (options?.child && new Child(options.child)) || new Child({})
 
     this.needsExtraTime = stringToBoolean(options?.needsExtraTime)
     this.extraTimeReason = options?.extraTimeReason
@@ -155,7 +145,7 @@ export class ClinicAppointment {
    * @returns {string} Child's first name
    */
   get firstName() {
-    return this.patient ? this.patient.firstName : this.unmatchedFirstName
+    return this.patient ? this.patient.firstName : this.child.firstName
   }
 
   /**
@@ -164,7 +154,7 @@ export class ClinicAppointment {
    * @returns {string} Child's last name
    */
   get lastName() {
-    return this.patient ? this.patient.lastName : this.unmatchedLastName
+    return this.patient ? this.patient.lastName : this.child.lastName
   }
 
   /**
@@ -174,26 +164,6 @@ export class ClinicAppointment {
    */
   get fullName() {
     return `${this.firstName} ${this.lastName}`
-  }
-
-  /**
-   * Get date of birth for `dateInput`
-   *
-   * @returns {object|undefined} `dateInput` object
-   */
-  get unmatchedDob_() {
-    return convertIsoDateToObject(this.unmatchedDob)
-  }
-
-  /**
-   * Set date of birth from `dateInput`
-   *
-   * @param {object} object - dateInput object
-   */
-  set unmatchedDob_(object) {
-    if (object) {
-      this.unmatchedDob = convertObjectToIsoDate(object)
-    }
   }
 
   /**

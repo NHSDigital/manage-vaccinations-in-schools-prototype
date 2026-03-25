@@ -1,9 +1,9 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.dob.title", firstName) %}
+{% set title = __("clinicBooking.addressSelection.title", firstName) %}
 
 {% block form %}
-  {{ dateInput({
+  {{ radios({
     fieldset: {
       legend: {
         html: appHeading({
@@ -12,7 +12,8 @@
         })
       }
     },
-    hint: { text: __("clinicBooking.dob.hint") },
-    decorate: "appointment.child.dob_"
+    hint: { text: __("clinicBooking.addressSelection.hint") },
+    items: previousAddressItems,
+    decorate: "transaction.previousAddress"
   }) }}
 {% endblock %}
