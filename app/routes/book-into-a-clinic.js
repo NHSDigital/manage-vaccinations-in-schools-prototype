@@ -32,7 +32,7 @@ router.get(
   bookIntoClinic.showForm
 )
 
-// MAL: Not convinced I need this special case for clinic bookings... unless it's to perform the final 'save'?
+// TODO: save the completed booking to the global context
 // router.post('/:session_preset_slug/:booking_uuid/new/check-answers', bookIntoClinic.update)
 
 router.post(

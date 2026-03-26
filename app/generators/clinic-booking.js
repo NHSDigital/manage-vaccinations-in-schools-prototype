@@ -6,7 +6,7 @@ import { ClinicBooking } from '../models.js'
 /**
  * Generate fake clinic booking (initially without any appointments, which can be added later)
  *
- * @param context
+ * @param {object} context
  * @returns {ClinicBooking} ClinicBooking
  */
 export function generateEmptyClinicBooking(context) {

@@ -21,9 +21,9 @@ import { stringToArray, stringToBoolean } from '../utils/string.js'
  * @property {string} booking_uuid - Unique ID for the booking in which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {import('./child.js').Child} [child] - child details recorded from form input values
- * @property {Boolean} needsExtraTime - Does the child need extra time for their vaccinations?
+ * @property {boolean} needsExtraTime - Does the child need extra time for their vaccinations?
  * @property {string} [extraTimeReason] - The reason why the child needs extra time for their appointment
- * @property {ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
+ * @property {import('../enums.js').ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
  * @property {string} [parentalRelationshipOther] - User-defined parental relationship to the child for this appointment
  * @property {boolean} [parentHasParentalResponsibility] - Does the parent/carer have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
@@ -124,6 +124,8 @@ export class ClinicAppointment {
   /**
    * Get a parent object combining the parent's contact details held in the
    * booking with the parental relationship for this appointment's child
+   *
+   * @returns {Parent} - a Parent with the correct relationship to this appointment's child
    */
   get parent() {
     const booking = this.clinicBooking

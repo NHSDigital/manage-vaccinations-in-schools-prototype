@@ -82,9 +82,9 @@ export const getAllAppointmentPaths = (sessionData, booking) => {
  * Get the path for a single health question
  *
  * @param {string} key
- * @param {ClinicAppointment} appointment
+ * @param {import('../models/clinic-appointment.js').ClinicAppointment} appointment
  * @param {string} pathPrefix
- * @returns
+ * @returns {string} The full path to the given health question
  */
 const getHealthQuestionPath = (key, appointment, pathPrefix) => {
   return `${pathPrefix}${appointment.uuid}/health-question-${camelToKebabCase(key)}`

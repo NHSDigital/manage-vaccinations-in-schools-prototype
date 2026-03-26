@@ -10,14 +10,20 @@ import {
 } from '../utils/clinic-appointment.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
+/**
+ * @typedef {import('express').Request} Request
+ * @typedef {import('express').Response} Response
+ * @typedef {import('express').NextFunction} Next
+ */
+
 export const bookIntoClinicController = {
   /**
    * Record the session preset
    *
-   * @param {*} request
-   * @param {*} response
-   * @param {*} next
-   * @param {*} session_preset_slug
+   * @param {Request} request
+   * @param {Response} response
+   * @param {Next} next
+   * @param {string} session_preset_slug
    */
   read(request, response, next, session_preset_slug) {
     const serviceName = 'Book into a clinic'
@@ -43,8 +49,8 @@ export const bookIntoClinicController = {
   /**
    * Send to the start page
    *
-   * @param {*} request
-   * @param {*} response
+   * @param {Request} request
+   * @param {Response} response
    */
   redirect(request, response) {
     const { sessionPreset } = response.locals
@@ -55,8 +61,8 @@ export const bookIntoClinicController = {
   /**
    * Start a new clinic booking for clinics with the primary programme we've been given
    *
-   * @param {*} request
-   * @param {*} response
+   * @param {Request} request
+   * @param {Response} response
    */
   new(request, response) {
     const { data } = request.session
@@ -81,16 +87,17 @@ export const bookIntoClinicController = {
    * This includes code to set up radio button groups for various pages (we set them up
    * regardless of which specific route we're handling).
    *
-   * @param {*} request
-   * @param {*} response
-   * @param {*} next
+   * @param {Request} request
+   * @param {Response} response
+   * @param {Next} next
    */
   readForm(request, response, next) {
     const { session_preset_slug, booking_uuid } = request.params
     const appointment_uuid = request.params.appointment_uuid
     const { data, referrer } = request.session
 
-    /** NOTE:
+    /**
+     * NOTE:
      *
      * The nature of the journey here is complex, as there are two separate sections in which we need to
      * iterate over children. Or over appointments, if you want to think of it that way (each child has
@@ -113,7 +120,7 @@ export const bookIntoClinicController = {
      *   - Health question n  <-- final page of the per-child health question journey; iterate to next child if required
      * - Confirmation
      *
-     * */
+     */
 
     // Create objects on the global context to allow us to check branching conditions, etc.
     // And make them available to the view.
@@ -204,8 +211,8 @@ export const bookIntoClinicController = {
   /**
    * Render the requested form page
    *
-   * @param {*} request
-   * @param {*} response
+   * @param {Request} request
+   * @param {Response} response
    */
   showForm(request, response) {
     const { appointment } = response.locals
@@ -258,24 +265,14 @@ export const bookIntoClinicController = {
       ]
     }
 
-    /////////////////////
-    // console.log(`view: ${view}`)
-    // console.log(
-    //   `data.wizard: ${JSON.stringify(request.session.data.wizard, null, 2)}`
-    // )
-    // console.log(
-    //   `data.appointment: ${JSON.stringify(request.session.data.appointment, null, 2)}`
-    // )
-    /////////////////////
-
     response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
   },
 
   /**
    * Store the latest values entered into a form in the booking journey
    *
-   * @param {*} request
-   * @param {*} response
+   * @param {Request} request
+   * @param {Response} response
    */
   updateForm(request, response) {
     const { booking_uuid, appointment_uuid, view } = request.params
@@ -357,8 +354,8 @@ export const bookIntoClinicController = {
   /**
    * Catch-all for pages not needing to reference a given clinic booking
    *
-   * @param {*} request
-   * @param {*} response
+   * @param {Request} request
+   * @param {Response} response
    */
   show(request, response) {
     const view = request.params.view || 'start'

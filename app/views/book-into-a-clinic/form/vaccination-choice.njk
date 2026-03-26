@@ -13,12 +13,6 @@
     {{ firstName }} is also eligible for other vaccinations.
   </p>
 
-  {% set programmeOptions = [] %}
-  {% for programme in appointment.eligibleProgrammes %}
-    {# MAL: where did I copy this from? Do I need to add name property to ensure the programme IDs (and not the programme titles) are put into the request body? #}
-    {% set programmeOptions = (programmeOptions.push({ text: programme.title, value: programme.id }), programmeOptions) %}
-  {% endfor %}
-
   {{ checkboxes({
     fieldset: {
       legend: {

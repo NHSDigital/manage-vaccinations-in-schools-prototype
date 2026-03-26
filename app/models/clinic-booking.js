@@ -13,7 +13,7 @@ import { formatMonospace, stringToBoolean } from '../utils/string.js'
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic booking UUID
  * @property {string} bookingReference - Booking reference number
- * @property {SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
+ * @property {import('../enums.js').SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
  * @property {Parent} parent - contact details for the parent making the booking; see appointments for parental relationship details
  * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
  */
@@ -49,7 +49,7 @@ export class ClinicBooking {
 
   /**
    *
-   * @returns Generate a new, random booking reference
+   * @returns {string} Generate a new, random booking reference
    */
   static generateReference() {
     return faker.helpers.replaceSymbols('CLN-####-####')
@@ -81,7 +81,6 @@ export class ClinicBooking {
    * @returns {Array<Programme>} the set of Programme objects represented by the session preset
    */
   get primaryProgrammes() {
-    // MAL: is this gonna trip me up, relying on the global context if called from the booking journey?
     return this.primaryProgrammeIDs.map((id) =>
       Programme.findOne(id, this.context)
     )
