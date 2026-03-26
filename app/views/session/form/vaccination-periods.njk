@@ -1,0 +1,68 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.vaccinationPeriods.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  })}}
+
+  <div class="nhsuk-form-group">
+    {{ dateInput({
+      fieldset: {
+        legend: {
+          classes: "nhsuk-fieldset__legend--m",
+          text: __("session.vaccinationPeriods.startTime.label")
+        }
+      },
+      hint: { text: __("session.vaccinationPeriods.startTime.hint") },
+      items: [
+        {
+          name: "hour",
+          label: "Hour",
+          width: 2
+        },
+        {
+          name: "minute",
+          label: "Minutes",
+          width: 2
+        }
+      ],
+      decorate: "session.clinicDetails.vaccinationPeriod.startAt"
+    }) }}
+
+    {{ dateInput({
+      fieldset: {
+        legend: {
+          classes: "nhsuk-fieldset__legend--m",
+          text: __("session.vaccinationPeriods.endTime.label")
+        }
+      },
+      hint: { text: __("session.vaccinationPeriods.endTime.hint") },
+      items: [
+        {
+          name: "hour",
+          label: "Hour",
+          width: 2
+        },
+        {
+          name: "minute",
+          label: "Minutes",
+          width: 2
+        }
+      ],
+      decorate: "session.clinicDetails.vaccinationPeriod.endAt"
+    }) }}
+  </div>
+
+  <div class="nhsuk-form-group">
+    {{ __("session.vaccinationPeriods.addPeriod.description") | nhsukMarkdown }}
+
+    {{ button({
+      href: session.uri ~ "/" ~ type ~ "/add-vaccination-period",
+      text: __("session.vaccinationPeriods.addPeriod.label"),
+      variant: "secondary"
+    }) }}
+  </div>
+
+{% endblock %}

@@ -2189,6 +2189,22 @@ export const en = {
       label: 'Clinic',
       title: 'Where is this community clinic taking place?'
     },
+    vaccinationPeriods: {
+      title: 'When will the session start and end?',
+      startTime: {
+        label: 'Start time',
+        hint: 'For example, 13 00'
+      },
+      endTime: {
+        label: 'End time',
+        hint: 'For example, 17 00'
+      },
+      addPeriod: {
+        description:
+          'Adding multiple vaccination periods will allow you to schedule breaks and to vary staffing levels across the session.',
+        label: 'Add another period'
+      }
+    },
     location: {
       label: 'Location',
       title: 'About this location'
