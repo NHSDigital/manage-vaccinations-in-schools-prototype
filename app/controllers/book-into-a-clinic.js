@@ -346,8 +346,8 @@ export const bookIntoClinicController = {
     }
 
     // NB: request.session.save was needed to avoid race condition issues on heroku
-    request.session.save((err) => {
-      if (!err) response.redirect(nextUrl)
+    request.session.save((error) => {
+      if (!error) response.redirect(nextUrl)
     })
   },
 
