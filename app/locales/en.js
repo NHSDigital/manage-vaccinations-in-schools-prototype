@@ -222,6 +222,264 @@ export const en = {
       label: 'Parent'
     }
   },
+  clinicAppointment: {
+    label: 'Appointment details',
+    show: {
+      title: 'Clinic appointment for %s'
+    },
+    nameAndAge: {
+      label: 'Child'
+    },
+    location: {
+      label: 'Clinic location'
+    },
+    date: {
+      label: 'Date'
+    },
+    dateAndTime: {
+      label: 'Date and time'
+    },
+    timeSlot: {
+      label: 'Time'
+    },
+    vaccinations: {
+      label: 'Vaccinations'
+    }
+  },
+  clinicBooking: {
+    start: {
+      title: {
+        [SessionPresetName.Flu]:
+          'Book an appointment for your child’s flu vaccination',
+        [SessionPresetName.Doubles]:
+          'Book an appointment for the MenACWY and Td/IPV vaccinations',
+        [SessionPresetName.HPV]: 'Book an appointment for the HPV vaccination',
+        [SessionPresetName.MMR]:
+          'Book an appointment for an MMR or MMR(V) catch-up vaccination'
+      },
+      primaryProgrammeInSentence: {
+        [SessionPresetName.Flu]: 'flu',
+        [SessionPresetName.Doubles]: 'MenACWY and Td/IPV',
+        [SessionPresetName.HPV]: 'HPV',
+        [SessionPresetName.MMR]: 'MMR or MMR(V)'
+      },
+      confirm: {
+        title: 'Book an appointment',
+        buttonText: 'Start now'
+      },
+      otherMethods: {
+        title: 'Other ways to book an appointment',
+        description:
+          'The quickest way to book an appointment is online, using this service. This will take less than 5 minutes.\n\nIf you cannot use the service, you can book an appointment by phoning %s.'
+      }
+    },
+    childCount: {
+      title: 'How many children do you need to book appointments for?',
+      description:
+        'If you have more than one child invited to a clinic, you can book appointments for all of them.',
+      children: {
+        label: 'Number of children',
+        hint: 'For example, if you have twins needing vaccination, enter 2'
+      }
+    },
+    nextChildButtonText: 'Continue to next child',
+    appointment: {
+      caption: 'Appointment for %s'
+    },
+    child: {
+      title: {
+        first: 'What is your child’s name?',
+        next: 'What is your next child’s name?'
+      },
+      caption: 'Appointment for your %s child',
+      summary: 'About your child',
+      description:
+        'Give the name on your child’s birth certificate. If it’s changed, give the name held by your child’s GP.',
+      firstName: {
+        label: 'First name',
+        hint: 'Or given name'
+      },
+      lastName: {
+        label: 'Last name',
+        hint: 'Or family name'
+      }
+    },
+    dob: {
+      title: 'What is %s’s date of birth?',
+      hint: 'For example, 27 3 2012'
+    },
+    address: {
+      title: 'What is %s’s home address?',
+      hint: 'Give the child’s primary address. We use this to confirm their identity.'
+    },
+    addressSelection: {
+      title: 'What is %s’s home address?',
+      hint: 'Select the child’s primary address. We use this to confirm their identity.'
+    },
+    parentalRelationship: {
+      title: 'What is your relationship to %s?',
+      hasParentalResponsibility: {
+        label: 'Do you have parental responsibility?',
+        hint: 'This means you have legal rights and duties relating to the child'
+      },
+      relationshipOther: {
+        label: 'Relationship to the child'
+      },
+      relationship: {
+        label: 'Relationship to child'
+      }
+    },
+    parentalResponsibility: {
+      title: 'You will be unable to give consent',
+      description:
+        'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
+    },
+    vaccinationChoice: {
+      title: 'Do you agree to %s having the following vaccinations?',
+      vaccinations: {
+        label: 'Select the vaccinations that you agree to %s having',
+        hint: 'Each vaccine is given separately'
+      }
+    },
+    extraTime: {
+      title: 'Does %s need extra time for their vaccination?',
+      hint: 'For example, they need longer than usual because they’re anxious about injections',
+      reason: {
+        label: 'Reason for needing extra time'
+      }
+    },
+    preferredLocation: {
+      title: 'Find a clinic near where you’d like %s’s appointment',
+      location: {
+        label: 'Preferred clinic location',
+        hint: 'Enter a town, city, or postcode'
+      }
+    },
+    preferredLocationMatches: {
+      title: 'We found 3 places that match “Newcastle”',
+      hits: {
+        label: 'Choose one of the following:'
+      },
+      tryAgain: 'None of these — try another town, city, or postcode'
+    },
+    clinicLocation: {
+      title: 'Choose a clinic location for %s',
+      hint: 'The following clinics are ordered by distance from NE12 7ET'
+    },
+    clinicDate: {
+      title: 'Choose a clinic date for %s',
+      location:
+        'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
+      date: {
+        label: 'Clinic date'
+      }
+    },
+    timeRange: {
+      title: 'Choose a time range for %s’s appointment',
+      clinicSummary: {
+        title: 'Clinic'
+      },
+      ranges: {
+        label: 'Available time ranges'
+      },
+      range: {
+        slotsAvailable:
+          '{count, plural, =0 {No slots remaining} one {1 slot remaining} other {{count} slots remaining}}'
+      }
+    },
+    time: {
+      title: 'Choose an appointment time for %s',
+      clinicSummary: {
+        title: 'Clinic'
+      },
+      times: {
+        label: 'Available appointment times'
+      }
+    },
+    parent: {
+      title: 'About you',
+      fullName: {
+        label: 'Full name'
+      },
+      notify: {
+        label: 'Send notifications'
+      },
+      email: {
+        label: 'Email address',
+        hint: 'We will use this to send you confirmation messages'
+      },
+      tel: {
+        label: 'Phone number',
+        hint: 'Someone from the vaccinations team might call you if they have questions'
+      },
+      sms: {
+        label: 'Tick this box if you’d like to get updates by text message'
+      },
+      contactPreference: {
+        title: 'If we need to contact you',
+        label: 'Do you have any communication needs?',
+        yes: 'Yes',
+        no: 'No',
+        description:
+          'Let us know if you have any communication needs you’d like us to be aware of — for example, a hearing or visual impairment.'
+      },
+      contactPreferenceDetails: {
+        label: 'Give details'
+      },
+      relationshipOther: {
+        label: 'Relationship to the child'
+      },
+      hasParentalResponsibility: {
+        label: 'Do you have parental responsibility?',
+        hint: 'This means you have legal rights and duties relating to the child'
+      }
+    },
+    offerHealthQuestions: {
+      title: 'We’ve got your vaccination booking request',
+      bookingReference: 'Your booking reference number is: %s',
+      beforeYouGo:
+        'Before you finish using the service, we’d like to ask some questions about your child’s health.\n\nThese questions help us make sure it’s safe to vaccinate. You can answer these questions at the clinic, but responding now will save time on the day.',
+      label: 'Answer the health questions?',
+      yes: 'Yes, answer the health questions now',
+      no: 'No, I’ll do it later'
+    },
+    healthAnswers: {
+      label: 'Answers to health questions',
+      caption: 'Health questions for %s',
+      yes: 'Yes',
+      no: 'No',
+      details: 'Give details'
+    },
+    'check-answers': {
+      confirm: 'Confirm',
+      title: 'Check and confirm'
+    },
+    confirmation: {
+      title: 'Booking complete',
+      subtitle: '<p>Your reference number:<br><strong>%s</strong></p>'
+    },
+    show: {
+      title: 'Manage your booking',
+      introduction:
+        'Check your appointment details and make changes where needed.',
+      appointment: {
+        title: 'Appointment %s',
+        change: {
+          label: 'Change appointment'
+        },
+        cancel: {
+          label: 'Cancel appointment'
+        }
+      },
+      parent: {
+        title: 'Your details',
+        change: {
+          label: 'Change my details'
+        }
+      },
+      referenceNumber: 'Your booking reference number is: %s'
+    }
+  },
   consent: {
     label: 'Consent response',
     title: 'Review consent responses',

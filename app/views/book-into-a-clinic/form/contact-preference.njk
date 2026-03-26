@@ -1,0 +1,31 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.parent.contactPreference.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ __("clinicBooking.parent.contactPreference.description") | nhsukMarkdown }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.parent.contactPreference.label")
+      }
+    },
+    items: [{
+      text: __("clinicBooking.parent.contactPreference.yes"),
+      conditional: {
+        html: textarea({
+          label: { text: __("clinicBooking.parent.contactPreferenceDetails.label") },
+          decorate: "booking.parent.contactPreferenceDetails"
+        })
+      }
+    }, {
+      text: __("clinicBooking.parent.contactPreference.no")
+    }],
+    decorate: "booking.parent.contactPreference"
+  }) }}
+{% endblock %}

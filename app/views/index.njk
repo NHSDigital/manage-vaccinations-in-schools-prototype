@@ -71,6 +71,23 @@
           }) }}
         {% endif %}
       {% endfor %}
+
+      {{ appHeading({
+        level: 2,
+        title: "Book into a clinic",
+        size: "m"
+      }) }}
+
+      {% for preset in SessionPresets %}
+        {% if preset.active %}
+          {{ actionLink({
+            classes: "nhsuk-u-margin-bottom-2",
+            text: "Start page for parents to book into a clinic for " + preset.name | replace("Flu", "flu"),
+            href: navigation.clinicBookingUrl[preset.name] + "/start"
+          }) }}
+        {% endif %}
+      {% endfor %}
+
     </main>
   </div>
 {% endblock %}

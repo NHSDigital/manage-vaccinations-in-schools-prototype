@@ -1,0 +1,19 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.addressSelection.title", firstName) %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+        })
+      }
+    },
+    hint: { text: __("clinicBooking.addressSelection.hint") },
+    items: previousAddressItems,
+    decorate: "transaction.previousAddress"
+  }) }}
+{% endblock %}

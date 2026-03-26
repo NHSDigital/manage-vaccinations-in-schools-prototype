@@ -1,0 +1,43 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.vaccinationChoice.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+  }) }}
+
+  <p>
+    While this clinic is primarily for {{ booking.formatted.primaryProgramme }} vaccinations, our records show that
+    {{ firstName }} is also eligible for other vaccinations.
+  </p>
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.vaccinationChoice.vaccinations.label", firstName),
+        size: "m"
+      }
+    },
+    hint: { text: __("clinicBooking.vaccinationChoice.vaccinations.hint") },
+    items: [{
+      text: 'HPV',
+      value: 'hpv',
+      hint: { text: 'Protects against human papillomavirus, some types of which are linked to an increased risk of certain types of cancer' }
+    }, {
+      text: 'MenACWY',
+      value: 'menacwy',
+      hint: { text: 'Protects against life-threatening illnesses like meningitis and sepsis' }
+    },{
+      text: 'Td/IPV',
+      value: 'td-ipv',
+      hint: { text: 'Protects against tetanus, diphtheria and polio' }
+    },{
+      text: 'MMR(V)',
+      value: 'mmr',
+      hint: { text: 'Protects against measles, mumps, rubella and varicella (chickenpox)' }
+    }],
+    decorate: "appointment.selected_programme_ids"
+  }) }}
+{% endblock %}

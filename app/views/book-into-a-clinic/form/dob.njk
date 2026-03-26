@@ -1,0 +1,18 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.dob.title", firstName) %}
+
+{% block form %}
+  {{ dateInput({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+        })
+      }
+    },
+    hint: { text: __("clinicBooking.dob.hint") },
+    decorate: "appointment.child.dob_"
+  }) }}
+{% endblock %}
