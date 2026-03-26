@@ -550,7 +550,8 @@ export const sessionController = {
             }
           : {
               [`/${session_id}/${type}/clinic`]: {},
-              [`/${session_id}/${type}/date`]: {}
+              [`/${session_id}/${type}/date`]: {},
+              [`/${session_id}/${type}/vaccination-periods`]: {}
             }),
         [`/${session_id}/${type}/date-check`]: {},
         ...(session.presetNames?.includes(SessionPresetName.MMR)
