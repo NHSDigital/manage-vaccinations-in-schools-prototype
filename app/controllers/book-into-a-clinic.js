@@ -315,7 +315,7 @@ export const bookIntoClinicController = {
 
         booking.addAppointment(appointment)
       }
-      for (let index = 0; index < childrenToRemove; index++) {
+      Array.from({ length: childrenToRemove }).forEach(() => {
         const appointment_uuid = booking.removeLastAppointment()
         ClinicAppointment.delete(appointment_uuid, data.wizard)
       }
