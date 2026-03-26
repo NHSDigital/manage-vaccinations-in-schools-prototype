@@ -69,7 +69,7 @@ export const bookIntoClinicController = {
     const { sessionPreset } = response.locals
 
     // Create a new clinic booking in the wizard context
-    const booking = ClinicBooking.createInContext(
+    const booking = ClinicBooking.create(
       {
         sessionPreset
       },
@@ -308,17 +308,17 @@ export const bookIntoClinicController = {
       const childrenToAdd = Math.max(0, desiredCount - existingCount)
       const childrenToRemove = Math.max(0, existingCount - desiredCount)
       Array.from({ length: childrenToAdd }).forEach(() => {
-        const appointment = ClinicAppointment.createInContext(
+        const appointment = ClinicAppointment.create(
           { primary_programme_ids: booking.primaryProgrammeIDs },
           data.wizard
         )
 
         booking.addAppointment(appointment)
-      }
+      })
       Array.from({ length: childrenToRemove }).forEach(() => {
         const appointment_uuid = booking.removeLastAppointment()
         ClinicAppointment.delete(appointment_uuid, data.wizard)
-      }
+      })
 
       // Start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]

@@ -31,23 +31,6 @@ export class ClinicBooking {
   }
 
   /**
-   * Create a new clinic booking, adding it to the context
-   *
-   * @param {object} booking
-   * @param {object} context
-   * @returns {ClinicBooking} A new clinic booking, added to the context, and possibly with a new UUID
-   */
-  static createInContext(booking, context) {
-    const createdBooking = new ClinicBooking(booking)
-
-    // Update context
-    context.clinicBookings = context.clinicBookings || {}
-    context.clinicBookings[createdBooking.uuid] = createdBooking
-
-    return createdBooking
-  }
-
-  /**
    *
    * @returns {string} Generate a new, random booking reference
    */
@@ -171,6 +154,23 @@ export class ClinicBooking {
     if (context?.clinicBookings?.[uuid]) {
       return new ClinicBooking(context.clinicBookings[uuid], context)
     }
+  }
+
+  /**
+   * Create a new clinic booking, adding it to the context
+   *
+   * @param {object} booking
+   * @param {object} context
+   * @returns {ClinicBooking} A new clinic booking, added to the context, and possibly with a new UUID
+   */
+  static create(booking, context) {
+    const createdBooking = new ClinicBooking(booking)
+
+    // Update context
+    context.clinicBookings = context.clinicBookings || {}
+    context.clinicBookings[createdBooking.uuid] = createdBooking
+
+    return createdBooking
   }
 
   /**

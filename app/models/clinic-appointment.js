@@ -66,23 +66,6 @@ export class ClinicAppointment {
   }
 
   /**
-   * Create a new clinic appointment, adding it to the context
-   *
-   * @param {object} appointment - an appointment to copy or an object with any subset of its properties
-   * @param {object} context - the context into which we'll add the new appointment
-   * @returns {ClinicAppointment} A new clinic booking, added to the context, and possibly with a new UUID
-   */
-  static createInContext(appointment, context) {
-    const createdAppointment = new ClinicAppointment(appointment)
-
-    // Update context
-    context.clinicAppointments = context.clinicAppointments || {}
-    context.clinicAppointments[createdAppointment.uuid] = createdAppointment
-
-    return createdAppointment
-  }
-
-  /**
    * Get URI of the booking journey
    *
    * @returns {string} Appointment URI
@@ -339,6 +322,23 @@ export class ClinicAppointment {
     if (context?.clinicAppointments?.[uuid]) {
       return new ClinicAppointment(context.clinicAppointments[uuid], context)
     }
+  }
+
+  /**
+   * Create a new clinic appointment, adding it to the context
+   *
+   * @param {object} appointment - an appointment to copy or an object with any subset of its properties
+   * @param {object} context - the context into which we'll add the new appointment
+   * @returns {ClinicAppointment} A new clinic booking, added to the context, and possibly with a new UUID
+   */
+  static create(appointment, context) {
+    const createdAppointment = new ClinicAppointment(appointment)
+
+    // Update context
+    context.clinicAppointments = context.clinicAppointments || {}
+    context.clinicAppointments[createdAppointment.uuid] = createdAppointment
+
+    return createdAppointment
   }
 
   /**
