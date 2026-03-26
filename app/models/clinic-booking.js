@@ -207,7 +207,7 @@ export class ClinicBooking {
   /**
    * Delete
    *
-   * @param {string} uuid - ClinicBooking UUID
+   * @param {string} uuid - Clinic booking UUID
    * @param {object} context - Context
    * @static
    */
