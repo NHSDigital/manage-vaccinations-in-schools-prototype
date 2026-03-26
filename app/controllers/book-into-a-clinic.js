@@ -307,7 +307,7 @@ export const bookIntoClinicController = {
 
       const childrenToAdd = Math.max(0, desiredCount - existingCount)
       const childrenToRemove = Math.max(0, existingCount - desiredCount)
-      for (let index = 0; index < childrenToAdd; index++) {
+      Array.from({ length: childrenToAdd }).forEach(() => {
         const appointment = ClinicAppointment.createInContext(
           { primary_programme_ids: booking.primaryProgrammeIDs },
           data.wizard
