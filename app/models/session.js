@@ -20,6 +20,7 @@ import {
 } from '../enums.js'
 import {
   Clinic,
+  ClinicVaccinationPeriod,
   Consent,
   PatientSession,
   Programme,
@@ -62,7 +63,9 @@ import {
  * @property {boolean} [registration] - Does session have registration?
  *
  *   Clinics only
- * @property {string} [clinic_id] - Clinic ID
+ * @property {string} [clinic_id] - Clinic ID i.e. the venue
+ * @property {Array<string>} [vaccination_period_ids] - the vaccination periods (start, end, etc) being run in the clinic
+ * @property {number} [appointmentLength] - standard length of the clinic appointment, in minutes
  *
  *   Schools only
  * @property {string} [school_id] - School URN
@@ -90,6 +93,8 @@ export class Session {
     if (this.type === SessionType.Clinic) {
       this.clinic_id = options?.clinic_id
       this.registration = false
+      this.vaccination_period_ids = options?.vaccination_period_ids
+      this.appointmentLength = options?.appointmentLength
     }
 
     if (this.type === SessionType.School) {
@@ -333,6 +338,23 @@ export class Session {
         return Clinic.findOne(this.clinic_id, this.context)
       } catch (error) {
         console.error('Session.clinic', error.message)
+      }
+    }
+  }
+
+  /**
+   * Get the vaccination periods set up for this clinic
+   *
+   * @returns {Array<ClinicVaccinationPeriod>|undefined} - the vaccination periods in this clinic session
+   */
+  get vaccinationPeriods() {
+    if (this.clinic_id && this.vaccination_period_ids) {
+      try {
+        return this.vaccination_period_ids.map((period_id) =>
+          ClinicVaccinationPeriod.findOne(period_id, this.context)
+        )
+      } catch (error) {
+        console.error('Session.vaccinationPeriods', error.message)
       }
     }
   }

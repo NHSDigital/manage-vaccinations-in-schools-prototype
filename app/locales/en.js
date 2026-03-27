@@ -2172,13 +2172,19 @@ export const en = {
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
-      startTime: {
-        label: 'Start time',
-        hint: 'For example, 13 00'
-      },
-      endTime: {
-        label: 'End time',
-        hint: 'For example, 17 00'
+      period: {
+        title: 'Vaccination period %d',
+        startTime: {
+          label: 'Start time',
+          hint: 'For example, 13 00'
+        },
+        endTime: {
+          label: 'End time',
+          hint: 'For example, 17 00'
+        },
+        removePeriod: {
+          label: 'Remove'
+        }
       },
       addPeriod: {
         description:

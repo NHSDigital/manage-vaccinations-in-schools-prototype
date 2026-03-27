@@ -1,68 +1,104 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("session.vaccinationPeriods.title") %}
+{% set hideConfirmButton = true %}
+
+{% set vaccinationPeriods = session.vaccinationPeriods %}
 
 {% block form %}
   {{ appHeading({
     title: title
   })}}
 
-  <div class="nhsuk-form-group">
+  {% for vaccinationPeriod in vaccinationPeriods %}
+    {% call fieldset({
+      legend: {
+        text: __("session.vaccinationPeriods.period.title", loop.index),
+        size: "m"
+      } if vaccinationPeriods.length > 1
+    }) %}
+
     {{ dateInput({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--m",
-          text: __("session.vaccinationPeriods.startTime.label")
+          size: "m" if vaccinationPeriods.length === 1 else "s",
+          text: __("session.vaccinationPeriods.period.startTime.label")
         }
       },
-      hint: { text: __("session.vaccinationPeriods.startTime.hint") },
+      hint: { text: __("session.vaccinationPeriods.period.startTime.hint") },
       items: [
         {
-          name: "hour",
           label: "Hour",
+          name: "hour",
           width: 2
         },
         {
-          name: "minute",
           label: "Minutes",
+          name: "minute",
           width: 2
         }
       ],
-      decorate: "session.clinicDetails.vaccinationPeriod.startAt"
+      decorate: "vaccinationPeriods[" + loop.index0 + "].startAt_"
     }) }}
 
     {{ dateInput({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--m",
-          text: __("session.vaccinationPeriods.endTime.label")
+          size: "m" if vaccinationPeriods.length === 1 else "s",
+          text: __("session.vaccinationPeriods.period.endTime.label")
         }
       },
-      hint: { text: __("session.vaccinationPeriods.endTime.hint") },
+      hint: { text: __("session.vaccinationPeriods.period.endTime.hint") },
       items: [
         {
-          name: "hour",
           label: "Hour",
+          name: "hour",
           width: 2
         },
         {
-          name: "minute",
           label: "Minutes",
+          name: "minute",
           width: 2
         }
       ],
-      decorate: "session.clinicDetails.vaccinationPeriod.endAt"
+      decorate: "vaccinationPeriods[" + loop.index0 + "].endAt_"
     }) }}
-  </div>
+
+    {% if vaccinationPeriods.length > 1 %}
+      <div class="nhsuk-form-group">
+        {{ button({
+          text: __("session.vaccinationPeriods.period.removePeriod.label"),
+          classes: "nhsuk-button--secondary",
+          small: true,
+          name: "action",
+          value: "remove-period-" ~ loop.index0
+        }) }}
+      </div>
+    {% endif %}
+
+    {% endcall %}
+
+  {% endfor %}
 
   <div class="nhsuk-form-group">
     {{ __("session.vaccinationPeriods.addPeriod.description") | nhsukMarkdown }}
 
     {{ button({
-      href: session.uri ~ "/" ~ type ~ "/add-vaccination-period",
       text: __("session.vaccinationPeriods.addPeriod.label"),
-      variant: "secondary"
+      variant: "secondary",
+      small: true,
+      name: "action",
+      value: "add-period"
     }) }}
   </div>
+
+  <div class="nhsuk-form-group">
+    {{ button({
+      text: __("form.continue"),
+      variant: confirmButtonVariant,
+      name: "action",
+      value: "continue"
+    }) }}
+</div>
 
 {% endblock %}

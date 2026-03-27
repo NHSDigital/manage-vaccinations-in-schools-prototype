@@ -15,6 +15,7 @@ import {
 } from '../enums.js'
 import {
   Clinic,
+  ClinicVaccinationPeriod,
   DefaultBatch,
   Instruction,
   PatientSession,
@@ -628,13 +629,76 @@ export const sessionController = {
   },
 
   updateForm(request, response) {
-    const { session_id } = request.params
+    const { session_id, view } = request.params
     const { data } = request.session
     const { paths } = response.locals
 
-    Session.update(session_id, request.body.session, data.wizard)
+    // Update values in the session model
+    let session = Session.findOne(session_id, data.wizard)
+    if (request.body.session) {
+      session = Session.update(session_id, request.body.session, data.wizard)
+    }
 
-    response.redirect(paths.next)
+    // Update values in the clinic vaccination periods (if defining them)
+    if (request.body.vaccinationPeriods) {
+      for (const [
+        index,
+        vaccinationPeriod
+      ] of request.body.vaccinationPeriods.entries()) {
+        ClinicVaccinationPeriod.update(
+          session.vaccination_period_ids[index],
+          vaccinationPeriod,
+          data.wizard
+        )
+      }
+    }
+
+    let nextPage = paths.next
+
+    if (session.type === SessionType.Clinic) {
+      // Add the first vaccination period, if not already there
+      if (!session.vaccination_period_ids?.length) {
+        const vaccination_period_ids = [
+          ClinicVaccinationPeriod.create(
+            { session_id: session.id },
+            data.wizard
+          ).uuid
+        ]
+        Session.update(session_id, { vaccination_period_ids }, data.wizard)
+      }
+
+      // Act accordingly for each of the possible button clicks in the vaccination periods page
+      if (view === 'vaccination-periods') {
+        const action = request.body.action
+        if (action === 'add-period') {
+          const vaccination_period_ids = [
+            ...session.vaccination_period_ids,
+            ClinicVaccinationPeriod.create(
+              { session_id: session.id },
+              data.wizard
+            ).uuid
+          ]
+          Session.update(session_id, { vaccination_period_ids }, data.wizard)
+
+          nextPage = request.originalUrl
+        } else if (action.startsWith('remove-period-')) {
+          const periodIndex = parseInt(
+            action.substring('remove-period-'.length),
+            10
+          )
+          const period_id = session.vaccination_period_ids[periodIndex]
+          const vaccination_period_ids =
+            session.vaccination_period_ids.toSpliced(periodIndex, 1)
+          Session.update(session_id, { vaccination_period_ids }, data.wizard)
+
+          ClinicVaccinationPeriod.delete(period_id, data.wizard)
+
+          nextPage = request.originalUrl
+        }
+      }
+    }
+
+    response.redirect(nextPage)
   },
 
   giveInstructions(request, response) {
