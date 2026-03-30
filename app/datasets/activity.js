@@ -76,7 +76,10 @@ export default {
       'Consent, health information, triage outcome and PSD status expired',
     merged: (mergedPatient, patient) =>
       `The record for ${mergedPatient.fullName} (date of birth ${mergedPatient.formatted.dob}) was merged with the record for ${patient.fullName} (date of birth ${patient.formatted.dob}) because they have the same NHS number (${mergedPatient.formatted.nhsn}).`,
-    updated: (key, value) => `Updated \`${key}\` to **${value}**`
+    updated: (source) =>
+      source
+        ? `Record updated automatically after new details were imported in a ${source} upload`
+        : 'Record updated manually'
   },
   preScreen: {
     created: 'Completed pre-screening checks'

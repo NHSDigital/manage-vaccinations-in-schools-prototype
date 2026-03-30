@@ -298,7 +298,8 @@ export const patientController = {
     const patient = Patient.update(
       patient_uuid,
       data.wizard.patients[patient_uuid],
-      data
+      data,
+      true
     )
 
     // Clean up session data

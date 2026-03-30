@@ -213,6 +213,54 @@ export const activityController = {
           auditEvent({
             name: activity.patient.merged(mergedPatient, patient),
             createdBy_uid
+          }),
+          auditEvent({
+            name: activity.patient.updated(),
+            updatedFields: [
+              {
+                key: 'patient.firstName.label',
+                before: patient.firstName,
+                after: mergedPatient.firstName
+              },
+              {
+                key: 'patient.dob.label',
+                before: patient.formatted.dob,
+                after: mergedPatient.formatted.dob
+              }
+            ],
+            createdBy_uid
+          }),
+          auditEvent({
+            name: activity.patient.updated('class list'),
+            updatedFields: [
+              {
+                key: 'patient.firstName.label',
+                before: patient.firstName,
+                after: mergedPatient.firstName
+              },
+              {
+                key: 'patient.dob.label',
+                before: patient.formatted.dob,
+                after: mergedPatient.formatted.dob
+              }
+            ],
+            createdBy_uid
+          }),
+          auditEvent({
+            name: activity.patient.updated('cohort'),
+            updatedFields: [
+              {
+                key: 'patient.firstName.label',
+                before: patient.firstName,
+                after: mergedPatient.firstName
+              },
+              {
+                key: 'patient.dob.label',
+                before: patient.formatted.dob,
+                after: mergedPatient.formatted.dob
+              }
+            ],
+            createdBy_uid
           })
         ]
       },

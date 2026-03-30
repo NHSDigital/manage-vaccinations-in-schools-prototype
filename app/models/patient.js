@@ -44,7 +44,6 @@ import {
  * @property {string} nhsn - NHS number
  * @property {boolean} invalid - Flagged as invalid
  * @property {boolean} sensitive - Flagged as sensitive
- * @property {Date} [updatedAt] - Updated date
  * @property {object} [address] - Address
  * @property {Parent} [parent1] - Parent 1
  * @property {Parent} [parent2] - Parent 2
@@ -68,7 +67,6 @@ export class Patient extends Child {
     this.nhsn = options?.nhsn || this.nhsNumber
     this.invalid = invalid
     this.sensitive = sensitive
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.address = !sensitive && options?.address ? options.address : undefined
     this.parent1 =
       !sensitive && options?.parent1 ? new Parent(options.parent1) : undefined
@@ -543,23 +541,43 @@ export class Patient extends Child {
    * @param {string} uuid - Patient record UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
+   * @param {boolean} log - Update activity log
    * @returns {Patient} Updated patient record
    * @static
    */
-  static update(uuid, updates, context) {
+  static update(uuid, updates, context, log = false) {
+    const patient = Patient.findOne(uuid, context)
     const updatedPatient = _.merge(Patient.findOne(uuid, context), updates)
-    updatedPatient.updatedAt = today()
 
-    // Add update to activity log (but only when updating wizard context)
-    // TODO: Make this work with nested values like date of birth
-    if (Object.keys(context.patients).length === 1) {
-      for (const [key, value] of Object.entries(updates)) {
-        updatedPatient.addEvent({
-          name: activity.patient.updated(key, value),
-          type: AuditEventType.Record,
-          createdAt: updatedPatient.updatedAt
-        })
+    // Add update to activity log
+    // TODO: Make this work with nested values
+    if (log) {
+      const updatedFields = []
+      const thing = new Patient(updatedPatient, context)
+      for (let key of Object.keys(updates)) {
+        // Prefer ISO 8601 date value instead date input object
+        if (key.endsWith('_')) {
+          key = key.slice(0, -1)
+        }
+
+        const before = patient.formatted?.[key] || patient?.[key]
+        const after = thing.formatted?.[key] || thing?.[key]
+
+        if (!_.isMatch(before, after)) {
+          updatedFields.push({
+            key: `patient.${key}.label`,
+            before: String(before).replace('<br>', ', '),
+            after: String(after).replace('<br>', ', ')
+          })
+        }
       }
+
+      updatedPatient.addEvent({
+        name: activity.patient.updated(),
+        type: AuditEventType.Record,
+        createdAt: today(),
+        updatedFields
+      })
     }
 
     // Remove patient context

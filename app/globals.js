@@ -150,7 +150,8 @@ export default () => {
         description: nunjucksEnv.filters.safe(
           auditEvent.formatted.programmes + auditEvent.description
         ),
-        details
+        details,
+        updatedFields: auditEvent.updatedFields
       })
     }
 

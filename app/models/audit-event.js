@@ -32,10 +32,11 @@ import {
  * @property {string} [createdBy_uid] - User who created event
  * @property {string} name - Name
  * @property {string} [note] - Note
+ * @property {import('../enums.js').AuditEventType} [type] - Audit event type
  * @property {boolean} [pinned] - Pinned
  * @property {object} [messageRecipient] - Message recipient
  * @property {string} [messageTemplate] - Message template
- * @property {import('../enums.js').AuditEventType} [type] - Audit event type
+ * @property {Array} [updatedFields] - Updated fields
  * @property {string} [outcome] - Outcome for activity type
  * @property {Date} [outcomeAt] - Date outcome invalidates
  * @property {object} [outcomeAt_] - Date outcome invalidates (from `dateInput`)
@@ -51,10 +52,11 @@ export class AuditEvent {
     this.createdBy_uid = options?.createdBy_uid
     this.name = options.name
     this.note = options.note
+    this.type = options?.type
     this.pinned = stringToBoolean(options?.pinned)
     this.messageRecipient = options?.messageRecipient
     this.messageTemplate = options?.messageTemplate
-    this.type = options?.type
+    this.updatedFields = options?.updatedFields
     this.outcome = options?.outcome
     this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)
     this.outcomeAt_ = options?.outcomeAt_

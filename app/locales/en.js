@@ -20,6 +20,10 @@ export const en = {
     update: 'Update',
     archive: 'Archive'
   },
+  count: {
+    updates:
+      '{count, plural, =0 {No fields updated} one {1 field updated} other {# fields updated}}'
+  },
   location: {
     name: {
       label: 'Name',
