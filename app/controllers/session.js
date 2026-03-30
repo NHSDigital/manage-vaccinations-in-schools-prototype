@@ -641,8 +641,6 @@ export const sessionController = {
     const { data } = request.session
     const { paths } = response.locals
 
-    console.log(`request.body: ${JSON.stringify(request.body, null, 2)}`)
-
     // Update values in the session model
     let session = Session.findOne(session_id, data.wizard)
     if (request.body.session) {
