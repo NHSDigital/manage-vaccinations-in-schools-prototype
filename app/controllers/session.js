@@ -709,6 +709,36 @@ export const sessionController = {
 
           nextPage = request.originalUrl
         }
+      } else if (view === 'vaccinators') {
+        if (
+          session.vaccination_period_ids.length > 1 &&
+          request.body.transaction.hasVariableVaccinatorCounts === 'false'
+        ) {
+          // Set the same number of vaccinators in all vaccination periods
+          for (const period_id of session.vaccination_period_ids) {
+            ClinicVaccinationPeriod.update(
+              period_id,
+              {
+                vaccinatorCount: parseInt(
+                  request.body.transaction.consistentVaccinatorCount,
+                  10
+                )
+              },
+              data.wizard
+            )
+          }
+        } else {
+          // Each vaccination period gets its own number of vaccinators
+          for (const [period_id, vaccinationPeriod] of Object.entries(
+            request.body.vaccinationPeriods
+          )) {
+            ClinicVaccinationPeriod.update(
+              period_id,
+              vaccinationPeriod,
+              data.wizard
+            )
+          }
+        }
       }
     }
 

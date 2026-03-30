@@ -5,6 +5,7 @@
 {% block form %}
   {% if vaccinationPeriods.length === 1 %}
     {# Only need to show a single text input to record staffing levels #}
+    {% set vaccinationPeriod = vaccinationPeriods[0] %}
     {{ input({
         label: {
           isPageHeading: true,
@@ -14,7 +15,9 @@
         suffix: __("session.vaccinators.input.suffix"),
         width: 2,
         inputmode: "numeric",
-        decorate: "vaccinationPeriod.vaccinatorCount"
+          id: "vaccinationPeriods-" ~ vaccinationPeriod.uuid ~ "-vaccinatorCount",
+          name: "[vaccinationPeriods][" ~ vaccinationPeriod.uuid ~ "][vaccinatorCount]",
+          value: vaccinationPeriod.vaccinatorCount
       }) }}
 
   {% else %}
@@ -41,7 +44,9 @@
           suffix: __("session.vaccinators.input.suffix"),
           width: 2,
           inputmode: "numeric",
-          decorate: "vaccinationPeriod.vaccinatorCount"
+          id: "vaccinationPeriods-" ~ vaccinationPeriod.uuid ~ "-vaccinatorCount",
+          name: "[vaccinationPeriods][" ~ vaccinationPeriod.uuid ~ "][vaccinatorCount]",
+          value: vaccinationPeriod.vaccinatorCount
         })
       %}
     {% endfor %}

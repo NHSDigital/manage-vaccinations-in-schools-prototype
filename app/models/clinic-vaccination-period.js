@@ -18,6 +18,7 @@ import {
  * @property {Date} [startAt_] - Start time of first appointment slot, from dateInput - see getter/setter
  * @property {Date} [endAt] - End time of final appointment slot
  * @property {Date} [endAt_] - End time of final appointment slot, from dateInput - see getter/setter
+ * @property {number} [vaccinatorCount] - The number of staff vaccinating in parallel during this period
  */
 export class ClinicVaccinationPeriod {
   constructor(options, context) {
@@ -29,6 +30,8 @@ export class ClinicVaccinationPeriod {
     this.startAt_ = options?.startAt_
     this.endAt = options?.endAt && new Date(options.endAt)
     this.endAt_ = options?.endAt_
+
+    this.vaccinatorCount = options?.vaccinatorCount
   }
 
   /**
