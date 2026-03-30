@@ -1,0 +1,21 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.appointmentLength.title") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      isPageHeading: true,
+      text: title,
+      size: "l"
+    },
+    hint: {
+      text: __("session.appointmentLength.hint")
+    },
+    suffix: __("session.appointmentLength.suffix"),
+    width: 3,
+    inputmode: "numeric",
+    spellcheck: false,
+    decorate: "session.appointmentLength"
+  }) }}
+{% endblock %}

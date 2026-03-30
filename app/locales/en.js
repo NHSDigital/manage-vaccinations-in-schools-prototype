@@ -2211,6 +2211,26 @@ export const en = {
         label: 'Add another period'
       }
     },
+    vaccinators: {
+      title: 'How many vaccinators do you have for this session?',
+      input: {
+        allPeriodsLabel: 'All periods',
+        singlePeriodLabel:
+          'From {{startTime.hour}}:{{startTime.minute}} until {{endTime.hour}}:{{endTime.minute}}',
+        suffix: 'vaccinators'
+      },
+      varies: {
+        label: 'The number will vary by vaccination period'
+      },
+      consistent: {
+        label: 'The number won’t vary'
+      }
+    },
+    appointmentLength: {
+      title: 'How long are your appointments?',
+      hint: 'For example, 5 minutes for flu clinics or 10 minutes for injected vaccines',
+      suffix: 'minutes'
+    },
     location: {
       label: 'Location',
       title: 'About this location'

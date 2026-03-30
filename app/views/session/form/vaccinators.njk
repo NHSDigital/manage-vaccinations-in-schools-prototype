@@ -1,0 +1,75 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.vaccinators.title") %}
+
+{% block form %}
+  {% if vaccinationPeriods.length === 1 %}
+    {# Only need to show a single text input to record staffing levels #}
+    {{ input({
+        label: {
+          isPageHeading: true,
+          text: title,
+          size: "l"
+        },
+        suffix: __("session.vaccinators.input.suffix"),
+        width: 2,
+        inputmode: "numeric",
+        decorate: "vaccinationPeriod.vaccinatorCount"
+      }) }}
+
+  {% else %}
+    {#
+      Ask whether the staffing levels are consistent across vaccination periods and
+      conditionally show an appropriate number of text inputs to define those levels
+    #}
+    {% set staffingLevelItems = [
+      { text: __("session.vaccinators.varies.label"), value: true },
+      { text: __("session.vaccinators.consistent.label"), value: false }
+    ] %}
+
+    {# Set conditional HTML for variable staffing levels #}
+    {% set variableVaccinatorCountHtml = "" %}
+    {% for vaccinationPeriod in vaccinationPeriods %}
+      {% set variableVaccinatorCountHtml = variableVaccinatorCountHtml ~
+        input({
+          label: {
+            text: __("session.vaccinators.input.singlePeriodLabel", {
+              startTime: vaccinationPeriod.startAt_,
+              endTime: vaccinationPeriod.endAt_
+            })
+          },
+          suffix: __("session.vaccinators.input.suffix"),
+          width: 2,
+          inputmode: "numeric",
+          decorate: "vaccinationPeriod.vaccinatorCount"
+        })
+      %}
+    {% endfor %}
+    {% set staffingLevelItems = injectConditionalHtml(staffingLevelItems, true, variableVaccinatorCountHtml) %}
+
+    {# Set conditional HTML for consistent staffing levels #}
+    {% set consistentVaccinatorCountHtml = input({
+      label: {
+        text: __("session.vaccinators.input.allPeriodsLabel")
+      },
+      suffix: __("session.vaccinators.input.suffix"),
+      width: 2,
+      inputmode: "numeric",
+      decorate: "transaction.consistentVaccinatorCount"
+    }) %}
+    {% set staffingLevelItems = injectConditionalHtml(staffingLevelItems, false, consistentVaccinatorCountHtml) %}
+
+    {{ radios({
+      fieldset: {
+        legend: {
+          html: appHeading({
+            title: title
+          })
+        }
+      },
+      items: staffingLevelItems,
+      decorate: "transaction.hasVariableVaccinatorCounts"
+    }) }}
+  {% endif %}
+
+{% endblock %}

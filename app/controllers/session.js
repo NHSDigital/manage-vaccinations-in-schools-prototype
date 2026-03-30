@@ -558,9 +558,11 @@ export const sessionController = {
           : {
               [`/${session_id}/${type}/clinic`]: {},
               [`/${session_id}/${type}/date`]: {},
-              [`/${session_id}/${type}/vaccination-periods`]: {}
+              [`/${session_id}/${type}/vaccination-periods`]: {},
+              [`/${session_id}/${type}/vaccinators`]: {},
+              [`/${session_id}/${type}/appointment-length`]: {}
             }),
-        [`/${session_id}/${type}/date-check`]: {},
+        //[`/${session_id}/${type}/date-check`]: {},
         ...(session.presetNames?.includes(SessionPresetName.MMR)
           ? {
               [`/${session_id}/${type}/mmr-consent`]: {}
@@ -638,6 +640,8 @@ export const sessionController = {
     const { session_id, view } = request.params
     const { data } = request.session
     const { paths } = response.locals
+
+    console.log(`request.body: ${JSON.stringify(request.body, null, 2)}`)
 
     // Update values in the session model
     let session = Session.findOne(session_id, data.wizard)
