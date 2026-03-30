@@ -1002,6 +1002,21 @@ export const en = {
       title: 'Select file format',
       label: 'File format'
     },
+    academicYear: {
+      label: 'Academic year'
+    },
+    startEndAt: {
+      label: 'Date range'
+    },
+    programme: {
+      label: 'Programme'
+    },
+    clinic: {
+      label: 'Clinic'
+    },
+    school: {
+      label: 'School'
+    },
     status: {
       label: 'Status'
     },

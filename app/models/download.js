@@ -8,6 +8,7 @@ import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
   formatDate,
+  getCurrentAcademicYear,
   today
 } from '../utils/date.js'
 import { getDownloadStatus } from '../utils/status.js'
@@ -28,6 +29,7 @@ import { formatList, formatProgress, formatTag } from '../utils/string.js'
  * @property {object} [endAt_] - Date to end report (from `dateInput`)
  * @property {DownloadFormat} [format] - Downloaded file format
  * @property {DownloadType} [type] - Download type
+ * @property {number} [academicYear] - Programme year
  * @property {string} [programme_id] - Programme ID
  * @property {Array<string>} [team_ids] - Team IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
@@ -39,16 +41,25 @@ export class Download {
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.createdBy_uid = options?.createdBy_uid
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
-    this.startAt = options?.startAt && new Date(options.startAt)
-    this.startAt_ = options?.startAt_
-    this.endAt = options?.endAt && new Date(options.endAt)
-    this.endAt_ = options?.endAt_
     this.format = options?.format || DownloadFormat.CSV
     this.type = options?.type || DownloadType.Report
     this.programme_id = options?.programme_id
     this.session_id = options?.session_id
     this.team_ids = options?.team_ids
     this.vaccination_uuids = options?.vaccination_uuids || []
+
+    if (this.type === DownloadType.Report) {
+      this.academicYear = options?.academicYear || getCurrentAcademicYear()
+    }
+
+    if ([DownloadType.Report, DownloadType.Moves].includes(this.type)) {
+      this.startAt =
+        (options?.startAt && new Date(options.startAt)) ||
+        new Date('2024-09-01')
+      this.startAt_ = options?.startAt_
+      this.endAt = (options?.endAt && new Date(options.endAt)) || today()
+      this.endAt_ = options?.endAt_
+    }
   }
 
   /**
@@ -116,11 +127,11 @@ export class Download {
       case this.type === DownloadType.Moves:
         return `School moves (${this.formatted.createdAt})`
       case this.type === DownloadType.Report:
-        return `${this.programme.name} vaccination records`
-      case this.type === DownloadType.Session && this.session_id:
-        return `Offline spreadsheet for ${this.session.name}`
+        return `${this.programme.name} vaccination records (${this.formatted.startEndAt})`
       case this.type === DownloadType.Session:
-        return `Offline spreadsheet for no known school (including home-educated children)`
+        return this.session.clinic
+          ? `Offline spreadsheet for ${this.session.clinic.name}`
+          : `Offline spreadsheet for ${this.session.school.name}`
       default:
         return 'Download'
     }
@@ -357,16 +368,21 @@ export class Download {
         hour12: true
       }),
       createdBy: this.createdBy?.fullName,
-      startAt: this.startAt
-        ? formatDate(this.startAt, { dateStyle: 'long' })
-        : 'Earliest recorded vaccination',
-      endAt: this.endAt
-        ? formatDate(this.endAt, { dateStyle: 'long' })
-        : 'Latest recorded vaccination',
+      startAt: this.startAt && formatDate(this.startAt, { dateStyle: 'long' }),
+      endAt: this.endAt && formatDate(this.endAt, { dateStyle: 'long' }),
+      startEndAt:
+        this.startAt &&
+        this.endAt &&
+        new Intl.DateTimeFormat('en', {
+          dateStyle: 'long'
+        }).formatRange(this.startAt, this.endAt),
       status:
         this.status === DownloadStatus.Processing
           ? formatProgress(this.progress)
           : formatTag(getDownloadStatus(this.status)),
+      clinic: this.session?.clinic && this.session.clinic.name,
+      school: this.session?.school && this.session.school.name,
+      programme: this.programme?.nameTag,
       teams:
         this.teams.length > 0
           ? formatList(this.teams.map(({ name }) => name))
