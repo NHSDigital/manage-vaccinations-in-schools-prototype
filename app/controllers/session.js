@@ -536,8 +536,14 @@ export const sessionController = {
       if (!session) {
         session = Session.create(response.locals.session, data.wizard)
       }
-
       response.locals.session = new Session(session, data)
+
+      const vaccinationPeriods = session.vaccinationPeriods
+      if (vaccinationPeriods) {
+        response.locals.vaccinationPeriods = vaccinationPeriods.map(
+          (period) => new ClinicVaccinationPeriod(period, data)
+        )
+      }
 
       const journey = {
         [`/`]: {},
@@ -639,20 +645,6 @@ export const sessionController = {
       session = Session.update(session_id, request.body.session, data.wizard)
     }
 
-    // Update values in the clinic vaccination periods (if defining them)
-    if (request.body.vaccinationPeriods) {
-      for (const [
-        index,
-        vaccinationPeriod
-      ] of request.body.vaccinationPeriods.entries()) {
-        ClinicVaccinationPeriod.update(
-          session.vaccination_period_ids[index],
-          vaccinationPeriod,
-          data.wizard
-        )
-      }
-    }
-
     let nextPage = paths.next
 
     if (session.type === SessionType.Clinic) {
@@ -669,8 +661,25 @@ export const sessionController = {
 
       // Act accordingly for each of the possible button clicks in the vaccination periods page
       if (view === 'vaccination-periods') {
+        // Save the times entered, no matter what we're doing next
+        for (const [period_id, vaccinationPeriod] of Object.entries(
+          request.body.vaccinationPeriods
+        )) {
+          ClinicVaccinationPeriod.update(
+            period_id,
+            _.merge(
+              // make sure we keep up to date with the session date
+              { startAt_: session.date_, endAt_: session.date_ },
+              vaccinationPeriod
+            ),
+            data.wizard
+          )
+        }
+
+        // Add or remove vaccination periods, if requested
         const action = request.body.action
         if (action === 'add-period') {
+          // Add another vaccination period
           const vaccination_period_ids = [
             ...session.vaccination_period_ids,
             ClinicVaccinationPeriod.create(
@@ -682,6 +691,7 @@ export const sessionController = {
 
           nextPage = request.originalUrl
         } else if (action.startsWith('remove-period-')) {
+          // Remove a vaccination period
           const periodIndex = parseInt(
             action.substring('remove-period-'.length),
             10

@@ -3,8 +3,6 @@
 {% set title = __("session.vaccinationPeriods.title") %}
 {% set hideConfirmButton = true %}
 
-{% set vaccinationPeriods = session.vaccinationPeriods %}
-
 {% block form %}
   {{ appHeading({
     title: title
@@ -29,16 +27,21 @@
       items: [
         {
           label: "Hour",
-          name: "hour",
-          width: 2
+          width: 2,
+          inputmode: "numeric",
+          id: "vaccinationPeriods-" ~ vaccinationPeriod.uuid ~ "-startAt_-hour",
+          name: "[vaccinationPeriods][" ~ vaccinationPeriod.uuid ~ "][startAt_][hour]",
+          value: vaccinationPeriod.startAt_.hour
         },
         {
           label: "Minutes",
-          name: "minute",
-          width: 2
+          width: 2,
+          inputmode: "numeric",
+          id: "vaccinationPeriods-" ~ vaccinationPeriod.uuid ~ "-startAt_-minute",
+          name: "[vaccinationPeriods][" ~ vaccinationPeriod.uuid ~ "][startAt_][minute]",
+          value: vaccinationPeriod.startAt_.minute
         }
-      ],
-      decorate: "vaccinationPeriods[" + loop.index0 + "].startAt_"
+      ]
     }) }}
 
     {{ dateInput({
@@ -52,16 +55,21 @@
       items: [
         {
           label: "Hour",
-          name: "hour",
-          width: 2
+          width: 2,
+          inputmode: "numeric",
+          id: "vaccinationPeriods-" ~ vaccinationPeriod.uuid ~ "-endAt_-hour",
+          name: "[vaccinationPeriods][" ~ vaccinationPeriod.uuid ~ "][endAt_][hour]",
+          value: vaccinationPeriod.endAt_.hour
         },
         {
           label: "Minutes",
-          name: "minute",
-          width: 2
+          width: 2,
+          inputmode: "numeric",
+          id: "vaccinationPeriods-" ~ vaccinationPeriod.uuid ~ "-endAt_-minute",
+          name: "[vaccinationPeriods][" ~ vaccinationPeriod.uuid ~ "][endAt_][minute]",
+          value: vaccinationPeriod.endAt_.minute
         }
-      ],
-      decorate: "vaccinationPeriods[" + loop.index0 + "].endAt_"
+      ]
     }) }}
 
     {% if vaccinationPeriods.length > 1 %}

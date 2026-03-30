@@ -72,7 +72,7 @@ export class ClinicVaccinationPeriod {
    * @returns {object|undefined} `dateInput` object
    */
   get endAt_() {
-    return convertIsoDateToObject(this.startAt)
+    return convertIsoDateToObject(this.endAt)
   }
 
   /**
@@ -82,7 +82,7 @@ export class ClinicVaccinationPeriod {
    */
   set endAt_(object) {
     if (object) {
-      this.startAt = convertObjectToIsoDate(object)
+      this.endAt = convertObjectToIsoDate(object)
     }
   }
 
