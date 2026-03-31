@@ -35,6 +35,18 @@ export default () => {
   ]
 
   /**
+   * Get boolean form field items
+   *
+   * @returns {object} Form field items
+   */
+  globals.getBooleanItems = function () {
+    return [
+      { text: 'Yes', value: true },
+      { text: 'No', value: false }
+    ]
+  }
+
+  /**
    * Get form field items for a given Enum
    *
    * @param {object} Enum - Enumerable name
