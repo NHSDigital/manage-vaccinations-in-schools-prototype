@@ -8,48 +8,110 @@
     title: title
   }) }}
 
-  {{ summaryList({
-    card: {
-      heading: __("session.summary"),
-      headingSize: "m"
-    },
-    rows: summaryRows(session, {
-      type: {
-        href: session.uri + "/new/type"
+  {% if session.type === SessionType.School %}
+    {{ summaryList({
+      card: {
+        heading: __("session.summary"),
+        headingSize: "m"
       },
-      clinic: {
-        href: session.uri + "/new/clinic"
+      rows: summaryRows(session, {
+        type: {
+          href: session.uri + "/new/type"
+        },
+        school: {
+          href: session.uri + "/new/school"
+        },
+        programmes: {
+          href: session.uri + "/new/programmes"
+        },
+        yearGroups: {
+          href: session.uri + "/new/year-groups"
+        },
+        dates: {
+          href: session.uri + "/new/dates"
+        },
+        openAt: {
+          href: session.uri + "/new/open-at"
+        },
+        reminderWeeks: {
+          href: session.uri + "/new/reminders"
+        },
+        mmrConsent: {
+          href: session.uri + "/new/mmr-consent"
+        },
+        registration: {
+          href: session.uri + "/new/registration"
+        },
+        psdProtocol: {
+          href: session.uri + "/new/delegation"
+        },
+        nationalProtocol: {
+          href: session.uri + "/new/delegation"
+        }
+      })
+    }) }}
+  {% else %}
+    {#
+      Work out the value for anything coming from the vaccination periods, as the
+      session won't find them on its global context
+    #}
+    {% set startAndEndTimes = "" %}
+    {% set vaccinatorCount = vaccinationPeriods[0].vaccinatorCount if vaccinationPeriods.length === 1 else "" %}
+    {% set totalSlots = 0 %}
+    {% for vaccinationPeriod in vaccinationPeriods %}
+      {% set thisPeriod = __("session.vaccinators.input.singlePeriodLabel", {
+        startTime: vaccinationPeriod.startAt_,
+        endTime: vaccinationPeriod.endAt_
+      }) %}
+
+      {% set startAndEndTimes = startAndEndTimes + thisPeriod %}
+      {% if loop.index < vaccinationPeriods.length %}
+        {% set startAndEndTimes = startAndEndTimes + "<br>" %}
+      {% endif %}
+
+      {% set totalSlots = totalSlots + vaccinationPeriod.appointmentCount(session.appointmentLength) %}
+
+      {% if vaccinationPeriods.length > 1 %}
+        {% set vaccinatorCount = vaccinatorCount + vaccinationPeriod.vaccinatorCount + " from " + thisPeriod + "<br>" %}
+      {% endif %}
+    {% endfor %}
+  
+    {{ summaryList({
+      card: {
+        heading: __("session.summary"),
+        headingSize: "m"
       },
-      school: {
-        href: session.uri + "/new/school"
-      },
-      programmes: {
-        href: session.uri + "/new/programmes"
-      },
-      yearGroups: {
-        href: session.uri + "/new/year-groups"
-      },
-      dates: {
-        href: session.uri + "/new/dates"
-      },
-      openAt: {
-        href: session.uri + "/new/open-at"
-      },
-      reminderWeeks: {
-        href: session.uri + "/new/reminders"
-      },
-      mmrConsent: {
-        href: session.uri + "/new/mmr-consent"
-      },
-      registration: {
-        href: session.uri + "/new/registration"
-      },
-      psdProtocol: {
-        href: session.uri + "/new/delegation"
-      },
-      nationalProtocol: {
-        href: session.uri + "/new/delegation"
-      }
-    })
-  }) }}
+      rows: summaryRows(session, {
+        type: {
+          href: session.uri + "/new/type"
+        },
+        programmes: {
+          href: session.uri + "/new/programmes"
+        },
+        mmrConsent: {
+          href: session.uri + "/new/mmr-consent"
+        },
+        location: {
+          href: session.uri + "/new/clinic"
+        },
+        date: {
+          href: session.uri + "/new/date"
+        },
+        vaccinationPeriods: {
+          href: session.uri + "/new/vaccination-periods",
+          value: startAndEndTimes
+        },
+        vaccinators: {
+          href: session.uri + "/new/vaccinators",
+          value: vaccinatorCount
+        },
+        appointmentLength: {
+          href: session.uri + "/new/appointment-length"
+        },
+        totalAppointments: {
+          value: totalSlots
+        }
+      })
+    }) }}
+  {% endif %}
 {% endblock %}

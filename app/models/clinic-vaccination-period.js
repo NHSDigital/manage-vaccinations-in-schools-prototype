@@ -35,6 +35,27 @@ export class ClinicVaccinationPeriod {
   }
 
   /**
+   * Get the total number of appointments that can be booked in this period
+   *
+   * @param {number} appointmentLengthInMinutes - the length of a single appointment, in minutes
+   * @returns {number} - the number of whole appointments that can fitted into this period
+   */
+  appointmentCount(appointmentLengthInMinutes) {
+    const periodLengthInMs = Math.abs(
+      this.endAt.getTime() - this.startAt.getTime()
+    )
+    if (periodLengthInMs <= 0) {
+      return 0
+    }
+
+    const periodLengthInMinutes = periodLengthInMs / (1000 * 60)
+    return (
+      Math.floor(periodLengthInMinutes / appointmentLengthInMinutes) *
+      this.vaccinatorCount
+    )
+  }
+
+  /**
    * Get the clinic session this vaccination period is part of
    *
    * @returns {Session|undefined} Clinic session

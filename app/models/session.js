@@ -794,7 +794,8 @@ export class Session {
       clinic: this.clinic && this.clinic.name,
       school: this.school && this.school.name,
       school_id: this.school && this.school.formatted.id,
-      yearGroups: this.yearGroups && formatYearGroups(this.yearGroups)
+      yearGroups: this.yearGroups && formatYearGroups(this.yearGroups),
+      appointmentLength: `${this.appointmentLength} minutes`
     }
   }
 

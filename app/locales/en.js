@@ -2191,6 +2191,7 @@ export const en = {
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
+      label: 'Vaccination period(s)',
       period: {
         title: 'Vaccination period %d',
         startTime: {
@@ -2213,10 +2214,11 @@ export const en = {
     },
     vaccinators: {
       title: 'How many vaccinators do you have for this session?',
+      label: 'Vaccinators',
       input: {
         allPeriodsLabel: 'All periods',
         singlePeriodLabel:
-          'From {{startTime.hour}}:{{startTime.minute}} until {{endTime.hour}}:{{endTime.minute}}',
+          '{{startTime.hour}}:{{startTime.minute}} to {{endTime.hour}}:{{endTime.minute}}',
         suffix: 'vaccinators'
       },
       varies: {
@@ -2227,9 +2229,13 @@ export const en = {
       }
     },
     appointmentLength: {
+      label: 'Appointment length',
       title: 'How long are your appointments?',
       hint: 'For example, 5 minutes for flu clinics or 10 minutes for injected vaccines',
       suffix: 'minutes'
+    },
+    totalAppointments: {
+      label: 'Number of appointments'
     },
     location: {
       label: 'Location',
