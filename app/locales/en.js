@@ -274,7 +274,7 @@ export const en = {
       otherMethods: {
         title: 'Other ways to book an appointment',
         description:
-          'The quickest way to book an appointment is online, using this service. This will take less than 5 minutes.\n\nIf you cannot use the service, you can book an appointment by phoning %s.'
+          'The quickest way to book an appointment is online, using this service. This will take less than 5 minutes per child.\n\nIf you cannot use the service, you can book an appointment by phoning %s.'
       }
     },
     childCount: {
