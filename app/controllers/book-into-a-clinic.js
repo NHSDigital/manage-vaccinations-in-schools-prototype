@@ -6,7 +6,8 @@ import { ParentalRelationship, SessionPresets } from '../enums.js'
 import { ClinicAppointment, ClinicBooking } from '../models.js'
 import {
   getAllAppointmentPaths,
-  getHealthQuestionPaths
+  getHealthQuestionPaths,
+  getPreviousAddressItems
 } from '../utils/clinic-appointment.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
@@ -88,25 +89,24 @@ export const bookIntoClinicController = {
 
     // Create objects on the global context to allow us to check branching conditions, etc.
     // And make them available to the view.
-    let booking, appointment
+    let booking, appointments, currentAppointment
     if (booking_uuid) {
-      booking = new ClinicBooking(
-        ClinicBooking.findOne(booking_uuid, data?.wizard),
-        data
-      )
+      const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
+      appointments = wizardBooking.appointments
+      booking = new ClinicBooking(wizardBooking, data)
       response.locals.booking = booking
 
       if (appointment_uuid) {
-        appointment = new ClinicAppointment(
+        currentAppointment = new ClinicAppointment(
           ClinicAppointment.findOne(appointment_uuid, data?.wizard),
           data
         )
-        response.locals.appointment = appointment
+        response.locals.appointment = currentAppointment
         response.locals.childNumber =
-          booking.appointments_ids.indexOf(appointment.uuid) + 1
+          booking.appointments_ids.indexOf(currentAppointment.uuid) + 1
         response.locals.childCount = booking.appointments_ids.length
-        response.locals.firstName = appointment.firstName || 'your child'
-        response.locals.fullName = appointment.fullName || 'your child'
+        response.locals.firstName = currentAppointment.firstName || 'your child'
+        response.locals.fullName = currentAppointment.fullName || 'your child'
       }
     }
 
@@ -122,7 +122,12 @@ export const bookIntoClinicController = {
       [`/${session_preset_slug}/${booking_uuid}/new/child-count`]: {},
 
       // Appointment journey; once per child
-      ...getAllAppointmentPaths(request.session.data, booking),
+      ...getAllAppointmentPaths(
+        session_preset_slug,
+        booking_uuid,
+        request.session.data,
+        appointments
+      ),
 
       // Parent journey
       [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
@@ -174,7 +179,16 @@ export const bookIntoClinicController = {
 
   showForm(request, response) {
     const { appointment } = response.locals
+    const { data } = request.session
     let { booking_uuid, view } = request.params
+
+    // Build the options for the selection of a home address address from those already entered
+    if (view === 'address-selection') {
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      response.locals.previousAddressItems = getPreviousAddressItems(
+        booking.appointments
+      )
+    }
 
     // All health questions use the same view
     let key
@@ -185,45 +199,8 @@ export const bookIntoClinicController = {
 
     // Only ask for details if question does not have sub-questions
     const hasSubQuestions =
-      appointment?.getHealthQuestionsForSelectedProgrammes(
-        request.session.data
-      )[key]?.conditional
-
-    // Build the options for the selection of a home address address from those already entered
-    if (view === 'address-selection') {
-      const booking = ClinicBooking.findOne(
-        booking_uuid,
-        request.session.data.wizard
-      )
-      let previousAddressItems = booking.appointments
-        .map(
-          (appointment) =>
-            appointment.child?.address && {
-              text: Object.values(appointment.child.address)
-                .filter((string) => string)
-                .join(', '),
-              value: appointment.uuid
-            }
-        )
-        .filter(Boolean)
-      // Take only copy of each address we've used so far
-      previousAddressItems = [
-        ...new Map(
-          previousAddressItems.map((item) => [item.text, item])
-        ).values()
-      ]
-
-      response.locals.previousAddressItems = [
-        ...previousAddressItems,
-        {
-          divider: 'or'
-        },
-        {
-          text: 'Enter a different address',
-          value: 'new'
-        }
-      ]
-    }
+      appointment?.getHealthQuestionsForSelectedProgrammes(data)[key]
+        ?.conditional
 
     response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
   },

@@ -1,26 +1,36 @@
-import { ClinicBooking } from '../models.js'
+import { ClinicAppointment, ClinicBooking } from '../models.js'
 
 import { camelToKebabCase } from './string.js'
 
 /**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
  *
+ * @param {string} session_preset_slug - URL part that represents the primary programme
+ * @param {string} booking_uuid - the ID of the booking we're creating
  * @param {object} sessionData - the request.session.data object
- * @param {ClinicBooking} booking - the clinic booking whose appointment journeys we're mapping
+ * @param {Array<ClinicAppointment>} appointments - the appointments whose journeys we're mapping
  * @returns {object} An object containing all relevants page and forks
  */
-export const getAllAppointmentPaths = (sessionData, booking) => {
-  const booking_uuid = booking.uuid
-  const session_preset_slug = booking.sessionPreset.slug
+export const getAllAppointmentPaths = (
+  session_preset_slug,
+  booking_uuid,
+  sessionData,
+  appointments
+) => {
+  if (!appointments?.length) {
+    return {}
+  }
 
-  const allPaths = booking.appointments_ids.map((appointment_uuid) => {
+  const allPaths = appointments.map((appointment) => {
+    const appointment_uuid = appointment.uuid
     return {
       // Child details
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/child`]:
         {},
       [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dob`]:
         {},
-      ...(booking.appointments_ids[0] !== appointment_uuid
+      ...(appointments[0].uuid !== appointment_uuid &&
+      getPreviousAddressItems(appointments).length > 2
         ? {
             [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
               {
@@ -157,4 +167,40 @@ export const getHealthQuestionPaths = (
   }
 
   return paths
+}
+
+/**
+ * Get a set of radio items to offer the user when entering address details of
+ * the 2nd and subsequent children
+ *
+ * @param {Array<ClinicAppointment>} appointments - the appointments we're creating
+ * @returns {Array<object>} - a set of radio items to display in the address selection page
+ */
+export const getPreviousAddressItems = (appointments) => {
+  let previousAddressItems = appointments
+    .map(
+      (appointment) =>
+        appointment.child?.address && {
+          text: Object.values(appointment.child.address)
+            .filter((string) => string)
+            .join(', '),
+          value: appointment.uuid
+        }
+    )
+    .filter((item) => item && item.text)
+  // Take only copy of each address we've used so far
+  previousAddressItems = [
+    ...new Map(previousAddressItems.map((item) => [item.text, item])).values()
+  ]
+
+  return [
+    ...previousAddressItems,
+    {
+      divider: 'or'
+    },
+    {
+      text: 'Enter a different address',
+      value: 'new'
+    }
+  ]
 }
