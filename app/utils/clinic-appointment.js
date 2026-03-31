@@ -25,7 +25,7 @@ export const getAllAppointmentPaths = (sessionData, booking) => {
             [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
               {
                 [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-                  () => sessionData.transaction.previousAddress !== 'new'
+                  () => sessionData.transaction.addressChoice !== 'new'
               }
           }
         : {}),

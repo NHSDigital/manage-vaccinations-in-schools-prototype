@@ -195,21 +195,23 @@ export const bookIntoClinicController = {
         booking_uuid,
         request.session.data.wizard
       )
-      const previousAddressItems = booking.appointments
-        .map((appointment) => {
-          if (appointment.child?.address) {
-            const oneLineAddress = Object.values(appointment.child.address)
-              .filter((string) => string)
-              .join(', ')
-            return {
-              text: oneLineAddress,
+      let previousAddressItems = booking.appointments
+        .map(
+          (appointment) =>
+            appointment.child?.address && {
+              text: Object.values(appointment.child.address)
+                .filter((string) => string)
+                .join(', '),
               value: appointment.uuid
             }
-          }
-
-          return null
-        })
+        )
         .filter(Boolean)
+      // Take only copy of each address we've used so far
+      previousAddressItems = [
+        ...new Map(
+          previousAddressItems.map((item) => [item.text, item])
+        ).values()
+      ]
 
       response.locals.previousAddressItems = [
         ...previousAddressItems,
@@ -278,11 +280,11 @@ export const bookIntoClinicController = {
       nextUrl = firstAppointmentUrl
     } else if (
       view === 'address-selection' &&
-      request.body.transaction.previousAddress !== 'new'
+      request.body.transaction.addressChoice !== 'new'
     ) {
       // We've just selected a previous child's address for the current appointment, so copy
       // that detail to the child record
-      const previous_appointment_uuid = request.body.transaction.previousAddress
+      const previous_appointment_uuid = request.body.transaction.addressChoice
       const previousAppointment = ClinicAppointment.findOne(
         previous_appointment_uuid,
         data.wizard
@@ -294,6 +296,11 @@ export const bookIntoClinicController = {
 
       if (previousAppointment && currentAppointment) {
         currentAppointment.child.address = previousAppointment.child.address
+        ClinicAppointment.update(
+          currentAppointment.uuid,
+          currentAppointment,
+          currentAppointment.context
+        )
       }
     }
 
