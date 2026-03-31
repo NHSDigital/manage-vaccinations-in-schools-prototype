@@ -10,21 +10,7 @@ import {
 } from '../utils/clinic-appointment.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
-/**
- * @typedef {import('express').Request} Request
- * @typedef {import('express').Response} Response
- * @typedef {import('express').NextFunction} Next
- */
-
 export const bookIntoClinicController = {
-  /**
-   * Record the session preset
-   *
-   * @param {Request} request
-   * @param {Response} response
-   * @param {Next} next
-   * @param {string} session_preset_slug
-   */
   read(request, response, next, session_preset_slug) {
     const serviceName = 'Book into a clinic'
 
@@ -46,24 +32,12 @@ export const bookIntoClinicController = {
     next()
   },
 
-  /**
-   * Send to the start page
-   *
-   * @param {Request} request
-   * @param {Response} response
-   */
   redirect(request, response) {
     const { sessionPreset } = response.locals
 
     response.redirect(`${request.baseUrl}/${sessionPreset.slug}/start`)
   },
 
-  /**
-   * Start a new clinic booking for clinics with the primary programme we've been given
-   *
-   * @param {Request} request
-   * @param {Response} response
-   */
   new(request, response) {
     const { data } = request.session
     const { sessionPreset } = response.locals
@@ -81,16 +55,6 @@ export const bookIntoClinicController = {
     response.redirect(redirectUrl)
   },
 
-  /**
-   * Prepare a form-based page of the clinic booking journey.
-   *
-   * This includes code to set up radio button groups for various pages (we set them up
-   * regardless of which specific route we're handling).
-   *
-   * @param {Request} request
-   * @param {Response} response
-   * @param {Next} next
-   */
   readForm(request, response, next) {
     const { session_preset_slug, booking_uuid } = request.params
     const appointment_uuid = request.params.appointment_uuid
@@ -208,12 +172,6 @@ export const bookIntoClinicController = {
     next()
   },
 
-  /**
-   * Render the requested form page
-   *
-   * @param {Request} request
-   * @param {Response} response
-   */
   showForm(request, response) {
     const { appointment } = response.locals
     let { booking_uuid, view } = request.params
@@ -268,12 +226,6 @@ export const bookIntoClinicController = {
     response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
   },
 
-  /**
-   * Store the latest values entered into a form in the booking journey
-   *
-   * @param {Request} request
-   * @param {Response} response
-   */
   updateForm(request, response) {
     const { booking_uuid, appointment_uuid, view } = request.params
     const { data } = request.session
@@ -351,12 +303,6 @@ export const bookIntoClinicController = {
     })
   },
 
-  /**
-   * Catch-all for pages not needing to reference a given clinic booking
-   *
-   * @param {Request} request
-   * @param {Response} response
-   */
   show(request, response) {
     const view = request.params.view || 'start'
 
