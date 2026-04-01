@@ -587,17 +587,28 @@ export const sessionController = {
       response.locals.paths.next =
         response.locals.paths.next || `${session.uri}/new/check-answers`
 
-      response.locals.clinicIdItems = Object.values(team.clinics)
-        .map((clinic) => new Clinic(clinic))
-        .map((clinic) => ({
-          text: clinic.name,
-          value: clinic.id,
-          ...(clinic.address && {
-            attributes: {
-              'data-hint': clinic.formatted.address
-            }
-          })
-        }))
+      // Set up different methods for clinic selection, based on number of clinics
+      if (session.type === SessionType.Clinic) {
+        const usableNumberOfRadios = 16
+        if (team.clinics.length <= usableNumberOfRadios) {
+          response.locals.clinicRadios = Object.values(team.clinics)
+            .map((clinic) => new Clinic(clinic))
+            .map((clinic) => ({
+              text: clinic.name,
+              value: clinic.id,
+              ...(clinic.address && {
+                attributes: {
+                  'data-hint': clinic.formatted.address
+                },
+                hint: {
+                  text: clinic.formatted.address
+                }
+              })
+            }))
+        } else {
+          response.locals.clinics = Clinic.findAll(data)
+        }
+      }
 
       if (session.type === SessionType.School) {
         const schools = School.findAll(data)

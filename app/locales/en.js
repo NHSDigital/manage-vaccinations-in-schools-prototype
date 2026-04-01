@@ -2186,8 +2186,11 @@ export const en = {
       title: 'Which year groups do you want to invite to this session?'
     },
     clinic: {
-      label: 'Clinic',
-      title: 'Where is this community clinic taking place?'
+      label: 'Clinic location',
+      title: 'Where is this community clinic taking place?',
+      search: {
+        label: 'Select a clinic location'
+      }
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',

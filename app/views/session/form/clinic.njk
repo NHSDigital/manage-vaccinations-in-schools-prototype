@@ -3,15 +3,23 @@
 {% set title = __("session.clinic.title") %}
 
 {% block form %}
-  {{ radios({
-    fieldset: {
-      legend: {
-        isPageHeading: true,
-        text: title,
-        size: "l"
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {% if clinicRadios %}
+    {{ radios({
+      items: clinicRadios,
+      decorate: "session.clinic_id"
+    })}}
+  {% else %}
+    {{ select({
+      label: { text: __("session.clinic.search.label") },
+      items: locationItems(clinics, session.clinic_id),
+      decorate: "session.clinic_id",
+      attributes: {
+        "data-module": "app-autocomplete"
       }
-    },
-    items: clinicIdItems,
-    decorate: "session.clinic_id"
-  })}}
+    }) }}
+  {% endif %}
 {% endblock %}
