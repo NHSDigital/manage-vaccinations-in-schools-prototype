@@ -718,7 +718,7 @@ export class Patient extends Child {
     this.vaccination_uuids.push(vaccination.uuid)
 
     this.addEvent({
-      name: activity.vaccination.recorded(vaccination),
+      name: 'activity.vaccination.recorded(vaccination)',
       note: vaccination.note,
       createdAt: vaccination.updatedAt || vaccination.createdAt,
       createdBy_uid: vaccination.createdBy_uid,
@@ -745,15 +745,17 @@ export class Patient extends Child {
     }
 
     for (const parent of this.parents) {
-      this.addEvent({
-        name: activity.notify['vaccination-reminder'](parent),
-        messageRecipient: parent,
-        messageTemplate: 'vaccination-reminder',
-        createdAt: removeDays(vaccination.createdAt, 7),
-        patient_uuid: this.uuid,
-        programme_ids: [vaccination.programme_id],
-        session_id: vaccination.session.id
-      })
+      if (vaccination.outcome !== VaccinationOutcome.AlreadyVaccinated) {
+        this.addEvent({
+          name: activity.notify['vaccination-reminder'](parent),
+          messageRecipient: parent,
+          messageTemplate: 'vaccination-reminder',
+          createdAt: removeDays(vaccination.createdAt, 7),
+          patient_uuid: this.uuid,
+          programme_ids: [vaccination.programme_id],
+          session_id: vaccination.session.id
+        })
+      }
 
       this.addEvent({
         name: activity.notify[messageTemplate](parent),
@@ -762,7 +764,7 @@ export class Patient extends Child {
         createdAt: vaccination.updatedAt || vaccination.createdAt,
         patient_uuid: this.uuid,
         programme_ids: [vaccination.programme_id],
-        session_id: vaccination.session.id,
+        session_id: vaccination.session?.id,
         vaccination_uuid: vaccination.uuid
       })
     }

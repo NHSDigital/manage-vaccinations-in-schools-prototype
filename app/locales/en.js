@@ -1799,13 +1799,14 @@ export const en = {
     refusalReasonDetails: {
       label: 'Refusal details',
       title: {
-        [ReplyRefusal.AlreadyVaccinated]:
-          'Where did the child get their vaccination?',
         [ReplyRefusal.GettingElsewhere]:
           'Where will the child get their vaccination?',
         [ReplyRefusal.Medical]:
           'What medical reasons prevent the child from being vaccinated?'
       }
+    },
+    alreadyVaccinated: {
+      title: 'When and where did the child get their vaccination?'
     },
     note: {
       title: 'Notes',

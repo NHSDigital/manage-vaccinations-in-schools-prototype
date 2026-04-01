@@ -79,7 +79,7 @@ export const replyController = {
       const { account, invalidUuid } = request.app.locals
       const { reply_uuid } = request.params
       const { data } = request.session
-      const { __, patientSession, triage } = response.locals
+      const { __, patientSession, triage, vaccination } = response.locals
 
       let reply
       let next
@@ -106,6 +106,32 @@ export const replyController = {
           })
         }
 
+        // Create vaccination if refusal reason is vaccination already given
+        if (reply?.refusalReason === ReplyRefusal.AlreadyVaccinated) {
+          const createdVaccination = Vaccination.create(
+            {
+              outcome: VaccinationOutcome.AlreadyVaccinated,
+              patient_uuid: patientSession.patient.uuid,
+              patientSession_uuid: patientSession.uuid,
+              programme_id: patientSession.programme.id,
+              session_id: patientSession.session.id,
+              createdBy_uid: account.uid || '000123456789',
+              createdAt_: vaccination.createdAt_,
+              clinic_id: vaccination.clinic_id,
+              school_id: vaccination.school_id,
+              locationName: vaccination.locationName,
+              addressLine1: vaccination.addressLine1,
+              addressLine2: vaccination.addressLine2,
+              addressLevel1: vaccination.addressLevel1,
+              country: vaccination.country,
+              locationType: vaccination.locationType
+            },
+            data
+          )
+
+          patientSession.patient.recordVaccination(createdVaccination)
+        }
+
         // Invalidate any replaced response
         if (invalidUuid) {
           Reply.update(invalidUuid, { invalid: true }, data)
@@ -122,6 +148,7 @@ export const replyController = {
       // Clean up session data
       delete data.reply
       delete data.triage
+      delete data.vaccination
 
       request.flash(
         'success',
@@ -136,7 +163,7 @@ export const replyController = {
     return (request, response, next) => {
       const { reply_uuid } = request.params
       const { data, referrer } = request.session
-      const { patientSession, triage } = response.locals
+      const { patientSession, triage, vaccination } = response.locals
 
       let reply
       if (type === 'edit') {
@@ -172,6 +199,11 @@ export const replyController = {
         ...data?.wizard?.triage // Wizard values
       }
 
+      response.locals.vaccination = {
+        ...(type === 'edit' && vaccination), // Previous values
+        ...data?.wizard?.vaccination // Wizard values
+      }
+
       const journey = {
         [`/`]: {},
         [`/${reply_uuid}/${type}/respondent`]: {},
@@ -204,11 +236,11 @@ export const replyController = {
         [`/${reply_uuid}/${type}/refusal-reason`]: {
           [`/${reply_uuid}/${type}/refusal-reason-details`]: {
             data: 'reply.refusalReason',
-            values: [
-              ReplyRefusal.AlreadyVaccinated,
-              ReplyRefusal.GettingElsewhere,
-              ReplyRefusal.Medical
-            ]
+            values: [ReplyRefusal.GettingElsewhere, ReplyRefusal.Medical]
+          },
+          [`/${reply_uuid}/${type}/refusal-already-vaccinated`]: {
+            data: 'reply.refusalReason',
+            value: ReplyRefusal.AlreadyVaccinated
           },
           [`/${reply_uuid}/${type}/refusal-notification`]: {
             data: 'reply.refusalReason',
@@ -294,13 +326,12 @@ export const replyController = {
   },
 
   updateForm(request, response) {
-    const { account } = request.app.locals
     const { respondent } = request.body
     const { reply_uuid } = request.params
     const { data } = request.session
-    const { paths, patientSession, reply, triage } = response.locals
+    let { paths, patientSession, triage, vaccination } = response.locals
 
-    Reply.update(reply_uuid, request.body.reply, data.wizard)
+    const reply = Reply.update(reply_uuid, request.body.reply, data.wizard)
 
     // Create parent based on choice of respondent
     if (respondent) {
@@ -312,7 +343,7 @@ export const replyController = {
           break
         case 'self':
           reply.method = ReplyMethod.InPerson
-          reply.parent = false
+          reply.parent = null
           reply.selfConsent = true
           break
         case 'parent-1': // Consent response is from CHIS record
@@ -336,25 +367,17 @@ export const replyController = {
       }
     }
 
-    // Store vaccination if refusal reason is vaccination already given
-    if (request.body.reply?.refusalReason === ReplyRefusal.AlreadyVaccinated) {
-      response.locals.vaccination = {
-        outcome: VaccinationOutcome.AlreadyVaccinated,
-        patient_uuid: patientSession.patient.uuid,
-        session_id: patientSession.session.id,
-        createdBy_uid: account.uid,
-        ...(data.reply?.note && { note: data.reply.note })
-      }
-    }
-
     delete data.healthAnswers
     delete data.respondent
-
-    Reply.update(reply_uuid, reply, data.wizard)
 
     data.wizard.triage = {
       ...triage, // Previous values
       ...request.body?.triage // New value
+    }
+
+    data.wizard.vaccination = {
+      ...vaccination, // Previous values
+      ...request?.body?.vaccination // Wizard values
     }
 
     response.redirect(
