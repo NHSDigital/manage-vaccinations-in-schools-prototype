@@ -2194,6 +2194,7 @@ export const en = {
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
+      hint: 'Parents will be able to book appointments for their children between these times.',
       label: 'Vaccination period(s)',
       period: {
         title: 'Vaccination period %d',
@@ -2211,7 +2212,7 @@ export const en = {
       },
       addPeriod: {
         description:
-          'Adding multiple vaccination periods will allow you to schedule breaks and to vary staffing levels across the session.',
+          'Adding multiple start and end times will allow you to schedule breaks and to vary staffing levels across the session.',
         label: 'Add another period'
       }
     },

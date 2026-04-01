@@ -6,8 +6,10 @@
 {% block form %}
   {{ appHeading({
     title: title
-  })}}
+  }) }}
 
+  {{ __("session.vaccinationPeriods.hint") | nhsukMarkdown }}
+  
   {% for vaccinationPeriod in vaccinationPeriods %}
     {% call fieldset({
       legend: {
