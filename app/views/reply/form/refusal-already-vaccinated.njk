@@ -1,0 +1,69 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("reply.alreadyVaccinated.title") %}
+
+{% block form %}
+  {{ appHeading({
+    caption: patient.fullName,
+    title: title
+  }) }}
+
+  {{ dateInput({
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("vaccination.createdAt_date.label")
+      }
+    },
+    hint: { text: __("vaccination.createdAt_date.hint") },
+    decorate: "vaccination.createdAt_"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("vaccination.location.label")
+      }
+    },
+    items: [
+      {
+        text: LocationType.Home
+      },
+      {
+        text: LocationType.Clinic,
+        conditional: {
+          html: select({
+            label: { text: __("vaccination.clinic_id.title") },
+            items: locationItems(data.clinics, vaccination.clinic_id),
+            decorate: "vaccination.clinic_id",
+            attributes: {
+              "data-module": "app-autocomplete"
+            }
+          })
+        }
+      },
+      {
+        text: LocationType.School,
+        conditional: {
+          html: select({
+            label: { text: __("vaccination.school_id.title") },
+            items: locationItems(data.schools, vaccination.school_id),
+            decorate: "vaccination.school_id",
+            attributes: {
+              "data-module": "app-autocomplete"
+            }
+          })
+        }
+      },
+      {
+        divider: "or"
+      },
+      {
+        text: LocationType.Other,
+        hint: { text: __("vaccination.locationOther.hint") }
+      }
+    ],
+    decorate: "vaccination.locationType"
+  }) }}
+{% endblock %}

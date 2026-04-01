@@ -92,6 +92,7 @@ export const patientSessionController = {
       canGillick:
         programme.type !== ProgrammeType.Flu &&
         session.isActive &&
+        !vaccinated &&
         !consentGiven,
       // Patient can be triaged
       canTriage: consentGiven,
