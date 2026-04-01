@@ -39,7 +39,7 @@
     "@types/lodash": "^4.17.24",
     "@x-govuk/eslint-config": "^0.0.2",
     "prettier": "^3.8.1",
-    "stylelint": "^16.26.1",
+    "stylelint": "^17.5.0",
     "stylelint-config-gds": "^2.0.0",
     "stylelint-order": "^7.0.1"
   },
