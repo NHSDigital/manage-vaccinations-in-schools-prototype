@@ -567,7 +567,8 @@ export const sessionController = {
               [`/${session_id}/${type}/appointment-length`]: {}
             }),
         //[`/${session_id}/${type}/date-check`]: {},
-        ...(session.presetNames?.includes(SessionPresetName.MMR)
+        ...(session.presetNames?.includes(SessionPresetName.MMR) &&
+        session.type === SessionType.School
           ? {
               [`/${session_id}/${type}/mmr-consent`]: {}
             }
