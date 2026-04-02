@@ -56,7 +56,9 @@
       session won't find them on its global context
     #}
     {% set startAndEndTimes = "" %}
-    {% set vaccinatorCount = vaccinationPeriods[0].vaccinatorCount if vaccinationPeriods.length === 1 else "" %}
+    {% set vaccinatorCounts = "" %}
+    {% set lastVaccinatorCount = -1 %}
+    {% set hasVariableVaccinatorCounts = false %}
     {% set totalSlots = 0 %}
     {% for vaccinationPeriod in vaccinationPeriods %}
       {% set thisPeriod = __("session.vaccinators.input.singlePeriodLabel", {
@@ -71,10 +73,15 @@
 
       {% set totalSlots = totalSlots + vaccinationPeriod.appointmentCount(session.appointmentLength) %}
 
-      {% if vaccinationPeriods.length > 1 %}
-        {% set vaccinatorCount = vaccinatorCount + vaccinationPeriod.vaccinatorCount + " from " + thisPeriod + "<br>" %}
+      {% set vaccinatorCounts = vaccinatorCounts + vaccinationPeriod.vaccinatorCount + " from " + thisPeriod + "<br>" %}
+      {% if lastVaccinatorCount !== -1 and lastVaccinatorCount !== vaccinationPeriod.vaccinatorCount %}
+        {% set hasVariableVaccinatorCounts = true %}
       {% endif %}
+      {% set lastVaccinatorCount = vaccinationPeriod.vaccinatorCount %}
     {% endfor %}
+    {% if not hasVariableVaccinatorCounts %}
+      {% set vaccinatorCounts = lastVaccinatorCount %}
+    {% endif %}
   
     {{ summaryList({
       card: {
@@ -103,7 +110,7 @@
         },
         vaccinators: {
           href: session.uri + "/new/vaccinators",
-          value: vaccinatorCount
+          value: vaccinatorCounts
         },
         appointmentLength: {
           href: session.uri + "/new/appointment-length"
