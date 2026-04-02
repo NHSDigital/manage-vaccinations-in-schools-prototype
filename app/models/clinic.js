@@ -24,6 +24,19 @@ export class Clinic extends Location {
   }
 
   /**
+   * Find all
+   *
+   * @param {object} context - Context
+   * @returns {Array<Clinic>|undefined} All clinics on the context
+   * @static
+   */
+  static findAll(context) {
+    return Object.values(context.clinics).map(
+      (clinic) => new Clinic(clinic, context)
+    )
+  }
+
+  /**
    * Find one
    *
    * @param {string} id - Clinic ID

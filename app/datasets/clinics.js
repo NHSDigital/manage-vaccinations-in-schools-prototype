@@ -439,8 +439,10 @@ export default {
   },
   X99999: {
     id: 'X99999',
-    name: 'Community clinic',
-    addressLevel1: 'Coventry',
+    name: 'The Kenilworth Centre',
+    addressLine1: 'Abbey End',
+    addressLevel1: 'Kenilworth',
+    postalCode: 'CV8 1QJ',
     team_id: '001',
     presetNames
   }

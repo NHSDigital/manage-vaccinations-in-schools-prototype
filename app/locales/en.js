@@ -2186,11 +2186,15 @@ export const en = {
       title: 'Which year groups do you want to invite to this session?'
     },
     clinic: {
-      label: 'Clinic',
-      title: 'Where is this community clinic taking place?'
+      label: 'Clinic location',
+      title: 'Where is this community clinic taking place?',
+      search: {
+        label: 'Select a clinic location'
+      }
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
+      hint: 'Parents will be able to book appointments between these times.',
       label: 'Vaccination period(s)',
       period: {
         title: 'Vaccination period %d',
@@ -2208,7 +2212,7 @@ export const en = {
       },
       addPeriod: {
         description:
-          'Adding multiple vaccination periods will allow you to schedule breaks and to vary staffing levels across the session.',
+          'Adding more than one time period allows you to schedule breaks and vary staffing levels across the session.',
         label: 'Add another period'
       }
     },
