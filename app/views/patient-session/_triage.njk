@@ -62,7 +62,7 @@
     {% set psdRadiosHtml = radios({
       fieldset: { legend: { text: __("triage.psd.label") } },
       inline: true,
-      items: booleanItems,
+      items: getBooleanItems(),
       decorate: "triage.psd"
     }) if account.canPrescribe %}
 

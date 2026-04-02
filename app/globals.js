@@ -29,16 +29,6 @@ export default () => {
    *
    * @returns {object} Form field items
    */
-  globals.booleanItems = [
-    { text: 'Yes', value: true },
-    { text: 'No', value: false }
-  ]
-
-  /**
-   * Get boolean form field items
-   *
-   * @returns {object} Form field items
-   */
   globals.getBooleanItems = function () {
     return [
       { text: 'Yes', value: true },

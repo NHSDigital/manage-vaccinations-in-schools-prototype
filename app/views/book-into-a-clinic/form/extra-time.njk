@@ -8,7 +8,7 @@
     label: { text: __("clinicBooking.extraTime.reason.label") },
     decorate: "appointment.extraTimeReason"
   }) %}
-  {% set items = injectConditionalHtml(booleanItems, true, yesHtml) %}
+  {% set items = injectConditionalHtml(getBooleanItems(), true, yesHtml) %}
 
   {{ radios({
     fieldset: {

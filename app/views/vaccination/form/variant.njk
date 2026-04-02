@@ -2,7 +2,7 @@
 
 {% if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated %}
   {% set title = __("vaccination.variant.title", { patient: vaccination.patient }) %}
-  {% set items = booleanItems %}
+  {% set items = getBooleanItems() %}
 {% else %}
   {% set title = __("vaccination.programme.title", { patient: vaccination.patient }) %}
   {% set items = [{
