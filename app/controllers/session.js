@@ -24,7 +24,11 @@ import {
   Session,
   Team
 } from '../models.js'
-import { getDateValueDifference } from '../utils/date.js'
+import {
+  convertIsoDateToObject,
+  getDateValueDifference,
+  today
+} from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { getSessionYearGroups } from '../utils/session.js'
 import { formatYearGroup } from '../utils/string.js'
@@ -678,11 +682,14 @@ export const sessionController = {
         for (const [period_id, vaccinationPeriod] of Object.entries(
           request.body.vaccinationPeriods
         )) {
+          const sessionDate_ = session.date
+            ? session.date_
+            : convertIsoDateToObject(today())
           ClinicVaccinationPeriod.update(
             period_id,
             _.merge(
-              // make sure we keep up to date with the session date
-              { startAt_: session.date_, endAt_: session.date_ },
+              // make sure the period start and end have date information as well as time
+              { startAt_: { ...sessionDate_ }, endAt_: { ...sessionDate_ } },
               vaccinationPeriod
             ),
             data.wizard
