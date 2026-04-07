@@ -570,8 +570,7 @@ export class Session {
           sentenceCaseProgrammeName(programme.emailName())
         )
       )} ${pluralisation}`,
-      titleCase: `${filters.formatList(this.programmes.map((programme) => programme.emailName()))}
-        ${pluralisation}`
+      titleCase: `${filters.formatList(this.programmes.map((programme) => programme.emailName()))} ${pluralisation}`
     }
   }
 

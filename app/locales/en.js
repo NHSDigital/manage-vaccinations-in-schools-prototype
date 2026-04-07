@@ -1056,7 +1056,7 @@ export const en = {
       },
       'invite-clinic': {
         label: 'Clinic booking',
-        name: '{{consent.child.firstName}} has still not had their {{session.vaccinationNames.sentenceCase}}'
+        name: '{{child.firstName}} has still not had their {{session.vaccinationNames.sentenceCase}}'
       },
       'invite-clinic-reminder': {
         label: 'Clinic booking reminder',
@@ -1068,11 +1068,11 @@ export const en = {
       },
       'consent-already-vaccinated': {
         label: 'Already vaccinated',
-        name: 'You’ve told us that {{consent.child.firstName}} is fully vaccinated against MMR'
+        name: 'You’ve told us that {{child.firstName}} is fully vaccinated against MMR'
       },
       'consent-given': {
         label: 'Consent given',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{child.firstName}}'
       },
       'consent-given-changed-school': {
         label: 'Consent given (changed school)',
@@ -1080,16 +1080,16 @@ export const en = {
       },
       'consent-refused': {
         label: 'Consent refused',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{child.firstName}}'
       },
       'consent-followed-up': {
         // Reuses same confirmation as that for consent refused (or given)
         label: 'Consent refusal confirmed',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{child.firstName}}'
       },
       'consent-needs-triage': {
         label: 'Consent needs triage',
-        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{consent.child.firstName}}'
+        name: '{{session.vaccinationNames.titleCase}} on {{session.formatted.nextDate}} for {{child.firstName}}'
       },
       'consent-unknown-contact': {
         label: 'Consent response from unknown contact',
@@ -1101,7 +1101,7 @@ export const en = {
       },
       'triage-vaccinate-second-dose': {
         label: 'Vaccinate (second dose)',
-        name: '{{consent.child.firstName}} needs another dose of the MMR vaccination'
+        name: '{{child.firstName}} needs another dose of the MMR vaccination'
       },
       'triage-delay-vaccination': {
         label: 'Delay vaccination',
@@ -1117,11 +1117,11 @@ export const en = {
       },
       'vaccination-reminder': {
         label: 'Session reminder',
-        name: '{{consent.child.fullName}} may get their {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
+        name: '{{child.fullName}} may get their {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
       },
       'vaccination-already-had': {
         label: 'Vaccination already had',
-        name: 'Cancelled {{session.vaccinationNames.sentenceCase}} appointment for {{consent.child.firstName}}'
+        name: 'Cancelled {{session.vaccinationNames.sentenceCase}} appointment for {{child.firstName}}'
       },
       'vaccination-deleted': {
         label: 'Vaccination message sent in error',

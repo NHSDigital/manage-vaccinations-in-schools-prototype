@@ -20,6 +20,11 @@
     background-color: nhsuk-colour("white");
     font-family: Helvetica, Arial, sans-serif;
 
+    h3:first-child {
+      padding-bottom: nhsuk-spacing(4);
+      border-bottom: 1px solid $nhsuk-border-colour;
+    }
+
     .nhsuk-inset-text {
       margin-top: 0;
       border-color: $nhsuk-border-colour;

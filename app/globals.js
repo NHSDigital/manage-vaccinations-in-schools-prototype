@@ -113,15 +113,23 @@ export default () => {
 
       // Show email message content if recipient given with email address
       if (auditEvent.messageRecipient?.email) {
+        const subject = nunjucksEnv.renderString(
+          en.emails.consent[auditEvent.messageTemplate].name,
+          auditEvent.messageData
+        )
+
+        const body = nunjucksEnv
+          .render(
+            `emails/consent/${auditEvent.messageTemplate}.njk`,
+            auditEvent.messageData
+          )
+          .replaceAll('## ', '#### ')
+          .replaceAll('### ', '##### ')
+
         details.push({
           classes: 'app-details--notify-message',
           summaryText: `Email sent to ${auditEvent.messageRecipient?.email}`,
-          html: formatMarkdown(
-            nunjucksEnv.render(
-              `emails/consent/${auditEvent.messageTemplate}.njk`,
-              auditEvent.messageData
-            )
-          )
+          html: formatMarkdown(`### ${subject}\n\n${body}`)
         })
       }
 
