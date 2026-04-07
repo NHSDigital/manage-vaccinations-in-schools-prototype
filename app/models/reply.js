@@ -112,7 +112,11 @@ export class Reply {
           : stringToBoolean(options?.invalid) || false
     }
 
-    if (this.decision === ReplyDecision.AlreadyVaccinated) {
+    if (
+      [ReplyDecision.AlreadyVaccinated, ReplyDecision.Refused].includes(
+        this.decision
+      )
+    ) {
       this.firstDose = options?.firstDose && new Vaccination(options.firstDose)
 
       if (options?.firstDose?.scheduled) {

@@ -175,11 +175,11 @@ export const parentController = {
       [`/${session_id}/${consent_uuid}/new/refusal-reason`]: {
         [`/${session_id}/${consent_uuid}/new/refusal-reason-details`]: {
           data: 'consent.refusalReason',
-          values: [
-            ReplyRefusal.AlreadyVaccinated,
-            ReplyRefusal.GettingElsewhere,
-            ReplyRefusal.Medical
-          ]
+          values: [ReplyRefusal.GettingElsewhere, ReplyRefusal.Medical]
+        },
+        [`/${session_id}/${consent_uuid}/new/previous-dose`]: {
+          data: 'consent.refusalReason',
+          value: ReplyRefusal.AlreadyVaccinated
         },
         [`/${session_id}/${consent_uuid}/new/first-dose-country`]: {
           data: 'consent.refusalReason',
@@ -194,7 +194,11 @@ export const parentController = {
       [`/${session_id}/${consent_uuid}/new/consultation`]: {
         [`/${session_id}/${consent_uuid}/new/check-answers`]: true
       },
-      // First and second dose journey
+      // Previous single dose journey
+      [`/${session_id}/${consent_uuid}/new/previous-dose`]: {
+        [`/${session_id}/${consent_uuid}/new/check-answers`]: true
+      },
+      // Previous multi-dose journey
       [`/${session_id}/${consent_uuid}/new/first-dose-country`]: {},
       [`/${session_id}/${consent_uuid}/new/first-dose-date`]: {},
       [`/${session_id}/${consent_uuid}/new/second-dose-country`]: {},
@@ -322,7 +326,7 @@ export const parentController = {
   showForm(request, response) {
     let { view } = request.params
     const { consent } = response.locals
-    let key
+    let key = kebabToCamelCase(view)
 
     // All health questions use the same view
     if (view.startsWith('health-question-')) {
