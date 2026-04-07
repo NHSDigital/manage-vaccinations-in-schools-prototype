@@ -11,7 +11,9 @@
 
       {% for group in activityLog %}
         {{ appHeading({
-          title: group.title
+          title: group.title,
+          level: 2,
+          size: "m"
         }) }}
 
         {{ appTimeline({
