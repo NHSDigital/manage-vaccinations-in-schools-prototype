@@ -179,41 +179,62 @@
     )
   }) if consent.given }}
 
-  {{ summaryList({
-    card: {
-      heading: __("consent.firstDose.label"),
-      headingSize: "m"
-    },
-    rows: summaryRows(consent, {
-      createdAt: {
-        label: __("consent.previousDose.createdAt.label"),
-        value: consent.firstDose.formatted.createdAt_date,
-        href: editPath("first-dose-date")
+  {% if SessionPresetName.MMR in session.presetNames and consent.decision == ReplyDecision.AlreadyVaccinated %}
+    {{ summaryList({
+      card: {
+        heading: __("consent.firstDose.label"),
+        headingSize: "m"
       },
-      country: {
-        label: __("consent.previousDose.country.label"),
-        value: consent.firstDose.formatted.country,
-        href: editPath("first-dose-country")
-      }
-    })
-  }) if consent.decision == ReplyDecision.AlreadyVaccinated }}
+      rows: summaryRows(consent, {
+        createdAt: {
+          label: __("consent.previousDose.createdAt.label"),
+          value: consent.firstDose.formatted.createdAt_date,
+          href: editPath("first-dose-date")
+        },
+        country: {
+          label: __("consent.previousDose.country.label"),
+          value: consent.firstDose.formatted.country,
+          href: editPath("first-dose-country")
+        }
+      })
+    }) }}
 
-  {{ summaryList({
-    card: {
-      heading: __("consent.secondDose.label"),
-      headingSize: "m"
-    },
-    rows: summaryRows(consent, {
-      createdAt: {
-        label: __("consent.previousDose.createdAt.label"),
-        value: consent.secondDose.formatted.createdAt_date,
-        href: editPath("second-dose-date")
+    {{ summaryList({
+      card: {
+        heading: __("consent.secondDose.label"),
+        headingSize: "m"
       },
-      country: {
-        label: __("consent.previousDose.country.label"),
-        value: consent.secondDose.formatted.country,
-        href: editPath("second-dose-country")
-      }
-    })
-  }) if consent.decision == ReplyDecision.AlreadyVaccinated }}
+      rows: summaryRows(consent, {
+        createdAt: {
+          label: __("consent.previousDose.createdAt.label"),
+          value: consent.secondDose.formatted.createdAt_date,
+          href: editPath("second-dose-date")
+        },
+        country: {
+          label: __("consent.previousDose.country.label"),
+          value: consent.secondDose.formatted.country,
+          href: editPath("second-dose-country")
+        }
+      })
+    }) }}
+  {% elif consent.refusalReason == ReplyRefusal.AlreadyVaccinated %}
+    {{ summaryList({
+      card: {
+        heading: __("consent.previousDose.label", session.programmes[0].nameSentenceCase),
+        headingSize: "m"
+      },
+      rows: summaryRows(consent, {
+        createdAt: {
+          label: __("consent.previousDose.createdAt.label"),
+          value: consent.firstDose.formatted.createdAt_date,
+          href: editPath("previous-dose")
+        },
+        country: {
+          label: __("consent.previousDose.country.label"),
+          value: consent.firstDose.formatted.country,
+          href: editPath("previous-dose")
+        }
+      })
+    }) }}
+  {% endif %}
 {% endblock %}
