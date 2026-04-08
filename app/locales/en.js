@@ -975,21 +975,22 @@ export const en = {
     }
   },
   download: {
-    label: 'Exports',
+    label: 'Downloads',
     list: {
-      label: 'Exports',
-      title: 'Exports'
+      label: 'Downloads',
+      title: 'Downloads',
+      results: 'All downloads'
     },
     search: {
-      label: 'Find export'
+      label: 'Find download'
     },
     results:
-      '{count, plural, =0 {No exports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> export} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> exports}}',
+      '{count, plural, =0 {No downloads matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> download} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> downloads}}',
     new: {
       label: 'Download vaccination report',
       confirm: 'Download vaccination data',
       success:
-        'It will take some time to prepare the records. You’ll be able to download them soon in [Exports](/downloads)'
+        'It will take some time to prepare the records. You’ll be able to download them soon in [Downloads](/downloads)'
     },
     createdAt: {
       label: 'Requested at'
@@ -2497,7 +2498,7 @@ export const en = {
     action: {
       title: 'Are you sure you want to %s?',
       description: 'This cannot be undone.',
-      cancel: 'No, return to import',
+      cancel: 'No, return to upload',
       confirm: 'Yes, %s'
     },
     delete: {
@@ -2506,22 +2507,22 @@ export const en = {
       success: 'Upload deleted'
     },
     approve: {
-      confirm: 'Approve and import records',
+      confirm: 'Approve and upload records',
       success: 'Upload approved'
     },
     list: {
-      label: 'Imports',
-      title: 'Imports',
-      description:
-        'Import child, cohort and vaccination records and see important notices',
+      label: 'Uploads',
+      title: 'Uploads',
+      results: 'All uploads',
+      description: 'Upload child, cohort and vaccination records',
       introduction:
-        'Use this page to upload and import child, class list and vaccination records.\n\nUpload times can vary. Refresh the page to see the latest status.'
+        'Use this page to upload child, class list and vaccination records.\n\nUpload times can vary. Refresh the page to see the latest status.'
     },
     search: {
-      label: 'Find import'
+      label: 'Find upload'
     },
     results:
-      '{count, plural, =0 {No imports matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> import} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> imports}}',
+      '{count, plural, =0 {No uploads matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
     recent: {
       label: 'Uploaded files',
       title: 'Uploaded files',
@@ -2529,10 +2530,10 @@ export const en = {
         '{count, plural, =0 {No uploaded files} one {1 uploaded file} other {# uploaded files}} ({needsReview, plural, =0 {none need} one {1 needs} other {# need}} review)'
     },
     imported: {
-      label: 'Completed imports',
-      title: 'Completed imports',
+      label: 'Completed uploads',
+      title: 'Completed uploads',
       count:
-        '{count, plural, =0 {No completed imports} one {1 completed import} other {# completed imports}}'
+        '{count, plural, =0 {No completed uploads} one {1 completed upload} other {# completed uploads}}'
     },
     show: {
       title: 'Upload ({{upload.formatted.createdAt}})',
@@ -2554,7 +2555,7 @@ export const en = {
         title: {
           [UploadStatus.Review]:
             'Close matches to existing records – need review',
-          [UploadStatus.Approved]: 'Upload issues resolved for this import'
+          [UploadStatus.Approved]: 'Issues resolved for this upload'
         },
         count: {
           [UploadStatus.Review]:
@@ -2588,7 +2589,7 @@ export const en = {
           [UploadStatus.Review]:
             'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
           [UploadStatus.Approved]:
-            '{count, plural, =0 {No records} one {1 import issue} other {# import issues}} reviewed'
+            '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed'
         }
       },
       matched: {
@@ -2599,14 +2600,14 @@ export const en = {
           'This upload includes {count, plural, =0 {no records that already exist} one {1 record that already exists} other {# records that already exist}} in Mavis. You do not need to remove these from your CSV file. If you approve the upload, any new information will be added to the existing records.'
       },
       imported: {
-        title: 'Imported records',
+        title: 'Uploaded records',
         count:
-          '{count, plural, =0 {No imported records} one {1 imported record} other {# imported records}}'
+          '{count, plural, =0 {No uploaded records} one {1 uploaded record} other {# uploaded records}}'
       },
       moves: {
         title: {
           [UploadStatus.Review]: 'School moves – need review',
-          [UploadStatus.Approved]: 'School moves resolved for this import'
+          [UploadStatus.Approved]: 'School moves resolved for this upload'
         },
         count:
           '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}}',
@@ -2633,11 +2634,11 @@ export const en = {
       success: 'Records uploaded for processing'
     },
     file: {
-      title: 'Import {{type}}',
+      title: 'Upload {{type}}',
       label: 'Upload file',
       description: {
         report:
-          'You can import vaccination records by uploading:\n\n- a Mavis CSV file\n- a SystmOne file',
+          'You can add vaccination records by uploading:\n\n- a Mavis CSV file\n- a SystmOne file',
         other:
           'The file you upload should use the Mavis CSV format for {{type}}'
       },
@@ -2650,7 +2651,7 @@ export const en = {
       title: 'Bulk remove relationships',
       label: 'Bulk remove relationships',
       description:
-        'If there is a problem in the class list import, you can bulk remove relationships between parents and children.',
+        'If there is a problem in the class list upload, you can bulk remove relationships between parents and children.',
       nonConsenting:
         'Remove relationships where parents haven’t given consent yet',
       all: 'Remove relationships for all parents and children',
@@ -2667,18 +2668,18 @@ export const en = {
       title: 'Which year groups do you want to import class list records for?'
     },
     invalid: {
-      title: 'Records could not be imported',
+      title: 'Records could not be uploaded',
       description:
-        'The records could not be imported due to errors in the CSV file. When fixing these errors, note that the header does not count as a row.'
+        'The records could not be uploaded due to errors in the CSV file. When fixing these errors, note that the header does not count as a row.'
     },
     devoid: {
       title: 'No new records',
-      description: 'All records in this upload have already been imported'
+      description: 'All records in this file have already been uploaded'
     },
     failed: {
       title: 'Too many records could not be matched',
       description:
-        'The records could not be imported as an unusually low number of records were matched to PDS (spine). PDS successfully matched only 60 records, a 10% match rate.\n\nReview your file and try uploading it again.',
+        'The records could not be uploaded as an unusually low number of records were matched to PDS (spine). PDS successfully matched only 60 records, a 10% match rate.\n\nReview your file and try uploading it again.',
       count:
         '{count, plural, =0 {No unmatched records} one {1 unmatched record} other {# unmatched records}}'
     },
