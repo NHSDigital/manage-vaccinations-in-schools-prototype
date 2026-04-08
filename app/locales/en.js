@@ -895,8 +895,11 @@ export const en = {
       }
     },
     previousDose: {
+      label: 'Details of %s vaccination',
+      title: 'When and where did your child get their %s vaccination?',
       country: {
         label: 'Country',
+        title: 'Which country was the vaccination given in?',
         england: 'England',
         scotland: 'Scotland',
         wales: 'Wales',
@@ -908,6 +911,7 @@ export const en = {
       },
       createdAt: {
         label: 'Date',
+        title: 'When was the vaccination given?',
         hint: 'If you do not know the exact date of the vaccination, leave the day field empty and enter your best guess for the month'
       },
       scheduled: {

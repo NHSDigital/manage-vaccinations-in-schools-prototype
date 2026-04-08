@@ -1,0 +1,73 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("consent.previousDose.title", session.programmes[0].nameSentenceCase) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ dateInput({
+    fieldset: {
+      legend: {
+        text: __("consent.previousDose.createdAt.title"),
+        size: "m"
+      }
+    },
+    hint: { text: __("consent.previousDose.createdAt.hint") },
+    decorate: "consent.firstDose.createdAt_"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("consent.previousDose.country.title"),
+        size: "m"
+      }
+    },
+    items: [
+      {
+        text: __("consent.previousDose.country.england")
+      },
+      {
+        text: __("consent.previousDose.country.scotland")
+      },
+      {
+        text: __("consent.previousDose.country.wales")
+      },
+      {
+        text: __("consent.previousDose.country.ni")
+      },
+      {
+        divider: "or"
+      },
+      {
+        text: __("consent.previousDose.country.other"),
+        value: "Other",
+        conditional: {
+          html: select({
+            label: { text: __("consent.previousDose.countryOther.title") },
+            items: otherCountryItems(Country, consent.previousDose.countryOther),
+            decorate: "consent.firstDose.countryOther",
+            attributes: {
+              "data-module": "app-autocomplete"
+            }
+          })
+        }
+      }
+    ],
+    decorate: "consent.firstDose.country"
+  }) }}
+
+  {{ input({
+    type: "hidden",
+    value: VaccinationOutcome.AlreadyVaccinated,
+    decorate: "consent.firstDose.outcome"
+  }) }}
+
+  {{ input({
+    type: "hidden",
+    value: session.programmes[0].sequenceDefault,
+    decorate: "consent.firstDose.sequence"
+  }) }}
+{% endblock %}
