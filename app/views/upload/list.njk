@@ -77,9 +77,9 @@
 
     <div class="app-grid-column-results">
       {% if data.type and data.type != "none" %}
-        {% set title = data.type | replace("records", "record imports") %}
+        {% set title = data.type | replace("records", "record uploads") %}
       {% else %}
-        {% set title = "All imports" %}
+        {% set title = __("upload.list.results") %}
       {% endif %}
 
       {{ appHeading({
