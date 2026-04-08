@@ -4,7 +4,9 @@
 
 {% set title = session.shortName + " – " + __("session." + view + ".title") %}
 {% set heading = session.shortName %}
-{% set caption = session.formatted.date + " – " + session.formatted.yearGroups %}
+{% set caption = session.formatted.date
+   + (" – " + session.formatted.yearGroups if session.type === SessionType.School)
+%}
 
 {% block content %}
   {% if (view == "record") and not session.isActive %}

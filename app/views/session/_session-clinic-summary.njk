@@ -1,0 +1,101 @@
+{{ appHeading({
+  title: "Appointments",
+  level: 3,
+  size: "m"
+}) }}
+
+<div class="nhsuk-grid-row nhsuk-card-group">
+  {% set columnWidth = "quarter" %}
+
+  {# Distribution chart elements: ▁▂▃▄▅▆▇█ https://rosettacode.org/wiki/Sparkline_in_unicode #}
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Total appointments",
+      headingLevel: 4,
+      colour: "blue",
+      compact: true,
+      data: session.totalAppointmentCount,
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Available appointments",
+      headingLevel: 4,
+      colour: "blue",
+      compact: true,
+      data: session.availableAppointmentCount,
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Availability",
+      headingLevel: 4,
+      colour: "green" if session.availabilityPercentage > 25 else ("orange" if session.availabilityPercentage > 5 else "red"),
+      compact: true,
+      data: session.availabilityPercentage ~ "%",
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Days left to book",
+      headingLevel: 4,
+      colour: "blue",
+      compact: true,
+      data: session.daysLeftToBook,
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Start time",
+      headingLevel: 4,
+      compact: true,
+      data: "9:00",
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "End time",
+      headingLevel: 4,
+      compact: true,
+      data: "15:00",
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Busiest hour",
+      headingLevel: 4,
+      colour: "orange",
+      compact: true,
+      data: "9:00",
+      href: session.uri + "/appointments"
+    }) }}
+  </div>
+  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+    {{ appDataCard({
+      heading: "Vaccinators",
+      headingLevel: 4,
+      colour: "blue",
+      compact: true,
+      data: "3",
+      href: session.uri + "/edit"
+    }) }}
+  </div>
+  {% for programme in session.programmes %}
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: programme.type + " appointments",
+        headingLevel: 4,
+        colour: "green",
+        compact: true,
+        data: "12",
+        href: session.uri + "/report?programme_id=" + programme.id
+      }) }}
+    </div>
+  {% endfor %}
+</div>
