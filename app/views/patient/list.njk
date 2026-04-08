@@ -13,6 +13,11 @@
     title: title
   }) }}
 
+  {{ actionLink({
+    text: __("pdsRecord.start.label"),
+    href: "/pds/new/start"
+  }) }}
+
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
       {{ appPatientSearch({

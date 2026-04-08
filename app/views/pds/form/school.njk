@@ -1,0 +1,37 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("pdsRecord.school.title", pdsRecord.firstName) %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          caption: pdsRecord.fullName,
+          title: title
+        })
+      }
+    },
+    items: [{
+      text: __("pdsRecord.school.yes.label"),
+      value: "urn",
+      conditional: {
+        html: select({
+          label: { text: __("pdsRecord.school_id.title") },
+          items: locationItems(data.schools, pdsRecord.urn),
+          decorate: "pdsRecord.school_id",
+          attributes: {
+            "data-module": "app-autocomplete"
+          }
+        })
+      }
+    }, {
+      text: __("pdsRecord.school.unknown.label"),
+      value: "888888"
+    }, {
+      text: __("pdsRecord.school.home-educated.label"),
+      value: "999999"
+    }],
+    decorate: "school_id"
+  }) }}
+{% endblock %}

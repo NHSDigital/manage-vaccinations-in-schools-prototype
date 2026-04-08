@@ -1,0 +1,31 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("pdsRecord.start.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: title,
+        size: "l"
+      }
+    },
+    items: [{
+      text: "Yes",
+      value: true,
+      conditional: {
+        html: input({
+          label: { text: __("pdsRecord.nhsn.title") },
+          hint: { text: __("pdsRecord.nhsn.hint") },
+          code: true,
+          width: 10,
+          name: "nhsn"
+        })
+      }
+    }, {
+      text: "No",
+      value: false
+    }],
+    decorate: "hasNhsNumber"
+  }) }}
+{% endblock %}

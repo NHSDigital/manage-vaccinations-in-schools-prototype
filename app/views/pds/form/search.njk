@@ -1,0 +1,34 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("pdsRecord.search.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ input({
+    label: { text: __("pdsRecord.firstName.label") },
+    decorate: "firstName"
+  }) }}
+
+  {{ input({
+    label: { text: __("pdsRecord.lastName.label") },
+    decorate: "lastName"
+  }) }}
+
+  {{ dateInput({
+    fieldset: {
+      legend: { text: __("pdsRecord.dob.label") }
+    },
+    hint: { text: __("pdsRecord.dob.hint") },
+    decorate: "dob_"
+  }) }}
+
+  {{ input({
+    label: { text: __("location.postalCode.label") },
+    autocomplete: "postal-code",
+    width: 10,
+    decorate: "postalCode"
+  }) }}
+{% endblock %}

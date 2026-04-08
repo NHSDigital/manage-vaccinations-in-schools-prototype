@@ -28,6 +28,7 @@ import { noticeRoutes } from './routes/notice.js'
 import { parentRoutes } from './routes/parent.js'
 import { patientSessionRoutes } from './routes/patient-session.js'
 import { patientRoutes } from './routes/patient.js'
+import { pdsRecordRoutes } from './routes/pds-record.js'
 import { programmeRoutes } from './routes/programme.js'
 import { replyRoutes } from './routes/reply.js'
 import { schoolRoutes } from './routes/school.js'
@@ -62,6 +63,7 @@ router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/patients', patientRoutes)
+router.use('/pds', pdsRecordRoutes)
 router.use('/reports/download', downloadRoutes)
 router.use('/reports', programmeRoutes)
 router.use('/reports/:programme_id/vaccinations', vaccinationRoutes)

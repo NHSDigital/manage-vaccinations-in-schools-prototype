@@ -1,0 +1,38 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("search.results") %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    summary: __mf("pdsRecord.results", {
+      from: results.from,
+      to: results.to,
+      count: results.count
+    }) | safe
+  }) }}
+
+  {% for pdsRecord in results.page %}
+    {{ summaryList({
+      card: {
+        classes: "app-card--compact",
+        heading: pdsRecord.fullAndPreferredNames | highlightQuery(data.q),
+        headingSize: "s",
+        headingLevel: 4,
+        href: pdsRecord.uri,
+        clickable: true
+      },
+      rows: summaryRows(pdsRecord, {
+        nhsn: {
+          value: pdsRecord.formatted.nhsn | highlightQuery(data.q)
+        },
+        dob: {},
+        gender: {},
+        address: {}
+      })
+    }) }}
+  {% endfor %}
+
+  {{ pagination(pages) }}
+{% endblock %}
