@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { SessionType, TeamDefaults } from '../enums.js'
+import { SessionPresetName, SessionType, TeamDefaults } from '../enums.js'
 import { Session } from '../models.js'
 import { addDays, getTermDates, removeDays, setMidday } from '../utils/date.js'
 import { getSessionYearGroups } from '../utils/session.js'
@@ -42,12 +42,19 @@ export function generateSession(preset, academicYear, user, options) {
 
     date = setMidday(date)
 
-    // Don’t create sessions during weekends
-    if ([0, 6].includes(date.getDay())) {
-      date = removeDays(date, 2)
+    if (school_id) {
+      // Don’t create school sessions during weekends
+      if ([0, 6].includes(date.getDay())) {
+        date = removeDays(date, 2)
+      }
     }
 
     openAt = removeDays(date, TeamDefaults.SessionOpenWeeks * 7)
+  }
+
+  let appointmentLength
+  if (clinic_id) {
+    appointmentLength = preset.name === SessionPresetName.Flu ? 5 : 10
   }
 
   let yearGroups
@@ -63,7 +70,11 @@ export function generateSession(preset, academicYear, user, options) {
     registration: true,
     academicYear,
     presetNames: [preset.name],
-    ...(clinic_id && { type: SessionType.Clinic, clinic_id }),
+    ...(clinic_id && {
+      type: SessionType.Clinic,
+      clinic_id,
+      appointmentLength
+    }),
     ...(school_id && { type: SessionType.School, school_id, yearGroups })
   })
 }

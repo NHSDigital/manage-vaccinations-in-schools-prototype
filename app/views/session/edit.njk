@@ -12,48 +12,83 @@
     title: title
   }) }}
 
-  {{ summaryList({
-    card: {
-      heading: __("session.summary"),
-      headingSize: "m"
-    },
-    rows: summaryRows(session, {
-      type: {
-        href: session.uri + "/edit/type" if session.consentWindow == ConsentWindow.Opening
+  {% if session.type === SessionType.School %}
+    {{ summaryList({
+      card: {
+        heading: __("session.summary"),
+        headingSize: "m"
       },
-      clinic: {
-        href: session.uri + "/edit/clinic"
+      rows: summaryRows(session, {
+        type: {
+          href: session.uri + "/edit/type" if session.consentWindow == ConsentWindow.Opening
+        },
+        clinic: {
+          href: session.uri + "/edit/clinic"
+        },
+        school: {
+          href: session.uri + "/edit/school" if session.consentWindow == ConsentWindow.Opening
+        },
+        programmes: {
+          href: session.uri + "/edit/programmes" if session.consentWindow == ConsentWindow.Opening
+        },
+        yearGroups: {
+          href: session.uri + "/edit/year-groups" if session.consentWindow == ConsentWindow.Opening
+        },
+        dates: {
+          href: session.uri + "/edit/dates"
+        },
+        openAt: {
+          href: session.uri + "/edit/open-at"
+        },
+        reminderWeeks: {
+          href: session.uri + "/edit/reminders"
+        },
+        mmrConsent: {
+          href: session.uri + "/new/mmr-consent"
+        },
+        registration: {
+          href: session.uri + "/edit/registration"
+        },
+        psdProtocol: {
+          href: session.uri + "/edit/delegation"
+        },
+        nationalProtocol: {
+          href: session.uri + "/edit/delegation"
+        }
+      })
+    }) }}
+  {% else %}
+    {{ summaryList({
+      card: {
+        heading: __("session.summary"),
+        headingSize: "m"
       },
-      school: {
-        href: session.uri + "/edit/school" if session.consentWindow == ConsentWindow.Opening
-      },
-      programmes: {
-        href: session.uri + "/edit/programmes" if session.consentWindow == ConsentWindow.Opening
-      },
-      yearGroups: {
-        href: session.uri + "/edit/year-groups" if session.consentWindow == ConsentWindow.Opening
-      },
-      dates: {
-        href: session.uri + "/edit/dates"
-      },
-      openAt: {
-        href: session.uri + "/edit/open-at"
-      },
-      reminderWeeks: {
-        href: session.uri + "/edit/reminders"
-      },
-      mmrConsent: {
-        href: session.uri + "/new/mmr-consent"
-      },
-      registration: {
-        href: session.uri + "/edit/registration"
-      },
-      psdProtocol: {
-        href: session.uri + "/edit/delegation"
-      },
-      nationalProtocol: {
-        href: session.uri + "/edit/delegation"
-      }
-    })
-  }) }}
+      rows: summaryRows(session, {
+        type: {},
+        programmes: {
+          href: session.uri + "/edit/programmes"
+        },
+        location: {
+          href: session.uri + "/edit/clinic"
+        },
+        date: {
+          href: session.uri + "/edit/date"
+        },
+        vaccinationPeriods: {
+          href: session.uri + "/edit/vaccination-periods",
+          value: vaccinationPeriodsSummary.startAndEndTimes
+        },
+        vaccinators: {
+          href: session.uri + "/edit/vaccinators",
+          value: vaccinationPeriodsSummary.vaccinatorCounts
+        },
+        appointmentLength: {
+          href: session.uri + "/edit/appointment-length"
+        },
+        totalAppointments: {
+          value: vaccinationPeriodsSummary.totalSlots
+        }
+      })
+    }) }}
+  {% endif %}
 {% endblock %}

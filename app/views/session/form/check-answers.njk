@@ -51,38 +51,6 @@
       })
     }) }}
   {% else %}
-    {#
-      Work out the value for anything coming from the vaccination periods, as the
-      session won't find them on its global context
-    #}
-    {% set startAndEndTimes = "" %}
-    {% set vaccinatorCounts = "" %}
-    {% set lastVaccinatorCount = -1 %}
-    {% set hasVariableVaccinatorCounts = false %}
-    {% set totalSlots = 0 %}
-    {% for vaccinationPeriod in vaccinationPeriods %}
-      {% set thisPeriod = __("session.vaccinators.input.singlePeriodLabel", {
-        startTime: vaccinationPeriod.startAt_,
-        endTime: vaccinationPeriod.endAt_
-      }) %}
-
-      {% set startAndEndTimes = startAndEndTimes + thisPeriod %}
-      {% if loop.index < vaccinationPeriods.length %}
-        {% set startAndEndTimes = startAndEndTimes + "<br>" %}
-      {% endif %}
-
-      {% set totalSlots = totalSlots + vaccinationPeriod.appointmentCount(session.appointmentLength) %}
-
-      {% set vaccinatorCounts = vaccinatorCounts + vaccinationPeriod.vaccinatorCount + " from " + thisPeriod + "<br>" %}
-      {% if lastVaccinatorCount !== -1 and lastVaccinatorCount !== vaccinationPeriod.vaccinatorCount %}
-        {% set hasVariableVaccinatorCounts = true %}
-      {% endif %}
-      {% set lastVaccinatorCount = vaccinationPeriod.vaccinatorCount %}
-    {% endfor %}
-    {% if not hasVariableVaccinatorCounts %}
-      {% set vaccinatorCounts = lastVaccinatorCount %}
-    {% endif %}
-  
     {{ summaryList({
       card: {
         heading: __("session.summary"),
@@ -95,9 +63,6 @@
         programmes: {
           href: session.uri + "/new/programmes"
         },
-        mmrConsent: {
-          href: session.uri + "/new/mmr-consent"
-        },
         location: {
           href: session.uri + "/new/clinic"
         },
@@ -106,17 +71,17 @@
         },
         vaccinationPeriods: {
           href: session.uri + "/new/vaccination-periods",
-          value: startAndEndTimes
+          value: vaccinationPeriodsSummary.startAndEndTimes
         },
         vaccinators: {
           href: session.uri + "/new/vaccinators",
-          value: vaccinatorCounts
+          value: vaccinationPeriodsSummary.vaccinatorCounts
         },
         appointmentLength: {
           href: session.uri + "/new/appointment-length"
         },
         totalAppointments: {
-          value: totalSlots
+          value: vaccinationPeriodsSummary.totalSlots
         }
       })
     }) }}

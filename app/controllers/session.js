@@ -30,7 +30,10 @@ import {
   today
 } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
-import { getSessionYearGroups } from '../utils/session.js'
+import {
+  getSessionYearGroups,
+  getVaccinationPeriodsSummary
+} from '../utils/session.js'
 import { formatYearGroup } from '../utils/string.js'
 
 export const sessionController = {
@@ -490,13 +493,48 @@ export const sessionController = {
     const { session_id } = request.params
     const { data } = request.session
 
-    // Setup wizard if not already setup
+    // Copy the saved session to the wizard context, if not already there
     let session = Session.findOne(session_id, data.wizard)
     if (!session) {
+      // NB: response.locals.session was set in read()
       session = Session.create(response.locals.session, data.wizard)
+      response.locals.session.vaccinationPeriods.forEach(
+        (vaccinationPeriod) => {
+          ClinicVaccinationPeriod.create(vaccinationPeriod, data.wizard)
+        }
+      )
+    }
+
+    // Set up the transaction metadata that controls how some clinic values are entered
+    if (session.type === SessionType.Clinic) {
+      const vaccinatorCounts = new Set(
+        session.vaccination_period_ids.map(
+          (period_id) =>
+            ClinicVaccinationPeriod.findOne(period_id, data.wizard)
+              ?.vaccinatorCount
+        )
+      )
+      const variableVaccinatorCounts = vaccinatorCounts.size > 1
+      data.transaction = {
+        hasVariableVaccinatorCounts: variableVaccinatorCounts ? 'true' : 'false'
+      }
+      if (!variableVaccinatorCounts) {
+        data.transaction.consistentVaccinatorCount = vaccinatorCounts
+          .values()
+          .next()
+          .value.toString()
+      }
     }
 
     response.locals.session = new Session(session, data)
+
+    // Generate summary info for the edit page
+    response.locals.vaccinationPeriodsSummary = getVaccinationPeriodsSummary(
+      session.vaccination_period_ids.map((period_id) =>
+        ClinicVaccinationPeriod.findOne(period_id, data.wizard)
+      ),
+      session.appointmentLength
+    )
 
     // Show back link to session page
     response.locals.back = session.uri
@@ -517,7 +555,20 @@ export const sessionController = {
         data
       )
 
+      // Update any clinic vaccination periods
+      if (session.type === SessionType.Clinic) {
+        session.vaccination_period_ids.forEach((period_id) => {
+          const vaccinationPeriod = ClinicVaccinationPeriod.findOne(
+            period_id,
+            data.wizard
+          )
+          ClinicVaccinationPeriod.update(period_id, vaccinationPeriod, data)
+        })
+      }
+
       // Clean up session data
+      delete data.vaccinationPeriods
+      delete data.transaction
       delete data.session
       delete data.wizard
 
@@ -612,6 +663,15 @@ export const sessionController = {
             }))
         } else {
           response.locals.clinics = Clinic.findAll(data)
+        }
+
+        // Generate summary info for the check-answers page
+        if (vaccinationPeriods) {
+          response.locals.vaccinationPeriodsSummary =
+            getVaccinationPeriodsSummary(
+              vaccinationPeriods,
+              session.appointmentLength
+            )
         }
       }
 
