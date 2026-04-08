@@ -40,10 +40,10 @@ import {
  * @augments Child
  * @param {object} options - Options
  * @param {object} [context] - Global context
- * @property {string} uuid - UUID
- * @property {string} nhsn - NHS number
- * @property {boolean} invalid - Flagged as invalid
- * @property {boolean} sensitive - Flagged as sensitive
+ * @property {string} [uuid] - UUID
+ * @property {string} [nhsn] - NHS number
+ * @property {boolean} [invalid] - Flagged as invalid
+ * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Parent} [parent1] - Parent 1
  * @property {Parent} [parent2] - Parent 2

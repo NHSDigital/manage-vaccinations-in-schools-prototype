@@ -1,0 +1,45 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("pds.result.title", patient.fullName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("patient.label"),
+      headingSize: "m"
+    },
+    rows: summaryRows(patient, {
+      nhsn: {},
+      fullName: {},
+      preferredNames: {},
+      dob: { value: patient.dobWithAge },
+      dod: {},
+      gender: {},
+      impairments: {},
+      adjustments: {},
+      address: {},
+      gpSurgery: {}
+    })
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("pds.add.label"),
+        size: "m"
+      }
+    },
+    items: [{
+      text: __("pds.add.yes.label"),
+      value: true
+    }, {
+      text: __("pds.add.no.label"),
+      value: false
+    }],
+    decorate: "add"
+  }) }}
+{% endblock %}

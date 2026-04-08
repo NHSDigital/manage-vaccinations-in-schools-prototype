@@ -1,0 +1,36 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("search.results") %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    summary: __mf("pds.results", {
+      from: results.from,
+      to: results.to,
+      count: results.count
+    }) | safe
+  }) }}
+
+  {% for patient in results.page %}
+    {{ summaryList({
+      card: {
+        classes: "app-card--compact",
+        heading: patient.fullAndPreferredNames | highlightQuery(data.q),
+        headingSize: "s",
+        headingLevel: 4,
+        href: "/pds/" + patient.uuid + "/new/result",
+        clickable: true
+      },
+      rows: summaryRows(patient, {
+        nhsn: {
+          value: patient.formatted.nhsn | highlightQuery(data.q)
+        },
+        dob: {}
+      })
+    }) }}
+  {% endfor %}
+
+  {{ pagination(pages) }}
+{% endblock %}

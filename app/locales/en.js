@@ -1637,6 +1637,53 @@ export const en = {
       }
     }
   },
+  pds: {
+    new: {
+      success: '{{patient.fullName}} has been added to your team'
+    },
+    start: {
+      label: 'Add a new child',
+      title: 'Do you have the child’s NHS number?'
+    },
+    search: {
+      title: 'Search for a child'
+    },
+    results:
+      '{count, plural, =0 {No children matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> record} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> children}}',
+    result: {
+      title: 'Check and confirm %s’s details'
+    },
+    school: {
+      title: 'Do you know which school %s goes to?',
+      yes: {
+        label: 'Yes'
+      },
+      unknown: {
+        label: 'No'
+      },
+      'home-educated': {
+        label: 'They are home-educated'
+      }
+    },
+    school_id: {
+      label: 'School URN',
+      title: 'Select a school'
+    },
+    nhsn: {
+      label: 'NHS number',
+      title: 'What is the child’s NHS number?',
+      hint: 'For example, 485 777 3456'
+    },
+    add: {
+      label: 'Do you want to add this child?',
+      yes: {
+        label: 'Yes'
+      },
+      no: {
+        label: 'No – search for another child'
+      }
+    }
+  },
   programme: {
     label: 'Programme',
     list: {
