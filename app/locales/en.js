@@ -2224,7 +2224,7 @@ export const en = {
       input: {
         allPeriodsLabel: 'All periods',
         singlePeriodLabel:
-          '{{startTime.hour}}:{{startTime.minute}} to {{endTime.hour}}:{{endTime.minute}}',
+          '{{startAt_.hour}}:{{startAt_.minute}} to {{endAt_.hour}}:{{endAt_.minute}}',
         suffix: 'vaccinators'
       },
       varies: {

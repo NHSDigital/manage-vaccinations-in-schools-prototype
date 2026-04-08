@@ -609,7 +609,7 @@ export class Session {
    */
   get shortName() {
     if (this.clinic) {
-      return `${this.programmeNames.titleCase} community clinic`
+      return `${this.programmeNames.titleCase} clinic at ${this.location.name}`
     }
 
     if (this.location) {

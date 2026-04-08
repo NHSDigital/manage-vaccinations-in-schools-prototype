@@ -114,3 +114,51 @@ export const getSessionYearGroups = (school_id, sessionPresets) => {
     [...programmeYearGroups].includes(yearGroup)
   )
 }
+
+/**
+ * Get various summary details for a clinic session's vaccination periods
+ *
+ * @param {Array<import('../models.js').ClinicVaccinationPeriod>} vaccinationPeriods - the vaccination periods for a given clinic session
+ * @param {number} appointmentLength - the length of a single appointment, in minutes
+ * @returns {object} - the summary details for a clinic session's vaccination period(s)
+ */
+export const getVaccinationPeriodsSummary = (
+  vaccinationPeriods,
+  appointmentLength
+) => {
+  {
+    let startAndEndTimes = ''
+    let vaccinatorCounts = ''
+    let lastVaccinatorCount = -1
+    let hasVariableVaccinatorCounts = false
+    let totalSlots = 0
+    vaccinationPeriods.forEach((vaccinationPeriod, periodIndex) => {
+      const thisPeriod = `${vaccinationPeriod.startAt_.hour}:${vaccinationPeriod.startAt_.minute} to ${vaccinationPeriod.endAt_.hour}:${vaccinationPeriod.endAt_.minute}`
+      const thisVaccinatorCount = vaccinationPeriod.vaccinatorCount || 0
+
+      startAndEndTimes += thisPeriod
+      vaccinatorCounts += `${thisVaccinatorCount} from ${thisPeriod}`
+      if (periodIndex < vaccinationPeriods.length - 1) {
+        startAndEndTimes += '<br>'
+        vaccinatorCounts += '<br>'
+      }
+
+      hasVariableVaccinatorCounts =
+        hasVariableVaccinatorCounts ||
+        (lastVaccinatorCount !== -1 &&
+          lastVaccinatorCount !== thisVaccinatorCount)
+      lastVaccinatorCount = thisVaccinatorCount
+
+      totalSlots += vaccinationPeriod.appointmentCount(appointmentLength)
+    })
+    if (!hasVariableVaccinatorCounts) {
+      vaccinatorCounts = lastVaccinatorCount.toString()
+    }
+
+    return {
+      startAndEndTimes,
+      vaccinatorCounts,
+      totalSlots
+    }
+  }
+}

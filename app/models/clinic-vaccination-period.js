@@ -41,9 +41,11 @@ export class ClinicVaccinationPeriod {
    * @returns {number} - the number of whole appointments that can fitted into this period
    */
   appointmentCount(appointmentLengthInMinutes) {
-    const periodLengthInMs = Math.abs(
-      this.endAt.getTime() - this.startAt.getTime()
-    )
+    if (!this.endAt || !this.startAt) {
+      return 0
+    }
+
+    const periodLengthInMs = this.endAt.getTime() - this.startAt.getTime()
     if (periodLengthInMs <= 0) {
       return 0
     }
