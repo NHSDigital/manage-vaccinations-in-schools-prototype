@@ -453,18 +453,35 @@ export class Session {
   }
 
   /**
-   * Get the percentage of the clinic session's run time that's available to book
+   * Does the clinic have staffing levels that vary across the session?
    *
-   * @returns {number} - the percentage of bookable time that's still available
+   * @returns {boolean} true if staffing levels vary, or false otherwise
    */
-  get availabilityPercentage() {
-    const total = this.totalAppointmentCount
-    if (total === 0) {
+  get hasVariableVaccinatorCounts() {
+    if (this.type !== SessionType.Clinic) {
+      return false
+    }
+
+    const vaccinatorCounts = new Set(
+      this.vaccinationPeriods.map((period) => period.vaccinatorCount)
+    )
+    return vaccinatorCounts.size > 1
+  }
+
+  /**
+   * Get the maximum number of vaccinators working in this clinic
+   *
+   * @returns {number} the maximum number of nurses vaccinating at any point in this clinic
+   */
+  get maximumVaccinatorCount() {
+    if (this.type !== SessionType.Clinic) {
       return 0
     }
 
-    const available = this.availableAppointmentCount
-    return Math.floor((available / total) * 100)
+    const vaccinatorCounts = new Set(
+      this.vaccinationPeriods.map((period) => period.vaccinatorCount)
+    )
+    return Math.max(...vaccinatorCounts)
   }
 
   /**

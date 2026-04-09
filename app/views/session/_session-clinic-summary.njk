@@ -7,12 +7,10 @@
 <div class="nhsuk-grid-row nhsuk-card-group">
   {% set columnWidth = "quarter" %}
 
-  {# Distribution chart elements: ▁▂▃▄▅▆▇█ https://rosettacode.org/wiki/Sparkline_in_unicode #}
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
       heading: "Total appointments",
       headingLevel: 4,
-      colour: "blue",
       compact: true,
       data: session.totalAppointmentCount,
       href: session.uri + "/edit"
@@ -22,7 +20,7 @@
     {{ appDataCard({
       heading: "Available appointments",
       headingLevel: 4,
-      colour: "blue",
+      colour: "white" if session.availableAppointmentCount > 10 else ("orange" if session.availableAppointmentCount > 0 else "red"),
       compact: true,
       data: session.availableAppointmentCount,
       href: session.uri + "/edit"
@@ -30,11 +28,10 @@
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
-      heading: "Availability",
+      heading: "Vaccinators (max.)" if session.hasVariableVaccinatorCounts else "Vaccinators",
       headingLevel: 4,
-      colour: "green" if session.availabilityPercentage > 25 else ("orange" if session.availabilityPercentage > 5 else "red"),
       compact: true,
-      data: session.availabilityPercentage ~ "%",
+      data: session.maximumVaccinatorCount,
       href: session.uri + "/edit"
     }) }}
   </div>
@@ -42,47 +39,9 @@
     {{ appDataCard({
       heading: "Days left to book",
       headingLevel: 4,
-      colour: "blue",
+      colour: "orange" if session.daysLeftToBook < 7 and session.daysLeftToBook > 0,
       compact: true,
       data: session.daysLeftToBook,
-      href: session.uri + "/edit"
-    }) }}
-  </div>
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: "Start time",
-      headingLevel: 4,
-      compact: true,
-      data: "9:00",
-      href: session.uri + "/edit"
-    }) }}
-  </div>
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: "End time",
-      headingLevel: 4,
-      compact: true,
-      data: "15:00",
-      href: session.uri + "/edit"
-    }) }}
-  </div>
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: "Busiest hour",
-      headingLevel: 4,
-      colour: "orange",
-      compact: true,
-      data: "9:00",
-      href: session.uri + "/appointments"
-    }) }}
-  </div>
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: "Vaccinators",
-      headingLevel: 4,
-      colour: "blue",
-      compact: true,
-      data: "3",
       href: session.uri + "/edit"
     }) }}
   </div>
