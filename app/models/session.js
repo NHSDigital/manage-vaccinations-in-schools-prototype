@@ -28,6 +28,7 @@ import {
   Vaccine
 } from '../models.js'
 import {
+  addDays,
   removeDays,
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -360,6 +361,66 @@ export class Session {
   }
 
   /**
+   * How many appointment slots (booked or otherwise) are there in this clinic session?
+   *
+   * @returns {number} - total number of appointment slots in this clinic session
+   */
+  get totalAppointmentCount() {
+    if (this.type !== SessionType.Clinic) {
+      return 0
+    }
+
+    if (!this.vaccinationPeriods?.length) {
+      return 0
+    }
+
+    return this.vaccinationPeriods
+      .map((period) => period.appointmentCount(this.appointmentLength))
+      .reduce((total, next) => total + next, 0)
+  }
+
+  /**
+   * How many appointment slots remain unbooked in this clinic session?
+   *
+   * @returns {number} - the number of appointment slots remaining in this clinic session
+   */
+  get availableAppointmentCount() {
+    return Math.floor(this.totalAppointmentCount * 0.1)
+  }
+
+  /**
+   * Get the number of days parents have left to book their child into this clinic
+   *
+   * @returns {number} - the number of days before appointment booking closes
+   */
+  get daysLeftToBook() {
+    if (this.status !== SessionStatus.Planned) {
+      return 0
+    }
+
+    // TODO: encode this assumption of closing booking 24 hours before the clinic into the booking process
+    const cutOffDate = addDays(this.date, -1)
+
+    const millisecondsPerDay = 1000 * 60 * 60 * 24
+    return Math.max(0, Math.floor((cutOffDate - today()) / millisecondsPerDay))
+  }
+
+  /**
+   * Get the percentage of the clinic session's run time that's available to book
+   *
+   * @returns {number} - the percentage of bookable time that's still available
+   */
+  get availabilityPercentage() {
+    const total = this.totalAppointmentCount
+    if (total === 0) {
+      return 0
+    }
+
+    const available = this.availableAppointmentCount
+    return Math.floor((available / total) * 100)
+  }
+
+  /**
    * Get school
    *
    * @returns {School|undefined} School
@@ -594,7 +655,7 @@ export class Session {
    */
   get name() {
     if (this.clinic) {
-      return `${this.programmeNames.titleCase} community clinic on ${this.formatted.dateShort}`
+      return `${this.programmeNames.titleCase} clinic at ${this.location.name} on ${this.formatted.dateShort}`
     }
 
     if (this.location) {

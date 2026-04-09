@@ -130,6 +130,20 @@
 {% endmacro %}
 
 {% set tabItems = [] %}
+
+{% if session.type === SessionType.Clinic %}
+  {% set planningHtml %}
+    {% include "session/_session-clinic-summary.njk" %}
+  {% endset %}
+  {% set tabItems = tabItems | push({
+    label: "Appointments",
+    id: "Planning",
+    panel: {
+      html: planningHtml
+    }
+  }) %}
+{% endif %}
+
 {% for programme in session.programmes %}
   {% set tabItems = tabItems | push({
     label: programme.name,
@@ -142,4 +156,4 @@
 
 {{ tabs({
   items: tabItems
-}) if session.programmes.length > 1 else programmeHtml(session.programmes[0]) }}
+}) if session.type === SessionType.Clinic or session.programmes.length > 1 else programmeHtml(session.programmes[0]) }}
