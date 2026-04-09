@@ -1,7 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
-import { Session } from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate
@@ -13,7 +12,6 @@ import {
  * @param {object} [context] - data context
  * @property {object} [context] - data context
  * @property {string} uuid - Vaccination period UUID
- * @property {string} session_id - ID of the clinic session to which this belongs
  * @property {Date} [startAt] - Start time of first appointment slot
  * @property {Date} [startAt_] - Start time of first appointment slot, from dateInput - see getter/setter
  * @property {Date} [endAt] - End time of final appointment slot
@@ -24,7 +22,6 @@ export class ClinicVaccinationPeriod {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.session_id = options?.session_id
 
     this.startAt = options?.startAt && new Date(options.startAt)
     this.startAt_ = options?.startAt_
@@ -55,21 +52,6 @@ export class ClinicVaccinationPeriod {
       Math.floor(periodLengthInMinutes / appointmentLengthInMinutes) *
       this.vaccinatorCount
     )
-  }
-
-  /**
-   * Get the clinic session this vaccination period is part of
-   *
-   * @returns {Session|undefined} Clinic session
-   */
-  get clinicSession() {
-    try {
-      if (this.session_id) {
-        return Session.findOne(this.session_id, this.context)
-      }
-    } catch (error) {
-      console.error('ClinicVaccinationPeriod.clinicSession', error.message)
-    }
   }
 
   /**
