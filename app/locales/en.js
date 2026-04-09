@@ -2178,7 +2178,7 @@ export const en = {
     },
     school: {
       label: 'School',
-      title: 'Where is this school session taking place?'
+      title: 'Where will this session be held?'
     },
     school_id: {
       label: 'School URN',
@@ -2190,7 +2190,7 @@ export const en = {
     },
     clinic: {
       label: 'Clinic location',
-      title: 'Where is this community clinic taking place?',
+      title: 'Where will this session be held?',
       search: {
         label: 'Select a clinic location'
       }
@@ -2232,13 +2232,12 @@ export const en = {
         label: 'The number will vary by vaccination period'
       },
       consistent: {
-        label: 'The number won’t vary'
+        label: 'The number will not vary'
       }
     },
     appointmentLength: {
       label: 'Appointment length',
       title: 'How long are your appointments?',
-      hint: 'For example, 5 minutes for flu clinics or 10 minutes for injected vaccines',
       suffix: 'minutes'
     },
     totalAppointments: {
