@@ -94,7 +94,7 @@ export class Session {
     if (this.type === SessionType.Clinic) {
       this.clinic_id = options?.clinic_id
       this.registration = false
-      this.vaccination_period_ids = options?.vaccination_period_ids
+      this.vaccination_period_ids = options?.vaccination_period_ids || []
       this.appointmentLength = options?.appointmentLength
     }
 

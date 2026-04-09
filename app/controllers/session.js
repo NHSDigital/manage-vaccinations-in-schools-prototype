@@ -498,11 +498,13 @@ export const sessionController = {
     if (!session) {
       // NB: response.locals.session was set in read()
       session = Session.create(response.locals.session, data.wizard)
-      response.locals.session.vaccinationPeriods.forEach(
-        (vaccinationPeriod) => {
-          ClinicVaccinationPeriod.create(vaccinationPeriod, data.wizard)
-        }
-      )
+      if (session.type === SessionType.Clinic) {
+        response.locals.session.vaccinationPeriods.forEach(
+          (vaccinationPeriod) => {
+            ClinicVaccinationPeriod.create(vaccinationPeriod, data.wizard)
+          }
+        )
+      }
     }
 
     // Set up the transaction metadata that controls how some clinic values are entered
@@ -526,15 +528,17 @@ export const sessionController = {
       }
     }
 
+    // Give access to the data needed for the summaryRows
     response.locals.session = new Session(session, data)
 
-    // Generate summary info for the edit page
-    response.locals.vaccinationPeriodsSummary = getVaccinationPeriodsSummary(
-      session.vaccination_period_ids.map((period_id) =>
-        ClinicVaccinationPeriod.findOne(period_id, data.wizard)
-      ),
-      session.appointmentLength
-    )
+    if (session.type === SessionType.Clinic) {
+      response.locals.vaccinationPeriodsSummary = getVaccinationPeriodsSummary(
+        session.vaccination_period_ids.map((period_id) =>
+          ClinicVaccinationPeriod.findOne(period_id, data.wizard)
+        ),
+        session.appointmentLength
+      )
+    }
 
     // Show back link to session page
     response.locals.back = session.uri
