@@ -733,10 +733,7 @@ export const sessionController = {
       // Add the first vaccination period, if not already there
       if (!session.vaccination_period_ids?.length) {
         const vaccination_period_ids = [
-          ClinicVaccinationPeriod.create(
-            { session_id: session.id },
-            data.wizard
-          ).uuid
+          ClinicVaccinationPeriod.create({}, data.wizard).uuid
         ]
         Session.update(session_id, { vaccination_period_ids }, data.wizard)
       }
@@ -767,10 +764,7 @@ export const sessionController = {
           // Add another vaccination period
           const vaccination_period_ids = [
             ...session.vaccination_period_ids,
-            ClinicVaccinationPeriod.create(
-              { session_id: session.id },
-              data.wizard
-            ).uuid
+            ClinicVaccinationPeriod.create({}, data.wizard).uuid
           ]
           Session.update(session_id, { vaccination_period_ids }, data.wizard)
 

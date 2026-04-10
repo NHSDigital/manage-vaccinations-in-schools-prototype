@@ -6,11 +6,10 @@ import { ClinicVaccinationPeriod } from '../models.js'
 /**
  * Generate one or more time periods during which vaccinations will be administered at a clinic
  *
- * @param {string} session_id - session ID for the clinic whose vaccination periods we're creating
  * @param {Date} sessionDate - the date on which the clinic's running
  * @returns {Array<ClinicVaccinationPeriod>} - one or more vaccination periods
  */
-export function generateClinicVaccinationPeriods(session_id, sessionDate) {
+export function generateClinicVaccinationPeriods(sessionDate) {
   const periodCount = faker.helpers.weightedArrayElement([
     { value: 1, weight: 70 },
     { value: 2, weight: 30 }
@@ -44,7 +43,6 @@ export function generateClinicVaccinationPeriods(session_id, sessionDate) {
   let nextPeriodStartTime = sessionStartTime
   return vaccinationPeriodLengths.map((periodLength) => {
     const vaccinationPeriod = new ClinicVaccinationPeriod({
-      session_id,
       startAt: nextPeriodStartTime,
       endAt: addMinutes(nextPeriodStartTime, periodLength),
       vaccinatorCount: faker.helpers.weightedArrayElement([
