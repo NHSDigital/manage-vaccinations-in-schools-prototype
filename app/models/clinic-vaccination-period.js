@@ -1,5 +1,4 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import _ from 'lodash'
 
 import {
   convertIsoDateToObject,

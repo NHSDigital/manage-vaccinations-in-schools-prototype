@@ -348,6 +348,22 @@ export class Session {
   }
 
   /**
+   * Get the vaccination period with the given UUID in this clinic session
+   *
+   * @param {string} period_uuid - the unique ID of the vaccination period to return
+   * @returns {ClinicVaccinationPeriod} - the vaccination period matching the given UUID
+   */
+  getVaccinationPeriod(period_uuid) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to get vaccination periods')
+    }
+
+    return this.vaccinationPeriods?.find(
+      (period) => period.uuid === period_uuid
+    )
+  }
+
+  /**
    * Add a new vaccination period to this clinic session
    *
    * @param {object} options - any specific values to give the new period
