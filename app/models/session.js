@@ -66,6 +66,7 @@ import {
  *   Clinics only
  * @property {string} [clinic_id] - Clinic ID i.e. the venue
  * @property {Array<string>} [vaccination_period_ids] - the vaccination periods (start, end, etc) being run in the clinic
+ * @property {Array<ClinicVaccinationPeriod>} clinicVaccinationPeriods - vaccination periods and staffing in this clinic
  * @property {number} [appointmentLength] - standard length of the clinic appointment, in minutes
  *
  *   Schools only
@@ -95,6 +96,11 @@ export class Session {
       this.clinic_id = options?.clinic_id
       this.registration = false
       this.vaccination_period_ids = options?.vaccination_period_ids || []
+      this.clinicVaccinationPeriods = options?.clinicVaccinationPeriods
+        ? options.clinicVaccinationPeriods.map(
+            (period) => new ClinicVaccinationPeriod(period)
+          )
+        : []
       this.appointmentLength = options?.appointmentLength
     }
 
@@ -358,6 +364,43 @@ export class Session {
         console.error('Session.vaccinationPeriods', error.message)
       }
     }
+  }
+
+  /**
+   * Add a new vaccination period to this clinic session
+   *
+   * @returns {ClinicVaccinationPeriod} the new vaccination period
+   */
+  addVaccinationPeriod() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to add vaccination periods')
+    }
+
+    this.clinicVaccinationPeriods.push(new ClinicVaccinationPeriod({}))
+
+    return this.clinicVaccinationPeriods.at(-1)
+  }
+
+  /**
+   * Remove a vaccination period from this clinic session
+   *
+   * @param {string} period_uuid - the unique ID of the vaccination period to remove
+   */
+  removeVaccinationPeriod(period_uuid) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to remove vaccination periods')
+    }
+
+    const index = this.clinicVaccinationPeriods.findIndex(
+      (period) => period.uuid == period_uuid
+    )
+    if (index === -1) {
+      throw new Error(
+        `Unable to find vaccination period with uuid of ${period_uuid}`
+      )
+    }
+
+    this.clinicVaccinationPeriods.splice(index, 1)
   }
 
   /**
