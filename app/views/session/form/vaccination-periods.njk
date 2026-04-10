@@ -10,18 +10,18 @@
 
   {{ __("session.vaccinationPeriods.hint") | nhsukMarkdown }}
   
-  {% for vaccinationPeriod in vaccinationPeriods %}
+  {% for vaccinationPeriod in session.vaccinationPeriods %}
     {% call fieldset({
       legend: {
         text: __("session.vaccinationPeriods.period.title", loop.index),
         size: "m"
-      } if vaccinationPeriods.length > 1
+      } if session.vaccinationPeriods.length > 1
     }) %}
 
     {{ dateInput({
       fieldset: {
         legend: {
-          size: "m" if vaccinationPeriods.length === 1 else "s",
+          size: "m" if session.vaccinationPeriods.length === 1 else "s",
           text: __("session.vaccinationPeriods.period.startTime.label")
         }
       },
@@ -49,7 +49,7 @@
     {{ dateInput({
       fieldset: {
         legend: {
-          size: "m" if vaccinationPeriods.length === 1 else "s",
+          size: "m" if session.vaccinationPeriods.length === 1 else "s",
           text: __("session.vaccinationPeriods.period.endTime.label")
         }
       },
@@ -74,7 +74,7 @@
       ]
     }) }}
 
-    {% if vaccinationPeriods.length > 1 %}
+    {% if session.vaccinationPeriods.length > 1 %}
       <div class="nhsuk-form-group">
         {{ button({
           text: __("session.vaccinationPeriods.period.removePeriod.label"),

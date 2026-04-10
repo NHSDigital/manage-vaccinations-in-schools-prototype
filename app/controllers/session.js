@@ -503,7 +503,7 @@ export const sessionController = {
     // Set up the transaction metadata that controls how some clinic values are entered
     if (session.type === SessionType.Clinic) {
       const vaccinatorCounts = new Set(
-        session.clinicVaccinationPeriods.map((period) => period.vaccinatorCount)
+        session.vaccinationPeriods.map((period) => period.vaccinatorCount)
       )
       const variableVaccinatorCounts = vaccinatorCounts.size > 1
       data.transaction = {
@@ -522,7 +522,7 @@ export const sessionController = {
 
     if (session.type === SessionType.Clinic) {
       response.locals.vaccinationPeriodsSummary = getVaccinationPeriodsSummary(
-        session.clinicVaccinationPeriods,
+        session.vaccinationPeriods,
         session.appointmentLength
       )
     }
@@ -572,13 +572,6 @@ export const sessionController = {
         session = Session.create(response.locals.session, data.wizard)
       }
       response.locals.session = new Session(session, data)
-
-      const vaccinationPeriods = session.clinicVaccinationPeriods
-      if (vaccinationPeriods) {
-        response.locals.vaccinationPeriods = vaccinationPeriods.map(
-          (period) => new ClinicVaccinationPeriod(period, data)
-        )
-      }
 
       const journey = {
         [`/`]: {},
@@ -646,10 +639,10 @@ export const sessionController = {
         }
 
         // Generate summary info for the check-answers page
-        if (vaccinationPeriods) {
+        if (session.vaccinationPeriods) {
           response.locals.vaccinationPeriodsSummary =
             getVaccinationPeriodsSummary(
-              vaccinationPeriods,
+              session.vaccinationPeriods,
               session.appointmentLength
             )
         }
@@ -707,7 +700,7 @@ export const sessionController = {
 
     if (session.type === SessionType.Clinic) {
       // Add the first vaccination period, if not already there
-      if (!session.clinicVaccinationPeriods?.length) {
+      if (!session.vaccinationPeriods?.length) {
         session.addVaccinationPeriod()
         Session.update(session_id, session, data.wizard)
       }
@@ -742,7 +735,7 @@ export const sessionController = {
         } else if (action.startsWith('remove-period-')) {
           // Remove a vaccination period
           const index = parseInt(action.substring('remove-period-'.length))
-          const period_id = session.clinicVaccinationPeriods[index].uuid
+          const period_id = session.vaccinationPeriods[index].uuid
           session.removeVaccinationPeriod(period_id)
           Session.update(session_id, session, data.wizard)
 
@@ -750,14 +743,14 @@ export const sessionController = {
         }
       } else if (view === 'vaccinators') {
         if (
-          session?.clinicVaccinationPeriods.length > 1 &&
+          session?.vaccinationPeriods.length > 1 &&
           request.body.transaction.hasVariableVaccinatorCounts === 'false'
         ) {
           // Set the same number of vaccinators in all vaccination periods
           const vaccinatorCount = parseInt(
             request.body.transaction.consistentVaccinatorCount
           )
-          for (const period of session.clinicVaccinationPeriods) {
+          for (const period of session.vaccinationPeriods) {
             period.vaccinatorCount = vaccinatorCount
           }
         } else {

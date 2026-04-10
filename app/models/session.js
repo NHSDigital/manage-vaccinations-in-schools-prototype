@@ -65,7 +65,7 @@ import {
  *
  *   Clinics only
  * @property {string} [clinic_id] - Clinic ID i.e. the venue
- * @property {Array<ClinicVaccinationPeriod>} clinicVaccinationPeriods - vaccination periods and staffing in this clinic
+ * @property {Array<ClinicVaccinationPeriod>} vaccinationPeriods - vaccination periods and staffing in this clinic
  * @property {number} [appointmentLength] - standard length of the clinic appointment, in minutes
  *
  *   Schools only
@@ -94,8 +94,8 @@ export class Session {
     if (this.type === SessionType.Clinic) {
       this.clinic_id = options?.clinic_id
       this.registration = false
-      this.clinicVaccinationPeriods = options?.clinicVaccinationPeriods
-        ? options.clinicVaccinationPeriods.map(
+      this.vaccinationPeriods = options?.vaccinationPeriods
+        ? options.vaccinationPeriods.map(
             (period) => new ClinicVaccinationPeriod(period)
           )
         : []
@@ -358,12 +358,10 @@ export class Session {
       throw new Error('Session must be a clinic to add vaccination periods')
     }
 
-    this.clinicVaccinationPeriods = this.clinicVaccinationPeriods || []
-    this.clinicVaccinationPeriods.push(
-      new ClinicVaccinationPeriod(options || {})
-    )
+    this.vaccinationPeriods = this.vaccinationPeriods || []
+    this.vaccinationPeriods.push(new ClinicVaccinationPeriod(options || {}))
 
-    return this.clinicVaccinationPeriods.at(-1)
+    return this.vaccinationPeriods.at(-1)
   }
 
   /**
@@ -376,7 +374,7 @@ export class Session {
       throw new Error('Session must be a clinic to remove vaccination periods')
     }
 
-    const index = this.clinicVaccinationPeriods.findIndex(
+    const index = this.vaccinationPeriods.findIndex(
       (period) => period.uuid == period_uuid
     )
     if (index === -1) {
@@ -385,7 +383,7 @@ export class Session {
       )
     }
 
-    this.clinicVaccinationPeriods.splice(index, 1)
+    this.vaccinationPeriods.splice(index, 1)
   }
 
   /**

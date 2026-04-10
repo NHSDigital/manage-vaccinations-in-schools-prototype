@@ -3,9 +3,9 @@
 {% set title = __("session.vaccinators.title") %}
 
 {% block form %}
-  {% if vaccinationPeriods.length === 1 %}
+  {% if session.vaccinationPeriods.length === 1 %}
     {# Only need to show a single text input to record staffing levels #}
-    {% set vaccinationPeriod = vaccinationPeriods[0] %}
+    {% set vaccinationPeriod = session.vaccinationPeriods[0] %}
     {{ input({
         label: {
           isPageHeading: true,
@@ -32,7 +32,7 @@
 
     {# Set conditional HTML for variable staffing levels #}
     {% set variableVaccinatorCountHtml = "" %}
-    {% for vaccinationPeriod in vaccinationPeriods %}
+    {% for vaccinationPeriod in session.vaccinationPeriods %}
       {% set variableVaccinatorCountHtml = variableVaccinatorCountHtml ~
         input({
           label: {
