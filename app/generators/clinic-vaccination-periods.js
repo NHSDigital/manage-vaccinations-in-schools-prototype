@@ -1,15 +1,14 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMinutes } from 'date-fns'
 
-import { ClinicVaccinationPeriod } from '../models.js'
+import { Session } from '../models.js'
 
 /**
  * Generate one or more time periods during which vaccinations will be administered at a clinic
  *
- * @param {Date} sessionDate - the date on which the clinic's running
- * @returns {Array<ClinicVaccinationPeriod>} - one or more vaccination periods
+ * @param {Session} session - the session to which we're adding vaccination periods
  */
-export function generateClinicVaccinationPeriods(sessionDate) {
+export function generateClinicVaccinationPeriods(session) {
   const periodCount = faker.helpers.weightedArrayElement([
     { value: 1, weight: 70 },
     { value: 2, weight: 30 }
@@ -26,6 +25,7 @@ export function generateClinicVaccinationPeriods(sessionDate) {
     vaccinationPeriodLengths.reduce((total, next) => total + next, 0) +
     breakLength
 
+  const sessionDate = new Date(session.date)
   const earliestSessionStartTime = new Date(sessionDate.setUTCHours(9, 0)) // 9am
   const latestSessionFinishTime = new Date(sessionDate.setUTCHours(20, 0)) // 8pm
   const sessionWindow = Math.floor(
@@ -41,8 +41,8 @@ export function generateClinicVaccinationPeriods(sessionDate) {
   const sessionStartTime = addMinutes(earliestSessionStartTime, startOffset)
 
   let nextPeriodStartTime = sessionStartTime
-  return vaccinationPeriodLengths.map((periodLength) => {
-    const vaccinationPeriod = new ClinicVaccinationPeriod({
+  vaccinationPeriodLengths.forEach((periodLength) => {
+    session.addVaccinationPeriod({
       startAt: nextPeriodStartTime,
       endAt: addMinutes(nextPeriodStartTime, periodLength),
       vaccinatorCount: faker.helpers.weightedArrayElement([
@@ -55,7 +55,5 @@ export function generateClinicVaccinationPeriods(sessionDate) {
       nextPeriodStartTime,
       periodLength + breakLength
     )
-
-    return vaccinationPeriod
   })
 }

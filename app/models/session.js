@@ -65,7 +65,6 @@ import {
  *
  *   Clinics only
  * @property {string} [clinic_id] - Clinic ID i.e. the venue
- * @property {Array<string>} [vaccination_period_ids] - the vaccination periods (start, end, etc) being run in the clinic
  * @property {Array<ClinicVaccinationPeriod>} clinicVaccinationPeriods - vaccination periods and staffing in this clinic
  * @property {number} [appointmentLength] - standard length of the clinic appointment, in minutes
  *
@@ -95,7 +94,6 @@ export class Session {
     if (this.type === SessionType.Clinic) {
       this.clinic_id = options?.clinic_id
       this.registration = false
-      this.vaccination_period_ids = options?.vaccination_period_ids || []
       this.clinicVaccinationPeriods = options?.clinicVaccinationPeriods
         ? options.clinicVaccinationPeriods.map(
             (period) => new ClinicVaccinationPeriod(period)
@@ -350,33 +348,20 @@ export class Session {
   }
 
   /**
-   * Get the vaccination periods set up for this clinic
-   *
-   * @returns {Array<ClinicVaccinationPeriod>|undefined} - the vaccination periods in this clinic session
-   */
-  get vaccinationPeriods() {
-    if (this.clinic_id && this.vaccination_period_ids) {
-      try {
-        return this.vaccination_period_ids.map((period_id) =>
-          ClinicVaccinationPeriod.findOne(period_id, this.context)
-        )
-      } catch (error) {
-        console.error('Session.vaccinationPeriods', error.message)
-      }
-    }
-  }
-
-  /**
    * Add a new vaccination period to this clinic session
    *
-   * @returns {ClinicVaccinationPeriod} the new vaccination period
+   * @param {object} options - any specific values to give the new period
+   * @returns {ClinicVaccinationPeriod} - the new vaccination period
    */
-  addVaccinationPeriod() {
+  addVaccinationPeriod(options) {
     if (this.type !== SessionType.Clinic) {
       throw new Error('Session must be a clinic to add vaccination periods')
     }
 
-    this.clinicVaccinationPeriods.push(new ClinicVaccinationPeriod({}))
+    this.clinicVaccinationPeriods = this.clinicVaccinationPeriods || []
+    this.clinicVaccinationPeriods.push(
+      new ClinicVaccinationPeriod(options || {})
+    )
 
     return this.clinicVaccinationPeriods.at(-1)
   }
