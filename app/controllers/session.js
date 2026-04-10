@@ -733,20 +733,6 @@ export const sessionController = {
           session.addVaccinationPeriod()
           Session.update(session_id, session, data.wizard)
 
-          const addedPeriod = ClinicVaccinationPeriod.findOne(
-            vaccination_period_ids.at(-1),
-            data.wizard
-          )
-          const previousPeriod = ClinicVaccinationPeriod.findOne(
-            vaccination_period_ids.at(-2),
-            data.wizard
-          )
-          ClinicVaccinationPeriod.update(
-            addedPeriod.uuid,
-            { vaccinatorCount: previousPeriod?.vaccinatorCount },
-            data.wizard
-          )
-
           nextPage = request.originalUrl
         } else if (action.startsWith('remove-period-')) {
           // Remove a vaccination period
