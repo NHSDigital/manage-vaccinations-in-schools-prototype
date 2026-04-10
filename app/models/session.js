@@ -864,6 +864,40 @@ export class Session {
 
     const reminderWeeks = filters.plural(this.reminderWeeks, 'week')
 
+    let startAndEndTimes, vaccinatorCounts, totalAppointments
+    if (this.type === SessionType.Clinic) {
+      startAndEndTimes = ''
+      vaccinatorCounts = ''
+      totalAppointments = 0
+
+      let lastVaccinatorCount = -1
+      let hasVariableVaccinatorCounts = false
+      this.vaccinationPeriods.forEach((vaccinationPeriod, periodIndex) => {
+        const thisPeriod = `${vaccinationPeriod.startAt_.hour}:${vaccinationPeriod.startAt_.minute} to ${vaccinationPeriod.endAt_.hour}:${vaccinationPeriod.endAt_.minute}`
+        const thisVaccinatorCount = vaccinationPeriod.vaccinatorCount || 0
+
+        startAndEndTimes += thisPeriod
+        vaccinatorCounts += `${thisVaccinatorCount} from ${thisPeriod}`
+        if (periodIndex < this.vaccinationPeriods.length - 1) {
+          startAndEndTimes += '<br>'
+          vaccinatorCounts += '<br>'
+        }
+
+        hasVariableVaccinatorCounts =
+          hasVariableVaccinatorCounts ||
+          (lastVaccinatorCount !== -1 &&
+            lastVaccinatorCount !== thisVaccinatorCount)
+        lastVaccinatorCount = thisVaccinatorCount
+
+        totalAppointments += vaccinationPeriod.appointmentCount(
+          this.appointmentLength
+        )
+      })
+      if (!hasVariableVaccinatorCounts) {
+        vaccinatorCounts = lastVaccinatorCount.toString()
+      }
+    }
+
     return {
       address:
         this.address &&
@@ -919,6 +953,9 @@ export class Session {
       school: this.school && this.school.name,
       school_id: this.school && this.school.formatted.id,
       yearGroups: this.yearGroups && formatYearGroups(this.yearGroups),
+      vaccinationPeriods: startAndEndTimes,
+      vaccinators: vaccinatorCounts,
+      totalAppointments,
       appointmentLength: `${this.appointmentLength} minutes`
     }
   }

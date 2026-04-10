@@ -73,19 +73,15 @@
           href: session.uri + "/edit/date"
         },
         vaccinationPeriods: {
-          href: session.uri + "/edit/vaccination-periods",
-          value: vaccinationPeriodsSummary.startAndEndTimes
+          href: session.uri + "/edit/vaccination-periods"
         },
         vaccinators: {
-          href: session.uri + "/edit/vaccinators",
-          value: vaccinationPeriodsSummary.vaccinatorCounts
+          href: session.uri + "/edit/vaccinators"
         },
         appointmentLength: {
           href: session.uri + "/edit/appointment-length"
         },
-        totalAppointments: {
-          value: vaccinationPeriodsSummary.totalSlots
-        }
+        totalAppointments: {}
       })
     }) }}
   {% endif %}

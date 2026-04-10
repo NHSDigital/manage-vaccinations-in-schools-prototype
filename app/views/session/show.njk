@@ -49,8 +49,12 @@
       {% set sessionDetailsRows = {
           location: {},
           status: {},
-          programmes: {}
-        } %}
+          programmes: {},
+          date: {},
+          vaccinationPeriods: {},
+          vaccinators: {},
+          appointmentLength: {}
+      } %}
     {% endif %}
 
     {{ summaryList({

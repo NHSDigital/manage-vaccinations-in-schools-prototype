@@ -29,10 +29,7 @@ import {
   today
 } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
-import {
-  getSessionYearGroups,
-  getVaccinationPeriodsSummary
-} from '../utils/session.js'
+import { getSessionYearGroups } from '../utils/session.js'
 import { formatYearGroup } from '../utils/string.js'
 
 export const sessionController = {
@@ -519,13 +516,6 @@ export const sessionController = {
     // Give access to the data needed for the summaryRows
     response.locals.session = new Session(session, data)
 
-    if (session.type === SessionType.Clinic) {
-      response.locals.vaccinationPeriodsSummary = getVaccinationPeriodsSummary(
-        session.vaccinationPeriods,
-        session.appointmentLength
-      )
-    }
-
     // Show back link to session page
     response.locals.back = session.uri
 
@@ -611,7 +601,8 @@ export const sessionController = {
 
       response.locals.type = type
 
-      // Some questions are not asked during journey, so need explicit next path
+      // Some questions are not asked during journey (you can only access them from
+      // the check-answers page), so they need an explicit next path
       response.locals.paths.next =
         response.locals.paths.next || `${session.uri}/new/check-answers`
 
@@ -635,15 +626,6 @@ export const sessionController = {
             }))
         } else {
           response.locals.clinics = Clinic.findAll(data)
-        }
-
-        // Generate summary info for the check-answers page
-        if (session.vaccinationPeriods) {
-          response.locals.vaccinationPeriodsSummary =
-            getVaccinationPeriodsSummary(
-              session.vaccinationPeriods,
-              session.appointmentLength
-            )
         }
       }
 
