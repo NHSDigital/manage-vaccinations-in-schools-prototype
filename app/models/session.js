@@ -377,7 +377,12 @@ export class Session {
     this.vaccinationPeriods = this.vaccinationPeriods || []
     this.vaccinationPeriods.push(new ClinicVaccinationPeriod(options || {}))
 
-    return this.vaccinationPeriods.at(-1)
+    const newPeriod = this.vaccinationPeriods.at(-1)
+    if (this.vaccinationPeriods.length >= 2) {
+      newPeriod.vaccinatorCount = this.vaccinationPeriods.at(-2).vaccinatorCount
+    }
+
+    return newPeriod
   }
 
   /**
