@@ -92,22 +92,4 @@ export class ClinicVaccinationPeriod {
       this.endAt = convertObjectToIsoDate(object)
     }
   }
-
-  /**
-   * Get various formatted values for display in the page (esp. in summaryRows)
-   *
-   * @returns {object} Formatted values
-   */
-  get formatted() {
-    return {}
-  }
-
-  /**
-   * Get namespace (top-level property in locale string lookup)
-   *
-   * @returns {string} namespace
-   */
-  get ns() {
-    return 'clinicVaccinationPeriod'
-  }
 }
