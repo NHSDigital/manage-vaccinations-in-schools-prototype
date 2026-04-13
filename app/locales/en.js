@@ -1683,7 +1683,13 @@ export const en = {
       caption: 'Consent response from {{reply.fullName}}',
       title: 'Follow up refusal',
       decision: {
-        label: 'Does their original decision still stand?'
+        label: 'Has their decision changed after follow-up?',
+        consent: {
+          label: 'Yes – they now consent to the vaccination'
+        },
+        refuse: {
+          label: 'No – they still refuse the vaccination'
+        }
       }
     },
     invalidate: {

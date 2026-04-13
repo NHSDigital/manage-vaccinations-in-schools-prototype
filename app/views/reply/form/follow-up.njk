@@ -40,7 +40,13 @@
         text: __("reply.follow-up.decision.label")
       }
     },
-    items: getBooleanItems(),
+    items: [{
+      text: __("reply.follow-up.decision.consent.label"),
+      value: false
+    }, {
+      text: __("reply.follow-up.decision.refuse.label"),
+      value: true
+    }],
     decorate: "decision"
   }) }}
 {% endblock %}
