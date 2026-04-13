@@ -40,10 +40,9 @@
 
         {{ link(consentPath + "?referrer=" + consentPath + "/match", "View full consent response") | nhsukMarkdown }}
 
-        {{ button({
+        {{ actionLink({
           href: consentPath + "/add",
-          text: __("consent.add.label"),
-          variant: "secondary"
+          text: __("consent.add.label")
         }) }}
       {% endcall %}
     </div>
