@@ -20,44 +20,37 @@
     {% include "session/_session-vaccinated-summary.njk" %}
   {% endif %}
 
-  {% if not session.isUnplanned and not session.isCompleted %}
+  {% if not session.isUnplanned %}
     {% include "session/_session-activity-summary.njk" %}
   {% endif %}
 
-  {{ summaryList({
-    card: {
-      heading: __("session.summary"),
-      headingLevel: 3
-    },
-    rows: summaryRows(session, {
-      location: {},
-      school_id: {},
-      status: {},
-      patients: {},
-      programmes: {},
-      yearGroups: {},
-      consentWindow: {},
-      consentForms: {},
-      mmrConsent: {}
-    })
-  }) }}
-
-  {{ appButtonGroup({
-    buttons: [
-      {
+  {% call card({
+    heading: __("session.summary"),
+    headingLevel: 3,
+    actions: {
+      items: [{
         text: __("session.schedule.title") if session.isUnplanned else __("session.edit.title"),
-        href: session.uri + "/edit",
-        variant: "secondary"
-      },
-      {
-        text: __("session.inviteToClinic.label"),
-        href: session.uri + "/invite-to-clinic",
-        variant: "secondary"
-      } if session.isCompleted
-    ],
-    links: [{
+        href: session.uri + "/edit"
+      }]
+    }
+  }) %}
+    {{ summaryList({
+      rows: summaryRows(session, {
+        location: {},
+        school_id: {},
+        status: {},
+        patients: {},
+        programmes: {},
+        yearGroups: {},
+        consentWindow: {},
+        consentForms: {},
+        mmrConsent: {}
+      })
+    }) }}
+
+    {{ actionLink({
       text: __("session.offline.title"),
       href: session.uri + "/offline"
-    }] if session.isPlanned or session.isActive
-  }) }}
+    }) if session.isPlanned or session.isActive }}
+  {% endcall %}
 {% endblock %}
