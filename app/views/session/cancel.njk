@@ -22,17 +22,24 @@
     })
   }) }}
 
-  {% if session.type === SessionType.Clinic and session.bookedAppointmentCount > 0 %}
-    {% set bookingsWarningHtml %}
-      {{ __mf("session.cancel.appointmentsMade", { appointmentCount: session.bookedAppointmentCount }) | nhsukMarkdown }}
+  {% if session.type === SessionType.Clinic %}
+    {% set appointmentCountHtml = __mf("session.cancel.appointmentsMade", { appointmentCount: session.bookedAppointmentCount }) | nhsukMarkdown %}
+    {% if session.bookedAppointmentCount === 0 %}
+      {{ insetText({
+        html: appointmentCountHtml
+      }) }}
+    {% else %}
+      {% set bookingsWarningHtml %}
+        {{ appointmentCountHtml }}
 
-      {{ __("session.cancel.notificationConsequence") | nhsukMarkdown }}
-    {% endset %}
+        {{ __("session.cancel.notificationConsequence") | nhsukMarkdown }}
+      {% endset %}
 
-    {{ warningCallout({
-      heading: "Cancelling appointments",
-      html: bookingsWarningHtml
-    }) }}
+      {{ warningCallout({
+        heading: __("session.cancel.warningTitle"),
+        html: bookingsWarningHtml
+      }) }}
+    {% endif %}
   {% endif %}
 {% endblock %}
 
