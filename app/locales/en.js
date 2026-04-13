@@ -2395,7 +2395,7 @@ export const en = {
   },
   team: {
     show: {
-      label: 'Your team',
+      label: 'Team',
       title: 'Your team',
       description: 'Manage your team’s settings'
     },
