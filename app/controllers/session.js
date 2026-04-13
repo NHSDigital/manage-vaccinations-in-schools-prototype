@@ -790,6 +790,18 @@ export const sessionController = {
     response.redirect(session.uri)
   },
 
+  cancelSession(request, response) {
+    const { __, session } = response.locals
+
+    request.flash('message', __('session.cancel.success', { session }))
+
+    // TODO: there'll doubtless be other dependent records I need to delete too,
+    //       or we may want to simply set a Cancelled status on the session instead
+    Session.delete(session.id, request.session.data)
+
+    response.redirect('/sessions')
+  },
+
   inviteToClinic(request, response) {
     const { account } = request.app.locals
     const { session_id } = request.params

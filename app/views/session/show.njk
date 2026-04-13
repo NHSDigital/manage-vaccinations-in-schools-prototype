@@ -28,10 +28,16 @@
     heading: __("session.summary"),
     headingLevel: 3,
     actions: {
-      items: [{
+      items: [
+      {
         text: __("session.schedule.title") if session.isUnplanned else __("session.edit.title"),
         href: session.uri + "/edit"
-      }]
+      },
+      {
+        text: __("session.action.cancel"),
+        href: session.uri + "/cancel"
+      } if session.isPlanned or session.isUnplanned,
+      ]
     }
   }) %}
     {% set sessionDetailsRows = {

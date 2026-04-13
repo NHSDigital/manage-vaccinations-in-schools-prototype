@@ -1,0 +1,51 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.cancel.title") %}
+{% set confirmButtonText = __("session.cancel.confirm") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: session.location.name,
+      headingSize: "s",
+      headingLevel: 4
+    },
+    rows: summaryRows(session, {
+      location: {},
+      date: {},
+      programmes: {},
+      yearGroups: {}
+    })
+  }) }}
+
+  {% if session.type === SessionType.Clinic and session.bookedAppointmentCount > 0 %}
+    {% set bookingsWarningHtml %}
+      {{ __mf("session.cancel.appointmentsMade", { appointmentCount: session.bookedAppointmentCount }) | nhsukMarkdown }}
+
+      {{ __("session.cancel.notificationConsequence") | nhsukMarkdown }}
+    {% endset %}
+
+    {{ warningCallout({
+      heading: "Cancelling appointments",
+      html: bookingsWarningHtml
+    }) }}
+  {% endif %}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [{
+      text: __("session.cancel.confirm"),
+      variant: "warning"
+    }],
+    links: [{
+      text: __("session.cancel.cancel"),
+      href: session.uri
+    }]
+  }) }}
+{% endblock %}
+

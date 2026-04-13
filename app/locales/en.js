@@ -1977,6 +1977,9 @@ export const en = {
     count:
       '{count, plural, =0 {No sessions} one {1 session} other {# sessions}}',
     summary: 'Session details',
+    action: {
+      cancel: 'Cancel this session'
+    },
     search: {
       label: 'Find session'
     },
@@ -1994,6 +1997,16 @@ export const en = {
     edit: {
       title: 'Edit session',
       success: '{{session.name}} updated'
+    },
+    cancel: {
+      title: 'Are you sure you want to cancel this session?',
+      appointmentsMade:
+        '{appointmentCount, plural, one {There is <b>{appointmentCount} child</b> already booked into this clinic.} other {There are <b>{appointmentCount} children</b> already booked into this clinic.}}',
+      notificationConsequence:
+        'Cancelling the clinic will send a notification to their parent or guardian, with an invitation to book into another clinic.',
+      confirm: 'Yes, cancel this session',
+      cancel: 'No, return to the session page',
+      success: '{{session.name}} cancelled'
     },
     academicYear: {
       label: 'Academic year'

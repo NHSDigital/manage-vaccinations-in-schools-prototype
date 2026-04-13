@@ -408,7 +408,11 @@ export class Session {
   }
 
   /**
-   * How many appointment slots (booked or otherwise) are there in this clinic session?
+   * How many appointments in total are possible in this clinic session?
+   *
+   * The returned value assumes that not of the appointments is an extended
+   * appointment, so we're really returning the session's maximum possible
+   * appointment count.
    *
    * @returns {number} - total number of appointment slots in this clinic session
    */
@@ -432,7 +436,25 @@ export class Session {
    * @returns {number} - the number of appointment slots remaining in this clinic session
    */
   get availableAppointmentCount() {
-    return Math.floor(this.totalAppointmentCount * 0.1)
+    // TODO: calculate this value from the actual appointments
+    return Math.floor(this.totalAppointmentCount * 0.9)
+  }
+
+  /**
+   * Get the number of appointments that have been booked in this clinic,
+   * regardless of their length
+   *
+   * @returns {number} - the number of clinic appointments booked
+   */
+  get bookedAppointmentCount() {
+    if (this.type !== SessionType.Clinic) {
+      return 0
+    }
+
+    // TODO: calculate this value from the actual appointments; it's not as simple
+    // as subtracting the available appointments from the total, as some appointments
+    // may be longer than the default/minimum.
+    return this.totalAppointmentCount - this.availableAppointmentCount
   }
 
   /**
@@ -1068,5 +1090,15 @@ export class Session {
    */
   updateRegister(patient_uuid, registration) {
     this.register[patient_uuid] = registration
+  }
+
+  /**
+   * Delete the session with the given ID
+   *
+   * @param {string} id - the ID of the session to delete
+   * @param {object} context - the context on which the session is stored
+   */
+  static delete(id, context) {
+    delete context.sessions[id]
   }
 }
