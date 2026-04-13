@@ -70,10 +70,9 @@
     view: "sessions"
   }) }}
 
-  {{ button({
+  {{ actionLink({
     text: __("session.new.label"),
-    href: "/sessions/new",
-    variant: "secondary"
+    href: "/sessions/new"
   }) }}
 
   {% if activeSession %}
