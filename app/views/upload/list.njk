@@ -16,10 +16,9 @@
   <div class="nhsuk-u-reading-width">
     {{ __("upload.list.introduction") | nhsukMarkdown }}
 
-    {{ button({
+    {{ actionLink({
       text: __("upload.new.label"),
-      href: "/uploads/new",
-      variant: "secondary"
+      href: "/uploads/new"
     }) }}
   </div>
 
