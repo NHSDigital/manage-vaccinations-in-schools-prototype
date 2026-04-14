@@ -9,7 +9,7 @@
 
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
-      heading: "Total appointments",
+      heading: __("session.tally.appointments.total.label"),
       headingLevel: 4,
       compact: true,
       data: session.totalAppointmentCount,
@@ -18,7 +18,7 @@
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
-      heading: "Available appointments",
+      heading: __("session.tally.appointments.available.label"),
       headingLevel: 4,
       colour: "white" if session.availableAppointmentCount > 10 else ("orange" if session.availableAppointmentCount > 0 else "red"),
       compact: true,
@@ -28,7 +28,7 @@
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
-      heading: "Vaccinators (max.)" if session.hasVariableVaccinatorCounts else "Vaccinators",
+      heading: __("session.tally.vaccinators.maximum.label") if session.hasVariableVaccinatorCounts else __("session.tally.vaccinators.consistent.label"),
       headingLevel: 4,
       compact: true,
       data: session.maximumVaccinatorCount,
@@ -37,7 +37,7 @@
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
-      heading: "Days left to book",
+      heading: __("session.tally.appointments.daysLeft.label"),
       headingLevel: 4,
       colour: "orange" if session.daysLeftToBook < 7 and session.daysLeftToBook > 0,
       compact: true,
@@ -48,7 +48,7 @@
   {% for programme in session.programmes %}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({
-        heading: programme.type + " appointments",
+        heading: __("session.tally.appointments.programmeRequests.label", programme.type),
         headingLevel: 4,
         colour: "green",
         compact: true,

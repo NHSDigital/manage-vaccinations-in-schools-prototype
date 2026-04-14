@@ -1978,7 +1978,7 @@ export const en = {
       '{count, plural, =0 {No sessions} one {1 session} other {# sessions}}',
     summary: 'Session details',
     action: {
-      cancel: 'Cancel this session'
+      cancel: 'Cancel session'
     },
     search: {
       label: 'Find session'
@@ -2182,6 +2182,28 @@ export const en = {
       },
       vaccinatedWithVaccineCriteria: {
         label: '{{programme.name}} ({{vaccineCriteria}})'
+      },
+      appointments: {
+        total: {
+          label: 'Total appointments'
+        },
+        available: {
+          label: 'Available appointments'
+        },
+        programmeRequests: {
+          label: '%s requests'
+        },
+        daysLeft: {
+          label: 'Days left to book'
+        }
+      },
+      vaccinators: {
+        consistent: {
+          label: 'Vaccinators'
+        },
+        maximum: {
+          label: 'Vaccinators (max.)'
+        }
       }
     },
     date: {
