@@ -28,14 +28,12 @@
     view: "show"
   }) }}
 
-  {{ button({
+  {{ actionLink({
     href: "/uploads/new?type=" + UploadType.School + "&school_id=" + school.id,
-    text: __("session.upload-class-list.title"),
-    variant: "secondary"
+    text: __("session.upload-class-list.title")
   } if not school.homeOrUnknown else {
     href: school.uri + "/invite-to-clinic",
-    text: __("session.inviteToClinic.label"),
-    variant: "secondary"
+    text: __("session.inviteToClinic.label")
   }) }}
 
   <div class="nhsuk-grid-row">

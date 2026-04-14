@@ -20,10 +20,20 @@
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("record")) %}
 {% endif %}
 
-{{ summaryList({
-  card: {
+{% if sessionActivityRows.length > 0 or session.isCompleted %}
+  {% call card({
     heading: __("session.activity.label"),
     headingLevel: 3
-  },
-  rows: sessionActivityRows | removeLastSummaryBorder
-}) if sessionActivityRows.length > 0 }}
+  }) %}
+    {{ summaryList({
+      rows: sessionActivityRows | removeLastSummaryBorder
+    }) if sessionActivityRows.length > 0 and not session.isCompleted }}
+
+    {{ actionLink({
+      text: __("session.inviteToClinic.label"),
+      href: session.uri + "/invite-to-clinic",
+      variant: "secondary"
+    }) if session.isCompleted }}
+  {% endcall %}
+{% endif %}
+
