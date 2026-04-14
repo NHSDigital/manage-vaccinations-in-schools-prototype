@@ -819,26 +819,30 @@ export const sessionController = {
       )
 
     // Find patients to invite to clinic
-    const patientSessionsForClinic = session.patientSessionsForClinic.map(
+    const patientUuidsForClinic = session.patientSessionsForClinic.map(
       (patient) => patient.uuid
     )
 
-    // Move patients to clinic
     if (clinic) {
-      for (const patientSession of patientSessionsForClinic) {
-        const patient = Patient.findOne(patientSession.patient_uuid, data)
-        patientSession.removeFromSession({
-          createdBy_uid: account.uid
-        })
-        patient.addToSession(patientSession.session)
-        Patient.update(patientSession.patient_uuid, {}, data)
+      // Move patients to clinic
+      for (const patientUuid of patientUuidsForClinic) {
+        const patientSession = PatientSession.findOne(patientUuid, data)
+
+        if (patientSession) {
+          patientSession.removeFromSession({
+            createdBy_uid: account.uid
+          })
+          patientSession.patient.addToSession(patientSession.session)
+
+          Patient.update(patientSession.patient_uuid, {}, data)
+        }
       }
     }
 
     request.flash(
       'success',
       __mf(`session.inviteToClinic.success`, {
-        count: patientSessionsForClinic.length
+        count: patientUuidsForClinic.length
       })
     )
 
