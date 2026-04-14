@@ -151,6 +151,17 @@ export class Child {
   }
 
   /**
+   * Can the child be offered the MMRV vaccine rather than MMR?
+   *
+   * Note: This property makes no assessment of their <b>need</b> for a vaccination
+   *
+   * @returns {boolean} - true if can be offered MMRV, or false if they should only receive MMR
+   */
+  get canBeOfferedMmrv() {
+    return this.dob?.getFullYear() >= 2020
+  }
+
+  /**
    * Get formatted ethnicity (ethnic group and background)
    *
    * @returns {string|undefined} Date of birth and age in years

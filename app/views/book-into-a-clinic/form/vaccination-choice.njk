@@ -34,10 +34,14 @@
       value: 'td-ipv',
       hint: { text: 'Protects against tetanus, diphtheria and polio' }
     },{
-      text: 'MMR(V)',
+      text: 'MMRV',
       value: 'mmr',
       hint: { text: 'Protects against measles, mumps, rubella and varicella (chickenpox)' }
-    }],
+    } if appointment.child.canBeOfferedMmrv,{
+      text: 'MMR',
+      value: 'mmr',
+      hint: { text: 'Protects against measles, mumps and rubella' }
+    } if not appointment.child.canBeOfferedMmrv],
     decorate: "appointment.selected_programme_ids"
   }) }}
 {% endblock %}
