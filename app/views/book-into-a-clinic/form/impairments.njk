@@ -16,32 +16,38 @@
       text: Impairment.Vision,
       hint: {
         text: __("consent.child.impairments.vision.hint")
-      }
+      },
+      exclusiveGroup: "impairments-list"
     }, {
       text: Impairment.Hearing,
       hint: {
         text: __("consent.child.impairments.hearing.hint")
-      }
+      },
+      exclusiveGroup: "impairments-list"
     }, {
       text: Impairment.Mobility,
       hint: {
         text: __("consent.child.impairments.mobility.hint")
-      }
+      },
+      exclusiveGroup: "impairments-list"
     }, {
       text: Impairment.Memory,
       hint: {
         text: __("consent.child.impairments.memory.hint")
-      }
+      },
+      exclusiveGroup: "impairments-list"
     }, {
       text: Impairment.MentalHealth,
       hint: {
         text: __("consent.child.impairments.mentalHealth.hint")
-      }
+      },
+      exclusiveGroup: "impairments-list"
     }, {
       text: Impairment.Communicative,
       hint: {
         text: __("consent.child.impairments.communicative.hint")
-      }
+      },
+      exclusiveGroup: "impairments-list"
     }, {
       text: Impairment.Other,
       conditional: {
@@ -49,7 +55,17 @@
           label: { text: __("consent.child.impairmentsOther.title") },
           decorate: "consent.child.impairmentsOther"
         })
-      }
+      },
+      exclusiveGroup: "impairments-list"
+    },
+    {
+      divider: 'or'
+    },
+    {
+      text: __("consent.child.impairments.none.label"),
+      value: Impairment.None,
+      exclusiveGroup: "impairments-list",
+      exclusive: true
     }],
     decorate: "consent.child.impairments"
   }) }}

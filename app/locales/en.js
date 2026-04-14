@@ -650,6 +650,9 @@ export const en = {
         },
         other: {
           label: 'Other'
+        },
+        none: {
+          label: 'No, my child does not need any adjustments'
         }
       },
       adjustmentsOther: {
@@ -676,6 +679,9 @@ export const en = {
         },
         communicative: {
           hint: 'For example, related to autism or ADHD (attention deficit hyperactivity disorder)'
+        },
+        none: {
+          label: 'No, my child has no impairments'
         }
       },
       impairmentsOther: {

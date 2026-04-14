@@ -17,13 +17,15 @@
     },
     items: [{
       text: __("consent.child.adjustments.distraction.label"),
-      value: Adjustment.Distraction
+      value: Adjustment.Distraction,
+      exclusiveGroup: "adjustments-list"
     }, {
       text: __("consent.child.adjustments.privacy.label"),
       value: Adjustment.Privacy,
       hint: {
         text: __("consent.child.adjustments.privacy.hint")
-      }
+      },
+      exclusiveGroup: "adjustments-list"
     }, {
       text: __("consent.child.adjustments.other.label"),
       value: Adjustment.Other,
@@ -32,7 +34,17 @@
           label: { text: __("consent.child.adjustmentsOther.title") },
           decorate: "consent.child.adjustmentsOther"
         })
-      }
+      },
+      exclusiveGroup: "adjustments-list"
+    },
+    {
+      divider: 'or'
+    },
+    {
+      text: __("consent.child.adjustments.none.label"),
+      value: Adjustment.None,
+      exclusiveGroup: "adjustments-list",
+      exclusive: true
     }],
     decorate: "consent.child.adjustments"
   }) }}

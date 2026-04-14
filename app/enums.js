@@ -30,7 +30,8 @@ export const Adjustment = {
   LastAppointment: 'Needs the last appointment',
   Privacy: 'Needs a private space',
   HomeVisit: 'Needs a home visit',
-  Other: 'Other reasonable adjustment'
+  Other: 'Other reasonable adjustment',
+  None: 'No adjustments required'
 }
 
 /**
@@ -225,7 +226,8 @@ export const Impairment = {
   Memory: 'Memory',
   MentalHealth: 'Mental health',
   Communicative: 'Social and/or communication differences',
-  Other: 'Other'
+  Other: 'Other',
+  None: 'None'
 }
 
 /**
