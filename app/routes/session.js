@@ -26,6 +26,7 @@ router.post('/:session_id/edit/:view', session.updateForm)
 router.post('/:session_id/invite-to-clinic', session.inviteToClinic)
 router.post('/:session_id/instructions', session.giveInstructions)
 router.post('/:session_id/reminders', session.sendReminders)
+router.post('/:session_id/cancel', session.cancelSession)
 
 router.all('/:session_id/:view', session.readPatientSessions)
 router.post('/:session_id/:view', session.filterPatientSessions)

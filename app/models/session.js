@@ -408,7 +408,11 @@ export class Session {
   }
 
   /**
-   * How many appointment slots (booked or otherwise) are there in this clinic session?
+   * How many appointments in total are possible in this clinic session?
+   *
+   * The returned value assumes that not of the appointments is an extended
+   * appointment, so we're really returning the session's maximum possible
+   * appointment count.
    *
    * @returns {number} - total number of appointment slots in this clinic session
    */
@@ -432,7 +436,54 @@ export class Session {
    * @returns {number} - the number of appointment slots remaining in this clinic session
    */
   get availableAppointmentCount() {
-    return Math.floor(this.totalAppointmentCount * 0.1)
+    // TODO: calculate this value from the actual appointments
+    return this.totalAppointmentCount
+  }
+
+  /**
+   * Get the number of appointments that have been booked in this clinic,
+   * regardless of their length
+   *
+   * @returns {number} - the number of clinic appointments booked
+   */
+  get bookedAppointmentCount() {
+    if (this.type !== SessionType.Clinic) {
+      return 0
+    }
+
+    // TODO: calculate this value from the actual appointments; it's not as simple
+    // as subtracting the available appointments from the total, as some appointments
+    // may be longer than the default/minimum.
+    return this.totalAppointmentCount - this.availableAppointmentCount
+  }
+
+  /**
+   * Get all appointment slots in this clinic session, regardless of booking
+   *
+   * @returns {Array<object>} - the start times of all possible appointments, grouped by their start hour
+   */
+  get appointmentsByHour() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have appointments')
+    }
+
+    const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
+    const allAppointmentsByHour = sortedPeriods.reduce(
+      (result, vaccinationPeriod) => {
+        const periodAppointments = vaccinationPeriod.appointmentsByHour(
+          this.appointmentLength
+        )
+        for (const [hour, appointments] of Object.entries(periodAppointments)) {
+          result[hour] = result[hour] || []
+          result[hour].push(...appointments)
+        }
+
+        return result
+      },
+      {}
+    )
+
+    return allAppointmentsByHour
   }
 
   /**
@@ -453,18 +504,35 @@ export class Session {
   }
 
   /**
-   * Get the percentage of the clinic session's run time that's available to book
+   * Does the clinic have staffing levels that vary across the session?
    *
-   * @returns {number} - the percentage of bookable time that's still available
+   * @returns {boolean} true if staffing levels vary, or false otherwise
    */
-  get availabilityPercentage() {
-    const total = this.totalAppointmentCount
-    if (total === 0) {
+  get hasVariableVaccinatorCounts() {
+    if (this.type !== SessionType.Clinic) {
+      return false
+    }
+
+    const vaccinatorCounts = new Set(
+      this.vaccinationPeriods.map((period) => period.vaccinatorCount)
+    )
+    return vaccinatorCounts.size > 1
+  }
+
+  /**
+   * Get the maximum number of vaccinators working in this clinic
+   *
+   * @returns {number} the maximum number of nurses vaccinating at any point in this clinic
+   */
+  get maximumVaccinatorCount() {
+    if (this.type !== SessionType.Clinic) {
       return 0
     }
 
-    const available = this.availableAppointmentCount
-    return Math.floor((available / total) * 100)
+    const vaccinatorCounts = new Set(
+      this.vaccinationPeriods.map((period) => period.vaccinatorCount)
+    )
+    return Math.max(...vaccinatorCounts)
   }
 
   /**
@@ -847,6 +915,40 @@ export class Session {
 
     const reminderWeeks = filters.plural(this.reminderWeeks, 'week')
 
+    let startAndEndTimes, vaccinatorCounts, totalAppointments
+    if (this.type === SessionType.Clinic) {
+      startAndEndTimes = ''
+      vaccinatorCounts = ''
+      totalAppointments = 0
+
+      let lastVaccinatorCount = -1
+      let hasVariableVaccinatorCounts = false
+      this.vaccinationPeriods.forEach((vaccinationPeriod, periodIndex) => {
+        const thisPeriod = `${vaccinationPeriod.startAt_.hour}:${vaccinationPeriod.startAt_.minute} to ${vaccinationPeriod.endAt_.hour}:${vaccinationPeriod.endAt_.minute}`
+        const thisVaccinatorCount = vaccinationPeriod.vaccinatorCount || 0
+
+        startAndEndTimes += thisPeriod
+        vaccinatorCounts += `${thisVaccinatorCount} from ${thisPeriod}`
+        if (periodIndex < this.vaccinationPeriods.length - 1) {
+          startAndEndTimes += '<br>'
+          vaccinatorCounts += '<br>'
+        }
+
+        hasVariableVaccinatorCounts =
+          hasVariableVaccinatorCounts ||
+          (lastVaccinatorCount !== -1 &&
+            lastVaccinatorCount !== thisVaccinatorCount)
+        lastVaccinatorCount = thisVaccinatorCount
+
+        totalAppointments += vaccinationPeriod.appointmentCount(
+          this.appointmentLength
+        )
+      })
+      if (!hasVariableVaccinatorCounts) {
+        vaccinatorCounts = lastVaccinatorCount.toString()
+      }
+    }
+
     return {
       address:
         this.address &&
@@ -902,6 +1004,9 @@ export class Session {
       school: this.school && this.school.name,
       school_id: this.school && this.school.formatted.id,
       yearGroups: this.yearGroups && formatYearGroups(this.yearGroups),
+      vaccinationPeriods: startAndEndTimes,
+      vaccinators: vaccinatorCounts,
+      totalAppointments,
       appointmentLength: `${this.appointmentLength} minutes`
     }
   }
@@ -1014,5 +1119,15 @@ export class Session {
    */
   updateRegister(patient_uuid, registration) {
     this.register[patient_uuid] = registration
+  }
+
+  /**
+   * Delete the session with the given ID
+   *
+   * @param {string} id - the ID of the session to delete
+   * @param {object} context - the context on which the session is stored
+   */
+  static delete(id, context) {
+    delete context.sessions[id]
   }
 }

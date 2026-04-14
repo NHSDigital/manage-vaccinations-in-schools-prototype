@@ -1977,6 +1977,9 @@ export const en = {
     count:
       '{count, plural, =0 {No sessions} one {1 session} other {# sessions}}',
     summary: 'Session details',
+    action: {
+      cancel: 'Cancel session'
+    },
     search: {
       label: 'Find session'
     },
@@ -1994,6 +1997,17 @@ export const en = {
     edit: {
       title: 'Edit session',
       success: '{{session.name}} updated'
+    },
+    cancel: {
+      title: 'Are you sure you want to cancel this session?',
+      warningTitle: 'Cancelling appointments',
+      appointmentsMade:
+        '{appointmentCount, plural, =0 {No children are booked into this clinic.} one {There is <b>{appointmentCount} child</b> already booked into this clinic.} other {There are <b>{appointmentCount} children</b> already booked into this clinic.}}',
+      notificationConsequence:
+        'If you cancel it, their parent or guardian will be notified and asked to book another clinic.',
+      confirm: 'Yes, cancel this session',
+      cancel: 'No, return to the session page',
+      success: '{{session.name}} cancelled'
     },
     academicYear: {
       label: 'Academic year'
@@ -2168,6 +2182,28 @@ export const en = {
       },
       vaccinatedWithVaccineCriteria: {
         label: '{{programme.name}} ({{vaccineCriteria}})'
+      },
+      appointments: {
+        total: {
+          label: 'Total appointments'
+        },
+        available: {
+          label: 'Available appointments'
+        },
+        programmeRequests: {
+          label: '%s requests'
+        },
+        daysLeft: {
+          label: 'Days left to book'
+        }
+      },
+      vaccinators: {
+        consistent: {
+          label: 'Vaccinators'
+        },
+        maximum: {
+          label: 'Vaccinators (max.)'
+        }
       }
     },
     date: {
@@ -2204,7 +2240,7 @@ export const en = {
     vaccinationPeriods: {
       title: 'When will the session start and end?',
       hint: 'Parents will be able to book appointments between these times.',
-      label: 'Vaccination period(s)',
+      label: 'Vaccination periods',
       period: {
         title: 'Vaccination period %d',
         startTime: {
@@ -2248,6 +2284,11 @@ export const en = {
     },
     totalAppointments: {
       label: 'Number of appointments'
+    },
+    appointments: {
+      available: {
+        label: 'Available appointments by hour'
+      }
     },
     location: {
       label: 'Location',

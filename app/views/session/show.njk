@@ -24,28 +24,58 @@
     {% include "session/_session-activity-summary.njk" %}
   {% endif %}
 
+  {% if session.type === SessionType.Clinic %}
+    {% set sessionAvailabilityRows = appointmentAvailabilityRows(session) %}
+    {{ summaryList({
+      card: {
+        heading: __("session.appointments.available.label"),
+        headingLevel: 3
+      },
+      rows: sessionAvailabilityRows
+    }) if sessionAvailabilityRows.length > 0 }}
+  {% endif %}
+
   {% call card({
     heading: __("session.summary"),
     headingLevel: 3,
     actions: {
-      items: [{
+      items: [
+      {
         text: __("session.schedule.title") if session.isUnplanned else __("session.edit.title"),
         href: session.uri + "/edit"
-      }]
+      },
+      {
+        text: __("session.action.cancel"),
+        href: session.uri + "/cancel"
+      } if session.isPlanned or session.isUnplanned
+      ]
     }
   }) %}
+    {% set sessionDetailsRows = {
+      location: {},
+      school_id: {},
+      status: {},
+      patients: {},
+      programmes: {},
+      yearGroups: {},
+      consentWindow: {},
+      consentForms: {},
+      mmrConsent: {}
+    } %}
+    {% if session.type === SessionType.Clinic %}
+      {% set sessionDetailsRows = {
+          location: {},
+          status: {},
+          programmes: {},
+          date: {},
+          vaccinationPeriods: {},
+          vaccinators: {},
+          appointmentLength: {}
+      } %}
+    {% endif %}
+
     {{ summaryList({
-      rows: summaryRows(session, {
-        location: {},
-        school_id: {},
-        status: {},
-        patients: {},
-        programmes: {},
-        yearGroups: {},
-        consentWindow: {},
-        consentForms: {},
-        mmrConsent: {}
-      })
+      rows: summaryRows(session, sessionDetailsRows)
     }) }}
 
     {{ actionLink({
