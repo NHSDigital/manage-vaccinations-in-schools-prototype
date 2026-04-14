@@ -743,7 +743,7 @@ export const sessionController = {
             request.body.vaccinationPeriods
           )) {
             session.getVaccinationPeriod(period_uuid).vaccinatorCount =
-              vaccinationPeriodValues.vaccinatorCount
+              parseInt(vaccinationPeriodValues.vaccinatorCount)
           }
         }
         Session.update(session_id, session, data.wizard)
