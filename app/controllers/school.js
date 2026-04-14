@@ -60,7 +60,7 @@ export const schoolController = {
     }
 
     // Filter by phase
-    if (phase) {
+    if (phase && phase !== 'none') {
       results = results.filter((school) => school.phase === phase)
     }
 
