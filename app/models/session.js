@@ -437,7 +437,7 @@ export class Session {
    */
   get availableAppointmentCount() {
     // TODO: calculate this value from the actual appointments
-    return Math.floor(this.totalAppointmentCount * 0.9)
+    return this.totalAppointmentCount
   }
 
   /**
