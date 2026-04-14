@@ -458,6 +458,35 @@ export class Session {
   }
 
   /**
+   * Get all appointment slots in this clinic session, regardless of booking
+   *
+   * @returns {Array<object>} - the start times of all possible appointments, grouped by their start hour
+   */
+  get appointmentsByHour() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have appointments')
+    }
+
+    const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
+    const allAppointmentsByHour = sortedPeriods.reduce(
+      (result, vaccinationPeriod) => {
+        const periodAppointments = vaccinationPeriod.appointmentsByHour(
+          this.appointmentLength
+        )
+        for (const [hour, appointments] of Object.entries(periodAppointments)) {
+          result[hour] = result[hour] || []
+          result[hour].push(...appointments)
+        }
+
+        return result
+      },
+      {}
+    )
+
+    return allAppointmentsByHour
+  }
+
+  /**
    * Get the number of days parents have left to book their child into this clinic
    *
    * @returns {number} - the number of days before appointment booking closes

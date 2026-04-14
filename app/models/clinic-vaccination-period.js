@@ -1,4 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { addMinutes } from 'date-fns'
+import _ from 'lodash'
 
 import {
   convertIsoDateToObject,
@@ -91,5 +93,33 @@ export class ClinicVaccinationPeriod {
     if (object) {
       this.endAt = convertObjectToIsoDate(object)
     }
+  }
+
+  /**
+   * Get all appointment slot start times grouped by the hour in which they start
+   *
+   * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
+   * @returns {Array<object>} - appointment start times grouped by the hour in which they start
+   */
+  appointmentsByHour(appointmentLengthInMinutes) {
+    const totalMinutesInPeriod =
+      (this.endAt.getTime() - this.startAt.getTime()) / 1000 / 60
+    if (totalMinutesInPeriod <= 0) {
+      throw new Error('Vaccination period end time must be after start time')
+    }
+
+    const wholeAppointmentsInPeriodPerVaccinator = Math.floor(
+      totalMinutesInPeriod / appointmentLengthInMinutes
+    )
+
+    const appointmentStartTimes = _.range(
+      wholeAppointmentsInPeriodPerVaccinator
+    )
+      .flatMap((index) => Array(this.vaccinatorCount).fill(index))
+      .map((index) =>
+        addMinutes(this.startAt, index * appointmentLengthInMinutes)
+      )
+
+    return _.groupBy(appointmentStartTimes, (time) => time.getHours())
   }
 }

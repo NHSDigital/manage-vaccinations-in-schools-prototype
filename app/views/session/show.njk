@@ -72,4 +72,15 @@
       href: session.uri + "/offline"
     }) if session.isPlanned or session.isActive }}
   {% endcall %}
+
+  {% if session.type === SessionType.Clinic %}
+    {% set sessionAvailabilityRows = appointmentAvailabilityRows(session) %}
+    {{ summaryList({
+      card: {
+        heading: __("session.appointments.available.label"),
+        headingLevel: 3
+      },
+      rows: sessionAvailabilityRows
+    }) if sessionAvailabilityRows.length > 0 }}
+  {% endif %}
 {% endblock %}

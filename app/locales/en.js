@@ -2263,6 +2263,11 @@ export const en = {
     totalAppointments: {
       label: 'Number of appointments'
     },
+    appointments: {
+      available: {
+        label: 'Available appointments by hour'
+      }
+    },
     location: {
       label: 'Location',
       title: 'About this location'
