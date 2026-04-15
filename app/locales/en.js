@@ -833,7 +833,21 @@ export const en = {
     consultation: {
       title:
         'Would you like a member of the team to contact you to discuss alternative options?',
-      hint: 'For example, it may be possible to vaccinate your child in a community clinic.',
+      hint: {
+        [ReplyRefusal.AlreadyVaccinated]: false,
+        [ReplyRefusal.AlreadyVaccinatedMMR]: false,
+        [ReplyRefusal.Gelatine]:
+          'For example, it may be possible to use a vaccine that does not contain gelatine.',
+        [ReplyRefusal.GelatineMMR]:
+          'For example, it may be possible to use a vaccine that does not contain gelatine.',
+        [ReplyRefusal.GettingElsewhere]: false,
+        [ReplyRefusal.Medical]:
+          'We understand alternatives might not be suitable in some cases.',
+        [ReplyRefusal.Other]: false,
+        [ReplyRefusal.OutsideSchool]:
+          'For example, it may be possible to vaccinate your child in a community clinic.',
+        [ReplyRefusal.Personal]: false
+      },
       label: 'Discuss options',
       yes: 'Yes, I would like someone to contact me',
       no: 'No'
