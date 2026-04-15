@@ -3,7 +3,7 @@
   feature: true,
   heading: programme.name + ": " + (patientSession.patientProgramme.status | lower),
   headingClasses: "app-card__heading--" + patientSession.patientProgramme.statusColour,
-  headingLevel: 3
+  headingSize: "m"
 }) %}
   {# Description #}
   {{ patientSession.reportNotes | nhsukMarkdown }}

@@ -2,7 +2,7 @@
 
 {% call card({
   heading: __("patientSession.screen.title", programme.nameSentenceCase),
-  headingLevel: 3
+  headingSize: "m"
 }) %}
   {# Description #}
   {{ patientSession.screenNotes | nhsukMarkdown }}

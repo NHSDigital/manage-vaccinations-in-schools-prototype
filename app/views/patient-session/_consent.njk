@@ -4,7 +4,7 @@
 
 {% call card({
   heading: __("patientSession.consent.title", programme.nameSentenceCase),
-  headingLevel: 3
+  headingSize: "m"
 }) %}
   {# Description #}
   {% if not isVaccinated %}
@@ -42,7 +42,7 @@
   {% if patientSession.replies | length %}
     {# Requests with responses or requests that couldn’t be delivered #}
     {{ appHeading({
-      level: 4,
+      level: 3,
       size: "s",
       title: __("patientSession.replies.responses") if patientSession.responses.length > 0 else __("patientSession.replies.requests")
     }) }}
@@ -52,8 +52,7 @@
         card: {
           classes: "app-card--compact app-card--offset",
           heading: reply.fullNameAndRelationship,
-          headingLevel: 5,
-          headingSize: "s",
+          headingLevel: 4,
           href: reply.uri if reply.delivered,
           actions: {
             items: [
@@ -90,7 +89,7 @@
     {# We don’t create replies so use parent details instead #}
 
     {{ appHeading({
-      level: 4,
+      level: 3,
       size: "s",
       title: __("patientSession.replies.pending")
     }) }}
@@ -100,7 +99,7 @@
         card: {
           classes: "app-card--compact app-card--offset",
           heading: parent.fullNameAndRelationship,
-          headingLevel: 5
+          headingLevel: 4
         },
         rows: summaryRows(parent, {
           tel: {},
@@ -126,7 +125,7 @@
     heading: __mf("healthAnswers.count", {
       count: patientSession.answersNeedingTriageCount
     }),
-    headingLevel: 3
+    headingSize: "m"
   },
   classes: "app-summary-list--full-width",
   rows: healthAnswerRows(patientSession.consentHealthAnswers)
