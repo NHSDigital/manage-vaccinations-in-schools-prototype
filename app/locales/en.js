@@ -3116,6 +3116,9 @@ export const en = {
     countryOther: {
       title: 'Which country was the vaccination given in?'
     },
+    schedule: {
+      label: 'Schedule'
+    },
     outcome: {
       label: 'Outcome',
       title: 'Vaccination outcome',
