@@ -701,6 +701,26 @@ export class PatientSession {
   }
 
   /**
+   * Get expanded description about deferred status
+   *
+   * @returns {string|undefined} Deferred description
+   */
+  get deferredDescription() {
+    switch (this.patientDeferred) {
+      case PatientDeferredStatus.ChildAbsent:
+      case PatientDeferredStatus.ChildRefused:
+      case PatientDeferredStatus.ChildUnwell:
+        return `${this.patientDeferred} on ${this.lastVaccinationOutcome?.formatted.createdAt}.`
+      case PatientDeferredStatus.InviteToClinic:
+      case PatientDeferredStatus.DelayVaccination:
+      case PatientDeferredStatus.DoNotVaccinate:
+        return this.screenDescription
+      default:
+        return this.patientDeferred
+    }
+  }
+
+  /**
    * Get instruction outcome
    *
    * @returns {import('../enums.js').InstructionOutcome|boolean} Instruction outcome
@@ -777,14 +797,12 @@ export class PatientSession {
           ? `${this.patient?.firstName} is ready to vaccinate (${this.vaccineCriteria.toLowerCase()}).`
           : `${this.patient?.firstName} is ready to vaccinate.`
       case PatientStatus.Deferred:
-        return this.lastVaccinationOutcome
-          ? `${this.patientDeferred} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
-          : `${this.patientDeferred}.`
+        return this.deferredDescription
       case PatientStatus.Triage:
         return this.screenDescription
       case PatientStatus.Refused:
-        return `${this.patientRefused}.`
       case PatientStatus.Consent:
+        // Don’t show full consent description as it’s shown directly below
         return `${this.patientConsent}.`
     }
   }
