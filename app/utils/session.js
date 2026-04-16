@@ -16,7 +16,7 @@ import { today } from './date.js'
  * Get consent window (is it open, opening or closed)
  *
  * @param {import('../models.js').Session} session - Session
- * @returns {object} Consent window key and value
+ * @returns {string} Consent window key and value
  */
 export const getConsentWindow = (session) => {
   const nowAt = today()

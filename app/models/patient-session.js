@@ -114,7 +114,7 @@ export class PatientSession {
    * @returns {import('./patient-programme.js').PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
-    return this.patient.programmes[this.programme_id]
+    return this.patient?.programmes[this.programme_id]
   }
 
   /**
@@ -123,7 +123,7 @@ export class PatientSession {
    * @returns {number} Year group in patient session’s academic year
    */
   get yearGroup() {
-    return getYearGroup(this.patient.dob, this.session.academicYear)
+    return getYearGroup(this.patient?.dob, this.session?.academicYear)
   }
 
   /**
@@ -145,10 +145,10 @@ export class PatientSession {
    * @returns {Array<import('./audit-event.js').AuditEvent>} Audit events
    */
   get auditEvents() {
-    return this.patient.events
+    return this.patient?.events
       .map((auditEvent) => new AuditEvent(auditEvent, this.context))
       .filter(({ programme_ids }) =>
-        programme_ids?.some((id) => this.session.programme_ids.includes(id))
+        programme_ids?.some((id) => this.session?.programme_ids.includes(id))
       )
   }
 
@@ -189,10 +189,10 @@ export class PatientSession {
   /**
    * Get replies for patient session
    *
-   * @returns {Array<import('./reply.js').Reply>} Replies
+   * @returns {Array<import('./reply.js').Reply>|undefined} Replies
    */
   get replies() {
-    return this.patient.replies
+    return this.patient?.replies
       .filter(({ programme_id }) => programme_id === this.programme_id)
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
@@ -200,33 +200,37 @@ export class PatientSession {
   /**
    * Get parental relationships from valid replies
    *
-   * @returns {Array<string>} Parental relationships
+   * @returns {Array<string>|undefined} Parental relationships
    */
   get parentalRelationships() {
-    return this.responses
-      .filter((reply) => !reply.invalid)
-      .flatMap((reply) => reply.relationship || 'Parent or guardian')
+    if (this.responses) {
+      return this.responses
+        .filter((reply) => !reply.invalid)
+        .flatMap((reply) => reply.relationship || 'Parent or guardian')
+    }
   }
 
   /**
    * Get names of parents who have requested a follow up
    *
-   * @returns {Array<string>} Parent names and relationships
+   * @returns {Array<string>|undefined} Parent names and relationships
    */
   get parentsRequestingFollowUp() {
-    return this.responses
-      .filter((reply) => !reply.invalid)
-      .filter((reply) => reply.declined)
-      .flatMap((reply) => reply.parent.fullNameAndRelationship)
+    if (this.responses) {
+      return this.responses
+        .filter((reply) => !reply.invalid)
+        .filter((reply) => reply.declined)
+        .flatMap((reply) => reply.parent.fullNameAndRelationship)
+    }
   }
 
   /**
    * Get responses (consent requests that were delivered)
    *
-   * @returns {Array<import('./reply.js').Reply>} Responses
+   * @returns {Array<import('./reply.js').Reply>|undefined} Responses
    */
   get responses() {
-    return this.replies.filter((reply) => reply.delivered)
+    return this.replies?.filter((reply) => reply.delivered)
   }
 
   /**
@@ -235,10 +239,10 @@ export class PatientSession {
    * Some parents may give consent for the nasal spray, but also given consent
    * for the injection as an alternative
    *
-   * @returns {boolean} Consent given for an injected vaccine
+   * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForInjection() {
-    return this.responses.every(
+    return this.responses?.every(
       ({ hasConsentForInjection }) => hasConsentForInjection
     )
   }
@@ -249,10 +253,10 @@ export class PatientSession {
    * We need this so that we don’t offer multiple triage outcomes if consent has
    * only been given for the injected vaccine
    *
-   * @returns {boolean} Consent given for an injected vaccine
+   * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForAlternativeInjectionOnly() {
-    return this.responses.every(
+    return this.responses?.every(
       ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
     )
   }
@@ -260,19 +264,23 @@ export class PatientSession {
   /**
    * Get screen outcomes for vaccination method(s) consented to
    *
-   * @returns {Array<ScreenOutcome>} Screen outcomes
+   * @returns {Array<ScreenOutcome>|undefined} Screen outcomes
    */
   get screenOutcomesForConsentMethod() {
-    return getScreenOutcomesForConsentMethod(this.programme, this.responses)
+    if (this.programme && this.responses) {
+      return getScreenOutcomesForConsentMethod(this.programme, this.responses)
+    }
   }
 
   /**
    * Get vaccination criteria consented to use if safe to vaccinate
    *
-   * @returns {import('../enums.js').ScreenVaccineCriteria|boolean} Criteria
+   * @returns {import('../enums.js').ScreenVaccineCriteria|boolean|undefined} Criteria
    */
   get screenVaccineCriteria() {
-    return getScreenVaccineCriteria(this.programme, this.responses)
+    if (this.programme && this.responses) {
+      return getScreenVaccineCriteria(this.programme, this.responses)
+    }
   }
 
   /**
@@ -311,7 +319,7 @@ export class PatientSession {
       return PatientSession.findAll(this.context)
         .filter(({ patient_uuid }) => patient_uuid === this.patient_uuid)
         .filter(({ session_id }) => session_id === this.session_id)
-        .sort((a, b) => a.programme.name.localeCompare(b.programme.name))
+        .sort((a, b) => a.programme?.name.localeCompare(b.programme?.name))
     } catch (error) {
       console.error('PatientSession.siblingPatientSessions', error.message)
     }
@@ -326,8 +334,8 @@ export class PatientSession {
    * @returns {import('./vaccine.js').Vaccine|undefined} Vaccine method
    */
   get vaccine() {
-    const standardVaccine = this.programme.vaccines.find((vaccine) => vaccine)
-    const alternativeVaccine = this.programme.alternativeVaccine
+    const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
+    const alternativeVaccine = this.programme?.alternativeVaccine
 
     // Need consent response(s) before we can determine the chosen method
     // We only want to instruct on patients being vaccinated using nasal spray
@@ -336,7 +344,7 @@ export class PatientSession {
     }
 
     // If no alternative, can only have been the standard vaccine
-    if (!this.programme.alternativeVaccine) {
+    if (!this.programme?.alternativeVaccine) {
       return standardVaccine
     }
 
@@ -368,7 +376,7 @@ export class PatientSession {
    */
   get vaccineCriteria() {
     // If no programme does not offer alternatives, don’t return a method
-    if (!this.programme.alternativeVaccine) {
+    if (!this.programme?.alternativeVaccine) {
       return
     }
 
@@ -410,7 +418,7 @@ export class PatientSession {
   /**
    * Can either vaccine be administered
    *
-   * @returns {boolean} Either vaccine be administered
+   * @returns {boolean|undefined} Either vaccine be administered
    */
   get canRecordAlternativeVaccine() {
     const hasScreenedForNasal =
@@ -430,9 +438,9 @@ export class PatientSession {
    */
   get vaccinationOutcomes() {
     try {
-      if (this.patient.vaccinations && this.programme_id) {
+      if (this.patient?.vaccinations && this.programme_id) {
         return this.patient.vaccinations.filter(
-          ({ programme }) => programme.id === this.programme_id
+          ({ programme }) => programme?.id === this.programme_id
         )
       }
     } catch (error) {
@@ -446,7 +454,7 @@ export class PatientSession {
    * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
    */
   get lastVaccinationOutcome() {
-    if (this.vaccinationOutcomes?.length > 0) {
+    if (this.vaccinationOutcomes && this.vaccinationOutcomes.length > 0) {
       return this.vaccinationOutcomes.at(-1)
     }
   }
@@ -454,74 +462,27 @@ export class PatientSession {
   /**
    * Get next activity, per programme
    *
-   * @returns {Array<PatientSession>} Patient sessions per programme
+   * @returns {Array<PatientSession>|undefined} Patient sessions per programme
    */
   get outstandingVaccinations() {
-    return this.siblingPatientSessions.filter(
+    return this.siblingPatientSessions?.filter(
       ({ report }) => report === PatientStatus.Due
     )
   }
 
   /**
-   * Get consent outcome
-   *
-   * @returns {ConsentOutcome} Consent outcome
-   */
-  get consent() {
-    return getConsentOutcome(this)
-  }
-
-  /**
-   * Get explanatory notes about consent outcome
-   *
-   * @returns {string} Explanatory notes
-   */
-  get consentNotes() {
-    const relationships = filters.formatList(this.parentalRelationships)
-    const parentNames = filters.formatList(this.parentsRequestingFollowUp)
-
-    if (this.patient.hasNoContactDetails) {
-      return 'There are no contact details for this child.'
-    }
-
-    if (this.session.consentWindow === ConsentWindow.Opening) {
-      return this.session.formatted.consentWindowSentence
-    }
-
-    switch (this.consent) {
-      case ConsentOutcome.NoResponse:
-        return 'No-one responded to our requests for consent.'
-      case ConsentOutcome.NotDelivered:
-        return 'Consent response could not be delivered.'
-      case ConsentOutcome.Inconsistent:
-        return 'You can only vaccinate if all respondents give consent.'
-      case ConsentOutcome.Declined:
-        return `${parentNames} would like to speak to a member of the team about other options for their child’s vaccination.`
-      case ConsentOutcome.Given:
-      case ConsentOutcome.GivenForAlternativeInjection:
-      case ConsentOutcome.GivenForIntranasal:
-        return `${relationships} gave consent.`
-      case ConsentOutcome.Refused:
-        return `${relationships} refused consent.`
-      case ConsentOutcome.FinalRefusal:
-        return `Refusal to give consent confirmed by ${relationships}.`
-      default:
-    }
-  }
-
-  /**
    * Get patient consent status
    *
-   * @returns {PatientConsentStatus} Patient consent status
+   * @returns {PatientConsentStatus|undefined} Patient consent status
    */
   get patientConsent() {
-    if (this.patient.hasNoContactDetails) {
+    if (this.patient?.hasNoContactDetails) {
       return PatientConsentStatus.NoDetails
     }
 
-    if (this.session.consentWindow === ConsentWindow.None) {
+    if (this.session?.consentWindow === ConsentWindow.None) {
       return PatientConsentStatus.NotScheduled
-    } else if (this.session.consentWindow === ConsentWindow.Opening) {
+    } else if (this.session?.consentWindow === ConsentWindow.Opening) {
       return PatientConsentStatus.Scheduled
     }
 
@@ -538,7 +499,7 @@ export class PatientSession {
   /**
    * Get patient deferred status
    *
-   * @returns {PatientDeferredStatus} Patient deferred status
+   * @returns {PatientDeferredStatus|undefined} Patient deferred status
    */
   get patientDeferred() {
     if (this.screen === ScreenOutcome.DoNotVaccinate) {
@@ -568,7 +529,7 @@ export class PatientSession {
   /**
    * Get patient refused status
    *
-   * @returns {PatientRefusedStatus} Patient refused status
+   * @returns {PatientRefusedStatus|undefined} Patient refused status
    */
   get patientRefused() {
     switch (this.consent) {
@@ -583,7 +544,7 @@ export class PatientSession {
   /**
    * Get patient vaccinated status
    *
-   * @returns {PatientVaccinatedStatus} Patient vaccinated status
+   * @returns {PatientVaccinatedStatus|undefined} Patient vaccinated status
    */
   get patientVaccinated() {
     switch (this.outcome) {
@@ -592,6 +553,71 @@ export class PatientSession {
         return PatientVaccinatedStatus.Vaccinated
       case VaccinationOutcome.AlreadyVaccinated:
         return PatientVaccinatedStatus.AlreadyVaccinated
+    }
+  }
+
+  /**
+   * At least one answer in consent health answers needs triage
+   *
+   * @returns {number} Number of answers needing triage
+   */
+  get answersNeedingTriageCount() {
+    return countAnswersNeedingTriage(this.consentHealthAnswers)
+  }
+
+  /**
+   * Get responses with triage notes for consent health answers
+   *
+   * @returns {Array<import('./reply.js').Reply>|undefined} Responses with triage notes
+   */
+  get responsesWithTriageNotes() {
+    return this.responses?.filter((response) => response.triageNote)
+  }
+
+  /**
+   * Get consent outcome
+   *
+   * @returns {ConsentOutcome} Consent outcome
+   */
+  get consent() {
+    return getConsentOutcome(this)
+  }
+
+  /**
+   * Get expanded description about consent outcome
+   *
+   * @returns {string|undefined} Consent description
+   */
+  get consentDescription() {
+    const relationships = filters.formatList(this.parentalRelationships)
+    const parentNames = filters.formatList(this.parentsRequestingFollowUp)
+
+    if (this.patient?.hasNoContactDetails) {
+      return 'There are no contact details for this child.'
+    }
+
+    if (this.session?.consentWindow === ConsentWindow.Opening) {
+      return this.session?.formatted.consentWindowSentence
+    }
+
+    switch (this.consent) {
+      case ConsentOutcome.NoResponse:
+        return 'No-one responded to our requests for consent.'
+      case ConsentOutcome.NotDelivered:
+        return 'Consent response could not be delivered.'
+      case ConsentOutcome.Inconsistent:
+        return 'You can only vaccinate if all respondents give consent.'
+      case ConsentOutcome.Declined:
+        return `${parentNames} would like to speak to a member of the team about other options for their child’s vaccination.`
+      case ConsentOutcome.Given:
+      case ConsentOutcome.GivenForAlternativeInjection:
+      case ConsentOutcome.GivenForIntranasal:
+        return `${relationships} gave consent.`
+      case ConsentOutcome.Refused:
+        return `${relationships} refused consent.`
+      case ConsentOutcome.FinalRefusal:
+        return `Refusal to give consent confirmed by ${relationships}.`
+      default:
     }
   }
 
@@ -611,28 +637,10 @@ export class PatientSession {
   /**
    * Get consent health answers
    *
-   * @returns {object|boolean} Consent health answers
+   * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
     return getConsentHealthAnswers(this)
-  }
-
-  /**
-   * At least one answer in consent health answers needs triage
-   *
-   * @returns {number} Number of answers needing triage
-   */
-  get answersNeedingTriageCount() {
-    return countAnswersNeedingTriage(this.consentHealthAnswers)
-  }
-
-  /**
-   * Get responses with triage notes for consent health answers
-   *
-   * @returns {Array} Triage notes
-   */
-  get responsesWithTriageNotes() {
-    return this.responses.filter((response) => response.triageNote)
   }
 
   /**
@@ -654,12 +662,16 @@ export class PatientSession {
   }
 
   /**
-   * Get explanatory notes about consent outcome
+   * Get expanded description about consent outcome
    *
-   * @returns {string} Explanatory notes
+   * @returns {string|undefined} Screen description
    */
-  get screenNotes() {
+  get screenDescription() {
     const { patient, triageNotes } = this
+
+    if (!patient) {
+      return
+    }
 
     const triageNote = triageNotes.at(-1)
     const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
@@ -670,7 +682,9 @@ export class PatientSession {
       case ScreenOutcome.InviteToClinic:
         return `${user.fullName} decided that ${patient.firstName}’s vaccination should take place at a clinic.`
       case ScreenOutcome.DelayVaccination:
-        return `${user.fullName} decided that ${patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.outcomeAt}.`
+        return triageNote?.outcomeAt
+          ? `${user.fullName} decided that ${patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.outcomeAt}.`
+          : `${user.fullName} decided that ${patient.firstName}’s vaccination should be delayed`
       case ScreenOutcome.DoNotVaccinate:
         return `${user.fullName} decided that ${patient.firstName} should not be vaccinated.`
       case ScreenOutcome.Vaccinate:
@@ -705,29 +719,27 @@ export class PatientSession {
   }
 
   /**
-   * Get explanatory notes about registration outcome
+   * Get expanded description about registration outcome
    *
-   * @returns {string} Explanatory notes
+   * @returns {string|undefined} Registration description
    */
-  get registerNotes() {
-    const { patient } = this
-
+  get registerDescription() {
     switch (this.register) {
       case RegistrationOutcome.Present:
-        return `${patient.firstName} is attending this session.`
+        return `${this.patient?.firstName} is attending this session.`
       case RegistrationOutcome.Absent:
-        return `${patient.firstName} is absent from this session.`
+        return `${this.patient?.firstName} is absent from this session.`
       case RegistrationOutcome.Pending:
-        return `${patient.firstName} has not been registered as attending yet.`
+        return `${this.patient?.firstName} has not been registered as attending yet.`
       case RegistrationOutcome.Complete:
-        return `${patient.firstName} has completed this session.`
+        return `${this.patient?.firstName} has completed this session.`
     }
   }
 
   /**
    * Get ready to record outcome
    *
-   * @returns {boolean} Ready to record outcome
+   * @returns {boolean|undefined} Ready to record outcome
    */
   get record() {
     return getRecordOutcome(this)
@@ -736,7 +748,7 @@ export class PatientSession {
   /**
    * Get vaccination (session) outcome
    *
-   * @returns {import('../enums.js').VaccinationOutcome} Vaccination (session) outcome
+   * @returns {import('../enums.js').VaccinationOutcome|undefined} Vaccination (session) outcome
    */
   get outcome() {
     return getSessionOutcome(this)
@@ -745,31 +757,31 @@ export class PatientSession {
   /**
    * Get patient status
    *
-   * @returns {PatientStatus} Patient status
+   * @returns {PatientStatus|undefined} Patient status
    */
   get report() {
-    return this.patientProgramme.status
+    return this.patientProgramme?.status
   }
 
   /**
-   * Get explanatory notes about patient status
+   * Get expanded description about patient status
    *
-   * @returns {string} Explanatory notes
+   * @returns {string|undefined} Report description
    */
-  get reportNotes() {
+  get reportDescription() {
     switch (this.report) {
       case PatientStatus.Vaccinated:
-        return `${this.patient.firstName} was vaccinated by ${this.lastVaccinationOutcome.createdBy.fullName} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
+        return `${this.patient?.firstName} was vaccinated by ${this.lastVaccinationOutcome.createdBy.fullName} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
       case PatientStatus.Due:
         return this.vaccineCriteria
-          ? `${this.patient.firstName} is ready to vaccinate (${this.vaccineCriteria.toLowerCase()}).`
-          : `${this.patient.firstName} is ready to vaccinate.`
+          ? `${this.patient?.firstName} is ready to vaccinate (${this.vaccineCriteria.toLowerCase()}).`
+          : `${this.patient?.firstName} is ready to vaccinate.`
       case PatientStatus.Deferred:
         return this.lastVaccinationOutcome
           ? `${this.patientDeferred} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
           : `${this.patientDeferred}.`
       case PatientStatus.Triage:
-        return this.screenNotes
+        return this.screenDescription
       case PatientStatus.Refused:
         return `${this.patientRefused}.`
       case PatientStatus.Consent:
@@ -784,7 +796,7 @@ export class PatientSession {
    */
   get link() {
     return {
-      fullName: formatLink(this.uri, this.patient.fullName)
+      fullName: formatLink(this.uri, this.patient?.fullName || '')
     }
   }
 
@@ -811,25 +823,25 @@ export class PatientSession {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const outstandingVaccinations = this.outstandingVaccinations.map(
-      ({ programme }) => programme.name
+    const outstandingVaccinations = this.outstandingVaccinations?.map(
+      (vaccination) => vaccination.programme?.name
     )
 
     let formattedYearGroup = formatYearGroup(this.yearGroup)
-    formattedYearGroup += this.patient.registrationGroup
-      ? `, ${this.patient.registrationGroup}`
+    formattedYearGroup += this.patient?.registrationGroup
+      ? `, ${this.patient?.registrationGroup}`
       : ''
     formattedYearGroup += ` (${AcademicYear[this.session.academicYear]} academic year)`
 
     return {
-      programme: this.programme.nameTag,
+      programme: this.programme?.nameTag,
       consent: formatTag(this.status.consent),
       patientConsent: formatTag(this.status.patientConsent),
       screen: this.screen && formatTag(this.status.screen),
-      instruct: this.session.psdProtocol && formatTag(this.status.instruct),
+      instruct: this.session?.psdProtocol && formatTag(this.status.instruct),
       register: formatTag(this.status.register),
       outcome: this.outcome && formatTag(this.status.outcome),
-      report: this.patientProgramme.formatted.programmeStatus,
+      report: this.patientProgramme?.formatted.programmeStatus,
       outstandingVaccinations: filters.formatList(outstandingVaccinations),
       vaccineCriteria: formatVaccineCriteria(this.vaccineCriteria),
       yearGroup: formattedYearGroup
@@ -851,7 +863,7 @@ export class PatientSession {
    * @returns {string} URI
    */
   get uri() {
-    return `/sessions/${this.session_id}/patients/${this.patient.nhsn}/${this.programme_id}`
+    return `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.programme_id}`
   }
 
   /**
@@ -934,12 +946,12 @@ export class PatientSession {
    */
   removeFromSession(event) {
     this.patient.patientSession_uuids =
-      this.patient.patientSession_uuids.filter((uuid) => uuid !== this.uuid)
+      this.patient?.patientSession_uuids.filter((uuid) => uuid !== this.uuid)
 
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: activity.session.removed(this.session),
       createdBy_uid: event.createdBy_uid,
-      programme_ids: this.session.programme_ids
+      programme_ids: this.session?.programme_ids
     })
   }
 
@@ -949,14 +961,14 @@ export class PatientSession {
    * @param {Gillick} gillick - gillick
    */
   assessGillick(gillick) {
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: gillick.updatedAt
         ? activity.gillick.updated(gillick)
         : activity.gillick.created(gillick),
       note: gillick.note,
       createdAt: gillick.createdAt,
       createdBy_uid: gillick.createdBy_uid,
-      programme_ids: this.session.programme_ids
+      programme_ids: this.session?.programme_ids
     })
 
     PatientSession.update(this.uuid, { gillick }, this.context)
@@ -968,7 +980,7 @@ export class PatientSession {
    * @param {import('./audit-event.js').AuditEvent} event - Event
    */
   recordTriage(event) {
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: activity.triage.decision(event),
       note: event.note,
       outcome: event.outcome,
@@ -993,16 +1005,18 @@ export class PatientSession {
         messageTemplate = 'triage-vaccinate'
     }
 
-    for (const parent of this.patient.parents) {
-      this.patient.addEvent({
-        name: activity.notify[messageTemplate](parent),
-        messageRecipient: parent,
-        messageTemplate,
-        createdAt: event.createdAt,
-        patient_uuid: this.uuid,
-        programme_ids: [this.programme_id],
-        session_id: this.session.id
-      })
+    if (this.patient?.parents) {
+      for (const parent of this.patient.parents) {
+        this.patient?.addEvent({
+          name: activity.notify[messageTemplate](parent),
+          messageRecipient: parent,
+          messageTemplate,
+          createdAt: event.createdAt,
+          patient_uuid: this.uuid,
+          programme_ids: [this.programme_id],
+          session_id: this.session?.id
+        })
+      }
     }
   }
 
@@ -1014,7 +1028,7 @@ export class PatientSession {
   giveInstruction(instruction) {
     this.instruction_uuid = instruction.uuid
 
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: activity.psd.added,
       createdAt: instruction.createdAt,
       createdBy_uid: instruction.createdBy_uid,
@@ -1029,16 +1043,16 @@ export class PatientSession {
    * @param {RegistrationOutcome} register - Registration
    */
   registerAttendance(event, register) {
-    this.session.updateRegister(this.patient.uuid, register)
+    this.session?.updateRegister(this.patient?.uuid, register)
 
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name:
         register === RegistrationOutcome.Present
           ? activity.attendance.present(this.session)
           : activity.attendance.absent(this.session),
       createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
-      programme_ids: this.session.programme_ids
+      programme_ids: this.session?.programme_ids
     })
   }
 
@@ -1048,12 +1062,12 @@ export class PatientSession {
    * @param {import('./audit-event.js').AuditEvent} event - Event
    */
   preScreen(event) {
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: activity.preScreen.created,
       note: event.note,
       createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
-      programme_ids: this.session.programme_ids
+      programme_ids: this.session?.programme_ids
     })
   }
 
@@ -1063,12 +1077,12 @@ export class PatientSession {
    * @param {import('./audit-event.js').AuditEvent} event - Event
    */
   saveNote(event) {
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: activity.note.created(event.type),
       note: event.note,
       pinned: event.pinned,
       createdBy_uid: event.createdBy_uid,
-      programme_ids: this.session.programme_ids
+      programme_ids: this.session?.programme_ids
     })
   }
 
@@ -1079,15 +1093,15 @@ export class PatientSession {
    * @param {import('./parent.js').Parent} parent - Parent
    */
   sendReminder(event, parent) {
-    this.patient.addEvent({
+    this.patient?.addEvent({
       name: activity.notify['vaccination-reminder'](parent),
       messageRecipient: parent,
       messageTemplate: 'vaccination-reminder',
       type: AuditEventType.Reminder,
       createdBy_uid: event.createdBy_uid,
       patient_uuid: this.patient_uuid,
-      programme_ids: this.session.programme_ids,
-      session_id: this.session.id
+      programme_ids: this.session?.programme_ids,
+      session_id: this.session?.id
     })
   }
 }

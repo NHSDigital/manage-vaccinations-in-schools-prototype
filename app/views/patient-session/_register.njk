@@ -3,7 +3,7 @@
   headingSize: "m"
 }) %}
   {# Description #}
-  {{ patientSession.registerNotes | nhsukMarkdown }}
+  {{ patientSession.registerDescription | nhsukMarkdown }}
 
   {# Actions #}
   {% if patientSession.register == RegistrationOutcome.Pending %}

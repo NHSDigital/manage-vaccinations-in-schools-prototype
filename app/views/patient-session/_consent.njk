@@ -8,7 +8,7 @@
 }) %}
   {# Description #}
   {% if not isVaccinated %}
-    {{ patientSession.consentNotes | nhsukMarkdown }}
+    {{ patientSession.consentDescription | nhsukMarkdown }}
 
     {% if patientSession.patient.lastReminderDate %}
       {{ patientSession.patient.formatted.lastReminderDate | nhsukMarkdown }}
