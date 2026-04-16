@@ -4,6 +4,8 @@
   heading: __("patientProgramme.vaccinationRecord.label"),
   headingLevel: 3
 }) %}
+  {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
+
   <p class="nhsuk-body">
     {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
       complete: summary.dosesComplete,
@@ -31,7 +33,15 @@
       },
       {
         header: __("vaccination.createdAt.label"),
-        text: ignored.vaccination.formatted.createdAt_date
+        html: ignored.vaccination.link.createdAt
+      },
+      {
+        header: __("vaccination.age.label"),
+        text: patient.dob | age(at=ignored.vaccination.createdAt)
+      },
+      {
+        header: __("vaccination.source.label"),
+        text: ignored.vaccination.source
       }
     ]) %}
   {% endfor %}
@@ -46,7 +56,15 @@
       },
       {
         header: __("vaccination.createdAt.label"),
-        text: valid.vaccination.formatted.createdAt_date
+        html: valid.vaccination.link.createdAt
+      },
+      {
+        header: __("vaccination.age.label"),
+        text: patient.dob | age(at=valid.vaccination.createdAt)
+      },
+      {
+        header: __("vaccination.source.label"),
+        text: valid.vaccination.source
       }
     ]) %}
   {% endfor %}
@@ -70,6 +88,14 @@
       {
         header: __("vaccination.createdAt.label"),
         text: dateText
+      },
+      {
+        header: __("vaccination.age.label"),
+        text: "—"
+      },
+      {
+        header: __("vaccination.source.label"),
+        text: "—"
       }
     ]) %}
   {% endfor %}
@@ -79,7 +105,9 @@
     responsive: true,
     head: [
       { text: __("patientProgramme.vaccinationRecord.dose.label") },
-      { text: __("vaccination.createdAt.label") }
+      { text: __("vaccination.createdAt.label") },
+      { text: __("vaccination.age.label") },
+      { text: __("vaccination.source.label") }
     ],
     rows: rows
   }) if rows.length }}

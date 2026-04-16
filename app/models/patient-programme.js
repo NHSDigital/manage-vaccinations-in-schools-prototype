@@ -236,8 +236,9 @@ export class PatientProgramme {
    * @returns {number} Doses remaining
    */
   get dosesRemaining() {
-    if (this.vaccinationsGiven?.length > 0) {
-      return this.dosesNeeded - this.vaccinationsGiven?.length
+    const validCount = this.scheduleSummary.dosesComplete
+    if (validCount > 0) {
+      return this.dosesNeeded - validCount
     }
 
     return this.dosesNeeded

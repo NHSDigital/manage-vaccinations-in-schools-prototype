@@ -34,8 +34,6 @@
     }),
     headingLevel: 3
   }) %}
-    {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
-
     {% if patientProgramme.vaccinationOutcomes.length %}
       {% set vaccinationRows = [] %}
       {% for vaccination in patientProgramme.vaccinationOutcomes %}
@@ -49,8 +47,8 @@
             text: patient.dob | age(at=vaccination.createdAt)
           },
           {
-            header: __("vaccination.programme.label"),
-            html: vaccination.formatted.programmeWithSequence
+            header: __("vaccination.outcome.label"),
+            html: vaccination.formatted.outcome
           },
           {
             header: __("vaccination.source.label"),
@@ -65,7 +63,7 @@
         head: [
           { text: __("vaccination.createdAt.label") },
           { text: __("vaccination.age.label") },
-          { text: __("vaccination.programme.label") },
+          { text: __("vaccination.outcome.label") },
           { text: __("vaccination.source.label") }
         ],
         rows: vaccinationRows
