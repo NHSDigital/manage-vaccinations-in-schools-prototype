@@ -58,7 +58,7 @@ export function getRepliesWithHealthAnswers(replies) {
  * Get combined answers to health questions
  *
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @returns {object|boolean} Combined answers to health questions
+ * @returns {object|undefined} Combined answers to health questions
  */
 export function getConsentHealthAnswers(patientSession) {
   const consentHealthAnswers = {}
@@ -69,7 +69,7 @@ export function getConsentHealthAnswers(patientSession) {
   ).filter((reply) => reply.healthAnswers)
 
   if (responsesWithHealthAnswers.length === 0) {
-    return false
+    return
   }
 
   for (const response of responsesWithHealthAnswers) {

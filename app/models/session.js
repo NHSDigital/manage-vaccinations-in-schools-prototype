@@ -252,7 +252,7 @@ export class Session {
   /**
    * Get consent window
    *
-   * @returns {object} Consent window
+   * @returns {string} Consent window
    */
   get consentWindow() {
     return getConsentWindow(this)
