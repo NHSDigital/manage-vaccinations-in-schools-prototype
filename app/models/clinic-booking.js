@@ -238,7 +238,7 @@ export class ClinicBooking {
   /**
    * Get rid of _unchecked values from checkboxes in the booking journey
    *
-   * @param {object} updates new values posted from the booking jounrey
+   * @param {object} updates - new values posted from the booking jounrey
    */
   static #sanitiseCheckboxUpdates(updates) {
     // Receive updates by SMS option
