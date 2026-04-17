@@ -4,7 +4,11 @@ import _ from 'lodash'
 import allProgrammesData from '../datasets/programmes.js'
 import { SessionPresets } from '../enums.js'
 import { ClinicAppointment, Parent, Programme } from '../models.js'
-import { formatMonospace, stringToBoolean } from '../utils/string.js'
+import {
+  formatMonospace,
+  stringToArray,
+  stringToBoolean
+} from '../utils/string.js'
 
 /**
  * @class ClinicBooking
@@ -15,7 +19,7 @@ import { formatMonospace, stringToBoolean } from '../utils/string.js'
  * @property {string} bookingReference - Booking reference number
  * @property {import('../enums.js').SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
  * @property {Parent} parent - contact details for the parent making the booking; see appointments for parental relationship details
- * @property {Array<string>} [appointments_ids] - Unique IDs of children's appointments (one parent may book in multiple children under one booking)
+ * @property {Array<ClinicAppointment>} appointments - the appointments created in this booking (one per child)
  */
 export class ClinicBooking {
   constructor(options, context) {
@@ -27,7 +31,10 @@ export class ClinicBooking {
     this.parent =
       (options?.parent && new Parent(options.parent)) ?? new Parent({})
 
-    this.appointments_ids = options?.appointments_ids ?? []
+    this.appointments =
+      options?.appointments?.map(
+        (appointment) => new ClinicAppointment(appointment, context)
+      ) ?? []
   }
 
   /**
@@ -70,32 +77,58 @@ export class ClinicBooking {
   }
 
   /**
-   * Add a child's appointment to this booking
+   * Add a new appointment to this clinic booking
    *
-   * @param {ClinicAppointment} appointment - An appointment to make part of this booking
+   * @param {object} options - any specific values to give the new period
+   * @returns {ClinicAppointment} - the new clinic appointment
    */
-  addAppointment(appointment) {
-    this.appointments_ids.push(appointment.uuid)
+  addAppointment(options) {
+    this.appointments = this.appointments || []
+    this.appointments.push(
+      new ClinicAppointment(
+        options ?? { primary_programme_ids: this.primaryProgrammeIDs },
+        this.context
+      )
+    )
+
+    return this.appointments.at(-1)
+  }
+
+  /**
+   * Remove a clinic appointment from this clinic booking
+   *
+   * @param {string} appointment_uuid - the unique ID of the clinic appointment to remove
+   */
+  removeAppointment(appointment_uuid) {
+    const index = this.appointments.findIndex(
+      (appointment) => appointment.uuid == appointment_uuid
+    )
+    if (index === -1) {
+      throw new Error(
+        `Unable to find clinic appointment with uuid of ${appointment_uuid}`
+      )
+    }
+
+    this.appointments.splice(index, 1)
   }
 
   /**
    * Remove the last appointment added to this booking
    *
-   * @returns {string} the uuid of the removed appointment
+   * @returns {ClinicAppointment} the removed appointment
    */
   removeLastAppointment() {
-    return this.appointments_ids.pop()
+    return this.appointments.pop()
   }
 
   /**
-   * Get appointments
+   * Get the appointment with the given unique ID
    *
-   * @returns {Array<ClinicAppointment>} Appointments that are part of this booking
+   * @param {string} appointment_uuid - the unique ID of the appointment to get
+   * @returns {ClinicAppointment} - the requested clinic appointment
    */
-  get appointments() {
-    return this.appointments_ids.map((id) =>
-      ClinicAppointment.findOne(id, this.context)
-    )
+  findAppointment(appointment_uuid) {
+    return this.appointments.find(({ uuid }) => uuid === appointment_uuid)
   }
 
   /**
@@ -184,9 +217,7 @@ export class ClinicBooking {
    */
   static update(uuid, updates, context) {
     // Sanitise any _unchecked checkbox values
-    if (updates?.parent?.sms) {
-      updates.parent.sms = stringToBoolean(updates.parent.sms) || false
-    }
+    ClinicBooking.#sanitiseCheckboxUpdates(updates)
 
     // Copy updates into the relevant booking
     const existingBooking = ClinicBooking.findOne(uuid, context)
@@ -202,6 +233,43 @@ export class ClinicBooking {
     context.clinicBookings[updatedBooking.uuid] = updatedBooking
 
     return updatedBooking
+  }
+
+  /**
+   * Get rid of _unchecked values from checkboxes in the booking journey
+   *
+   * @param {object} updates new values posted from the booking jounrey
+   */
+  static #sanitiseCheckboxUpdates(updates) {
+    // Receive updates by SMS option
+    if (updates?.parent?.sms) {
+      updates.parent.sms = stringToBoolean(updates.parent.sms) || false
+    }
+
+    if (updates?.appointments) {
+      for (const appointment of updates.appointments) {
+        // Vaccinations selected
+        if (appointment?.selected_programme_ids) {
+          appointment.selected_programme_ids = stringToArray(
+            appointment.selected_programme_ids
+          )
+        }
+
+        // Impairments
+        if (appointment?.child?.impairments) {
+          appointment.child.impairments = stringToArray(
+            appointment.child.impairments
+          )
+        }
+
+        // Adjustments
+        if (appointment?.child?.adjustments) {
+          appointment.child.adjustments = stringToArray(
+            appointment.child.adjustments
+          )
+        }
+      }
+    }
   }
 
   /**

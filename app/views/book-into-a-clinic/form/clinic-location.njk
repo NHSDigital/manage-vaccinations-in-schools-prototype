@@ -16,17 +16,20 @@
     items: [
       { 
         text: 'Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
-        hint: { text: '0.5 miles away'}
+        hint: { text: '0.5 miles away'},
+        value: 123
       },
       {
         text: 'Lane End Surgery, 2 Manor Walk, Four Lane Ends, NE7 7XX',
-        hint: { text: '2.4 miles away'}
+        hint: { text: '2.4 miles away'},
+        value: 124
       },
       {
         text: 'City Library, John Dobson Street, Newcastle upon Tyne, NE1 8AX',
-        hint: { text: '4.7 miles away'}
+        hint: { text: '4.7 miles away'},
+        value: 125
       }
     ],
-    decorate: "transaction.clinicLocation"
+    decorate: "transaction.clinic_id"
   }) }}
 {% endblock %}

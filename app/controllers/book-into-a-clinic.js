@@ -3,7 +3,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { ParentalRelationship, SessionPresets } from '../enums.js'
-import { ClinicAppointment, ClinicBooking } from '../models.js'
+import { ClinicBooking } from '../models.js'
 import {
   getAllAppointmentPaths,
   getHealthQuestionPaths,
@@ -89,22 +89,19 @@ export const bookIntoClinicController = {
 
     // Create objects on the global context to allow us to check branching conditions, etc.
     // And make them available to the view.
-    let booking, appointments, currentAppointment
+    let booking
     if (booking_uuid) {
       const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
-      appointments = wizardBooking.appointments
       booking = new ClinicBooking(wizardBooking, data)
       response.locals.booking = booking
 
       if (appointment_uuid) {
-        currentAppointment = new ClinicAppointment(
-          ClinicAppointment.findOne(appointment_uuid, data?.wizard),
-          data
-        )
+        const currentAppointment = booking.findAppointment(appointment_uuid)
         response.locals.appointment = currentAppointment
+
         response.locals.childNumber =
-          booking.appointments_ids.indexOf(currentAppointment.uuid) + 1
-        response.locals.childCount = booking.appointments_ids.length
+          booking.appointments.indexOf(currentAppointment) + 1
+        response.locals.childCount = booking.appointments.length
         response.locals.firstName = currentAppointment.firstName || 'your child'
         response.locals.fullName = currentAppointment.fullName || 'your child'
       }
@@ -126,7 +123,7 @@ export const bookIntoClinicController = {
         session_preset_slug,
         booking_uuid,
         request.session.data,
-        appointments
+        booking.appointments
       ),
 
       // Parent journey
@@ -164,16 +161,6 @@ export const bookIntoClinicController = {
     paths.back = referrer || paths.back
     response.locals.paths = paths // used later to redirect in updateForm
 
-    // Prepare the radio options for the parental relationship page
-    response.locals.parentalRelationshipItems = Object.values(
-      ParentalRelationship
-    )
-      .filter((relationship) => relationship !== ParentalRelationship.Unknown)
-      .map((relationship) => ({
-        text: relationship,
-        value: relationship
-      }))
-
     next()
   },
 
@@ -182,12 +169,22 @@ export const bookIntoClinicController = {
     const { data } = request.session
     let { booking_uuid, view } = request.params
 
-    // Build the options for the selection of a home address address from those already entered
     if (view === 'address-selection') {
+      // Build the options for the selection of a home address address from those already entered
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       response.locals.previousAddressItems = getPreviousAddressItems(
         booking.appointments
       )
+    } else if (view === 'parental-relationship') {
+      // Prepare the radio options for the parental relationship page
+      response.locals.parentalRelationshipItems = Object.values(
+        ParentalRelationship
+      )
+        .filter((relationship) => relationship !== ParentalRelationship.Unknown)
+        .map((relationship) => ({
+          text: relationship,
+          value: relationship
+        }))
     }
 
     // All health questions use the same view
@@ -215,11 +212,11 @@ export const bookIntoClinicController = {
       ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
     }
     if (request.body.appointment) {
-      ClinicAppointment.update(
-        appointment_uuid,
-        request.body.appointment,
-        data.wizard
-      )
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = booking?.findAppointment(appointment_uuid)
+      _.merge(appointment, request.body.appointment)
+
+      ClinicBooking.update(booking_uuid, booking, data.wizard)
     }
     if (request.body.transaction) {
       data.wizard.transaction = data.wizard.transaction ?? {}
@@ -234,22 +231,17 @@ export const bookIntoClinicController = {
 
       let desiredCount = Number(data.wizard.transaction.childCount)
       desiredCount = isNaN(desiredCount) || desiredCount < 1 ? 1 : desiredCount
-      const existingCount = booking.appointments_ids.length
+      const existingCount = booking.appointments.length
 
       const childrenToAdd = Math.max(0, desiredCount - existingCount)
       const childrenToRemove = Math.max(0, existingCount - desiredCount)
-      Array.from({ length: childrenToAdd }).forEach(() => {
-        const appointment = ClinicAppointment.create(
-          { primary_programme_ids: booking.primaryProgrammeIDs },
-          data.wizard
-        )
-
-        booking.addAppointment(appointment)
-      })
-      Array.from({ length: childrenToRemove }).forEach(() => {
-        const appointment_uuid = booking.removeLastAppointment()
-        ClinicAppointment.delete(appointment_uuid, data.wizard)
-      })
+      Array.from({ length: childrenToAdd }).forEach(() =>
+        booking.addAppointment()
+      )
+      Array.from({ length: childrenToRemove }).forEach(() =>
+        booking.removeLastAppointment()
+      )
+      ClinicBooking.update(booking_uuid, booking, data.wizard)
 
       // Start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]
@@ -261,23 +253,17 @@ export const bookIntoClinicController = {
     ) {
       // We've just selected a previous child's address for the current appointment, so copy
       // that detail to the child record
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+
       const previous_appointment_uuid = request.body.transaction.addressChoice
-      const previousAppointment = ClinicAppointment.findOne(
-        previous_appointment_uuid,
-        data.wizard
+      const previousAppointment = booking?.findAppointment(
+        previous_appointment_uuid
       )
-      const currentAppointment = ClinicAppointment.findOne(
-        appointment_uuid,
-        data.wizard
-      )
+      const currentAppointment = booking?.findAppointment(appointment_uuid)
 
       if (previousAppointment && currentAppointment) {
         currentAppointment.child.address = previousAppointment.child.address
-        ClinicAppointment.update(
-          currentAppointment.uuid,
-          currentAppointment,
-          currentAppointment.context
-        )
+        ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
     }
 

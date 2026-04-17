@@ -21,7 +21,7 @@ export const getAllAppointmentPaths = (
     return {}
   }
 
-  const allPaths = appointments.map((appointment) => {
+  const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
     return {
       // Child details
@@ -85,7 +85,7 @@ export const getAllAppointmentPaths = (
   })
 
   // Merge all the appointments' paths into a single sequence, preserving order
-  return Object.assign({}, ...allPaths)
+  return Object.assign({}, ...pathsPerAppointment)
 }
 
 /**
