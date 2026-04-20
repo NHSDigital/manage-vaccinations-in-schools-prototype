@@ -47,12 +47,19 @@
   {% endfor %}
 
   {% for valid in summary.validDoses %}
+    {% set validDoseHtml %}
+      {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
+        sequence: valid.sequence
+      }) }}
+      {% if valid.vaccination.vaccine.type %}
+        <br>
+        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ valid.vaccination.vaccine.type }}</span>
+      {% endif %}
+    {% endset %}
     {% set rows = rows | push([
       {
         header: __("patientProgramme.vaccinationRecord.dose.label"),
-        text: __mf("patientProgramme.vaccinationRecord.dose.number", {
-          sequence: valid.sequence
-        })
+        html: validDoseHtml
       },
       {
         header: __("vaccination.createdAt.label"),
