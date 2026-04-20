@@ -132,7 +132,7 @@ export class PatientProgramme {
    *
    * @returns {boolean} Eligible for vaccination
    */
-  get inviteToSession() {
+  get canInviteToSession() {
     return (
       this.status !== PatientStatus.Ineligible &&
       this.status !== PatientStatus.Vaccinated

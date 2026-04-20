@@ -88,7 +88,7 @@ export class School extends Location {
    */
   patientsToInviteToSession(programmeId) {
     return this.patients.filter(
-      (patient) => patient.programmes[programmeId].inviteToSession
+      (patient) => patient.programmes[programmeId].canInviteToSession
     )
   }
 
