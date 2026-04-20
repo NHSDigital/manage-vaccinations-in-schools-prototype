@@ -2120,9 +2120,9 @@ export const en = {
       title: 'Are you sure you want to cancel this session?',
       warningTitle: 'Cancelling appointments',
       appointmentsMade:
-        '{appointmentCount, plural, =0 {No children are booked into this clinic.} one {There is <b>{appointmentCount} child</b> already booked into this clinic.} other {There are <b>{appointmentCount} children</b> already booked into this clinic.}}',
+        '{appointmentCount, plural, =0 {No children are booked for this session.} one {There is <b>{appointmentCount} child</b> already booked for this session.} other {There are <b>{appointmentCount} children</b> already booked for this session.}}',
       notificationConsequence:
-        'If you cancel it, their parent or guardian will be notified and asked to book another clinic.',
+        'If you cancel it, their parent or guardian will be notified and asked to book another clinic session.',
       confirm: 'Yes, cancel this session',
       cancel: 'No, return to the session page',
       success: '{{session.name}} cancelled'
