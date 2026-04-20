@@ -5,7 +5,9 @@ import activity from '../datasets/activity.js'
 import programmesData from '../datasets/programmes.js'
 import schools from '../datasets/schools.js'
 import {
+  Adjustment,
   AuditEventType,
+  Impairment,
   NoticeType,
   NotifyEmailStatus,
   VaccinationOutcome
@@ -129,7 +131,14 @@ export class Patient extends Child {
    * @returns {boolean} Needs reasonable adjustments(s)
    */
   get hasAdjustment() {
-    return this.adjustments.length > 0
+    switch (this.adjustments.length) {
+      case 0:
+        return false
+      case 1:
+        return this.adjustments.at(0) !== Adjustment.None
+      default:
+        return true
+    }
   }
 
   /**
@@ -138,7 +147,14 @@ export class Patient extends Child {
    * @returns {boolean} Has impairment(s)
    */
   get hasImpairment() {
-    return this.impairments.length > 0
+    switch (this.impairments.length) {
+      case 0:
+        return false
+      case 1:
+        return this.impairments.at(0) !== Impairment.None
+      default:
+        return true
+    }
   }
 
   /**
