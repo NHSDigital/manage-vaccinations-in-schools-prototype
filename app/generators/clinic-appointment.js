@@ -129,25 +129,21 @@ export function generateClinicAppointment(booking, context) {
     ...additionalProgramme_ids
   ]
 
-  return new ClinicAppointment(
-    {
-      uuid,
-      booking_uuid: booking.uuid,
-      patient_uuid,
-      unmatchedFirstName,
-      unmatchedLastName,
-      unmatchedDob,
-      needsExtraTime,
-      extraTimeReason,
-      parentalRelationship,
-      parentalRelationshipOther,
-      parentHasParentalResponsibility,
-      session_id,
-      startAt,
-      endAt,
-      selected_programme_ids,
-      primary_programme_ids
-    },
-    context
-  )
+  return booking.addAppointment({
+    uuid,
+    patient_uuid,
+    unmatchedFirstName,
+    unmatchedLastName,
+    unmatchedDob,
+    needsExtraTime,
+    extraTimeReason,
+    parentalRelationship,
+    parentalRelationshipOther,
+    parentHasParentalResponsibility,
+    session_id,
+    startAt,
+    endAt,
+    selected_programme_ids,
+    primary_programme_ids
+  })
 }

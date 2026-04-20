@@ -10,8 +10,6 @@ import {
 /**
  * @class ClinicVaccinationPeriod
  * @param {object} options - property values
- * @param {object} [context] - data context
- * @property {object} [context] - data context
  * @property {string} uuid - Vaccination period UUID
  * @property {Date} [startAt] - Start time of first appointment slot
  * @property {Date} [startAt_] - Start time of first appointment slot, from dateInput - see getter/setter
@@ -20,8 +18,7 @@ import {
  * @property {number} [vaccinatorCount] - The number of staff vaccinating in parallel during this period
  */
 export class ClinicVaccinationPeriod {
-  constructor(options, context) {
-    this.context = context
+  constructor(options) {
     this.uuid = options?.uuid || faker.string.uuid()
 
     this.startAt = options?.startAt && new Date(options.startAt)

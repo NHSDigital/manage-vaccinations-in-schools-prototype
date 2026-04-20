@@ -1,24 +1,15 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import _ from 'lodash'
 
-import {
-  Child,
-  ClinicBooking,
-  Parent,
-  Patient,
-  Programme,
-  Session
-} from '../models.js'
-import { formatDate, getDateValueDifference } from '../utils/date.js'
+import { Child, Patient, Programme, Session } from '../models.js'
+import { formatDate } from '../utils/date.js'
 import { stringToArray, stringToBoolean } from '../utils/string.js'
 
 /**
  * @class ClinicAppointment
  * @param {object} options - Options
  * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @property {object} [context] - Context, for access to patients, programmes, etc.
  * @property {string} uuid - Unique ID for this clinic appointment
- * @property {string} booking_uuid - Unique ID for the booking in which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {import('./child.js').Child} [child] - child details recorded from form input values
  * @property {boolean} needsExtraTime - Does the child need extra time for their vaccinations?
@@ -35,9 +26,14 @@ import { stringToArray, stringToBoolean } from '../utils/string.js'
  */
 export class ClinicAppointment {
   constructor(options, context) {
-    this.context = context
+    // Define 'context' so it's hidden from JSON.stringify, or we'll get
+    // circular reference issues during saving
+    Object.defineProperty(this, 'context', {
+      value: context,
+      enumerable: false
+    })
+
     this.uuid = options?.uuid || faker.string.uuid()
-    this.booking_uuid = options?.booking_uuid
 
     this.patient_uuid = options?.patient_uuid
     this.child = (options?.child && new Child(options.child)) || new Child({})
@@ -75,21 +71,6 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get the booking this appointment belongs to
-   *
-   * @returns {ClinicBooking|undefined} Clinic booking
-   */
-  get clinicBooking() {
-    try {
-      if (this.booking_uuid) {
-        return ClinicBooking.findOne(this.booking_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('ClinicAppointment.clinicBooking', error.message)
-    }
-  }
-
-  /**
    * Get patient
    *
    * @returns {Patient|undefined} Patient
@@ -102,26 +83,6 @@ export class ClinicAppointment {
     } catch (error) {
       console.error('ClinicAppointment.patient', error.message)
     }
-  }
-
-  /**
-   * Get a parent object combining the parent's contact details held in the
-   * booking with the parental relationship for this appointment's child
-   *
-   * @returns {Parent} - a Parent with the correct relationship to this appointment's child
-   */
-  get parent() {
-    const booking = this.clinicBooking
-    if (booking) {
-      const parent = new Parent(booking.parent)
-      return _.merge(parent, {
-        relationship: this.parentalRelationship,
-        relationshipOther: this.parentalRelationshipOther,
-        hasParentalResponsibility: this.parentHasParentalResponsibility
-      })
-    }
-
-    return undefined
   }
 
   /**
@@ -295,95 +256,5 @@ export class ClinicAppointment {
    */
   get uri() {
     return `/clinic-appointments/${this.uuid}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<ClinicAppointment>|undefined} Clinic appointments
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context?.clinicAppointments ?? {})
-      .map((appt) => new ClinicAppointment(appt, context))
-      .sort((a, b) => getDateValueDifference(a.startAt, b.startAt))
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - ClinicAppointment UUID
-   * @param {object} context - Context
-   * @returns {ClinicAppointment|undefined} Clinic appointment
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.clinicAppointments?.[uuid]) {
-      return new ClinicAppointment(context.clinicAppointments[uuid], context)
-    }
-  }
-
-  /**
-   * Create a new clinic appointment, adding it to the context
-   *
-   * @param {object} appointment - an appointment to copy or an object with any subset of its properties
-   * @param {object} context - the context into which we'll add the new appointment
-   * @returns {ClinicAppointment} A new clinic booking, added to the context, and possibly with a new UUID
-   */
-  static create(appointment, context) {
-    const createdAppointment = new ClinicAppointment(appointment)
-
-    // Update context
-    context.clinicAppointments = context.clinicAppointments || {}
-    context.clinicAppointments[createdAppointment.uuid] = createdAppointment
-
-    return createdAppointment
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - ClinicAppointment UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {ClinicAppointment} Updated appointment
-   * @static
-   */
-  static update(uuid, updates, context) {
-    // Sanitise any _unchecked checkbox values
-    if (updates?.selected_programme_ids) {
-      updates.selected_programme_ids = stringToArray(
-        updates.selected_programme_ids
-      )
-    }
-
-    // Copy updates into the relevant appointment
-    const updatedAppointment = _.merge(
-      ClinicAppointment.findOne(uuid, context),
-      updates
-    )
-
-    // Remove appointment context
-    delete updatedAppointment.context
-
-    // Delete original appointment (with previous UUID)
-    delete context.clinicAppointments[uuid]
-
-    // Update context
-    context.clinicAppointments[updatedAppointment.uuid] = updatedAppointment
-
-    return updatedAppointment
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} uuid - ClinicAppointment UUID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(uuid, context) {
-    delete context.clinicAppointments[uuid]
   }
 }

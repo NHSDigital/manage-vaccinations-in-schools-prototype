@@ -9,6 +9,7 @@ import { Programme, Team } from '../models.js'
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {string} [name] - Name
+ * @property {string} [id] - Location ID
  * @property {string} [addressLine1] - Address line 1
  * @property {string} [addressLine2] - Address line 2
  * @property {string} [addressLevel1] - Address level 1
