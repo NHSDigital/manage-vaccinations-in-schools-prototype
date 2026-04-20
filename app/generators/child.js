@@ -34,6 +34,8 @@ export function generateChild() {
         { value: Impairment.Communicative, weight: 4 }
       ])
     ]
+  } else {
+    impairments = [Impairment.None]
   }
 
   let impairmentsOther
@@ -55,6 +57,8 @@ export function generateChild() {
         { value: Adjustment.HomeVisit, weight: 2 }
       ])
     ]
+  } else {
+    adjustments = [Adjustment.None]
   }
 
   if (impairments?.includes(Impairment.Vision)) {
