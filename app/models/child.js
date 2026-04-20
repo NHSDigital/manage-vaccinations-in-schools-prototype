@@ -33,9 +33,10 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @property {import('../enums.js').Gender} gender - Gender
  * @property {EthnicGroup} [ethnicGroup] - Ethnic group
  * @property {string} [ethnicGroupOther] - Other ethnic group
- * @property {import('../enums.js).EthnicBackground')} [ethnicBackground] - Ethnic background
+ * @property {import('../enums.js').EthnicBackground} [ethnicBackground] - Ethnic background
  * @property {string} [ethnicBackgroundOther] - Other ethnic background
  * @property {Array<Adjustment>} [adjustments] - Reasonable adjustments
+ * @property {string} [adjustmentsOther] - Other adjustment
  * @property {Array<Impairment>} [impairments] - Impairments
  * @property {string} [impairmentsOther] - Other impairment
  * @property {boolean} [immunocompromised] - Immunocompromised
