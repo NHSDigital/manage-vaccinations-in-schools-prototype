@@ -15,63 +15,43 @@
 
   {% set rows = [] %}
 
-  {% for ignored in summary.ignoredDoses %}
-    {% set ignoredLabelHtml %}
-      <span>
-        {{- tag({
-          text: __("patientProgramme.vaccinationRecord.ignored.label"),
-          classes: "nhsuk-tag--grey"
-        }) -}}
-        <br>
-        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ ignored.reason }}</span>
-      </span>
-    {% endset %}
-    {% set rows = rows | push([
-      {
-        header: __("patientProgramme.vaccinationRecord.dose.label"),
-        html: ignoredLabelHtml
-      },
-      {
-        header: __("vaccination.createdAt.label"),
-        html: ignored.vaccination.link.createdAt
-      },
-      {
-        header: __("vaccination.age.label"),
-        text: patient.dob | age(at=ignored.vaccination.createdAt)
-      },
-      {
-        header: __("vaccination.source.label"),
-        text: ignored.vaccination.source
-      }
-    ]) %}
-  {% endfor %}
-
-  {% for valid in summary.validDoses %}
-    {% set validDoseHtml %}
-      {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
-        sequence: valid.sequence
-      }) }}
-      {% if valid.vaccination.vaccine.type %}
-        <br>
-        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ valid.vaccination.vaccine.type }}</span>
+  {% for recorded in summary.recordedDoses %}
+    {% set doseCellHtml %}
+      {% if recorded.kind == "ignored" %}
+        <span>
+          {{- tag({
+            text: __("patientProgramme.vaccinationRecord.ignored.label"),
+            classes: "nhsuk-tag--grey"
+          }) -}}
+          <br>
+          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.reason }}</span>
+        </span>
+      {% else %}
+        {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
+          sequence: recorded.sequence
+        }) }}
+        {% if recorded.vaccination.vaccine.type %}
+          <br>
+          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.vaccination.vaccine.type }}</span>
+        {% endif %}
       {% endif %}
     {% endset %}
     {% set rows = rows | push([
       {
         header: __("patientProgramme.vaccinationRecord.dose.label"),
-        html: validDoseHtml
+        html: doseCellHtml
       },
       {
         header: __("vaccination.createdAt.label"),
-        html: valid.vaccination.link.createdAt
+        html: recorded.vaccination.link.createdAt
       },
       {
         header: __("vaccination.age.label"),
-        text: patient.dob | age(at=valid.vaccination.createdAt)
+        text: patient.dob | age(at=recorded.vaccination.createdAt)
       },
       {
         header: __("vaccination.source.label"),
-        text: valid.vaccination.source
+        text: recorded.vaccination.source
       }
     ]) %}
   {% endfor %}
