@@ -734,7 +734,7 @@ export class Patient extends Child {
     this.vaccination_uuids.push(vaccination.uuid)
 
     this.addEvent({
-      name: 'activity.vaccination.recorded(vaccination)',
+      name: activity.vaccination.recorded(vaccination),
       note: vaccination.note,
       createdAt: vaccination.updatedAt || vaccination.createdAt,
       createdBy_uid: vaccination.createdBy_uid,
