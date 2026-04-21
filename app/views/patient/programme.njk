@@ -4,7 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set title = patient.fullName + " – " + patient.programmes[programme.slug].name %}
+{% set title = patient.fullName + " – " + patientProgramme.programme.name %}
 {% set formAction = patientProgramme.uri + "/record?referrer=" + referrer %}
 
 {% block beforeContent %}
