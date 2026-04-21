@@ -40,7 +40,7 @@ export const activityController = {
     )
     const mergedPatient = Patient.findAll(data).find(
       ({ uuid, hasMissingNhsNumber, invalid }) =>
-        uuid !== patient.uuid && !hasMissingNhsNumber && !invalid
+        uuid !== patient?.uuid && !hasMissingNhsNumber && !invalid
     )
     const reply = Reply.findAll(data).find(
       (reply) => !reply.selfConsent && reply.given
@@ -59,7 +59,7 @@ export const activityController = {
     )
 
     // Parent for use in Notify activities; force having both email and phone
-    const parent = generateParent(patient.lastName)
+    const parent = generateParent(patient?.lastName)
     parent.email =
       parent.email ||
       `${parent.fullName.replace(' ', '.').toLowerCase()}@example.com`
@@ -189,9 +189,9 @@ export const activityController = {
             name: activity.notify[name](parent),
             messageRecipient: parent,
             messageTemplate: name,
-            patient_uuid: patient.uuid,
-            programme_ids: session.programme_ids,
-            session_id: session.id
+            patient_uuid: patient?.uuid,
+            programme_ids: session?.programme_ids,
+            session_id: session?.id
           })
         )
       },
@@ -207,7 +207,7 @@ export const activityController = {
           }),
           auditEvent({
             name: activity.patient.expired,
-            note: `${patient.fullName} was vaccinated`,
+            note: `${patient?.fullName} was vaccinated`,
             createdBy_uid
           }),
           auditEvent({
@@ -219,13 +219,13 @@ export const activityController = {
             updatedFields: [
               {
                 key: 'patient.firstName.label',
-                before: patient.firstName,
-                after: mergedPatient.firstName
+                before: patient?.firstName,
+                after: mergedPatient?.firstName
               },
               {
                 key: 'patient.dob.label',
-                before: patient.formatted.dob,
-                after: mergedPatient.formatted.dob
+                before: patient?.formatted.dob,
+                after: mergedPatient?.formatted.dob
               }
             ],
             createdBy_uid
@@ -235,13 +235,13 @@ export const activityController = {
             updatedFields: [
               {
                 key: 'patient.firstName.label',
-                before: patient.firstName,
-                after: mergedPatient.firstName
+                before: patient?.firstName,
+                after: mergedPatient?.firstName
               },
               {
                 key: 'patient.dob.label',
-                before: patient.formatted.dob,
-                after: mergedPatient.formatted.dob
+                before: patient?.formatted.dob,
+                after: mergedPatient?.formatted.dob
               }
             ],
             createdBy_uid
@@ -251,13 +251,13 @@ export const activityController = {
             updatedFields: [
               {
                 key: 'patient.firstName.label',
-                before: patient.firstName,
-                after: mergedPatient.firstName
+                before: patient?.firstName,
+                after: mergedPatient?.firstName
               },
               {
                 key: 'patient.dob.label',
-                before: patient.formatted.dob,
-                after: mergedPatient.formatted.dob
+                before: patient?.formatted.dob,
+                after: mergedPatient?.formatted.dob
               }
             ],
             createdBy_uid
@@ -324,25 +324,25 @@ export const activityController = {
             name: activity.vaccination.recorded(vaccinationGiven),
             note: 'A brief note about the vaccination session.',
             createdBy_uid,
-            programme_ids: [vaccinationGiven.programme_id]
+            programme_ids: [vaccinationGiven?.programme_id]
           }),
           auditEvent({
             name: activity.vaccination.recorded(vaccinationNotGiven),
             note: 'A brief note about the vaccination session.',
             createdBy_uid,
-            programme_ids: [vaccinationNotGiven.programme_id]
+            programme_ids: [vaccinationNotGiven?.programme_id]
           }),
           auditEvent({
             name: activity.vaccination.added,
             createdBy_uid,
-            programme_ids: [vaccinationGiven.programme_id],
-            vaccination_uuid: vaccinationGiven.uuid
+            programme_ids: [vaccinationGiven?.programme_id],
+            vaccination_uuid: vaccinationGiven?.uuid
           }),
           auditEvent({
             name: activity.vaccination.uploaded,
             createdBy_uid,
-            programme_ids: [vaccinationGiven.programme_id],
-            vaccination_uuid: vaccinationGiven.uuid
+            programme_ids: [vaccinationGiven?.programme_id],
+            vaccination_uuid: vaccinationGiven?.uuid
           })
         ]
       }
