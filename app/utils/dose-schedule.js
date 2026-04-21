@@ -69,6 +69,16 @@ export function getScheduleSummary({
     const atScheduleMax = nextSequence > MMR_MAX_SEQUENCE
     const createdAt = new Date(vaccination.createdAt)
 
+    if (lastValidCreatedAt) {
+      const gap = differenceInCalendarDays(createdAt, lastValidCreatedAt)
+      if (gap < MMR_MIN_INTERVAL_DAYS) {
+        const reason = REASON.LessThan28DaysAfterPrevious
+        ignoredDoses.push({ vaccination, reason })
+        recordedDoses.push({ vaccination, kind: 'ignored', reason })
+        continue
+      }
+    }
+
     if (!atScheduleMax) {
       const minAgeDate = addMonths(dob, MMR_MIN_AGE_MONTHS[nextSequence])
 
@@ -77,16 +87,6 @@ export function getScheduleSummary({
           nextSequence === 1
             ? REASON.BeforeAge12Months
             : REASON.BeforeAge15Months
-        ignoredDoses.push({ vaccination, reason })
-        recordedDoses.push({ vaccination, kind: 'ignored', reason })
-        continue
-      }
-    }
-
-    if (lastValidCreatedAt) {
-      const gap = differenceInCalendarDays(createdAt, lastValidCreatedAt)
-      if (gap < MMR_MIN_INTERVAL_DAYS) {
-        const reason = REASON.LessThan28DaysAfterPrevious
         ignoredDoses.push({ vaccination, reason })
         recordedDoses.push({ vaccination, kind: 'ignored', reason })
         continue
