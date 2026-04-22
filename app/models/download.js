@@ -29,6 +29,7 @@ import { formatList, formatProgress, formatTag } from '../utils/string.js'
  * @property {object} [endAt_] - Date to end report (from `dateInput`)
  * @property {DownloadFormat} [format] - Downloaded file format
  * @property {DownloadType} [type] - Download type
+ * @property {Array<import('../enums.js').DownloadVariable>} [variables] - Download variables
  * @property {number} [academicYear] - Programme year
  * @property {string} [programme_id] - Programme ID
  * @property {Array<string>} [team_ids] - Team IDs
@@ -43,22 +44,30 @@ export class Download {
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.format = options?.format || DownloadFormat.CSV
     this.type = options?.type || DownloadType.Report
-    this.programme_id = options?.programme_id
-    this.session_id = options?.session_id
     this.team_ids = options?.team_ids
-    this.vaccination_uuids = options?.vaccination_uuids || []
+
+    if (this.type === DownloadType.Cohort) {
+      this.variables = options?.variables || []
+    }
 
     if (this.type === DownloadType.Report) {
       this.academicYear = options?.academicYear || getCurrentAcademicYear()
     }
 
+    if ([DownloadType.Cohort, DownloadType.Report].includes(this.type)) {
+      this.programme_id = options?.programme_id
+      this.vaccination_uuids = options?.vaccination_uuids || []
+    }
+
     if ([DownloadType.Report, DownloadType.Moves].includes(this.type)) {
-      this.startAt =
-        (options?.startAt && new Date(options.startAt)) ||
-        new Date('2024-09-01')
+      this.startAt = options?.startAt && new Date(options.startAt)
       this.startAt_ = options?.startAt_
-      this.endAt = (options?.endAt && new Date(options.endAt)) || today()
+      this.endAt = options?.endAt && new Date(options.endAt)
       this.endAt_ = options?.endAt_
+    }
+
+    if (this.type === DownloadType.Session) {
+      this.session_id = options?.session_id
     }
   }
 
@@ -118,6 +127,28 @@ export class Download {
   }
 
   /**
+   * Get variable for `checkboxes`s
+   *
+   * @returns {Array<string>} `checkboxes` array values
+   */
+  get variables_() {
+    return this.variables.map((variable) => String(variable))
+  }
+
+  /**
+   * Set variable from `checkboxes`s
+   *
+   * @param {Array<string>} array - checkboxes array values
+   */
+  set variables_(array) {
+    if (array) {
+      this.variables = array
+        .filter((item) => item !== '_unchecked')
+        .map((variable) => String(variable))
+    }
+  }
+
+  /**
    * Get name
    *
    * @returns {string} Name
@@ -127,11 +158,11 @@ export class Download {
       case this.type === DownloadType.Moves:
         return `School moves (${this.formatted.createdAt})`
       case this.type === DownloadType.Report:
-        return `${this.programme.name} vaccination records (${this.formatted.startEndAt})`
+        return `${this.programme?.name} vaccination records (${this.formatted.startEndAt})`
       case this.type === DownloadType.Session:
-        return this.session.clinic
-          ? `Offline spreadsheet for ${this.session.clinic.name}`
-          : `Offline spreadsheet for ${this.session.school.name}`
+        return this.session?.clinic
+          ? `Offline spreadsheet for ${this.session?.clinic?.name}`
+          : `Offline spreadsheet for ${this.session?.school?.name}`
       default:
         return 'Download'
     }
@@ -187,7 +218,7 @@ export class Download {
    * @returns {Array<Vaccination>} Vaccinations
    */
   get vaccinations() {
-    return this.vaccination_uuids.map((uuid) =>
+    return this.vaccination_uuids?.map((uuid) =>
       Vaccination.findOne(uuid, this.context)
     )
   }
@@ -384,10 +415,10 @@ export class Download {
       school: this.session?.school && this.session.school.name,
       programme: this.programme?.nameTag,
       teams:
-        this.teams.length > 0
+        this.teams?.length > 0
           ? formatList(this.teams.map(({ name }) => name))
           : this.teams.length,
-      vaccinations: `${this.vaccinations.length} records`
+      vaccinations: `${this.vaccinations?.length} records`
     }
   }
 

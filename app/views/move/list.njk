@@ -16,15 +16,9 @@
   <div class="nhsuk-u-reading-width">
     {{ __("move.list.introduction") | nhsukMarkdown }}
 
-    {{ button({
+    {{ actionLink({
       text: __("move.download.label"),
-      value: DownloadType.Moves,
-      variant: "secondary",
-      decorate: "download.type",
-      attributes: {
-        formaction: "/downloads/new?referrer=/moves",
-        formmethod: "post"
-      }
+      href: "/moves/download?referrer=/moves"
     }) }}
   </div>
 

@@ -1,5 +1,7 @@
 import { healthQuestions } from '../datasets/health-questions.js'
 import {
+  AcademicYear,
+  DownloadType,
   RegistrationOutcome,
   ReplyDecision,
   ReplyRefusal,
@@ -1015,10 +1017,20 @@ export const en = {
     results:
       '{count, plural, =0 {No downloads matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> download} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> downloads}}',
     new: {
-      label: 'Download vaccination report',
-      confirm: 'Download vaccination data',
-      success:
-        'It will take some time to prepare the records. You’ll be able to download them soon in [Downloads](/downloads)'
+      label: 'Download data',
+      message:
+        'It may take some time to prepare the records. You’ll be able to download them soon.'
+    },
+    create: {
+      title: 'Download %s',
+      confirm: 'Download %s',
+      description: {
+        [DownloadType.Cohort]: `Download vaccination data for the ${Object.values(AcademicYear).at(-1)} academic year so far.\n\nThis data was last updated on %s.`,
+        [DownloadType.Moves]:
+          'Download a record of school moves as a CSV file. Only school moves that have been reviewed and confirmed will be included.',
+        [DownloadType.Report]:
+          'Full vaccination details for individual children. Only includes vaccinations given by your team.'
+      }
     },
     createdAt: {
       label: 'Requested at'
@@ -1027,23 +1039,29 @@ export const en = {
       label: 'Requested by'
     },
     startAt: {
-      label: 'Get vaccination data from'
+      label: 'From',
+      title: 'Get data from',
+      hint: 'For example, 27 3 2017'
     },
     endAt: {
-      label: 'Get vaccination data until'
-    },
-    format: {
-      title: 'Select file format',
-      label: 'File format'
-    },
-    academicYear: {
-      label: 'Academic year'
+      label: 'Until',
+      title: 'Get data until',
+      hint: 'For example, 27 3 2017'
     },
     startEndAt: {
       label: 'Date range'
     },
-    programme: {
-      label: 'Programme'
+    format: {
+      title: 'File format',
+      label: 'File format'
+    },
+    academicYear: {
+      label: 'Academic year',
+      title: 'Academic year'
+    },
+    programmeType: {
+      label: 'Programme',
+      title: 'Which programme do you want data for?'
     },
     clinic: {
       label: 'Clinic'
@@ -1059,10 +1077,20 @@ export const en = {
       label: 'Providers'
     },
     type: {
-      label: 'Type'
+      title: 'What data do you want to download?',
+      label: 'Type',
+      hint: {
+        [DownloadType.Cohort]:
+          'Total figures for all children in your cohort. Includes vaccinations given by any provider.',
+        [DownloadType.Moves]:
+          'A record of school moves. Only includes school moves that have been reviewed and confirmed.',
+        [DownloadType.Report]:
+          'Full vaccination details for individual children. Only includes vaccinations given by your team.'
+      }
     },
-    vaccinations: {
-      label: 'Records'
+    variables: {
+      label: 'Variables',
+      title: 'What variables do you want to use to break down the data?'
     }
   },
   emails: {
@@ -2933,7 +2961,7 @@ export const en = {
       }
     },
     download: {
-      label: 'Download records'
+      label: 'Download school moves'
     },
     ignore: {
       success: '{{move.patient.fullName}}’s school move ignored'

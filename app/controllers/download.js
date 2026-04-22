@@ -1,5 +1,6 @@
-import programmesData from '../datasets/programmes.js'
-import { AcademicYear, DownloadFormat, ProgrammeType } from '../enums.js'
+import wizard from '@x-govuk/govuk-prototype-wizard'
+
+import { AcademicYear, DownloadType } from '../enums.js'
 import { Download, Programme, Team } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -61,8 +62,73 @@ export const downloadController = {
     response.redirect(`/downloads?${params}`)
   },
 
-  form(request, response) {
+  new(type) {
+    return (request, response) => {
+      const { account } = request.app.locals
+      const { data } = request.session
+
+      const download = Download.create(
+        { createdBy_uid: account.uid },
+        data.wizard
+      )
+
+      if (type) {
+        download.type = type
+        response.redirect(`${download.uri}/new/moves`)
+      } else {
+        response.redirect(`${download.uri}/new/type`)
+      }
+    }
+  },
+
+  update(request, response) {
+    const { download_id } = request.params
     const { data } = request.session
+    const { __ } = response.locals
+
+    const download = Download.create(data.wizard.downloads[download_id], data)
+
+    // Clean up session data
+    delete data.download
+    delete data.wizard
+
+    request.flash('message', __(`download.new.message`, { download }))
+
+    response.redirect('/downloads')
+  },
+
+  readForm(request, response, next) {
+    const { download_id } = request.params
+    const { data, referrer } = request.session
+    const { __ } = response.locals
+
+    // Setup wizard if not already setup
+    let download = Download.findOne(download_id, data.wizard)
+    if (!download) {
+      download = Download.create(response.locals.download, data.wizard)
+    }
+
+    const journey = {
+      [`/`]: {},
+      [`/${download_id}/new/type`]: {
+        [`/${download_id}/new/cohort`]: {
+          data: 'download.type',
+          value: DownloadType.Cohort
+        },
+        [`/${download_id}/new/report`]: {
+          data: 'download.type',
+          value: DownloadType.Report
+        },
+        [`/${download_id}/new/moves`]: {
+          data: 'download.type',
+          value: DownloadType.Moves
+        }
+      }
+    }
+
+    // TODO: Use presenter
+    download = new Download(download, data)
+    response.locals.download = download
 
     const academicYearKeys = Object.keys(AcademicYear)
     const mostRecentYear = academicYearKeys[academicYearKeys.length - 1]
@@ -75,67 +141,51 @@ export const downloadController = {
       })
     )
 
-    response.locals.programmeTypeItems = Object.entries(ProgrammeType).map(
-      ([value, text]) => ({
-        text,
-        value,
-        checked: value === ProgrammeType.Flu
-      })
-    )
+    response.locals.programmeTypeItems = Programme.findAll(data)
+      ?.filter((programme) => !programme.hidden)
+      .map((programme) => ({
+        text: programme.name,
+        value: programme.type
+      }))
 
-    response.locals.download = {
-      format: DownloadFormat.CSV
-    }
-
-    response.locals.teamItems = Team.findAll(data).map((team) => ({
+    response.locals.teamItems = Team.findAll(data)?.map((team) => ({
       text: team.name,
       value: team.id
     }))
 
+    response.locals.typeItems = Object.values(DownloadType)
+      ?.filter((type) => type !== DownloadType.Session)
+      .sort((a, b) => a.localeCompare(b))
+      .map((type) => ({
+        text: type,
+        value: type,
+        hint: {
+          text: __(`download.type.hint.${type}`)
+        }
+      }))
+
     response.locals.paths = {
-      back: '/reports',
-      next: '/reports/download/new'
+      ...wizard(journey, request),
+      ...(referrer && { back: referrer })
     }
 
-    response.render('download/form')
+    next()
   },
 
-  create(request, response) {
-    const { account } = request.app.locals
-    const { programmeType, session_id, type } = request.body.download
-    const { data, referrer } = request.session
-    const { __ } = response.locals
+  showForm(request, response) {
+    const { view } = request.params
 
-    let createdDownload
-    if (type) {
-      createdDownload = Download.create(
-        {
-          createdBy_uid: account.uid,
-          session_id,
-          type
-        },
-        data
-      )
-    } else {
-      const programme_id = programmesData[programmeType].id
-      const programme = Programme.findOne(programme_id, data)
+    response.render(`download/form/${view}`)
+  },
 
-      createdDownload = Download.create(
-        {
-          ...request.body.download,
-          programme_id,
-          vaccination_uuids: programme.vaccinations.map(({ uuid }) => uuid),
-          createdBy_uid: account.uid
-        },
-        data
-      )
-    }
+  updateForm(request, response, next) {
+    const { download_id } = request.params
+    const { data } = request.session
+    const { paths } = response.locals
 
-    const download = new Download(createdDownload, data)
+    Download.update(download_id, request.body.download, data.wizard)
 
-    request.flash('success', __(`download.new.success`, { download }))
-
-    response.redirect(referrer)
+    return paths.next ? response.redirect(paths.next) : next()
   },
 
   download(request, response) {

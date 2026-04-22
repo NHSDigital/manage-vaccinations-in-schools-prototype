@@ -1,0 +1,17 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("download.type.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        isPageHeading: true,
+        text: title,
+        size: "l"
+      }
+    },
+    items: typeItems,
+    decorate: "download.type"
+  }) }}
+{% endblock %}

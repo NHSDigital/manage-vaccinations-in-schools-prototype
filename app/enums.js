@@ -110,6 +110,17 @@ export const DownloadFormat = {
  * @readonly
  * @enum {string}
  */
+export const DownloadVariable = {
+  Gender: 'Gender',
+  LocalAuthority: 'Local Authority',
+  School: 'School',
+  YearGroup: 'Year Group'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const DownloadStatus = {
   Processing: 'Processing',
   Ready: 'Ready'
@@ -120,8 +131,9 @@ export const DownloadStatus = {
  * @enum {string}
  */
 export const DownloadType = {
-  Report: 'Vaccination records',
+  Cohort: 'Aggregate vaccination and consent data',
   Moves: 'School moves',
+  Report: 'Child-level vaccination data',
   Session: 'Offline session'
 }
 

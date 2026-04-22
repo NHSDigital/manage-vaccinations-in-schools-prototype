@@ -1,0 +1,41 @@
+{% extends "_layouts/form.njk" %}
+
+{% set type = download.type | lower %}
+{% set confirmButtonText = __("download.create.confirm", type) %}
+{% set title = __("download.create.title", type) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ __("download.create.description." + download.type, today + " at 1pm") | nhsukMarkdown }}
+
+  {{ radios({
+    formGroup: {
+      classes: "nhsuk-u-margin-bottom-8"
+    },
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("download.programmeType.title")
+      }
+    },
+    items: programmeTypeItems,
+    decorate: "download.programmeType"
+  }) }}
+
+  {{ checkboxes({
+    formGroup: {
+      classes: "nhsuk-u-margin-bottom-8"
+    },
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("download.variables.title")
+      }
+    },
+    items: enumItems(DownloadVariable),
+    decorate: "download.variables_"
+  }) }}
+{% endblock %}

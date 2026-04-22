@@ -1,14 +1,16 @@
 {% extends "_layouts/form.njk" %}
 
-{% set formAction = "/downloads/new?referrer=/reports" %}
-{% set confirmButtonText = __("download.new.confirm") %}
-{% set title = __("download.new.label") %}
+{% set type = download.type | lower %}
+{% set confirmButtonText = __("download.create.confirm", type) %}
+{% set title = __("download.create.title", type) %}
 
 {% block form %}
   {{ appHeading({
     title: title
   }) }}
 
+  {{ __("download.create.description." + download.type) | nhsukMarkdown }}
+
   {{ radios({
     formGroup: {
       classes: "nhsuk-u-margin-bottom-8"
@@ -16,11 +18,11 @@
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
-        text: "Academic year"
+        text: __("download.academicYear.title")
       }
     },
     items: academicYearItems,
-    decorate: "download.year"
+    decorate: "download.academicYear"
   }) }}
 
   {{ radios({
@@ -30,7 +32,7 @@
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
-        text: "Programme"
+        text: __("download.programmeType.title")
       }
     },
     items: programmeTypeItems,
@@ -44,8 +46,11 @@
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
-        text: __("download.startAt.label") + " (optional)"
+        text: __("download.startAt.title") + " (optional)"
       }
+    },
+    hint: {
+      text: __("download.startAt.hint")
     },
     decorate: "download.startAt_"
   }) }}
@@ -57,8 +62,11 @@
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
-        text: __("download.endAt.label") + " (optional)"
+        text: __("download.endAt.title") + " (optional)"
       }
+    },
+    hint: {
+      text: __("download.endAt.hint")
     },
     decorate: "download.endAt_"
   }) }}
