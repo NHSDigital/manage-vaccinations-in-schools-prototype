@@ -266,5 +266,38 @@ export default {
       PreScreenQuestion.IsHappy,
       PreScreenQuestion.IsNotContraindicated
     ]
+  },
+  // MMRV (measles, mumps, rubella, varicella) — not used on the UK schedule.
+  // Included only to simulate miscoded records surfacing in Mavis. SNOMED is
+  // fabricated (99 prefix) since there is no real UK dm+d code to lean on.
+  '99926011000001103': {
+    snomed: '99926011000001103',
+    type: 'MMRV',
+    brand: 'ProQuad',
+    manufacturer: 'Merck Sharp & Dohme (UK) Ltd',
+    criteria: VaccineCriteria.Injection,
+    method: VaccineMethod.Injection,
+    dose: 0.5,
+    sideEffects: [
+      VaccineSideEffect.Bruising,
+      VaccineSideEffect.TemperatureShiver,
+      VaccineSideEffect.SickFeeling,
+      VaccineSideEffect.PainArms
+    ],
+    healthQuestions: {
+      'bleeding': {},
+      'bloodThinning': {},
+      'bloodTransfusion': {},
+      'previousReactionMmr': {},
+      'previousReactionNeomycinGelatine': {},
+      'immuneSystem': {},
+      'immunisations': {}
+    },
+    preScreenQuestions: [
+      PreScreenQuestion.IsWell,
+      PreScreenQuestion.IsPregnant,
+      PreScreenQuestion.IsHappy,
+      PreScreenQuestion.IsNotContraindicated
+    ]
   }
 }

@@ -8,9 +8,11 @@ import {
 } from '../enums.js'
 import { AuditEvent, Patient, Programme, Vaccination } from '../models.js'
 import {
+  formatDate,
   getCurrentAcademicYear,
   getDateValueDifference
 } from '../utils/date.js'
+import { getScheduleSummary } from '../utils/dose-schedule.js'
 import { ordinal } from '../utils/number.js'
 import { getReportOutcome } from '../utils/patient-session.js'
 import { getPatientStatus } from '../utils/status.js'
@@ -234,11 +236,42 @@ export class PatientProgramme {
    * @returns {number} Doses remaining
    */
   get dosesRemaining() {
-    if (this.vaccinationsGiven?.length > 0) {
-      return this.dosesNeeded - this.vaccinationsGiven?.length
+    const validCount = this.scheduleSummary.dosesComplete
+    if (validCount > 0) {
+      return this.dosesNeeded - validCount
     }
 
     return this.dosesNeeded
+  }
+
+  /**
+   * Get schedule summary classifying given doses into valid and ignored
+   * according to programme rules, with the next eligibility date if a slot
+   * is still empty. MMR only in phase 1; other programmes fall through with
+   * all given doses treated as valid.
+   *
+   * @returns {{
+   *   validDoses: Array<{ vaccination: Vaccination, sequence: number }>,
+   *   ignoredDoses: Array<{ vaccination: Vaccination, reason: string }>,
+   *   nextEligibleFrom: Date|null,
+   *   dosesComplete: number,
+   *   dosesNeeded: number
+   * }}
+   */
+  get scheduleSummary() {
+    const summary = getScheduleSummary({
+      vaccinationsGiven: this.vaccinationsGiven || [],
+      dob: this.patient?.dob,
+      programme: this.programme
+    })
+    return {
+      ...summary,
+      dosesComplete: summary.validDoses.length,
+      dosesNeeded: this.dosesNeeded,
+      nextEligibleFromFormatted: summary.nextEligibleFrom
+        ? formatDate(summary.nextEligibleFrom, { dateStyle: 'long' })
+        : null
+    }
   }
 
   /**

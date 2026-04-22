@@ -1462,6 +1462,22 @@ export const en = {
       count:
         '{count, plural, =0 {No vaccination record} one {Vaccination record} other {# vaccination records}}'
     },
+    procedures: {
+      count:
+        '{count, plural, =0 {No procedures recorded} one {Procedure} other {# procedures}}'
+    },
+    vaccinationRecord: {
+      label: 'Vaccination record',
+      dosesComplete: '{complete} of {needed} doses complete.',
+      dose: {
+        label: 'Dose',
+        number: 'Dose {sequence}'
+      },
+      ignored: {
+        label: 'Ignored'
+      },
+      eligibleFrom: 'Eligible from {date}'
+    },
     status: {
       label: 'Status'
     },
@@ -3099,6 +3115,9 @@ export const en = {
     },
     countryOther: {
       title: 'Which country was the vaccination given in?'
+    },
+    schedule: {
+      label: 'Schedule'
     },
     outcome: {
       label: 'Outcome',

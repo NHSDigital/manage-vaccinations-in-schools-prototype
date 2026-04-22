@@ -440,7 +440,9 @@ export class PatientSession {
     try {
       if (this.patient?.vaccinations && this.programme_id) {
         return this.patient.vaccinations.filter(
-          ({ programme }) => programme?.id === this.programme_id
+          (vaccination) =>
+            vaccination.programme?.id === this.programme_id &&
+            vaccination.patientSession_uuid === this.uuid
         )
       }
     } catch (error) {
@@ -792,8 +794,18 @@ export class PatientSession {
    */
   get reportDescription() {
     switch (this.report) {
-      case PatientStatus.Vaccinated:
-        return `${this.patient?.firstName} was vaccinated by ${this.lastVaccinationOutcome.createdBy.fullName} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
+      case PatientStatus.Vaccinated: {
+        const vaccination =
+          this.lastVaccinationOutcome ||
+          this.patientProgramme?.lastVaccinationGiven
+        if (!vaccination) {
+          return `${this.patient?.firstName} has been vaccinated.`
+        }
+        const by = vaccination.createdBy?.fullName
+        return by
+          ? `${this.patient?.firstName} was vaccinated by ${by} on ${vaccination.formatted.createdAt}.`
+          : `${this.patient?.firstName} was vaccinated on ${vaccination.formatted.createdAt}.`
+      }
       case PatientStatus.Due:
         return this.vaccineCriteria
           ? `${this.patient?.firstName} is ready to vaccinate (${this.vaccineCriteria.toLowerCase()}).`

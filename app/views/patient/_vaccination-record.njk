@@ -1,0 +1,101 @@
+{% set summary = patientProgramme.scheduleSummary %}
+
+{% call card({
+  heading: __("patientProgramme.vaccinationRecord.label"),
+  headingLevel: 3
+}) %}
+  {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
+
+  <p class="nhsuk-body">
+    {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
+      complete: summary.dosesComplete,
+      needed: summary.dosesNeeded
+    }) }}
+  </p>
+
+  {% set rows = [] %}
+
+  {% for recorded in summary.recordedDoses %}
+    {% set doseCellHtml %}
+      {% if recorded.kind == "ignored" %}
+        <span>
+          {{- tag({
+            text: __("patientProgramme.vaccinationRecord.ignored.label"),
+            classes: "nhsuk-tag--grey"
+          }) -}}
+          <br>
+          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.reason }}</span>
+        </span>
+      {% else %}
+        {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
+          sequence: recorded.sequence
+        }) }}
+        {% if recorded.vaccination.vaccine.type %}
+          <br>
+          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.vaccination.vaccine.type }}</span>
+        {% endif %}
+      {% endif %}
+    {% endset %}
+    {% set rows = rows | push([
+      {
+        header: __("patientProgramme.vaccinationRecord.dose.label"),
+        html: doseCellHtml
+      },
+      {
+        header: __("vaccination.createdAt.label"),
+        html: recorded.vaccination.link.createdAt
+      },
+      {
+        header: __("vaccination.age.label"),
+        text: patient.dob | age(at=recorded.vaccination.createdAt)
+      },
+      {
+        header: __("vaccination.source.label"),
+        text: recorded.vaccination.source
+      }
+    ]) %}
+  {% endfor %}
+
+  {% set firstEmptySequence = summary.validDoses.length + 1 %}
+  {% for sequence in range(firstEmptySequence, summary.dosesNeeded + 1) %}
+    {% set isFirstEmpty = sequence == firstEmptySequence %}
+    {% set dateText = "—" %}
+    {% if isFirstEmpty and summary.nextEligibleFromFormatted %}
+      {% set dateText = __mf("patientProgramme.vaccinationRecord.eligibleFrom", {
+        date: summary.nextEligibleFromFormatted
+      }) %}
+    {% endif %}
+    {% set rows = rows | push([
+      {
+        header: __("patientProgramme.vaccinationRecord.dose.label"),
+        text: __mf("patientProgramme.vaccinationRecord.dose.number", {
+          sequence: sequence
+        })
+      },
+      {
+        header: __("vaccination.createdAt.label"),
+        text: dateText
+      },
+      {
+        header: __("vaccination.age.label"),
+        text: "—"
+      },
+      {
+        header: __("vaccination.source.label"),
+        text: "—"
+      }
+    ]) %}
+  {% endfor %}
+
+  {{ table({
+    id: "vaccination-record",
+    responsive: true,
+    head: [
+      { text: __("patientProgramme.vaccinationRecord.dose.label") },
+      { text: __("vaccination.createdAt.label") },
+      { text: __("vaccination.age.label") },
+      { text: __("vaccination.source.label") }
+    ],
+    rows: rows
+  }) if rows.length }}
+{% endcall %}
