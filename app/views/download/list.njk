@@ -11,14 +11,10 @@
     title: title
   }) }}
 
-  <div class="nhsuk-u-reading-width">
-    {{ __("download.list.introduction") | nhsukMarkdown }}
-
-    {{ actionLink({
-      text: __("download.new.label"),
-      href: "/downloads/new"
-    }) }}
-  </div>
+  {{ actionLink({
+    text: __("download.new.label"),
+    href: "/downloads/new"
+  }) }}
 
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
