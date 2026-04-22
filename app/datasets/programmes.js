@@ -88,30 +88,6 @@ export default {
     vaccine_snomeds: ['33493111000001108'],
     nhseSyncable: true
   },
-  [ProgrammeType.TdIPV]: {
-    type: ProgrammeType.TdIPV,
-    id: 'td-ipv',
-    name: 'Td/IPV',
-    title: 'Td/IPV (3-in-1 teenage booster)',
-    information: {
-      startPage:
-        'The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps protect against tetanus, diphtheria and polio.\n\nIt boosts the protection provided by the [6-in-1 vaccine](https://www.nhs.uk/vaccinations/6-in-1-vaccine/) and [4-in-1 pre-school booster vaccine](https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/).',
-      description:
-        'The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps protect against tetanus, diphtheria and polio.\n\nIt’s offered at around 13 or 14 years old (school year 9 or 10). It boosts the protection provided by the [6-in-1 vaccine](https://www.nhs.uk/vaccinations/6-in-1-vaccine/) and [4-in-1 pre-school booster vaccine](https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/).',
-      url: 'https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster/'
-    },
-    guidance: {
-      url: 'https://www.gov.uk/government/publications/a-guide-to-the-3-in-1-teenage-booster-tdipv',
-      hint: 'with links to information in other languages'
-    },
-    sequence: ['2B'],
-    sequenceDefault: '2B',
-    yearGroups: [9, 10, 11],
-    targetYearGroup: 9,
-    vaccine_snomeds: ['7374311000001101'],
-    ttcv: true,
-    nhseSyncable: false
-  },
   [ProgrammeType.MenACWY]: {
     type: ProgrammeType.MenACWY,
     id: 'menacwy',
@@ -161,5 +137,29 @@ export default {
     yearGroups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     vaccine_snomeds: ['13968211000001108', '34925111000001104'],
     nhseSyncable: true
+  },
+  [ProgrammeType.TdIPV]: {
+    type: ProgrammeType.TdIPV,
+    id: 'td-ipv',
+    name: 'Td/IPV',
+    title: 'Td/IPV (3-in-1 teenage booster)',
+    information: {
+      startPage:
+        'The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps protect against tetanus, diphtheria and polio.\n\nIt boosts the protection provided by the [6-in-1 vaccine](https://www.nhs.uk/vaccinations/6-in-1-vaccine/) and [4-in-1 pre-school booster vaccine](https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/).',
+      description:
+        'The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps protect against tetanus, diphtheria and polio.\n\nIt’s offered at around 13 or 14 years old (school year 9 or 10). It boosts the protection provided by the [6-in-1 vaccine](https://www.nhs.uk/vaccinations/6-in-1-vaccine/) and [4-in-1 pre-school booster vaccine](https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/).',
+      url: 'https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster/'
+    },
+    guidance: {
+      url: 'https://www.gov.uk/government/publications/a-guide-to-the-3-in-1-teenage-booster-tdipv',
+      hint: 'with links to information in other languages'
+    },
+    sequence: ['2B'],
+    sequenceDefault: '2B',
+    yearGroups: [9, 10, 11],
+    targetYearGroup: 9,
+    vaccine_snomeds: ['7374311000001101'],
+    ttcv: true,
+    nhseSyncable: false
   }
 }
