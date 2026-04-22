@@ -37,11 +37,7 @@ const REASON = {
  *   nextEligibleFrom: Date|null
  * }}
  */
-export function getScheduleSummary({
-  vaccinationsGiven = [],
-  dob,
-  programme
-}) {
+export function getScheduleSummary({ vaccinationsGiven = [], dob, programme }) {
   const givenDoses = [...vaccinationsGiven].sort(
     (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   )
@@ -110,7 +106,10 @@ export function getScheduleSummary({
   if (nextSlot <= MMR_MAX_SEQUENCE) {
     const minAgeDate = addMonths(dob, MMR_MIN_AGE_MONTHS[nextSlot])
     nextEligibleFrom = lastValidCreatedAt
-      ? maxDate([minAgeDate, addDays(lastValidCreatedAt, MMR_MIN_INTERVAL_DAYS)])
+      ? maxDate([
+          minAgeDate,
+          addDays(lastValidCreatedAt, MMR_MIN_INTERVAL_DAYS)
+        ])
       : minAgeDate
   }
 
