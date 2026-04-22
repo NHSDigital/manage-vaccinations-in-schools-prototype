@@ -1006,10 +1006,7 @@ export const en = {
       label: 'Downloads',
       title: 'Downloads',
       results: 'All downloads',
-      description:
-        'See the status of downloads you’ve requested elsewhere in Mavis',
-      introduction:
-        'Use this page to see the status of downloads you’ve requested elsewhere in Mavis.\n\nDownload times can vary. Refresh the page to see the latest status.'
+      description: 'See the status of downloads you’ve requested'
     },
     search: {
       label: 'Find download'
@@ -2716,9 +2713,7 @@ export const en = {
       label: 'Uploads',
       title: 'Uploads',
       results: 'All uploads',
-      description: 'Upload child, cohort and vaccination records',
-      introduction:
-        'Use this page to upload child, class list and vaccination records.\n\nUpload times can vary. Refresh the page to see the latest status.'
+      description: 'Upload child, cohort and vaccination records'
     },
     search: {
       label: 'Find upload'

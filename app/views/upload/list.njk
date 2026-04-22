@@ -11,14 +11,10 @@
     title: title
   }) }}
 
-  <div class="nhsuk-u-reading-width">
-    {{ __("upload.list.introduction") | nhsukMarkdown }}
-
-    {{ actionLink({
-      text: __("upload.new.label"),
-      href: "/uploads/new"
-    }) }}
-  </div>
+  {{ actionLink({
+    text: __("upload.new.label"),
+    href: "/uploads/new"
+  }) }}
 
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
