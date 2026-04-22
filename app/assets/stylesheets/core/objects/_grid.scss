@@ -36,8 +36,3 @@
 .app-grid-column-results {
   @include nhsuk-grid-column(two-thirds, $at: desktop);
 }
-
-.app-grid-column-filters > .nhsuk-card--feature,
-.app-grid-column-results > .nhsuk-card--warning {
-  margin-top: nhsuk-spacing(3);
-}

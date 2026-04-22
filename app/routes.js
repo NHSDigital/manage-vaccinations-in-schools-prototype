@@ -27,8 +27,8 @@ import { parentRoutes } from './routes/parent.js'
 import { patientSessionRoutes } from './routes/patient-session.js'
 import { patientRoutes } from './routes/patient.js'
 import { pdsRecordRoutes } from './routes/pds-record.js'
-import { programmeRoutes } from './routes/programme.js'
 import { replyRoutes } from './routes/reply.js'
+import { reportRoutes } from './routes/report.js'
 import { reviewRoutes } from './routes/review.js'
 import { schoolRoutes } from './routes/school.js'
 import { sessionRoutes } from './routes/session.js'
@@ -61,7 +61,7 @@ router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/patients', patientRoutes)
 router.use('/pds', pdsRecordRoutes)
-router.use('/reports', programmeRoutes)
+router.use('/reports', reportRoutes)
 router.use('/reports/:programme_id/vaccinations', vaccinationRoutes)
 router.use(
   '/reports/:programme_id/vaccinations/:vaccination_uuid/patients',

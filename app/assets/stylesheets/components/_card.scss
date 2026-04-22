@@ -26,7 +26,10 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
     border-color: $_blue-border-colour;
     color: $_blue-text-colour;
     background-color: $_blue-background-colour;
-    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-colour;
+
+    &.nhsuk-card--clickable {
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-colour;
+    }
 
     &.nhsuk-card--clickable:hover,
     &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
@@ -46,7 +49,10 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
     border-color: $_green-border-colour;
     color: $_green-text-colour;
     background-color: $_green-background-colour;
-    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-colour;
+
+    &.nhsuk-card--clickable {
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-colour;
+    }
 
     &.nhsuk-card--clickable:hover,
     &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
@@ -66,7 +72,10 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
     border-color: $_orange-border-colour;
     color: $_orange-text-colour;
     background-color: $_orange-background-colour;
-    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-colour;
+
+    &.nhsuk-card--clickable {
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-colour;
+    }
 
     &.nhsuk-card--clickable:hover,
     &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
@@ -90,7 +99,10 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
     border-color: $_red-border-colour;
     color: $_red-text-colour;
     background-color: $_red-background-colour;
-    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-colour;
+
+    &.nhsuk-card--clickable {
+      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-colour;
+    }
 
     &.nhsuk-card--clickable:hover,
     &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
