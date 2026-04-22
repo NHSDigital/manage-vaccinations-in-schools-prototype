@@ -21,7 +21,6 @@ import { consentRoutes } from './routes/consent.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
 import { downloadRoutes } from './routes/download.js'
 import { homeRoutes } from './routes/home.js'
-import { interchangeRoutes } from './routes/interchange.js'
 import { moveRoutes } from './routes/move.js'
 import { noticeRoutes } from './routes/notice.js'
 import { parentRoutes } from './routes/parent.js'
@@ -30,6 +29,7 @@ import { patientRoutes } from './routes/patient.js'
 import { pdsRecordRoutes } from './routes/pds-record.js'
 import { programmeRoutes } from './routes/programme.js'
 import { replyRoutes } from './routes/reply.js'
+import { reviewRoutes } from './routes/review.js'
 import { schoolRoutes } from './routes/school.js'
 import { sessionRoutes } from './routes/session.js'
 import { teamRoutes } from './routes/team.js'
@@ -55,20 +55,19 @@ router.use('/clinic-bookings', clinicBookingRoutes) // original explorations of 
 router.use('/consents', consentRoutes)
 router.use('/downloads', downloadRoutes)
 router.use('/give-or-refuse-consent', parentRoutes)
-router.use('/interchange', interchangeRoutes)
 router.use('/moves', moveRoutes)
 router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/patients', patientRoutes)
 router.use('/pds', pdsRecordRoutes)
-router.use('/reports/download', downloadRoutes)
 router.use('/reports', programmeRoutes)
 router.use('/reports/:programme_id/vaccinations', vaccinationRoutes)
 router.use(
   '/reports/:programme_id/vaccinations/:vaccination_uuid/patients',
   patientRoutes
 )
+router.use('/reviews', reviewRoutes)
 router.use('/schools', schoolRoutes)
 router.use('/sessions/:session_id/consents', consentRoutes)
 router.use('/sessions/:session_id/default-batch', defaultBatchRoutes)

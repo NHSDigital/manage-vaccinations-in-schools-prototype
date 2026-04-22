@@ -1,5 +1,3 @@
-{% from "interchange/_navigation.njk" import interchangeNavigation with context %}
-
 {% extends "_layouts/form.njk" %}
 
 {% set gridColumns = "full" %}
@@ -9,8 +7,8 @@
 {% block form %}
   {{ super() }}
 
-  {{ interchangeNavigation({
-    view: "uploads"
+  {{ appHeading({
+    title: title
   }) }}
 
   <div class="nhsuk-u-reading-width">

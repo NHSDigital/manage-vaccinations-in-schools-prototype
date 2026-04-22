@@ -34,7 +34,6 @@ const data = {
   batches,
   clinicBookings,
   clinics,
-  counts: {},
   defaultBatches: {},
   downloads: {},
   features: {},
@@ -58,11 +57,17 @@ const data = {
 }
 
 // Statistics
-data.counts.consents = Consent.findAll(data).length
-data.counts.moves = Move.findAll(data).length
-data.counts.notices = Notice.findAll(data).filter(
-  ({ archivedAt }) => !archivedAt
-).length
-data.counts.sessions = Session.findAll(data).length
+const consentCount = Consent.findAll(data).length || 0
+const moveCount = Move.findAll(data).length || 0
+const noticeCount =
+  Notice.findAll(data).filter(({ archivedAt }) => !archivedAt).length || 0
+
+data.counts = {
+  consents: consentCount,
+  moves: moveCount,
+  notices: noticeCount,
+  review: consentCount + moveCount + noticeCount,
+  sessions: Session.findAll(data).length
+}
 
 export default data

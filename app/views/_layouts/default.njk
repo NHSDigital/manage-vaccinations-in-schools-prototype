@@ -49,32 +49,30 @@
           active: navigation.activeSection == "sessions"
         },
         {
-          href: "/vaccines",
-          text: __("vaccine.list.label"),
-          active: navigation.activeSection == "vaccines"
-        },
-        {
           classes: "app-header__navigation-item--with-count",
-          href: "/consents",
-          html: __("consent.list.label") + appCount(data.counts.consents),
-          active: navigation.activeSection == "consents"
-        },
-        {
-          classes: "app-header__navigation-item--with-count",
-          href: "/moves",
-          html: __("move.list.label") + appCount(data.counts.moves),
-          active: navigation.activeSection == "moves"
-        },
-        {
-          classes: 'app-header__navigation-item--with-count',
-          href: "/interchange",
-          html: __("interchange.list.label"),
-          active: navigation.activeSection in ["uploads", "downloads"]
+          href: "/reviews",
+          html: __("review.list.label") + appCount(data.counts.review),
+          active: navigation.activeSection == "reviews"
         },
         {
           href: "/reports",
           text: __("programme.list.label"),
           active: navigation.activeSection == "reports"
+        },
+        {
+          href: "/uploads",
+          text: __("upload.list.label"),
+          active: navigation.activeSection == "uploads"
+        },
+        {
+          href: "/downloads",
+          text: __("download.list.label"),
+          active: navigation.activeSection == "downloads"
+        },
+        {
+          href: "/vaccines",
+          text: __("vaccine.list.label"),
+          active: navigation.activeSection == "vaccines"
         },
         {
           href: team.uri,

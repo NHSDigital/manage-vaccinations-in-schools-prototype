@@ -51,10 +51,10 @@
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("vaccine.list.title"),
+        heading: __("review.list.title"),
         headingSize: "s",
-        href: "/vaccines",
-        description: __("vaccine.list.description")
+        href: "/reviews",
+        description: __("review.list.description")
       }) }}
     </li>
   </ul>
@@ -64,40 +64,40 @@
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("consent.list.title"),
-        headingSize: "xs",
-        href: "/consents",
-        description: __("consent.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: __("move.list.title"),
-        headingSize: "xs",
-        href: "/moves",
-        description: __("move.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: __("interchange.list.title"),
-        headingSize: "xs",
-        href: "/interchange",
-        description: __("interchange.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
         heading: __("programme.list.title"),
         headingSize: "xs",
         href: "/reports",
         descriptionHtml: __("programme.list.description") | nhsukMarkdown
+      }) }}
+    </li>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      {{ card({
+        clickable: true,
+        secondary: true,
+        heading: __("upload.list.title"),
+        headingSize: "xs",
+        href: "/uploads",
+        descriptionHtml: __("upload.list.description") | nhsukMarkdown
+      }) }}
+    </li>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      {{ card({
+        clickable: true,
+        secondary: true,
+        heading: __("download.list.title"),
+        headingSize: "xs",
+        href: "/downloads",
+        descriptionHtml: __("download.list.description") | nhsukMarkdown
+      }) }}
+    </li>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      {{ card({
+        clickable: true,
+        secondary: true,
+        heading: __("vaccine.list.title"),
+        headingSize: "xs",
+        href: "/vaccines",
+        description: __("vaccine.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">

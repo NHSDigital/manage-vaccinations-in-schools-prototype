@@ -12,6 +12,9 @@ export const navigation = (request, response, next) => {
   if (activeSection === 'programmes' && request.query.activity) {
     activeSection = 'sessions'
   }
+  if (['moves', 'notices', 'consents'].includes(activeSection)) {
+    activeSection = 'reviews'
+  }
 
   // Get programme sessions
   const sessions = Session.findAll(data)

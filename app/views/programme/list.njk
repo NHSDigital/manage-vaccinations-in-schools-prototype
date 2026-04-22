@@ -9,11 +9,6 @@
     title: title
   }) }}
 
-  {{ actionLink({
-    text: __("download.new.label"),
-    href: "/reports/download/new"
-  }) }}
-
   {% for year, programmes in programmes | reverse | groupby("year") %}
     {% set programmeRows = [] %}
 

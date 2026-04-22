@@ -1004,6 +1004,8 @@ export const en = {
       label: 'Downloads',
       title: 'Downloads',
       results: 'All downloads',
+      description:
+        'See the status of downloads you’ve requested elsewhere in Mavis',
       introduction:
         'Use this page to see the status of downloads you’ve requested elsewhere in Mavis.\n\nDownload times can vary. Refresh the page to see the latest status.'
     },
@@ -1206,9 +1208,9 @@ export const en = {
     }
   },
   notice: {
-    label: 'Notice',
+    label: 'Important notice',
     list: {
-      label: 'Notices',
+      label: 'Important notices',
       title: 'Important notices'
     },
     archive: {
@@ -1760,8 +1762,7 @@ export const en = {
     list: {
       label: 'Reports',
       title: 'Reports',
-      description:
-        'View the progress of vaccination programmes and download vaccination data'
+      description: 'View the progress of vaccination programmes'
     },
     show: {
       responses: 'Consent responses'
@@ -1942,6 +1943,14 @@ export const en = {
     },
     confirmed: {
       label: 'Confirm consent refusal?'
+    }
+  },
+  review: {
+    list: {
+      label: 'Review',
+      title: 'Review',
+      description:
+        'Review unmatched consent responses, school moves and important notices'
     }
   },
   school: {
@@ -2555,7 +2564,7 @@ export const en = {
   },
   team: {
     show: {
-      label: 'Team',
+      label: 'Your team',
       title: 'Your team',
       description: 'Manage your team’s settings'
     },

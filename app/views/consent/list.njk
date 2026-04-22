@@ -1,3 +1,5 @@
+{% from "review/_navigation.njk" import reviewNavigation with context %}
+
 {% extends "_layouts/default.njk" %}
 
 {% set title = __("consent.list.title") %}
@@ -20,8 +22,8 @@
 {% block content %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ reviewNavigation({
+    view: "consent"
   }) }}
 
   {% set consentRows = [] %}
@@ -59,9 +61,8 @@
       id: "consents",
       responsive: true,
       card: {
-        feature: true,
         heading: __mf("consent.count", { count: consents.length }),
-        headingLevel: 2
+        headingLevel: 3
       },
       head: [
         { text: __("consent.summary.label") },

@@ -1,0 +1,33 @@
+{% from "_macros/count.njk" import appCount %}
+{% from "_macros/heading.njk" import appHeading %}
+{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+
+{% macro reviewNavigation(params) %}
+  {{ appHeading({
+    title: __("review.list.title")
+  }) }}
+
+  {{ appSecondaryNavigation({
+    items: [
+      {
+        text: __("notice.list.label") + appCount(data.counts.notices),
+        href: "/notices",
+        current: params.view == "notice"
+      },
+      {
+        text: __("consent.list.label") + appCount(data.counts.consents),
+        href: "/consents",
+        current: params.view == "consent"
+      },
+      {
+        text: __("move.list.label") + appCount(data.counts.moves),
+        href: "/moves",
+        current: params.view == "move"
+      }
+    ]
+  }) }}
+
+  <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">
+    {{ __(params.view + ".list.title") }}
+  </h2>
+{% endmacro %}

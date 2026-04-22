@@ -1,3 +1,5 @@
+{% from "review/_navigation.njk" import reviewNavigation with context %}
+
 {% extends "_layouts/form.njk" %}
 
 {% set gridColumns = "full" %}
@@ -7,8 +9,8 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ reviewNavigation({
+    view: "move"
   }) }}
 
   <div class="nhsuk-u-reading-width">
@@ -63,9 +65,8 @@
       id: "moves",
       responsive: true,
       card: {
-        feature: true,
         heading: __mf("move.count", { count: moves.length }),
-        headingLevel: 2
+        headingLevel: 3
       },
       head: [
         { text: __("move.createdAt.label") },
