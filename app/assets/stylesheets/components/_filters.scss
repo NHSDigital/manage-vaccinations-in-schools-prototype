@@ -3,6 +3,7 @@
 
 .app-filters {
   &.nhsuk-card {
+    margin-top: nhsuk-spacing(3);
     background-color: color.scale(nhsuk-colour("grey-4"), $alpha: -50%);
 
     @include nhsuk-responsive-padding(4, "left");

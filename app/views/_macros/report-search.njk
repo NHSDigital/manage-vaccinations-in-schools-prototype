@@ -1,0 +1,63 @@
+{%- from "x-nhsuk/decorated/button/macro.njk" import button with context %}
+{%- from "x-nhsuk/decorated/checkboxes/macro.njk" import checkboxes with context %}
+{%- from "x-nhsuk/decorated/date-input/macro.njk" import dateInput with context %}
+{%- from "x-nhsuk/decorated/radios/macro.njk" import radios with context %}
+{%- from "nhsuk/components/button/macro.njk" import button with context -%}
+{%- from "nhsuk/components/card/macro.njk" import card with context -%}
+{%- from "nhsuk/components/details/macro.njk" import details with context -%}
+{%- from "_macros/button-group.njk" import appButtonGroup with context -%}
+{%- from "_macros/search-input.njk" import appSearchInput with context -%}
+
+{% macro appReportSearch(params) %}
+  {% call card({
+    classes: "app-filters",
+    feature: true,
+    heading: __("report.search.label") ,
+    headingLevel: 3
+  }) %}
+    {{ radios({
+      fieldset: {
+        legend: {
+          classes: "nhsuk-fieldset__legend--s",
+          text: __("report.programme.label")
+        }
+      },
+      small: true,
+      items: programmeItems,
+      decorate: "programme_id"
+    })}}
+
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          classes: "nhsuk-fieldset__legend--s",
+          text: __("report.gender.label")
+        }
+      },
+      small: true,
+      items: checkboxFilterItems(Gender),
+      decorate: "gender"
+    }) }}
+
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          classes: "nhsuk-fieldset__legend--s",
+          text: __("report.yearGroup.label")
+        }
+      },
+      small: true,
+      items: yearGroupItems,
+      decorate: "yearGroup"
+    }) }}
+
+    {{ appButtonGroup({
+      buttons: [{
+        text: __("search.clear"),
+        href: params.clear or "/reports",
+        small: true,
+        variant: "secondary"
+      } if data.programme_id or data.gender != "none" or data.yearGroup != "none"]
+    }) }}
+  {% endcall %}
+{% endmacro %}

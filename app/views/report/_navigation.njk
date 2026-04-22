@@ -1,0 +1,39 @@
+{% from "_macros/count.njk" import appCount %}
+{% from "_macros/heading.njk" import appHeading %}
+{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+
+{% macro reportNavigation(params) %}
+  {{ appHeading({
+    title: __("report.list.title"),
+    summary: __("report.list.summary")
+  }) }}
+
+  {{ appSecondaryNavigation({
+    items: [
+      {
+        text: __("report.vaccinations.label"),
+        href: "/reports/vaccinations",
+        current: params.view == "vaccinations"
+      },
+      {
+        text: __("report.consent.label"),
+        href: "/reports/consent",
+        current: params.view == "consent"
+      },
+      {
+        text: __("report.schools.label"),
+        href: "/reports/schools",
+        current: params.view == "schools"
+      },
+      {
+        text: __("report.local-authorities.label"),
+        href: "/reports/local-authorities",
+        current: params.view == "local-authorities"
+      }
+    ]
+  }) }}
+
+  <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">
+    {{ __(params.view + ".list.title") }}
+  </h2>
+{% endmacro %}

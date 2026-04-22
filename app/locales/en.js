@@ -10,6 +10,8 @@ import {
   UploadStatus
 } from '../enums.js'
 
+const thisAcademicYear = Object.values(AcademicYear).at(-1)
+
 /**
  * @returns {import("i18n").LocaleCatalog}
  */
@@ -1022,7 +1024,7 @@ export const en = {
       title: 'Download %s',
       confirm: 'Download %s',
       description: {
-        [DownloadType.Cohort]: `Download vaccination data for the ${Object.values(AcademicYear).at(-1)} academic year so far.\n\nThis data was last updated on %s.`,
+        [DownloadType.Cohort]: `Download vaccination data for the ${thisAcademicYear} academic year so far.\n\nThis data was last updated on %s.`,
         [DownloadType.Moves]:
           'Download a record of school moves as a CSV file. Only school moves that have been reviewed and confirmed will be included.',
         [DownloadType.Report]:
@@ -1783,23 +1785,54 @@ export const en = {
     }
   },
   programme: {
-    label: 'Programme',
+    label: 'Programme'
+  },
+  report: {
+    label: 'Report',
     list: {
       label: 'Reports',
       title: 'Reports',
-      description: 'View the progress of vaccination programmes'
+      description: 'View the progress of vaccination programmes',
+      summary: `For the ${thisAcademicYear} academic year so far`,
+      updated: 'This data was last updated on **%s at 10pm**.'
     },
-    show: {
-      responses: 'Consent responses'
+    vaccinations: {
+      label: 'Vaccinations',
+      title: 'Vaccinations',
+      team: 'Monthly vaccinations by %s'
+    },
+    consent: {
+      label: 'Consent',
+      title: 'Consent'
+    },
+    schools: {
+      label: 'Schools',
+      title: 'Schools'
+    },
+    'local-authorities': {
+      label: 'Local authorities',
+      title: 'Local authorities'
+    },
+    search: {
+      label: 'Filter data'
     },
     patients: {
       label: 'Children'
+    },
+    programme: {
+      label: 'Programme'
+    },
+    gender: {
+      label: 'Gender'
     },
     name: {
       label: 'Programme'
     },
     type: {
       label: 'Programme type'
+    },
+    yearGroup: {
+      label: 'Year group'
     }
   },
   remind: {
