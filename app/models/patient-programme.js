@@ -186,6 +186,11 @@ export class PatientProgramme {
     }
 
     // Check various disqualifying conditions to see whether the child's ready to invite to clinic...
+
+    // Not old enough for this programme?
+    if (!this.eligible) {
+      return false
+    }
     if (lastPatientSession) {
       const { report, screen, consent, triageNotes } = lastPatientSession
       // Already vaccinated?
@@ -209,10 +214,6 @@ export class PatientProgramme {
       ) {
         return false
       }
-    }
-    // Not old enough for this programme?
-    if (!this.eligible) {
-      return false
     }
     // Child's school session for this academic year hasn't happened yet?
     // (Remember that patient may have only recently moved to the school.)
