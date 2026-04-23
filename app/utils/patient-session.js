@@ -162,11 +162,19 @@ export const getReportOutcome = (patientSession) => {
     [
       ConsentOutcome.NotDelivered,
       ConsentOutcome.NoResponse,
-      ConsentOutcome.NoResponse,
-      ConsentOutcome.Declined
+      ConsentOutcome.NoResponse
     ].includes(patientSession.consent)
   ) {
     return PatientStatus.Consent
+  } else if (
+    [
+      ConsentOutcome.Declined,
+      ConsentOutcome.Inconsistent,
+      ConsentOutcome.Refused,
+      ConsentOutcome.FinalRefusal
+    ].includes(patientSession.consent)
+  ) {
+    return PatientStatus.Refused
   }
 
   return PatientStatus.Ineligible

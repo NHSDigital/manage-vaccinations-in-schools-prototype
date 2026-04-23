@@ -2,7 +2,6 @@ import {
   ConsentOutcome,
   DownloadStatus,
   InstructionOutcome,
-  PatientConsentStatus,
   PatientStatus,
   RegistrationOutcome,
   ReplyDecision,
@@ -98,9 +97,6 @@ export function getPatientConsentStatus(patientConsent) {
     case PatientConsentStatus.NoDetails:
     case PatientConsentStatus.NotDelivered:
       colour = 'orange'
-      break
-    case PatientConsentStatus.FollowUp:
-      colour = 'yellow'
       break
     case ConsentOutcome.Refused:
       colour = 'red'

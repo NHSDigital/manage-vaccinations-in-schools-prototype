@@ -43,7 +43,6 @@ import {
 import {
   getConsentOutcomeStatus,
   getInstructionOutcomeStatus,
-  getPatientConsentStatus,
   getRegistrationStatus,
   getScreenOutcomeStatus,
   getVaccinationOutcomeStatus
@@ -492,7 +491,7 @@ export class PatientSession {
       case ConsentOutcome.NoResponse:
         return PatientConsentStatus.NoResponse
       case ConsentOutcome.Declined:
-        return PatientConsentStatus.FollowUp
+        return PatientRefusedStatus.FollowUp
       case ConsentOutcome.Refused:
         return PatientRefusedStatus.Refusal
     }
@@ -537,6 +536,8 @@ export class PatientSession {
     switch (this.consent) {
       case ConsentOutcome.Inconsistent:
         return PatientRefusedStatus.Conflict
+      case ConsentOutcome.Declined:
+        return PatientRefusedStatus.FollowUp
       case ConsentOutcome.Refused:
       case ConsentOutcome.FinalRefusal:
         return PatientRefusedStatus.Refusal
@@ -828,7 +829,6 @@ export class PatientSession {
   get status() {
     return {
       consent: getConsentOutcomeStatus(this.consent),
-      patientConsent: getPatientConsentStatus(this.patientConsent),
       screen: getScreenOutcomeStatus(this.screen),
       instruct: getInstructionOutcomeStatus(this.instruct),
       register: getRegistrationStatus(this.register),
@@ -855,8 +855,7 @@ export class PatientSession {
 
     return {
       programme: this.programme?.nameTag,
-      consent: formatTag(this.status.consent),
-      patientConsent: formatTag(this.status.patientConsent),
+      consent: this.consent && formatTag(this.status.consent),
       screen: this.screen && formatTag(this.status.screen),
       instruct: this.session?.psdProtocol && formatTag(this.status.instruct),
       register: formatTag(this.status.register),

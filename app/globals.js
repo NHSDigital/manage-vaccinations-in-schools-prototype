@@ -435,8 +435,8 @@ export default () => {
       },
       followUp: {
         view: 'report',
-        key: 'patientConsent',
-        value: PatientConsentStatus.FollowUp
+        key: 'patientRefused',
+        value: PatientRefusedStatus.FollowUp
       },
       resolveConsent: {
         view: 'report',
