@@ -331,8 +331,7 @@ export const PatientConsentStatus = {
   Scheduled: 'Request scheduled',
   NoDetails: 'No contact details',
   NotDelivered: 'Request failed',
-  NoResponse: 'No response',
-  FollowUp: 'Follow-up requested'
+  NoResponse: 'No response'
 }
 
 /**
@@ -352,6 +351,7 @@ export const PatientDueStatus = {
  */
 export const PatientRefusedStatus = {
   Conflict: 'Conflicting consent',
+  FollowUp: 'Follow-up requested',
   Refusal: 'Consent refused'
 }
 
