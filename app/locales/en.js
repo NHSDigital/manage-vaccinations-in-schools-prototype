@@ -1372,8 +1372,12 @@ export const en = {
       label: 'Last reminder sent'
     },
     count: '{count, plural, =0 {No children} one {1 child} other {# children}}',
-    results:
-      '{count, plural, =0 {No children matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> record} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> children}}',
+    results: {
+      summary:
+        '{count, plural, =0 {No children matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> record} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> children}}',
+      inviteToClinic:
+        '{count, plural, one {Invite 1 child to clinic} other {Invite {count} children to clinic}}'
+    },
     search: {
       label: 'Find children',
       dob: 'Child’s date of birth',

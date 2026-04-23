@@ -123,6 +123,8 @@ export const patientController = {
 
     // Filter by programme clinic status
     if (filters.clinicStatus && filters.clinicStatus !== 'none') {
+      response.locals.showingClinicReady =
+        filters.clinicStatus === PatientClinicStatus.Ready
       if (programme_id) {
         // Patient must have the selected clinic status for any of the selected programmes (if
         // there's a selected programme), or for *any* programme if not
