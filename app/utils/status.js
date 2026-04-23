@@ -19,7 +19,6 @@ import {
  */
 export function getConsentOutcomeStatus(consent) {
   let colour
-  let icon
   switch (consent) {
     case ConsentOutcome.NoResponse:
       colour = 'grey'
@@ -27,32 +26,26 @@ export function getConsentOutcomeStatus(consent) {
     case ConsentOutcome.NotDelivered:
     case ConsentOutcome.Inconsistent:
       colour = 'orange'
-      icon = 'cross'
       break
     case ConsentOutcome.Given:
     case ConsentOutcome.GivenForAlternativeInjection:
     case ConsentOutcome.GivenForIntranasal:
       colour = 'green'
-      icon = 'tick'
       break
     case ConsentOutcome.Declined:
       colour = 'yellow'
-      icon = 'info'
       break
     case ConsentOutcome.Refused:
       colour = 'red'
-      icon = 'cross'
       break
     case ConsentOutcome.FinalRefusal:
       colour = 'red'
-      icon = 'cross'
       break
     default:
   }
 
   return {
     colour,
-    icon,
     text: consent
   }
 }
@@ -76,39 +69,6 @@ export function getDownloadStatus(status) {
   return {
     colour,
     text: status
-  }
-}
-
-/**
- * Get consent outcome status properties
- *
- * @param {PatientConsentStatus} patientConsent - Patient consent status
- * @returns {object} Status properties
- */
-export function getPatientConsentStatus(patientConsent) {
-  let colour
-  let text = patientConsent
-  switch (patientConsent) {
-    case PatientConsentStatus.NoResponse:
-    case PatientConsentStatus.NotScheduled:
-    case PatientConsentStatus.Scheduled:
-      colour = 'grey'
-      break
-    case PatientConsentStatus.NoDetails:
-    case PatientConsentStatus.NotDelivered:
-      colour = 'orange'
-      break
-    case ConsentOutcome.Refused:
-      colour = 'red'
-      break
-    default:
-      text = ConsentOutcome.Given
-      colour = 'green'
-  }
-
-  return {
-    colour,
-    text
   }
 }
 
