@@ -103,7 +103,8 @@ export const ConsentWindow = {
 export const DownloadFormat = {
   CSV: 'CSV',
   CarePlus: 'XLSX for CarePlus (System C)',
-  SystmOne: 'XLSX for SystmOne (TPP)'
+  SystmOne: 'XLSX for SystmOne (TPP)',
+  XLSX: 'XLSX'
 }
 
 /**
@@ -134,7 +135,7 @@ export const DownloadType = {
   Cohort: 'Aggregate vaccination and consent data',
   Moves: 'School moves',
   Report: 'Child-level vaccination data',
-  Session: 'Offline session'
+  Session: 'Session spreadsheet'
 }
 
 /**

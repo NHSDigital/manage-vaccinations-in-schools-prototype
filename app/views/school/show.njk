@@ -62,16 +62,9 @@
         }) | safe
       }) }}
 
-      {{ button({
-        text: __("session.offline.confirm"),
-        small: true,
-        variant: "secondary",
-        value: DownloadType.Session,
-        decorate: "download.type",
-        attributes: {
-          formaction: "/downloads/new?referrer=" + school.uri,
-          formmethod: "post"
-        }
+      {{ actionLink({
+        text: __("school.download.label"),
+        href: school.uri + "/download?referrer=" + school.uri
       }) if data.invitedToClinic and results.count > 0 }}
 
       {% for patient in results.page %}

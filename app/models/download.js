@@ -3,7 +3,14 @@ import { addSeconds } from 'date-fns'
 import xlsx from 'json-as-xlsx'
 
 import { DownloadFormat, DownloadStatus, DownloadType } from '../enums.js'
-import { Programme, Session, Team, Vaccination, User } from '../models.js'
+import {
+  Programme,
+  School,
+  Session,
+  Team,
+  Vaccination,
+  User
+} from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -12,7 +19,12 @@ import {
   today
 } from '../utils/date.js'
 import { getDownloadStatus } from '../utils/status.js'
-import { formatList, formatProgress, formatTag } from '../utils/string.js'
+import {
+  formatList,
+  formatProgress,
+  formatTag,
+  stringToBoolean
+} from '../utils/string.js'
 
 /**
  * @class Vaccination report download
@@ -29,9 +41,12 @@ import { formatList, formatProgress, formatTag } from '../utils/string.js'
  * @property {object} [endAt_] - Date to end report (from `dateInput`)
  * @property {DownloadFormat} [format] - Downloaded file format
  * @property {DownloadType} [type] - Download type
+ * @property {boolean} [recordOffline] - Include columns for recording offline
  * @property {Array<import('../enums.js').DownloadVariable>} [variables] - Download variables
  * @property {number} [academicYear] - Programme year
  * @property {string} [programme_id] - Programme ID
+ * @property {string} [school_id] - School ID
+ * @property {string} [session_id] - Session ID
  * @property {Array<string>} [team_ids] - Team IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
@@ -67,6 +82,8 @@ export class Download {
     }
 
     if (this.type === DownloadType.Session) {
+      this.recordOffline = stringToBoolean(options?.recordOffline)
+      this.school_id = options?.school_id
       this.session_id = options?.session_id
     }
   }
@@ -159,10 +176,12 @@ export class Download {
         return `School moves (${this.formatted.createdAt})`
       case this.type === DownloadType.Report:
         return `${this.programme?.name} vaccination records (${this.formatted.startEndAt})`
+      case this.type === DownloadType.Session && !!this.session_id:
+        return `Session spreadsheet for ${this.session?.shortName}`
+      case this.type === DownloadType.Session && !!this.school_id:
+        return `Session spreadsheet for ${this.school?.name}`
       case this.type === DownloadType.Session:
-        return this.session?.clinic
-          ? `Offline spreadsheet for ${this.session?.clinic?.name}`
-          : `Offline spreadsheet for ${this.session?.school?.name}`
+        return `Session spreadsheet`
       default:
         return 'Download'
     }
@@ -181,6 +200,19 @@ export class Download {
       }
     } catch (error) {
       console.error('Download.programme', error.message)
+    }
+  }
+
+  /**
+   * Get school
+   *
+   * @returns {School|undefined} School
+   */
+  get school() {
+    try {
+      return School.findOne(this.school_id, this.context)
+    } catch (error) {
+      console.error('Download.school', error.message)
     }
   }
 
@@ -411,14 +443,15 @@ export class Download {
         this.status === DownloadStatus.Processing
           ? formatProgress(this.progress)
           : formatTag(getDownloadStatus(this.status)),
-      clinic: this.session?.clinic && this.session.clinic.name,
-      school: this.session?.school && this.session.school.name,
       programme: this.programme?.nameTag,
       teams:
         this.teams?.length > 0
           ? formatList(this.teams.map(({ name }) => name))
           : this.teams.length,
-      vaccinations: `${this.vaccinations?.length} records`
+      vaccinations: `${this.vaccinations?.length} records`,
+      ...(this.type === DownloadType.Session && {
+        recordOffline: this.recordOffline === true ? 'Yes' : 'No'
+      })
     }
   }
 

@@ -79,8 +79,8 @@
     }) }}
 
     {{ actionLink({
-      text: __("session.offline.title"),
-      href: session.uri + "/offline"
+      text: __("session.download.label"),
+      href: session.uri + "/download?referrer=" + session.uri
     }) if session.isPlanned or session.isActive }}
   {% endcall %}
 {% endblock %}

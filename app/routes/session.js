@@ -1,6 +1,8 @@
 import express from 'express'
 
+import { downloadController as download } from '../controllers/download.js'
 import { sessionController as session } from '../controllers/session.js'
+import { DownloadType } from '../enums.js'
 
 const router = express.Router({ strict: true })
 
@@ -10,6 +12,8 @@ router.post('/', session.filter)
 router.get('/new', session.new)
 
 router.param('session_id', session.read)
+
+router.get('/:session_id/download', download.new(DownloadType.Session))
 
 router.all('/:session_id/new/:view', session.readForm('new'))
 router.get('/:session_id/new/:view', session.showForm)

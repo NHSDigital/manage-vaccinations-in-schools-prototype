@@ -16,8 +16,9 @@ router.get('/:download_id/new/:view', download.showForm)
 router.post(
   [
     '/:download_id/new/cohort',
+    '/:download_id/new/moves',
     '/:download_id/new/report',
-    '/:download_id/new/moves'
+    '/:download_id/new/session'
   ],
   download.updateForm,
   download.update

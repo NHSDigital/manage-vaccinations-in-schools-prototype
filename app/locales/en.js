@@ -1028,7 +1028,9 @@ export const en = {
         [DownloadType.Moves]:
           'Download a record of school moves as a CSV file. Only school moves that have been reviewed and confirmed will be included.',
         [DownloadType.Report]:
-          'Full vaccination details for individual children. Only includes vaccinations given by your team.'
+          'Full vaccination details for individual children. Only includes vaccinations given by your team.',
+        [DownloadType.Session]:
+          'Download a record of all children in this session as an XLSX file.\n\nYou can include extra columns to record vaccinations offline. You can then upload a completed spreadsheet as Vaccination records in the Uploads area.'
       }
     },
     createdAt: {
@@ -1085,6 +1087,16 @@ export const en = {
           'A record of school moves. Only includes school moves that have been reviewed and confirmed.',
         [DownloadType.Report]:
           'Full vaccination details for individual children. Only includes vaccinations given by your team.'
+      }
+    },
+    recordOffline: {
+      label: 'Record offline?',
+      title: 'Do you want to use this spreadsheet for offline recording?',
+      yes: {
+        label: 'Yes'
+      },
+      no: {
+        label: 'No'
       }
     },
     variables: {
@@ -2059,6 +2071,9 @@ export const en = {
       yes: 'Yes, I want to add this school',
       no: 'No, I want to add a different school'
     },
+    download: {
+      label: 'Download session spreadsheet'
+    },
     inviteToClinic: {
       title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
@@ -2517,16 +2532,8 @@ export const en = {
         'Do you want to register children’s attendance before recording vaccinations?',
       label: 'Register attendance'
     },
-    offline: {
-      title: 'Record offline',
-      description:
-        'If the internet connection at the vaccination session is unreliable, you can record offline using a spreadsheet.\n\nYou need to download the blank spreadsheet ahead of the session while you still have internet access.\n\nTo upload a completed spreadsheet, go to the ‘Vaccinations’ area. You also need an internet connection to upload the spreadsheet.',
-      confirm: 'Download offline spreadsheet',
-      vaccinator: {
-        label: 'Vaccinator',
-        firstName: 'First name',
-        lastName: 'Last name'
-      }
+    download: {
+      label: 'Download session spreadsheet'
     },
     inviteToClinic: {
       title: 'Invite parents to book a clinic appointment',

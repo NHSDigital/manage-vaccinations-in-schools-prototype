@@ -1,6 +1,6 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
-import { AcademicYear, DownloadType } from '../enums.js'
+import { AcademicYear, DownloadFormat, DownloadType } from '../enums.js'
 import { Download, Programme, Team } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -64,6 +64,7 @@ export const downloadController = {
 
   new(type) {
     return (request, response) => {
+      const { school_id, session_id } = request.params
       const { account } = request.app.locals
       const { data } = request.session
 
@@ -72,11 +73,20 @@ export const downloadController = {
         data.wizard
       )
 
-      if (type) {
-        download.type = type
-        response.redirect(`${download.uri}/new/moves`)
-      } else {
-        response.redirect(`${download.uri}/new/type`)
+      switch (type) {
+        case DownloadType.Moves:
+          download.type = type
+          response.redirect(`${download.uri}/new/moves`)
+          break
+        case DownloadType.Session:
+          download.type = type
+          download.format = DownloadFormat.XLSX
+          download.school_id = school_id
+          download.session_id = session_id
+          response.redirect(`${download.uri}/new/session`)
+          break
+        default:
+          response.redirect(`${download.uri}/new/type`)
       }
     }
   },
@@ -147,6 +157,17 @@ export const downloadController = {
         text: programme.name,
         value: programme.type
       }))
+
+    response.locals.recordOfflineItems = [
+      {
+        text: __('download.recordOffline.yes.label'),
+        value: true
+      },
+      {
+        text: __('download.recordOffline.no.label'),
+        value: false
+      }
+    ]
 
     response.locals.teamItems = Team.findAll(data)?.map((team) => ({
       text: team.name,

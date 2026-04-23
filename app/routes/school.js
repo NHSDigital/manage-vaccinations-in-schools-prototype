@@ -1,6 +1,8 @@
 import express from 'express'
 
+import { downloadController as download } from '../controllers/download.js'
 import { schoolController as school } from '../controllers/school.js'
+import { DownloadType } from '../enums.js'
 
 const router = express.Router({ strict: true })
 
@@ -11,6 +13,8 @@ router.get('/new', school.new('school'))
 router.get('/new-site', school.new('site'))
 
 router.param('school_id', school.read)
+
+router.get('/:school_id/download', download.new(DownloadType.Session))
 
 router.all('/:school_id/new/:view', school.readForm('new'))
 router.get('/:school_id/new/:view', school.showForm)
