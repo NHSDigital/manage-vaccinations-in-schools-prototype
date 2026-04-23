@@ -2746,7 +2746,7 @@ export const en = {
       label: 'Uploads',
       title: 'Uploads',
       results: 'All uploads',
-      description: 'Upload child, cohort and vaccination records'
+      description: 'Upload cohort, class list and vaccination records'
     },
     search: {
       label: 'Find upload'

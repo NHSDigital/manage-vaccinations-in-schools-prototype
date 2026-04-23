@@ -660,7 +660,7 @@ export const TeamDefaults = {
  * @enum {string}
  */
 export const UploadType = {
-  Cohort: 'Child records',
+  Cohort: 'Cohort records',
   School: 'Class list records',
   Report: 'Vaccination records'
 }
