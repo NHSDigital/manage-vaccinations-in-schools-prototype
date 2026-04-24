@@ -833,7 +833,7 @@ export const sessionController = {
           patientSession.removeFromSession({
             createdBy_uid: account.uid
           })
-          const clinicPatientSession = PatientSession.create(
+          let clinicPatientSession = PatientSession.create(
             {
               createdBy_uid: account.uid,
               patient_uuid: patientSession.patient_uuid,
@@ -842,6 +842,7 @@ export const sessionController = {
             },
             data
           )
+          clinicPatientSession = new PatientSession(clinicPatientSession, data)
           patientSession.patient.addToSession(clinicPatientSession)
 
           Patient.update(
