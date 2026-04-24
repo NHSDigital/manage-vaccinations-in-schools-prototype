@@ -93,8 +93,7 @@ export const schoolController = {
   },
 
   readPatients(request, response, next) {
-    const { invitedToClinic, option, programme_id, q, yearGroup } =
-      request.query
+    const { option, programme_id, q, yearGroup } = request.query
     const { data } = request.session
     const { school } = response.locals
 
@@ -126,6 +125,7 @@ export const schoolController = {
     // Filter defaults
     const filters = {
       report: request.query.report || 'none',
+      clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
       patientRefused: request.query.patientRefused || 'none',
@@ -143,17 +143,23 @@ export const schoolController = {
       )
     }
 
-    // Filter by programme clinic invitations
-    if (programme_id && invitedToClinic === 'true') {
-      results = results.filter(
-        (patient) => patient.programmes[programme_id]?.invitedToClinic
-      )
-    } else if (invitedToClinic === 'true') {
-      results = results.filter((patient) =>
-        Object.values(patient.programmes).some(
-          (programme) => programme.invitedToClinic
+    // Filter by programme clinic status
+    if (filters.clinicStatus && filters.clinicStatus !== 'none') {
+      if (programme_id) {
+        results = results.filter((patient) =>
+          programme_ids.some(
+            (programme_id) =>
+              patient.programmes[programme_id]?.clinicStatus ===
+              filters.clinicStatus
+          )
         )
-      )
+      } else {
+        results = results.filter((patient) =>
+          Object.values(patient.programmes).some(
+            (programme) => programme.clinicStatus === filters.clinicStatus
+          )
+        )
+      }
     }
 
     // Filter by status
@@ -234,7 +240,7 @@ export const schoolController = {
     }))
 
     // Clean up session data
-    delete data.invitedToClinic
+    delete data.clinicStatus
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
@@ -255,7 +261,7 @@ export const schoolController = {
     const params = new URLSearchParams()
 
     // Radios and text inputs
-    for (const key of ['q', 'report']) {
+    for (const key of ['q', 'report', 'clinicStatus']) {
       const value = request.body[key]
       if (value) {
         params.append(key, String(value))
@@ -264,7 +270,6 @@ export const schoolController = {
 
     // Checkboxes
     for (const key of [
-      'invitedToClinic',
       'option',
       'patientConsent',
       'patientDeferred',
