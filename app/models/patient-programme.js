@@ -192,9 +192,20 @@ export class PatientProgramme {
       return false
     }
     if (lastPatientSession) {
-      const { report, screen, consent, triageNotes } = lastPatientSession
+      const { report, screen, triageNotes } = lastPatientSession
       // Already vaccinated?
       if (report === PatientStatus.Vaccinated) {
+        return false
+      }
+      // Refused consent?
+      if (report === PatientStatus.Refused) {
+        return false
+      }
+      // Need consent, but no contact details?
+      if (
+        report === PatientStatus.Consent &&
+        lastPatientSession.patientConsent === PatientConsentStatus.NoDetails
+      ) {
         return false
       }
       // Triaged as not safe to vaccinate?
@@ -205,12 +216,6 @@ export class PatientProgramme {
       if (
         screen === ScreenOutcome.DelayVaccination &&
         triageNotes?.at(-1)?.outcomeAt > today()
-      ) {
-        return false
-      }
-      // Refused consent?
-      if (
-        [ConsentOutcome.Refused, ConsentOutcome.FinalRefusal].includes(consent)
       ) {
         return false
       }
