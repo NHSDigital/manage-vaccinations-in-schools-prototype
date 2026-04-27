@@ -2,6 +2,7 @@ import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import _ from 'lodash'
 
 import { ordinal } from './utils/number.js'
+import { queryToQueryString } from './utils/querystring.js'
 import {
   formatHighlight,
   formatList,
@@ -181,6 +182,16 @@ export default (env) => {
    */
   filters.removeEmpty = (array) => {
     return array.filter((item) => item !== '')
+  }
+
+  /**
+   * Rebuild the querystring from the request.query object
+   *
+   * @param {object} query - the request.query object
+   * @returns {string} - the rebuilt query string
+   */
+  filters.asQueryString = function (query) {
+    return queryToQueryString(query)
   }
 
   return filters

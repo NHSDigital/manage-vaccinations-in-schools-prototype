@@ -10,6 +10,7 @@ import {
   Impairment,
   NoticeType,
   NotifyEmailStatus,
+  PatientClinicStatus,
   VaccinationOutcome
 } from '../enums.js'
 import {
@@ -350,6 +351,17 @@ export class Patient extends Child {
   }
 
   /**
+   * Get the IDs of programmes for which this patient can be invited to clinic
+   *
+   * @returns {Array<string>} the IDs of programmes for which this patient is clinic-ready
+   */
+  get clinicReadyProgramme_ids() {
+    return Object.values(this.programmes)
+      .filter(({ clinicStatus }) => clinicStatus === PatientClinicStatus.Ready)
+      .map(({ programme_id }) => programme_id)
+  }
+
+  /**
    * Get replies
    *
    * @returns {Array<Reply>} Replies
@@ -668,6 +680,10 @@ export class Patient extends Child {
    * @param {Array<string>} programme_ids - The programmes for which the child's invited
    */
   inviteToClinic(programme_ids) {
+    this.clinicProgramme_ids = [
+      ...new Set(this.clinicProgramme_ids.concat(programme_ids))
+    ]
+
     for (const parent of this.parents) {
       this.addEvent({
         name: activity.notify['invite-clinic'](parent),

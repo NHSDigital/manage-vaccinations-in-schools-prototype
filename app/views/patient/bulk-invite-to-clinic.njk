@@ -1,0 +1,26 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("patient.bulkInviteToClinic.title") %}
+{% set confirmButtonText = __("patient.bulkInviteToClinic.confirm") %}
+{% set formAction = "invite-to-clinic" + query | asQueryString %}
+
+{% block form %}
+  {{ appHeading({
+    caption: __mf("patient.bulkInviteToClinic.caption", { count: data.clinicPatient_ids.length }),
+    title: title
+  }) }}
+
+  {# e.g. 271 children can be invited to clinic for HPV, MenACWY, or Td/IPV programmes. #}
+  {{ cohortSummary | nhsukMarkdown }}
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        text: __("patient.bulkInviteToClinic.programme.label"),
+        size: "m"
+      }
+    },
+    items: checkboxItems,
+    decorate: "clinicProgramme_ids"
+  }) }}
+{% endblock %}

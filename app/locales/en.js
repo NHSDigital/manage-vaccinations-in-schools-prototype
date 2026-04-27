@@ -1358,6 +1358,31 @@ export const en = {
       success:
         '{{patientName}} has been invited to attend a clinic for {{selectedProgrammes}} vaccination'
     },
+    bulkInviteToClinic: {
+      title: 'Invite parents to book a clinic appointment',
+      caption:
+        '{count, plural, one {1 child selected} other {{count} children selected}}',
+      childrenFragment:
+        '{count, plural, =0 {No children} one {1 child} other {{count} children}}',
+      programmesFragment:
+        '{count, plural, one {the {programmeNames} programme} other {the {programmeNames} programmes}}',
+      anyProgrammesFragment: 'at least one programme',
+      cohortSummary:
+        '{{children}} can be invited to clinic for {{programmes}}.',
+      programme: {
+        label: 'Which programmes do you want to send invitations for?',
+        hint: {
+          children:
+            '{count, plural, one {1 child can be invited for {programmeName}} other {{count} children can be invited for {programmeName}}}',
+          clinics:
+            '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {{count} clinics are scheduled for {programmeName}}}',
+          combined: '{{childrenHint}}<br>{{clinicsHint}}'
+        }
+      },
+      confirm: 'Send clinic invitations',
+      success:
+        '{count, plural, one {1 child has been invited to clinic} other {{count} children have been invited to clinic}}'
+    },
     auditEvents: {
       label: 'Activity log'
     },

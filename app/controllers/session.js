@@ -845,11 +845,9 @@ export const sessionController = {
           clinicPatientSession = new PatientSession(clinicPatientSession, data)
           patientSession.patient.addToSession(clinicPatientSession)
 
-          Patient.update(
-            patientSession.patient_uuid,
-            { clinicProgramme_ids: clinic.programme_ids },
-            data
-          )
+          const patient = Patient.findOne(patientSession.patient_uuid, data)
+          patient.inviteToClinic(clinic.programme_ids)
+          Patient.update(patient.uuid, patient, data)
         }
       }
     }

@@ -485,7 +485,9 @@ export const schoolController = {
       (item) => item !== '_unchecked'
     )
     for (const patient_uuid of patient_uuids) {
-      Patient.update(patient_uuid, { clinicProgramme_ids }, data)
+      const patient = Patient.findOne(patient_uuid, data)
+      patient.inviteToClinic(clinicProgramme_ids)
+      Patient.update(patient_uuid, patient, data)
     }
 
     request.flash(

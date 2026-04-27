@@ -6,6 +6,7 @@ import {
   PatientStatus,
   ProgrammeType,
   SessionPresetName,
+  SessionStatus,
   SessionType,
   VaccinationOutcome
 } from '../enums.js'
@@ -19,6 +20,11 @@ import {
 } from '../models.js'
 import { today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import {
+  ConjunctionType,
+  programmeNamesListForSentence
+} from '../utils/programme.js'
+import { queryToQueryString } from '../utils/querystring.js'
 import { formatYearGroup, stringToArray } from '../utils/string.js'
 
 export const patientController = {
@@ -122,12 +128,12 @@ export const patientController = {
     }
 
     // Filter by programme clinic status
+    let showingClinicReady = false
     if (filters.clinicStatus && filters.clinicStatus !== 'none') {
-      response.locals.showingClinicReady =
-        filters.clinicStatus === PatientClinicStatus.Ready
+      showingClinicReady = filters.clinicStatus === PatientClinicStatus.Ready
+      // Patient must have the selected clinic status for any of the selected programmes (if
+      // there's a selected programme), or for *any* programme if not
       if (programme_id) {
-        // Patient must have the selected clinic status for any of the selected programmes (if
-        // there's a selected programme), or for *any* programme if not
         results = results.filter((patient) =>
           programme_ids.some(
             (programme_id) =>
@@ -202,8 +208,13 @@ export const patientController = {
 
     // Results
     response.locals.patients = patients
+    response.locals.showingClinicReady = showingClinicReady
+    if (showingClinicReady) {
+      data.clinicPatient_ids = results.map(({ uuid }) => uuid)
+    }
     response.locals.results = getResults(results, request.query)
     response.locals.pages = getPagination(results, request.query)
+    response.locals.query = request.query
 
     // Programme filter options
     response.locals.programmeItems = programmes.map((programme) => ({
@@ -412,7 +423,7 @@ export const patientController = {
     response.render(`patient/programme`)
   },
 
-  inviteToClinic(request, response) {
+  inviteOneToClinic(request, response) {
     const { patient_uuid } = request.params
     const { data } = request.session
     const { __ } = response.locals
@@ -425,21 +436,16 @@ export const patientController = {
       clinicProgramme_ids = stringToArray(clinicProgramme_ids)
     }
 
-    // Update the record of programmes for which the patient's been invited to clinic
-    const patient = Patient.update(patient_uuid, { clinicProgramme_ids }, data)
-
     // Send comms to parents and record in audit trail
+    const patient = Patient.findOne(patient_uuid, data)
     patient.inviteToClinic(clinicProgramme_ids)
+    Patient.update(patient.uuid, patient, data)
 
     // Report the success
-    const formatter = new Intl.ListFormat('en', {
-      style: 'long',
-      type: 'conjunction'
-    })
-    const selectedProgrammeNames = formatter.format(
-      clinicProgramme_ids.map((programme_id) =>
-        Programme.findOne(programme_id, data)?.name?.replace('Flu', 'flu')
-      )
+    const selectedProgrammeNames = programmeNamesListForSentence(
+      clinicProgramme_ids,
+      ConjunctionType.and,
+      data
     )
     request.flash(
       'success',
@@ -450,6 +456,148 @@ export const patientController = {
     )
 
     response.redirect(patient.uri)
+  },
+
+  showInviteManyToClinic(request, response) {
+    const { __, __mf } = response.locals
+    const { data } = request.session
+    const { clinicPatient_ids } = data
+    const { programme_id } = request.query
+
+    const programmes = Programme.findAll(data)
+      .filter((programme) => !programme.hidden)
+      .sort((a, b) => a.name.localeCompare(b.name))
+
+    let programme_ids
+    if (programme_id) {
+      programme_ids = Array.isArray(programme_id)
+        ? programme_id
+        : [programme_id]
+    } else {
+      programme_ids = programmes.map(({ id }) => id)
+    }
+
+    // e.g. 271 children can be invited to clinic for HPV, MenACWY, or Td/IPV programmes.
+    const childrenFragment = __mf(
+      'patient.bulkInviteToClinic.childrenFragment',
+      { count: clinicPatient_ids.length }
+    )
+    const programmesFragment = programme_id
+      ? __mf('patient.bulkInviteToClinic.programmesFragment', {
+          count: programme_ids.length,
+          programmeNames: programmeNamesListForSentence(
+            programme_ids,
+            ConjunctionType.or,
+            data
+          )
+        })
+      : __('patient.bulkInviteToClinic.anyProgrammesFragment')
+    response.locals.cohortSummary = __(
+      'patient.bulkInviteToClinic.cohortSummary',
+      { children: childrenFragment, programmes: programmesFragment }
+    )
+
+    // Create the programme checkboxes and their patient and clinic counts
+    const checkboxItems = []
+    const scheduledSessions = Session.findAll(data)
+      .filter(({ type }) => type === SessionType.Clinic)
+      .filter(({ status }) => status === SessionStatus.Planned)
+    const invitableProgrammes = programmes.filter((programme) =>
+      programme_ids.includes(programme.id)
+    )
+    for (const programme of invitableProgrammes) {
+      const clinicReadyChildrenCount = clinicPatient_ids
+        .map((id) => Patient.findOne(id, data))
+        .filter(
+          (patient) =>
+            patient.programmes[programme.id].clinicStatus ===
+            PatientClinicStatus.Ready
+        ).length
+      if (clinicReadyChildrenCount > 0) {
+        const scheduledClinicCount = scheduledSessions.filter((session) =>
+          session.programme_ids.includes(programme.id)
+        ).length
+
+        const childrenHint = __mf(
+          'patient.bulkInviteToClinic.programme.hint.children',
+          {
+            count: clinicReadyChildrenCount,
+            programmeName: programme.name
+          }
+        )
+        const clinicsHint = __mf(
+          'patient.bulkInviteToClinic.programme.hint.clinics',
+          {
+            count: scheduledClinicCount,
+            programmeName: programme.name
+          }
+        )
+        checkboxItems.push({
+          text: programme.name,
+          value: programme.id,
+          hint: {
+            html: __('patient.bulkInviteToClinic.programme.hint.combined', {
+              childrenHint,
+              clinicsHint
+            })
+          }
+        })
+      }
+    }
+
+    response.locals.checkboxItems = checkboxItems
+
+    response.render('patient/bulk-invite-to-clinic')
+  },
+
+  inviteManyToClinic(request, response) {
+    let { clinicProgramme_ids } = request.body
+    const { __mf } = response.locals
+    const { data } = request.session
+    const { clinicPatient_ids } = data
+
+    // Tidy up any _unchecked values
+    if (typeof clinicProgramme_ids === 'string') {
+      clinicProgramme_ids = [clinicProgramme_ids]
+    } else {
+      clinicProgramme_ids = stringToArray(clinicProgramme_ids)
+    }
+
+    // Invite each of the children to clinic for the subset of the selected programmes
+    // that make sense for that child
+    let invitedChildrenCount = 0
+    for (const patient of clinicPatient_ids.map((id) =>
+      Patient.findOne(id, data)
+    )) {
+      // Work out which of the selected programmes this patient was clinic-ready for
+      const { clinicReadyProgramme_ids } = patient
+      const invitedProgramme_ids = [
+        ...new Set(clinicReadyProgramme_ids).intersection(
+          new Set(clinicProgramme_ids)
+        )
+      ]
+
+      if (invitedProgramme_ids.length) {
+        // Send comms to parents and record in audit trail
+        patient.inviteToClinic(invitedProgramme_ids)
+        Patient.update(patient.uuid, patient, data)
+
+        invitedChildrenCount++
+      }
+    }
+
+    request.flash(
+      'success',
+      __mf('patient.bulkInviteToClinic.success', {
+        count: invitedChildrenCount
+      })
+    )
+
+    // Reset the cohort
+    delete data.clinicPatient_ids
+
+    // Get back to the filter page as we left it
+    response.redirect(`/patients${queryToQueryString(request.query)}`)
   },
 
   archive(request, response) {

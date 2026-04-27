@@ -45,12 +45,10 @@
           }) | safe
         }) }}
 
-        {% if showingClinicReady and results.count > 0 %}
-          {{ actionLink({
-            text: __mf("patient.results.inviteToClinic", { count: results.count }),
-            href: "/patients/invite-to-clinic"
-          }) }}
-        {% endif %}
+        {{ actionLink({
+          text: __mf("patient.results.inviteToClinic", { count: results.count }),
+          href: "/patients/invite-to-clinic" + query | asQueryString
+        }) if showingClinicReady and results.count > 0 }}
 
         {% for patient in results.page %}
           {% set reportStatusHtml -%}
