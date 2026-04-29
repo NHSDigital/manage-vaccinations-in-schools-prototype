@@ -31,14 +31,14 @@
           address: {
             value: consent.child.formatted.address | highlightDifference(patient.formatted.address)
           },
-          school: {
-            value: consent.child.formatted.school | highlightDifference(patient.formatted.school)
+          schoolName: {
+            value: consent.child.formatted.schoolName | highlightDifference(patient.formatted.schoolName)
           },
           gpSurgery: {
             value: consent.child.formatted.gpSurgery | highlightDifference(patient.formatted.gpSurgery)
           },
           parent: {
-            value: parent(consent.parent)
+            value: consent.parent.fullNameAndRelationship
           }
         })
       }) }}
@@ -54,7 +54,7 @@
           fullName: {},
           dob: {},
           address: {},
-          school: {},
+          schoolName: {},
           gpSurgery: {},
           parents: {}
         })

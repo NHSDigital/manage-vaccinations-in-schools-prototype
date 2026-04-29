@@ -44,8 +44,8 @@
             dob: {},
             gender: {},
             postalCode: {},
-            school: {
-              value: move.formatted.to | highlightDifference(move.formatted.from_urn)
+            schoolName: {
+              value: move.formatted.to_urn | highlightDifference(move.formatted.from_urn)
             }
           })
         }) }}
@@ -64,7 +64,7 @@
           dob: {},
           gender: {},
           postalCode: {},
-          school: {}
+          schoolName: {}
         })
       }) }}
     </div>

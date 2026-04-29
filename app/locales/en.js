@@ -221,6 +221,9 @@ export const en = {
     postalCode: {
       label: 'Postcode'
     },
+    school: {
+      label: 'School'
+    },
     schoolName: {
       label: 'School'
     },
@@ -1493,6 +1496,9 @@ export const en = {
     school: {
       label: 'School',
       title: 'What school does the child go to?'
+    },
+    schoolName: {
+      label: 'School'
     },
     yearGroup: {
       label: 'Year group'
