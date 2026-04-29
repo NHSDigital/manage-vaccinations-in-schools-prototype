@@ -5,7 +5,7 @@
       text: __("session.tally.vaccinatedWithVaccineCriteria.label", {
         programme: programme,
         vaccineCriteria: programme.standardVaccine.criteria
-      })
+      }) | safe
     },
     value: {
       text: session.tally(programme.id, PatientStatus.Vaccinated, programme.standardVaccine.criteria)
@@ -17,7 +17,7 @@
         text: __("session.tally.vaccinatedWithVaccineCriteria.label", {
           programme: programme,
           vaccineCriteria: programme.alternativeVaccine.criteria
-        })
+        }) | safe
       },
       value: {
         text: session.tally(programme.id, PatientStatus.Vaccinated, programme.alternativeVaccine.criteria)
