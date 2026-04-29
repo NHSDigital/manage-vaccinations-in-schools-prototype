@@ -2453,10 +2453,13 @@ export const en = {
           label: 'Available appointments'
         },
         programmeRequests: {
-          label: '%s requests'
+          label: '%s appointments'
         },
         daysLeft: {
           label: 'Days left to book'
+        },
+        unmatched: {
+          label: 'Unmatched children'
         }
       },
       vaccinators: {

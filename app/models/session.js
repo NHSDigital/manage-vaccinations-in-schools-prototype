@@ -20,6 +20,7 @@ import {
 } from '../enums.js'
 import {
   Clinic,
+  ClinicAppointment,
   ClinicVaccinationPeriod,
   Consent,
   PatientSession,
@@ -533,6 +534,24 @@ export class Session {
       this.vaccinationPeriods.map((period) => period.vaccinatorCount)
     )
     return Math.max(...vaccinatorCounts)
+  }
+
+  /**
+   * Get all appointments for this clinic with unmatched child details
+   *
+   * @returns {Array<ClinicAppointment>} - the appointments made for unmatched children
+   */
+  get unmatchedAppointments() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error(
+        'Unmatched clinic appointments are only relevant to clinic sessions'
+      )
+    }
+
+    const appointments = this.patientSessions
+      .map(({ clinicAppointment }) => clinicAppointment)
+      .filter(Boolean)
+    return appointments.filter((patient_uuid) => !patient_uuid)
   }
 
   /**

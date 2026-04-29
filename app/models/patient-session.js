@@ -18,10 +18,13 @@ import {
   ScreenOutcome,
   VaccinationOutcome,
   ProgrammeType,
-  PatientClinicStatus
+  PatientClinicStatus,
+  SessionType
 } from '../enums.js'
 import {
   AuditEvent,
+  ClinicAppointment,
+  ClinicBooking,
   Gillick,
   Instruction,
   Patient,
@@ -316,6 +319,24 @@ export class PatientSession {
    */
   get clinicStatus() {
     return this.patientProgramme?.clinicStatus
+  }
+
+  /**
+   * Get the clinic appointment associated with this patient session
+   *
+   * @returns {ClinicAppointment|undefined} - the appointment if found, or undefined otherwise
+   */
+  get clinicAppointment() {
+    if (this.session.type !== SessionType.Clinic) {
+      throw new Error(
+        'Clinic appointments are only relevant to clinic sessions'
+      )
+    }
+
+    return ClinicBooking.findAll(this.context)
+      ?.flatMap(({ appointments }) => appointments)
+      ?.filter(({ session_id }) => session_id === this.session_id)
+      ?.find(({ patient_uuid }) => patient_uuid === this.patient_uuid)
   }
 
   /**
