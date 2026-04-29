@@ -75,7 +75,7 @@
       small: true,
       items: radioFilterItems(PatientClinicStatus, data["clinicStatus"], false),
       decorate: "clinicStatus"
-    }) }}
+    }) if not params.hideClinicStatuses }}
 
     {% for name, enums in params.checkboxFilters %}
       {{ checkboxes({
