@@ -221,7 +221,7 @@ export const en = {
     postalCode: {
       label: 'Postcode'
     },
-    school: {
+    schoolName: {
       label: 'School'
     },
     gpSurgery: {

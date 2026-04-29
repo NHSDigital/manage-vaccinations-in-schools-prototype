@@ -289,7 +289,7 @@ export class Child {
           this.registrationGroup && yearGroup
             ? `${yearGroup} (${this.registrationGroup})`
             : yearGroup,
-        school: this?.school && this.school.name
+        schoolName: this?.school && this.school.name
       }),
       adjustments: this.adjustments && formatList(this.adjustments),
       impairments: this.impairments && formatList(this.impairments)
