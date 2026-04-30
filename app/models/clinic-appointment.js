@@ -235,6 +235,7 @@ export class ClinicAppointment {
       location: Object.values(session?.clinic?.location ?? {})
         .filter(Boolean)
         .join(', '),
+      locationName: session?.clinic?.name,
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
