@@ -261,8 +261,8 @@ export const en = {
     match: {
       label: 'Match'
     },
-    invalidate: {
-      label: 'Invalidate'
+    archive: {
+      label: 'Archive'
     }
   },
   clinicAppointment: {
