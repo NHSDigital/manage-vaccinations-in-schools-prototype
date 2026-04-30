@@ -223,8 +223,6 @@ export const bookIntoClinicController = {
       _.merge(data.wizard.transaction, request.body.transaction)
     }
 
-    let nextUrl = paths.next
-
     if (view === 'child-count') {
       // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -245,8 +243,8 @@ export const bookIntoClinicController = {
 
       // Start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]
-      const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.appointmentUri}/child`
-      nextUrl = firstAppointmentUrl
+      const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.uuid}/child`
+      paths.next = firstAppointmentUrl
     } else if (
       view === 'address-selection' &&
       request.body.transaction.addressChoice !== 'new'
@@ -269,7 +267,7 @@ export const bookIntoClinicController = {
 
     // NB: request.session.save was needed to avoid race condition issues on heroku
     request.session.save((error) => {
-      if (!error) response.redirect(nextUrl)
+      if (!error) response.redirect(paths.next)
     })
   },
 

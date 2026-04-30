@@ -66,15 +66,6 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get URI of the booking journey
-   *
-   * @returns {string} Appointment URI
-   */
-  get appointmentUri() {
-    return `${this.uuid}`
-  }
-
-  /**
    * Get patient
    *
    * @returns {Patient|undefined} Patient
