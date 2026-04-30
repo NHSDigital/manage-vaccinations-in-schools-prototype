@@ -234,6 +234,14 @@ export const en = {
       label: 'Parent'
     }
   },
+  appointments: {
+    list: {
+      label: 'Clinic appointments',
+      title: 'Unmatched clinic appointments'
+    },
+    count:
+      '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {# unmatched clinic appointments}}'
+  },
   clinicAppointment: {
     label: 'Appointment details',
     show: {
@@ -500,7 +508,7 @@ export const en = {
     results:
       '{count, plural, =0 {No responses matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> response} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> responses}}',
     list: {
-      label: 'Unmatched responses',
+      label: 'Consent responses',
       title: 'Unmatched consent responses',
       description:
         'Review incoming consent responses that can’t be automatically matched'

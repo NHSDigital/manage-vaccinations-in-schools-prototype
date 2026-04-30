@@ -20,6 +20,11 @@
         current: params.view == "consent"
       },
       {
+        text: __("appointments.list.label") + appCount(0),
+        href: "/appointments",
+        current: params.view == "appointments"
+      },
+      {
         text: __("move.list.label") + appCount(data.counts.moves),
         href: "/moves",
         current: params.view == "move"
