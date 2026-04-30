@@ -17,7 +17,7 @@ import users from '../.data/users.json' with { type: 'json' }
 import vaccinations from '../.data/vaccinations.json' with { type: 'json' }
 
 import vaccines from './datasets/vaccines.js'
-import { Consent, Move, Notice, Session } from './models.js'
+import { ClinicBooking, Consent, Move, Notice, Session } from './models.js'
 
 // Use Coventry and Warwickshire as team
 const team = teams['001']
@@ -56,12 +56,16 @@ const data = {
 }
 
 // Statistics
+const unmatchedAppointmentCount = ClinicBooking.findAll(data)
+  ?.flatMap(({ appointments }) => appointments)
+  .filter(({ patient_uuid }) => !patient_uuid).length
 const consentCount = Consent.findAll(data).length || 0
 const moveCount = Move.findAll(data).length || 0
 const noticeCount =
   Notice.findAll(data).filter(({ archivedAt }) => !archivedAt).length || 0
 
 data.counts = {
+  appointments: unmatchedAppointmentCount,
   consents: consentCount,
   moves: moveCount,
   notices: noticeCount,

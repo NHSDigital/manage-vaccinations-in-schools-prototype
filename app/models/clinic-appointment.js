@@ -2,7 +2,11 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { Child, Patient, Programme, Session } from '../models.js'
 import { formatDate } from '../utils/date.js'
-import { stringToArray, stringToBoolean } from '../utils/string.js'
+import {
+  formatLinkWithSecondaryText,
+  stringToArray,
+  stringToBoolean
+} from '../utils/string.js'
 
 /**
  * @class ClinicAppointment
@@ -241,6 +245,21 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get formatted links
+   *
+   * @returns {object} Formatted links
+   */
+  get link() {
+    return {
+      summary: formatLinkWithSecondaryText(
+        this.uri,
+        this.parentalRelationship, // TODO: look up name of parent in booking
+        `for ${this.child.fullName}`
+      )
+    }
+  }
+
+  /**
    * Get the prefix used for looking up localised strings for this model
    *
    * @returns {string} Namespace
@@ -255,6 +274,6 @@ export class ClinicAppointment {
    * @returns {string} URI
    */
   get uri() {
-    return `/clinic-appointments/${this.uuid}`
+    return `/appointments/${this.uuid}`
   }
 }

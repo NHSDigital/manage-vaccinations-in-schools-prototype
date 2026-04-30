@@ -52,7 +52,7 @@
       colour: "orange" if session.unmatchedAppointments.length > 0,
       compact: true,
       data: session.unmatchedAppointments.length,
-      href: "/appointments/?session_id=" + session.id
+      href: session.uri + "/appointments"
     }) }}
   </div>
   {% for programme in session.programmes %}

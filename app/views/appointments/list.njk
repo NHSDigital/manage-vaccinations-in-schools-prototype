@@ -26,61 +26,71 @@
     view: "appointments"
   }) }}
 
-  {# {% set consentRows = [] %}
-  {% for consent in results.page %}
-    {% set consentRows = consentRows | push([
+  {% set appointmentRows = [] %}
+  {% for appointment in results.page %}
+    {% set appointmentRows = appointmentRows | push([
       {
-        header: __("consent.summary.label"),
-        html: consent.link.summary | replace("/consents", consentsPath)
+        header: __("appointments.summary.label"),
+        html: appointment.link.summary | replace("/appointments", appointmentsPath)
       },
       {
-        header: __("consent.createdAt.label"),
-        text: consent.formatted.createdAt
-      },
+        header: __("appointments.location.label"),
+        text: appointment.formatted.location
+      } if not session,
       {
-        header: __("consent.decision.label"),
-        text: consent.decision
-      },
+        header: __("appointments.date.label"),
+        text: appointment.formatted.date
+      } if not session,
+      {
+        header: __("appointments.time.label"),
+        text: appointment.formatted.timeSlot
+      } if session,
+      {
+        header: __("appointments.vaccinations.label"),
+        text: appointment.formatted.vaccinations
+      } if session,
       {
         header: __("actions.label"),
         html: appActionList({
           items: [{
-            text: __("consent.match.label"),
-            href: consentsPath + "/" + consent.uuid + "/match?referrer=" + consentsPath
+            text: __("appointments.match.label"),
+            href: appointmentsPath + "/" + appointment.uuid + "/match?referrer=" + appointmentsPath
           }, {
-            text: __("consent.invalidate.label"),
-            href: consentsPath + "/" + consent.uuid + "/invalidate?referrer=" + consentsPath
+            text: __("appointments.invalidate.label"),
+            href: appointmentsPath + "/" + appointment.uuid + "/invalidate?referrer=" + appointmentsPath
           }]
         })
       }
     ]) %}
   {% endfor %}
 
-  {% if consents.length %}
+  {% if appointments.length %}
     {{ table({
-      id: "consents",
+      id: "appointments",
       responsive: true,
       card: {
-        heading: __mf("consent.count", { count: consents.length }),
+        heading: __mf("appointments.count", { count: appointments.length }),
         headingLevel: 3
       },
       head: [
-        { text: __("consent.summary.label") },
-        { text: __("consent.createdAt.label") },
-        { text: __("consent.decision.label") },
+        { text: __("appointments.summary.label") },
+        { text: __("appointments.location.label") } if not session,
+        { text: __("appointments.date.label") } if not session,
+        { text: __("appointments.time.label") } if session,
+        { text: __("appointments.vaccinations.label") } if session,
         { text: __("actions.label") }
       ],
-      rows: consentRows
+      rows: appointmentRows
     }) }}
 
     {{ pagination(pages) }}
 
-    {{ __mf("consent.results", {
+    {{ __mf("appointments.results", {
       from: results.from,
       to: results.to,
       count: results.count
     }) | nhsukMarkdown }}
-  {% else %} #}
+  {% else %}
     {{ __mf("appointments.count", { count: 0 }) | nhsukMarkdown }}
-  {# {% endif %} #}
+  {% endif %}
 {% endblock %}

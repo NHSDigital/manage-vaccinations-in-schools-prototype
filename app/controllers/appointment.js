@@ -12,14 +12,14 @@ export const appointmentController = {
 
   readAll(request, response, next) {
     const { session_id } = request.params
-    let appointments = ClinicBooking.findAll(request.session.data)?.flatMap(
-      ({ appointments }) => appointments
-    )
+    let appointments = ClinicBooking.findAll(request.session.data)
+      ?.flatMap(({ appointments }) => appointments)
+      .filter(({ patient_uuid }) => !patient_uuid)
 
     // Sort
     appointments = _.sortBy(appointments, 'startAt')
 
-    // Session consents
+    // Session appointments
     if (session_id) {
       const session = Session.findOne(session_id, request.session.data)
       response.locals.session = session
@@ -30,9 +30,9 @@ export const appointmentController = {
     }
 
     response.locals.appointments = appointments
-    // response.locals.consentsPath = session_id
-    //   ? `/sessions/${session_id}/consents`
-    //   : '/consents'
+    response.locals.appointmentsPath = session_id
+      ? `/sessions/${session_id}/appointments`
+      : '/appointments'
     response.locals.results = getResults(appointments, request.query)
     response.locals.pages = getPagination(appointments, request.query)
 

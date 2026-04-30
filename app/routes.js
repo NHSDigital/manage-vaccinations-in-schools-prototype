@@ -50,7 +50,7 @@ router.use(referrer)
 router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
 router.use('/activity', activityRoutes)
-router.use('/appointments', appointmentRoutes) // unmatched clinic appointments
+router.use('/appointments', appointmentRoutes) // all unmatched clinic appointments
 router.use('/book-into-a-clinic', bookIntoClinicRoutes) // parent-facing clinic booking journey
 router.use('/clinic-bookings', clinicBookingRoutes) // original explorations of clinic booking data
 router.use('/consents', consentRoutes)
@@ -70,6 +70,7 @@ router.use(
 )
 router.use('/reviews', reviewRoutes)
 router.use('/schools', schoolRoutes)
+router.use('/sessions/:session_id/appointments', appointmentRoutes)
 router.use('/sessions/:session_id/consents', consentRoutes)
 router.use('/sessions/:session_id/default-batch', defaultBatchRoutes)
 router.use('/sessions/:session_id/patients', patientSessionRoutes)
