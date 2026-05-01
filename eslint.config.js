@@ -11,9 +11,6 @@ export default [
     }
   },
   {
-    ignores: [
-      'assets',
-      'app/data.js' // https://github.com/eslint/eslint/discussions/15305
-    ]
+    ignores: ['assets']
   }
 ]

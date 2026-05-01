@@ -1,12 +1,11 @@
-import vaccines from './datasets/vaccines.js'
 import batches from '../.data/batches.json' with { type: 'json' }
 import clinicBookings from '../.data/clinic-bookings.json' with { type: 'json' }
 import clinics from '../.data/clinics.json' with { type: 'json' }
 import instructions from '../.data/instructions.json' with { type: 'json' }
 import moves from '../.data/moves.json' with { type: 'json' }
 import notices from '../.data/notices.json' with { type: 'json' }
-import patients from '../.data/patients.json' with { type: 'json' }
 import patientSessions from '../.data/patient-sessions.json' with { type: 'json' }
+import patients from '../.data/patients.json' with { type: 'json' }
 import pdsRecords from '../.data/pds-records.json' with { type: 'json' }
 import programmes from '../.data/programmes.json' with { type: 'json' }
 import replies from '../.data/replies.json' with { type: 'json' }
@@ -17,6 +16,7 @@ import uploads from '../.data/uploads.json' with { type: 'json' }
 import users from '../.data/users.json' with { type: 'json' }
 import vaccinations from '../.data/vaccinations.json' with { type: 'json' }
 
+import vaccines from './datasets/vaccines.js'
 import { Consent, Move, Notice, Session } from './models.js'
 
 // Use Coventry and Warwickshire as team
