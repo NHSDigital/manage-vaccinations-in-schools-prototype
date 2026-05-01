@@ -1414,7 +1414,7 @@ export const en = {
       hasAdjustment: 'Children needing reasonable adjustments',
       hasImpairment: 'Children with impairments',
       hasMissingNhsNumber: 'Children missing an NHS&nbsp;number',
-      post16: 'Children aged out of programmes'
+      agedOutOfProgrammes: 'Children aged out of programmes'
     },
     archiveReason: {
       label: 'Reason archived'
@@ -1440,8 +1440,8 @@ export const en = {
     hasMissingNhsNumber: {
       label: 'Missing NHS number'
     },
-    post16: {
-      label: 'Over 16 years old?',
+    agedOutOfProgrammes: {
+      label: 'Aged out of programmes?',
       status:
         '{{patient.fullName}} is no longer eligible for school age immunisations'
     },

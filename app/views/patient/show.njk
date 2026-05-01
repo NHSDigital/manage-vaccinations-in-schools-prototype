@@ -49,10 +49,10 @@
     }) if patient.notice }}
 
     {{ appStatus({
-      text: __("patient.post16.status", { patient: patient }),
+      text: __("patient.agedOutOfProgrammes.status", { patient: patient }),
       icon: "warning",
       colour: "blue"
-    }) if patient.post16 }}
+    }) if patient.agedOutOfProgrammes }}
 
     {{ summaryList({
       rows: summaryRows(patient, {

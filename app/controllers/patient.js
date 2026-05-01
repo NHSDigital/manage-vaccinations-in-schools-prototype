@@ -36,9 +36,10 @@ export const patientController = {
 
     const patient = Patient.findOne(patient_uuid, data)
 
-    const recordTitle = patient.post16
-      ? __('patient.label').replace('Child', 'Patient')
-      : __('patient.label')
+    const recordTitle =
+      patient?.age >= 18
+        ? __('patient.label').replace('Child', 'Patient')
+        : __('patient.label')
 
     response.locals.patient = patient
 
@@ -190,11 +191,11 @@ export const patientController = {
 
     // Filter by display option
     for (const key of [
+      'agedOutOfProgrammes',
       'archived',
       'hasImpairment',
       'hasAdjustment',
-      'hasMissingNhsNumber',
-      'post16'
+      'hasMissingNhsNumber'
     ]) {
       if (option?.includes(key)) {
         results = results.filter((patient) => patient[key])
@@ -224,7 +225,7 @@ export const patientController = {
     }))
 
     // Year group filter options
-    response.locals.yearGroupItems = [...Array(12).keys()].map((yearGroup) => ({
+    response.locals.yearGroupItems = [...Array(14).keys()].map((yearGroup) => ({
       text: formatYearGroup(yearGroup),
       value: yearGroup,
       checked: yearGroups?.includes(yearGroup) ?? false

@@ -352,6 +352,7 @@ export const PatientClinicStatus = {
  * @enum {string}
  */
 export const PatientConsentStatus = {
+  SelfConsent: 'Can self-consent (16+)',
   NotScheduled: 'No request scheduled',
   Scheduled: 'Request scheduled',
   NoDetails: 'No contact details',

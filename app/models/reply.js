@@ -177,7 +177,7 @@ export class Reply {
     if (this.parent) {
       return this.parent.relationship
     } else if (this.child) {
-      return 'Child (Gillick competent)'
+      return `${this.child.fullName} (child)`
     }
   }
 
