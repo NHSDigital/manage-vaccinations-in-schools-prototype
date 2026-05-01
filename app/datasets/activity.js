@@ -7,9 +7,9 @@ export default {
     absent: (session) => `Absent from session at ${session.location.name}`
   },
   consent: {
-    created: ({ decision, parent, selfConsent }) =>
+    created: ({ child, decision, parent, selfConsent }) =>
       selfConsent
-        ? `${decision} by child (Gillick competent)`
+        ? `${decision} by ${child?.fullName} (child)`
         : `${decision} by ${parent.fullNameAndRelationship}`,
     updated: ({ decision, parent }) =>
       `${decision} in updated response from ${parent.fullNameAndRelationship}`,

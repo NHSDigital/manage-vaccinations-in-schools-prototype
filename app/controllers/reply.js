@@ -63,7 +63,8 @@ export const replyController = {
         patient_uuid: patientSession.patient.uuid,
         programme_id: patientSession.programme.id,
         session_id: patientSession.session.id,
-        createdBy_uid: account.uid
+        createdBy_uid: account.uid,
+        selfConsent: patientSession?.patient?.post16
       },
       data
     )
@@ -71,7 +72,14 @@ export const replyController = {
     // TODO: Use presenter
     const reply = new Reply(createdReply, data)
 
-    response.redirect(`${reply.uri}/new/respondent`)
+    let next
+    if (patientSession?.patient?.post16) {
+      next = `${reply.uri}/new/decision`
+    } else {
+      next = `${reply.uri}/new/respondent`
+    }
+
+    response.redirect(next)
   },
 
   update(type) {
@@ -180,10 +188,6 @@ export const replyController = {
       response.locals.reply = new Reply(reply, data)
       response.locals.patient = patientSession.patient
 
-      // Child can self consent if assessed as Gillick competent
-      const canSelfConsent =
-        patientSession.gillick?.competent === GillickCompetent.True
-
       // Only ask for programme if more than 1 administered in a session
       const isMultiProgrammeSession =
         patientSession.session.programmes.length > 1
@@ -215,7 +219,7 @@ export const replyController = {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
         [`/${reply_uuid}/${type}/decision`]: {
-          [`/${reply_uuid}/${type}/${reply?.selfConsent ? 'notify-parent' : 'health-answers'}`]:
+          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.post16 ? 'notify-parent' : 'health-answers'}`]:
             {
               data: 'reply.decision',
               value: ReplyDecision.Given
@@ -291,9 +295,10 @@ export const replyController = {
         )
       }
 
-      if (canSelfConsent) {
+      // Child can self consent if assessed as Gillick competent
+      if (patientSession.gillick?.competent === GillickCompetent.True) {
         response.locals.respondentItems.unshift({
-          text: 'Child (Gillick competent)',
+          text: `${reply?.patient?.fullName} (child)`,
           value: 'self'
         })
       }

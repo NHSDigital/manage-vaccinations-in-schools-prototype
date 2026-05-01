@@ -37,7 +37,7 @@
         formmethod: "post"
       }
     }]
-  }) if not isVaccinated }}
+  }) if not isVaccinated and not patientSession.patient.post16 }}
 
   {% if patientSession.replies | length %}
     {# Requests with responses or requests that couldn’t be delivered #}
@@ -84,7 +84,7 @@
         })
       }) }}
     {% endfor %}
-  {% elif not patientSession.patient.hasNoContactDetails %}
+  {% elif not patientSession.patient.hasNoContactDetails and not patientSession.patient.post16 %}
     {# Requests that have been sent but with no response yet #}
     {# We don’t create replies so use parent details instead #}
 

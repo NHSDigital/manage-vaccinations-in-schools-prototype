@@ -66,7 +66,10 @@ export class Child {
     this.address = options?.address
     this.gpSurgery = options?.gpSurgery
     this.registrationGroup = options?.registrationGroup
-    this.school_id = options?.school_id
+
+    if (!this.agedOutOfProgrammes) {
+      this.school_id = options?.school_id
+    }
 
     if (this.ethnicGroup === EthnicGroup.Other) {
       this.ethnicGroupOther = options?.ethnicGroupOther
@@ -179,12 +182,22 @@ export class Child {
   }
 
   /**
-   * Is the child over the age of 16?
+   * Is the child aged 16 or over?
+   * Children over the age of 16 can self-consent
    *
-   * @returns {boolean} Child is over the age of 16
+   * @returns {boolean} Child is aged 16 or over
    */
   get post16() {
-    return this.age >= 17
+    return this.age >= 16
+  }
+
+  /**
+   * Is the child still eligible for SAIS vaccinations?
+   *
+   * @returns {boolean} Child still eligible for SAIS vaccinations
+   */
+  get agedOutOfProgrammes() {
+    return this.age >= 18
   }
 
   /**
@@ -193,7 +206,7 @@ export class Child {
    * @returns {number|undefined} Year group, for example 8
    */
   get yearGroup() {
-    if (!this.post16) {
+    if (!this.agedOutOfProgrammes) {
       return getYearGroup(this.dob)
     }
   }
@@ -283,7 +296,7 @@ export class Child {
         Object.values(this.address)
           .filter((string) => string)
           .join('<br>'),
-      ...(!this.post16 && {
+      ...(!this.agedOutOfProgrammes && {
         yearGroup,
         yearGroupWithRegistration:
           this.registrationGroup && yearGroup

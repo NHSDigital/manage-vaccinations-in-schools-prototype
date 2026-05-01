@@ -506,6 +506,10 @@ export class PatientSession {
    * @returns {PatientConsentStatus|undefined} Patient consent status
    */
   get patientConsent() {
+    if (this.patient?.post16) {
+      return PatientConsentStatus.SelfConsent
+    }
+
     if (this.patient?.hasNoContactDetails) {
       return PatientConsentStatus.NoDetails
     }
@@ -625,6 +629,10 @@ export class PatientSession {
   get consentDescription() {
     const relationships = filters.formatList(this.parentalRelationships)
     const parentNames = filters.formatList(this.parentsRequestingFollowUp)
+
+    if (this.patient?.post16) {
+      return `${this.patient.firstName} is old enough to self-consent.`
+    }
 
     if (this.patient?.hasNoContactDetails) {
       return 'There are no contact details for this child.'

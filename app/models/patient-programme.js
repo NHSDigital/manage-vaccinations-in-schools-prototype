@@ -219,7 +219,7 @@ export class PatientProgramme {
         }
       }
       case PatientStatus.Consent:
-        return !this.patient?.hasNoContactDetails
+        return !this.patient?.hasNoContactDetails || this.patient.post16
       case PatientStatus.Refused:
         return (
           this.lastPatientSession?.patientRefused ===
@@ -270,7 +270,10 @@ export class PatientProgramme {
    * @returns {boolean} Eligible for programme
    */
   get eligible() {
-    return getCurrentAcademicYear() >= this.year
+    return (
+      !this.patient?.agedOutOfProgrammes &&
+      getCurrentAcademicYear() >= this.year
+    )
   }
 
   /**
@@ -507,7 +510,7 @@ export class PatientProgramme {
   get statusNotes() {
     switch (this.status) {
       case PatientStatus.Ineligible:
-        return this.patient.post16
+        return this.patient?.agedOutOfProgrammes
           ? 'Not eligible for school age immunisation'
           : `Eligible from 1 September ${this.year}`
       case PatientStatus.Vaccinated:
