@@ -347,9 +347,9 @@ export const en = {
         'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
     vaccinationChoice: {
-      title: 'Do you agree to %s having the following vaccinations?',
+      title: 'Do you consent to %s having the following vaccinations?',
       vaccinations: {
-        label: 'Select the vaccinations that you agree to %s having',
+        label: 'Select the vaccinations that you consent to %s having',
         hint: 'Each vaccine is given separately'
       }
     },
