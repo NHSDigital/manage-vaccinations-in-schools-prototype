@@ -67,8 +67,6 @@ export function generateParent(childLastName, isMum) {
     { value: NotifyEmailStatus.Technical, weight: 1 }
   ])
 
-  const contactPreference = faker.datatype.boolean(0.2)
-
   return new Parent({
     fullName: `${firstName} ${lastName}`,
     relationship,
@@ -82,12 +80,7 @@ export function generateParent(childLastName, isMum) {
     ...(tel && {
       tel,
       sms,
-      ...(smsStatus && { smsStatus }),
-      contactPreference,
-      ...(contactPreference && {
-        contactPreferenceDetails:
-          'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
-      })
+      ...(smsStatus && { smsStatus })
     })
   })
 }

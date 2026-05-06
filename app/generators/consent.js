@@ -54,6 +54,13 @@ export function generateConsent(
     return
   }
 
+  // If telephone number provided, sometimes add a communication need
+  if (parent.tel && faker.datatype.boolean(0.2)) {
+    parent.contactPreference = true
+    parent.contactPreferenceDetails =
+      'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
+  }
+
   // Decision
   const decision = faker.helpers.weightedArrayElement([
     { value: ReplyDecision.Given, weight: 10 },
