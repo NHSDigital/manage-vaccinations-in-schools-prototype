@@ -342,9 +342,7 @@ export const PatientStatus = {
 export const PatientClinicStatus = {
   Ready: 'Can be invited',
   Invited: 'Invited',
-  Booked: 'Booked in',
-  Registered: 'Attending',
-  Completed: 'Attended'
+  Booked: 'Booked'
 }
 
 /**
