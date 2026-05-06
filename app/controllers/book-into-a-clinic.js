@@ -50,6 +50,9 @@ export const bookIntoClinicController = {
     response.redirect(`/book-into-a-clinic/start`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   new(request, response) {
     const { data } = request.session
 
@@ -58,9 +61,13 @@ export const bookIntoClinicController = {
 
     // Redirect to the first page in the booking journey (after the start page, that is)
     const redirectUrl = `${request.baseUrl}/${booking.bookingUri}/new/child-count`
-    response.redirect(redirectUrl)
+
+    return response.redirect(redirectUrl)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readForm(request, response, next) {
     const { booking_uuid } = request.params
     const appointment_uuid = request.params.appointment_uuid
@@ -165,9 +172,12 @@ export const bookIntoClinicController = {
     paths.back = referrer || paths.back
     response.locals.paths = paths // used later to redirect in updateForm
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const { appointment } = response.locals
     const { data } = request.session
@@ -203,9 +213,15 @@ export const bookIntoClinicController = {
       appointment?.getHealthQuestionsForSelectedProgrammes(data)[key]
         ?.conditional
 
-    response.render(`book-into-a-clinic/form/${view}`, { key, hasSubQuestions })
+    return response.render(`book-into-a-clinic/form/${view}`, {
+      key,
+      hasSubQuestions
+    })
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { booking_uuid, appointment_uuid, view } = request.params
     const { data } = request.session
@@ -275,6 +291,9 @@ export const bookIntoClinicController = {
     })
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'start'
 
@@ -283,6 +302,6 @@ export const bookIntoClinicController = {
       request.session.data.teams[0]?.tel ??
       faker.helpers.replaceSymbols('01### ######')
 
-    response.render(`book-into-a-clinic/${view}`)
+    return response.render(`book-into-a-clinic/${view}`)
   }
 }

@@ -4,6 +4,9 @@ import { Consent, PatientSession, Patient, Session } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const consentController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, consent_uuid) {
     const { patient_uuid } = request.query
     const { session_id } = request.params
@@ -32,6 +35,9 @@ export const consentController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     const { session_id } = request.params
     let consents = Consent.findAll(request.session.data)
@@ -53,19 +59,28 @@ export const consentController = {
     response.locals.results = getResults(consents, request.query)
     response.locals.pages = getPagination(consents, request.query)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'show'
 
-    response.render(`consent/${view}`)
+    return response.render(`consent/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.render('consent/list')
+    return response.render('consent/list')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readMatches(request, response, next) {
     let { hasMissingNhsNumber, page, limit, q } = request.query
     const { data } = request.session
@@ -105,9 +120,12 @@ export const consentController = {
     delete data.hasMissingNhsNumber
     delete data.q
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterMatches(request, response) {
     const { hasMissingNhsNumber, q } = request.body
     const { consent } = response.locals
@@ -121,9 +139,12 @@ export const consentController = {
       params.append('hasMissingNhsNumber', 'true')
     }
 
-    response.redirect(`${consent.uri}/match?${params}`)
+    return response.redirect(`${consent.uri}/match?${params}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   link(request, response) {
     const { consent_uuid } = request.params
     const { data } = request.session
@@ -138,9 +159,12 @@ export const consentController = {
 
     request.flash('success', __(`consent.link.success`, { consent, patient }))
 
-    response.redirect(consentsPath)
+    return response.redirect(consentsPath)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   add(request, response) {
     const { consent_uuid } = request.params
     const { data } = request.session
@@ -174,9 +198,12 @@ export const consentController = {
 
     request.flash('success', __(`consent.add.success`, { consent, patient }))
 
-    response.redirect(consentsPath)
+    return response.redirect(consentsPath)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   invalidate(request, response) {
     const { note } = request.body.consent
     const { consent_uuid } = request.params
@@ -191,6 +218,6 @@ export const consentController = {
 
     request.flash('success', __(`consent.invalidate.success`, { consent }))
 
-    response.redirect(consentsPath)
+    return response.redirect(consentsPath)
   }
 }

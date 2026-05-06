@@ -1,6 +1,9 @@
 import { Batch, DefaultBatch } from '../models.js'
 
 export const batchController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, batch_id) {
     const batch = Batch.findOne(batch_id, request.session.data)
 
@@ -13,18 +16,29 @@ export const batchController = {
     next()
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   form(type) {
     return (request, response) => {
       response.render('batch/form', { type })
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   action(type) {
     return (request, response) => {
       response.render('batch/action', { type })
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   create(request, response) {
     const { vaccine_snomed } = request.params
     const { data } = request.session
@@ -40,9 +54,12 @@ export const batchController = {
 
     request.flash('success', __(`batch.new.success`, { batch }))
 
-    response.redirect('/vaccines')
+    return response.redirect('/vaccines')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { batch_id } = request.params
     const { data } = request.session
@@ -56,9 +73,12 @@ export const batchController = {
 
     request.flash('success', __(`batch.edit.success`, { batch }))
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   archive(request, response) {
     const { batch_id } = request.params
     const { data } = request.session
@@ -72,6 +92,6 @@ export const batchController = {
 
     request.flash('success', __(`batch.archive.success`, { batch }))
 
-    response.redirect('/vaccines')
+    return response.redirect('/vaccines')
   }
 }

@@ -1,5 +1,8 @@
 export const reviewController = {
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.redirect('/notices')
+    return response.redirect('/notices')
   }
 }

@@ -72,16 +72,25 @@ export const reportController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'vaccinations'
 
-    response.render(`report/${view}`)
+    return response.render(`report/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.redirect('/reports/vaccinations')
+    return response.redirect('/reports/vaccinations')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterList(request, response) {
     const view = request.params.view || 'vaccinations'
 
@@ -108,6 +117,6 @@ export const reportController = {
       }
     }
 
-    response.redirect(`/reports/${view}?${params}`)
+    return response.redirect(`/reports/${view}?${params}`)
   }
 }

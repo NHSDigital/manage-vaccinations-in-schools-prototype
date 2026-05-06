@@ -106,7 +106,7 @@ export class Download {
   /**
    * Get start date for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get startAt_() {
     return convertIsoDateToObject(this.startAt)
@@ -126,7 +126,7 @@ export class Download {
   /**
    * Get end date for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get endAt_() {
     return convertIsoDateToObject(this.endAt)

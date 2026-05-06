@@ -38,7 +38,7 @@ export class Batch {
   /**
    * Get expiry date for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get expiry_() {
     return convertIsoDateToObject(this.expiry)

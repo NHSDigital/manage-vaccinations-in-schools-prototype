@@ -55,7 +55,7 @@ export class ClinicVaccinationPeriod {
   /**
    * Get start time of first appointment for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get startAt_() {
     return convertIsoDateToObject(this.startAt)
@@ -75,7 +75,7 @@ export class ClinicVaccinationPeriod {
   /**
    * Get end time of final appointment for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get endAt_() {
     return convertIsoDateToObject(this.endAt)

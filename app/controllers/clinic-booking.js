@@ -2,6 +2,9 @@ import { ClinicBooking } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const clinicBookingController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, clinic_booking_uuid) {
     response.locals.clinicBooking = ClinicBooking.findOne(
       clinic_booking_uuid,
@@ -11,6 +14,9 @@ export const clinicBookingController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     const clinicBookings = ClinicBooking.findAll(request.session.data)
 
@@ -21,14 +27,20 @@ export const clinicBookingController = {
     response.locals.results = getResults(clinicBookings, request.query)
     response.locals.pages = getPagination(clinicBookings, request.query)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
-    response.render('clinic-booking/show')
+    return response.render('clinic-booking/show')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.render('clinic-booking/list')
+    return response.render('clinic-booking/list')
   }
 }

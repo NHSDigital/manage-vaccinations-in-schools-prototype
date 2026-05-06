@@ -2,16 +2,22 @@ import { UserRole } from '../enums.js'
 import { Notice } from '../models.js'
 
 export const homeController = {
+  /**
+   * @type {import("express").RequestHandler}
+   */
   redirect(request, response) {
     const { account } = request.app.locals
 
     if (account.role === UserRole.DataConsumer) {
-      response.redirect('/reports')
-    } else {
-      response.redirect('/dashboard')
+      return response.redirect('/reports')
     }
+
+    return response.redirect('/dashboard')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   dashboard(request, response) {
     const { account } = request.app.locals
     const { data } = request.session
@@ -22,10 +28,13 @@ export const homeController = {
       )
     }
 
-    response.render('dashboard')
+    return response.render('dashboard')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   start(request, response) {
-    response.render('start')
+    return response.render('start')
   }
 }

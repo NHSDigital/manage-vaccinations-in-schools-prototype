@@ -6,6 +6,9 @@ import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const downloadController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, download_id) {
     response.locals.download = Download.findOne(
       download_id,
@@ -15,12 +18,18 @@ export const downloadController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     response.locals.downloads = Download.findAll(request.session.data)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
     const { type } = request.query
     const { data } = request.session
@@ -45,9 +54,12 @@ export const downloadController = {
     // Clean up session data
     delete data.type
 
-    response.render(`download/list`)
+    return response.render(`download/list`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterList(request, response) {
     const params = new URLSearchParams()
 
@@ -59,9 +71,13 @@ export const downloadController = {
       }
     }
 
-    response.redirect(`/downloads?${params}`)
+    return response.redirect(`/downloads?${params}`)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   new(type) {
     return (request, response) => {
       const { school_id, session_id } = request.params
@@ -91,6 +107,9 @@ export const downloadController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { download_id } = request.params
     const { data } = request.session
@@ -104,7 +123,7 @@ export const downloadController = {
 
     request.flash('message', __(`download.new.message`, { download }))
 
-    response.redirect('/downloads')
+    return response.redirect('/downloads')
   },
 
   readForm(request, response, next) {
@@ -193,10 +212,13 @@ export const downloadController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const { view } = request.params
 
-    response.render(`download/form/${view}`)
+    return response.render(`download/form/${view}`)
   },
 
   updateForm(request, response, next) {
@@ -209,6 +231,9 @@ export const downloadController = {
     return paths.next ? response.redirect(paths.next) : next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   download(request, response) {
     const { data } = request.session
     const { download } = response.locals
@@ -219,6 +244,6 @@ export const downloadController = {
     response.header('Content-Type', mimetype)
     response.header('Content-disposition', `attachment; filename=${fileName}`)
 
-    response.end(buffer)
+    return response.end(buffer)
   }
 }

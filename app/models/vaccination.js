@@ -147,7 +147,7 @@ export class Vaccination {
   /**
    * Get created date for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get createdAt_() {
     return convertIsoDateToObject(this.createdAt)
@@ -212,7 +212,7 @@ export class Vaccination {
   /**
    * Get batch expiry date for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get batch_expiry_() {
     return convertIsoDateToObject(this.batch.expiry)

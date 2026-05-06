@@ -1,6 +1,9 @@
 import { Vaccine } from '../models.js'
 
 export const vaccineController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, vaccine_snomed) {
     response.locals.vaccine = Vaccine.findOne(
       vaccine_snomed,
@@ -10,26 +13,42 @@ export const vaccineController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     response.locals.vaccines = Vaccine.findAll(request.session.data)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
-    response.render('vaccine/show')
+    return response.render('vaccine/show')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.render('vaccine/list')
+    return response.render('vaccine/list')
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   action(type) {
     return (request, response) => {
       response.render('vaccine/action', { type })
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   delete(request, response) {
     const { vaccine_snomed } = request.params
     const { data } = request.session
@@ -39,6 +58,6 @@ export const vaccineController = {
 
     request.flash('success', __(`vaccine.delete.success`))
 
-    response.redirect('/vaccines')
+    return response.redirect('/vaccines')
   }
 }

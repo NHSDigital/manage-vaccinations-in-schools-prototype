@@ -33,6 +33,9 @@ import { getSessionYearGroups } from '../utils/session.js'
 import { formatYearGroup } from '../utils/string.js'
 
 export const sessionController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, session_id) {
     const { view } = request.params
     const { data } = request.session
@@ -78,12 +81,18 @@ export const sessionController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     response.locals.sessions = Session.findAll(request.session.data)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     let { view } = request.params
 
@@ -93,9 +102,12 @@ export const sessionController = {
       view = 'show'
     }
 
-    response.render(`session/${view}`)
+    return response.render(`session/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   new(request, response) {
     const { account } = request.app.locals
     const { data } = request.session
@@ -109,9 +121,12 @@ export const sessionController = {
       data.wizard
     )
 
-    response.redirect(`${session.uri}/new/type`)
+    return response.redirect(`${session.uri}/new/type`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
     const { programme_id, q } = request.query
     const { data } = request.session
@@ -210,9 +225,12 @@ export const sessionController = {
     delete data.status
     delete data.type
 
-    response.render('session/list', { sessions })
+    return response.render('session/list', { sessions })
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filter(request, response) {
     const params = new URLSearchParams()
 
@@ -237,7 +255,7 @@ export const sessionController = {
       }
     }
 
-    response.redirect(`/sessions?${params}`)
+    return response.redirect(`/sessions?${params}`)
   },
 
   readPatientSessions(request, response, next) {
@@ -449,6 +467,9 @@ export const sessionController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterPatientSessions(request, response) {
     const { session_id, view } = request.params
     const params = new URLSearchParams()
@@ -483,9 +504,12 @@ export const sessionController = {
       }
     }
 
-    response.redirect(`/sessions/${session_id}/${view}?${params}`)
+    return response.redirect(`/sessions/${session_id}/${view}?${params}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   edit(request, response) {
     const { session_id } = request.params
     const { data } = request.session
@@ -520,9 +544,13 @@ export const sessionController = {
     // Show back link to session page
     response.locals.back = session.uri
 
-    response.render('session/edit')
+    return response.render('session/edit')
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   update(type) {
     return (request, response) => {
       const { session_id } = request.params
@@ -548,6 +576,10 @@ export const sessionController = {
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   readForm(type) {
     return (request, response, next) => {
       const { session_id } = request.params
@@ -661,12 +693,18 @@ export const sessionController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const { view } = request.params
 
-    response.render(`session/form/${view}`)
+    return response.render(`session/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { session_id, view } = request.params
     const { data } = request.session
@@ -751,9 +789,12 @@ export const sessionController = {
       }
     }
 
-    response.redirect(nextPage)
+    return response.redirect(nextPage)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   giveInstructions(request, response) {
     const { account } = request.app.locals
     const { __, session } = response.locals
@@ -780,17 +821,23 @@ export const sessionController = {
 
     request.flash('success', __(`session.instructions.success`))
 
-    response.redirect(`${session.uri}/instruct`)
+    return response.redirect(`${session.uri}/instruct`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   sendReminders(request, response) {
     const { __, session } = response.locals
 
     request.flash('success', __(`session.reminders.success`, { session }))
 
-    response.redirect(session.uri)
+    return response.redirect(session.uri)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   cancelSession(request, response) {
     const { __, session } = response.locals
 
@@ -800,9 +847,12 @@ export const sessionController = {
     //       or we may want to simply set a Cancelled status on the session instead
     Session.delete(session.id, request.session.data)
 
-    response.redirect('/sessions')
+    return response.redirect('/sessions')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   inviteToClinic(request, response) {
     const { account } = request.app.locals
     const { session_id } = request.params
@@ -859,6 +909,6 @@ export const sessionController = {
       })
     )
 
-    response.redirect(session.uri)
+    return response.redirect(session.uri)
   }
 }

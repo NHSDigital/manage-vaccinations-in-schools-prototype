@@ -40,8 +40,8 @@ const enrichWithRealisticAnswer = (key, healthCondition) => {
 /**
  * Get consent responses with answers to health questions
  *
- * @param {Array} replies - Consent responses
- * @returns {Array} Consent responses with answers to health questions
+ * @param {Array<import('../models.js').Reply>} replies - Consent responses
+ * @returns {Array<import('../models.js').Reply>} Consent responses with answers to health questions
  */
 export function getRepliesWithHealthAnswers(replies) {
   replies = Array.isArray(replies) ? replies : [replies]
@@ -276,7 +276,7 @@ export const getConsentOutcome = (patientSession) => {
  * Get combined refusal reasons
  *
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @returns {Array} Refusal reasons
+ * @returns {Array<ReplyRefusal>} Refusal reasons
  */
 export const getConsentRefusalReasons = (patientSession) => {
   const reasons = []

@@ -13,7 +13,7 @@ export const ConjunctionType = {
  * Get a comma-delimited list of programme names to use in a sentence
  *
  * @param {Array<string>} programme_ids - the IDs of programmes whose name will form the list
- * @param {ConjunctionType} conjunctionType - Choice between 'and' and 'or'
+ * @param {Intl.ListFormatType} conjunctionType - Choice between 'and' and 'or'
  * @param {object} context - the data context where programmes are held
  * @returns {string} the list ready to use in a sentence
  */

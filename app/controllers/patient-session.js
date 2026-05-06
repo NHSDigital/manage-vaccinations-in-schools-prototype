@@ -19,6 +19,9 @@ import {
 import { today } from '../utils/date.js'
 
 export const patientSessionController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, nhsn) {
     const { account } = request.app.locals
     const { programme_id, session_id } = request.params
@@ -166,12 +169,18 @@ export const patientSessionController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'show'
 
-    response.render(`patient-session/${view}`)
+    return response.render(`patient-session/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readForm(request, response, next) {
     const { referrer } = request.session
     const { patientSession } = response.locals
@@ -179,9 +188,13 @@ export const patientSessionController = {
     // Show back link to referring page, else patient session page
     response.locals.back = referrer || patientSession.uri
 
-    next()
+    return next()
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   showForm(type) {
     return (request, response) => {
       const { view } = request.params
@@ -190,6 +203,9 @@ export const patientSessionController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   register(request, response) {
     const { account } = request.app.locals
     const { register } = request.body.patientSession
@@ -237,9 +253,13 @@ export const patientSessionController = {
       })
     )
 
-    response.redirect(back)
+    return response.redirect(back)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   gillick(type) {
     return (request, response) => {
       const { account } = request.app.locals
@@ -264,6 +284,9 @@ export const patientSessionController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   preScreen(request, response) {
     const { account } = request.app.locals
     const { preScreen } = request.body.patientSession
@@ -282,11 +305,14 @@ export const patientSessionController = {
     // Update patient session
     PatientSession.update(patientSession.uuid, patientSession, data)
 
-    response.redirect(
+    return response.redirect(
       `${programme.uri}/vaccinations/new?patientSession_uuid=${patientSession.uuid}`
     )
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   invite(request, response) {
     const { __, back, patient, patientSession } = response.locals
 
@@ -298,9 +324,12 @@ export const patientSessionController = {
       __('patientSession.invite.success', { parent: patient.parent1 })
     )
 
-    response.redirect(back)
+    return response.redirect(back)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   remind(request, response) {
     const { account } = request.app.locals
     const { back, patient, patientSession } = response.locals
@@ -312,9 +341,12 @@ export const patientSessionController = {
       patient.parent1
     )
 
-    response.redirect(back)
+    return response.redirect(back)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   triage(request, response) {
     const { account } = request.app.locals
     const { triage } = request.body
@@ -346,9 +378,12 @@ export const patientSessionController = {
 
     request.flash('success', __(`triage.edit.success`, { patientSession }))
 
-    response.redirect(back)
+    return response.redirect(back)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   note(request, response) {
     const { account } = request.app.locals
     const { note, pinned } = request.body
@@ -369,6 +404,6 @@ export const patientSessionController = {
       __(`patientSession.notes.new.success`, { patientSession })
     )
 
-    response.redirect(back)
+    return response.redirect(back)
   }
 }

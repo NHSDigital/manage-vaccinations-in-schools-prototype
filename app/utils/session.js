@@ -65,7 +65,7 @@ export const getSessionConsentUrl = (
  * Filter array where key has a value
  *
  * @param {import('../models.js').Session} session - Session
- * @param {Array} filters - Filters
+ * @param {Array<object>} filters - Filters
  * @returns {number} Number
  */
 export const getSessionActivityCount = (session, filters) => {

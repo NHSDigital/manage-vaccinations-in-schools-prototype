@@ -22,6 +22,9 @@ import { today } from '../utils/date.js'
 import { formatSequence } from '../utils/string.js'
 
 export const vaccinationController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, vaccination_uuid) {
     const { programme_id } = request.params
 
@@ -38,16 +41,25 @@ export const vaccinationController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   redirect(request, response) {
     const { id, nhsn } = request.params
 
-    response.redirect(`/sessions/${id}/${nhsn}`)
+    return response.redirect(`/sessions/${id}/${nhsn}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
-    response.render('vaccination/show')
+    return response.render('vaccination/show')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   edit(request, response) {
     const { vaccination_uuid } = request.params
     const { data, referrer } = request.session
@@ -64,9 +76,12 @@ export const vaccinationController = {
     // Show back link to referring page, else vaccination page
     response.locals.back = referrer || vaccination.uri
 
-    response.render('vaccination/edit')
+    return response.render('vaccination/edit')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   new(request, response) {
     const { account } = request.app.locals
     const { patientSession_uuid } = request.query
@@ -165,9 +180,13 @@ export const vaccinationController = {
       data.wizard
     )
 
-    response.redirect(`${vaccination.uri}/new/${data.startPath}`)
+    return response.redirect(`${vaccination.uri}/new/${data.startPath}`)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   update(type) {
     return (request, response) => {
       const { vaccination_uuid } = request.params
@@ -233,6 +252,10 @@ export const vaccinationController = {
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   readForm(type) {
     return (request, response, next) => {
       const { vaccination_uuid } = request.params
@@ -373,6 +396,10 @@ export const vaccinationController = {
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   showForm(type) {
     return (request, response) => {
       const { view } = request.params
@@ -381,6 +408,9 @@ export const vaccinationController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { data } = request.session
     const { vaccination_uuid } = request.params
@@ -428,6 +458,6 @@ export const vaccinationController = {
 
     const redirect = paths.next || `${vaccination.uri}/new/check-answers`
 
-    response.redirect(redirect)
+    return response.redirect(redirect)
   }
 }

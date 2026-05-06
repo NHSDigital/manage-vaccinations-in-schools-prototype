@@ -1,6 +1,9 @@
 import { School, Team } from '../models.js'
 
 export const teamController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, team_id) {
     const { view } = request.params
     const { __ } = response.locals
@@ -22,18 +25,27 @@ export const teamController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   redirect(request, response) {
     const { team_id } = request.params
 
-    response.redirect(`${team_id}/contact`)
+    return response.redirect(`${team_id}/contact`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'show'
 
-    response.render(`team/${view}`)
+    return response.render(`team/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readForm(request, response, next) {
     const { view } = request.params
     const { team } = response.locals
@@ -49,28 +61,40 @@ export const teamController = {
       next: referrers[view]
     }
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readSchool(request, response, next) {
     const { school_id } = request.params
 
     const school = School.findOne(school_id, request.session.data)
     response.locals.school = school
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showSchool(request, response) {
-    response.render(`team/school`)
+    return response.render(`team/school`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const view = request.params.view || 'contact'
 
-    response.render(`team/form/${view}`)
+    return response.render(`team/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { team_id } = request.params
     const { data } = request.session
@@ -84,6 +108,6 @@ export const teamController = {
 
     request.flash('success', __(`team.edit.success`))
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   }
 }

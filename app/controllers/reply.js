@@ -23,6 +23,9 @@ import {
 } from '../utils/triage.js'
 
 export const replyController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, reply_uuid) {
     const { nhsn, programme_id } = request.params
 
@@ -36,18 +39,27 @@ export const replyController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   redirect(request, response) {
     const { nhsn, programme_id, session_id } = request.params
 
-    response.redirect(
+    return response.redirect(
       `/sessions/${session_id}/patients/${nhsn}/${programme_id}`
     )
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
-    response.render('reply/show')
+    return response.render('reply/show')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   new(request, response) {
     const { account } = request.app.locals
     const { programme_id, nhsn } = request.params
@@ -79,9 +91,13 @@ export const replyController = {
       next = `${reply.uri}/new/respondent`
     }
 
-    response.redirect(next)
+    return response.redirect(next)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   update(type) {
     return (request, response) => {
       const { account, invalidUuid } = request.app.locals
@@ -167,6 +183,10 @@ export const replyController = {
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   readForm(type) {
     return (request, response, next) => {
       const { reply_uuid } = request.params
@@ -324,12 +344,18 @@ export const replyController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const { view } = request.params
 
-    response.render(`reply/form/${view}`)
+    return response.render(`reply/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { respondent } = request.body
     const { reply_uuid } = request.params
@@ -385,47 +411,53 @@ export const replyController = {
       ...request?.body?.vaccination // Wizard values
     }
 
-    response.redirect(
+    return response.redirect(
       paths.next ||
         `${patientSession.uri}/replies/${reply_uuid}/new/check-answers`
     )
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   followUp(request, response) {
     const { decision } = request.body
     const { data } = request.session
     const { patientSession, reply } = response.locals
 
     if (decision === 'true') {
-      response.redirect(`${reply.uri}/edit/outcome`)
-    } else {
-      // Store reply that needs marked as invalid
-      // We only want to do this when submitting replacement reply
-      request.app.locals.invalidUuid = reply.uuid
-
-      const newReply = Reply.create(
-        {
-          child: patientSession.patient,
-          parent: reply.parent,
-          patient_uuid: patientSession.patient_uuid,
-          session_id: patientSession.session_id,
-          programme_id: patientSession.programme_id,
-          method: ReplyMethod.Phone
-        },
-        data.wizard
-      )
-
-      const createdReply = new Reply(newReply, data)
-
-      // Clean up session data
-      delete data.decision
-
-      response.redirect(
-        `${createdReply.uri}/new/decision?referrer=${reply.uri}`
-      )
+      return response.redirect(`${reply.uri}/edit/outcome`)
     }
+
+    // Store reply that needs marked as invalid
+    // We only want to do this when submitting replacement reply
+    request.app.locals.invalidUuid = reply.uuid
+
+    const newReply = Reply.create(
+      {
+        child: patientSession.patient,
+        parent: reply.parent,
+        patient_uuid: patientSession.patient_uuid,
+        session_id: patientSession.session_id,
+        programme_id: patientSession.programme_id,
+        method: ReplyMethod.Phone
+      },
+      data.wizard
+    )
+
+    const createdReply = new Reply(newReply, data)
+
+    // Clean up session data
+    delete data.decision
+
+    return response.redirect(
+      `${createdReply.uri}/new/decision?referrer=${reply.uri}`
+    )
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   invalidate(request, response) {
     const { note } = request.body.reply
     const { reply_uuid } = request.params
@@ -440,9 +472,12 @@ export const replyController = {
 
     request.flash('success', __(`reply.invalidate.success`, { reply }))
 
-    response.redirect(patientSession.uri)
+    return response.redirect(patientSession.uri)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   withdraw(request, response) {
     const { account } = request.app.locals
     const { refusalReason, refusalReasonOther, note } = request.body.reply
@@ -492,6 +527,6 @@ export const replyController = {
 
     request.flash('success', __(`reply.withdraw.success`, { reply }))
 
-    response.redirect(patientSession.uri)
+    return response.redirect(patientSession.uri)
   }
 }
