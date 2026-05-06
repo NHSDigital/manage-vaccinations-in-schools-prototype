@@ -1,12 +1,15 @@
 @use "../../vendor/nhsuk-frontend" as *;
 
 // Sticky columns
-[class^="app-grid-column"],
-[class^="nhsuk-grid-column"] {
-  &[data-app-sticky-init] {
-    @include nhsuk-media-query($from: large-desktop) {
+.nhsuk-grid-column-one-third {
+  @include nhsuk-media-query($from: desktop) {
+    &[data-app-sticky-init] {
       position: sticky;
       top: 0;
+    }
+
+    .nhsuk-card--feature {
+      margin-top: nhsuk-spacing(3);
     }
   }
 }
@@ -19,8 +22,9 @@
 .app-grid-column-patient-record {
   @include nhsuk-grid-column(one-quarter, $float: right, $at: large-desktop);
 
-  &[data-app-sticky-init] {
-    @include nhsuk-media-query($from: large-desktop) {
+  @include nhsuk-media-query($from: large-desktop) {
+    &[data-app-sticky-init] {
+      position: sticky;
       top: #{nhsuk-spacing(9) + nhsuk-spacing(5)};
     }
   }
