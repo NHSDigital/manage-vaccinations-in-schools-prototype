@@ -22,7 +22,7 @@ export function generateClinicAppointment(patient, session, booking) {
   const session_id = session.id
 
   let patient_uuid, child
-  if (faker.datatype.boolean(0.95)) {
+  if (faker.datatype.boolean(0.9)) {
     // Matched appointment
     patient_uuid = patient.uuid
 
@@ -58,7 +58,7 @@ export function generateClinicAppointment(patient, session, booking) {
   let parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility
-  if (!booking.parent) {
+  if (!booking.parent.fullName) {
     // First appointment, so set up the booking's parent
     booking.parent =
       patient.parent1 ||

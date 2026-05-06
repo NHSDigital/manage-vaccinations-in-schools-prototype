@@ -59,17 +59,18 @@ const data = {
 const unmatchedAppointmentCount = ClinicBooking.findAll(data)
   ?.flatMap(({ appointments }) => appointments)
   .filter(({ patient_uuid }) => !patient_uuid).length
-const consentCount = Consent.findAll(data).length || 0
+const unmatchedConsentCount = Consent.findAll(data).length || 0
 const moveCount = Move.findAll(data).length || 0
 const noticeCount =
   Notice.findAll(data).filter(({ archivedAt }) => !archivedAt).length || 0
 
 data.counts = {
   appointments: unmatchedAppointmentCount,
-  consents: consentCount,
+  consents: unmatchedConsentCount,
   moves: moveCount,
   notices: noticeCount,
-  review: consentCount + moveCount + noticeCount,
+  review:
+    unmatchedAppointmentCount + unmatchedConsentCount + moveCount + noticeCount,
   sessions: Session.findAll(data).length
 }
 

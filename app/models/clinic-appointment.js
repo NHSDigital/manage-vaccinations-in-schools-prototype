@@ -1,6 +1,13 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Child, ClinicBooking, Patient, Programme, Session } from '../models.js'
+import {
+  Child,
+  ClinicBooking,
+  Parent,
+  Patient,
+  Programme,
+  Session
+} from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
   formatLinkWithSecondaryText,
@@ -259,10 +266,14 @@ export class ClinicAppointment {
    * @returns {object} Formatted links
    */
   get link() {
+    const parent = new Parent({
+      fullName: this.booking?.parent?.fullName,
+      relationship: this.parentalRelationship
+    })
     return {
       summary: formatLinkWithSecondaryText(
         this.uri,
-        this.booking?.parent?.fullNameAndRelationship,
+        parent.fullNameAndRelationship,
         `for ${this.child.fullName}`
       )
     }
