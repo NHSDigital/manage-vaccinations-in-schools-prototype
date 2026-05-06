@@ -56,8 +56,8 @@
     {{ checkboxes({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--s",
-          text: __("programme.label")
+          text: __("programme.label"),
+          size: "s"
         }
       },
       small: true,
@@ -68,8 +68,8 @@
     {{ radios({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--s",
-          text: "Clinic status"
+          text: "Clinic status",
+          size: "s"
         }
       },
       small: true,
@@ -81,8 +81,8 @@
       {{ checkboxes({
         fieldset: {
           legend: {
-            classes: "nhsuk-fieldset__legend--s",
-            text: __("patientSession." + name + ".label")
+            text: __("patientSession." + name + ".label"),
+            size: "s"
           }
         },
         small: true,
@@ -95,8 +95,8 @@
       {{ radios({
         fieldset: {
           legend: {
-            classes: "nhsuk-fieldset__legend--s",
-            text: __("patientSession." + name + ".label")
+            text: __("patientSession." + name + ".label"),
+            size: "s"
           }
         },
         small: true,
@@ -109,8 +109,8 @@
       small: true,
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--s",
-          text: __("patientSession.report.label")
+          text: __("patientSession.report.label"),
+          size: "s"
         }
       },
       items: [{
@@ -145,8 +145,8 @@
           html: (checkboxes({
             fieldset: {
               legend: {
-                classes: "nhsuk-fieldset__legend--s nhsuk-u-margin-bottom-0",
-                text: ProgrammeType.Flu + " vaccine type"
+                text: ProgrammeType.Flu + " vaccine type",
+                size: "s"
               }
             } if not session,
             small: true,
@@ -162,8 +162,8 @@
           }) if showFluVaccineCriteria) + (checkboxes({
             fieldset: {
               legend: {
-                classes: "nhsuk-fieldset__legend--s nhsuk-u-margin-bottom-0",
-                text: ProgrammeType.MMR + " vaccine type"
+                text: ProgrammeType.MMR + " vaccine type",
+                size: "s"
               }
             } if not session,
             small: true,
@@ -202,8 +202,8 @@
     {{ checkboxes({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--s",
-          text: __("patient.yearGroup.label")
+          text: __("patient.yearGroup.label"),
+          size: "s"
         }
       },
       small: true,
@@ -215,8 +215,8 @@
       {{ dateInput({
         fieldset: {
           legend: {
-            classes: "nhsuk-label--s",
-            text: __("patient.dob.label")
+            text: __("patient.dob.label"),
+            size: "s"
           }
         },
         decorate: "dob"
@@ -225,8 +225,8 @@
       {{ checkboxes({
         fieldset: {
           legend: {
-            classes: "nhsuk-fieldset__legend--s",
-            text: __("patient.search.showOnly")
+            text: __("patient.search.showOnly"),
+            size: "s"
           }
         },
         small: true,
