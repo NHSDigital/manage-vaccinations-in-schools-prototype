@@ -69,8 +69,8 @@
     {% set delayVaccinationHtml = dateInput({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--s",
-          text: __("triage.outcomeAt.title", { patient: patient })
+          text: __("triage.outcomeAt.title", { patient: patient }),
+          size: "s"
         }
       },
       hint: { text: __("triage.outcomeAt.hint", { date: DelayDate }) },
