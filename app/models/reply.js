@@ -52,9 +52,10 @@ import {
  * @property {boolean} [alternative] - Consent for alternative vaccine
  * @property {boolean} [confirmed] - Decision confirmed
  * @property {boolean} [consultation] - Consultation requested
- * @property {boolean} declined - Reply declines consent
  * @property {boolean} ethnicity - Answered ethnicity questions
+ * @property {boolean} declined - Reply declines consent
  * @property {boolean} given - Reply gives consent
+ * @property {boolean} refused - Reply refuses consent
  * @property {boolean} invalid - Reply is invalid
  * @property {ReplyMethod} [method] - Reply method
  * @property {object} [healthAnswers] - Answers to health questions
@@ -103,6 +104,10 @@ export class Reply {
         ReplyDecision.OnlyAlternativeInjection,
         ReplyDecision.OnlyMenACWY,
         ReplyDecision.OnlyTdIPV
+      ].includes(this.decision)
+      this.refused = [
+        ReplyDecision.AlreadyVaccinated,
+        ReplyDecision.Refused
       ].includes(this.decision)
       this.healthAnswers = this.given && options?.healthAnswers
       this.triageNote = this.given && options?.triageNote

@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker'
-import _ from 'lodash'
 
 import { healthConditions } from '../datasets/health-conditions.js'
 import {
   ConsentOutcome,
-  ParentalRelationship,
+  ConsentVaccineCriteria,
   ProgrammeType,
   ReplyDecision,
   ReplyRefusal
@@ -127,12 +126,20 @@ export function getConsentHealthAnswers(patientSession) {
  * @returns {ConsentOutcome} Consent outcome
  */
 export const getConfirmedConsentOutcome = (reply, session) => {
+  if (!reply.delivered) {
+    return ConsentOutcome.NotDelivered
+  }
+
   if (reply.decision === ReplyDecision.NoResponse) {
     return ConsentOutcome.NoResponse
   }
 
-  if (reply.decision === ReplyDecision.Refused && reply.confirmed) {
+  if (reply.decision === reply.refused && reply.confirmed) {
     return ConsentOutcome.FinalRefusal
+  }
+
+  if (reply.refused) {
+    return ConsentOutcome.Refused
   }
 
   if (reply.given) {
@@ -164,50 +171,102 @@ export const getConfirmedConsentOutcome = (reply, session) => {
  * @returns {ConsentOutcome} Consent outcome
  */
 export const getConsentOutcome = (patientSession) => {
-  const parentalRelationships = Object.values(ParentalRelationship)
-
   // Get valid replies
-  // Include undelivered replies so can return ConsentOutcome.NotDelivered
-  let replies = Object.values(patientSession.replies).filter(
-    (reply) => !reply.invalid
+  const validReplies = Object.values(patientSession.replies).filter(
+    ({ invalid }) => !invalid
   )
 
+  // If no valid replies, no response
+  if (validReplies.length === 0) {
+    return ConsentOutcome.NoResponse
+  }
+
+  // If all valid replies were undelivered, request failed
+  if (validReplies.every(({ delivered }) => !delivered)) {
+    return ConsentOutcome.NotDelivered
+  }
+
+  // Get valid and delivered replies
+  const replies = validReplies.filter(({ delivered }) => delivered)
+
+  // If any reply is child self consenting, use child’s decision
+  const childReply = replies.find((reply) => reply.selfConsent)
+  if (childReply) {
+    return getConfirmedConsentOutcome(childReply, patientSession.session)
+  }
+
+  // If only one reply, use that decision
   if (replies.length === 1) {
-    // Check if request was delivered
-    if (!replies[0].delivered) {
-      return ConsentOutcome.NotDelivered
-    }
-
-    // Reply decision value matches consent outcome key
     return getConfirmedConsentOutcome(replies[0], patientSession.session)
-  } else if (replies.length > 1) {
-    // Exclude undelivered replies so can return ConsentOutcome.NotDelivered
-    replies = replies.filter((reply) => reply.delivered)
+  }
 
-    // If no replies, no requests were delivered
-    if (replies.length === 0) {
-      return ConsentOutcome.NotDelivered
+  // If many replies, determine if responses are consistent or inconsistent
+  if (replies.length > 1) {
+    // If one of the replies is a confirmed refusal, consent is final refusal
+    if (replies.find(({ refused, confirmed }) => refused && confirmed)) {
+      return ConsentOutcome.FinalRefusal
     }
 
-    const decisions = _.uniqBy(replies, 'decision')
-    if (decisions.length > 1) {
-      // If one of the replies is not from parent (so from child), use that
-      const childReply = replies.find(
-        (reply) => !parentalRelationships.includes(reply.relationship)
-      )
-      if (childReply) {
-        return getConfirmedConsentOutcome(childReply, patientSession.session)
-      }
-
-      // If one of the replies has declined (requested follow up), show this
-      // status over showing responses as inconsistent
-      if (decisions.find((reply) => reply.declined)) {
-        return ConsentOutcome.Declined
-      }
-
-      return ConsentOutcome.Inconsistent
+    // If one of the replies is a refusal, consent is refused
+    if (replies.find(({ refused }) => refused)) {
+      return ConsentOutcome.Refused
     }
-    return getConfirmedConsentOutcome(decisions[0], patientSession.session)
+
+    // If one of the replies has requested follow up, show this status
+    // over showing inconsistent consent
+    if (replies.find(({ declined }) => declined)) {
+      return ConsentOutcome.Declined
+    }
+
+    // If consent given, determine which vaccine method has consent
+    if (replies.every(({ given }) => given)) {
+      // For flu programme, determine if consent given for injection
+      if (patientSession.session?.offersIntranasalVaccine) {
+        const allWantInjection = replies.every(
+          ({ vaccineCriteria }) =>
+            vaccineCriteria ===
+            ConsentVaccineCriteria.AlternativeFluInjectionOnly
+        )
+        const someWantInjectionOnly = replies.some(
+          ({ vaccineCriteria }) =>
+            vaccineCriteria ===
+            ConsentVaccineCriteria.AlternativeFluInjectionOnly
+        )
+        const someWantIntranasalOnly = replies.some(
+          ({ vaccineCriteria }) =>
+            vaccineCriteria === ConsentVaccineCriteria.IntranasalOnly
+        )
+        const allAcceptAlternative = replies.every(
+          ({ alternative }) => alternative
+        )
+
+        if (someWantInjectionOnly && someWantIntranasalOnly) {
+          return ConsentOutcome.Inconsistent
+        }
+
+        if (
+          allWantInjection ||
+          (someWantInjectionOnly && allAcceptAlternative)
+        ) {
+          return ConsentOutcome.GivenForAlternativeInjection
+        }
+
+        return ConsentOutcome.GivenForIntranasal
+      }
+
+      // For MMR programme, determine if any consent requested gelatine-free
+      if (patientSession.session?.offersAlternativeVaccine) {
+        if (replies.some(({ alternative }) => alternative)) {
+          return ConsentOutcome.GivenForAlternativeInjection
+        }
+      }
+
+      if (replies.every(({ given }) => given)) {
+        return ConsentOutcome.Given
+      }
+    }
+
+    return ConsentOutcome.Inconsistent
   }
 
   return ConsentOutcome.NoResponse
