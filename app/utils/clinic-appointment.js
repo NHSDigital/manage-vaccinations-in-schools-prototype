@@ -74,7 +74,7 @@ export const getAllAppointmentPaths = (
  * Get the path for a single health question
  *
  * @param {string} key
- * @param {import('../models/clinic-appointment.js').ClinicAppointment} appointment
+ * @param {import('../models.js').ClinicAppointment} appointment
  * @param {string} pathPrefix
  * @returns {string} The full path to the given health question
  */

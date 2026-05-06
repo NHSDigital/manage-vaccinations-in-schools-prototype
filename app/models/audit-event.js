@@ -98,7 +98,7 @@ export class AuditEvent {
   /**
    * Get date outcome invalidates for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get outcomeAt_() {
     return convertIsoDateToObject(this.outcomeAt)

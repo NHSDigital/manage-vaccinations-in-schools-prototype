@@ -6,10 +6,16 @@ import { Patient, PDSRecord } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const pdsRecordController = {
+  /**
+   * @type {import("express").RequestHandler}
+   */
   redirect(request, response) {
-    response.redirect('/patients')
+    return response.redirect('/patients')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   start(request, response) {
     const { data } = request.session
 
@@ -23,12 +29,15 @@ export const pdsRecordController = {
       // Add PDS record to wizard data
       PDSRecord.create(pdsRecord, data.wizard)
 
-      response.redirect(`/pds/${pdsRecord.uuid}/new/result`)
-    } else {
-      response.redirect(`/pds/new/search`)
+      return response.redirect(`/pds/${pdsRecord.uuid}/new/result`)
     }
+
+    return response.redirect(`/pds/new/search`)
   },
 
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, pdsRecord_uuid) {
     const { data } = request.session
 
@@ -37,6 +46,9 @@ export const pdsRecordController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { pdsRecord_uuid } = request.params
     const { data } = request.session
@@ -62,7 +74,7 @@ export const pdsRecordController = {
 
     request.flash('success', __(`pdsRecord.new.success`, { patient }))
 
-    response.redirect(patient.uri)
+    return response.redirect(patient.uri)
   },
 
   readAll(request, response, next) {
@@ -138,12 +150,18 @@ export const pdsRecordController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     let { view } = request.params
 
-    response.render(`pds/form/${view}`)
+    return response.render(`pds/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response, next) {
     const { pdsRecord_uuid } = request.params
     const { data } = request.session

@@ -47,7 +47,7 @@ export function stringToBoolean(value) {
  *
  * @template T
  * @param {T} value - Value to test
- * @returns {Array} Array
+ * @returns {Array<T>} Array
  */
 export function stringToArray(value) {
   const array = Array.isArray(value) ? value : []
@@ -225,7 +225,7 @@ export function formatHealthQuestions(questions) {
 /**
  * Format array as HTML list
  *
- * @param {Array} array - Array
+ * @param {Array<string>} array - Array
  * @returns {string|undefined} HTML unordered list with nhsuk-* classes
  */
 export function formatList(array) {
@@ -302,7 +302,7 @@ export function formatMonospace(string, noWrap = false) {
  *
  * @param {string} string - String
  * @param {boolean} invalid - Invalid record
- * @returns {string|undefined} Formatted HTML
+ * @returns {string|undefined|null} Formatted HTML
  */
 export function formatNhsNumber(string, invalid) {
   if (!string) return

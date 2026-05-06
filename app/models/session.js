@@ -138,9 +138,9 @@ export class Session {
   }
 
   /**
-   * Get session date for `dateInput`s
+   * Get session date for `dateInput`
    *
-   * @returns {Array<object|undefined>} `dateInput` objects
+   * @returns {object|string} `dateInput` object
    */
   get date_() {
     return convertIsoDateToObject(this.date)
@@ -160,7 +160,7 @@ export class Session {
   /**
    * Get date consent window opens for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get openAt_() {
     return convertIsoDateToObject(this.openAt)

@@ -325,7 +325,7 @@ export function setMidday(date) {
 }
 
 /**
- * @param {Array} dates - Dates
+ * @param {Array<Date>} dates - Dates
  * @param {Date} date - Date
  * @returns {boolean} Dates includes date
  */

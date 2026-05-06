@@ -8,6 +8,9 @@ import { getResults, getPagination } from '../utils/pagination.js'
 import { formatYearGroup } from '../utils/string.js'
 
 export const schoolController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, school_id) {
     const { data } = request.session
 
@@ -17,18 +20,28 @@ export const schoolController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     response.locals.schools = School.findAll(request.session.data)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'show'
 
-    response.render(`school/${view}`)
+    return response.render(`school/${view}`)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   new(type) {
     return (request, response) => {
       const { data } = request.session
@@ -45,6 +58,9 @@ export const schoolController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
     const { phase, q } = request.query
     const { data } = request.session
@@ -75,9 +91,12 @@ export const schoolController = {
     delete data.q
     delete data.phase
 
-    response.render('school/list')
+    return response.render('school/list')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterList(request, response) {
     const params = new URLSearchParams()
 
@@ -89,9 +108,12 @@ export const schoolController = {
       }
     }
 
-    response.redirect(`/schools?${params}`)
+    return response.redirect(`/schools?${params}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readPatients(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
     const { data } = request.session
@@ -252,9 +274,12 @@ export const schoolController = {
     delete data.vaccineCriteria
     delete data.yearGroup
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterPatients(request, response) {
     const { school } = response.locals
 
@@ -290,17 +315,23 @@ export const schoolController = {
       }
     }
 
-    response.redirect(`${school.uri}?${params}`)
+    return response.redirect(`${school.uri}?${params}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readSessions(request, response) {
     const { school } = response.locals
 
     response.locals.sessions = school.sessions
 
-    response.render('school/sessions')
+    return response.render('school/sessions')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   edit(request, response) {
     const { school_id } = request.params
     const { data } = request.session
@@ -316,9 +347,13 @@ export const schoolController = {
     // Show back link to session page
     response.locals.back = school.uri
 
-    response.render('school/edit')
+    return response.render('school/edit')
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   update(type) {
     return (request, response) => {
       const { school_id } = request.params
@@ -343,6 +378,10 @@ export const schoolController = {
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   readForm(type) {
     return (request, response, next) => {
       const { school_id } = request.params
@@ -398,12 +437,18 @@ export const schoolController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const { view } = request.params
 
-    response.render(`school/form/${view}`)
+    return response.render(`school/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { school_id, view } = request.params
     const { data } = request.session
@@ -447,15 +492,22 @@ export const schoolController = {
 
     School.update(school_id, request.body.school, data.wizard)
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   action(type) {
     return (request, response) => {
       response.render('school/action', { type })
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   delete(request, response) {
     const { school_id } = request.params
     const { data } = request.session
@@ -467,9 +519,12 @@ export const schoolController = {
 
     request.flash('success', __(`school.delete.success`))
 
-    response.redirect(referrer)
+    return response.redirect(referrer)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   inviteToClinic(request, response) {
     const { school_id } = request.params
     const { data } = request.session
@@ -497,6 +552,6 @@ export const schoolController = {
       })
     )
 
-    response.redirect(school.uri)
+    return response.redirect(school.uri)
   }
 }

@@ -2,6 +2,13 @@ import { ReplyDecision } from '../enums.js'
 
 import { camelToKebabCase } from './string.js'
 
+/**
+ * Get health question path
+ *
+ * @param {string} key - Key
+ * @param {string} pathPrefix - Path prefix
+ * @returns {string} Health question path
+ */
 const getHealthQuestionPath = (key, pathPrefix) => {
   return `${pathPrefix}health-question-${camelToKebabCase(key)}`
 }

@@ -1,6 +1,9 @@
 import { Clinic } from '../models.js'
 
 export const clinicController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, clinic_id) {
     const clinic = Clinic.findOne(clinic_id, request.session.data)
 
@@ -13,18 +16,29 @@ export const clinicController = {
     next()
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   form(type) {
     return (request, response) => {
       response.render('clinic/form', { type })
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   action(type) {
     return (request, response) => {
       response.render('clinic/action', { type })
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   create(request, response) {
     const { team_id } = request.params
     const { data } = request.session
@@ -40,9 +54,12 @@ export const clinicController = {
 
     request.flash('success', __(`clinic.new.success`, { clinic }))
 
-    response.redirect(`${clinic.team.uri}/clinics`)
+    return response.redirect(`${clinic.team.uri}/clinics`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { clinic_id } = request.params
     const { data } = request.session
@@ -56,9 +73,12 @@ export const clinicController = {
 
     request.flash('success', __(`clinic.edit.success`, { clinic }))
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   delete(request, response) {
     const { clinic_id } = request.params
     const { data } = request.session
@@ -68,6 +88,6 @@ export const clinicController = {
 
     request.flash('success', __(`clinic.delete.success`))
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   }
 }

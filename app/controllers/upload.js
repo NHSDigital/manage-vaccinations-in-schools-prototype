@@ -7,24 +7,36 @@ import { getResults, getPagination } from '../utils/pagination.js'
 import { formatYearGroup } from '../utils/string.js'
 
 export const uploadController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, upload_id) {
     response.locals.upload = Upload.findOne(upload_id, request.session.data)
 
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     response.locals.uploads = Upload.findAll(request.session.data)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'show'
 
-    response.render(`upload/${view}`)
+    return response.render(`upload/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
     const { status, type } = request.query
     const { data } = request.session
@@ -55,9 +67,12 @@ export const uploadController = {
     delete data.status
     delete data.type
 
-    response.render(`upload/list`)
+    return response.render(`upload/list`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterList(request, response) {
     const params = new URLSearchParams()
 
@@ -82,9 +97,13 @@ export const uploadController = {
       }
     }
 
-    response.redirect(`/uploads?${params}`)
+    return response.redirect(`/uploads?${params}`)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   action(type) {
     return (request, response) => {
       const { upload } = response.locals
@@ -98,6 +117,9 @@ export const uploadController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   new(request, response) {
     const { account } = request.app.locals
     const { programme_id } = request.params
@@ -124,9 +146,13 @@ export const uploadController = {
         : 'file'
       : 'type'
 
-    response.redirect(`${upload.uri}/new/${data.startPath}`)
+    return response.redirect(`${upload.uri}/new/${data.startPath}`)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   update(type) {
     return (request, response) => {
       const { upload_id } = request.params
@@ -159,6 +185,10 @@ export const uploadController = {
     }
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   readForm(type) {
     return (request, response, next) => {
       const { upload_id } = request.params
@@ -220,12 +250,18 @@ export const uploadController = {
     }
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     const { view } = request.params
 
-    response.render(`upload/form/${view}`)
+    return response.render(`upload/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { upload_id } = request.params
     const { data } = request.session
@@ -233,9 +269,12 @@ export const uploadController = {
 
     Upload.update(upload_id, request.body.upload, data.wizard)
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   delete(request, response) {
     const { upload_id } = request.params
     const { data } = request.session
@@ -245,9 +284,12 @@ export const uploadController = {
 
     request.flash('success', __(`upload.delete.success`))
 
-    response.redirect('/uploads')
+    return response.redirect('/uploads')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   approve(request, response) {
     const { account } = request.app.locals
     const { upload_id } = request.params
@@ -265,14 +307,17 @@ export const uploadController = {
 
     request.flash('success', __(`upload.approve.success`))
 
-    response.redirect('/uploads')
+    return response.redirect('/uploads')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   removeRelationships(request, response) {
     const { __, upload } = response.locals
 
     request.flash('success', __('upload.removeRelationships.success'))
 
-    response.redirect(upload.uri)
+    return response.redirect(upload.uri)
   }
 }

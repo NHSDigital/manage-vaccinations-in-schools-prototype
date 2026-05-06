@@ -4,7 +4,7 @@ import _ from 'lodash'
  * Tokenize selected keys in an object
  *
  * @param {object} object - Object to tokenize
- * @param {Array} keys - Keys to tokenize
+ * @param {Array<string>} keys - Keys to tokenize
  * @returns {string} Tokens
  */
 export function tokenize(object, keys) {

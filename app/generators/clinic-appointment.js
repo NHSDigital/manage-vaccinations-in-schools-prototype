@@ -11,9 +11,9 @@ const clinicSlotLength = Number(process.env.CLINIC_SLOT_LENGTH) || 10
 /**
  * Generate fake clinic appointment
  *
- * @param {import('../models/patient.js').Patient} patient - The patient for whom the appointment is being created
- * @param {import('../models/session.js').Session} session - The clinic session into which we're booking the patient
- * @param {import('../models/clinic-booking.js').ClinicBooking} booking - The booking this appointment will belong to
+ * @param {import('../models.js').Patient} patient - The patient for whom the appointment is being created
+ * @param {import('../models.js').Session} session - The clinic session into which we're booking the patient
+ * @param {import('../models.js').ClinicBooking} booking - The booking this appointment will belong to
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
 export function generateClinicAppointment(patient, session, booking) {

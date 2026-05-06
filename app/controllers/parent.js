@@ -15,6 +15,9 @@ import { getHealthQuestionPaths } from '../utils/consent.js'
 import { formatList, kebabToCamelCase } from '../utils/string.js'
 
 export const parentController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, session_id) {
     const session = Session.findOne(session_id, request.session.data)
     const serviceName = 'Give or refuse consent for vaccinations'
@@ -31,12 +34,18 @@ export const parentController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   redirect(request, response) {
     const { session } = response.locals
 
-    response.redirect(`${session.consentUrl}/start`)
+    return response.redirect(`${session.consentUrl}/start`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const view = request.params.view || 'show'
     const { data } = request.session
@@ -70,9 +79,12 @@ export const parentController = {
       response.locals.sideEffects = formatList([...sideEffects])
     }
 
-    response.render(`parent/${view}`)
+    return response.render(`parent/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   new(request, response) {
     const { data } = request.session
     const { session } = response.locals
@@ -85,9 +97,12 @@ export const parentController = {
     )
     consent = new Consent(consent, data)
 
-    response.redirect(`${consent.parentUri}/new/child`)
+    return response.redirect(`${consent.parentUri}/new/child`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { consent_uuid } = request.params
     const { data } = request.session
@@ -102,9 +117,12 @@ export const parentController = {
       Consent.update(consent_uuid, consent, data.wizard)
     }
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readForm(request, response, next) {
     const { session_id, consent_uuid } = request.params
     const { data, referrer } = request.session
@@ -320,9 +338,12 @@ export const parentController = {
       session.programmes.map((programme) => programme.type).includes(type)
     )
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     let { view } = request.params
     const { consent } = response.locals
@@ -343,9 +364,12 @@ export const parentController = {
     // Only ask for details if question does not have sub-questions
     const hasSubQuestions = consent.healthQuestionsForDecision[key]?.conditional
 
-    response.render(`parent/form/${view}`, { key, hasSubQuestions })
+    return response.render(`parent/form/${view}`, { key, hasSubQuestions })
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { decision } = request.body
     const { consent_uuid } = request.params
@@ -370,6 +394,6 @@ export const parentController = {
 
     Consent.update(consent_uuid, request.body.consent, data.wizard)
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   }
 }

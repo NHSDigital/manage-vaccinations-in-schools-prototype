@@ -120,7 +120,7 @@ export class Child {
   /**
    * Get date of birth for `dateInput`
    *
-   * @returns {object|undefined} `dateInput` object
+   * @returns {object|string} `dateInput` object
    */
   get dob_() {
     return convertIsoDateToObject(this.dob)

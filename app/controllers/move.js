@@ -4,12 +4,18 @@ import { Move } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const moveController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, move_uuid) {
     response.locals.move = Move.findOne(move_uuid, request.session.data)
 
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readAll(request, response, next) {
     let moves = Move.findAll(request.session.data)
 
@@ -20,17 +26,26 @@ export const moveController = {
     response.locals.results = getResults(moves, request.query)
     response.locals.pages = getPagination(moves, request.query)
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
-    response.render('move/show')
+    return response.render('move/show')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.render('move/list')
+    return response.render('move/list')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { decision } = request.body
     const { data } = request.session
@@ -46,6 +61,6 @@ export const moveController = {
 
     request.flash('success', __(`move.${decision}.success`, { move }))
 
-    response.redirect('/moves')
+    return response.redirect('/moves')
   }
 }

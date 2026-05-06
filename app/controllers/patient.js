@@ -28,6 +28,9 @@ import { queryToQueryString } from '../utils/querystring.js'
 import { formatYearGroup, stringToArray } from '../utils/string.js'
 
 export const patientController = {
+  /**
+   * @type {import("express").RequestParamHandler}
+   */
   read(request, response, next, patient_uuid) {
     const { data } = request.session
     const { __ } = response.locals
@@ -247,6 +250,9 @@ export const patientController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
     const { patient } = response.locals
     const view = request.params.view || 'show'
@@ -278,13 +284,19 @@ export const patientController = {
       }
     }
 
-    response.render(`patient/${view}`)
+    return response.render(`patient/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   list(request, response) {
-    response.render('patient/list')
+    return response.render('patient/list')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   filterList(request, response) {
     const params = new URLSearchParams()
 
@@ -318,9 +330,12 @@ export const patientController = {
       }
     }
 
-    response.redirect(`/patients?${params}`)
+    return response.redirect(`/patients?${params}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   edit(request, response) {
     const { patient_uuid } = request.params
     const { data, referrer } = request.session
@@ -336,9 +351,12 @@ export const patientController = {
     // Show back link to referring page, else patient page
     response.locals.back = referrer || patient.uri
 
-    response.render('patient/edit')
+    return response.render('patient/edit')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { patient_uuid } = request.params
     const { data, referrer } = request.session
@@ -358,9 +376,12 @@ export const patientController = {
 
     request.flash('success', __('patient.edit.success'))
 
-    response.redirect(referrer || patient.uri)
+    return response.redirect(referrer || patient.uri)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readForm(request, response, next) {
     const { patient_uuid } = request.params
     const { data } = request.session
@@ -378,9 +399,12 @@ export const patientController = {
       next: `${patient.uri}/edit`
     }
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showForm(request, response) {
     let { view } = request.params
 
@@ -390,9 +414,12 @@ export const patientController = {
       view = 'parent'
     }
 
-    response.render(`patient/form/${view}`)
+    return response.render(`patient/form/${view}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   updateForm(request, response) {
     const { patient_uuid } = request.params
     const { data } = request.session
@@ -400,9 +427,12 @@ export const patientController = {
 
     Patient.update(patient_uuid, request.body.patient, data.wizard)
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readProgramme(request, response, next) {
     const { programme_id } = request.params
     const { data } = request.session
@@ -417,13 +447,19 @@ export const patientController = {
       data
     )
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showProgramme(request, response) {
-    response.render(`patient/programme`)
+    return response.render(`patient/programme`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   inviteOneToClinic(request, response) {
     const { patient_uuid } = request.params
     const { data } = request.session
@@ -448,6 +484,7 @@ export const patientController = {
       ConjunctionType.and,
       data
     )
+
     request.flash(
       'success',
       __('patient.inviteToClinic.success', {
@@ -456,9 +493,12 @@ export const patientController = {
       })
     )
 
-    response.redirect(patient.uri)
+    return response.redirect(patient.uri)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   showInviteManyToClinic(request, response) {
     const { data } = request.session
     const { clinicPatient_ids } = data
@@ -533,9 +573,12 @@ export const patientController = {
       )
     }
 
-    response.render('patient/bulk-invite-to-clinic')
+    return response.render('patient/bulk-invite-to-clinic')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   inviteManyToClinic(request, response) {
     let { clinicProgramme_ids } = request.body
     const { __mf } = response.locals
@@ -583,9 +626,12 @@ export const patientController = {
     delete data.clinicPatient_ids
 
     // Get back to the filter page as we left it
-    response.redirect(`/patients${queryToQueryString(request.query)}`)
+    return response.redirect(`/patients${queryToQueryString(request.query)}`)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   archive(request, response) {
     const { account } = request.app.locals
     const { patient_uuid } = request.params
@@ -603,9 +649,12 @@ export const patientController = {
 
     request.flash('success', __(`patient.archive.success`))
 
-    response.redirect(patient.uri)
+    return response.redirect(patient.uri)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   note(request, response) {
     const { account } = request.app.locals
     const { note } = request.body
@@ -622,9 +671,12 @@ export const patientController = {
 
     request.flash('success', __(`patient.notes.new.success`, { patient }))
 
-    response.redirect(patient.uri)
+    return response.redirect(patient.uri)
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   record(request, response) {
     const { account } = request.app.locals
     const { programme_id } = request.params
@@ -679,9 +731,13 @@ export const patientController = {
       data
     )
 
-    response.redirect(patientSession.uri)
+    return response.redirect(patientSession.uri)
   },
 
+  /**
+   * @param {string} type - Form type
+   * @returns {import("express").RequestHandler} - Request handler
+   */
   vaccination(type) {
     return (request, response) => {
       const { account } = request.app.locals

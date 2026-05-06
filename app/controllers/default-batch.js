@@ -25,10 +25,16 @@ export const defaultBatchController = {
     next()
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   show(request, response) {
-    response.render('default-batch/edit')
+    return response.render('default-batch/edit')
   },
 
+  /**
+   * @type {import("express").RequestHandler}
+   */
   update(request, response) {
     const { data } = request.session
     const { __, defaultBatch, session, paths } = response.locals
@@ -42,6 +48,6 @@ export const defaultBatchController = {
 
     request.flash('success', __(`defaultBatch.edit.success`))
 
-    response.redirect(paths.next)
+    return response.redirect(paths.next)
   }
 }

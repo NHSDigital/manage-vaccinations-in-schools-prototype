@@ -1,7 +1,7 @@
 /**
  * Generate results page
  *
- * @param {Array} items - Items to paginate
+ * @param {Array<object>} items - Items to paginate
  * @param {object} query - Query parameters
  * @param {number} [limit] - Limit
  * @returns {object} Results
@@ -27,7 +27,7 @@ export function getResults(items, query, limit = 50) {
 /**
  * Generate pagination items
  *
- * @param {Array} items - Items to paginate
+ * @param {Array<object>} items - Items to paginate
  * @param {object} query - Query parameters
  * @param {number} [limit] - Limit
  * @returns {object} Pagination
