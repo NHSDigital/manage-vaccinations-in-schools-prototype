@@ -114,3 +114,38 @@ export const getSessionYearGroups = (school_id, sessionPresets) => {
     [...programmeYearGroups].includes(yearGroup)
   )
 }
+
+/**
+ * Remove a list of slots from a wider list of all possible slots
+ *
+ * @param {Array<Date>} allSlots - the full set of time slots
+ * @param {Array<Date>} slotsToRemove - the slots to remove from allSlots
+ * @returns {Array<Date>} - an array of the remaining slots
+ */
+export function removeSlots(allSlots, slotsToRemove) {
+  const slotRemovalCounts = new Map()
+
+  // Work out how many of each time we need to remove
+  for (const date of slotsToRemove) {
+    slotRemovalCounts.set(
+      date.getTime(),
+      (slotRemovalCounts.get(date.getTime()) || 0) + 1
+    )
+  }
+
+  // Get rid of the according number of slots for each time
+  return allSlots.filter((date) => {
+    const countToRemove = slotRemovalCounts.get(date.getTime()) || 0
+
+    if (countToRemove === 0) {
+      // No need to remove this time slot
+      return true
+    }
+
+    // Scratch one off from the number to remove at this timepoint...
+    slotRemovalCounts.set(date.getTime(), countToRemove - 1)
+
+    // ...and filter this one out of the original array
+    return false
+  })
+}

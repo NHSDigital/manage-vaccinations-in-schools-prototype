@@ -339,10 +339,10 @@ export class Patient extends Child {
         this.context
       )
 
-      // Patient invited to clinic if invitation needed and invitation sent
-      patientProgramme.invitedToClinic =
-        patientProgramme.canInviteToSession &&
-        this.clinicProgramme_ids.includes(programme.id)
+      // Patient invited to clinic if invitation sent
+      patientProgramme.invitedToClinic = this.clinicProgramme_ids.includes(
+        programme.id
+      )
 
       programmes[programme.id] = patientProgramme
     }

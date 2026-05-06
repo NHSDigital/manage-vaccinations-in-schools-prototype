@@ -93,12 +93,12 @@ export class ClinicVaccinationPeriod {
   }
 
   /**
-   * Get all appointment slot start times grouped by the hour in which they start
+   * Get all appointment slot start times, replicated for the number of vaccinators
    *
    * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
-   * @returns {Array<object>} - appointment start times grouped by the hour in which they start
+   * @returns {Array<Date>} - all appointment slot start times
    */
-  appointmentsByHour(appointmentLengthInMinutes) {
+  allAppointmentTimes(appointmentLengthInMinutes) {
     const totalMinutesInPeriod =
       (this.endAt.getTime() - this.startAt.getTime()) / 1000 / 60
     if (totalMinutesInPeriod <= 0) {
@@ -116,6 +116,19 @@ export class ClinicVaccinationPeriod {
       .map((index) =>
         addMinutes(this.startAt, index * appointmentLengthInMinutes)
       )
+    return appointmentStartTimes
+  }
+
+  /**
+   * Get all appointment slot start times grouped by the hour in which they start
+   *
+   * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
+   * @returns {Array<object>} - appointment start times grouped by the hour in which they start
+   */
+  appointmentTimesByHour(appointmentLengthInMinutes) {
+    const appointmentStartTimes = this.allAppointmentTimes(
+      appointmentLengthInMinutes
+    )
 
     return _.groupBy(appointmentStartTimes, (time) => time.getHours())
   }

@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Child, Patient, Programme, Session } from '../models.js'
+import { Child, ClinicBooking, Patient, Programme, Session } from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
   formatLinkWithSecondaryText,
@@ -14,6 +14,7 @@ import {
  * @param {object} [context] - Context
  * @property {object} [context] - Context, for access to patients, programmes, etc.
  * @property {string} uuid - Unique ID for this clinic appointment
+ * @property {string} booking_uuid - Unique ID for the booking under which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {import('./child.js').Child} [child] - child details recorded from form input values
  * @property {boolean} needsExtraTime - Does the child need extra time for their vaccinations?
@@ -39,6 +40,7 @@ export class ClinicAppointment {
 
     this.uuid = options?.uuid || faker.string.uuid()
 
+    this.booking_uuid = options?.booking_uuid
     this.patient_uuid = options?.patient_uuid
     this.child = (options?.child && new Child(options.child)) || new Child({})
 
@@ -63,6 +65,21 @@ export class ClinicAppointment {
         stringToArray(options.primary_programme_ids)) ||
       []
     this.healthAnswers = options?.healthAnswers || {}
+  }
+
+  /**
+   * Get the booking that this appointment's part of
+   *
+   * @returns {ClinicBooking|undefined} - the booking that this is part of
+   */
+  get booking() {
+    try {
+      if (this.booking_uuid) {
+        return ClinicBooking.findOne(this.booking_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('ClinicAppointment.booking', error.message)
+    }
   }
 
   /**
@@ -231,8 +248,8 @@ export class ClinicAppointment {
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
       vaccinations: this.#getSelectedProgrammes(this.context)
-        .map((programme) => programme.name)
-        .join(', ')
+        .map((programme) => programme.nameTag)
+        .join(' ')
     }
   }
 
@@ -245,7 +262,7 @@ export class ClinicAppointment {
     return {
       summary: formatLinkWithSecondaryText(
         this.uri,
-        this.parentalRelationship, // TODO: look up name of parent in booking
+        this.booking?.parent?.fullNameAndRelationship,
         `for ${this.child.fullName}`
       )
     }
@@ -261,7 +278,7 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get URI
+   * Get URI, without the context of the session
    *
    * @returns {string} URI
    */

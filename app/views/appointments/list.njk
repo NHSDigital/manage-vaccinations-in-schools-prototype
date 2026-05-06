@@ -47,7 +47,7 @@
       } if session,
       {
         header: __("appointments.vaccinations.label"),
-        text: appointment.formatted.vaccinations
+        text: appointment.formatted.vaccinations | safe
       } if session,
       {
         header: __("actions.label"),
@@ -69,7 +69,7 @@
       id: "appointments",
       responsive: true,
       card: {
-        heading: __mf("appointments.count", { count: appointments.length }),
+        heading: __mf("appointments.count.session", { count: appointments.length, location: session.location.name }) if session else __mf("appointments.count.total", { count: appointments.length }),
         headingLevel: 3
       },
       head: [
@@ -91,6 +91,10 @@
       count: results.count
     }) | nhsukMarkdown }}
   {% else %}
-    {{ __mf("appointments.count", { count: 0 }) | nhsukMarkdown }}
+    {% if not session %}
+      {{ __mf("appointments.count.total", { count: 0 }) | nhsukMarkdown }}
+    {% else %}
+      {{ __mf("appointments.count.session", { count: appointments.length, location: session.location.name }) | nhsukMarkdown }}
+    {% endif %}
   {% endif %}
 {% endblock %}

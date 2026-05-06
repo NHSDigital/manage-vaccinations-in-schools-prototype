@@ -1,6 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { SessionPresets } from '../enums.js'
 import { ClinicBooking } from '../models.js'
 
 /**
@@ -12,15 +11,11 @@ import { ClinicBooking } from '../models.js'
 export function generateEmptyClinicBooking(context) {
   const uuid = faker.string.uuid()
   const bookingReference = ClinicBooking.generateReference()
-  const sessionPreset = faker.helpers.arrayElement(
-    SessionPresets.filter((preset) => preset.active)
-  )
 
   return new ClinicBooking(
     {
       uuid,
-      bookingReference,
-      sessionPreset
+      bookingReference
     },
     context
   )
