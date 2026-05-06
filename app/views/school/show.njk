@@ -45,6 +45,7 @@
 
     <div class="app-grid-column-results">
       {{ warningCallout({
+        classes: "nhsuk-u-margin-top-3",
         heading: __("school.patientsMissingNhsNumber.title"),
         html: link(school.uri + "?option=hasMissingNhsNumber", __mf("school.patientsMissingNhsNumber.count", {
           count: school.patientsMissingNhsNumber.length
