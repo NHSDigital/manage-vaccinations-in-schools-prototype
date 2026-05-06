@@ -514,10 +514,13 @@ export class PatientSession {
       return PatientConsentStatus.NoDetails
     }
 
-    if (this.session?.consentWindow === ConsentWindow.None) {
-      return PatientConsentStatus.NotScheduled
-    } else if (this.session?.consentWindow === ConsentWindow.Opening) {
-      return PatientConsentStatus.Scheduled
+    // Only school sessions have a consent window
+    if (this.session.school_id) {
+      if (this.session?.consentWindow === ConsentWindow.None) {
+        return PatientConsentStatus.NotScheduled
+      } else if (this.session?.consentWindow === ConsentWindow.Opening) {
+        return PatientConsentStatus.Scheduled
+      }
     }
 
     switch (this.consent) {
