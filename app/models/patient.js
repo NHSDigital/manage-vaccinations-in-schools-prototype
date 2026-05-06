@@ -496,7 +496,7 @@ export class Patient extends Child {
         ? `Last reminder sent on ${this.lastReminderDate}`
         : 'No reminders sent',
       clinicProgramme_ids: this.clinicProgramme_ids
-        .map((id) => Programme.findOne(id, this.context).nameTag)
+        .map((id) => this.programmes[id].programme.nameTag)
         .join(' ')
     }
   }
