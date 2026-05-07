@@ -127,86 +127,97 @@ export const uploadController = {
     response.redirect(`${upload.uri}/new/${data.startPath}`)
   },
 
-  update(request, response) {
-    const { upload_id } = request.params
-    const { data, referrer } = request.session
-    const { __ } = response.locals
+  update(type) {
+    return (request, response) => {
+      const { upload_id } = request.params
+      const { data, referrer } = request.session
+      const { __ } = response.locals
 
-    // Update session data
-    let upload = Upload.update(
-      upload_id,
-      data.wizard.uploads[upload_id],
-      data.wizard
-    )
+      // Update session data
+      let upload = Upload.update(
+        upload_id,
+        data.wizard.uploads[upload_id],
+        data.wizard
+      )
 
-    upload = Upload.create(upload, data)
+      // Editing an upload means retrying an upload with a new file
+      // This means the existing failed or invalid status should be replaced
+      if (type === 'edit') {
+        upload.status = UploadStatus.Processing
+        upload.progress = 10
+      }
 
-    // Clean up session data
-    delete data.upload
-    delete data.wizard
+      upload = Upload.create(upload, data)
 
-    request.flash('success', __('upload.new.success'))
+      // Clean up session data
+      delete data.upload
+      delete data.wizard
 
-    response.redirect(referrer || upload.uri)
+      request.flash('success', __(`upload.${type}.success`))
+
+      response.redirect(referrer || upload.uri)
+    }
   },
 
-  readForm(request, response, next) {
-    const { upload_id } = request.params
-    const { data } = request.session
-    const { __ } = response.locals
+  readForm(type) {
+    return (request, response, next) => {
+      const { upload_id } = request.params
+      const { data } = request.session
+      const { __ } = response.locals
 
-    // Setup wizard if not already setup
-    let upload = Upload.findOne(upload_id, data.wizard)
-    if (!upload) {
-      upload = Upload.create(response.locals.upload, data.wizard)
-    }
+      // Setup wizard if not already setup
+      let upload = Upload.findOne(upload_id, data.wizard)
+      if (!upload) {
+        upload = Upload.create(response.locals.upload, data.wizard)
+      }
 
-    const journey = {
-      [`/`]: {},
-      ...(data.startPath === 'type'
-        ? {
-            [`/${upload_id}/new/type`]: {
-              [`/${upload_id}/new/file`]: {
-                data: 'upload.type',
-                excludedValue: UploadType.School
-              }
-            },
-            [`/${upload_id}/new/school`]: {},
-            [`/${upload_id}/new/year-groups`]: {},
-            [`/${upload_id}/new/file`]: {}
-          }
-        : {
-            [`/${upload_id}/new/school`]: {},
-            [`/${upload_id}/new/year-groups`]: {},
-            [`/${upload_id}/new/file`]: {}
-          }),
-      [`/${upload_id}`]: {}
-    }
+      const journey = {
+        [`/`]: {},
+        ...(data.startPath === 'type'
+          ? {
+              [`/${upload_id}/${type}/type`]: {
+                [`/${upload_id}/${type}/file`]: {
+                  data: 'upload.type',
+                  excludedValue: UploadType.School
+                }
+              },
+              [`/${upload_id}/${type}/school`]: {},
+              [`/${upload_id}/${type}/year-groups`]: {},
+              [`/${upload_id}/${type}/file`]: {}
+            }
+          : {
+              [`/${upload_id}/${type}/school`]: {},
+              [`/${upload_id}/${type}/year-groups`]: {},
+              [`/${upload_id}/${type}/file`]: {}
+            }),
+        [`/${upload_id}`]: {}
+      }
 
-    // TODO: Use presenter
-    upload = new Upload(upload, data)
-    response.locals.upload = upload
+      // TODO: Use presenter
+      upload = new Upload(upload, data)
+      response.locals.upload = upload
 
-    response.locals.paths = wizard(journey, request)
+      response.locals.paths = wizard(journey, request)
 
-    response.locals.typeItems = Object.entries(UploadType).map(
-      ([key, value]) => ({
-        text: UploadType[key],
-        hint: { text: __(`upload.type.hint.${key}`) },
-        value
-      })
-    )
-
-    if (upload.school) {
-      response.locals.yearGroupItems = upload.school.yearGroups.map(
-        (yearGroup) => ({
-          text: formatYearGroup(yearGroup),
-          value: yearGroup
+      response.locals.typeItems = Object.entries(UploadType).map(
+        ([key, value]) => ({
+          text: UploadType[key],
+          hint: { text: __(`upload.type.hint.${key}`) },
+          value
         })
       )
-    }
 
-    next()
+      if (upload.school) {
+        response.locals.yearGroupItems = upload.school.yearGroups.map(
+          (yearGroup) => ({
+            text: formatYearGroup(yearGroup),
+            value: yearGroup
+          })
+        )
+      }
+
+      next()
+    }
   },
 
   showForm(request, response) {

@@ -2940,6 +2940,10 @@ export const en = {
       label: 'Upload records',
       success: 'Records uploaded for processing'
     },
+    edit: {
+      label: 'Upload corrected %s',
+      success: 'Corrected records uploaded for processing'
+    },
     file: {
       title: 'Upload {{type}}',
       label: 'Upload file',

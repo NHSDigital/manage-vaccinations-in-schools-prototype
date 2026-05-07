@@ -11,11 +11,15 @@ router.get('/new', upload.new)
 
 router.param('upload_id', upload.read)
 
-router.post('/:upload_id/new/file', upload.update)
-
-router.all('/:upload_id/new/:view', upload.readForm)
+router.all('/:upload_id/new/:view', upload.readForm('new'))
 router.get('/:upload_id/new/:view', upload.showForm)
+router.post('/:upload_id/new/file', upload.update('new'))
 router.post('/:upload_id/new/:view', upload.updateForm)
+
+router.all('/:upload_id/edit/:view', upload.readForm('edit'))
+router.get('/:upload_id/edit/:view', upload.showForm)
+router.post('/:upload_id/edit/file', upload.update('edit'))
+router.post('/:upload_id/edit/:view', upload.updateForm)
 
 router.get(
   '/:upload_id/remove-relationships',
