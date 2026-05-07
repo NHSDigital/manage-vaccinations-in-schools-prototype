@@ -20,7 +20,6 @@ import {
   Parent,
   PatientProgramme,
   PatientSession,
-  Programme,
   Reply,
   Vaccination
 } from '../models.js'

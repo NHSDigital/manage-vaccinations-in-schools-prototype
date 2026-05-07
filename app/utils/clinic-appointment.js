@@ -5,14 +5,12 @@ import { camelToKebabCase } from './string.js'
 /**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
  *
- * @param {string} session_preset_slug - URL part that represents the primary programme
  * @param {string} booking_uuid - the ID of the booking we're creating
  * @param {object} sessionData - the request.session.data object
  * @param {Array<ClinicAppointment>} appointments - the appointments whose journeys we're mapping
  * @returns {object} An object containing all relevants page and forks
  */
 export const getAllAppointmentPaths = (
-  session_preset_slug,
   booking_uuid,
   sessionData,
   appointments
@@ -25,62 +23,46 @@ export const getAllAppointmentPaths = (
     const appointment_uuid = appointment.uuid
     return {
       // Child details
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/child`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/dob`]:
-        {},
+      [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousAddressItems(appointments).length > 2
         ? {
-            [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
-              {
-                [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-                  () => sessionData.transaction.addressChoice !== 'new'
-              }
+            [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]: {
+              [`/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
+                () => sessionData.transaction.addressChoice !== 'new'
+            }
           }
         : {}),
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/address`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-        {
-          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]:
-            {
-              data: 'appointment.parentHasParentalResponsibility',
-              value: 'false'
-            }
-        },
+      [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
+          data: 'appointment.parentHasParentalResponsibility',
+          value: 'false'
+        }
+      },
 
       // Appointment-length influences
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/extra-time`]:
-        {},
+      [`/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/extra-time`]: {},
 
       // Clinic and slot selection
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]:
-        {
-          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]:
-            {
-              data: 'transaction.preferredLocation',
-              value: 'NE12 7ET'
-            }
-        },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]:
-        {
-          [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/preferred-location`]:
-            {
-              data: 'transaction.preferredLocation',
-              value: 'retry'
-            }
-        },
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-location`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/clinic-date`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
-        {},
-      [`/${session_preset_slug}/${booking_uuid}/new/${appointment_uuid}/appointment-time`]:
-        {}
+      [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
+          data: 'transaction.preferredLocation',
+          value: 'NE12 7ET'
+        }
+      },
+      [`/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
+          data: 'transaction.preferredLocation',
+          value: 'retry'
+        }
+      },
+      [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {}
     }
   })
 

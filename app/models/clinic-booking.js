@@ -1,9 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
-import allProgrammesData from '../datasets/programmes.js'
-import { SessionPresets } from '../enums.js'
-import { ClinicAppointment, Parent, Programme } from '../models.js'
+import { ClinicAppointment, Parent } from '../models.js'
 import {
   formatMonospace,
   stringToArray,
@@ -17,7 +15,6 @@ import {
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic booking UUID
  * @property {string} bookingReference - Booking reference number
- * @property {import('../enums.js').SessionPreset} sessionPreset - the primary programme for which the parent was invited to book e.g. doubles
  * @property {Parent} parent - contact details for the parent making the booking; see appointments for parental relationship details
  * @property {Array<ClinicAppointment>} appointments - the appointments created in this booking (one per child)
  */
@@ -27,7 +24,6 @@ export class ClinicBooking {
     this.uuid = options?.uuid || faker.string.uuid()
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
-    this.sessionPreset = options?.sessionPreset ?? SessionPresets[0]
     this.parent =
       (options?.parent && new Parent(options.parent)) ?? new Parent({})
 
@@ -51,29 +47,7 @@ export class ClinicBooking {
    * @returns {string} Booking journey URI
    */
   get bookingUri() {
-    return `${this.sessionPreset.slug}/${this.uuid}`
-  }
-
-  /**
-   * Get the IDs of the set of programmes that this clinic was set up to serve
-   *
-   * @returns {Array<string>} the set of Programme objects represented by the session preset
-   */
-  get primaryProgrammeIDs() {
-    return this.sessionPreset.programmeTypes.map(
-      (type) => allProgrammesData[type].id
-    )
-  }
-
-  /**
-   * Get the set of programmes that this clinic was set up to serve
-   *
-   * @returns {Array<Programme>} the set of Programme objects represented by the session preset
-   */
-  get primaryProgrammes() {
-    return this.primaryProgrammeIDs.map((id) =>
-      Programme.findOne(id, this.context)
-    )
+    return `${this.uuid}`
   }
 
   /**
@@ -84,12 +58,7 @@ export class ClinicBooking {
    */
   addAppointment(options) {
     this.appointments = this.appointments || []
-    this.appointments.push(
-      new ClinicAppointment(
-        options ?? { primary_programme_ids: this.primaryProgrammeIDs },
-        this.context
-      )
-    )
+    this.appointments.push(new ClinicAppointment(options, this.context))
 
     return this.appointments.at(-1)
   }
@@ -138,8 +107,6 @@ export class ClinicBooking {
    */
   get formatted() {
     return {
-      // TODO: make this work using commas for more than 2 programmes
-      primaryProgramme: this.primaryProgrammes.map((p) => p.name).join(' and '),
       bookingReference: formatMonospace(this.bookingReference, true)
     }
   }

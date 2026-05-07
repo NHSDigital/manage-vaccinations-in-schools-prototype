@@ -295,21 +295,11 @@ export const en = {
   },
   clinicBooking: {
     start: {
-      title: {
-        [SessionPresetName.Flu]:
-          'Book an appointment for your child’s flu vaccination',
-        [SessionPresetName.Doubles]:
-          'Book an appointment for the MenACWY and Td/IPV vaccinations',
-        [SessionPresetName.HPV]: 'Book an appointment for the HPV vaccination',
-        [SessionPresetName.MMR]:
-          'Book an appointment for an MMR or MMRV catch-up vaccination'
-      },
-      primaryProgrammeInSentence: {
-        [SessionPresetName.Flu]: 'flu',
-        [SessionPresetName.Doubles]: 'MenACWY and Td/IPV',
-        [SessionPresetName.HPV]: 'HPV',
-        [SessionPresetName.MMR]: 'MMR and MMRV'
-      },
+      title: 'Book an appointment for your child’s vaccination',
+      intro:
+        'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.',
+      programmes:
+        'Clinics have recently been set up to offer {{programmeNames}} vaccinations, but your child may be able to catch up on any outstanding vaccinations during their appointment.',
       confirm: {
         title: 'Book an appointment',
         buttonText: 'Start now'

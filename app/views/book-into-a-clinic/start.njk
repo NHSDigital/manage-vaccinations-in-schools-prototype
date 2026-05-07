@@ -7,17 +7,12 @@
     <div class="nhsuk-grid-column-two-thirds">
       {{ appHeading({
         size: "xl",
-        title: __("clinicBooking.start.title." + sessionPreset.name)
+        title: __("clinicBooking.start.title")
       }) }}
 
-      <p>
-        If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.
-      </p>
+      {{ __("clinicBooking.start.intro") | nhsukMarkdown }}
       
-      <p>
-        Clinics have recently been set up to offer {{ __("clinicBooking.start.primaryProgrammeInSentence." + sessionPreset.name) }} vaccinations, but your child may be able to catch up on any outstanding
-        vaccinations during their appointment.
-      </p>
+      {{ __("clinicBooking.start.programmes", { programmeNames: clinicInvite.programmeNames }) | nhsukMarkdown }}
 
       <h2 class="nhsuk-heading-l">
         {{ __("clinicBooking.start.confirm.title") }}
@@ -25,7 +20,7 @@
 
       {{ button({
         text: __("clinicBooking.start.confirm.buttonText"),
-        href: "/book-into-a-clinic/" + sessionPreset.slug + "/new"
+        href: "/book-into-a-clinic/new"
       }) }}
 
       <h3 class="nhsuk-heading-m">

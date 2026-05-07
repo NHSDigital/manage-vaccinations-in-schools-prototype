@@ -32,7 +32,6 @@ import {
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
- * @property {Array<string>} [primary_programme_ids] - IDs of primary programmes for this clinic booking
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {object} [healthAnswers] - Answers to health questions
  */
@@ -66,10 +65,6 @@ export class ClinicAppointment {
     this.selected_programme_ids =
       (options?.selected_programme_ids &&
         stringToArray(options.selected_programme_ids)) ||
-      []
-    this.primary_programme_ids =
-      (options?.primary_programme_ids &&
-        stringToArray(options.primary_programme_ids)) ||
       []
     this.healthAnswers = options?.healthAnswers || {}
   }
@@ -150,23 +145,8 @@ export class ClinicAppointment {
    * @returns {Array<Programme>} The programmes from which the parent is able to choose
    */
   get eligibleProgrammes() {
-    const patient = this.patient
-    if (!patient) {
-      return this.clinicBooking?.primaryProgrammes
-    }
-
-    // TODO: work out which vaccinations the matched child is eligible for
-    const catchup_programme_ids = []
-
-    let eligible_programme_ids = new Set(this.primary_programme_ids)
-    eligible_programme_ids = eligible_programme_ids.union(
-      new Set(catchup_programme_ids)
-    )
-
-    return ClinicAppointment.#getProgrammesFromIDs(
-      [...eligible_programme_ids],
-      this.context
-    )
+    const programme_ids = this.patient?.clinicReadyProgramme_ids ?? []
+    return ClinicAppointment.#getProgrammesFromIDs(programme_ids, this.context)
   }
 
   /**

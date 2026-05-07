@@ -8,10 +8,8 @@ import {
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
-  RegistrationOutcome,
   SessionStatus,
-  SessionType,
-  VaccinationOutcome
+  SessionType
 } from '../enums.js'
 import {
   AuditEvent,
