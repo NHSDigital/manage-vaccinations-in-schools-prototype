@@ -11,16 +11,6 @@
   {% set title = __("upload.show.title", { upload: upload }) %}
 {% endif %}
 
-{% set templateFormat %}
-  {% if upload.type == UploadType.Cohort %}
-    {% include "upload/_template-format-cohort.njk" %}
-  {% elif upload.type == UploadType.School %}
-    {% include "upload/_template-format-school.njk" %}
-  {% elif upload.type == UploadType.Report %}
-    {% include "upload/_template-format-report.njk" %}
-  {% endif %}
-{% endset %}
-
 {% block beforeContent %}
   {{ breadcrumb({
     items: [{
@@ -124,9 +114,9 @@
         {{ __("upload.invalid.description") | nhsukMarkdown }}
       </div>
 
-      {{ details({
-        summaryText: __("upload.file.format", { type: upload.type | lower }),
-        html: templateFormat
+      {{ actionLink({
+        text: __("upload.edit.label", upload.type | lower),
+        href: upload.uri + "/edit/file"
       }) }}
 
       {% for row, validations in upload.validations %}
@@ -155,9 +145,9 @@
         {{ __("upload.failed.description") | nhsukMarkdown }}
       </div>
 
-      {{ details({
-        summaryText: __("upload.file.format", { type: upload.type | lower }),
-        html: templateFormat
+      {{ actionLink({
+        text: __("upload.edit.label", upload.type | lower),
+        href: upload.uri + "/edit/file"
       }) }}
     {% endcall %}
 
