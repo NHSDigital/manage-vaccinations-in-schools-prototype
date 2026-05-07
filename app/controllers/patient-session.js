@@ -24,9 +24,12 @@ export const patientSessionController = {
     const { programme_id, session_id } = request.params
     const { __ } = response.locals
 
-    const patientSession = PatientSession.findAll(request.session.data)
-      .filter(({ session }) => session.id === session_id)
-      .find(({ patient }) => patient.nhsn === nhsn)
+    const patientSession = PatientSession.findAll(request.session.data).find(
+      (patientSession) =>
+        patientSession.session.id === session_id &&
+        patientSession.programme_id === programme_id &&
+        patientSession.patient.nhsn === nhsn
+    )
 
     const {
       consent,
