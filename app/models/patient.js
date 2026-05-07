@@ -29,10 +29,8 @@ import { getPreferredNames } from '../utils/reply.js'
 import {
   formatLink,
   formatLinkWithSecondaryText,
-  formatList,
   formatNhsNumber,
   formatOther,
-  formatParent,
   formatWithSecondaryText,
   stringToArray,
   stringToBoolean
@@ -478,7 +476,6 @@ export class Patient extends Child {
    */
   get formatted() {
     const formattedNhsn = formatNhsNumber(this.nhsn, this.invalid)
-    const formattedParents = this.parents.map((parent) => formatParent(parent))
 
     return {
       ...super.formatted,
@@ -487,9 +484,6 @@ export class Patient extends Child {
       newUrn:
         this.pendingChanges?.school_id &&
         schools[this.pendingChanges.school_id].name,
-      parent1: this.parent1 && formatParent(this.parent1),
-      parent2: this.parent2 && formatParent(this.parent2),
-      parents: formatList(formattedParents),
       archiveReason: formatOther(this.archiveReasonOther, this.archiveReason),
       lastReminderDate: this.lastReminderDate
         ? `Last reminder sent on ${this.lastReminderDate}`

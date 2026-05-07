@@ -45,4 +45,26 @@
     label: { text: __("patient.parent.tel.label") },
     decorate: "patient." + parent + ".tel"
   }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("patient.parent.contactPreference.label")
+      }
+    },
+    items: [{
+      text: __("patient.parent.contactPreference.yes"),
+      value: true,
+      conditional: {
+        html: textarea({
+          label: { text: __("patient.parent.contactPreferenceDetails.label") },
+          decorate: "patient." + parent + ".contactPreferenceDetails"
+        })
+      }
+    }, {
+      text: __("patient.parent.contactPreference.no"),
+      value: false
+    }],
+    decorate: "patient." + parent + ".contactPreference"
+  }) }}
 {% endblock %}
