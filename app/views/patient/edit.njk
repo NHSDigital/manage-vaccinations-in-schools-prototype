@@ -17,6 +17,7 @@
       heading: __("patient.edit.summary"),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: [{
       key: {
         text: __("patient.nhsn.label")
@@ -109,38 +110,6 @@
           text: __("actions.change"),
           href: "edit/gp-surgery"
         }] if patient.gpSurgery
-      }
-    }, {
-      key: {
-        text: __("patient.parent1.label")
-      },
-      value: {
-        html: patient.formatted.parent1
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/parent-1"
-        }, {
-          text: __("actions.remove"),
-          href: "#"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.parent2.label")
-      },
-      value: {
-        html: patient.formatted.parent2
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/parent-2"
-        }, {
-          text: __("actions.remove"),
-          href: "#"
-        }]
       }
     }]
   }) }}

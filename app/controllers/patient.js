@@ -54,6 +54,11 @@ export const patientController = {
         href: patient.uri,
         current: currentPath === patient.uri
       },
+      {
+        text: __('patient.parents.label'),
+        href: `${patient.uri}/contacts`,
+        current: currentPath === `${patient.uri}/contacts`
+      },
       ...Object.values(patient.programmes).map((patientProgramme) => {
         return {
           text: patientProgramme.programme.name,

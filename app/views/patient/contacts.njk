@@ -1,0 +1,56 @@
+{% from "patient/_navigation.njk" import patientNavigation with context %}
+
+{% extends "_layouts/form.njk" %}
+
+{% set gridColumns = "full" %}
+{% set hideConfirmButton = true %}
+{% set title = patient.initials %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [{
+      text: __("home.show.title"),
+      href: "/"
+    }, {
+      text: __("patient.list.title"),
+      href: "/patients"
+    }]
+  }) }}
+{% endblock %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ patientNavigation({
+    patient: patient,
+    view: "show"
+  }) }}
+
+  {{ actionLink({
+    text: __("parent.new.label"),
+    href: "#"
+  }) }}
+
+  {% for parent in patient.parents %}
+    {{ summaryList({
+      card: {
+        heading: parent.fullNameAndRelationship,
+        headingLevel: 4,
+        actions: {
+          items: [{
+            text: "Edit",
+            href: patient.uri + "/edit/parent-" + loop.index
+          }, {
+            text: "Remove",
+            href: "#"
+          }]
+        }
+      },
+      rows: summaryRows(parent, {
+        email: {},
+        tel: {},
+        contactPreference: {}
+      })
+    }) }}
+  {% endfor %}
+{% endblock %}

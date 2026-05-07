@@ -1298,6 +1298,9 @@ export const en = {
   },
   parent: {
     label: 'Parent or guardian',
+    new: {
+      label: 'Add a new contact'
+    },
     fullName: {
       label: 'Name'
     },
@@ -1545,7 +1548,7 @@ export const en = {
       label: 'Year group'
     },
     parents: {
-      label: 'Parents or guardians'
+      label: 'Contacts'
     },
     vaccinations: {
       label: 'Vaccinations'
@@ -1554,9 +1557,6 @@ export const en = {
       label: 'Parent or guardian',
       fullName: {
         label: 'Name'
-      },
-      relationship: {
-        label: 'Relationship to child'
       },
       notify: {
         label: 'Send notifications'
@@ -1567,16 +1567,25 @@ export const en = {
       tel: {
         label: 'Phone number'
       },
+      relationship: {
+        label: 'Relationship to child'
+      },
       relationshipOther: {
         label: 'Relationship to the child'
+      },
+      contactPreference: {
+        label: 'Communication needs',
+        yes: 'Yes',
+        no: 'No'
+      },
+      contactPreferenceDetails: {
+        label: 'Give details'
       }
     },
     parent1: {
-      label: 'First parent or guardian',
       title: 'Details for first parent or guardian'
     },
     parent2: {
-      label: 'Second parent or guardian',
       title: 'Details for second parent or guardian'
     },
     programmes: {

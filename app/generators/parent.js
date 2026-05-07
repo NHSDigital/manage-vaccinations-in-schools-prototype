@@ -46,7 +46,7 @@ export function generateParent(childLastName, isMum) {
   const phoneNumber = '077## 9#####'.replace(/#+/g, (m) =>
     faker.string.numeric(m.length)
   )
-  const tel = faker.helpers.maybe(() => phoneNumber, { probability: 0.4 })
+  const tel = faker.helpers.maybe(() => phoneNumber, { probability: 0.6 })
 
   const sms = faker.datatype.boolean(0.5)
   const smsStatus = faker.helpers.weightedArrayElement([
