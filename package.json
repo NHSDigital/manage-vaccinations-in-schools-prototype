@@ -49,7 +49,7 @@
     "@types/lodash": "^4.17.24",
     "@x-govuk/eslint-config": "^0.0.2",
     "prettier": "^3.8.1",
-    "stylelint": "^16.26.1",
+    "stylelint": "^17.9.1",
     "stylelint-config-gds": "^2.0.0",
     "stylelint-order": "^7.0.1",
     "typed-query-selector": "^2.12.2",
