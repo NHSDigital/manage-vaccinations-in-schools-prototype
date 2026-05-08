@@ -84,6 +84,7 @@
             href: download.uri + "/download" if download.status == DownloadStatus.Ready,
             clickable: true if download.status == DownloadStatus.Ready
           },
+          lastRowBorder: false,
           rows: summaryRows(download, {
             createdAt: {},
             createdBy: {},

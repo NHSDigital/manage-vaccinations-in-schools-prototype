@@ -20,6 +20,7 @@
           heading: __("clinicBooking.show.appointment.title", loop.index),
           headingSize: "m"
         },
+        lastRowBorder: false,
         rows: summaryRows(appointment, {
           nameAndAge: {},
           location: {},
@@ -48,6 +49,7 @@
         heading: __("clinicBooking.show.parent.title"),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(clinicBooking.parent, {
         fullName: {},
         email: {},

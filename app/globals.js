@@ -325,11 +325,6 @@ export default () => {
       })
     }
 
-    // Remove border from final row
-    if (summaryRows.at(-1)) {
-      summaryRows.at(-1).border = false
-    }
-
     return summaryRows
   }
 
@@ -383,11 +378,6 @@ export default () => {
           }
         })
       })
-    }
-
-    // Remove border from final row
-    if (summaryRows.at(-1)) {
-      summaryRows.at(-1).border = false
     }
 
     return summaryRows
@@ -669,11 +659,6 @@ export default () => {
             }
         })
       }
-    }
-
-    // Remove border from final row
-    if (summaryRows.at(-1)) {
-      summaryRows.at(-1).border = false
     }
 
     return summaryRows

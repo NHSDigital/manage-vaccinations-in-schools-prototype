@@ -55,6 +55,7 @@
     }) if patient.agedOutOfProgrammes }}
 
     {{ summaryList({
+      lastRowBorder: false,
       rows: summaryRows(patient, {
         nhsn: {
           changeLabel: "the child’s NHS number",

@@ -12,31 +12,32 @@
     title: title
   }) }}
 
-  {{ card({
-    heading:  __("school.edit.summary"),
-    headingClasses: "nhsuk-heading-m",
-    descriptionHtml: summaryList({
-      rows: summaryRows(school, {
-        id: {},
-        name: {
-          href: "edit/name" if school.site
-        },
-        address: {
-          href: "edit/address" if school.site
-        },
-        phase: {
-          href: "edit/phase"
-        },
-        sen: {
-          href: "edit/sen"
-        },
-        yearGroups: {
-          href: "edit/year-groups"
-        },
-        programmes: {
-          href: "edit/programmes"
-        }
-      })
+  {{ summaryList({
+    card: {
+      heading:  __("school.edit.summary"),
+      headingClasses: "nhsuk-heading-m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(school, {
+      id: {},
+      name: {
+        href: "edit/name" if school.site
+      },
+      address: {
+        href: "edit/address" if school.site
+      },
+      phase: {
+        href: "edit/phase"
+      },
+      sen: {
+        href: "edit/sen"
+      },
+      yearGroups: {
+        href: "edit/year-groups"
+      },
+      programmes: {
+        href: "edit/programmes"
+      }
     })
   }) }}
 {% endblock %}

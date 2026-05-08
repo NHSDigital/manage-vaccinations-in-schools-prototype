@@ -26,6 +26,7 @@
     <div class="app-grid-column-patient-record" data-module="app-sticky">
       {{ summaryList({
         classes: "app-summary-list--full-width-at-large-desktop",
+        lastRowBorder: false,
         rows: summaryRows(patient, {
           nhsn: {
             changeLabel: "the child’s NHS number",

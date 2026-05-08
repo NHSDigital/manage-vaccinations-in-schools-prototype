@@ -11,6 +11,7 @@
   }) }}
 
   {% set vaccinationSummaryListHtml = summaryList({
+    lastRowBorder: false,
     rows: summaryRows(vaccination, {
       programme: {},
       outcome: {},
@@ -69,6 +70,7 @@
     {{ warningCallout({
       heading: __("vaccination.new.notGiven.title"),
       html: summaryList({
+        lastRowBorder: false,
         rows: summaryRows(vaccination, {
           programme: {},
           outcome: {

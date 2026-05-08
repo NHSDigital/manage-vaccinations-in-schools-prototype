@@ -27,6 +27,7 @@
   {% set archiveDecision = __("upload.show.partial.decision.restore.label", type) %}
 
   {% set duplicateChangeset = summaryList({
+    lastRowBorder: false,
     rows: summaryRows(patient, {
       dob: {
         value: appChange(patient.formatted.dob, "1 January 2021")

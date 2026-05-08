@@ -38,6 +38,7 @@
         }) if move.team_id }}
 
         {{ summaryList({
+          lastRowBorder: false,
           rows: summaryRows(move.patient, {
             nhsn: {},
             fullName: {},
@@ -58,6 +59,7 @@
           heading: __("patient.label"),
           headingSize: "m"
         },
+        lastRowBorder: false,
         rows: summaryRows(move.patient, {
           nhsn: {},
           fullName: {},

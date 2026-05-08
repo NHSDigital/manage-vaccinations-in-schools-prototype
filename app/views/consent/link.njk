@@ -21,6 +21,7 @@
           heading: __("consent.label"),
           headingSize: "m"
         },
+        lastRowBorder: false,
         rows: summaryRows(consent.child, {
           fullName: {
             value: consent.child.fullName | highlightDifference(patient.fullName)
@@ -50,6 +51,7 @@
           heading: __("patient.label"),
           headingSize: "m"
         },
+        lastRowBorder: false,
         rows: summaryRows(patient, {
           fullName: {},
           dob: {},
