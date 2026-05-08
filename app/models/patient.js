@@ -550,7 +550,8 @@ export class Patient extends Child {
   /**
    * Create
    *
-   * @param {Patient} patient - Patient record
+   * @template {Child | Patient} PatientType
+   * @param {PatientType} patient - Patient record
    * @param {object} context - Context
    * @returns {Patient} Created patient record
    * @static
