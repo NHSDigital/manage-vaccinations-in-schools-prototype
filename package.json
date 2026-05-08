@@ -38,12 +38,16 @@
     "response-time": "^2.3.4"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
     "@types/lodash": "^4.17.24",
     "@x-govuk/eslint-config": "^0.0.2",
     "prettier": "^3.8.1",
     "stylelint": "^16.26.1",
     "stylelint-config-gds": "^2.0.0",
-    "stylelint-order": "^7.0.1"
+    "stylelint-order": "^7.0.1",
+    "typed-query-selector": "^2.12.2",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@x-govuk/govuk-prototype-filters": "^2.1.0",

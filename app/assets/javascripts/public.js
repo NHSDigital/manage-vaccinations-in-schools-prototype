@@ -5,7 +5,7 @@ import {
   ErrorSummary,
   Radios,
   SkipLink
-} from 'nhsuk-frontend'
+} from '/nhsuk-frontend/nhsuk-frontend.min.js'
 
 import { Autocomplete } from './components/autocomplete.js'
 
