@@ -70,7 +70,6 @@ export const vaccinationController = {
       vaccination = Vaccination.create(response.locals.vaccination, data.wizard)
     }
 
-    // TODO: Use presenter
     response.locals.vaccination = new Vaccination(vaccination, data)
 
     // Show back link to referring page, else vaccination page
@@ -208,7 +207,6 @@ export const vaccinationController = {
         Vaccination.update(vaccination_uuid, updates, data)
       }
 
-      // TODO: Use presenter
       const vaccination = Vaccination.findOne(vaccination_uuid, data)
 
       const patientSession = PatientSession.findOne(
