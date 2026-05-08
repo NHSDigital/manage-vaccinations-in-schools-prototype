@@ -318,7 +318,7 @@ export class PatientSession {
    * @returns {PatientClinicStatus|undefined} clinic status for our programme
    */
   get clinicStatus() {
-    return this.patientProgramme?.clinicStatus
+    return this.patientProgramme?.clinicStatus || undefined
   }
 
   /**
@@ -945,12 +945,14 @@ export class PatientSession {
   /**
    * Find one
    *
-   * @param {string} uuid - Patient UUID
+   * @param {string|string[]} uuid - Patient UUID
    * @param {object} context - Context
    * @returns {PatientSession|undefined} Patient
    * @static
    */
   static findOne(uuid, context) {
+    uuid = String(uuid)
+
     if (context?.patientSessions?.[uuid]) {
       return new PatientSession(context.patientSessions[uuid], context)
     }
@@ -977,13 +979,15 @@ export class PatientSession {
   /**
    * Update
    *
-   * @param {string} uuid - Patient UUID
+   * @param {string|string[]} uuid - Patient UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {PatientSession} Updated patient session
    * @static
    */
   static update(uuid, updates, context) {
+    uuid = String(uuid)
+
     const updatedPatientSession = Object.assign(
       PatientSession.findOne(uuid, context),
       updates
@@ -1005,7 +1009,7 @@ export class PatientSession {
   /**
    * Remove patient from session
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
+   * @param {Pick<import('./audit-event.js').AuditEvent, 'createdBy_uid'>} event - Event
    */
   removeFromSession(event) {
     this.patient.patientSession_uuids =

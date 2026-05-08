@@ -319,6 +319,7 @@ export default () => {
       appointmentTimesByHour
     )) {
       summaryRows.push({
+        border: undefined,
         key: { text: `${hour}:00 to ${parseInt(hour) + 1}:00` },
         value: { text: `${appointmentTimes.length} available` }
       })

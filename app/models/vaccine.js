@@ -135,12 +135,14 @@ export class Vaccine {
   /**
    * Find one
    *
-   * @param {string} snomed - SNOMED code
+   * @param {string|string[]} snomed - SNOMED code
    * @param {object} context - Context
    * @returns {Vaccine|undefined} Vaccine
    * @static
    */
   static findOne(snomed, context) {
+    snomed = String(snomed)
+
     if (context?.vaccines?.[snomed]) {
       return new Vaccine(context.vaccines[snomed], context)
     }
@@ -149,11 +151,11 @@ export class Vaccine {
   /**
    * Delete
    *
-   * @param {string} snomed - SNOMED code
+   * @param {string|string[]} snomed - SNOMED code
    * @param {object} context - Context
    * @static
    */
   static delete(snomed, context) {
-    delete context.vaccines[snomed]
+    delete context.vaccines[String(snomed)]
   }
 }

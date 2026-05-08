@@ -20,7 +20,7 @@ export const consentController = {
     response.locals.back = referrer || back
     response.locals.consent = consent
     response.locals.patient = Patient.findOne(
-      patient_uuid,
+      String(patient_uuid),
       request.session.data
     )
     response.locals.consentPath = session_id
@@ -82,17 +82,13 @@ export const consentController = {
    * @type {import("express").RequestHandler}
    */
   readMatches(request, response, next) {
-    let { hasMissingNhsNumber, page, limit, q } = request.query
+    let { hasMissingNhsNumber, q } = request.query
     const { data } = request.session
 
     let patients = Patient.findAll(data)
 
     // Sort
     patients = _.sortBy(patients, 'lastName')
-
-    // Paginate
-    page = parseInt(page) || 1
-    limit = parseInt(limit) || 50
 
     // Query
     if (q) {
@@ -113,7 +109,7 @@ export const consentController = {
 
     // Results
     response.locals.patients = patients
-    response.locals.results = getResults(patients, page, limit)
+    response.locals.results = getResults(patients, request.query)
     response.locals.pages = getPagination(patients, request.query)
 
     // Clean up session data

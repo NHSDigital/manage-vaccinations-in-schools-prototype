@@ -232,7 +232,7 @@ export const schoolController = {
       'hasAdjustment',
       'hasMissingNhsNumber'
     ]) {
-      if (option?.includes(key)) {
+      if (option && String(option).includes(key)) {
         results = results.filter((patient) => patient[key])
       }
     }
@@ -363,7 +363,7 @@ export const schoolController = {
       // Update session data
       const school = School.update(
         school_id,
-        data.wizard.schools[school_id],
+        data.wizard.schools[String(school_id)],
         data
       )
 

@@ -39,12 +39,14 @@ export class Clinic extends Location {
   /**
    * Find one
    *
-   * @param {string} id - Clinic ID
+   * @param {string|string[]} id - Clinic ID
    * @param {object} context - Context
    * @returns {Clinic|undefined} Clinic
    * @static
    */
   static findOne(id, context) {
+    id = String(id)
+
     if (context?.clinics?.[id]) {
       return new Clinic(context.clinics[id], context)
     }
@@ -74,13 +76,15 @@ export class Clinic extends Location {
   /**
    * Update
    *
-   * @param {string} id - Clinic ID
+   * @param {string|string[]} id - Clinic ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Clinic} Updated clinic
    * @static
    */
   static update(id, updates, context) {
+    id = String(id)
+
     const updatedClinic = Object.assign(Clinic.findOne(id, context), updates)
 
     // Remove clinic context
@@ -98,11 +102,13 @@ export class Clinic extends Location {
   /**
    * Delete
    *
-   * @param {string} id - Clinic ID
+   * @param {string|string[]} id - Clinic ID
    * @param {object} context - Context
    * @static
    */
   static delete(id, context) {
+    id = String(id)
+
     const clinic = Clinic.findOne(id, context)
 
     // Remove from team

@@ -1,9 +1,11 @@
-const focusableSelector = `button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]`
+import { ElementError } from '/nhsuk-frontend/nhsuk-frontend.min.js'
+
+const focusableSelector = `button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])`
 
 export const AddAnotherComponent = class extends HTMLElement {
   connectedCallback() {
-    this.$addButtonTemplate = this.querySelector('#add-button')
-    this.$deleteButtonTemplate = this.querySelector('#delete-button')
+    this.$addButtonTemplate = this.querySelector('template#add-button')
+    this.$deleteButtonTemplate = this.querySelector('template#delete-button')
     this.$$fields = this.querySelectorAll('.app-add-another__field')
     this.$list = this.querySelector('.app-add-another__list')
 
@@ -30,6 +32,10 @@ export const AddAnotherComponent = class extends HTMLElement {
    * @param {Event} event - Delete button event
    */
   delete(event) {
+    if (!(event.target instanceof HTMLElement)) {
+      return
+    }
+
     event.preventDefault()
     event.target.closest('li').remove()
     this.updateItems()
@@ -39,7 +45,7 @@ export const AddAnotherComponent = class extends HTMLElement {
   /**
    * Get heading
    *
-   * @returns {HTMLLegendElement} Get page heading
+   * @returns {HTMLHeadingElement} Get page heading
    */
   getHeading() {
     return document.querySelector('h1')
@@ -74,7 +80,7 @@ export const AddAnotherComponent = class extends HTMLElement {
    * @returns {HTMLButtonElement} Delete button
    */
   getDeleteButton(element) {
-    return element.querySelector('.app-add-another__delete')
+    return element.querySelector('button.app-add-another__delete')
   }
 
   /**
@@ -105,9 +111,12 @@ export const AddAnotherComponent = class extends HTMLElement {
    * @returns {HTMLLIElement} List item containing form field(s)
    */
   createItem() {
-    const $$items = this.querySelectorAll('.app-add-another__list-item')
-    const $item = $$items[0].cloneNode(true)
-    const uid = Date.now().toString()
+    const $$items = this.querySelectorAll('li.app-add-another__list-item')
+    const $item = $$items[0]?.cloneNode(true)
+
+    if (!($item instanceof HTMLLIElement)) {
+      throw new ElementError({ identifier: 'List item (`$item`)' })
+    }
 
     const $$fields = $item.querySelectorAll('.nhsuk-form-group--error')
     for (const $field of $$fields) {
@@ -118,6 +127,8 @@ export const AddAnotherComponent = class extends HTMLElement {
     for (const $errorMessage of $$errorMessages) {
       $errorMessage.remove()
     }
+
+    const uid = Date.now().toString()
 
     const $$inputs = $item.querySelectorAll('input, select, textarea')
     for (const $input of $$inputs) {
@@ -149,7 +160,7 @@ export const AddAnotherComponent = class extends HTMLElement {
    * - Add remove buttons (or remove if only one item remaining in list)
    */
   updateItems() {
-    const $$items = this.querySelectorAll('.app-add-another__list-item')
+    const $$items = this.querySelectorAll('li.app-add-another__list-item')
 
     for (const [index, $item] of $$items.entries()) {
       $item.id = $item.id || `${this.id}-${index}`

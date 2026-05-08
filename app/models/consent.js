@@ -66,12 +66,14 @@ export class Consent extends Reply {
   /**
    * Find one
    *
-   * @param {string} uuid - Reply UUID
+   * @param {string|string[]} uuid - Reply UUID
    * @param {object} context - Context
    * @returns {Consent|undefined} Consent
    * @static
    */
   static findOne(uuid, context) {
+    uuid = String(uuid)
+
     if (context?.replies?.[uuid]) {
       return new Consent(context.replies[uuid], context)
     }

@@ -534,12 +534,14 @@ export class Patient extends Child {
   /**
    * Find one
    *
-   * @param {string} uuid - Patient UUID
+   * @param {string|string[]} uuid - Patient UUID
    * @param {object} context - Context
    * @returns {Patient|undefined} Patient record
    * @static
    */
   static findOne(uuid, context) {
+    uuid = String(uuid)
+
     if (context?.patients?.[uuid]) {
       return new Patient(context.patients[uuid], context)
     }
@@ -566,7 +568,7 @@ export class Patient extends Child {
   /**
    * Update
    *
-   * @param {string} uuid - Patient record UUID
+   * @param {string|string[]} uuid - Patient record UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @param {boolean} log - Update activity log
@@ -574,6 +576,8 @@ export class Patient extends Child {
    * @static
    */
   static update(uuid, updates, context, log = false) {
+    uuid = String(uuid)
+
     // Sanitise any checkbox values in the updates
     if (updates?.clinicProgramme_ids) {
       updates.clinicProgramme_ids = stringToArray(updates.clinicProgramme_ids)
@@ -637,13 +641,15 @@ export class Patient extends Child {
   /**
    * Archive
    *
-   * @param {string} uuid - Patient record UUID
+   * @param {string|string[]} uuid - Patient record UUID
    * @param {object} archive - Archive details
    * @param {object} context - Context
    * @returns {Patient} Archived patient record
    * @static
    */
   static archive(uuid, archive, context) {
+    uuid = String(uuid)
+
     const archivedPatient = Patient.update(uuid, archive, context)
 
     archivedPatient.addEvent({

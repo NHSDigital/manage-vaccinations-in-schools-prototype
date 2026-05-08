@@ -162,7 +162,7 @@ export const uploadController = {
       // Update session data
       let upload = Upload.update(
         upload_id,
-        data.wizard.uploads[upload_id],
+        data.wizard.uploads[String(upload_id)],
         data.wizard
       )
 

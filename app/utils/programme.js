@@ -2,11 +2,11 @@ import { Programme } from '../models.js'
 
 /**
  * @readonly
- * @enum {string}
+ * @enum {Intl.ListFormatType}
  */
 export const ConjunctionType = {
-  and: 'conjunction',
-  or: 'disjunction'
+  and: /** @type {Intl.ListFormatType} */ ('conjunction'),
+  or: /** @type {Intl.ListFormatType} */ ('disjunction')
 }
 
 /**

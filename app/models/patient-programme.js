@@ -154,7 +154,7 @@ export class PatientProgramme {
   /**
    * Get the patient's clinic status for this programme
    *
-   * @returns {PatientClinicStatus|boolean} - the patient's clinic status for this programme, or false if clinic not applicable
+   * @returns {PatientClinicStatus|false} - the patient's clinic status for this programme, or false if clinic not applicable
    */
   get clinicStatus() {
     // Work backwards from the most complete status

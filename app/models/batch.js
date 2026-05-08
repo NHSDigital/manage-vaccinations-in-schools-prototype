@@ -139,12 +139,14 @@ export class Batch {
   /**
    * Find one
    *
-   * @param {string} id - Batch ID
+   * @param {string|string[]} id - Batch ID
    * @param {object} context - Context
    * @returns {Batch|undefined} Batch
    * @static
    */
   static findOne(id, context) {
+    id = String(id)
+
     if (context?.batches?.[id]) {
       return new Batch(context.batches[id], context)
     }
@@ -171,13 +173,15 @@ export class Batch {
   /**
    * Update
    *
-   * @param {string} id - Batch ID
+   * @param {string|string[]} id - Batch ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Batch} Updated batch
    * @static
    */
   static update(id, updates, context) {
+    id = String(id)
+
     const updatedBatch = Object.assign(Batch.findOne(id, context), updates)
     updatedBatch.updatedAt = today()
 
@@ -196,12 +200,14 @@ export class Batch {
   /**
    * Archive
    *
-   * @param {string} id - Batch ID
+   * @param {string|string[]} id - Batch ID
    * @param {object} context - Context
    * @returns {Batch} Batch
    * @static
    */
   static archive(id, context) {
+    id = String(id)
+
     const archivedBatch = Batch.findOne(id, context)
     archivedBatch.archivedAt = new Date()
 

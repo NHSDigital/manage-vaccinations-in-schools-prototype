@@ -365,7 +365,7 @@ export const patientController = {
     // Update session data
     const patient = Patient.update(
       patient_uuid,
-      data.wizard.patients[patient_uuid],
+      data.wizard.patients[String(patient_uuid)],
       data,
       true
     )
@@ -410,7 +410,7 @@ export const patientController = {
 
     // Parent forms share same view
     if (view.includes('parent')) {
-      response.locals.parentId = view.split('-')[1]
+      response.locals.parentId = String(view).split('-')[1]
       view = 'parent'
     }
 
@@ -443,7 +443,7 @@ export const patientController = {
     }
 
     response.locals.patientProgramme = new PatientProgramme(
-      patient.programmes[programme_id],
+      patient.programmes[String(programme_id)],
       data
     )
 
@@ -746,7 +746,7 @@ export const patientController = {
       const { patient } = response.locals
 
       const patientProgramme = new PatientProgramme(
-        patient.programmes[programme_id],
+        patient.programmes[String(programme_id)],
         data
       )
 

@@ -84,12 +84,14 @@ export class Notice {
   /**
    * Find one
    *
-   * @param {string} uuid - Notice UUID
+   * @param {string|string[]} uuid - Notice UUID
    * @param {object} context - Context
    * @returns {Notice|undefined} Notice
    * @static
    */
   static findOne(uuid, context) {
+    uuid = String(uuid)
+
     if (context?.notices?.[uuid]) {
       return new Notice(context.notices[uuid], context)
     }
@@ -98,20 +100,22 @@ export class Notice {
   /**
    * Archive
    *
-   * @param {string} id - Notice ID
+   * @param {string|string[]} uuid - Notice UUID
    * @param {object} context - Context
    * @returns {Notice} Notice
    * @static
    */
-  static archive(id, context) {
-    const archivedNotice = Notice.findOne(id, context)
+  static archive(uuid, context) {
+    uuid = String(uuid)
+
+    const archivedNotice = Notice.findOne(uuid, context)
     archivedNotice.archivedAt = new Date()
 
     // Remove notice context
     delete archivedNotice.context
 
     // Update context
-    context.notices[id] = archivedNotice
+    context.notices[uuid] = archivedNotice
 
     return archivedNotice
   }

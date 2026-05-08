@@ -475,12 +475,14 @@ export class Reply {
   /**
    * Find one
    *
-   * @param {string} uuid - Reply UUID
+   * @param {string|string[]} uuid - Reply UUID
    * @param {object} context - Context
    * @returns {Reply|undefined} Reply
    * @static
    */
   static findOne(uuid, context) {
+    uuid = String(uuid)
+
     if (context?.replies?.[uuid]) {
       return new Reply(context.replies[uuid], context)
     }
@@ -507,13 +509,15 @@ export class Reply {
   /**
    * Update
    *
-   * @param {string} uuid - Reply UUID
+   * @param {string|string[]} uuid - Reply UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Reply} Updated reply
    * @static
    */
   static update(uuid, updates, context) {
+    uuid = String(uuid)
+
     const updatedReply = _.merge(Reply.findOne(uuid, context), updates)
     updatedReply.updatedAt = today()
 
