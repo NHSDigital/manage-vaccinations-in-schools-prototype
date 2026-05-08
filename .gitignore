@@ -3,6 +3,7 @@
 .port.tmp
 .sass-cache
 .start.pid
+*.tsbuildinfo
 
 .data
 /node_modules
