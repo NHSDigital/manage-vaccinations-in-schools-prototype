@@ -460,7 +460,6 @@ export const patientController = {
   },
 
   showInviteManyToClinic(request, response) {
-    const { __, __mf } = response.locals
     const { data } = request.session
     const { clinicPatient_ids } = data
     const { programme_id } = request.query
@@ -477,35 +476,27 @@ export const patientController = {
     } else {
       programme_ids = programmes.map(({ id }) => id)
     }
-
-    // e.g. 271 children can be invited to clinic for HPV, MenACWY, or Td/IPV programmes.
-    const childrenFragment = __mf(
-      'patient.bulkInviteToClinic.childrenFragment',
-      { count: clinicPatient_ids.length }
-    )
-    const programmesFragment = programme_id
-      ? __mf('patient.bulkInviteToClinic.programmesFragment', {
-          count: programme_ids.length,
-          programmeNames: programmeNamesListForSentence(
-            programme_ids,
-            ConjunctionType.or,
-            data
-          )
-        })
-      : __('patient.bulkInviteToClinic.anyProgrammesFragment')
-    response.locals.cohortSummary = __(
-      'patient.bulkInviteToClinic.cohortSummary',
-      { children: childrenFragment, programmes: programmesFragment }
-    )
-
-    // Create the programme checkboxes and their patient and clinic counts
-    const checkboxItems = []
-    const scheduledSessions = Session.findAll(data)
-      .filter(({ type }) => type === SessionType.Clinic)
-      .filter(({ status }) => status === SessionStatus.Planned)
     const invitableProgrammes = programmes.filter((programme) =>
       programme_ids.includes(programme.id)
     )
+
+    // Details required for the intro paragraph
+    response.locals.cohortDetails = {
+      childrenCount: clinicPatient_ids.length,
+      specificProgrammes: !!programme_id,
+      programmeCount: programme_ids.length,
+      programmeNames: programmeNamesListForSentence(
+        programme_ids,
+        ConjunctionType.or,
+        data
+      )
+    }
+
+    // Details required for the programme checkboxes
+    const clinicReadyProgrammes = []
+    const scheduledSessions = Session.findAll(data)
+      .filter(({ type }) => type === SessionType.Clinic)
+      .filter(({ status }) => status === SessionStatus.Planned)
     for (const programme of invitableProgrammes) {
       const clinicReadyChildrenCount = clinicPatient_ids
         .map((id) => Patient.findOne(id, data))
@@ -519,34 +510,28 @@ export const patientController = {
           session.programme_ids.includes(programme.id)
         ).length
 
-        const childrenHint = __mf(
-          'patient.bulkInviteToClinic.programme.hint.children',
-          {
-            count: clinicReadyChildrenCount,
-            programmeName: programme.name
-          }
-        )
-        const clinicsHint = __mf(
-          'patient.bulkInviteToClinic.programme.hint.clinics',
-          {
-            count: scheduledClinicCount,
-            programmeName: programme.name
-          }
-        )
-        checkboxItems.push({
-          text: programme.name,
-          value: programme.id,
-          hint: {
-            html: __('patient.bulkInviteToClinic.programme.hint.combined', {
-              childrenHint,
-              clinicsHint
-            })
-          }
+        clinicReadyProgrammes.push({
+          name: programme.name,
+          id: programme.id,
+          childrenCount: clinicReadyChildrenCount,
+          clinicCount: scheduledClinicCount
         })
       }
     }
+    response.locals.clinicReadyProgrammes = clinicReadyProgrammes
 
-    response.locals.checkboxItems = checkboxItems
+    // Summary information for a warning about programmes without clinics
+    const programmesWithoutClinics = clinicReadyProgrammes.filter(
+      ({ clinicCount }) => clinicCount === 0
+    )
+    response.locals.clinicReadyProgrammesWithoutClinics = {
+      count: programmesWithoutClinics.length,
+      names: programmeNamesListForSentence(
+        programmesWithoutClinics.map(({ id }) => id),
+        ConjunctionType.or,
+        data
+      )
+    }
 
     response.render('patient/bulk-invite-to-clinic')
   },
