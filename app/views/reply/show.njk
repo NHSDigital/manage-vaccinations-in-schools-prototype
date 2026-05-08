@@ -50,6 +50,7 @@
         heading: __("reply.label"),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(reply, {
         programme: {},
         createdAt: {},
@@ -69,6 +70,7 @@
         heading: __("parent.label"),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(reply.parent, {
         fullName: {
           href: reply.uri + "/edit/parent"
@@ -93,6 +95,7 @@
         heading: __("child.label"),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(reply.child, {
         fullName: {},
         preferredFirstName: {},

@@ -8,30 +8,31 @@
     title: title
   }) }}
 
-  {{ card({
-    heading: __("school.new.summary"),
-    headingClasses: "nhsuk-heading-m",
-    descriptionHtml: summaryList({
-      rows: summaryRows(school, {
-        urn: {
-          href: school.uri + "/new/urn"
-        },
-        site: {},
-        name: {},
-        address: {},
-        phase: {
-          href: school.uri + "/new/phase"
-        },
-        sen: {
-          href: school.uri + "/new/sen"
-        },
-        yearGroups: {
-          href: school.uri + "/new/year-groups"
-        },
-        programmes: {
-          href: school.uri + "/new/programmes"
-        }
-      })
+  {{ summaryList({
+    card: {
+      heading: __("school.new.summary"),
+      headingClasses: "nhsuk-heading-m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(school, {
+      urn: {
+        href: school.uri + "/new/urn"
+      },
+      site: {},
+      name: {},
+      address: {},
+      phase: {
+        href: school.uri + "/new/phase"
+      },
+      sen: {
+        href: school.uri + "/new/sen"
+      },
+      yearGroups: {
+        href: school.uri + "/new/year-groups"
+      },
+      programmes: {
+        href: school.uri + "/new/programmes"
+      }
     })
   }) }}
 {% endblock %}

@@ -20,6 +20,7 @@
         heading: "Consent for the MenACWY vaccination",
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         decision: {
           value: ReplyDecision.Given,
@@ -33,6 +34,7 @@
         heading: "Consent for the Td/IPV vaccination",
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         decision: {
           value: ReplyDecision.Refused,
@@ -52,6 +54,7 @@
         heading: "Consent for the MenACWY vaccination",
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         decision: {
           value: ReplyDecision.Refused,
@@ -71,6 +74,7 @@
         heading: "Consent for the Td/IPV vaccination",
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         decision: {
           value: ReplyDecision.Given,
@@ -84,6 +88,7 @@
         heading: __("consent.decision.summary", { session: session }) | safe,
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         decision: {
           href: editPath("decision")
@@ -110,6 +115,7 @@
       heading: __("consent.child.summary"),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: summaryRows(consent.child, {
       fullName: {
         href: editPath("child")
@@ -141,6 +147,7 @@
       heading: __("consent.parent.summary"),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: summaryRows(consent.parent, {
       fullName: {
         href: editPath("parent")
@@ -185,6 +192,7 @@
         heading: __("consent.firstDose.label"),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         createdAt: {
           label: __("consent.previousDose.createdAt.label"),
@@ -204,6 +212,7 @@
         heading: __("consent.secondDose.label"),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         createdAt: {
           label: __("consent.previousDose.createdAt.label"),
@@ -223,6 +232,7 @@
         heading: __("consent.previousDose.label", session.programmes[0].nameSentenceCase),
         headingSize: "m"
       },
+      lastRowBorder: false,
       rows: summaryRows(consent, {
         createdAt: {
           label: __("consent.previousDose.createdAt.label"),

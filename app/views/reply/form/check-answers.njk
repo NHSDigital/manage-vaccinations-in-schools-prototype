@@ -15,6 +15,7 @@
       heading: __("reply.label"),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: summaryRows(reply, {
       programme: {
         href: reply.uri + "/new/programme" if isMultiProgrammeSession
@@ -46,6 +47,7 @@
       heading: __("child.label"),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: summaryRows(reply.child, {
       fullName: {},
       preferredFirstName: {},
@@ -61,6 +63,7 @@
       heading: __("parent.label"),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: summaryRows(reply.parent, {
       fullName: {
         href: reply.uri + "/new/parent"
@@ -100,6 +103,7 @@
       heading: __("triage.label", patient.firstName),
       headingSize: "m"
     },
+    lastRowBorder: false,
     rows: summaryRows(triage, {
       outcome: {
         label: __("triage.outcome.label"),
