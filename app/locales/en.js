@@ -1382,7 +1382,20 @@ export const en = {
           combined: '{{childrenHint}}<br>{{clinicsHint}}'
         }
       },
+      clinicCount: {
+        hint: '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {# clinics are scheduled for {programmeName}}}',
+        someParagraph:
+          '{count, plural, one {There is 1 clinic scheduled for the {programmeName} programme.} other {There are # clinics scheduled for the {programmeName} programme.}}',
+        noneParagraph:
+          'No clinics are scheduled for the {{programmeName}} programme. Only send an invitation if you can offer {{programmeName}} alongside other vaccinations.'
+      },
+      scheduledClinicWarning: {
+        title: 'Programmes without clinics',
+        description:
+          '{count, plural, one {No clinics are scheduled for the <b>{programmeNames}</b> programme. Only select this option if you can offer it alongside other vaccinations.} other {No clinics are scheduled for the <b>{programmeNames}</b> programmes. Only select these options if you can offer them alongside other vaccinations.}}'
+      },
       confirm: 'Send clinic invitations',
+      cancel: 'Go back to children list',
       success:
         '{count, plural, one {1 child has been invited to clinic} other {{count} children have been invited to clinic}}'
     },

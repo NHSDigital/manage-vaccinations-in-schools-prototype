@@ -4,23 +4,108 @@
 {% set confirmButtonText = __("patient.bulkInviteToClinic.confirm") %}
 {% set formAction = "invite-to-clinic" + query | asQueryString %}
 
+{% set checkboxItems = [] %}
+{% for programme in clinicReadyProgrammes %}
+  {% set checkboxItems = checkboxItems | push({
+    text: programme.name,
+    value: programme.id,
+    hint: { html: __("patient.bulkInviteToClinic.programme.hint.combined",
+      {
+        childrenHint: __mf(
+          'patient.bulkInviteToClinic.programme.hint.children',
+          {
+            count: programme.childrenCount,
+            programmeName: programme.name | replace("Flu", "flu")
+          }),
+        clinicsHint: __mf(
+          'patient.bulkInviteToClinic.programme.hint.clinics',
+          {
+            count: programme.clinicCount,
+            programmeName: programme.name | replace("Flu", "flu")
+          })
+      })
+    }
+  }) %}
+{% endfor %}
+
 {% block form %}
   {{ appHeading({
-    caption: __mf("patient.bulkInviteToClinic.caption", { count: data.clinicPatient_ids.length }),
+    caption: __mf("patient.bulkInviteToClinic.caption", { count: cohortDetails.childrenCount }),
     title: title
   }) }}
 
   {# e.g. 271 children can be invited to clinic for HPV, MenACWY, or Td/IPV programmes. #}
-  {{ cohortSummary | nhsukMarkdown }}
+  {{ __('patient.bulkInviteToClinic.cohortSummary',
+    {
+      children: __mf('patient.bulkInviteToClinic.childrenFragment', { count: cohortDetails.childrenCount }),
+      programmes: __mf('patient.bulkInviteToClinic.programmesFragment', { count: cohortDetails.programmeCount, programmeNames: cohortDetails.programmeNames }) if cohortDetails.specificProgrammes else __('patient.bulkInviteToClinic.anyProgrammesFragment')
+    }) | nhsukMarkdown
+  }}
 
-  {{ checkboxes({
-    fieldset: {
-      legend: {
-        text: __("patient.bulkInviteToClinic.programme.label"),
-        size: "m"
-      }
-    },
-    items: checkboxItems,
-    decorate: "clinicProgramme_ids"
-  }) }}
+  {% if clinicReadyProgrammes.length > 1 %}
+
+    {# Show checkboxes: can invite to clinic for multiple programmes #}
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          text: __("patient.bulkInviteToClinic.programme.label"),
+          size: "m"
+        }
+      },
+      items: checkboxItems,
+      decorate: "clinicProgramme_ids"
+    }) }}
+
+    {# Warn about inviting to any programmes that have no scheduled clinics #}
+    {{ warningCallout({
+      heading: __("patient.bulkInviteToClinic.scheduledClinicWarning.title"),
+      text: __mf("patient.bulkInviteToClinic.scheduledClinicWarning.description",
+        {
+          programmeNames: clinicReadyProgrammesWithoutClinics.names,
+          count: clinicReadyProgrammesWithoutClinics.count
+        }) | safe
+    }) if clinicReadyProgrammesWithoutClinics.count > 0 }}
+
+  {% else %}
+
+    {# Hide checkboxes: can invite to clinic for only a single programme #}
+    {% if clinicReadyProgrammesWithoutClinics.count === 0 %}
+      {# Clinics ARE scheduled: tell the user how many #}
+      {{ __mf("patient.bulkInviteToClinic.clinicCount.someParagraph",
+      {
+        programmeName: clinicReadyProgrammes[0].name | replace("Flu", "flu"),
+        count: clinicReadyProgrammes[0].clinicCount
+      }) | nhsukMarkdown }}
+    {% else %}
+      {# Clinics are NOT scheduled: warn about inviting to clinic #}
+      {{ warningCallout({
+        heading: __("patient.bulkInviteToClinic.scheduledClinicWarning.title"),
+        text: __("patient.bulkInviteToClinic.clinicCount.noneParagraph",
+          {
+            programmeName: clinicReadyProgrammes[0].name | replace("Flu", "flu")
+          })
+      }) }}
+    {% endif %}
+
+    {# Fake the user's selection of a checkbox for this one programme #}
+    <input type="hidden" id="clinicProgramme_ids" name="clinicProgramme_ids" value="{{clinicReadyProgrammes[0].programme_id}}" />
+  {% endif %}
+{% endblock %}
+
+{% block afterForm %}
+  {# Include a link to back out if there are no clinics available for the clinic-ready programmes #}
+  {% if clinicReadyProgrammes.length === clinicReadyProgrammesWithoutClinics.count %}
+    {{ appButtonGroup({
+      buttons: [{
+        text: confirmButtonText,
+        variant: confirmButtonVariant
+      }],
+      links: [{
+        text: __("patient.bulkInviteToClinic.cancel"),
+        href: "/patients" + query | asQueryString
+      }]
+    }) }}
+  {% else %}
+    {{ super() }}
+  {% endif %}
 {% endblock %}
