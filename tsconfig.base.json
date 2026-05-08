@@ -11,6 +11,9 @@
       ],
       "/nhsuk-prototype-kit/javascripts/send-unchecked-checkboxes.js": [
         "./node_modules/nhsuk-prototype-kit/lib/javascripts/send-unchecked-checkboxes.js"
+      ],
+      "accessible-autocomplete": [
+        "./node_modules/accessible-autocomplete/src/wrapper.js"
       ]
     },
     "resolveJsonModule": true,

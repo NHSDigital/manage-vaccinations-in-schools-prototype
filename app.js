@@ -15,7 +15,9 @@ const prototype = await NHSPrototypeKit.init({
     entryPoints: [
       'app/assets/stylesheets/*.scss',
       'app/assets/javascripts/*.js'
-    ]
+    ],
+    external: ['/nhsuk-prototype-kit/*'],
+    tsconfigRaw: {}
   },
   filters,
   globals,
