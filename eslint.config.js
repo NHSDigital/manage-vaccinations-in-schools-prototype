@@ -11,6 +11,13 @@ export default [
     }
   },
   {
+    files: ['app/assets/javascripts/**/*.js'],
+    rules: {
+      'import-x/no-unresolved': 'off',
+      'n/no-missing-import': 'off'
+    }
+  },
+  {
     ignores: ['assets']
   }
 ]
