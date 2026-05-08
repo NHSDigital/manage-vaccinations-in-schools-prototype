@@ -535,7 +535,7 @@ export class Session {
   /**
    * Get a list of all available appointment slot times, including parallel appointments
    *
-   * @returns {Array<ClinicAppointment>} - a list of appointment times available to book
+   * @returns {Array<Date>} - a list of appointment times available to book
    */
   get availableAppointmentTimes() {
     return removeSlots(this.allAppointmentTimes, this.bookedAppointmentTimes)
@@ -556,7 +556,7 @@ export class Session {
   /**
    * Get a list of all booked appointment time slots, including parallel appointments
    *
-   * @returns {Array<ClinicAppointment>} - a list of appointment times booked so far
+   * @returns {Array<Date>} - a list of appointment times booked so far
    */
   get bookedAppointmentTimes() {
     const appointments = this.appointments

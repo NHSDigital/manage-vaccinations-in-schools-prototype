@@ -586,7 +586,7 @@ export const sessionController = {
       const { data, referrer } = request.session
       let { team } = response.locals
 
-      team = Team.findOne(team?.code || '001', data)
+      team = Team.findOne(team?.id || '001', data)
 
       // Setup wizard if not already setup
       let session = Session.findOne(session_id, data.wizard)
