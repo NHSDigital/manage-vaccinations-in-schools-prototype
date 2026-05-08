@@ -109,12 +109,14 @@ export class Move {
   /**
    * Find one
    *
-   * @param {string} uuid - Move UUID
+   * @param {string|string[]} uuid - Move UUID
    * @param {object} context - Context
    * @returns {Move|undefined} Move
    * @static
    */
   static findOne(uuid, context) {
+    uuid = String(uuid)
+
     if (context?.moves?.[uuid]) {
       return new Move(context.moves[uuid], context)
     }
@@ -123,13 +125,15 @@ export class Move {
   /**
    * Update
    *
-   * @param {string} uuid - Move UUID
+   * @param {string|string[]} uuid - Move UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Move} Updated download
    * @static
    */
   static update(uuid, updates, context) {
+    uuid = String(uuid)
+
     const updatedMove = Object.assign(Move.findOne(uuid, context), updates)
     updatedMove.updatedAt = today()
 
@@ -148,12 +152,12 @@ export class Move {
   /**
    * Delete
    *
-   * @param {string} uuid - Move UUID
+   * @param {string|string[]} uuid - Move UUID
    * @param {object} context - Context
    * @static
    */
   static delete(uuid, context) {
-    delete context.moves[uuid]
+    delete context.moves[String(uuid)]
   }
 
   /**

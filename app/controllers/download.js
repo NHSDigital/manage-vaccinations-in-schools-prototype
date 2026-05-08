@@ -75,7 +75,7 @@ export const downloadController = {
   },
 
   /**
-   * @param {string} type - Form type
+   * @param {string} [type] - Form type
    * @returns {import("express").RequestHandler} - Request handler
    */
   new(type) {
@@ -115,7 +115,10 @@ export const downloadController = {
     const { data } = request.session
     const { __ } = response.locals
 
-    const download = Download.create(data.wizard.downloads[download_id], data)
+    const download = Download.create(
+      data.wizard.downloads[String(download_id)],
+      data
+    )
 
     // Clean up session data
     delete data.download

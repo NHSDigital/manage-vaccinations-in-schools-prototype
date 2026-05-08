@@ -87,7 +87,10 @@ export const vaccinationController = {
     const { patientSession_uuid } = request.query
     const { data } = request.session
 
-    const patientSession = PatientSession.findOne(patientSession_uuid, data)
+    const patientSession = PatientSession.findOne(
+      String(patientSession_uuid),
+      data
+    )
     const { session, programme, vaccine, instruction } = patientSession
     const { identifiedBy, injectionSite, ready, selfId, suppliedBy_uid } =
       data.patientSession.preScreen
@@ -195,7 +198,7 @@ export const vaccinationController = {
 
       // Update session data
       const updates = {
-        ...data.wizard.vaccinations[vaccination_uuid],
+        ...data.wizard.vaccinations[String(vaccination_uuid)],
         ...request.body?.vaccination
       }
 

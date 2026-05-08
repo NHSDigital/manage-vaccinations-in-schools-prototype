@@ -489,12 +489,14 @@ export class Download {
   /**
    * Find one
    *
-   * @param {string} id - Download ID
+   * @param {string|string[]} id - Download ID
    * @param {object} context - Context
    * @returns {Download|undefined} Download
    * @static
    */
   static findOne(id, context) {
+    id = String(id)
+
     if (context?.downloads?.[id]) {
       return new Download(context.downloads[id], context)
     }
@@ -521,13 +523,15 @@ export class Download {
   /**
    * Update
    *
-   * @param {string} id - Download ID
+   * @param {string|string[]} id - Download ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Download} Updated download
    * @static
    */
   static update(id, updates, context) {
+    id = String(id)
+
     const updatedDownload = Object.assign(
       Download.findOne(id, context),
       updates

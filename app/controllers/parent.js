@@ -345,7 +345,7 @@ export const parentController = {
    * @type {import("express").RequestHandler}
    */
   showForm(request, response) {
-    let { view } = request.params
+    let view = String(request.params.view)
     const { consent } = response.locals
     let key = kebabToCamelCase(view)
 

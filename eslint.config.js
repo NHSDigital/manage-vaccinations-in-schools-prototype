@@ -7,7 +7,8 @@ export default [
     rules: {
       camelcase: 'off',
       'getter-return': 'off',
-      'no-continue': 'off'
+      'no-continue': 'off',
+      'no-unused-vars': ['error', { ignoreRestSiblings: true }]
     }
   },
   {

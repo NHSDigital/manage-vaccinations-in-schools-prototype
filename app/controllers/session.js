@@ -96,7 +96,7 @@ export const sessionController = {
   show(request, response) {
     let { view } = request.params
 
-    if (['instruct', 'record', 'report'].includes(view)) {
+    if (['instruct', 'record', 'report'].includes(String(view))) {
       view = 'activity'
     } else if (!view) {
       view = 'show'
@@ -560,7 +560,7 @@ export const sessionController = {
       // Update session data
       const session = Session.update(
         session_id,
-        data.wizard.sessions[session_id],
+        data.wizard.sessions[String(session_id)],
         data
       )
 

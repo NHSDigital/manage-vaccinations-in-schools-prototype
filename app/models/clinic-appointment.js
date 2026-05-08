@@ -37,13 +37,7 @@ import {
  */
 export class ClinicAppointment {
   constructor(options, context) {
-    // Define 'context' so it's hidden from JSON.stringify, or we'll get
-    // circular reference issues during saving
-    Object.defineProperty(this, 'context', {
-      value: context,
-      enumerable: false
-    })
-
+    this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
 
     this.booking_uuid = options?.booking_uuid
@@ -275,5 +269,16 @@ export class ClinicAppointment {
    */
   get uri() {
     return `/appointments/${this.uuid}`
+  }
+
+  /**
+   * Remove 'context' so it's hidden from JSON.stringify, or we'll get
+   * circular reference issues during saving
+   *
+   * @returns {string} Clinic appointment as JSON
+   */
+  toJSON() {
+    const { context, ...rest } = this
+    return JSON.stringify(rest)
   }
 }

@@ -69,8 +69,7 @@ export const bookIntoClinicController = {
    * @type {import("express").RequestHandler}
    */
   readForm(request, response, next) {
-    const { booking_uuid } = request.params
-    const appointment_uuid = request.params.appointment_uuid
+    const { appointment_uuid, booking_uuid } = request.params
     const { data, referrer } = request.session
 
     /**
@@ -159,7 +158,7 @@ export const bookIntoClinicController = {
       // relevant health questions and impairments/adjustments questions
       ...getHealthQuestionPaths(
         `/${booking_uuid}/new/`,
-        booking_uuid,
+        String(booking_uuid),
         data.wizard,
         data
       ),
@@ -181,7 +180,8 @@ export const bookIntoClinicController = {
   showForm(request, response) {
     const { appointment } = response.locals
     const { data } = request.session
-    let { booking_uuid, view } = request.params
+    let { booking_uuid } = request.params
+    let view = String(request.params.view)
 
     if (view === 'address-selection') {
       // Build the options for the selection of a home address address from those already entered
@@ -286,7 +286,7 @@ export const bookIntoClinicController = {
     }
 
     // NB: request.session.save was needed to avoid race condition issues on heroku
-    request.session.save((error) => {
+    return request.session.save((error) => {
       if (!error) response.redirect(paths.next)
     })
   },

@@ -57,7 +57,7 @@ export const pdsRecordController = {
     // Update session data
     const pdsRecord = PDSRecord.update(
       pdsRecord_uuid,
-      data.wizard.pdsRecords[pdsRecord_uuid],
+      data.wizard.pdsRecords[String(pdsRecord_uuid)],
       data.wizard
     )
 
