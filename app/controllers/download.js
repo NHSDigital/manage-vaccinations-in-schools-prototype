@@ -158,7 +158,6 @@ export const downloadController = {
       }
     }
 
-    // TODO: Use presenter
     download = new Download(download, data)
     response.locals.download = download
 

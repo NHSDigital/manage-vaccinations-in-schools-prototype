@@ -1192,7 +1192,6 @@ export class Session {
     // Update context
     context.sessions[updatedSession.id] = updatedSession
 
-    // TODO: Use presenter?
     return new Session(updatedSession, context)
   }
 

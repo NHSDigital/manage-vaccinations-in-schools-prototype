@@ -81,7 +81,6 @@ export const replyController = {
       data
     )
 
-    // TODO: Use presenter
     const reply = new Reply(createdReply, data)
 
     let next
@@ -204,7 +203,6 @@ export const replyController = {
         }
       }
 
-      // TODO: Use presenter
       response.locals.reply = new Reply(reply, data)
       response.locals.patient = patientSession.patient
 

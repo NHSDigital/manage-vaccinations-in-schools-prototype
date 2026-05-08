@@ -223,7 +223,6 @@ export const uploadController = {
         [`/${upload_id}`]: {}
       }
 
-      // TODO: Use presenter
       upload = new Upload(upload, data)
       response.locals.upload = upload
 
