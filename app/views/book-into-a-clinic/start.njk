@@ -12,7 +12,7 @@
 
       {{ __("clinicBooking.start.intro") | nhsukMarkdown }}
       
-      {{ __("clinicBooking.start.programmes", { programmeNames: clinicInvite.programmeNames }) | nhsukMarkdown }}
+      {{ __("clinicBooking.start.programmes", { programmeNames: data.clinicInvite.programmeNames }) | nhsukMarkdown }}
 
       <h2 class="nhsuk-heading-l">
         {{ __("clinicBooking.start.confirm.title") }}
