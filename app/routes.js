@@ -12,6 +12,7 @@ import { rollover } from './middleware/rollover.js'
 import { team } from './middleware/team.js'
 import { accountRoutes } from './routes/account.js'
 import { activityRoutes } from './routes/activity.js'
+import { appointmentRoutes } from './routes/appointment.js'
 import { batchRoutes } from './routes/batch.js'
 import { bookIntoClinicRoutes } from './routes/book-into-a-clinic.js'
 import { clinicBookingRoutes } from './routes/clinic-booking.js'
@@ -49,6 +50,7 @@ router.use(referrer)
 router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
 router.use('/activity', activityRoutes)
+router.use('/appointments', appointmentRoutes) // all unmatched clinic appointments
 router.use('/book-into-a-clinic', bookIntoClinicRoutes) // parent-facing clinic booking journey
 router.use('/clinic-bookings', clinicBookingRoutes) // original explorations of clinic booking data
 router.use('/consents', consentRoutes)
@@ -68,6 +70,7 @@ router.use(
 )
 router.use('/reviews', reviewRoutes)
 router.use('/schools', schoolRoutes)
+router.use('/sessions/:session_id/appointments', appointmentRoutes)
 router.use('/sessions/:session_id/consents', consentRoutes)
 router.use('/sessions/:session_id/default-batch', defaultBatchRoutes)
 router.use('/sessions/:session_id/patients', patientSessionRoutes)

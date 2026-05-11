@@ -314,8 +314,10 @@ export default () => {
     }
 
     const summaryRows = []
-    const appointmentsByHour = session.appointmentsByHour
-    for (const [hour, appointmentTimes] of Object.entries(appointmentsByHour)) {
+    const appointmentTimesByHour = session.appointmentTimesByHour
+    for (const [hour, appointmentTimes] of Object.entries(
+      appointmentTimesByHour
+    )) {
       summaryRows.push({
         key: { text: `${hour}:00 to ${parseInt(hour) + 1}:00` },
         value: { text: `${appointmentTimes.length} available` }

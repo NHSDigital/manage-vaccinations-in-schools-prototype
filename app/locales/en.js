@@ -234,6 +234,41 @@ export const en = {
       label: 'Parent'
     }
   },
+  appointments: {
+    list: {
+      label: 'Clinic appointments',
+      title: 'Unmatched clinic appointments'
+    },
+    count: {
+      total:
+        '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {{count} unmatched clinic appointments}}',
+      session:
+        '{count, plural, =0 {No unmatched clinic appointments at {location}} one {1 unmatched clinic appointment at {location}} other {{count} unmatched clinic appointments at {location}}}'
+    },
+    results:
+      '{count, plural, =0 {No unmatched appointments matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointment} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointments}}',
+    summary: {
+      label: 'Response'
+    },
+    location: {
+      label: 'Clinic location'
+    },
+    date: {
+      label: 'Clinic date'
+    },
+    time: {
+      label: 'Appointment time'
+    },
+    vaccinations: {
+      label: 'Programmes'
+    },
+    match: {
+      label: 'Match'
+    },
+    archive: {
+      label: 'Archive'
+    }
+  },
   clinicAppointment: {
     label: 'Appointment details',
     show: {
@@ -260,21 +295,11 @@ export const en = {
   },
   clinicBooking: {
     start: {
-      title: {
-        [SessionPresetName.Flu]:
-          'Book an appointment for your child’s flu vaccination',
-        [SessionPresetName.Doubles]:
-          'Book an appointment for the MenACWY and Td/IPV vaccinations',
-        [SessionPresetName.HPV]: 'Book an appointment for the HPV vaccination',
-        [SessionPresetName.MMR]:
-          'Book an appointment for an MMR or MMRV catch-up vaccination'
-      },
-      primaryProgrammeInSentence: {
-        [SessionPresetName.Flu]: 'flu',
-        [SessionPresetName.Doubles]: 'MenACWY and Td/IPV',
-        [SessionPresetName.HPV]: 'HPV',
-        [SessionPresetName.MMR]: 'MMR and MMRV'
-      },
+      title: 'Book an appointment for your child’s vaccination',
+      intro:
+        'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.',
+      programmes:
+        'Clinics have recently been set up to offer {{programmeNames}} vaccinations, but your child may be able to catch up on any outstanding vaccinations during their appointment.',
       confirm: {
         title: 'Book an appointment',
         buttonText: 'Start now'
@@ -500,7 +525,7 @@ export const en = {
     results:
       '{count, plural, =0 {No responses matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> response} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> responses}}',
     list: {
-      label: 'Unmatched responses',
+      label: 'Consent responses',
       title: 'Unmatched consent responses',
       description:
         'Review incoming consent responses that can’t be automatically matched'

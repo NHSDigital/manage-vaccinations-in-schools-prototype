@@ -2,54 +2,59 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
-import { ParentalRelationship, SessionPresets } from '../enums.js'
+import { ParentalRelationship } from '../enums.js'
 import { ClinicBooking } from '../models.js'
 import {
   getAllAppointmentPaths,
   getHealthQuestionPaths,
   getPreviousAddressItems
 } from '../utils/clinic-appointment.js'
+import {
+  ConjunctionType,
+  programmeNamesListForSentence
+} from '../utils/programme.js'
 import { kebabToCamelCase } from '../utils/string.js'
 
 export const bookIntoClinicController = {
-  read(request, response, next, session_preset_slug) {
+  setupServiceHeader(request, response, next) {
     const serviceName = 'Book into a clinic'
 
     response.locals.assetsName = 'public'
     response.locals.serviceName = serviceName
     response.locals.headerOptions = { service: { text: serviceName } }
 
-    // Record the session preset (aka "primary programme" to the parent)
-    const sessionPreset =
-      SessionPresets.find((preset) => preset.slug === session_preset_slug) ??
-      SessionPresets[0]
-    response.locals.sessionPreset = sessionPreset
-
-    // Allow us to offer a phone booking if not wanting online (start.njk)
-    response.locals.bookingPhoneNumber =
-      request.session.data.teams[0]?.tel ??
-      faker.helpers.replaceSymbols('01### ######')
-
     next()
   },
 
-  redirect(request, response) {
-    const { sessionPreset } = response.locals
+  readProgrammes(request, response) {
+    const { data } = request.session
 
-    response.redirect(`${request.baseUrl}/${sessionPreset.slug}/start`)
+    // Read the invited programme IDs from the querystring and store them
+    const { programme_id } = request.query
+    let programme_ids
+    if (programme_id) {
+      programme_ids = Array.isArray(programme_id)
+        ? programme_id
+        : [programme_id]
+
+      data.clinicInvite = {
+        programme_ids,
+        programmeNames: programmeNamesListForSentence(
+          programme_ids,
+          ConjunctionType.and,
+          data
+        )
+      }
+    }
+
+    response.redirect(`/book-into-a-clinic/start`)
   },
 
   new(request, response) {
     const { data } = request.session
-    const { sessionPreset } = response.locals
 
     // Create a new clinic booking in the wizard context
-    const booking = ClinicBooking.create(
-      {
-        sessionPreset
-      },
-      data.wizard
-    )
+    const booking = ClinicBooking.create({}, data.wizard)
 
     // Redirect to the first page in the booking journey (after the start page, that is)
     const redirectUrl = `${request.baseUrl}/${booking.bookingUri}/new/child-count`
@@ -57,7 +62,7 @@ export const bookIntoClinicController = {
   },
 
   readForm(request, response, next) {
-    const { session_preset_slug, booking_uuid } = request.params
+    const { booking_uuid } = request.params
     const appointment_uuid = request.params.appointment_uuid
     const { data, referrer } = request.session
 
@@ -115,30 +120,29 @@ export const bookIntoClinicController = {
     }
 
     const journey = {
-      [`/${session_preset_slug}`]: {},
-      [`/${session_preset_slug}/${booking_uuid}/new/child-count`]: {},
+      [`/`]: {},
+      [`/${booking_uuid}/new/child-count`]: {},
 
       // Appointment journey; once per child
       ...getAllAppointmentPaths(
-        session_preset_slug,
         booking_uuid,
         request.session.data,
         booking.appointments
       ),
 
       // Parent journey
-      [`/${session_preset_slug}/${booking_uuid}/new/parent`]: {
-        [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]:
-          () => !request.session.data.booking?.parent?.tel
+      [`/${booking_uuid}/new/parent`]: {
+        [`/${booking_uuid}/new/offer-health-questions`]: () =>
+          !request.session.data.booking?.parent?.tel
       },
-      [`/${session_preset_slug}/${booking_uuid}/new/contact-preference`]: {},
+      [`/${booking_uuid}/new/contact-preference`]: {},
 
       // Check answers
-      [`/${session_preset_slug}/${booking_uuid}/new/check-answers`]: {},
+      [`/${booking_uuid}/new/check-answers`]: {},
 
       // Health questions (optional)
-      [`/${session_preset_slug}/${booking_uuid}/new/offer-health-questions`]: {
-        [`/${session_preset_slug}/${booking_uuid}/new/confirmation`]: {
+      [`/${booking_uuid}/new/offer-health-questions`]: {
+        [`/${booking_uuid}/new/confirmation`]: {
           data: 'transaction.optedIntoHealthQuestions',
           value: 'false'
         }
@@ -147,14 +151,14 @@ export const bookIntoClinicController = {
       // For each child being booked in, and their selected vaccinations, ask the
       // relevant health questions and impairments/adjustments questions
       ...getHealthQuestionPaths(
-        `/${session_preset_slug}/${booking_uuid}/new/`,
+        `/${booking_uuid}/new/`,
         booking_uuid,
         data.wizard,
         data
       ),
 
       // Confirmation! \o/
-      [`/${session_preset_slug}/${booking_uuid}/new/confirmation`]: {}
+      [`/${booking_uuid}/new/confirmation`]: {}
     }
 
     const paths = wizard(journey, request)
@@ -223,8 +227,6 @@ export const bookIntoClinicController = {
       _.merge(data.wizard.transaction, request.body.transaction)
     }
 
-    let nextUrl = paths.next
-
     if (view === 'child-count') {
       // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -245,8 +247,8 @@ export const bookIntoClinicController = {
 
       // Start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]
-      const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.appointmentUri}/child`
-      nextUrl = firstAppointmentUrl
+      const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.uuid}/child`
+      paths.next = firstAppointmentUrl
     } else if (
       view === 'address-selection' &&
       request.body.transaction.addressChoice !== 'new'
@@ -269,12 +271,17 @@ export const bookIntoClinicController = {
 
     // NB: request.session.save was needed to avoid race condition issues on heroku
     request.session.save((error) => {
-      if (!error) response.redirect(nextUrl)
+      if (!error) response.redirect(paths.next)
     })
   },
 
   show(request, response) {
     const view = request.params.view || 'start'
+
+    // Allow us to offer a phone booking if not wanting online (start.njk)
+    response.locals.bookingPhoneNumber =
+      request.session.data.teams[0]?.tel ??
+      faker.helpers.replaceSymbols('01### ######')
 
     response.render(`book-into-a-clinic/${view}`)
   }

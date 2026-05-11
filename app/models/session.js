@@ -39,7 +39,11 @@ import {
   today
 } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
-import { getConsentWindow, getSessionActivityCount } from '../utils/session.js'
+import {
+  getConsentWindow,
+  getSessionActivityCount,
+  removeSlots
+} from '../utils/session.js'
 import {
   formatLink,
   formatList,
@@ -418,17 +422,7 @@ export class Session {
    * @returns {number} - total number of appointment slots in this clinic session
    */
   get totalAppointmentCount() {
-    if (this.type !== SessionType.Clinic) {
-      return 0
-    }
-
-    if (!this.vaccinationPeriods?.length) {
-      return 0
-    }
-
-    return this.vaccinationPeriods
-      .map((period) => period.appointmentCount(this.appointmentLength))
-      .reduce((total, next) => total + next, 0)
+    return this.allAppointmentTimes.length
   }
 
   /**
@@ -437,8 +431,7 @@ export class Session {
    * @returns {number} - the number of appointment slots remaining in this clinic session
    */
   get availableAppointmentCount() {
-    // TODO: calculate this value from the actual appointments
-    return this.totalAppointmentCount
+    return this.availableAppointmentTimes.length
   }
 
   /**
@@ -463,7 +456,7 @@ export class Session {
    *
    * @returns {Array<object>} - the start times of all possible appointments, grouped by their start hour
    */
-  get appointmentsByHour() {
+  get appointmentTimesByHour() {
     if (this.type !== SessionType.Clinic) {
       throw new Error('Session must be a clinic to have appointments')
     }
@@ -471,7 +464,7 @@ export class Session {
     const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
     const allAppointmentsByHour = sortedPeriods.reduce(
       (result, vaccinationPeriod) => {
-        const periodAppointments = vaccinationPeriod.appointmentsByHour(
+        const periodAppointments = vaccinationPeriod.appointmentTimesByHour(
           this.appointmentLength
         )
         for (const [hour, appointments] of Object.entries(periodAppointments)) {
@@ -537,20 +530,86 @@ export class Session {
   }
 
   /**
-   * Get all appointments for this clinic with unmatched child details
+   * Get a list of all available appointment slot times, including parallel appointments
+   *
+   * @returns {Array<ClinicAppointment>} - a list of appointment times available to book
+   */
+  get availableAppointmentTimes() {
+    return removeSlots(this.allAppointmentTimes, this.bookedAppointmentTimes)
+  }
+
+  /**
+   * Get a list of all appointment slot times, booked or otherwise, including parallel appointments
+   *
+   * @returns {Array<Date>} - the start times of all possible appointments in this clinic
+   */
+  get allAppointmentTimes() {
+    const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
+    return sortedPeriods
+      .map((period) => period.allAppointmentTimes(this.appointmentLength))
+      .flat()
+  }
+
+  /**
+   * Get a list of all booked appointment time slots, including parallel appointments
+   *
+   * @returns {Array<ClinicAppointment>} - a list of appointment times booked so far
+   */
+  get bookedAppointmentTimes() {
+    const appointments = this.appointments
+    return appointments.map(({ startAt }) => startAt)
+
+    // TODO: expand on this when we can have appointments that cover multiple slots
+  }
+
+  /**
+   * For a clinic session, get the percentage of slots already booked
+   *
+   * @returns {number} - the (rounded) percentage of slots booked
+   */
+  get percentBooked() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error(
+        'Booking percentages are only relevant to clinic sessions'
+      )
+    }
+
+    if (!this.allAppointmentTimes.length) {
+      return 100
+    }
+
+    return Math.round(
+      (this.bookedAppointmentTimes.length / this.allAppointmentTimes.length) *
+        100
+    )
+  }
+
+  /**
+   * Get all appointments for this clinic
    *
    * @returns {Array<ClinicAppointment>} - the appointments made for unmatched children
    */
-  get unmatchedAppointments() {
+  get appointments() {
     if (this.type !== SessionType.Clinic) {
       throw new Error(
         'Unmatched clinic appointments are only relevant to clinic sessions'
       )
     }
 
-    const appointments = this.patientSessions
-      .map(({ clinicAppointment }) => clinicAppointment)
-      .filter(Boolean)
+    const appointments = this.patientSessions.map(
+      ({ clinicAppointment }) => clinicAppointment
+    )
+
+    return appointments
+  }
+
+  /**
+   * Get all appointments for this clinic with unmatched child details
+   *
+   * @returns {Array<ClinicAppointment>} - the appointments made for unmatched children
+   */
+  get unmatchedAppointments() {
+    const appointments = this.appointments
     return appointments.filter((patient_uuid) => !patient_uuid)
   }
 

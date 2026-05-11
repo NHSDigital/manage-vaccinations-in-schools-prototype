@@ -20,7 +20,6 @@ import {
   Parent,
   PatientProgramme,
   PatientSession,
-  Programme,
   Reply,
   Vaccination
 } from '../models.js'
@@ -339,10 +338,10 @@ export class Patient extends Child {
         this.context
       )
 
-      // Patient invited to clinic if invitation needed and invitation sent
-      patientProgramme.invitedToClinic =
-        patientProgramme.canInviteToSession &&
-        this.clinicProgramme_ids.includes(programme.id)
+      // Patient invited to clinic if invitation sent
+      patientProgramme.invitedToClinic = this.clinicProgramme_ids.includes(
+        programme.id
+      )
 
       programmes[programme.id] = patientProgramme
     }
@@ -496,7 +495,7 @@ export class Patient extends Child {
         ? `Last reminder sent on ${this.lastReminderDate}`
         : 'No reminders sent',
       clinicProgramme_ids: this.clinicProgramme_ids
-        .map((id) => Programme.findOne(id, this.context).nameTag)
+        .map((id) => this.programmes[id].programme.nameTag)
         .join(' ')
     }
   }

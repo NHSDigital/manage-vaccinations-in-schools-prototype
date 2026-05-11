@@ -1,0 +1,100 @@
+{% from "review/_navigation.njk" import reviewNavigation with context %}
+
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("appointments.list.title") %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [{
+      text: __("home.show.title"),
+      href: "/"
+    }, {
+      text: __("session.list.title"),
+      href: "/sessions"
+    }, {
+      text: session.location.name,
+      href: session.uri
+    }]
+  }) if session }}
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+
+  {{ reviewNavigation({
+    view: "appointments"
+  }) }}
+
+  {% set appointmentRows = [] %}
+  {% for appointment in results.page %}
+    {% set appointmentRows = appointmentRows | push([
+      {
+        header: __("appointments.summary.label"),
+        html: appointment.link.summary | replace("/appointments", appointmentsPath)
+      },
+      {
+        header: __("appointments.location.label"),
+        text: appointment.formatted.locationName
+      } if not session,
+      {
+        header: __("appointments.date.label"),
+        text: appointment.formatted.date
+      } if not session,
+      {
+        header: __("appointments.time.label"),
+        text: appointment.formatted.timeSlot
+      } if session,
+      {
+        header: __("appointments.vaccinations.label"),
+        text: appointment.formatted.vaccinations | safe
+      } if session,
+      {
+        header: __("actions.label"),
+        html: appActionList({
+          items: [{
+            text: __("appointments.match.label"),
+            href: appointmentsPath + "/" + appointment.uuid + "/match?referrer=" + appointmentsPath
+          }, {
+            text: __("appointments.archive.label"),
+            href: appointmentsPath + "/" + appointment.uuid + "/archive?referrer=" + appointmentsPath
+          }]
+        })
+      }
+    ]) %}
+  {% endfor %}
+
+  {% if appointments.length %}
+    {{ table({
+      id: "appointments",
+      responsive: true,
+      card: {
+        heading: __mf("appointments.count.session", { count: appointments.length, location: session.location.name }) if session else __mf("appointments.count.total", { count: appointments.length }),
+        headingLevel: 3
+      },
+      head: [
+        { text: __("appointments.summary.label") },
+        { text: __("appointments.location.label") } if not session,
+        { text: __("appointments.date.label") } if not session,
+        { text: __("appointments.time.label") } if session,
+        { text: __("appointments.vaccinations.label") } if session,
+        { text: __("actions.label") }
+      ],
+      rows: appointmentRows
+    }) }}
+
+    {{ pagination(pages) }}
+
+    {{ __mf("appointments.results", {
+      from: results.from,
+      to: results.to,
+      count: results.count
+    }) | nhsukMarkdown }}
+  {% else %}
+    {% if not session %}
+      {{ __mf("appointments.count.total", { count: 0 }) | nhsukMarkdown }}
+    {% else %}
+      {{ __mf("appointments.count.session", { count: appointments.length, location: session.location.name }) | nhsukMarkdown }}
+    {% endif %}
+  {% endif %}
+{% endblock %}

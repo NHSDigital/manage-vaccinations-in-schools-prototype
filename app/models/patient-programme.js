@@ -8,10 +8,8 @@ import {
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
-  RegistrationOutcome,
   SessionStatus,
-  SessionType,
-  VaccinationOutcome
+  SessionType
 } from '../enums.js'
 import {
   AuditEvent,
@@ -161,22 +159,16 @@ export class PatientProgramme {
   get clinicStatus() {
     // Work backwards from the most complete status
 
-    const { lastPatientSession } = this // should we look beyond the last session?
+    // Booked into a clinic that hasn't happened / isn't happening yet?
     if (
-      lastPatientSession &&
-      lastPatientSession.session.type === SessionType.Clinic
+      this.patientSessions.some(
+        ({ session }) =>
+          session.type === SessionType.Clinic &&
+          ![SessionStatus.Completed, SessionStatus.Closed].includes(
+            session.status
+          )
+      )
     ) {
-      // Clinic vaccination has already happened?
-      if (lastPatientSession.outcome === VaccinationOutcome.Vaccinated) {
-        return PatientClinicStatus.Completed
-      }
-
-      // Attending a clinic right now?
-      if (lastPatientSession.register === RegistrationOutcome.Present) {
-        return PatientClinicStatus.Registered
-      }
-
-      // For the PatientSession at a clinic to exist, the child must be booked in
       return PatientClinicStatus.Booked
     }
 

@@ -9,6 +9,7 @@ import {
   EthnicGroup,
   Impairment
 } from '../enums.js'
+import { School } from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -261,11 +262,11 @@ export class Child {
   /**
    * Get school
    *
-   * @returns {object|undefined} School
+   * @returns {School|undefined} School
    */
   get school() {
     if (this.school_id) {
-      return schools[this.school_id]
+      return new School(schools[this.school_id], this.context)
     }
   }
 

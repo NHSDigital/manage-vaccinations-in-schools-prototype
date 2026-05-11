@@ -4,46 +4,34 @@ import { bookIntoClinicController as bookIntoClinic } from '../controllers/book-
 
 const router = express.Router({ strict: true, mergeParams: true })
 
-router.param('session_preset_slug', bookIntoClinic.read)
+router.use(bookIntoClinic.setupServiceHeader)
 
-router.get(
-  ['/:session_preset_slug', '/:session_preset_slug/'],
-  bookIntoClinic.redirect
-)
+router.get('/', bookIntoClinic.readProgrammes)
 
-router.get('/:session_preset_slug/new', bookIntoClinic.new)
+router.get('/new', bookIntoClinic.new)
 
 // TODO
 router.all(
-  '/:session_preset_slug/:booking_uuid/new/:appointment_uuid/:view',
+  '/:booking_uuid/new/:appointment_uuid/:view',
   bookIntoClinic.readForm
 )
-router.all(
-  '/:session_preset_slug/:booking_uuid/new/:view',
-  bookIntoClinic.readForm
-)
+router.all('/:booking_uuid/new/:view', bookIntoClinic.readForm)
 
 router.get(
-  '/:session_preset_slug/:booking_uuid/new/:appointment_uuid/:view',
+  '/:booking_uuid/new/:appointment_uuid/:view',
   bookIntoClinic.showForm
 )
-router.get(
-  '/:session_preset_slug/:booking_uuid/new/:view',
-  bookIntoClinic.showForm
-)
+router.get('/:booking_uuid/new/:view', bookIntoClinic.showForm)
 
 // TODO: save the completed booking to the global context
-// router.post('/:session_preset_slug/:booking_uuid/new/check-answers', bookIntoClinic.update)
+// router.post('/:booking_uuid/new/check-answers', bookIntoClinic.update)
 
 router.post(
-  '/:session_preset_slug/:booking_uuid/new/:appointment_uuid/:view',
+  '/:booking_uuid/new/:appointment_uuid/:view',
   bookIntoClinic.updateForm
 )
-router.post(
-  '/:session_preset_slug/:booking_uuid/new/:view',
-  bookIntoClinic.updateForm
-)
+router.post('/:booking_uuid/new/:view', bookIntoClinic.updateForm)
 
-router.get('/:session_preset_slug{/:view}', bookIntoClinic.show)
+router.get('{/:view}', bookIntoClinic.show)
 
 export const bookIntoClinicRoutes = router

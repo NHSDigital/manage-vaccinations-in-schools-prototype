@@ -1,8 +1,19 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Child, Patient, Programme, Session } from '../models.js'
+import {
+  Child,
+  ClinicBooking,
+  Parent,
+  Patient,
+  Programme,
+  Session
+} from '../models.js'
 import { formatDate } from '../utils/date.js'
-import { stringToArray, stringToBoolean } from '../utils/string.js'
+import {
+  formatLinkWithSecondaryText,
+  stringToArray,
+  stringToBoolean
+} from '../utils/string.js'
 
 /**
  * @class ClinicAppointment
@@ -10,6 +21,7 @@ import { stringToArray, stringToBoolean } from '../utils/string.js'
  * @param {object} [context] - Context
  * @property {object} [context] - Context, for access to patients, programmes, etc.
  * @property {string} uuid - Unique ID for this clinic appointment
+ * @property {string} booking_uuid - Unique ID for the booking under which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {import('./child.js').Child} [child] - child details recorded from form input values
  * @property {boolean} needsExtraTime - Does the child need extra time for their vaccinations?
@@ -20,7 +32,6 @@ import { stringToArray, stringToBoolean } from '../utils/string.js'
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
- * @property {Array<string>} [primary_programme_ids] - IDs of primary programmes for this clinic booking
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {object} [healthAnswers] - Answers to health questions
  */
@@ -35,6 +46,7 @@ export class ClinicAppointment {
 
     this.uuid = options?.uuid || faker.string.uuid()
 
+    this.booking_uuid = options?.booking_uuid
     this.patient_uuid = options?.patient_uuid
     this.child = (options?.child && new Child(options.child)) || new Child({})
 
@@ -54,20 +66,22 @@ export class ClinicAppointment {
       (options?.selected_programme_ids &&
         stringToArray(options.selected_programme_ids)) ||
       []
-    this.primary_programme_ids =
-      (options?.primary_programme_ids &&
-        stringToArray(options.primary_programme_ids)) ||
-      []
     this.healthAnswers = options?.healthAnswers || {}
   }
 
   /**
-   * Get URI of the booking journey
+   * Get the booking that this appointment's part of
    *
-   * @returns {string} Appointment URI
+   * @returns {ClinicBooking|undefined} - the booking that this is part of
    */
-  get appointmentUri() {
-    return `${this.uuid}`
+  get booking() {
+    try {
+      if (this.booking_uuid) {
+        return ClinicBooking.findOne(this.booking_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('ClinicAppointment.booking', error.message)
+    }
   }
 
   /**
@@ -131,23 +145,8 @@ export class ClinicAppointment {
    * @returns {Array<Programme>} The programmes from which the parent is able to choose
    */
   get eligibleProgrammes() {
-    const patient = this.patient
-    if (!patient) {
-      return this.clinicBooking?.primaryProgrammes
-    }
-
-    // TODO: work out which vaccinations the matched child is eligible for
-    const catchup_programme_ids = []
-
-    let eligible_programme_ids = new Set(this.primary_programme_ids)
-    eligible_programme_ids = eligible_programme_ids.union(
-      new Set(catchup_programme_ids)
-    )
-
-    return ClinicAppointment.#getProgrammesFromIDs(
-      [...eligible_programme_ids],
-      this.context
-    )
+    const programme_ids = this.patient?.clinicReadyProgramme_ids ?? []
+    return ClinicAppointment.#getProgrammesFromIDs(programme_ids, this.context)
   }
 
   /**
@@ -231,12 +230,32 @@ export class ClinicAppointment {
       location: Object.values(session?.clinic?.location ?? {})
         .filter(Boolean)
         .join(', '),
+      locationName: session?.clinic?.name,
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
       vaccinations: this.#getSelectedProgrammes(this.context)
-        .map((programme) => programme.name)
-        .join(', ')
+        .map((programme) => programme.nameTag)
+        .join(' ')
+    }
+  }
+
+  /**
+   * Get formatted links
+   *
+   * @returns {object} Formatted links
+   */
+  get link() {
+    const parent = new Parent({
+      fullName: this.booking?.parent?.fullName,
+      relationship: this.parentalRelationship
+    })
+    return {
+      summary: formatLinkWithSecondaryText(
+        this.uri,
+        parent.fullNameAndRelationship,
+        `for ${this.child.fullName}`
+      )
     }
   }
 
@@ -250,11 +269,11 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get URI
+   * Get URI, without the context of the session
    *
    * @returns {string} URI
    */
   get uri() {
-    return `/clinic-appointments/${this.uuid}`
+    return `/appointments/${this.uuid}`
   }
 }
