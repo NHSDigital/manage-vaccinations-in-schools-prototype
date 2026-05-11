@@ -275,10 +275,10 @@ export class ClinicAppointment {
    * Remove 'context' so it's hidden from JSON.stringify, or we'll get
    * circular reference issues during saving
    *
-   * @returns {string} Clinic appointment as JSON
+   * @returns {object} Clinic appointment ready to be serialized to JSON
    */
   toJSON() {
     const { context, ...rest } = this
-    return JSON.stringify(rest)
+    return rest
   }
 }
