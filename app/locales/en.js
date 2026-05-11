@@ -2942,7 +2942,7 @@ export const en = {
         count:
           '{count, plural, =0 {No records} one {1 record} other {# records}} already in Mavis',
         summary:
-          'This upload includes {count, plural, =0 {no records that already exist} one {1 record that already exists} other {# records that already exist}} in Mavis. You do not need to remove these from your CSV file. If you approve the upload, any new information will be added to the existing records.'
+          'This upload includes {count, plural, =0 {no records that already exist} one {1 record that already exists} other {# records that already exist}} in Mavis. You do not need to remove these from your CSV file. If you approve the upload, any additional information will be added to the existing records.'
       },
       imported: {
         title: 'Uploaded records',
@@ -3017,9 +3017,7 @@ export const en = {
       title: 'Which year groups do you want to import class list records for?'
     },
     invalid: {
-      title: 'Records could not be uploaded',
-      description:
-        'The records could not be uploaded due to errors in the CSV file. When fixing these errors, note that the header does not count as a row.'
+      title: 'Records could not be uploaded'
     },
     devoid: {
       title: 'No new records',
