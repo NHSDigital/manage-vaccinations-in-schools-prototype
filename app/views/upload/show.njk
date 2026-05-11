@@ -112,13 +112,11 @@
       headingSize: "m"
     }) %}
       <div class="nhsuk-u-reading-width">
-        {{ __("upload.invalid.description") | nhsukMarkdown }}
+        {{ actionLink({
+          text: __("upload.edit.label", upload.type | lower),
+          href: upload.uri + "/edit/file"
+        }) }}
       </div>
-
-      {{ actionLink({
-        text: __("upload.edit.label", upload.type | lower),
-        href: upload.uri + "/edit/file"
-      }) }}
 
       {% for row, validations in upload.validations %}
         {{ appHeading({
