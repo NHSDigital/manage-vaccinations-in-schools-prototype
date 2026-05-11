@@ -1,59 +1,56 @@
-import batches from '../.data/batches.json' with { type: 'json' }
-import clinicBookings from '../.data/clinic-bookings.json' with { type: 'json' }
-import clinics from '../.data/clinics.json' with { type: 'json' }
-import instructions from '../.data/instructions.json' with { type: 'json' }
-import moves from '../.data/moves.json' with { type: 'json' }
-import notices from '../.data/notices.json' with { type: 'json' }
-import patientSessions from '../.data/patient-sessions.json' with { type: 'json' }
-import patients from '../.data/patients.json' with { type: 'json' }
-import pdsRecords from '../.data/pds-records.json' with { type: 'json' }
-import programmes from '../.data/programmes.json' with { type: 'json' }
-import replies from '../.data/replies.json' with { type: 'json' }
-import schools from '../.data/schools.json' with { type: 'json' }
-import sessions from '../.data/sessions.json' with { type: 'json' }
-import teams from '../.data/teams.json' with { type: 'json' }
-import uploads from '../.data/uploads.json' with { type: 'json' }
-import users from '../.data/users.json' with { type: 'json' }
-import vaccinations from '../.data/vaccinations.json' with { type: 'json' }
-
 import vaccines from './datasets/vaccines.js'
 import { ClinicBooking, Consent, Move, Notice, Session } from './models.js'
-
-// Use Coventry and Warwickshire as team
-const team = teams['001']
+import { camelToKebabCase } from './utils/string.js'
 
 /**
- * Default values for user session data
+ * Load default values for user session data from JSON data files
  *
  * These are automatically added via the `autoStoreData` middleware. A values
  * will only be added to the session if it doesn't already exist. This may be
  * useful for testing journeys where users are returning or logging in to an
  * existing application.
  */
-const data = {
-  batches,
-  clinicBookings,
-  clinics,
-  defaultBatches: {},
-  downloads: {},
-  instructions,
-  moves,
-  notices,
-  patients,
-  patientSessions,
-  pdsRecords,
-  programmes,
-  replies,
-  schools,
-  sessions,
-  team,
-  teams,
-  uploads,
-  users,
-  vaccinations,
-  vaccines,
-  wizard: {}
+const namespaces = [
+  'batches',
+  'clinicBookings',
+  'clinics',
+  'instructions',
+  'moves',
+  'notices',
+  'patients',
+  'patientSessions',
+  'pdsRecords',
+  'programmes',
+  'replies',
+  'schools',
+  'sessions',
+  'teams',
+  'uploads',
+  'users',
+  'vaccinations'
+]
+
+const data = {}
+
+for (const namespace of namespaces) {
+  // We don’t use import attributes because JSON files are not created when
+  // linting files in CI workflow
+  try {
+    const fileName = camelToKebabCase(namespace)
+    const module = await import(`../.data/${fileName}.json`, {
+      with: { type: 'json' }
+    })
+    data[namespace] = module.default
+  } catch {
+    data[namespace] = {}
+  }
 }
+
+data.defaultBatches = {}
+data.downloads = {}
+data.team = data.teams['001'] // Use Coventry and Warwickshire as team
+data.vaccines = vaccines
+data.wizard = {}
 
 // Statistics
 const unmatchedAppointmentCount = ClinicBooking.findAll(data)
