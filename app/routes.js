@@ -20,10 +20,10 @@ import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
 import { downloadRoutes } from './routes/download.js'
+import { giveOrRefuseConsentRoutes } from './routes/give-or-refuse-consent.js'
 import { homeRoutes } from './routes/home.js'
 import { moveRoutes } from './routes/move.js'
 import { noticeRoutes } from './routes/notice.js'
-import { parentRoutes } from './routes/parent.js'
 import { patientSessionRoutes } from './routes/patient-session.js'
 import { patientRoutes } from './routes/patient.js'
 import { pdsRecordRoutes } from './routes/pds-record.js'
@@ -55,7 +55,7 @@ router.use('/book-into-a-clinic', bookIntoClinicRoutes) // parent-facing clinic 
 router.use('/clinic-bookings', clinicBookingRoutes) // original explorations of clinic booking data
 router.use('/consents', consentRoutes)
 router.use('/downloads', downloadRoutes)
-router.use('/give-or-refuse-consent', parentRoutes)
+router.use('/give-or-refuse-consent', giveOrRefuseConsentRoutes)
 router.use('/moves', moveRoutes)
 router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
