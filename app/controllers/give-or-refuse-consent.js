@@ -14,7 +14,7 @@ import { Consent, Session } from '../models.js'
 import { getHealthQuestionPaths } from '../utils/consent.js'
 import { formatList, kebabToCamelCase } from '../utils/string.js'
 
-export const parentController = {
+export const giveOrRefuseConsentController = {
   /**
    * @type {import("express").RequestParamHandler}
    */
@@ -79,7 +79,7 @@ export const parentController = {
       response.locals.sideEffects = formatList([...sideEffects])
     }
 
-    return response.render(`parent/${view}`)
+    return response.render(`give-or-refuse-consent/${view}`)
   },
 
   /**
@@ -364,7 +364,10 @@ export const parentController = {
     // Only ask for details if question does not have sub-questions
     const hasSubQuestions = consent.healthQuestionsForDecision[key]?.conditional
 
-    return response.render(`parent/form/${view}`, { key, hasSubQuestions })
+    return response.render(`give-or-refuse-consent/form/${view}`, {
+      key,
+      hasSubQuestions
+    })
   },
 
   /**
