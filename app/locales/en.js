@@ -371,11 +371,45 @@ export const en = {
       description:
         'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
-    vaccinationChoice: {
+    programmes: {
       title: 'Do you consent to %s having the following vaccinations?',
-      vaccinations: {
-        label: 'Select the vaccinations that you consent to %s having',
-        hint: 'Each vaccine is given separately'
+      description: {
+        matched:
+          'While invited for {{ programmeNames }} vaccination, our records show that {{ firstName }} is also eligible for other vaccinations.'
+      },
+      label: 'Select the vaccinations that you consent to %s having',
+      hint: 'Each vaccine is given separately'
+    },
+    fluChoice: {
+      title: 'Which of the flu vaccines do you agree to %s having?',
+      nasal: {
+        label: 'I agree to the nasal spray vaccine',
+        hint: 'This is the recommended option and gives the best protection against flu'
+      },
+      injection: {
+        label: 'I agree to the alternative flu injection',
+        hint: 'This is suitable for children who do not use gelatine products, or if they cannot have the nasal spray vaccine for medical reasons'
+      }
+    },
+    fluAlternative: {
+      title:
+        'If %s cannot have the nasal spray, do you agree to them having the injected vaccine instead?',
+      hint: 'We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead.',
+      yes: {
+        label: 'Yes'
+      },
+      no: {
+        label: 'No'
+      }
+    },
+    mmrAlternative: {
+      title: 'Do you want %s to have an MMR vaccine without gelatine?',
+      hint: 'One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.',
+      yes: {
+        label: 'I want %s to have the vaccine that does not contain gelatine'
+      },
+      no: {
+        label: '%s can have either type of vaccine'
       }
     },
     extraTime: {

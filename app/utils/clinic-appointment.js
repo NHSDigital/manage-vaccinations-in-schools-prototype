@@ -1,3 +1,4 @@
+import { ReplyDecision } from '../enums.js'
 import { ClinicAppointment, ClinicBooking } from '../models.js'
 
 import { camelToKebabCase } from './string.js'
@@ -42,8 +43,23 @@ export const getAllAppointmentPaths = (
         }
       },
 
-      // Appointment-length influences
-      [`/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]: {},
+      // Vaccinations (and types) and other appointment-length influences
+      [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {},
+      ...(sessionData.appointment?.selected_programme_ids?.includes('flu')
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/flu-choice`]: {}
+          }
+        : {}),
+      ...(sessionData.appointment?.fluDecision === ReplyDecision.Given
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/flu-alternative`]: {}
+          }
+        : {}),
+      ...(sessionData.appointment?.selected_programme_ids?.includes('mmr')
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
+          }
+        : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/extra-time`]: {},
 
       // Clinic and slot selection

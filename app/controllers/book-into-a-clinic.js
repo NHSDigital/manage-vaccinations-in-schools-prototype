@@ -199,6 +199,48 @@ export const bookIntoClinicController = {
           text: relationship,
           value: relationship
         }))
+    } else if (view === 'programmes') {
+      response.locals.programmeItems = [
+        {
+          text: 'Flu',
+          value: 'flu',
+          hint: {
+            text: 'Protects against flu, which can sometimes cause serious problems, such as pneumonia'
+          }
+        },
+        {
+          text: 'HPV',
+          value: 'hpv',
+          hint: {
+            text: 'Protects against human papillomavirus, some types of which are linked to an increased risk of certain types of cancer'
+          }
+        },
+        {
+          text: 'MenACWY',
+          value: 'menacwy',
+          hint: {
+            text: 'Protects against life-threatening illnesses like meningitis and sepsis'
+          }
+        },
+        {
+          text: 'Td/IPV',
+          value: 'td-ipv',
+          hint: { text: 'Protects against tetanus, diphtheria and polio' }
+        },
+        appointment.child.canBeOfferedMmrv
+          ? {
+              text: 'MMRV',
+              value: 'mmr',
+              hint: {
+                text: 'Protects against measles, mumps, rubella and varicella (chickenpox)'
+              }
+            }
+          : {
+              text: 'MMR',
+              value: 'mmr',
+              hint: { text: 'Protects against measles, mumps and rubella' }
+            }
+      ].filter(({ value }) => ['flu', 'mmr'].includes(value)) // test with these for now
     }
 
     // All health questions use the same view
