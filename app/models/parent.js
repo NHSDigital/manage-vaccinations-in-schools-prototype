@@ -39,8 +39,7 @@ export class Parent {
     this.emailStatus = this?.email && options?.emailStatus
     this.sms = stringToBoolean(options.sms) || false
     this.smsStatus = this?.tel && options?.smsStatus
-    this.contactPreference =
-      stringToBoolean(options?.contactPreference) || false
+    this.contactPreference = stringToBoolean(options?.contactPreference)
 
     if (this.contactPreference) {
       this.contactPreferenceDetails = options?.contactPreferenceDetails
