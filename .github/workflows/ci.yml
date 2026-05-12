@@ -6,6 +6,12 @@ on:
 permissions:
   contents: read
 
+env:
+  BATCHES: 1
+  RECORDS: 1
+  TEAMS: 1
+  USERS: 1
+
 jobs:
   lint-and-create-data:
     runs-on: ubuntu-latest
