@@ -316,7 +316,7 @@ export const patientSessionController = {
 
     request.flash(
       'success',
-      __('patientSession.invite.success', { parent: patient.parent1 })
+      __('patientSession.invite.success', { parent: patient.parents[0] })
     )
 
     return response.redirect(back)
@@ -333,7 +333,7 @@ export const patientSessionController = {
       {
         createdBy_uid: account.uid
       },
-      patient.parent1
+      patient.parents[0]
     )
 
     return response.redirect(back)

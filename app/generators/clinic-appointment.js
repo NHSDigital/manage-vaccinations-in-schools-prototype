@@ -61,8 +61,8 @@ export function generateClinicAppointment(patient, session, booking) {
   if (!booking.parent.fullName) {
     // First appointment, so set up the booking's parent
     booking.parent =
-      patient.parent1 ||
-      patient.parent2 ||
+      patient.parents[0] ||
+      patient.parents[1] ||
       generateParent(child.lastName, faker.datatype.boolean(0.5))
     // ...and their relationship to this child
     parentalRelationship = booking.parent.relationship

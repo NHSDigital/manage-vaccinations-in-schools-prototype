@@ -4,7 +4,6 @@ import schools from '../datasets/schools.js'
 import { Patient } from '../models.js'
 
 import { generateChild } from './child.js'
-import { generateParent } from './parent.js'
 
 /**
  * Generate fake patient record
@@ -13,15 +12,6 @@ import { generateParent } from './parent.js'
  */
 export function generatePatient() {
   const child = generateChild()
-
-  // Parents
-  const parent1 = generateParent(child, true)
-
-  let parent2
-  const addSecondParent = faker.datatype.boolean(0.5)
-  if (addSecondParent) {
-    parent2 = generateParent(child)
-  }
 
   // Pending changes
   const pendingChanges = {}
@@ -48,8 +38,6 @@ export function generatePatient() {
 
   return new Patient({
     ...child,
-    parent1,
-    parent2,
     pendingChanges
   })
 }

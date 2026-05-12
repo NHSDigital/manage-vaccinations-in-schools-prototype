@@ -45,14 +45,13 @@ import {
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
- * @property {Parent} [parent1] - Parent 1
- * @property {Parent} [parent2] - Parent 2
  * @property {Patient} [pendingChanges] - Pending changes to record values
  * @property {import('../enums.js').ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<import('./audit-event.js').AuditEvent>} events - Events
  * @property {Array<string>} [reply_uuids] - Reply IDs
+ * @property {Array<string>} [parent_uuids] - Parent UUIDS
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
@@ -67,10 +66,6 @@ export class Patient extends Child {
     this.invalid = invalid
     this.sensitive = sensitive
     this.address = !sensitive && options?.address ? options.address : undefined
-    this.parent1 =
-      !sensitive && options?.parent1 ? new Parent(options.parent1) : undefined
-    this.parent2 =
-      !sensitive && options?.parent2 ? new Parent(options.parent2) : undefined
     this.archiveReason = options?.archiveReason
     this.archiveReasonOther = options?.archiveReasonOther
     this.pendingChanges = options?.pendingChanges || {}
@@ -78,6 +73,7 @@ export class Patient extends Child {
     this.clinicProgramme_ids = options?.clinicProgramme_ids || []
     this.events = options?.events || []
     this.reply_uuids = options?.reply_uuids || []
+    this.parent_uuids = options?.parent_uuids || []
     this.patientSession_uuids = options?.patientSession_uuids || []
     this.vaccination_uuids = options?.vaccination_uuids || []
   }
@@ -114,12 +110,7 @@ export class Patient extends Child {
    * @returns {boolean} Has no parental details
    */
   get hasNoContactDetails() {
-    return (
-      !this.parent1?.email &&
-      !this.parent1?.tel &&
-      !this.parent2?.email &&
-      !this.parent2?.tel
-    )
+    return this.parents.every((parent) => !parent.email && !parent.tel)
   }
 
   /**
@@ -180,19 +171,15 @@ export class Patient extends Child {
   get parents() {
     const parents = new Map()
 
-    if (this.parent1) {
-      parents.set(this.parent1.uuid, new Parent(this.parent1))
-    }
-
-    if (this.parent2) {
-      parents.set(this.parent2.uuid, new Parent(this.parent2))
+    if (!this.sensitive) {
+      this.parent_uuids.forEach((uuid) =>
+        parents.set(uuid, Parent.findOne(uuid, this.context))
+      )
     }
 
     // Add any new parents found in consent replies
     Object.values(this.replies).forEach(({ parent }) => {
-      if (parent && !parents.has(parent.uuid)) {
-        parents.set(parent.uuid, new Parent(parent))
-      }
+      parents.set(parent.uuid, new Parent(parent))
     })
 
     return [...parents.values()]
@@ -832,9 +819,9 @@ export class Patient extends Child {
         this.dod = removeDays(today(), 5)
         name = `Record updated with child’s date of death`
         break
-      case notice.type === NoticeType.NoNotify && this.parent1?.notify:
+      case notice.type === NoticeType.NoNotify && this.parents[0]?.notify:
         // Notify request to not share vaccination with GP
-        this.parent1.notify = false
+        this.parents[0].notify = false
         name = `Child gave consent for HPV and flu vaccinations under Gillick competence and does not want their parents to be notified.\n\nThese records are not automatically synced with GP records.\n\nYour team must let the child’s GP know they were vaccinated.`
         break
       case notice.type === NoticeType.Invalid:
