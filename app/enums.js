@@ -819,3 +819,13 @@ export const VaccineSideEffect = {
   TemperatureShiver: 'a high temperature, or feeling hot and shivery',
   Unwell: 'generally feeling unwell'
 }
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const LocationSearchType = {
+  Postcode: 'Postcode',
+  Outcode: 'Outcode',
+  Place: 'Place'
+}

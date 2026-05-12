@@ -1,8 +1,9 @@
 import _ from 'lodash'
 
-import { ReplyDecision } from '../enums.js'
+import { LocationSearchType, ReplyDecision } from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 
+import { getLocationSearchType } from './geolocation.js'
 import { camelToKebabCase } from './string.js'
 
 /**
@@ -75,14 +76,23 @@ export const getAllAppointmentPaths = (
           }
         : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
-          data: 'transaction.preferredLocation',
-          value: 'NE12 7ET'
+        [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: () => {
+          const searchTerm = sessionData.transaction.preferredLocation
+          const searchType = getLocationSearchType(searchTerm)
+          switch (searchType) {
+            case LocationSearchType.Postcode:
+            case LocationSearchType.Outcode:
+              sessionData.transaction.preferredPostcode = searchTerm
+              return true
+            case LocationSearchType.Place:
+            default:
+              return false
+          }
         }
       },
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
-          data: 'transaction.preferredLocation',
+          data: 'transaction.preferredPostcode',
           value: 'retry'
         }
       },

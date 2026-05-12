@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.preferredLocationMatches.title") %}
+{% set title = __("clinicBooking.preferredLocationMatches.title", transaction.preferredLocation) %}
 
 {% block form %}
   {{ appHeading({
@@ -13,15 +13,15 @@
       legend: { text: __("clinicBooking.preferredLocationMatches.hits.label") }
     },
     items: [{
-      text: 'Newcastle upon Tyne, NE1',
+      text: transaction.preferredLocation + ' upon Tyne, NE1',
       value: 'NE1'
     },
     {
-      text: 'Newcastle-under-Lyme, ST5',
+      text: transaction.preferredLocation + '-under-Lyme, ST5',
       value: 'ST5'
     },
     {
-      text: 'Newcastle, SY7',
+      text: transaction.preferredLocation + ', SY7',
       value: 'SY7'
     },
     {
@@ -31,6 +31,6 @@
       text: __('clinicBooking.preferredLocationMatches.tryAgain'),
       value: 'retry'
     }],
-    decorate: "transaction.preferredLocation"
+    decorate: "transaction.preferredPostcode"
   }) }}
 {% endblock %}

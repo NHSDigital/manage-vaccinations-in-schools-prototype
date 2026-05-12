@@ -8,12 +8,13 @@
     caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
   }) }}
 
-  {{ __("clinicBooking.clinicDate.location") | nhsukMarkdown }}
+  {% include "book-into-a-clinic/form/_session-summary.njk" %}
 
   {{ radios({
     fieldset: {
       legend: {
-        text: __("clinicBooking.clinicDate.date.label")
+        text: __("clinicBooking.clinicDate.date.label"),
+        size: "m"
       }
     },
     items: clinicDateItems,

@@ -279,7 +279,7 @@ export const bookIntoClinicController = {
       })
       response.locals.clinicLocationItems = clinicLocationItems
     } else if (view === 'clinic-date') {
-      const scheduledClinics = _.sortBy(
+      const scheduledClinicSessions = _.sortBy(
         Session.findAll(data).filter(
           (session) =>
             session.type === SessionType.Clinic &&
@@ -290,7 +290,7 @@ export const bookIntoClinicController = {
       )
 
       const clinicDateItems = []
-      scheduledClinics.forEach((session) => {
+      scheduledClinicSessions.forEach((session) => {
         const midday = new Date(session.date)
         setMidday(midday)
 
@@ -313,6 +313,10 @@ export const bookIntoClinicController = {
         })
       })
       response.locals.clinicDateItems = clinicDateItems
+      response.locals.clinicSummary = {
+        location: scheduledClinicSessions.at(0)?.formatted.location,
+        date: 'To be decided'
+      }
     } else if (view === 'appointment-time-range') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
@@ -338,6 +342,10 @@ export const bookIntoClinicController = {
         }
       })
       response.locals.timeRangeItems = timeRangeItems
+      response.locals.clinicSummary = {
+        location: session.formatted.location,
+        date: session.formatted.date
+      }
     } else if (view === 'appointment-time') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
@@ -374,6 +382,10 @@ export const bookIntoClinicController = {
         }
       )
       response.locals.appointmentTimeItems = appointmentTimeItems
+      response.locals.clinicSummary = {
+        location: session.formatted.location,
+        date: session.formatted.date
+      }
     }
 
     // All health questions use the same view

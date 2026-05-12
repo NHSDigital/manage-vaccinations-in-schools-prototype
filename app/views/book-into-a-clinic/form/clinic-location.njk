@@ -1,6 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("clinicBooking.clinicLocation.title", firstName) %}
+{% set postcode = transaction.preferredPostcode if transaction.preferredPostcode.length else "CV32" %}
 
 {% block form %}
   {{ radios({
@@ -12,7 +13,7 @@
         })
       }
     },
-    hint: { text: __('clinicBooking.clinicLocation.hint') },
+    hint: { text: __('clinicBooking.clinicLocation.hint', transaction.preferredPostcode) },
     items: clinicLocationItems,
     decorate: "transaction.clinic_id"
   }) }}
