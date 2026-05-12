@@ -381,7 +381,7 @@ export const en = {
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
-      title: 'Which of the flu vaccines do you agree to %s having?',
+      title: 'Which flu vaccine do you agree to %s having?',
       nasal: {
         label: 'I agree to the nasal spray vaccine',
         hint: 'This is the recommended option and gives the best protection against flu'
