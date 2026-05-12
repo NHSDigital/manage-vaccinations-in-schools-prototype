@@ -17,6 +17,7 @@
     },
     items: [{
       text: __("consent.parent.contactPreference.yes"),
+      value: true,
       conditional: {
         html: textarea({
           label: { text: __("consent.parent.contactPreferenceDetails.label") },
@@ -24,7 +25,8 @@
         })
       }
     }, {
-      text: __("consent.parent.contactPreference.no")
+      text: __("consent.parent.contactPreference.no"),
+      value: false
     }],
     decorate: "consent.parent.contactPreference"
   }) }}
