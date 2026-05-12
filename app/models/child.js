@@ -1,3 +1,5 @@
+import { fakerEN_GB as faker } from '@faker-js/faker'
+
 import schools from '../datasets/schools.js'
 import {
   Adjustment,
@@ -23,6 +25,7 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @class Child
  * @param {object} options - Options
  * @param {object} [context] - Context
+ * @property {string} [uuid] - UUID
  * @property {object} [context] - Context
  * @property {string} [firstName] - First name
  * @property {string} [lastName] - Last name
@@ -49,6 +52,7 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
 export class Child {
   constructor(options, context) {
     this.context = context
+    this.uuid = options?.uuid || faker.string.uuid()
     this.firstName = options?.firstName || ''
     this.lastName = options?.lastName || ''
     this.preferredFirstName = options?.preferredFirstName

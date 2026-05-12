@@ -41,7 +41,6 @@ import {
  * @augments Child
  * @param {object} options - Options
  * @param {object} [context] - Global context
- * @property {string} [uuid] - UUID
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
@@ -64,7 +63,6 @@ export class Patient extends Child {
     const invalid = stringToBoolean(options?.invalid)
     const sensitive = stringToBoolean(options?.sensitive)
 
-    this.uuid = options?.uuid || faker.string.uuid()
     this.nhsn = options?.nhsn || this.nhsNumber
     this.invalid = invalid
     this.sensitive = sensitive
