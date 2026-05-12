@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/express-flash": "^0.0.5",
     "@types/express-session": "^1.19.0",
     "@types/lodash": "^4.17.24",
     "@x-govuk/eslint-config": "^0.0.2",
