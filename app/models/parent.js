@@ -5,6 +5,9 @@ import { formatOther, formatParent, stringToBoolean } from '../utils/string.js'
 
 /**
  * @class Parent
+ * @param {object} options - Options
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
  * @property {string} uuid - UUID
  * @property {string} [fullName] - Full name
  * @property {ParentalRelationship} [relationship] - Relationship to child
@@ -20,7 +23,8 @@ import { formatOther, formatParent, stringToBoolean } from '../utils/string.js'
  * @property {string} [contactPreferenceDetails] - Contact method details
  */
 export class Parent {
-  constructor(options) {
+  constructor(options, context) {
+    this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.fullName = options.fullName || ''
     this.relationship = options.relationship || ParentalRelationship.Unknown
@@ -76,5 +80,34 @@ export class Parent {
    */
   get ns() {
     return 'parent'
+  }
+
+  /**
+   * Find all
+   *
+   * @param {object} context - Context
+   * @returns {Array<Parent>|undefined} Parents
+   * @static
+   */
+  static findAll(context) {
+    return Object.values(context.parents).map(
+      (parent) => new Parent(parent, context)
+    )
+  }
+
+  /**
+   * Find one
+   *
+   * @param {string|string[]} uuid - Parent UUID
+   * @param {object} context - Context
+   * @returns {Parent|undefined} Parent
+   * @static
+   */
+  static findOne(uuid, context) {
+    uuid = String(uuid)
+
+    if (context?.parents?.[uuid]) {
+      return new Parent(context.parents[uuid], context)
+    }
   }
 }
