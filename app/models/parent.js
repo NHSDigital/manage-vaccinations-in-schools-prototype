@@ -111,6 +111,17 @@ export class Parent {
   }
 
   /**
+   * Remove `context` so it’s hidden from JSON.stringify, or we’ll get
+   * circular reference issues during saving
+   *
+   * @returns {object} Parent ready to be serialized to JSON
+   */
+  toJSON() {
+    const { context, ...rest } = this
+    return rest
+  }
+
+  /**
    * Find all
    *
    * @param {object} context - Context

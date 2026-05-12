@@ -338,7 +338,7 @@ export class ClinicAppointment {
   }
 
   /**
-   * Remove 'context' so it's hidden from JSON.stringify, or we'll get
+   * Remove `context` so it’s hidden from JSON.stringify, or we’ll get
    * circular reference issues during saving
    *
    * @returns {object} Clinic appointment ready to be serialized to JSON
