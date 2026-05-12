@@ -10,11 +10,11 @@ import { Parent } from '../models.js'
 /**
  * Generate fake parent
  *
- * @param {string} childLastName - Child’s last name
+ * @param {import('../models.js').Child|import('../models.js').Patient} patient - Child
  * @param {boolean} [isMum] - Parent is child’s mother
  * @returns {Parent} Parent
  */
-export function generateParent(childLastName, isMum) {
+export function generateParent(patient, isMum) {
   // Relationship
   const relationship = isMum
     ? ParentalRelationship.Mum
@@ -31,11 +31,11 @@ export function generateParent(childLastName, isMum) {
   switch (relationship) {
     case ParentalRelationship.Mum:
       firstName = faker.person.firstName('female').replace(`'`, '’')
-      lastName = childLastName
+      lastName = patient.lastName
       break
     case ParentalRelationship.Dad:
       firstName = faker.person.firstName('male').replace(`'`, '’')
-      lastName = childLastName
+      lastName = patient.lastName
       break
     default:
       firstName = faker.person.firstName().replace(`'`, '’')
@@ -81,6 +81,7 @@ export function generateParent(childLastName, isMum) {
       tel,
       sms,
       ...(smsStatus && { smsStatus })
-    })
+    }),
+    patient_uuid: patient.uuid
   })
 }

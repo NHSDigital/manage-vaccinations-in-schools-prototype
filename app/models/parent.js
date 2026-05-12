@@ -21,6 +21,7 @@ import { formatOther, formatParent, stringToBoolean } from '../utils/string.js'
  * @property {import('../enums.js').NotifySmsStatus} smsStatus - SMS status
  * @property {boolean} [contactPreference] - Preferred contact method
  * @property {string} [contactPreferenceDetails] - Contact method details
+ * @property {string} [patient_uuid] - Patient UUID
  */
 export class Parent {
   constructor(options, context) {
@@ -48,6 +49,8 @@ export class Parent {
     if (this.contactPreference) {
       this.contactPreferenceDetails = options?.contactPreferenceDetails
     }
+
+    this.patient_uuid = options?.patient_uuid
   }
 
   /**

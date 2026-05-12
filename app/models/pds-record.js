@@ -16,13 +16,11 @@ import {
  * @augments Child
  * @param {object} options - Options
  * @param {object} [context] - Global context
- * @property {string} [uuid] - UUID
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
- * @property {Parent} [parent1] - Parent 1
- * @property {Parent} [parent2] - Parent 2
+ * @property {Array<string>} [parent_uuids] - Parent UUIDS
  */
 export class PDSRecord extends Child {
   constructor(options, context) {
@@ -31,18 +29,14 @@ export class PDSRecord extends Child {
     const invalid = stringToBoolean(options?.invalid)
     const sensitive = stringToBoolean(options?.sensitive)
 
-    this.uuid = options?.uuid || faker.string.uuid()
     this.nhsn =
       options?.nhsn ||
       '999#######'.replace(/#+/g, (m) => faker.string.numeric(m.length))
     this.invalid = invalid
     this.sensitive = sensitive
     this.address = !sensitive && options?.address ? options.address : undefined
-    this.parent1 =
-      !sensitive && options?.parent1 ? new Parent(options.parent1) : undefined
-    this.parent2 =
-      !sensitive && options?.parent2 ? new Parent(options.parent2) : undefined
     this.school_id = null
+    this.parent_uuids = options?.parent_uuids || []
   }
 
   /**
@@ -51,12 +45,7 @@ export class PDSRecord extends Child {
    * @returns {boolean} Has no parental details
    */
   get hasNoContactDetails() {
-    return (
-      !this.parent1?.email &&
-      !this.parent1?.tel &&
-      !this.parent2?.email &&
-      !this.parent2?.tel
-    )
+    return this.parents.every((parent) => !parent.email && !parent.tel)
   }
 
   /**
@@ -71,20 +60,12 @@ export class PDSRecord extends Child {
   /**
    * Get parents (from record and replies)
    *
-   * @returns {Array<Parent>} Parents
+   * @returns {Array<Parent>|undefined} Parents
    */
   get parents() {
-    const parents = new Map()
-
-    if (this.parent1) {
-      parents.set(this.parent1.uuid, new Parent(this.parent1))
+    if (!this.sensitive) {
+      return this.parent_uuids.map((uuid) => Parent.findOne(uuid, this.context))
     }
-
-    if (this.parent2) {
-      parents.set(this.parent2.uuid, new Parent(this.parent2))
-    }
-
-    return [...parents.values()]
   }
 
   /**
@@ -116,8 +97,6 @@ export class PDSRecord extends Child {
       ...super.formatted,
       fullNameAndNhsn: formatWithSecondaryText(this.fullName, formattedNhsn),
       nhsn: formattedNhsn,
-      parent1: this.parent1 && formatParent(this.parent1),
-      parent2: this.parent2 && formatParent(this.parent2),
       parents: formatList(formattedParents)
     }
   }
