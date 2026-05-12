@@ -39,9 +39,9 @@ export function generateConsent(
   // Parent
   let parent
   if (index === 0) {
-    parent = patientSession.patient.parent1
-  } else if (index === 1 && patientSession.patient?.parent2) {
-    parent = patientSession.patient.parent2
+    parent = patientSession.patient.parents[0]
+  } else if (index === 1 && patientSession.patient?.parents[1]) {
+    parent = patientSession.patient.parents[1]
   }
 
   // Can’t create a consent response if no parent associated with child

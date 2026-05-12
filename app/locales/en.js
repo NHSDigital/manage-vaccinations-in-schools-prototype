@@ -1679,12 +1679,6 @@ export const en = {
         label: 'Give details'
       }
     },
-    parent1: {
-      title: 'Details for first parent or guardian'
-    },
-    parent2: {
-      title: 'Details for second parent or guardian'
-    },
     programmes: {
       label: 'Vaccination programmes'
     },
