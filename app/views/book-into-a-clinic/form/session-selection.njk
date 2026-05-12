@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.clinicLocation.title", firstName) %}
+{% set title = __("clinicBooking.sessionSelection.title", firstName) %}
 
 {% block form %}
   {{ radios({
@@ -12,8 +12,8 @@
         })
       }
     },
-    hint: { text: __('clinicBooking.clinicLocation.hint') },
-    items: clinicLocationItems,
-    decorate: "transaction.clinic_id"
+    hint: { text: __("clinicBooking.sessionSelection.hint") },
+    items: previousSessionItems,
+    decorate: "transaction.sessionChoice"
   }) }}
 {% endblock %}

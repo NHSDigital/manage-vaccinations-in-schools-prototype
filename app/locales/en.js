@@ -371,11 +371,45 @@ export const en = {
       description:
         'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
-    vaccinationChoice: {
+    programmes: {
       title: 'Do you consent to %s having the following vaccinations?',
-      vaccinations: {
-        label: 'Select the vaccinations that you consent to %s having',
-        hint: 'Each vaccine is given separately'
+      description: {
+        matched:
+          'While invited for {{ programmeNames }} vaccination, our records show that {{ firstName }} is also eligible for other vaccinations.'
+      },
+      label: 'Select the vaccinations that you consent to %s having',
+      hint: 'Each vaccine is given separately'
+    },
+    fluChoice: {
+      title: 'Which of the flu vaccines do you agree to %s having?',
+      nasal: {
+        label: 'I agree to the nasal spray vaccine',
+        hint: 'This is the recommended option and gives the best protection against flu'
+      },
+      injection: {
+        label: 'I agree to the alternative flu injection',
+        hint: 'This is suitable for children who do not use gelatine products, or if they cannot have the nasal spray vaccine for medical reasons'
+      }
+    },
+    fluAlternative: {
+      title:
+        'If %s cannot have the nasal spray, do you agree to them having the injected vaccine instead?',
+      hint: 'We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead.',
+      yes: {
+        label: 'Yes'
+      },
+      no: {
+        label: 'No'
+      }
+    },
+    mmrAlternative: {
+      title: 'Do you want %s to have an MMR vaccine without gelatine?',
+      hint: 'One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.',
+      yes: {
+        label: 'I want %s to have the vaccine that does not contain gelatine'
+      },
+      no: {
+        label: '%s can have either type of vaccine'
       }
     },
     extraTime: {
@@ -399,6 +433,10 @@ export const en = {
       },
       tryAgain: 'None of these — try another town, city, or postcode'
     },
+    sessionSelection: {
+      title: 'Choose a clinic location and date for %s’s appointment',
+      hint: 'Select the same location and date as an earlier child, or find a different clinic.'
+    },
     clinicLocation: {
       title: 'Choose a clinic location for %s',
       hint: 'The following clinics are ordered by distance from NE12 7ET'
@@ -409,6 +447,11 @@ export const en = {
         'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
       date: {
         label: 'Clinic date'
+      },
+      hint: {
+        morning: 'Morning available',
+        afternoon: 'Afternoon available',
+        both: 'Morning and afternoon available'
       }
     },
     timeRange: {
@@ -431,7 +474,9 @@ export const en = {
       },
       times: {
         label: 'Available appointment times'
-      }
+      },
+      nurses:
+        '{count, plural, =0 {No nurses available} one {1 nurse available} other {{count} nurses available}}'
     },
     parent: {
       title: 'About you',

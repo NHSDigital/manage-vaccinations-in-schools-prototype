@@ -1,0 +1,27 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.mmrAlternative.title", firstName) %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          size: "l",
+          title: title
+        })
+      }
+    },
+    hint: {
+      text: __("clinicBooking.mmrAlternative.hint")
+    },
+    items: [{
+      text: __("clinicBooking.mmrAlternative.yes.label", firstName),
+      value: true
+    }, {
+      text: __("clinicBooking.mmrAlternative.no.label", firstName),
+      value: false
+    }],
+    decorate: "appointment.mmrAlternative"
+  }) }}
+{% endblock %}

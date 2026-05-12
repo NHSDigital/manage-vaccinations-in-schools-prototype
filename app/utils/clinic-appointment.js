@@ -1,4 +1,7 @@
-import { ClinicAppointment, ClinicBooking } from '../models.js'
+import _ from 'lodash'
+
+import { ReplyDecision } from '../enums.js'
+import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 
 import { camelToKebabCase } from './string.js'
 
@@ -42,11 +45,35 @@ export const getAllAppointmentPaths = (
         }
       },
 
-      // Appointment-length influences
-      [`/${booking_uuid}/new/${appointment_uuid}/vaccination-choice`]: {},
+      // Vaccinations (and types) and other appointment-length influences
+      [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {},
+      ...(sessionData.appointment?.selected_programme_ids?.includes('flu')
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/flu-choice`]: {}
+          }
+        : {}),
+      ...(sessionData.appointment?.fluDecision === ReplyDecision.Given
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/flu-alternative`]: {}
+          }
+        : {}),
+      ...(sessionData.appointment?.selected_programme_ids?.includes('mmr')
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
+          }
+        : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/extra-time`]: {},
 
       // Clinic and slot selection
+      ...(appointments[0].uuid !== appointment_uuid &&
+      getPreviousSessionItems(appointments, sessionData).length > 2
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/session-selection`]: {
+              [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
+                () => sessionData.transaction.addressChoice !== 'new'
+            }
+          }
+        : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
           data: 'transaction.preferredLocation',
@@ -182,6 +209,40 @@ export const getPreviousAddressItems = (appointments) => {
     },
     {
       text: 'Enter a different address',
+      value: 'new'
+    }
+  ]
+}
+
+/**
+ * Get a set of radio items to offer the user when choosing a clinic for
+ * the 2nd and subsequent children
+ *
+ * @param {Array<ClinicAppointment>} appointments - the appointments we're creating
+ * @param {object} sessionContext - the context on which the sessions are stored
+ * @returns {Array<object>} - a set of radio items to display in the address selection page
+ */
+export const getPreviousSessionItems = (appointments, sessionContext) => {
+  let previousClinicSessions = appointments
+    .map(({ session_id }) => Session.findOne(session_id, sessionContext))
+    .filter(Boolean)
+  previousClinicSessions = _.uniqBy(previousClinicSessions, 'id')
+
+  let previousClinicSessionItems = previousClinicSessions.map((session) => ({
+    text: session.formatted.location,
+    value: session.id,
+    hint: {
+      text: session.formatted.date
+    }
+  }))
+
+  return [
+    ...previousClinicSessionItems,
+    {
+      divider: 'or'
+    },
+    {
+      text: 'Choose a different clinic location or date',
       value: 'new'
     }
   ]

@@ -2,18 +2,20 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
-import { ParentalRelationship } from '../enums.js'
-import { ClinicBooking } from '../models.js'
+import { ParentalRelationship, SessionStatus, SessionType } from '../enums.js'
+import { ClinicBooking, Session } from '../models.js'
 import {
   getAllAppointmentPaths,
   getHealthQuestionPaths,
-  getPreviousAddressItems
+  getPreviousAddressItems,
+  getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
+import { setMidday } from '../utils/date.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
-import { kebabToCamelCase } from '../utils/string.js'
+import { formatHour, formatTime, kebabToCamelCase } from '../utils/string.js'
 
 export const bookIntoClinicController = {
   setupServiceHeader(request, response, next) {
@@ -178,7 +180,7 @@ export const bookIntoClinicController = {
    * @type {import("express").RequestHandler}
    */
   showForm(request, response) {
-    const { appointment } = response.locals
+    const { __, __mf, appointment } = response.locals
     const { data } = request.session
     let { booking_uuid } = request.params
     let view = String(request.params.view)
@@ -188,6 +190,13 @@ export const bookIntoClinicController = {
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       response.locals.previousAddressItems = getPreviousAddressItems(
         booking.appointments
+      )
+    } else if (view === 'session-selection') {
+      // Build the options for the selection of a clinic session from those already chosen for other appointments
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      response.locals.previousSessionItems = getPreviousSessionItems(
+        booking.appointments,
+        data
       )
     } else if (view === 'parental-relationship') {
       // Prepare the radio options for the parental relationship page
@@ -199,6 +208,172 @@ export const bookIntoClinicController = {
           text: relationship,
           value: relationship
         }))
+    } else if (view === 'programmes') {
+      response.locals.programmeItems = [
+        {
+          text: 'Flu',
+          value: 'flu',
+          hint: {
+            text: 'Protects against flu, which can sometimes cause serious problems, such as pneumonia'
+          }
+        },
+        {
+          text: 'HPV',
+          value: 'hpv',
+          hint: {
+            text: 'Protects against human papillomavirus, some types of which are linked to an increased risk of certain types of cancer'
+          }
+        },
+        {
+          text: 'MenACWY',
+          value: 'menacwy',
+          hint: {
+            text: 'Protects against life-threatening illnesses like meningitis and sepsis'
+          }
+        },
+        {
+          text: 'Td/IPV',
+          value: 'td-ipv',
+          hint: { text: 'Protects against tetanus, diphtheria and polio' }
+        },
+        appointment.child.canBeOfferedMmrv
+          ? {
+              text: 'MMRV',
+              value: 'mmr',
+              hint: {
+                text: 'Protects against measles, mumps, rubella and varicella (chickenpox)'
+              }
+            }
+          : {
+              text: 'MMR',
+              value: 'mmr',
+              hint: { text: 'Protects against measles, mumps and rubella' }
+            }
+      ].filter(({ value }) => ['flu', 'mmr'].includes(value)) // test with these for now
+    } else if (view === 'clinic-location') {
+      const scheduledClinics = Session.findAll(data).filter(
+        (session) =>
+          session.type === SessionType.Clinic &&
+          session.status === SessionStatus.Planned
+      )
+
+      const sessionsByLocation = _.groupBy(
+        scheduledClinics,
+        (session) => session.clinic_id
+      )
+      let distanceToClinic = 0.5
+      const clinicLocationItems = []
+      Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
+        const firstSession = sessions.reduce((earliest, current) => {
+          return current.date < earliest.date ? current : earliest
+        })
+
+        clinicLocationItems.push({
+          text: sessions[0].formatted.location,
+          value: clinic_id,
+          hint: {
+            text: `${distanceToClinic} miles away, next date is ${firstSession.formatted.date}`
+          }
+        })
+        distanceToClinic += 2.1
+      })
+      response.locals.clinicLocationItems = clinicLocationItems
+    } else if (view === 'clinic-date') {
+      const scheduledClinics = _.sortBy(
+        Session.findAll(data).filter(
+          (session) =>
+            session.type === SessionType.Clinic &&
+            session.status === SessionStatus.Planned &&
+            session.clinic_id === data.transaction.clinic_id
+        ),
+        'date'
+      )
+
+      const clinicDateItems = []
+      scheduledClinics.forEach((session) => {
+        const midday = new Date(session.date)
+        setMidday(midday)
+
+        const availableTimes = session.availableAppointmentTimes
+        const morningAvailable = availableTimes.some((time) => time < midday)
+        const afternoonAvailable = availableTimes.some((time) => time >= midday)
+        const availability =
+          morningAvailable && afternoonAvailable
+            ? __('clinicBooking.clinicDate.hint.both')
+            : morningAvailable
+              ? __('clinicBooking.clinicDate.hint.morning')
+              : __('clinicBooking.clinicDate.hint.afternoon')
+
+        clinicDateItems.push({
+          text: session.formatted.date,
+          value: session.id,
+          hint: {
+            text: availability
+          }
+        })
+      })
+      response.locals.clinicDateItems = clinicDateItems
+    } else if (view === 'appointment-time-range') {
+      const session = Session.findOne(appointment.session_id, data)
+      const availableTimesByHour = _.groupBy(
+        session.availableAppointmentTimes,
+        (time) => time.getHours()
+      )
+
+      const timeRangeItems = []
+      Object.entries(availableTimesByHour).forEach(([hour, times]) => {
+        if (times.length) {
+          const startHourNumber = parseInt(hour)
+          const endHourNumber = startHourNumber + 1
+
+          timeRangeItems.push({
+            text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
+            value: startHourNumber,
+            hint: {
+              text: __mf('clinicBooking.timeRange.range.slotsAvailable', {
+                count: times.length
+              })
+            }
+          })
+        }
+      })
+      response.locals.timeRangeItems = timeRangeItems
+    } else if (view === 'appointment-time') {
+      const session = Session.findOne(appointment.session_id, data)
+      const availableTimesByHour = _.groupBy(
+        session.availableAppointmentTimes,
+        (time) => time.getHours()
+      )
+
+      const availabilityForChosenHour = {}
+      for (const date of availableTimesByHour[data.transaction.timeRange]) {
+        const key = formatTime(date, true)
+
+        if (!availabilityForChosenHour[key]) {
+          availabilityForChosenHour[key] = {
+            date: new Date(date),
+            count: 0
+          }
+        }
+
+        availabilityForChosenHour[key].count++
+      }
+
+      const appointmentTimeItems = []
+      Object.entries(availabilityForChosenHour).forEach(
+        ([formattedTime, availability]) => {
+          appointmentTimeItems.push({
+            text: formattedTime,
+            value: formatTime(availability.date, false),
+            hint: {
+              text: __mf('clinicBooking.time.nurses', {
+                count: availability.count
+              })
+            }
+          })
+        }
+      )
+      response.locals.appointmentTimeItems = appointmentTimeItems
     }
 
     // All health questions use the same view
@@ -281,6 +456,18 @@ export const bookIntoClinicController = {
 
       if (previousAppointment && currentAppointment) {
         currentAppointment.child.address = previousAppointment.child.address
+        ClinicBooking.update(booking.uuid, booking, data.wizard)
+      }
+    } else if (
+      view === 'session-selection' &&
+      request.body.transaction.sessionChoice !== 'new'
+    ) {
+      // We've just selected a previous child's session choice for the current appointment;
+      // in this case, the session ID is actually the radio value passed in request.body
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const currentAppointment = booking?.findAppointment(appointment_uuid)
+      if (currentAppointment) {
+        currentAppointment.session_id = request.body.transaction.sessionChoice
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
     }

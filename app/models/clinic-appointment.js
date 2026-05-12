@@ -1,5 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
+import { ReplyDecision } from '../enums.js'
 import {
   Child,
   ClinicBooking,
@@ -33,6 +34,9 @@ import {
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
+ * @property {ReplyDecision} fluDecision - whether to use nasal or injected flu vaccine
+ * @property {boolean} fluAlternative - accept the alternative flu vaccine if nasal not suitable?
+ * @property {boolean} mmrAlternative - want the vaccine that doesn't contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
  */
 export class ClinicAppointment {
@@ -60,6 +64,9 @@ export class ClinicAppointment {
       (options?.selected_programme_ids &&
         stringToArray(options.selected_programme_ids)) ||
       []
+    this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
+    this.fluAlternative = options?.fluAlternative
+    this.mmrAlternative = options?.mmrAlternative
     this.healthAnswers = options?.healthAnswers || {}
   }
 
@@ -75,6 +82,21 @@ export class ClinicAppointment {
       }
     } catch (error) {
       console.error('ClinicAppointment.booking', error.message)
+    }
+  }
+
+  /**
+   * Get the session in which this appointment has been (or will be) booked
+   *
+   * @returns {Session|undefined} - the session in which this appointment is booked
+   */
+  get session() {
+    try {
+      if (this.session_id) {
+        return Session.findOne(this.session_id, this.context)
+      }
+    } catch (error) {
+      console.error('ClinicAppointment.session', error.message)
     }
   }
 
