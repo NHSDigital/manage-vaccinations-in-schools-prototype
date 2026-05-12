@@ -482,7 +482,9 @@ export class PatientSession {
     try {
       if (this.patient?.vaccinations && this.programme_id) {
         return this.patient.vaccinations.filter(
-          ({ programme }) => programme?.id === this.programme_id
+          (vaccination) =>
+            vaccination.programme?.id === this.programme_id &&
+            vaccination.patientSession_uuid === this.uuid
         )
       }
     } catch (error) {
