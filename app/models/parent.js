@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ParentalRelationship } from '../enums.js'
+import { Patient } from '../models.js'
 import { formatOther, formatParent, stringToBoolean } from '../utils/string.js'
 
 /**
@@ -63,6 +64,21 @@ export class Parent {
   }
 
   /**
+   * Get patient
+   *
+   * @returns {Patient|undefined} Patient
+   */
+  get patient() {
+    try {
+      if (this.patient_uuid) {
+        return Patient.findOne(this.patient_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('Parent.patient', error.message)
+    }
+  }
+
+  /**
    * Get formatted values
    *
    * @returns {object} Formatted values
@@ -83,6 +99,15 @@ export class Parent {
    */
   get ns() {
     return 'parent'
+  }
+
+  /**
+   * Get URI
+   *
+   * @returns {string} URI
+   */
+  get uri() {
+    return `/parents/${this.uuid}`
   }
 
   /**
@@ -112,5 +137,60 @@ export class Parent {
     if (context?.parents?.[uuid]) {
       return new Parent(context.parents[uuid], context)
     }
+  }
+
+  /**
+   * Create
+   *
+   * @param {object} parent - Parent
+   * @param {object} context - Context
+   * @returns {Parent} Created parent
+   * @static
+   */
+  static create(parent, context) {
+    const createdParent = new Parent(parent)
+
+    // Update context
+    context.parents = context.parents || {}
+    context.parents[createdParent.uuid] = createdParent
+
+    return createdParent
+  }
+
+  /**
+   * Update
+   *
+   * @param {string|string[]} uuid - Parent UUID
+   * @param {object} updates - Updates
+   * @param {object} context - Context
+   * @returns {Parent} Updated parent
+   * @static
+   */
+  static update(uuid, updates, context) {
+    uuid = String(uuid)
+
+    const updatedParent = Object.assign(Parent.findOne(uuid, context), updates)
+
+    // Remove move context
+    delete updatedParent.context
+
+    // Delete original move (with previous UUID)
+    delete context.parents[uuid]
+
+    // Update context
+    context.parents[updatedParent.uuid] = updatedParent
+
+    return updatedParent
+  }
+
+  /**
+   * Delete
+   *
+   * @param {string|string[]} uuid - Parent UUID
+   * @param {object} context - Context
+   * @static
+   */
+  static delete(uuid, context) {
+    delete context.parents[String(uuid)]
   }
 }

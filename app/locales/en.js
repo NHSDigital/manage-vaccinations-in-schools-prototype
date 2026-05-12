@@ -19,7 +19,8 @@ export const en = {
   actions: {
     label: 'Actions',
     change: 'Change',
-    remove: 'Remove',
+    delete: 'Delete',
+    edit: 'Edit',
     review: 'Review',
     update: 'Update',
     archive: 'Archive'
@@ -1391,7 +1392,25 @@ export const en = {
   parent: {
     label: 'Parent or guardian',
     new: {
-      label: 'Add a new contact'
+      label: 'Add a new contact',
+      title: 'Add a new contact',
+      confirm: 'Add contact',
+      success: 'Contact added'
+    },
+    edit: {
+      title: 'Edit contact',
+      confirm: 'Save changes',
+      success: 'Contact updated'
+    },
+    delete: {
+      success: 'Contact deleted'
+    },
+    action: {
+      title: 'Are you sure you want to {{type}} {{parent.fullName}}?',
+      description:
+        'Deleting this contact will remove them from {{patient.firstName}}, but not from any other children.\n\nThis cannot be undone.',
+      confirm: 'Yes, %s this contact',
+      cancel: 'No, return to contacts'
     },
     fullName: {
       label: 'Name'

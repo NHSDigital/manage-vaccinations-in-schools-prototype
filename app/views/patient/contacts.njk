@@ -28,7 +28,7 @@
 
   {{ actionLink({
     text: __("parent.new.label"),
-    href: "#"
+    href: "/parents/new?patient_uuid=" + patient.uuid
   }) }}
 
   {% for parent in patient.parents %}
@@ -38,14 +38,15 @@
         headingLevel: 4,
         actions: {
           items: [{
-            text: "Edit",
-            href: patient.uri + "/edit/parent-" + loop.index
+            text: __("actions.edit"),
+            href: parent.uri + "/edit"
           }, {
-            text: "Remove",
-            href: "#"
+            text: __("actions.delete"),
+            href: parent.uri + "/delete"
           }]
         }
       },
+      lastRowBorder: false,
       rows: summaryRows(parent, {
         email: {},
         tel: {},

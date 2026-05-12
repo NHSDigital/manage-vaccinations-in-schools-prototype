@@ -645,6 +645,20 @@ export class Patient extends Child {
   }
 
   /**
+   * Add contact to patient
+   *
+   * @param {import('./parent.js').Parent} parent - Parent
+   */
+  addContact(parent) {
+    this.parent_uuids.push(parent.uuid)
+
+    this.addEvent({
+      name: activity.patient.contact(parent),
+      type: AuditEventType.Record
+    })
+  }
+
+  /**
    * Add patient to session
    *
    * @param {import('./patient-session.js').PatientSession} patientSession - PatientSession

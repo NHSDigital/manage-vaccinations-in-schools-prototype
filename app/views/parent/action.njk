@@ -1,0 +1,31 @@
+{% extends "_layouts/form.njk" %}
+
+{% block form %}
+  {{ appHeading({
+    caption: parent.patient.fullName,
+    title: __("parent.action.title", {
+      parent: parent,
+      type: type
+    })
+  }) }}
+
+  {{ __("parent.action.description", {
+    patient: parent.patient
+  }) | nhsukMarkdown }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [{
+      text: __("parent.action.confirm", type),
+      variant: "warning",
+      attributes: {
+        formAction: parent.uri + "/" + type
+      }
+    }],
+    links: [{
+      text: __("parent.action.cancel"),
+      href: back
+    }]
+  }) }}
+{% endblock %}
