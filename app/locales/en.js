@@ -433,6 +433,10 @@ export const en = {
       },
       tryAgain: 'None of these — try another town, city, or postcode'
     },
+    sessionSelection: {
+      title: 'Choose a clinic location and date for %s’s appointment',
+      hint: 'Select the same location and date as an earlier child, or find a different clinic.'
+    },
     clinicLocation: {
       title: 'Choose a clinic location for %s',
       hint: 'The following clinics are ordered by distance from NE12 7ET'
@@ -443,6 +447,11 @@ export const en = {
         'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
       date: {
         label: 'Clinic date'
+      },
+      hint: {
+        morning: 'Morning available',
+        afternoon: 'Afternoon available',
+        both: 'Morning and afternoon available'
       }
     },
     timeRange: {
@@ -465,7 +474,9 @@ export const en = {
       },
       times: {
         label: 'Available appointment times'
-      }
+      },
+      nurses:
+        '{count, plural, =0 {No nurses available} one {1 nurse available} other {{count} nurses available}}'
     },
     parent: {
       title: 'About you',

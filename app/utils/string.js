@@ -1,4 +1,5 @@
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
+import i18n from 'i18n'
 
 import { healthQuestions } from '../datasets/health-questions.js'
 
@@ -521,4 +522,44 @@ export function sentenceCaseProgrammeName(string) {
     .replaceAll('Children', 'children') // Children’s flu vaccine
     .replaceAll('Flu', 'flu') // Flu vaccination
     .replaceAll('Human', 'human') // Human papillomavirus
+}
+
+/**
+ * Format a given hour number from the 24-hour clock as am/pm
+ *
+ * @example
+ * // returns 9am
+ * formatHour(9)
+ * @example
+ * // returns 12pm
+ * formatHour(12)
+ * @example
+ * // returns 3pm
+ * formatHour(15)
+ * @param {number} hour - the hour as a number from the 24-hour clock
+ * @returns {string} the hour, formatted with a trailing am or pm e.g.
+ */
+export function formatHour(hour) {
+  const hourText = hour < 13 ? String(hour) : String(hour - 12)
+  const amPm = hour < 12 ? 'am' : 'pm'
+
+  return `${hourText}${amPm}`
+}
+
+/**
+ * Format the time in a date using the 12-hour clock and an am/pm suffix
+ *
+ * @param {Date} date - the date containing the time we want to format
+ * @param {boolean} hour12 - use the 12 hour clock and am/pm?
+ * @returns {string} the time formatted according to the hour12 parameter
+ */
+export function formatTime(date, hour12 = true) {
+  const locale = i18n.getLocale()
+  return date
+    .toLocaleTimeString(locale, {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: hour12
+    })
+    .toLowerCase()
 }

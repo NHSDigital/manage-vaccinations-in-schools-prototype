@@ -86,6 +86,21 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get the session in which this appointment has been (or will be) booked
+   *
+   * @returns {Session|undefined} - the session in which this appointment is booked
+   */
+  get session() {
+    try {
+      if (this.session_id) {
+        return Session.findOne(this.session_id, this.context)
+      }
+    } catch (error) {
+      console.error('ClinicAppointment.session', error.message)
+    }
+  }
+
+  /**
    * Get patient
    *
    * @returns {Patient|undefined} Patient

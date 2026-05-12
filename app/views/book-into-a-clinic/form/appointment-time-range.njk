@@ -28,23 +28,7 @@
         text: __("clinicBooking.timeRange.ranges.label")
       }
     },
-    items: [
-      {
-        text: '9am to 10am',
-        value: '0900-1000',
-        hint: { text: __mf("clinicBooking.timeRange.range.slotsAvailable", { count: 6 }) }
-      },
-      {
-        text: '10am to 11am',
-        value: "1000-1100",
-        hint: { text: __mf("clinicBooking.timeRange.range.slotsAvailable", { count: 4 }) }
-      },
-      {
-        text: '11am to 12pm (midday)',
-        value: "1100-1200",
-        hint: { text: __mf("clinicBooking.timeRange.range.slotsAvailable", { count: 1 }) }
-      }
-    ],
+    items: timeRangeItems,
     decorate: "transaction.timeRange"
   }) }}
 {% endblock %}
