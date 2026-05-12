@@ -158,9 +158,7 @@ export const giveOrRefuseConsentController = {
         [`/${session_id}/parental-responsibility`]: {
           data: 'consent.parent.hasParentalResponsibility',
           value: 'false'
-        },
-        [`/${session_id}/${consent_uuid}/new/decision`]: () =>
-          !request.session.data.consent?.parent?.tel
+        }
       },
       [`/${session_id}/${consent_uuid}/new/contact-preference`]: {},
       [`/${session_id}/${consent_uuid}/new/decision`]: {
