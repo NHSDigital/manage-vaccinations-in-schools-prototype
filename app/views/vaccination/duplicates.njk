@@ -1,0 +1,110 @@
+{% extends "_layouts/default.njk" %}
+
+{% set patient = vaccination.patient %}
+{% set patientProgramme = patient.programmes[vaccination.programme_id] %}
+{% set title = patient.fullName %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [{
+      text: __("home.show.title"),
+      href: "/"
+    }, {
+      text: __("patient.list.title"),
+      href: "/patients"
+    }, {
+      text: patient.fullName,
+      href: patient.uri
+    }, {
+      text: patientProgramme.programme.name,
+      href: patientProgramme.uri
+    }]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {% set primaryRows = [[
+    {
+      header: __("vaccination.createdAt.label"),
+      html: vaccination.link.createdAt
+    },
+    {
+      header: __("vaccination.age.label"),
+      text: patient.dob | age(at=vaccination.createdAt)
+    },
+    {
+      header: __("vaccination.outcome.label"),
+      html: vaccination.formatted.outcome
+    },
+    {
+      header: __("vaccination.source.label"),
+      text: vaccination.source
+    }
+  ]] %}
+
+  {{ table({
+    id: "primary-record",
+    responsive: true,
+    card: {
+      heading: __("vaccination.duplicates.canonical.heading"),
+      headingLevel: 3
+    },
+    head: [
+      { text: __("vaccination.createdAt.label") },
+      { text: __("vaccination.age.label") },
+      { text: __("vaccination.outcome.label") },
+      { text: __("vaccination.source.label") }
+    ],
+    rows: primaryRows
+  }) }}
+
+  {% set duplicateRows = [] %}
+  {% for duplicate in vaccination.duplicates %}
+    {% set duplicateRows = duplicateRows | push([
+      {
+        header: __("vaccination.createdAt.label"),
+        html: duplicate.link.createdAt
+      },
+      {
+        header: __("vaccination.age.label"),
+        text: patient.dob | age(at=duplicate.createdAt)
+      },
+      {
+        header: __("vaccination.outcome.label"),
+        html: duplicate.formatted.outcome
+      },
+      {
+        header: __("vaccination.source.label"),
+        text: duplicate.source
+      }
+    ]) %}
+  {% endfor %}
+
+  {{ table({
+    id: "duplicate-records",
+    responsive: true,
+    card: {
+      heading: __mf("vaccination.duplicates.list.heading", {
+        count: vaccination.duplicates.length
+      }),
+      headingLevel: 3
+    },
+    head: [
+      { text: __("vaccination.createdAt.label") },
+      { text: __("vaccination.age.label") },
+      { text: __("vaccination.outcome.label") },
+      { text: __("vaccination.source.label") }
+    ],
+    rows: duplicateRows
+  }) }}
+
+  <p class="nhsuk-body">
+    <a class="nhsuk-link" href="#">{{ __("vaccination.duplicates.reportProblem") }}</a>
+  </p>
+{% endblock %}

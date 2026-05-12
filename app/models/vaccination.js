@@ -88,6 +88,7 @@ import {
  * @property {string} [batch_id] - Batch ID
  * @property {boolean} [variant] - Is programme variant?
  * @property {string} [vaccine_snomed] - Vaccine SNOMED code
+ * @property {string} [canonicalVaccination_uuid] - UUID of the canonical record this is a duplicate of
  */
 
 /**
@@ -142,6 +143,7 @@ export class Vaccination {
       ? stringToBoolean(options.variant)
       : undefined
     this.vaccine_snomed = options?.vaccine_snomed
+    this.canonicalVaccination_uuid = options?.canonicalVaccination_uuid
 
     if (this.outcome === VaccinationOutcome.AlreadyVaccinated) {
       this.addressLine1 = options?.addressLine1
@@ -416,6 +418,70 @@ export class Vaccination {
   }
 
   /**
+   * Whether this record is a duplicate of another vaccination record.
+   *
+   * @returns {boolean} True if this record points to a canonical record
+   */
+  get isDuplicate() {
+    return Boolean(this.canonicalVaccination_uuid)
+  }
+
+  /**
+   * Whether this record is the canonical record in a duplicate set.
+   *
+   * @returns {boolean} True if at least one other record points to this one
+   */
+  get isCanonical() {
+    if (!this.context?.vaccinations) return false
+    return Object.values(this.context.vaccinations).some(
+      (vaccination) => vaccination.canonicalVaccination_uuid === this.uuid
+    )
+  }
+
+  /**
+   * Get the canonical record this duplicate points to, or `this` if not a
+   * duplicate.
+   *
+   * @returns {Vaccination} Canonical vaccination
+   */
+  get canonical() {
+    if (this.isDuplicate) {
+      return (
+        Vaccination.findOne(this.canonicalVaccination_uuid, this.context) ||
+        this
+      )
+    }
+    return this
+  }
+
+  /**
+   * Get records that point to this one as their canonical, in chronological
+   * order. Empty for duplicate or standalone records.
+   *
+   * @returns {Array<Vaccination>} Duplicate vaccinations
+   */
+  get duplicates() {
+    if (!this.context?.vaccinations) return []
+    return Object.values(this.context.vaccinations)
+      .filter(
+        (vaccination) => vaccination.canonicalVaccination_uuid === this.uuid
+      )
+      .map((vaccination) => new Vaccination(vaccination, this.context))
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  }
+
+  /**
+   * Get this record together with any duplicates pointing to it. On a
+   * duplicate record, returns `[this]`.
+   *
+   * @returns {Array<Vaccination>} Duplicate set
+   */
+  get duplicateSet() {
+    if (this.isDuplicate) return [this]
+    return [this, ...this.duplicates]
+  }
+
+  /**
    * Get status of sync with NHS England API
    *
    * @returns {VaccinationSyncStatus} Sync status
@@ -620,6 +686,21 @@ export class Vaccination {
   static findAll(context) {
     return Object.values(context.vaccinations).map(
       (vaccination) => new Vaccination(vaccination, context)
+    )
+  }
+
+  /**
+   * Find all canonical vaccination records — those that are not themselves
+   * duplicates of another record. Includes standalone records (canonical-of-
+   * one).
+   *
+   * @param {object} context - Context
+   * @returns {Array<Vaccination>} Vaccinations
+   * @static
+   */
+  static findAllCanonical(context) {
+    return Vaccination.findAll(context).filter(
+      (vaccination) => !vaccination.canonicalVaccination_uuid
     )
   }
 

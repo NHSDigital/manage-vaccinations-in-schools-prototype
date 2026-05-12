@@ -28,6 +28,46 @@
       title: title
     }) }}
 
+    {% set patientProgramme = vaccination.patient.programmes[vaccination.programme_id] %}
+    {% set summary = patientProgramme.scheduleSummary %}
+    {% set scheduleValue %}
+      {% set found = false %}
+      {% for valid in summary.validDoses %}
+        {% if valid.vaccination.uuid == vaccination.uuid %}
+          {% set found = true %}
+          {{ __mf("patientProgramme.vaccinationRecord.dose.number", { sequence: valid.sequence }) }}
+        {% endif %}
+      {% endfor %}
+      {% for ignored in summary.ignoredDoses %}
+        {% if ignored.vaccination.uuid == vaccination.uuid %}
+          {% set found = true %}
+          <span>
+            {{- tag({
+              text: __("patientProgramme.vaccinationRecord.ignored.label"),
+              classes: "nhsuk-tag--grey"
+            }) -}}
+            <br>
+            <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ ignored.reason }}</span>
+          </span>
+        {% endif %}
+      {% endfor %}
+    {% endset %}
+
+    {% set canonicalRoleValue %}
+      {% if vaccination.isDuplicate %}
+        {{ __("vaccination.canonicalRole.no") }}. <a href="{{ vaccination.canonical.uri }}">{{ __("vaccination.canonicalRole.view") }}</a>
+      {% elif vaccination.duplicates.length %}
+        {{ __("vaccination.canonicalRole.yes") }}
+      {% endif %}
+    {% endset %}
+
+    {% set duplicateRecordsValue %}
+      {% if vaccination.isDuplicate or vaccination.duplicates.length %}
+        {% set duplicatesUri = vaccination.canonical.uri + "/duplicates" %}
+        <a href="{{ duplicatesUri }}">{{ __mf("vaccination.duplicateRecords.count", { count: vaccination.canonical.duplicates.length }) }}</a>
+      {% endif %}
+    {% endset %}
+
     {{ summaryList({
       card: {
         heading: __("vaccination.show.summary"),
@@ -44,6 +84,7 @@
       lastRowBorder: false,
       rows: summaryRows(vaccination, {
         programme: {},
+        schedule: { value: scheduleValue | trim, label: __("patientProgramme.vaccinationRecord.dose.label") },
         outcome: {},
         vaccine_snomed: {},
         method: {},
@@ -60,8 +101,16 @@
         protocol: {},
         note: {},
         source: {},
-        syncStatus: {}
+        syncStatus: {},
+        canonicalRole: { value: canonicalRoleValue | trim },
+        duplicateRecords: { value: duplicateRecordsValue | trim }
       })
     }) }}
+
+    {% if vaccination.isDuplicate or vaccination.duplicates.length %}
+      <p class="nhsuk-body">
+        <a class="nhsuk-link" href="#">{{ __("vaccination.reportProblem") }}</a>
+      </p>
+    {% endif %}
   </div>
 {% endblock %}

@@ -59,6 +59,23 @@ export const vaccinationController = {
     return response.render('vaccination/show')
   },
 
+  duplicates(request, response) {
+    const { vaccination } = response.locals
+
+    if (!vaccination) {
+      return response.redirect('/')
+    }
+
+    if (
+      vaccination.canonicalVaccination_uuid ||
+      !vaccination.duplicates.length
+    ) {
+      return response.redirect(vaccination.uri)
+    }
+
+    response.render('vaccination/duplicates')
+  },
+
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
