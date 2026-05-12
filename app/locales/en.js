@@ -1323,7 +1323,12 @@ export const en = {
       label: 'Phone number'
     },
     contactPreference: {
-      label: 'Communication needs'
+      label: 'Communication needs',
+      yes: 'Yes',
+      no: 'No'
+    },
+    contactPreferenceDetails: {
+      label: 'Give details'
     },
     relationshipOther: {
       label: 'Give details'

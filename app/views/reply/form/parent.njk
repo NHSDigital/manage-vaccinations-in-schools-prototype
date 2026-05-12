@@ -54,4 +54,26 @@
     label: { text: __("parent.tel.label") + " (optional)" },
     decorate: "reply.parent.tel"
   }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("parent.contactPreference.label")
+      }
+    },
+    items: [{
+      text: __("parent.contactPreference.yes"),
+      value: true,
+      conditional: {
+        html: textarea({
+          label: { text: __("parent.contactPreferenceDetails.label") },
+          decorate: "reply.parent.contactPreferenceDetails"
+        })
+      }
+    }, {
+      text: __("parent.contactPreference.no"),
+      value: false
+    }],
+    decorate: "reply.parent.contactPreference"
+  }) }}
 {% endblock %}
