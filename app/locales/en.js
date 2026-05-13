@@ -546,11 +546,11 @@ export const en = {
       },
       contactPreference: {
         title: 'If we need to contact you',
-        label: 'Do you have any communication needs?',
+        label: 'Do you have any communication or language needs?',
         yes: 'Yes',
         no: 'No',
         description:
-          'Let us know if you have any communication needs you’d like us to be aware of — for example, a hearing or visual impairment.'
+          'Tell us if you have any communication or language needs we should know about.\n\nFor example, if you have any hearing or sight needs, or if English is not your first language.'
       },
       contactPreferenceDetails: {
         label: 'Give details'
@@ -874,11 +874,11 @@ export const en = {
       },
       contactPreference: {
         title: 'If we need to contact you',
-        label: 'Do you have any communication needs?',
+        label: 'Do you have any communication or language needs?',
         yes: 'Yes',
         no: 'No',
         description:
-          'Let us know if you have any communication needs you’d like us to be aware of – for example, a hearing or visual impairment.'
+          'Tell us if you have any communication or language needs we should know about.\n\nFor example, if you have any hearing or sight needs, or if English is not your first language.'
       },
       contactPreferenceDetails: {
         label: 'Give details'
@@ -1415,7 +1415,7 @@ export const en = {
       label: 'Phone number'
     },
     contactPreference: {
-      label: 'Communication needs',
+      label: 'Communication or language needs',
       yes: 'Yes',
       no: 'No'
     },
@@ -1671,7 +1671,7 @@ export const en = {
         label: 'Relationship to the child'
       },
       contactPreference: {
-        label: 'Communication needs',
+        label: 'Communication or language needs',
         yes: 'Yes',
         no: 'No'
       },
