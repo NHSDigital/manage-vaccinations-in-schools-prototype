@@ -178,9 +178,11 @@ export class Patient extends Child {
     }
 
     // Add any new parents found in consent replies
-    Object.values(this.replies).forEach(({ parent }) => {
-      parents.set(parent.uuid, new Parent(parent))
-    })
+    Object.values(this.replies)
+      .filter(({ selfConsent }) => !selfConsent)
+      .forEach(({ parent }) => {
+        parents.set(parent.uuid, new Parent(parent))
+      })
 
     return [...parents.values()]
   }

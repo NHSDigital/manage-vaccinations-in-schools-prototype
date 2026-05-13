@@ -47,7 +47,7 @@ import {
  * @property {string} [createdBy_uid] - User who created reply
  * @property {Date} [updatedAt] - Updated date
  * @property {import('./child.js').Child} [child] - Child
- * @property {import('./parent.js').Parent} [parent] - Parent or guardian
+ * @property {import('./parent.js').Parent} [parent_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
  * @property {boolean} [alternative] - Consent for alternative vaccine
  * @property {boolean} [confirmed] - Decision confirmed
@@ -65,6 +65,7 @@ import {
  * @property {string} [refusalReasonDetails] - Refusal reason details
  * @property {boolean} [selfConsent] - Reply given by child
  * @property {string} [note] - Note about this response
+ * @property {string} [parent_uuid] - Parent UUID
  * @property {string} patient_uuid - Patient UUID
  * @property {string} [programme_id] - Programme ID
  * @property {string} session_id - Session ID
@@ -81,10 +82,11 @@ export class Reply {
     this.decision =
       this.confirmed === true ? ReplyDecision.Refused : options?.decision
     this.ethnicity = stringToBoolean(options?.ethnicity)
-    this.parent = options?.parent && new Parent(options.parent)
     this.method = options?.method
     this.selfConsent = options?.selfConsent
     this.note = options?.note || ''
+    this.parent_ = options?.parent_ && new Parent(options.parent_)
+    this.parent_uuid = options?.parent_uuid
     this.patient_uuid = options?.patient_uuid
     this.programme_id = options?.programme_id
     this.session_id = options?.session_id
@@ -340,6 +342,34 @@ export class Reply {
   }
 
   /**
+   * Get parent
+   *
+   * @returns {Parent|undefined} Parent
+   */
+  get parent() {
+    try {
+      if (this.parent_uuid) {
+        return Parent.findOne(this.parent_uuid, this.context)
+      }
+    } catch (error) {
+      console.error('Reply.parent (get)', error.message)
+    }
+  }
+
+  /**
+   * Set parent
+   */
+  set parent(updates) {
+    try {
+      if (this.parent_uuid) {
+        Parent.update(this.parent_uuid, updates, this.context)
+      }
+    } catch (error) {
+      console.error('Reply.parent (set)', error.message)
+    }
+  }
+
+  /**
    * Get patient
    *
    * @returns {Patient|undefined} Patient
@@ -353,6 +383,7 @@ export class Reply {
       console.error('Reply.patient', error.message)
     }
   }
+
   /**
    * Get programme
    *

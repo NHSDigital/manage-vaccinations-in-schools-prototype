@@ -117,7 +117,7 @@ export const replyController = {
 
         // Remove any parent details in reply if self consent
         if (reply.selfConsent) {
-          delete reply.parent
+          delete reply.parent_uuid
         }
 
         if (triage?.outcome) {
@@ -291,32 +291,18 @@ export const replyController = {
         ...(referrer && { back: referrer })
       }
 
-      const consentRefusals = Object.values(patientSession.replies).filter(
-        (reply) => reply.decision === ReplyDecision.Refused
+      response.locals.respondentItems = patientSession.patient.parents.map(
+        (parent) => ({
+          text: formatParent(parent, false),
+          hint: { text: parent.tel },
+          value: parent.uuid
+        })
       )
-
-      if (Object.values(consentRefusals).length > 0) {
-        response.locals.respondentItems = consentRefusals.map(
-          ({ parent, uuid }) => ({
-            text: `${parent.fullName} (${parent.relationship})`,
-            hint: { text: parent.tel },
-            value: uuid
-          })
-        )
-      } else {
-        response.locals.respondentItems = patientSession.patient.parents.map(
-          (parent, index) => ({
-            text: formatParent(parent, false),
-            hint: { text: parent.tel },
-            value: `parent-${index + 1}`
-          })
-        )
-      }
 
       // Child can self consent if assessed as Gillick competent
       if (patientSession.gillick?.competent === GillickCompetent.True) {
         response.locals.respondentItems.unshift({
-          text: `${reply?.patient?.fullName} (child)`,
+          text: `${patientSession.patient?.firstName} (child)`,
           value: 'self'
         })
       }
@@ -360,6 +346,9 @@ export const replyController = {
     const { data } = request.session
     let { paths, patientSession, triage, vaccination } = response.locals
 
+    // Add parents from global context to wizard
+    data.wizard.parents = data.parents
+
     const reply = Reply.update(reply_uuid, request.body.reply, data.wizard)
 
     // Create parent based on choice of respondent
@@ -367,27 +356,21 @@ export const replyController = {
       switch (respondent) {
         case 'new': // Consent response is from a new contact
           reply.method = ReplyMethod.Phone
-          reply.parent = new Parent({})
+          reply.parent_uuid = Parent.create(
+            {
+              patient_uuid: reply.patient_uuid
+            },
+            data.wizard
+          ).uuid
           reply.selfConsent = false
           break
         case 'self':
           reply.method = ReplyMethod.InPerson
-          reply.parent = null
           reply.selfConsent = true
-          break
-        case 'parent-1': // Consent response is from CHIS record
-          reply.method = ReplyMethod.Phone
-          reply.parent = patientSession.patient.parents[0]
-          reply.selfConsent = false
-          break
-        case 'parent-2': // Consent response is from CHIS record
-          reply.method = ReplyMethod.Phone
-          reply.parent = patientSession.patient.parents[1]
-          reply.selfConsent = false
           break
         default: // Consent response is an existing respondent
           reply.method = ReplyMethod.Phone
-          reply.parent = Reply.findOne(respondent, data).parent
+          reply.parent_uuid = respondent
           reply.selfConsent = false
 
           // Store reply that needs marked as invalid
