@@ -4,15 +4,15 @@ import { SessionPresets } from '../enums.js'
 /**
  * Generate a URL for booking into a clinic whose primary programme is given by the session preset
  *
- * @param {string} sessionPresetName - the primary programme for the clinic
+ * @param {Array<string>} sessionPresetNames - the programmes for which the child has been invited to clinic
  * @returns {string} - path to the start of the clinic booking journey for the given programme
  */
-export const getClinicInviteUrl = (sessionPresetName) => {
-  const sessionPreset = SessionPresets.find(
-    (preset) => preset.name === sessionPresetName
+export const getClinicInviteUrl = (sessionPresetNames) => {
+  const sessionPresets = SessionPresets.filter((preset) =>
+    sessionPresetNames.includes(preset.name)
   )
-  const programme_ids = sessionPreset.programmeTypes.map(
-    (type) => programmesData[type].id
+  const programme_ids = sessionPresets.flatMap((preset) =>
+    preset.programmeTypes.map((type) => programmesData[type].id)
   )
 
   const searchParams = new URLSearchParams()

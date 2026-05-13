@@ -87,6 +87,16 @@
           }) }}
         {% endif %}
       {% endfor %}
+      {{ actionLink({
+        classes: "nhsuk-u-margin-bottom-2",
+        text: "Start page for parents to book into a clinic for the adolescent programmes",
+        href: navigation.clinicInviteUrl["adolescent programmes"]
+      }) }}
+      {{ actionLink({
+        classes: "nhsuk-u-margin-bottom-2",
+        text: "Start page for parents to book into a clinic for all but flu",
+        href: navigation.clinicInviteUrl["all but flu"]
+      }) }}
 
     </main>
   </div>

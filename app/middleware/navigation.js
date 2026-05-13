@@ -29,10 +29,19 @@ export const navigation = (request, response, next) => {
       'MMR(V)': getSessionConsentUrl(sessions, SessionPresetName.MMR)
     },
     clinicInviteUrl: {
-      Flu: getClinicInviteUrl(SessionPresetName.Flu),
-      HPV: getClinicInviteUrl(SessionPresetName.HPV),
-      Doubles: getClinicInviteUrl(SessionPresetName.Doubles),
-      'MMR(V)': getClinicInviteUrl(SessionPresetName.MMR)
+      Flu: getClinicInviteUrl([SessionPresetName.Flu]),
+      HPV: getClinicInviteUrl([SessionPresetName.HPV]),
+      Doubles: getClinicInviteUrl([SessionPresetName.Doubles]),
+      'MMR(V)': getClinicInviteUrl([SessionPresetName.MMR]),
+      'adolescent programmes': getClinicInviteUrl([
+        SessionPresetName.HPV,
+        SessionPresetName.Doubles
+      ]),
+      'all but flu': getClinicInviteUrl([
+        SessionPresetName.HPV,
+        SessionPresetName.Doubles,
+        SessionPresetName.MMR
+      ])
     }
   }
 
