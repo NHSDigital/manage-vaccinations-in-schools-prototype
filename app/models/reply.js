@@ -294,6 +294,7 @@ export class Reply {
    */
   get healthQuestionsForDecision() {
     const { Flu, HPV, MenACWY, TdIPV, MMR } = ProgrammeType
+    if (!this.session) return {}
     // TODO: is this consent reply really only ever for the session's first programme?
     const programme = this.session.programmes[0]
 
