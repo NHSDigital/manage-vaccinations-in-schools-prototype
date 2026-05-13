@@ -43,7 +43,7 @@
         {% endif %}
         {% set vaccinationRows = vaccinationRows | push([
           {
-            header: __("vaccination.createdAt.label"),
+            header: __("patientProgramme.encounters.date.label"),
             html: vaccination.link.createdAt
           },
           {
@@ -65,7 +65,7 @@
         id: "encounters",
         responsive: true,
         head: [
-          { text: __("vaccination.createdAt.label") },
+          { text: __("patientProgramme.encounters.date.label") },
           { text: __("vaccination.age.label") },
           { text: __("vaccination.outcome.label") },
           { text: __("vaccination.source.label") }
