@@ -42,23 +42,17 @@ export class ClinicBooking {
   }
 
   /**
-   * Get URI of the booking journey
-   *
-   * @returns {string} Booking journey URI
-   */
-  get bookingUri() {
-    return `${this.uuid}`
-  }
-
-  /**
    * Add a new appointment to this clinic booking
    *
    * @param {object} options - any specific values to give the new period
    * @returns {ClinicAppointment} - the new clinic appointment
    */
   addAppointment(options) {
+    const appointment = new ClinicAppointment(options, this.context)
+    appointment.booking_uuid = this.uuid
+
     this.appointments = this.appointments || []
-    this.appointments.push(new ClinicAppointment(options, this.context))
+    this.appointments.push(appointment)
 
     return this.appointments.at(-1)
   }
@@ -125,10 +119,13 @@ export class ClinicBooking {
   /**
    * Get URI
    *
-   * @returns {string} URI
+   * @returns {object} An object containing different URLs for this booking
    */
   get uri() {
-    return `/clinic-bookings/${this.uuid}`
+    return {
+      new: `/book-into-a-clinic/${this.uuid}/new`,
+      debug: `/clinic-bookings/${this.uuid}`
+    }
   }
 
   /**
@@ -194,7 +191,17 @@ export class ClinicBooking {
 
     // Copy updates into the relevant booking
     const existingBooking = ClinicBooking.findOne(uuid, context)
-    const updatedBooking = _.merge(existingBooking, updates)
+    const updatedBooking = _.mergeWith(
+      existingBooking,
+      updates,
+      (oldValue, newValue) => {
+        // The appointments array shouldn’t be merged but replaced entirely, or updates following
+        // the removal of a non-last appointment will result in appointment duplication
+        if (Array.isArray(oldValue)) {
+          return newValue
+        }
+      }
+    )
 
     // Remove booking context
     delete updatedBooking.context

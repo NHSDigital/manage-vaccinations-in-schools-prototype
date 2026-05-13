@@ -4,7 +4,7 @@
 {% set title = __("clinicBooking.check-answers.title") %}
 {% set gridColumns = "three-quarters" %}
 {% macro editPath(view) -%}
-  {{- view }}?referrer={{ clinicBooking.bookingUri }}/new/check-answers
+  {{- view }}?referrer={{ clinicBooking.uri.new }}/check-answers
 {%- endmacro %}
 
 {% block form %}

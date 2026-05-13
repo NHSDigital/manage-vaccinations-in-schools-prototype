@@ -60,9 +60,11 @@ export const bookIntoClinicController = {
 
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create({}, data.wizard)
+    booking.addAppointment()
+    const firstAppointment = booking.appointments[0]
 
     // Redirect to the first page in the booking journey (after the start page, that is)
-    const redirectUrl = `${request.baseUrl}/${booking.bookingUri}/new/child-count`
+    const redirectUrl = `${firstAppointment.uri.new}/child`
 
     return response.redirect(redirectUrl)
   },
@@ -112,6 +114,10 @@ export const bookIntoClinicController = {
         const currentAppointment = booking.findAppointment(appointment_uuid)
         response.locals.appointment = currentAppointment
 
+        // Check answers needs a version of the appointment that can find its booking on the context
+        response.locals.wizardAppointment =
+          wizardBooking.findAppointment(appointment_uuid)
+
         response.locals.childNumber =
           booking.appointments.indexOf(currentAppointment) + 1
         response.locals.childCount = booking.appointments.length
@@ -129,7 +135,6 @@ export const bookIntoClinicController = {
 
     const journey = {
       [`/`]: {},
-      [`/${booking_uuid}/new/child-count`]: {},
 
       // Appointment journey; once per child
       ...getAllAppointmentPaths(
@@ -137,6 +142,7 @@ export const bookIntoClinicController = {
         request.session.data,
         booking.appointments
       ),
+      [`/${booking_uuid}/new/add-another`]: {},
 
       // Parent journey
       [`/${booking_uuid}/new/parent`]: {
@@ -185,7 +191,10 @@ export const bookIntoClinicController = {
     let { booking_uuid } = request.params
     let view = String(request.params.view)
 
-    if (view === 'address-selection') {
+    if (view === 'child') {
+      console.log(request.originalUrl)
+      console.log(JSON.stringify(appointment, null, 2))
+    } else if (view === 'address-selection') {
       // Build the options for the selection of a home address address from those already entered
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       response.locals.previousAddressItems = getPreviousAddressItems(
@@ -450,7 +459,7 @@ export const bookIntoClinicController = {
 
       // Start the appointment journey for the first child
       const firstAppointment = booking.appointments[0]
-      const firstAppointmentUrl = `${request.baseUrl}/${booking.bookingUri}/new/${firstAppointment.uuid}/child`
+      const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
       paths.next = firstAppointmentUrl
     } else if (
       view === 'address-selection' &&
@@ -482,6 +491,31 @@ export const bookIntoClinicController = {
         currentAppointment.session_id = request.body.transaction.sessionChoice
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
+    } else if (view === 'add-another') {
+      // If the user elected to add another, create the new appointment and override the default redirect
+      const addAnother = request.body.transaction.addAnother === 'true'
+      if (addAnother) {
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const appointment = booking.addAppointment()
+        ClinicBooking.update(booking.uuid, booking, data.wizard)
+
+        // Clear out values we don't want pre-selected for the next child
+        delete data.appointment
+        delete data.transaction.addAnother
+        delete data.transaction.addressChoice
+        delete data.transaction.sessionChoice
+        delete data.transaction.timeRange
+        delete data.transaction.time
+
+        paths.next = `${appointment.uri.new}/child`
+      }
+    } else if (view === 'remove-appointment') {
+      // The user's chosen to remove an appointment
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      booking.removeAppointment(String(appointment_uuid))
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
+
+      paths.next = `${booking.uri.new}/add-another`
     }
 
     // NB: request.session.save was needed to avoid race condition issues on heroku

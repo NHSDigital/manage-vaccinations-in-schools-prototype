@@ -1,0 +1,74 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("clinicBooking.check-appointment.confirm") %}
+{% set title = __("clinicBooking.check-appointment.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.check-appointment.summary.child"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      nameAndAge: {
+        href: appointment.uri.new + "/child"
+      },
+      homeAddress: {
+        href: appointment.uri.new + "/address"
+      },
+      parentalRelationship: {
+        href: appointment.uri.new + "/parental-relationship",
+        value: wizardAppointment.formatted.parentalRelationship
+      }
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.check-appointment.summary.vaccination"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      vaccinations: {
+        href: appointment.uri.new + "/programmes"
+      },
+      fluVaccineType: {
+        href: appointment.uri.new + "/flu-choice"
+      },
+      fluAlternative: {
+        href: appointment.uri.new + "/flu-alternative"
+      },
+      mmrAlternative: {
+        href: appointment.uri.new + "/mmr-alternative"
+      }
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.check-appointment.summary.appointment"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      location: {
+        href: appointment.uri.new + "/clinic-location"
+      },
+      date: {
+        href: appointment.uri.new + "/clinic-date"
+      },
+      timeSlot: {
+        href: appointment.uri.new + "/appointment-time-range"
+      },
+      extraTime: {
+        href: appointment.uri.new + "/extra-time"
+      }
+    })
+  }) }}
+{% endblock %}

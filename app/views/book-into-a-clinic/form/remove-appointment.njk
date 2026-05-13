@@ -1,0 +1,37 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.removeAppointment.title", firstName) %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: appointment.fullName,
+      headingSize: "s",
+      headingLevel: 4
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      location: {},
+      date: {},
+      vaccinations: {}
+    })
+  }) }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [{
+      text: __("clinicBooking.removeAppointment.confirm"),
+      variant: "warning"
+    }],
+    links: [{
+      text: __("clinicBooking.removeAppointment.cancel"),
+      href: booking.uri.new + "/add-another"
+    }]
+  }) }}
+{% endblock %}
+
