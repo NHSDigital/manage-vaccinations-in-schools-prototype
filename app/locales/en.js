@@ -381,7 +381,7 @@ export const en = {
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
-      title: 'Which of the flu vaccines do you agree to %s having?',
+      title: 'Which flu vaccine do you agree to %s having?',
       nasal: {
         label: 'I agree to the nasal spray vaccine',
         hint: 'This is the recommended option and gives the best protection against flu'
@@ -427,7 +427,7 @@ export const en = {
       }
     },
     preferredLocationMatches: {
-      title: 'We found 3 places that match “Newcastle”',
+      title: 'We found 3 places that match “%s”',
       hits: {
         label: 'Choose one of the following:'
       },
@@ -438,15 +438,18 @@ export const en = {
       hint: 'Select the same location and date as an earlier child, or find a different clinic.'
     },
     clinicLocation: {
-      title: 'Choose a clinic location for %s',
-      hint: 'The following clinics are ordered by distance from NE12 7ET'
+      title: 'Choose a clinic location for %s’s appointment',
+      hint: 'The following clinics are ordered by distance from %s'
     },
     clinicDate: {
-      title: 'Choose a clinic date for %s',
-      location:
-        'Location: Killingworth Library, White Swan Centre, Killingworth, NE12 6SS',
+      title: 'Choose a clinic date for %s’s appointment',
       date: {
         label: 'Clinic date'
+      },
+      clinicSummary: {
+        location: {
+          label: 'Location'
+        }
       },
       hint: {
         morning: 'Morning available',
@@ -457,7 +460,12 @@ export const en = {
     timeRange: {
       title: 'Choose a time range for %s’s appointment',
       clinicSummary: {
-        title: 'Clinic'
+        location: {
+          label: 'Location'
+        },
+        date: {
+          label: 'Date'
+        }
       },
       ranges: {
         label: 'Available time ranges'
