@@ -3,7 +3,7 @@
 {% if reply.selfConsent %}
   {% set title = __("reply.decision.title.Child", { programme: programme }) %}
 {% else %}
-  {% set title = __("reply.decision.title.Parent", { programme: programme, patient: patient }) %}
+  {% set title = __("reply.decision.title.Contact", { programme: programme, patient: patient }) %}
 {% endif %}
 
 {% block form %}

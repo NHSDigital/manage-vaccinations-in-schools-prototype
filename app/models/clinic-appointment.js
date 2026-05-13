@@ -4,7 +4,7 @@ import { ReplyDecision } from '../enums.js'
 import {
   Child,
   ClinicBooking,
-  Parent,
+  Contact,
   Patient,
   Programme,
   Session
@@ -30,7 +30,7 @@ import {
  * @property {string} [extraTimeReason] - The reason why the child needs extra time for their appointment
  * @property {import('../enums.js').ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
  * @property {string} [parentalRelationshipOther] - User-defined parental relationship to the child for this appointment
- * @property {boolean} [parentHasParentalResponsibility] - Does the parent/carer have legal parental responsibility for the child?
+ * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
@@ -159,7 +159,7 @@ export class ClinicAppointment {
   /**
    * Get the programmes for which this child is eligible
    *
-   * @returns {Array<Programme>} The programmes from which the parent is able to choose
+   * @returns {Array<Programme>} Programmes from which contact can choose
    */
   get eligibleProgrammes() {
     const programme_ids = this.patient?.clinicReadyProgramme_ids ?? []
@@ -257,7 +257,7 @@ export class ClinicAppointment {
         .filter(Boolean)
         .join('<br>'),
       homeAddress: this.child.formatted.address,
-      parentalRelationship: this.parent?.formatted.relationship,
+      parentalRelationship: this.contact?.formatted.relationship,
       ...(fluVaccineType ? { fluVaccineType } : {}),
       ...(this.mmrAlternative !== undefined
         ? {
@@ -285,20 +285,20 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get the parent for this appointment's child
+   * Get the contact for this appointment’s child
    *
-   * @returns {Parent} parent with the correct relationship to this appointment's child
+   * @returns {Contact} Contact with the correct relationship to this appointment’s child
    */
-  get parent() {
-    // Take most details from the parent in the booking
-    const parent = new Parent(this.booking?.parent ?? {})
-    if (parent) {
-      parent.relationship = this.parentalRelationship
-      parent.relationshipOther = this.parentalRelationshipOther
-      parent.hasParentalResponsibility = this.parentHasParentalResponsibility
+  get contact() {
+    // Take most details from the contact in the booking
+    const contact = new Contact(this.booking?.contact ?? {})
+    if (contact) {
+      contact.relationship = this.parentalRelationship
+      contact.relationshipOther = this.parentalRelationshipOther
+      contact.hasParentalResponsibility = this.parentHasParentalResponsibility
     }
 
-    return parent
+    return contact
   }
 
   /**
@@ -310,7 +310,7 @@ export class ClinicAppointment {
     return {
       unmatched: formatLinkWithSecondaryText(
         this.uri.unmatched,
-        this.parent.fullNameAndRelationship,
+        this.contact.fullNameAndRelationship,
         `for ${this.child.fullName}`
       )
     }

@@ -214,16 +214,16 @@ export class PatientSession {
   }
 
   /**
-   * Get names of parents who have requested a follow up
+   * Get names of contacts who have requested a follow up
    *
-   * @returns {Array<string>|undefined} Parent names and relationships
+   * @returns {Array<string>|undefined} Contact names and relationships
    */
-  get parentsRequestingFollowUp() {
+  get contactsRequestingFollowUp() {
     if (this.responses) {
       return this.responses
         .filter((reply) => !reply.invalid)
         .filter((reply) => reply.declined)
-        .flatMap((reply) => reply.parent.fullNameAndRelationship)
+        .flatMap((reply) => reply.contact.fullNameAndRelationship)
     }
   }
 
@@ -237,9 +237,9 @@ export class PatientSession {
   }
 
   /**
-   * Has every parent given consent for an injected vaccine?
+   * Has every contact given consent for an injected vaccine?
    *
-   * Some parents may give consent for the nasal spray, but also given consent
+   * Some contacts may give consent for the nasal spray, but also given consent
    * for the injection as an alternative
    *
    * @returns {boolean|undefined} Consent given for an injected vaccine
@@ -251,7 +251,7 @@ export class PatientSession {
   }
 
   /**
-   * Has every parent given consent only for an injected vaccine?
+   * Has every contact given consent only for an injected vaccine?
    *
    * We need this so that we don’t offer multiple triage outcomes if consent has
    * only been given for the injected vaccine
@@ -633,7 +633,7 @@ export class PatientSession {
    */
   get consentDescription() {
     const relationships = filters.formatList(this.parentalRelationships)
-    const parentNames = filters.formatList(this.parentsRequestingFollowUp)
+    const contactNames = filters.formatList(this.contactsRequestingFollowUp)
 
     if (this.patient?.post16) {
       return `${this.patient.firstName} is old enough to self-consent.`
@@ -655,7 +655,7 @@ export class PatientSession {
       case ConsentOutcome.Inconsistent:
         return 'You can only vaccinate if all respondents give consent.'
       case ConsentOutcome.Declined:
-        return `${parentNames} would like to speak to a member of the team about other options for their child’s vaccination.`
+        return `${contactNames} would like to speak to a member of the team about other options for their child’s vaccination.`
       case ConsentOutcome.Given:
       case ConsentOutcome.GivenForAlternativeInjection:
       case ConsentOutcome.GivenForIntranasal:
@@ -1072,11 +1072,11 @@ export class PatientSession {
         messageTemplate = 'triage-vaccinate'
     }
 
-    if (this.patient?.parents) {
-      for (const parent of this.patient.parents) {
+    if (this.patient?.contacts) {
+      for (const contact of this.patient.contacts) {
         this.patient?.addEvent({
-          name: activity.notify[messageTemplate](parent),
-          messageRecipient: parent,
+          name: activity.notify[messageTemplate](contact),
+          messageRecipient: contact,
           messageTemplate,
           createdAt: event.createdAt,
           patient_uuid: this.uuid,
@@ -1156,13 +1156,13 @@ export class PatientSession {
   /**
    * Send reminder
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
-   * @param {import('./parent.js').Parent} parent - Parent
+   * @param {import('../models.js').AuditEvent} event - Event
+   * @param {import('../models.js').Contact} contact - Contact
    */
-  sendReminder(event, parent) {
+  sendReminder(event, contact) {
     this.patient?.addEvent({
-      name: activity.notify['vaccination-reminder'](parent),
-      messageRecipient: parent,
+      name: activity.notify['vaccination-reminder'](contact),
+      messageRecipient: contact,
       messageTemplate: 'vaccination-reminder',
       type: AuditEventType.Reminder,
       createdBy_uid: event.createdBy_uid,

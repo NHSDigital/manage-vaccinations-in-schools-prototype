@@ -31,9 +31,9 @@
             dob: {},
             postalCode: {},
             schoolName: {},
-            parent: {
-              label: __("consent.parent.label"),
-              value: consent.formatted.parent
+            contact: {
+              label: __("consent.contact.label"),
+              value: consent.formatted.contact
             }
           })
         }) }}
@@ -91,8 +91,8 @@
               schoolName: {
                 value: patient.school.name | highlightQuery(data.q)
               },
-              parents: {
-                value: patient.formatted.parents | highlightQuery(data.q)
+              contacts: {
+                value: patient.formatted.contacts | highlightQuery(data.q)
               }
             })
           }) }}

@@ -58,7 +58,7 @@ export const giveOrRefuseConsentController = {
       response.locals.consent = new Consent(
         {
           child: patient,
-          parent_uuid: patient.parent_uuids[0],
+          contact_uuid: patient.contact_uuids[0],
           session_id: session.id
         },
         data
@@ -95,7 +95,7 @@ export const giveOrRefuseConsentController = {
     consent = new Consent(consent, data)
 
     return request.session.save((error) => {
-      if (!error) response.redirect(`${consent.parentUri}/new/child`)
+      if (!error) response.redirect(`${consent.publicUri}/new/child`)
     })
   },
 
@@ -152,10 +152,10 @@ export const giveOrRefuseConsentController = {
             [`/${session_id}/${consent_uuid}/new/school`]: {}
           }
         : {}),
-      // Parent journey
-      [`/${session_id}/${consent_uuid}/new/parent`]: {
+      // Contact journey
+      [`/${session_id}/${consent_uuid}/new/contact`]: {
         [`/${session_id}/parental-responsibility`]: {
-          data: 'consent.parent_.hasParentalResponsibility',
+          data: 'consent.contact_.hasParentalResponsibility',
           value: 'false'
         }
       },
@@ -266,7 +266,7 @@ export const giveOrRefuseConsentController = {
             : ReplyDecision.OnlyMenACWY
       }))
     } else if (session.presetNames.includes(SessionPresetName.Flu)) {
-      // Flu: Ask which vaccine the parent would prefer
+      // Flu: Ask which vaccine the contact would prefer
       response.locals.decisionItems = [
         {
           text: __('consent.decision.nasal.label'),

@@ -55,7 +55,7 @@ export const patientController = {
         current: currentPath === patient.uri
       },
       {
-        text: __('patient.parents.label'),
+        text: __('patient.contacts.label'),
         href: `${patient.uri}/contacts`,
         current: currentPath === `${patient.uri}/contacts`
       },
@@ -413,10 +413,10 @@ export const patientController = {
   showForm(request, response) {
     let { view } = request.params
 
-    // Parent forms share same view
-    if (view.includes('parent')) {
+    // Contact forms share same view
+    if (view.includes('contact')) {
       response.locals.parentId = String(view).split('-')[1]
-      view = 'parent'
+      view = 'contact'
     }
 
     return response.render(`patient/form/${view}`)
@@ -478,7 +478,7 @@ export const patientController = {
       clinicProgramme_ids = stringToArray(clinicProgramme_ids)
     }
 
-    // Send comms to parents and record in audit trail
+    // Send comms to contacts and record in audit trail
     const patient = Patient.findOne(patient_uuid, data)
     patient.inviteToClinic(clinicProgramme_ids)
     Patient.update(patient.uuid, patient, data)
@@ -612,7 +612,7 @@ export const patientController = {
       ]
 
       if (invitedProgramme_ids.length) {
-        // Send comms to parents and record in audit trail
+        // Send comms to contacts and record in audit trail
         patient.inviteToClinic(invitedProgramme_ids)
         Patient.update(patient.uuid, patient, data)
 

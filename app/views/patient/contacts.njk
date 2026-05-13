@@ -27,27 +27,27 @@
   }) }}
 
   {{ actionLink({
-    text: __("parent.new.label"),
-    href: "/parents/new?patient_uuid=" + patient.uuid
+    text: __("contact.new.label"),
+    href: "/contacts/new?patient_uuid=" + patient.uuid
   }) }}
 
-  {% for parent in patient.parents %}
+  {% for contact in patient.contacts %}
     {{ summaryList({
       card: {
-        heading: parent.fullNameAndRelationship,
+        heading: contact.fullNameAndRelationship,
         headingLevel: 4,
         actions: {
           items: [{
             text: __("actions.edit"),
-            href: parent.uri + "/edit"
+            href: contact.uri + "/edit"
           }, {
             text: __("actions.delete"),
-            href: parent.uri + "/delete"
+            href: contact.uri + "/delete"
           }]
         }
       },
       lastRowBorder: false,
-      rows: summaryRows(parent, {
+      rows: summaryRows(contact, {
         email: {},
         tel: {},
         contactPreference: {}

@@ -2,29 +2,29 @@
 
 {% block form %}
   {{ appHeading({
-    caption: parent.patient.fullName,
-    title: __("parent.action.title", {
-      parent: parent,
+    caption: contact.patient.fullName,
+    title: __("contact.action.title", {
+      contact: contact,
       type: type
     })
   }) }}
 
-  {{ __("parent.action.description", {
-    patient: parent.patient
+  {{ __("contact.action.description", {
+    patient: contact.patient
   }) | nhsukMarkdown }}
 {% endblock %}
 
 {% block afterForm %}
   {{ appButtonGroup({
     buttons: [{
-      text: __("parent.action.confirm", type),
+      text: __("contact.action.confirm", type),
       variant: "warning",
       attributes: {
-        formAction: parent.uri + "/" + type
+        formAction: contact.uri + "/" + type
       }
     }],
     links: [{
-      text: __("parent.action.cancel"),
+      text: __("contact.action.cancel"),
       href: back
     }]
   }) }}

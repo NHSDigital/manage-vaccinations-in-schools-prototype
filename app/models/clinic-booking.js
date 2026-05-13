@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
-import { ClinicAppointment, Parent } from '../models.js'
+import { ClinicAppointment, Contact } from '../models.js'
 import {
   formatMonospace,
   stringToArray,
@@ -15,7 +15,7 @@ import {
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic booking UUID
  * @property {string} bookingReference - Booking reference number
- * @property {Parent} parent - contact details for the parent making the booking; see appointments for parental relationship details
+ * @property {Contact} contact - Contact details for the booking; see appointments for parental relationship details
  * @property {Array<ClinicAppointment>} appointments - the appointments created in this booking (one per child)
  */
 export class ClinicBooking {
@@ -24,8 +24,8 @@ export class ClinicBooking {
     this.uuid = options?.uuid || faker.string.uuid()
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
-    this.parent =
-      (options?.parent && new Parent(options.parent)) ?? new Parent({})
+    this.contact =
+      (options?.contact && new Contact(options.contact)) ?? new Contact({})
 
     this.appointments =
       options?.appointments?.map(
@@ -218,12 +218,12 @@ export class ClinicBooking {
   /**
    * Get rid of _unchecked values from checkboxes in the booking journey
    *
-   * @param {object} updates - new values posted from the booking jounrey
+   * @param {object} updates - new values posted from the booking journey
    */
   static #sanitiseCheckboxUpdates(updates) {
     // Receive updates by SMS option
-    if (updates?.parent?.sms) {
-      updates.parent.sms = stringToBoolean(updates.parent.sms) || false
+    if (updates?.contact?.sms) {
+      updates.contact.sms = stringToBoolean(updates.contact.sms) || false
     }
 
     if (updates?.appointments) {

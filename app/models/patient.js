@@ -16,8 +16,8 @@ import {
 import {
   AuditEvent,
   Child,
+  Contact,
   Move,
-  Parent,
   PatientProgramme,
   PatientSession,
   Reply,
@@ -51,7 +51,7 @@ import {
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<import('./audit-event.js').AuditEvent>} events - Events
  * @property {Array<string>} [reply_uuids] - Reply IDs
- * @property {Array<string>} [parent_uuids] - Parent UUIDS
+ * @property {Array<string>} [contact_uuids] - Contact UUIDS
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
@@ -73,7 +73,7 @@ export class Patient extends Child {
     this.clinicProgramme_ids = options?.clinicProgramme_ids || []
     this.events = options?.events || []
     this.reply_uuids = options?.reply_uuids || []
-    this.parent_uuids = options?.parent_uuids || []
+    this.contact_uuids = options?.contact_uuids || []
     this.patientSession_uuids = options?.patientSession_uuids || []
     this.vaccination_uuids = options?.vaccination_uuids || []
   }
@@ -105,12 +105,12 @@ export class Patient extends Child {
   }
 
   /**
-   * Has no parental contact details
+   * Has no contact details
    *
-   * @returns {boolean} Has no parental details
+   * @returns {boolean} Has no contact details
    */
   get hasNoContactDetails() {
-    return this.parents.every((parent) => !parent.email && !parent.tel)
+    return this.contacts.every((contact) => !contact.email && !contact.tel)
   }
 
   /**
@@ -164,27 +164,27 @@ export class Patient extends Child {
   }
 
   /**
-   * Get parents (from record and replies)
+   * Get contacts (from record and replies)
    *
-   * @returns {Array<Parent>} Parents
+   * @returns {Array<Contact>} Contacts
    */
-  get parents() {
-    const parents = new Map()
+  get contacts() {
+    const contacts = new Map()
 
     if (!this.sensitive) {
-      this.parent_uuids.forEach((uuid) =>
-        parents.set(uuid, Parent.findOne(uuid, this.context))
+      this.contact_uuids.forEach((uuid) =>
+        contacts.set(uuid, Contact.findOne(uuid, this.context))
       )
     }
 
-    // Add any new parents found in consent replies
+    // Add any new contacts found in consent replies
     Object.values(this.replies)
       .filter(({ selfConsent }) => !selfConsent)
-      .forEach(({ parent }) => {
-        parents.set(parent.uuid, new Parent(parent))
+      .forEach(({ contact }) => {
+        contacts.set(contact.uuid, new Contact(contact))
       })
 
-    return [...parents.values()]
+    return [...contacts.values()]
   }
 
   get recordEvents() {
@@ -441,9 +441,9 @@ export class Patient extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const parentTokens = []
-    for (const parent of this.parents) {
-      parentTokens.push(tokenize(parent, ['fullName', 'tel', 'email']))
+    const contactTokens = []
+    for (const contact of this.contacts) {
+      contactTokens.push(tokenize(contact, ['fullName', 'tel', 'email']))
     }
 
     const childTokens = tokenize(this, [
@@ -453,7 +453,7 @@ export class Patient extends Child {
       'school.name'
     ])
 
-    return [childTokens, parentTokens].join(' ')
+    return [childTokens, contactTokens].join(' ')
   }
 
   /**
@@ -647,13 +647,13 @@ export class Patient extends Child {
   /**
    * Add contact to patient
    *
-   * @param {import('./parent.js').Parent} parent - Parent
+   * @param {import('../models').Contact} contact - Contact
    */
-  addContact(parent) {
-    this.parent_uuids.push(parent.uuid)
+  addContact(contact) {
+    this.contact_uuids.push(contact.uuid)
 
     this.addEvent({
-      name: activity.patient.contact(parent),
+      name: activity.patient.contact(contact),
       type: AuditEventType.Record
     })
   }
@@ -676,7 +676,7 @@ export class Patient extends Child {
   }
 
   /**
-   * Invite parent to book a clinic appointment
+   * Invite contact to book a clinic appointment
    *
    * @param {Array<string>} programme_ids - The programmes for which the child's invited
    */
@@ -685,10 +685,10 @@ export class Patient extends Child {
       ...new Set(this.clinicProgramme_ids.concat(programme_ids))
     ]
 
-    for (const parent of this.parents) {
+    for (const contact of this.contacts) {
       this.addEvent({
-        name: activity.notify['invite-clinic'](parent),
-        messageRecipient: parent,
+        name: activity.notify['invite-clinic'](contact),
+        messageRecipient: contact,
         messageTemplate: 'invite-clinic',
         patient_uuid: this.uuid,
         programme_ids: programme_ids
@@ -697,16 +697,19 @@ export class Patient extends Child {
   }
 
   /**
-   * Invite parent to give consent
+   * Invite contact to give consent
    *
    * @param {import('./patient-session.js').PatientSession} patientSession - Patient session
    */
   requestConsent(patientSession) {
-    for (const parent of this.parents) {
-      if (parent.email && parent.emailStatus === NotifyEmailStatus.Delivered) {
+    for (const contact of this.contacts) {
+      if (
+        contact.email &&
+        contact.emailStatus === NotifyEmailStatus.Delivered
+      ) {
         this.addEvent({
-          name: activity.notify.invite(parent),
-          messageRecipient: parent,
+          name: activity.notify.invite(contact),
+          messageRecipient: contact,
           messageTemplate: 'invite',
           createdAt: patientSession.session.openAt,
           patient_uuid: this.uuid,
@@ -782,11 +785,11 @@ export class Patient extends Child {
         messageTemplate = 'vaccination-deleted'
     }
 
-    for (const parent of this.parents) {
+    for (const contact of this.contacts) {
       if (vaccination.outcome !== VaccinationOutcome.AlreadyVaccinated) {
         this.addEvent({
-          name: activity.notify['vaccination-reminder'](parent),
-          messageRecipient: parent,
+          name: activity.notify['vaccination-reminder'](contact),
+          messageRecipient: contact,
           messageTemplate: 'vaccination-reminder',
           createdAt: removeDays(vaccination.createdAt, 7),
           patient_uuid: this.uuid,
@@ -796,8 +799,8 @@ export class Patient extends Child {
       }
 
       this.addEvent({
-        name: activity.notify[messageTemplate](parent),
-        messageRecipient: parent,
+        name: activity.notify[messageTemplate](contact),
+        messageRecipient: contact,
         messageTemplate,
         createdAt: vaccination.updatedAt || vaccination.createdAt,
         patient_uuid: this.uuid,
@@ -835,9 +838,9 @@ export class Patient extends Child {
         this.dod = removeDays(today(), 5)
         name = `Record updated with child’s date of death`
         break
-      case notice.type === NoticeType.NoNotify && this.parents[0]?.notify:
+      case notice.type === NoticeType.NoNotify && this.contacts[0]?.notify:
         // Notify request to not share vaccination with GP
-        this.parents[0].notify = false
+        this.contacts[0].notify = false
         name = `Child gave consent for HPV and flu vaccinations under Gillick competence and does not want their parents to be notified.\n\nThese records are not automatically synced with GP records.\n\nYour team must let the child’s GP know they were vaccinated.`
         break
       case notice.type === NoticeType.Invalid:

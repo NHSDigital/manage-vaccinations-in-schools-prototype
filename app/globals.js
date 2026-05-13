@@ -333,10 +333,10 @@ export default () => {
    *
    * @param {object} healthAnswers - Health answers
    * @param {string} edit - Edit link
-   * @param {string} [parentFacing] - Use parent-facing questions (‘your child’)
+   * @param {string} [publicFacing] - Use public-facing questions (‘your child’)
    * @returns {Array|undefined} Parameters for summary list component
    */
-  globals.healthAnswerRows = function (healthAnswers, edit, parentFacing) {
+  globals.healthAnswerRows = function (healthAnswers, edit, publicFacing) {
     if (healthAnswers.length === 0) {
       return
     }
@@ -358,7 +358,7 @@ export default () => {
       let keyText =
         healthQuestions[key].labelWithOptions || healthQuestions[key].label
 
-      keyText = parentFacing
+      keyText = publicFacing
         ? keyText.replace('the child', 'your child')
         : keyText
 

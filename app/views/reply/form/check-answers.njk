@@ -60,31 +60,31 @@
 
   {{ summaryList({
     card: {
-      heading: __("parent.label"),
+      heading: __("contact.label"),
       headingSize: "m"
     },
     lastRowBorder: false,
-    rows: summaryRows(reply.parent, {
+    rows: summaryRows(reply.contact, {
       fullName: {
-        href: reply.uri + "/new/parent"
+        href: reply.uri + "/new/contact"
       },
       relationship: {
-        href: reply.uri + "/new/parent"
+        href: reply.uri + "/new/contact"
       },
       hasParentalResponsibility: {
-        href: reply.uri + "/new/parent"
+        href: reply.uri + "/new/contact"
       },
       notify: {
-        href: reply.uri + "/new/notify-parent"
+        href: reply.uri + "/new/notify-contact"
       },
       email: {
-        href: reply.uri + "/new/parent"
+        href: reply.uri + "/new/contact"
       },
       tel: {
-        href: reply.uri + "/new/parent"
+        href: reply.uri + "/new/contact"
       }
     })
-  }) if reply.parent.relationship or reply.parent.notify !== undefined }}
+  }) if reply.contact.relationship or reply.contact.notify !== undefined }}
 
   {{ summaryList({
     classes: "app-summary-list--full-width",

@@ -1,34 +1,34 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.parent.contactPreference.title") %}
+{% set title = __("consent.contact.contactPreference.title") %}
 
 {% block form %}
   {{ appHeading({
     title: title
   }) }}
 
-  {{ __("consent.parent.contactPreference.description") | nhsukMarkdown }}
+  {{ __("consent.contact.contactPreference.description") | nhsukMarkdown }}
 
   {{ radios({
     fieldset: {
       legend: {
-        text: __("consent.parent.contactPreference.label"),
+        text: __("consent.contact.contactPreference.label"),
         size: "s"
       }
     },
     items: [{
-      text: __("consent.parent.contactPreference.yes"),
+      text: __("consent.contact.contactPreference.yes"),
       value: true,
       conditional: {
         html: textarea({
-          label: { text: __("consent.parent.contactPreferenceDetails.label") },
-          decorate: "consent.parent_.contactPreferenceDetails"
+          label: { text: __("consent.contact.contactPreferenceDetails.label") },
+          decorate: "consent.contact_.contactPreferenceDetails"
         })
       }
     }, {
-      text: __("consent.parent.contactPreference.no"),
+      text: __("consent.contact.contactPreference.no"),
       value: false
     }],
-    decorate: "consent.parent_.contactPreference"
+    decorate: "consent.contact_.contactPreference"
   }) }}
 {% endblock %}

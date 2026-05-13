@@ -1,12 +1,12 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
-import { Child, Parent } from '../models.js'
+import { Child, Contact } from '../models.js'
 import { tokenize } from '../utils/object.js'
 import {
   formatList,
   formatNhsNumber,
-  formatParent,
+  formatContact,
   formatWithSecondaryText,
   stringToBoolean
 } from '../utils/string.js'
@@ -20,7 +20,7 @@ import {
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
- * @property {Array<string>} [parent_uuids] - Parent UUIDS
+ * @property {Array<string>} [contact_uuids] - Contact UUIDS
  */
 export class PDSRecord extends Child {
   constructor(options, context) {
@@ -36,16 +36,16 @@ export class PDSRecord extends Child {
     this.sensitive = sensitive
     this.address = !sensitive && options?.address ? options.address : undefined
     this.school_id = null
-    this.parent_uuids = options?.parent_uuids || []
+    this.contact_uuids = options?.contact_uuids || []
   }
 
   /**
-   * Has no parental contact details
+   * Has no contact details
    *
-   * @returns {boolean} Has no parental details
+   * @returns {boolean} Has no contact details
    */
   get hasNoContactDetails() {
-    return this.parents.every((parent) => !parent.email && !parent.tel)
+    return this.contacts.every((contact) => !contact.email && !contact.tel)
   }
 
   /**
@@ -58,13 +58,15 @@ export class PDSRecord extends Child {
   }
 
   /**
-   * Get parents (from record and replies)
+   * Get contacts (from record and replies)
    *
-   * @returns {Array<Parent>|undefined} Parents
+   * @returns {Array<Contact>|undefined} Contacts
    */
-  get parents() {
+  get contacts() {
     if (!this.sensitive) {
-      return this.parent_uuids.map((uuid) => Parent.findOne(uuid, this.context))
+      return this.contact_uuids.map((uuid) =>
+        Contact.findOne(uuid, this.context)
+      )
     }
   }
 
@@ -74,14 +76,14 @@ export class PDSRecord extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const parentTokens = []
-    for (const parent of this.parents) {
-      parentTokens.push(tokenize(parent, ['fullName', 'tel', 'email']))
+    const contactTokens = []
+    for (const contact of this.contacts) {
+      contactTokens.push(tokenize(contact, ['fullName', 'tel', 'email']))
     }
 
     const childTokens = tokenize(this, ['nhsn', 'fullName', 'postalCode'])
 
-    return [childTokens, parentTokens].join(' ')
+    return [childTokens, contactTokens].join(' ')
   }
 
   /**
@@ -91,13 +93,15 @@ export class PDSRecord extends Child {
    */
   get formatted() {
     const formattedNhsn = formatNhsNumber(this.nhsn, this.invalid)
-    const formattedParents = this.parents.map((parent) => formatParent(parent))
+    const formattedContacts = this.contacts.map((contact) =>
+      formatContact(contact)
+    )
 
     return {
       ...super.formatted,
       fullNameAndNhsn: formatWithSecondaryText(this.fullName, formattedNhsn),
       nhsn: formattedNhsn,
-      parents: formatList(formattedParents)
+      contacts: formatList(formattedContacts)
     }
   }
 

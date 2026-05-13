@@ -43,14 +43,14 @@
       }) }}
     {% endfor %}
 
-    {# Parent details #}
+    {# Contact details #}
     {{ summaryList({
       card: {
-        heading: __("clinicBooking.show.parent.title"),
+        heading: __("clinicBooking.show.contact.title"),
         headingSize: "m"
       },
       lastRowBorder: false,
-      rows: summaryRows(clinicBooking.parent, {
+      rows: summaryRows(clinicBooking.contact, {
         fullName: {},
         email: {},
         phone: {},
@@ -61,7 +61,7 @@
     {# TODO: need to figure out what routes I'm going to need for editing, but that can wait till I make the booking journey #}
     {{ button({
       classes: "nhsuk-button--secondary",
-      text: __("clinicBooking.show.parent.change.label"),
+      text: __("clinicBooking.show.contact.change.label"),
       href: "/clinic-appointments/" + appointment.id + "/change"
     }) }}
 

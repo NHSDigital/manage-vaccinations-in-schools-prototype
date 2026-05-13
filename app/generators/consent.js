@@ -22,7 +22,7 @@ import {
  * @param {import('../models.js').Programme} programme - Programme
  * @param {import('../models.js').Session} session - Session
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @param {import('../models.js').Parent} parent - Parent
+ * @param {import('../models.js').Contact} contact - Contact
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
  * @returns {Consent|undefined} Consent
  */
@@ -30,19 +30,19 @@ export function generateConsent(
   programme,
   session,
   patientSession,
-  parent,
+  contact,
   lastConsentCreatedAt
 ) {
   // Child
   const child = patientSession.patient
 
-  // Can’t create a consent response if no parent associated with child
-  if (!parent) {
+  // Can’t create a consent response if no contact associated with child
+  if (!contact) {
     return
   }
 
-  // Can’t create a consent response if no contact details for parent
-  if (!parent.email && !parent.tel) {
+  // Can’t create a consent response if no contact details
+  if (!contact.email && !contact.tel) {
     return
   }
 
@@ -58,7 +58,7 @@ export function generateConsent(
 
   const isFluProgramme = programme.type === ProgrammeType.Flu
 
-  // Has the parent given consent for alternative injected vaccine?
+  // Has the contact given consent for alternative injected vaccine?
   const alternative =
     isFluProgramme && decision === ReplyDecision.Given
       ? faker.datatype.boolean(0.75)
@@ -112,7 +112,7 @@ export function generateConsent(
         to: sessionClosedBeforeToday ? session.closeAt : nowAt
       }),
     child,
-    parent,
+    contact,
     decision,
     method,
     ...(decision === ReplyDecision.Given && { alternative }),
@@ -144,7 +144,7 @@ export function generateConsent(
       }),
       consultation
     }),
-    parent_uuid: parent.uuid,
+    contact_uuid: contact.uuid,
     programme_id: programme.id,
     session_id: session.id
   })

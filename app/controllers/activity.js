@@ -5,7 +5,7 @@ import {
   ReplyDecision,
   ScreenOutcome
 } from '../enums.js'
-import { generateParent } from '../generators/parent.js'
+import { generateContact } from '../generators/contact.js'
 import {
   AuditEvent,
   Gillick,
@@ -61,12 +61,12 @@ export const activityController = {
       (vaccination) => !vaccination.given
     )
 
-    // Parent for use in Notify activities; force having both email and phone
-    const parent = generateParent(patient?.lastName)
-    parent.email =
-      parent.email ||
-      `${parent.fullName.replace(' ', '.').toLowerCase()}@example.com`
-    parent.tel = parent.tel || '07700 900000'
+    // Contact for use in Notify activities; force having both email and phone
+    const contact = generateContact(patient?.lastName)
+    contact.email =
+      contact.email ||
+      `${contact.fullName.replace(' ', '.').toLowerCase()}@example.com`
+    contact.tel = contact.tel || '07700 900000'
 
     const activityLog = [
       {
@@ -189,8 +189,8 @@ export const activityController = {
           'vaccination-deleted'
         ].map((name) =>
           auditEvent({
-            name: activity.notify[name](parent),
-            messageRecipient: parent,
+            name: activity.notify[name](contact),
+            messageRecipient: contact,
             messageTemplate: name,
             patient_uuid: patient?.uuid,
             programme_ids: session?.programme_ids,

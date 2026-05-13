@@ -2,10 +2,10 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ParentalRelationship } from '../enums.js'
 import { Patient } from '../models.js'
-import { formatOther, formatParent, stringToBoolean } from '../utils/string.js'
+import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 
 /**
- * @class Parent
+ * @class Contact
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context
@@ -24,7 +24,7 @@ import { formatOther, formatParent, stringToBoolean } from '../utils/string.js'
  * @property {string} [contactPreferenceDetails] - Contact method details
  * @property {string} [patient_uuid] - Patient UUID
  */
-export class Parent {
+export class Contact {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
@@ -60,7 +60,7 @@ export class Parent {
    * @returns {string} Full name and relationship
    */
   get fullNameAndRelationship() {
-    return formatParent(this, false)
+    return formatContact(this, false)
   }
 
   /**
@@ -74,7 +74,7 @@ export class Parent {
         return Patient.findOne(this.patient_uuid, this.context)
       }
     } catch (error) {
-      console.error('Parent.patient', error.message)
+      console.error('Contact.patient', error.message)
     }
   }
 
@@ -98,7 +98,7 @@ export class Parent {
    * @returns {string} Namespace
    */
   get ns() {
-    return 'parent'
+    return 'contact'
   }
 
   /**
@@ -107,14 +107,14 @@ export class Parent {
    * @returns {string} URI
    */
   get uri() {
-    return `/parents/${this.uuid}`
+    return `/contacts/${this.uuid}`
   }
 
   /**
    * Remove `context` so it’s hidden from JSON.stringify, or we’ll get
    * circular reference issues during saving
    *
-   * @returns {object} Parent ready to be serialized to JSON
+   * @returns {object} Contact ready to be serialized to JSON
    */
   toJSON() {
     const { context, ...rest } = this
@@ -125,83 +125,86 @@ export class Parent {
    * Find all
    *
    * @param {object} context - Context
-   * @returns {Array<Parent>|undefined} Parents
+   * @returns {Array<Contact>|undefined} Contacts
    * @static
    */
   static findAll(context) {
-    return Object.values(context.parents).map(
-      (parent) => new Parent(parent, context)
+    return Object.values(context.contacts).map(
+      (contact) => new Contact(contact, context)
     )
   }
 
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - Parent UUID
+   * @param {string|string[]} uuid - Contact UUID
    * @param {object} context - Context
-   * @returns {Parent|undefined} Parent
+   * @returns {Contact|undefined} Contact
    * @static
    */
   static findOne(uuid, context) {
     uuid = String(uuid)
 
-    if (context?.parents?.[uuid]) {
-      return new Parent(context.parents[uuid], context)
+    if (context?.contacts?.[uuid]) {
+      return new Contact(context.contacts[uuid], context)
     }
   }
 
   /**
    * Create
    *
-   * @param {object} parent - Parent
+   * @param {object} contact - Contact
    * @param {object} context - Context
-   * @returns {Parent} Created parent
+   * @returns {Contact} Created contact
    * @static
    */
-  static create(parent, context) {
-    const createdParent = new Parent(parent)
+  static create(contact, context) {
+    const createdContact = new Contact(contact)
 
     // Update context
-    context.parents = context.parents || {}
-    context.parents[createdParent.uuid] = createdParent
+    context.contacts = context.contacts || {}
+    context.contacts[createdContact.uuid] = createdContact
 
-    return createdParent
+    return createdContact
   }
 
   /**
    * Update
    *
-   * @param {string|string[]} uuid - Parent UUID
+   * @param {string|string[]} uuid - Contact UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
-   * @returns {Parent} Updated parent
+   * @returns {Contact} Updated contact
    * @static
    */
   static update(uuid, updates, context) {
     uuid = String(uuid)
 
-    const updatedParent = Object.assign(Parent.findOne(uuid, context), updates)
+    const updatedContact = Object.assign(
+      Contact.findOne(uuid, context),
+      updates
+    )
 
     // Remove move context
-    delete updatedParent.context
+    delete updatedContact.context
 
     // Delete original move (with previous UUID)
-    delete context.parents[uuid]
+    delete context.contacts[uuid]
 
     // Update context
-    context.parents[updatedParent.uuid] = updatedParent
+    context.contacts[updatedContact.uuid] = updatedContact
 
-    return updatedParent
+    return updatedContact
   }
 
   /**
    * Delete
    *
-   * @param {string|string[]} uuid - Parent UUID
+   * @param {string|string[]} uuid - Contact UUID
    * @param {object} context - Context
    * @static
    */
   static delete(uuid, context) {
-    delete context.parents[String(uuid)]
+    delete context.contacts[String(uuid)]
   }
 }

@@ -1,0 +1,10 @@
+{%- from "_macros/status.njk" import appStatus -%}
+{% macro appContactSms(contact, hideStatus) -%}
+  <p class="nhsuk-body nhsuk-u-margin-0">{{ contact.tel }}</p>
+  {{ appStatus({
+    classes: "app-status--small nhsuk-u-margin-top-1",
+    text: contact.smsStatus,
+    icon: "warning",
+    colour: "blue"
+  }) if not hideStatus and contact.smsStatus != NotifySmsStatus.Delivered }}
+{% endmacro %}

@@ -5,16 +5,16 @@ import {
   ParentalRelationship,
   NotifySmsStatus
 } from '../enums.js'
-import { Parent } from '../models.js'
+import { Contact } from '../models.js'
 
 /**
- * Generate fake parent
+ * Generate fake contact
  *
  * @param {import('../models.js').Child|import('../models.js').Patient} patient - Child
- * @param {boolean} [isMum] - Parent is child’s mother
- * @returns {Parent} Parent
+ * @param {boolean} [isMum] - Contact is child’s mother
+ * @returns {Contact} Contact
  */
-export function generateParent(patient, isMum) {
+export function generateContact(patient, isMum) {
   // Relationship
   const relationship = isMum
     ? ParentalRelationship.Mum
@@ -67,7 +67,7 @@ export function generateParent(patient, isMum) {
     { value: NotifyEmailStatus.Technical, weight: 1 }
   ])
 
-  return new Parent({
+  return new Contact({
     fullName: `${firstName} ${lastName}`,
     relationship,
     ...(relationship === ParentalRelationship.Other && {

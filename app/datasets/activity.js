@@ -7,20 +7,20 @@ export default {
     absent: (session) => `Absent from session at ${session.location.name}`
   },
   consent: {
-    created: ({ child, decision, parent, selfConsent }) =>
+    created: ({ child, decision, contact, selfConsent }) =>
       selfConsent
         ? `${decision} by ${child?.fullName} (child)`
-        : `${decision} by ${parent?.fullNameAndRelationship}`,
-    updated: ({ decision, parent }) =>
-      `${decision} in updated response from ${parent.fullNameAndRelationship}`,
-    followedUp: ({ confirmed, decision, parent }) =>
-      `${confirmed ? 'Refusal confirmed' : decision} in followed-up response from ${parent.fullNameAndRelationship}`,
-    matched: ({ parent }) =>
-      `Consent response from ${parent.fullNameAndRelationship} manually matched with child record`,
-    invalid: ({ parent }) =>
-      `Consent response from ${parent.fullNameAndRelationship} marked as invalid`,
-    withdrawn: ({ parent }) =>
-      `Consent response from ${parent.fullNameAndRelationship} withdrawn`
+        : `${decision} by ${contact?.fullNameAndRelationship}`,
+    updated: ({ decision, contact }) =>
+      `${decision} in updated response from ${contact.fullNameAndRelationship}`,
+    followedUp: ({ confirmed, decision, contact }) =>
+      `${confirmed ? 'Refusal confirmed' : decision} in followed-up response from ${contact.fullNameAndRelationship}`,
+    matched: ({ contact }) =>
+      `Consent response from ${contact.fullNameAndRelationship} manually matched with child record`,
+    invalid: ({ contact }) =>
+      `Consent response from ${contact.fullNameAndRelationship} marked as invalid`,
+    withdrawn: ({ contact }) =>
+      `Consent response from ${contact.fullNameAndRelationship} withdrawn`
   },
   gillick: {
     created: (gillick) => gillick.competent,
@@ -30,46 +30,46 @@ export default {
     created: (type) => `${type} added`
   },
   notify: {
-    invite: (parent) =>
-      `Consent request sent to ${parent.fullNameAndRelationship}`,
-    'invite-reminder': (parent) =>
-      `Consent reminder sent to ${parent.fullNameAndRelationship}`,
-    'invite-clinic': (parent) =>
-      `Clinic invitation sent to ${parent.fullNameAndRelationship}`,
-    'invite-clinic-reminder': (parent) =>
-      `Clinic invitation reminder sent to ${parent.fullNameAndRelationship}`,
-    'consent-given': (parent) =>
-      `Confirmation of consent given sent to ${parent.fullNameAndRelationship}`,
-    'consent-given-changed-school': (parent) =>
-      `Confirmation of consent given (clinic booking needed) sent to ${parent.fullNameAndRelationship}`,
-    'consent-needs-triage': (parent) =>
-      `Confirmation of consent given (triage needed) sent to ${parent.fullNameAndRelationship}`,
-    'consent-refused': (parent) =>
-      `Confirmation of consent refused sent to ${parent.fullNameAndRelationship}`,
-    'consent-followed-up': (parent) =>
-      `Confirmation of follow-up decision to confirm refusal sent to ${parent.fullNameAndRelationship}`,
-    'consent-unknown-contact': (parent) =>
-      `Unknown parent contact details warning sent to ${parent.fullNameAndRelationship}`,
-    'triage-delay-vaccination': (parent) =>
-      `Confirmation of triage decision (delay vaccination) sent to ${parent.fullNameAndRelationship}`,
-    'triage-do-not-vaccinate': (parent) =>
-      `Confirmation of triage decision (unable to vaccinate) sent to ${parent.fullNameAndRelationship}`,
-    'triage-invite-to-clinic': (parent) =>
-      `Confirmation of triage decision (invite to clinic) sent to ${parent.fullNameAndRelationship}`,
-    'triage-vaccinate': (parent) =>
-      `Confirmation of triage decision (safe to vaccinate) sent to ${parent.fullNameAndRelationship}`,
-    'triage-vaccinate-second-dose': (parent) =>
-      `Confirmation of triage decision (2nd dose will be given in school) sent to ${parent.fullNameAndRelationship}`,
-    'vaccination-reminder': (parent) =>
-      `Session reminder sent to ${parent.fullNameAndRelationship}`,
-    'vaccination-given': (parent) =>
-      `Confirmation the vaccination was given sent to ${parent.fullNameAndRelationship}`,
-    'vaccination-not-administered': (parent) =>
-      `Confirmation the vaccination was not given sent to ${parent.fullNameAndRelationship}`,
-    'vaccination-already-had': (parent) =>
-      `Confirmation previous vaccination discovered since consent sent to ${parent.fullNameAndRelationship}`,
-    'vaccination-deleted': (parent) =>
-      `Apology for incorrect message sent to ${parent.fullNameAndRelationship}`
+    invite: (contact) =>
+      `Consent request sent to ${contact.fullNameAndRelationship}`,
+    'invite-reminder': (contact) =>
+      `Consent reminder sent to ${contact.fullNameAndRelationship}`,
+    'invite-clinic': (contact) =>
+      `Clinic invitation sent to ${contact.fullNameAndRelationship}`,
+    'invite-clinic-reminder': (contact) =>
+      `Clinic invitation reminder sent to ${contact.fullNameAndRelationship}`,
+    'consent-given': (contact) =>
+      `Confirmation of consent given sent to ${contact.fullNameAndRelationship}`,
+    'consent-given-changed-school': (contact) =>
+      `Confirmation of consent given (clinic booking needed) sent to ${contact.fullNameAndRelationship}`,
+    'consent-needs-triage': (contact) =>
+      `Confirmation of consent given (triage needed) sent to ${contact.fullNameAndRelationship}`,
+    'consent-refused': (contact) =>
+      `Confirmation of consent refused sent to ${contact.fullNameAndRelationship}`,
+    'consent-followed-up': (contact) =>
+      `Confirmation of follow-up decision to confirm refusal sent to ${contact.fullNameAndRelationship}`,
+    'consent-unknown-contact': (contact) =>
+      `Unknown parent contact details warning sent to ${contact.fullNameAndRelationship}`,
+    'triage-delay-vaccination': (contact) =>
+      `Confirmation of triage decision (delay vaccination) sent to ${contact.fullNameAndRelationship}`,
+    'triage-do-not-vaccinate': (contact) =>
+      `Confirmation of triage decision (unable to vaccinate) sent to ${contact.fullNameAndRelationship}`,
+    'triage-invite-to-clinic': (contact) =>
+      `Confirmation of triage decision (invite to clinic) sent to ${contact.fullNameAndRelationship}`,
+    'triage-vaccinate': (contact) =>
+      `Confirmation of triage decision (safe to vaccinate) sent to ${contact.fullNameAndRelationship}`,
+    'triage-vaccinate-second-dose': (contact) =>
+      `Confirmation of triage decision (2nd dose will be given in school) sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-reminder': (contact) =>
+      `Session reminder sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-given': (contact) =>
+      `Confirmation the vaccination was given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-not-administered': (contact) =>
+      `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-already-had': (contact) =>
+      `Confirmation previous vaccination discovered since consent sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-deleted': (contact) =>
+      `Apology for incorrect message sent to ${contact.fullNameAndRelationship}`
   },
   patient: {
     archived: (archive) =>
