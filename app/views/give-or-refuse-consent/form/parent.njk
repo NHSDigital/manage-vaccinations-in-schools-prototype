@@ -9,7 +9,7 @@
 
   {{ input({
     label: { text: __("consent.parent.fullName.label") },
-    decorate: "consent.parent.fullName"
+    decorate: "consent.parent_.fullName"
   }) }}
 
   {%- set fosterCarerHtml = radios({
@@ -18,19 +18,19 @@
     },
     hint: { text: __("consent.parent.hasParentalResponsibility.hint") },
     items: getBooleanItems(),
-    decorate: "consent.parent.hasParentalResponsibility"
+    decorate: "consent.parent_.hasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
     label: { text: __("consent.parent.relationshipOther.label") },
-    decorate: "consent.parent.relationshipOther"
+    decorate: "consent.parent_.relationshipOther"
   }) + radios({
     fieldset: {
       legend: { text: __("consent.parent.hasParentalResponsibility.label") }
     },
     hint: { text: __("consent.parent.hasParentalResponsibility.hint") },
     items: getBooleanItems(),
-    decorate: "consent.parent.hasParentalResponsibility"
+    decorate: "consent.parent_.hasParentalResponsibility"
   }) %}
 
   {# Add conditional html for ‘Foster carer’ option #}
@@ -44,19 +44,19 @@
       legend: { text: __("consent.parent.relationship.label") }
     },
     items: items,
-    decorate: "consent.parent.relationship"
+    decorate: "consent.parent_.relationship"
   }) }}
 
   {{ input({
     label: { text: __("consent.parent.email.label") },
     hint: { text: __("consent.parent.email.hint") },
-    decorate: "consent.parent.email"
+    decorate: "consent.parent_.email"
   }) }}
 
   {{ input({
     label: { text: __("consent.parent.tel.label") + " (optional)" },
     hint: { text: __("consent.parent.tel.hint") },
-    decorate: "consent.parent.tel"
+    decorate: "consent.parent_.tel"
   }) }}
 
   {{ checkboxes({
@@ -64,6 +64,6 @@
       text: __("consent.parent.sms.label"),
       value: true
     }],
-    decorate: "consent.parent.sms"
+    decorate: "consent.parent_.sms"
   }) }}
 {% endblock %}

@@ -10,7 +10,7 @@ export default {
     created: ({ child, decision, parent, selfConsent }) =>
       selfConsent
         ? `${decision} by ${child?.fullName} (child)`
-        : `${decision} by ${parent.fullNameAndRelationship}`,
+        : `${decision} by ${parent?.fullNameAndRelationship}`,
     updated: ({ decision, parent }) =>
       `${decision} in updated response from ${parent.fullNameAndRelationship}`,
     followedUp: ({ confirmed, decision, parent }) =>

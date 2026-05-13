@@ -8,9 +8,7 @@ import {
   SessionPresetName,
   SessionType
 } from '../enums.js'
-import { generateChild } from '../generators/child.js'
-import { generateParent } from '../generators/parent.js'
-import { Consent, Session } from '../models.js'
+import { Consent, Patient, Session } from '../models.js'
 import { getHealthQuestionPaths } from '../utils/consent.js'
 import { formatList, kebabToCamelCase } from '../utils/string.js'
 
@@ -53,15 +51,14 @@ export const giveOrRefuseConsentController = {
 
     // Text and email messages
     if (view === 'emails' || view === 'texts') {
-      const child = generateChild()
-      const parent = generateParent(child.lastName)
+      const patient = Patient.findAll(data)[0]
 
       response.locals.assetsName = 'prototype'
 
       response.locals.consent = new Consent(
         {
-          child,
-          parent,
+          child: patient,
+          parent_uuid: patient.parent_uuids[0],
           session_id: session.id
         },
         data
@@ -158,7 +155,7 @@ export const giveOrRefuseConsentController = {
       // Parent journey
       [`/${session_id}/${consent_uuid}/new/parent`]: {
         [`/${session_id}/parental-responsibility`]: {
-          data: 'consent.parent.hasParentalResponsibility',
+          data: 'consent.parent_.hasParentalResponsibility',
           value: 'false'
         }
       },

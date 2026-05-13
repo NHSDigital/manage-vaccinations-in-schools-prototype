@@ -22,7 +22,7 @@ import {
  * @param {import('../models.js').Programme} programme - Programme
  * @param {import('../models.js').Session} session - Session
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @param {number} index - Reply
+ * @param {import('../models.js').Parent} parent - Parent
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
  * @returns {Consent|undefined} Consent
  */
@@ -30,19 +30,11 @@ export function generateConsent(
   programme,
   session,
   patientSession,
-  index,
+  parent,
   lastConsentCreatedAt
 ) {
   // Child
   const child = patientSession.patient
-
-  // Parent
-  let parent
-  if (index === 0) {
-    parent = patientSession.patient.parents[0]
-  } else if (index === 1 && patientSession.patient?.parents[1]) {
-    parent = patientSession.patient.parents[1]
-  }
 
   // Can’t create a consent response if no parent associated with child
   if (!parent) {
@@ -52,13 +44,6 @@ export function generateConsent(
   // Can’t create a consent response if no contact details for parent
   if (!parent.email && !parent.tel) {
     return
-  }
-
-  // If telephone number provided, sometimes add a communication need
-  if (parent.tel && faker.datatype.boolean(0.2)) {
-    parent.contactPreference = true
-    parent.contactPreferenceDetails =
-      'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
   }
 
   // Decision
@@ -159,6 +144,7 @@ export function generateConsent(
       }),
       consultation
     }),
+    parent_uuid: parent.uuid,
     programme_id: programme.id,
     session_id: session.id
   })
