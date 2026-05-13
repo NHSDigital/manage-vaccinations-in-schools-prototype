@@ -4,7 +4,6 @@ import {
   InstructionOutcome,
   PatientStatus,
   PreScreenQuestion,
-  ProgrammeType,
   RegistrationOutcome,
   UserRole,
   VaccinationOutcome,
@@ -46,7 +45,7 @@ export const patientSessionController = {
       vaccine
     } = patientSession
 
-    const vaccinated = patientSession.siblingPatientSessions.filter(
+    const vaccinated = patientSession.siblingPatientSessions.findIndex(
       ({ report }) => report !== PatientStatus.Vaccinated
     )
 
@@ -87,7 +86,7 @@ export const patientSessionController = {
 
     response.locals.options = {
       // Show outstanding vaccinations
-      showOutstandingVaccinations: vaccinated.length > 0 && due.length > 1,
+      showOutstandingVaccinations: vaccinated && due.length > 1,
       // Send a reminder to give consent
       canRemind:
         !patient.hasNoContactDetails &&
@@ -95,11 +94,7 @@ export const patientSessionController = {
         !session.isActive &&
         consent === ConsentOutcome.NoResponse,
       // Perform Gillick assessment
-      canGillick:
-        programme.type !== ProgrammeType.Flu &&
-        session.isActive &&
-        !vaccinated &&
-        !consentGiven,
+      canGillick: session.isActive && !vaccinated && !consentGiven,
       // Patient can be triaged
       canTriage: consentGiven,
       // Patient needs triage
