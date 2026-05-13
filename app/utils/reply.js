@@ -95,7 +95,7 @@ export function getConsentHealthAnswers(patientSession) {
       // Don’t modify original health answer
       const thisHealthAnswer = { ...healthAnswer }
       thisHealthAnswer.relationship = formatParentalRelationship(
-        response.parent
+        response.contact
       )
 
       if (hasSingleResponse) {
@@ -319,7 +319,7 @@ export const getHealthAnswers = (vaccine, healthCondition) => {
     answers[key] = enrichWithRealisticAnswer(key, healthCondition)
   }
 
-  // If asthma sub-question(s) has 'Yes’ answer, change parent answer to ‘Yes’
+  // If asthma sub-question(s) has 'Yes’ answer, change contact answer to ‘Yes’
   if (
     [answers.asthmaSteroids?.answer, answers.asthmaAdmitted?.answer].includes(
       'Yes'

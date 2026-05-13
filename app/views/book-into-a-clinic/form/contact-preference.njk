@@ -1,32 +1,32 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.parent.contactPreference.title") %}
+{% set title = __("clinicBooking.contact.contactPreference.title") %}
 
 {% block form %}
   {{ appHeading({
     title: title
   }) }}
 
-  {{ __("clinicBooking.parent.contactPreference.description") | nhsukMarkdown }}
+  {{ __("clinicBooking.contact.contactPreference.description") | nhsukMarkdown }}
 
   {{ radios({
     fieldset: {
       legend: {
-        text: __("clinicBooking.parent.contactPreference.label"),
+        text: __("clinicBooking.contact.contactPreference.label"),
         size: "s"
       }
     },
     items: [{
-      text: __("clinicBooking.parent.contactPreference.yes"),
+      text: __("clinicBooking.contact.contactPreference.yes"),
       conditional: {
         html: textarea({
-          label: { text: __("clinicBooking.parent.contactPreferenceDetails.label") },
-          decorate: "booking.parent.contactPreferenceDetails"
+          label: { text: __("clinicBooking.contact.contactPreferenceDetails.label") },
+          decorate: "booking.contact.contactPreferenceDetails"
         })
       }
     }, {
-      text: __("clinicBooking.parent.contactPreference.no")
+      text: __("clinicBooking.contact.contactPreference.no")
     }],
-    decorate: "booking.parent.contactPreference"
+    decorate: "booking.contact.contactPreference"
   }) }}
 {% endblock %}

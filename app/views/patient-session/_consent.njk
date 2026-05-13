@@ -1,5 +1,5 @@
-{% from "../_macros/parent-email.njk" import appParentEmail with context %}
-{% from "../_macros/parent-sms.njk" import appParentSms with context %}
+{% from "../_macros/contact-email.njk" import appContactEmail with context %}
+{% from "../_macros/contact-sms.njk" import appContactSms with context %}
 {% set isVaccinated = patientSession.report == PatientStatus.Vaccinated %}
 
 {% call card({
@@ -74,15 +74,15 @@
         lastRowBorder: false,
         rows: summaryRows(reply, {
           email: {
-            value: appParentEmail(reply.parent, reply.given)
-          } if reply.parent.email,
+            value: appContactEmail(reply.contact, reply.given)
+          } if reply.contact.email,
           tel: {
-            value: appParentSms(reply.parent, reply.given)
-          } if reply.parent.tel,
+            value: appContactSms(reply.contact, reply.given)
+          } if reply.contact.tel,
           contactPreference: {
-            label: __("parent.contactPreference.label"),
-            value: reply.parent.contactPreferenceDetails
-          } if reply.parent.contactPreferenceDetails,
+            label: __("contact.contactPreference.label"),
+            value: reply.contact.contactPreferenceDetails
+          } if reply.contact.contactPreferenceDetails,
           createdAt: {},
           decisionStatus: {},
           vaccineCriteria: {}
@@ -91,7 +91,7 @@
     {% endfor %}
   {% elif not patientSession.patient.hasNoContactDetails and not patientSession.patient.post16 %}
     {# Requests that have been sent but with no response yet #}
-    {# We don’t create replies so use parent details instead #}
+    {# We don’t create replies so use contact details instead #}
 
     {{ appHeading({
       level: 3,
@@ -99,15 +99,15 @@
       title: __("patientSession.replies.pending")
     }) }}
 
-    {% for parent in patientSession.patient.parents %}
+    {% for contact in patientSession.patient.contacts %}
       {{ summaryList({
         card: {
           classes: "app-card--compact app-card--offset",
-          heading: parent.fullNameAndRelationship,
+          heading: contact.fullNameAndRelationship,
           headingLevel: 4
         },
         lastRowBorder: false,
-        rows: summaryRows(parent, {
+        rows: summaryRows(contact, {
           email: {},
           tel: {},
           contactPreference: {},
@@ -120,7 +120,7 @@
             })
           }
         })
-      }) if parent.email or parent.tel }}
+      }) if contact.email or contact.tel }}
     {% endfor %}
   {% endif %}
 {% endcall %}

@@ -481,7 +481,7 @@ export class Session {
   }
 
   /**
-   * Get the number of days parents have left to book their child into this clinic
+   * Get the number of days contacts have left to book their child into this clinic
    *
    * @returns {number} - the number of days before appointment booking closes
    */

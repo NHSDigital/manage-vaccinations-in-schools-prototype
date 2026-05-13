@@ -67,28 +67,28 @@
 
     {{ summaryList({
       card: {
-        heading: __("parent.label"),
+        heading: __("contact.label"),
         headingSize: "m"
       },
       lastRowBorder: false,
-      rows: summaryRows(reply.parent, {
+      rows: summaryRows(reply.contact, {
         fullName: {
-          href: reply.uri + "/edit/parent"
+          href: reply.uri + "/edit/contact"
         },
         relationship: {
-          href: reply.uri + "/edit/parent"
+          href: reply.uri + "/edit/contact"
         },
         hasParentalResponsibility: {},
         email: {
-          href: reply.uri + "/edit/parent"
+          href: reply.uri + "/edit/contact"
         },
         tel: {
-          href: reply.uri + "/edit/parent"
+          href: reply.uri + "/edit/contact"
         },
         sms: {},
         contactPreference: {}
       })
-    }) if reply.parent }}
+    }) if reply.contact }}
 
     {{ summaryList({
       card: {

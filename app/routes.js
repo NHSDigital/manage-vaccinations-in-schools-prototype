@@ -18,13 +18,13 @@ import { bookIntoClinicRoutes } from './routes/book-into-a-clinic.js'
 import { clinicBookingRoutes } from './routes/clinic-booking.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
+import { contactRoutes } from './routes/contact.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
 import { downloadRoutes } from './routes/download.js'
 import { giveOrRefuseConsentRoutes } from './routes/give-or-refuse-consent.js'
 import { homeRoutes } from './routes/home.js'
 import { moveRoutes } from './routes/move.js'
 import { noticeRoutes } from './routes/notice.js'
-import { parentRoutes } from './routes/parent.js'
 import { patientSessionRoutes } from './routes/patient-session.js'
 import { patientRoutes } from './routes/patient.js'
 import { pdsRecordRoutes } from './routes/pds-record.js'
@@ -52,7 +52,7 @@ router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
 router.use('/activity', activityRoutes)
 router.use('/appointments', appointmentRoutes) // all unmatched clinic appointments
-router.use('/book-into-a-clinic', bookIntoClinicRoutes) // parent-facing clinic booking journey
+router.use('/book-into-a-clinic', bookIntoClinicRoutes) // public-facing clinic booking journey
 router.use('/clinic-bookings', clinicBookingRoutes) // original explorations of clinic booking data
 router.use('/consents', consentRoutes)
 router.use('/downloads', downloadRoutes)
@@ -61,7 +61,7 @@ router.use('/moves', moveRoutes)
 router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
-router.use('/parents', parentRoutes)
+router.use('/contacts', contactRoutes)
 router.use('/patients', patientRoutes)
 router.use('/pds', pdsRecordRoutes)
 router.use('/reports', reportRoutes)

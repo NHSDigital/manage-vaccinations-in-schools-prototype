@@ -325,30 +325,30 @@ export function formatNhsNumber(string, invalid) {
 }
 
 /**
- * Format parent with optional display of contact details
+ * Format contact name with optional display of contact details
  *
- * @param {import('../models.js').Parent} parent - Parent
+ * @param {import('../models.js').Contact} contact - Contact
  * @param {boolean} [includeContactDetails] - Include contact details
- * @returns {string|undefined} Formatted parent HTML
+ * @returns {string|undefined} Formatted contact HTML
  */
-export function formatParent(parent, includeContactDetails = true) {
-  if (!parent) return
+export function formatContact(contact, includeContactDetails = true) {
+  if (!contact) return
 
-  let string = parent.fullName || 'Parent or guardian'
+  let string = contact.fullName || 'Parent or guardian'
 
   // Add relationship, if provided
-  if (parent.fullName !== undefined && parent.relationship) {
-    string += ` (${lowerCaseFirst(parent.relationship)})`
+  if (contact.fullName !== undefined && contact.relationship) {
+    string += ` (${lowerCaseFirst(contact.relationship)})`
   }
 
   // Add telephone number, if provided
-  if (includeContactDetails && parent.tel) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${parent.tel}</span>`
+  if (includeContactDetails && contact.tel) {
+    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.tel}</span>`
   }
 
   // Add email address, if provided
-  if (includeContactDetails && parent.email) {
-    string += `<br>${parent.email}`
+  if (includeContactDetails && contact.email) {
+    string += `<br>${contact.email}`
   }
 
   return string
@@ -388,13 +388,13 @@ export function formatIdentifier(identifiedBy) {
 /**
  * Format parental relationship, falling back to name else unknown
  *
- * @param {import('../models.js').Parent} parent - Parent
- * @returns {string|undefined} Formatted parent HTML
+ * @param {import('../models.js').Contact} contact - Contact
+ * @returns {string|undefined} Formatted parental relationship HTML
  */
-export function formatParentalRelationship(parent) {
-  if (!parent) return
+export function formatParentalRelationship(contact) {
+  if (!contact) return
 
-  return parent.relationship || parent.fullName || 'Name unknown'
+  return contact.relationship || contact.fullName || 'Name unknown'
 }
 
 /**

@@ -95,7 +95,7 @@ export const bookIntoClinicController = {
      *   - Child DOB
      *   - ...
      *   - Appointment time   <-- final page of the per-child appointment journey; iterate to next child if required
-     * - Parent info
+     * - Contact info
      * - Check answers
      * - Health questions?
      *   - Health question 1  <-- first page of the per-child health question journey
@@ -147,10 +147,10 @@ export const bookIntoClinicController = {
       ),
       [`/${booking_uuid}/new/add-another`]: {},
 
-      // Parent journey
-      [`/${booking_uuid}/new/parent`]: {
+      // Contact journey
+      [`/${booking_uuid}/new/contact`]: {
         [`/${booking_uuid}/new/offer-health-questions`]: () =>
-          !request.session.data.booking?.parent?.tel
+          !request.session.data.booking?.contact?.tel
       },
       [`/${booking_uuid}/new/contact-preference`]: {},
 

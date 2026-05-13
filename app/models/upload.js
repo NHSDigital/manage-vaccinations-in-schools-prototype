@@ -101,11 +101,11 @@ export class Upload {
       }
 
       // Simulate a subset of patient records being new
-      // Use the existence of a second parent as a proxy for this
+      // Use the existence of a second contact as a proxy for this
       patients = patients.map((patient) => {
         patient.isNew =
-          patient.parent2 !== undefined && !patient.hasPendingChanges
-        patient.hasMatch = !patient.parent2 && !patient.hasPendingChanges
+          patient.contacts[1] !== undefined && !patient.hasPendingChanges
+        patient.hasMatch = !patient.contacts[1] && !patient.hasPendingChanges
         return patient
       })
 

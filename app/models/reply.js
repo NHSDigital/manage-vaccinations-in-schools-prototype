@@ -16,7 +16,7 @@ import {
 } from '../enums.js'
 import {
   Child,
-  Parent,
+  Contact,
   Patient,
   Programme,
   Session,
@@ -31,7 +31,7 @@ import {
 import {
   formatMarkdown,
   formatOther,
-  formatParent,
+  formatContact,
   formatTag,
   formatWithSecondaryText,
   stringToBoolean
@@ -46,8 +46,8 @@ import {
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created reply
  * @property {Date} [updatedAt] - Updated date
- * @property {import('./child.js').Child} [child] - Child
- * @property {import('./parent.js').Parent} [parent_] - Parent or guardian
+ * @property {import('./models.js').Child} [child] - Child
+ * @property {import('./models.js').Contact} [contact_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
  * @property {boolean} [alternative] - Consent for alternative vaccine
  * @property {boolean} [confirmed] - Decision confirmed
@@ -65,7 +65,7 @@ import {
  * @property {string} [refusalReasonDetails] - Refusal reason details
  * @property {boolean} [selfConsent] - Reply given by child
  * @property {string} [note] - Note about this response
- * @property {string} [parent_uuid] - Parent UUID
+ * @property {string} [contact_uuid] - Contact UUID
  * @property {string} patient_uuid - Patient UUID
  * @property {string} [programme_id] - Programme ID
  * @property {string} session_id - Session ID
@@ -85,8 +85,8 @@ export class Reply {
     this.method = options?.method
     this.selfConsent = options?.selfConsent
     this.note = options?.note || ''
-    this.parent_ = options?.parent_ && new Parent(options.parent_)
-    this.parent_uuid = options?.parent_uuid
+    this.contact_ = options?.contact_ && new Contact(options.contact_)
+    this.contact_uuid = options?.contact_uuid
     this.patient_uuid = options?.patient_uuid
     this.programme_id = options?.programme_id
     this.session_id = options?.session_id
@@ -168,8 +168,8 @@ export class Reply {
    * @returns {string|undefined} Full name
    */
   get fullName() {
-    if (this.parent) {
-      return this.parent.fullName
+    if (this.contact) {
+      return this.contact.fullName
     } else if (this.child) {
       return this.child.fullName
     }
@@ -181,8 +181,8 @@ export class Reply {
    * @returns {string|undefined} Relationship to child
    */
   get relationship() {
-    if (this.parent) {
-      return this.parent.relationship
+    if (this.contact) {
+      return this.contact.relationship
     } else if (this.child) {
       return `${this.child.fullName} (child)`
     }
@@ -196,7 +196,7 @@ export class Reply {
   get fullNameAndRelationship() {
     return this.selfConsent
       ? this.relationship
-      : formatParent(this.parent, false)
+      : formatContact(this.contact, false)
   }
 
   /**
@@ -211,10 +211,10 @@ export class Reply {
     }
 
     const hasEmailGotEmail =
-      this.parent?.email &&
-      this.parent?.emailStatus === NotifyEmailStatus.Delivered
+      this.contact?.email &&
+      this.contact?.emailStatus === NotifyEmailStatus.Delivered
     const hasTelSmsGotSms =
-      this.parent?.tel && this.parent?.smsStatus === NotifySmsStatus.Delivered
+      this.contact?.tel && this.contact?.smsStatus === NotifySmsStatus.Delivered
 
     return hasEmailGotEmail || hasTelSmsGotSms
   }
@@ -259,7 +259,7 @@ export class Reply {
   }
 
   /**
-   * Has parent given consent for an injected vaccine?
+   * Has contact given consent for an injected vaccine?
    *
    * @returns {boolean} Consent given for an injected vaccine
    */
@@ -342,30 +342,30 @@ export class Reply {
   }
 
   /**
-   * Get parent
+   * Get contact
    *
-   * @returns {Parent|undefined} Parent
+   * @returns {Contact|undefined} Contact
    */
-  get parent() {
+  get contact() {
     try {
-      if (this.parent_uuid) {
-        return Parent.findOne(this.parent_uuid, this.context)
+      if (this.contact_uuid) {
+        return Contact.findOne(this.contact_uuid, this.context)
       }
     } catch (error) {
-      console.error('Reply.parent (get)', error.message)
+      console.error('Reply.contact (get)', error.message)
     }
   }
 
   /**
-   * Set parent
+   * Set contact
    */
-  set parent(updates) {
+  set contact(updates) {
     try {
-      if (this.parent_uuid) {
-        Parent.update(this.parent_uuid, updates, this.context)
+      if (this.contact_uuid) {
+        Contact.update(this.contact_uuid, updates, this.context)
       }
     } catch (error) {
-      console.error('Reply.parent (set)', error.message)
+      console.error('Reply.contact (set)', error.message)
     }
   }
 
@@ -453,9 +453,9 @@ export class Reply {
       }),
       createdBy: this.createdBy?.fullName || '',
       decisionStatus,
-      parent: formatParent(this.parent, true),
-      tel: this.parent && this.parent.tel,
-      email: this.parent && this.parent.email,
+      contact: formatContact(this.contact, true),
+      tel: this.contact && this.contact.tel,
+      email: this.contact && this.contact.email,
       programme: this.programme?.nameTag,
       refusalReason: formatOther(this.refusalReasonOther, this.refusalReason),
       refusalReasonDetails: formatMarkdown(this.refusalReasonDetails),
@@ -482,11 +482,11 @@ export class Reply {
   }
 
   /**
-   * Get parent form URI
+   * Get public-facing form URI
    *
-   * @returns {string} Parent form URI
+   * @returns {string} Public-facing form URI
    */
-  get parentUri() {
+  get publicUri() {
     return `${this.session.consentUrl}/${this.uuid}`
   }
 

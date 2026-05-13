@@ -231,7 +231,7 @@ export const en = {
     gpSurgery: {
       label: 'GP surgery'
     },
-    parent: {
+    contact: {
       label: 'Parent'
     }
   },
@@ -526,7 +526,7 @@ export const en = {
       confirm: 'Yes, remove this appointment',
       cancel: 'No, return to the previous page'
     },
-    parent: {
+    contact: {
       title: 'About you',
       fullName: {
         label: 'Full name'
@@ -601,7 +601,7 @@ export const en = {
           label: 'Cancel appointment'
         }
       },
-      parent: {
+      contact: {
         title: 'Your details',
         change: {
           label: 'Change my details'
@@ -629,23 +629,23 @@ export const en = {
     match: {
       label: 'Match',
       title: 'Search for a child record to match with {{child.fullName}}',
-      caption: 'Consent response from {{parent.formatted.fullName}}'
+      caption: 'Consent response from {{contact.formatted.fullName}}'
     },
     link: {
       title: 'Link consent response with child record?',
-      caption: 'Consent response from {{parent.fullName}}',
+      caption: 'Consent response from {{contact.fullName}}',
       summary: 'Compare child details',
       confirm: 'Link response with record',
       success:
-        'Consent response from {{consent.parent.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
+        'Consent response from {{consent.contact.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
     },
     add: {
       label: 'Create new record',
       title: 'Create a new child record from this consent response?',
-      caption: 'Consent response from {{parent.fullName}}',
+      caption: 'Consent response from {{contact.fullName}}',
       confirm: 'Create a new record from response',
       success:
-        '[{{patient.fullName}}]({{patient.uri}})’s record created from a consent response from {{consent.parent.fullName}}'
+        '[{{patient.fullName}}]({{patient.uri}})’s record created from a consent response from {{consent.contact.fullName}}'
     },
     invalidate: {
       label: 'Archive',
@@ -849,7 +849,7 @@ export const en = {
         label: 'No, skip the ethnicity questions'
       }
     },
-    parent: {
+    contact: {
       summary: 'About you',
       title: 'About you',
       label: 'Parent',
@@ -1106,7 +1106,7 @@ export const en = {
           'You’ve told us that you do not want {{consent.child.fullName}} to get the {{session.vaccinationNames.sentenceCase}} at school'
       },
       triage: {
-        // TODO: Parent may have given consent for two vaccinations for doubles
+        // TODO: Contact may have given consent for two vaccinations for doubles
         // so text should say either ‘vaccination is’ or ‘vaccinations are’
         [ReplyDecision.Given]:
           'As you answered ‘yes’ to one or more of the health questions, we need to check the {{session.vaccinationNames.sentenceCase}} is suitable for {{consent.child.fullName}}. We’ll review your answers and get in touch again soon.',
@@ -1117,7 +1117,7 @@ export const en = {
         [ReplyDecision.OnlyTdIPV]:
           'As you answered ‘yes’ to one or more of the health questions, we need to check the Td/IPV vaccination is suitable for {{consent.child.fullName}}. We’ll review your answers and get in touch again soon.'
       },
-      description: 'We’ve sent a confirmation to <{{consent.parent.email}}>.'
+      description: 'We’ve sent a confirmation to <{{consent.contact.email}}>.'
     },
     actions: {
       label: 'Actions'
@@ -1389,7 +1389,7 @@ export const en = {
       cancel: 'No, return to notices'
     }
   },
-  parent: {
+  contact: {
     label: 'Parent or guardian',
     new: {
       label: 'Add a new contact',
@@ -1406,7 +1406,7 @@ export const en = {
       success: 'Contact deleted'
     },
     action: {
-      title: 'Are you sure you want to {{type}} {{parent.fullName}}?',
+      title: 'Are you sure you want to {{type}} {{contact.fullName}}?',
       description:
         'Deleting this contact will remove them from {{patient.firstName}}, but not from any other children.\n\nThis cannot be undone.',
       confirm: 'Yes, %s this contact',
@@ -1663,13 +1663,13 @@ export const en = {
     yearGroupWithRegistration: {
       label: 'Year group'
     },
-    parents: {
+    contacts: {
       label: 'Contacts'
     },
     vaccinations: {
       label: 'Vaccinations'
     },
-    parent: {
+    contact: {
       label: 'Parent or guardian',
       fullName: {
         label: 'Name'
@@ -1835,7 +1835,7 @@ export const en = {
     },
     invite: {
       label: 'Send consent request',
-      success: 'Consent request sent to {{parent.fullNameAndRelationship}}'
+      success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
     },
     replies: {
       pending: 'Consent requests',
@@ -2003,7 +2003,7 @@ export const en = {
       label: 'GP surgery',
       title: 'Who is the child’s GP?'
     },
-    parents: {
+    contacts: {
       label: 'Parents or guardians'
     },
     add: {
@@ -2131,15 +2131,15 @@ export const en = {
     child: {
       label: 'Child'
     },
-    parent: {
+    contact: {
       label: 'Parent',
       title: {
         new: 'Details for parent or guardian',
-        edit: 'Details for {{parent.fullNameAndRelationship}}'
+        edit: 'Details for {{contact.fullNameAndRelationship}}'
       },
       notify: {
         title:
-          'Do you want to send {{parent.formatted.fullName}} an email and text message confirming their decision?',
+          'Do you want to send {{contact.formatted.fullName}} an email and text message confirming their decision?',
         label: 'Notify parent'
       }
     },
@@ -2147,7 +2147,7 @@ export const en = {
       label: 'Programme',
       title: {
         Child: 'Which vaccination is the child giving consent for?',
-        Parent: 'Which vaccination are they giving consent for?'
+        Contact: 'Which vaccination are they giving consent for?'
       }
     },
     method: {
@@ -2159,7 +2159,7 @@ export const en = {
       title: {
         Child:
           'Does the child agree to having the {{programme.vaccineName.sentenceCase}}?',
-        Parent:
+        Contact:
           'Do they agree to {{patient.firstName}} having the {{programme.vaccineName.sentenceCase}}?'
       },
       yes: {
@@ -2521,7 +2521,7 @@ export const en = {
       description:
         'Mavis automatically sends email and text reminders to parents who have not responded to the initial consent request.\n\nAutomatic reminders are sent 14, 7 and 3 days before a session.\n\nYou can also send reminders manually. Mavis will then skip the next automatic reminder if it’s due to be sent within 3 days.',
       activity:
-        '{{parents}} parents out of {{patients}} have not responded yet',
+        '{{contacts}} parents out of {{patients}} have not responded yet',
       preConfirm:
         'Mavis will skip the next automatic reminder if it’s scheduled to be sent within 3 days.',
       confirm: 'Send manual consent reminders',

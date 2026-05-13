@@ -4,7 +4,7 @@ import { addMinutes, addYears } from 'date-fns'
 import { ParentalRelationship } from '../enums.js'
 import { ClinicAppointment } from '../models.js'
 
-import { generateParent } from './parent.js'
+import { generateContact } from './contact.js'
 
 const clinicSlotLength = Number(process.env.CLINIC_SLOT_LENGTH) || 10
 
@@ -52,35 +52,35 @@ export function generateClinicAppointment(patient, session, booking) {
     }
   }
 
-  // Set up the relationship to the child for this appointment. If the booking doesn't already have
-  // a parent set up, we'll create the booking and appointment's parent based on the first appointment's
-  // child details
+  // Set up the relationship to the child for this appointment. If the booking
+  // doesn’t already have a contact set up, we’ll create the booking and
+  // appointment’s contact based on the first appointment’s child details
   let parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility
-  if (!booking.parent.fullName) {
-    // First appointment, so set up the booking's parent
-    booking.parent =
-      patient.parents[0] ||
-      patient.parents[1] ||
-      generateParent(child.lastName, faker.datatype.boolean(0.5))
+  if (!booking.contact.fullName) {
+    // First appointment, so set up the booking’s contact
+    booking.contact =
+      patient.contacts[0] ||
+      patient.contacts[1] ||
+      generateContact(child.lastName, faker.datatype.boolean(0.5))
     // ...and their relationship to this child
-    parentalRelationship = booking.parent.relationship
-    parentalRelationshipOther = booking.parent.relationshipOther
-    parentHasParentalResponsibility = booking.parent.hasParentalResponsibility
+    parentalRelationship = booking.contact.relationship
+    parentalRelationshipOther = booking.contact.relationshipOther
+    parentHasParentalResponsibility = booking.contact.hasParentalResponsibility
   } else {
-    // This isn't the first appointment, so set up parent details similar to the first one
-    const parent = booking.parent
+    // This isn’t the first appointment, so set up contact details similar to the first one
+    const contact = booking.contact
     const mumOrDad = [
       ParentalRelationship.Mum,
       ParentalRelationship.Dad
-    ].includes(parent.relationship)
+    ].includes(contact.relationship)
     if (mumOrDad) {
       // Mum or Dad initially, and most likely to stay that way
       if (faker.datatype.boolean(0.9)) {
-        parentalRelationship = parent.relationship
-        parentalRelationshipOther = parent.relationshipOther
-        parentHasParentalResponsibility = parent.hasParentalResponsibility
+        parentalRelationship = contact.relationship
+        parentalRelationshipOther = contact.relationshipOther
+        parentHasParentalResponsibility = contact.hasParentalResponsibility
       } else {
         parentalRelationship = faker.helpers.arrayElement([
           ParentalRelationship.Fosterer,
@@ -95,9 +95,9 @@ export function generateClinicAppointment(patient, session, booking) {
       }
     } else {
       // Fosterer, Guardian or Other - for these, we'll keep the relationship exactly the same
-      parentalRelationship = parent.relationship
-      parentalRelationshipOther = parent.relationshipOther
-      parentHasParentalResponsibility = parent.hasParentalResponsibility
+      parentalRelationship = contact.relationship
+      parentalRelationshipOther = contact.relationshipOther
+      parentHasParentalResponsibility = contact.hasParentalResponsibility
     }
   }
 

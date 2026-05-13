@@ -8,7 +8,7 @@ import {
   VaccinationOutcome
 } from '../enums.js'
 import {
-  Parent,
+  Contact,
   PatientSession,
   Programme,
   Reply,
@@ -16,7 +16,7 @@ import {
 } from '../models.js'
 import { today } from '../utils/date.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
-import { formatParent } from '../utils/string.js'
+import { formatContact } from '../utils/string.js'
 import {
   getScreenOutcomesForConsentMethod,
   getScreenVaccineCriteria
@@ -115,9 +115,9 @@ export const replyController = {
         reply = new Reply(Reply.findOne(reply_uuid, data.wizard), data)
         next = patientSession.uri
 
-        // Remove any parent details in reply if self consent
+        // Remove any contact details in reply if self consent
         if (reply.selfConsent) {
-          delete reply.parent_uuid
+          delete reply.contact_uuid
         }
 
         if (triage?.outcome) {
@@ -231,13 +231,13 @@ export const replyController = {
         [`/${reply_uuid}/${type}/respondent`]: {},
         ...(data.respondent !== 'self' &&
           !reply.selfConsent && {
-            [`/${reply_uuid}/${type}/parent`]: {}
+            [`/${reply_uuid}/${type}/contact`]: {}
           }),
         ...(isMultiProgrammeSession && {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
         [`/${reply_uuid}/${type}/decision`]: {
-          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.post16 ? 'notify-parent' : 'health-answers'}`]:
+          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.post16 ? 'notify-contact' : 'health-answers'}`]:
             {
               data: 'reply.decision',
               value: ReplyDecision.Given
@@ -251,7 +251,7 @@ export const replyController = {
             value: ReplyDecision.NoResponse
           }
         },
-        [`/${reply_uuid}/${type}/notify-parent`]: {},
+        [`/${reply_uuid}/${type}/notify-contact`]: {},
         [`/${reply_uuid}/${type}/health-answers`]: {
           [`/${reply_uuid}/${type}/${countAnswersNeedingTriage(request.session.data.reply?.healthAnswers) ? 'triage' : 'check-answers'}`]: true
         },
@@ -291,11 +291,11 @@ export const replyController = {
         ...(referrer && { back: referrer })
       }
 
-      response.locals.respondentItems = patientSession.patient.parents.map(
-        (parent) => ({
-          text: formatParent(parent, false),
-          hint: { text: parent.tel },
-          value: parent.uuid
+      response.locals.respondentItems = patientSession.patient.contacts.map(
+        (contact) => ({
+          text: formatContact(contact, false),
+          hint: { text: contact.tel },
+          value: contact.uuid
         })
       )
 
@@ -346,17 +346,17 @@ export const replyController = {
     const { data } = request.session
     let { paths, patientSession, triage, vaccination } = response.locals
 
-    // Add parents from global context to wizard
-    data.wizard.parents = data.parents
+    // Add contacts from global context to wizard
+    data.wizard.contacts = data.contacts
 
     const reply = Reply.update(reply_uuid, request.body.reply, data.wizard)
 
-    // Create parent based on choice of respondent
+    // Create contact based on choice of respondent
     if (respondent) {
       switch (respondent) {
         case 'new': // Consent response is from a new contact
           reply.method = ReplyMethod.Phone
-          reply.parent_uuid = Parent.create(
+          reply.contact_uuid = Contact.create(
             {
               patient_uuid: reply.patient_uuid
             },
@@ -370,7 +370,7 @@ export const replyController = {
           break
         default: // Consent response is an existing respondent
           reply.method = ReplyMethod.Phone
-          reply.parent_uuid = respondent
+          reply.contact_uuid = respondent
           reply.selfConsent = false
 
           // Store reply that needs marked as invalid
@@ -417,7 +417,7 @@ export const replyController = {
     const newReply = Reply.create(
       {
         child: patientSession.patient,
-        parent: reply.parent,
+        contact: reply.contact,
         patient_uuid: patientSession.patient_uuid,
         session_id: patientSession.session_id,
         programme_id: patientSession.programme_id,

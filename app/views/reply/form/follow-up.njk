@@ -13,20 +13,20 @@
     html: summaryList({
       lastRowBorder: false,
       rows: summaryRows(reply, {
-        parent: {
-          value: reply.parent.fullNameAndRelationship
+        contact: {
+          value: reply.contact.fullNameAndRelationship
         },
         email: {
-          label: __("parent.email.label"),
-          value: reply.parent.email
+          label: __("contact.email.label"),
+          value: reply.contact.email
         },
         tel: {
-          label: __("parent.tel.label"),
-          value: reply.parent.tel
+          label: __("contact.tel.label"),
+          value: reply.contact.tel
         },
         contactPreference: {
-          label: __("parent.contactPreference.label"),
-          value: reply.parent.contactPreference
+          label: __("contact.contactPreference.label"),
+          value: reply.contact.contactPreference
         },
         refusalReason: {},
         refusalReasonDetails: {}

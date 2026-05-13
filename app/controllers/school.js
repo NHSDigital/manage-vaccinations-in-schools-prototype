@@ -535,7 +535,7 @@ export const schoolController = {
     // Find patients to invite to clinic
     const patient_uuids = school.patients.map((patient) => patient.uuid)
 
-    // Invite parents to book into a clinic
+    // Invite contacts to book into a clinic
     const clinicProgramme_ids = request.body.clinicProgramme_ids.filter(
       (item) => item !== '_unchecked'
     )

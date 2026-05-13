@@ -1,0 +1,69 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("consent.contact.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ input({
+    label: { text: __("consent.contact.fullName.label") },
+    decorate: "consent.contact_.fullName"
+  }) }}
+
+  {%- set fosterCarerHtml = radios({
+    fieldset: {
+      legend: { text: __("consent.contact.hasParentalResponsibility.label") }
+    },
+    hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
+    items: getBooleanItems(),
+    decorate: "consent.contact_.hasParentalResponsibility"
+  }) %}
+
+  {%- set otherHtml = input({
+    label: { text: __("consent.contact.relationshipOther.label") },
+    decorate: "consent.contact_.relationshipOther"
+  }) + radios({
+    fieldset: {
+      legend: { text: __("consent.contact.hasParentalResponsibility.label") }
+    },
+    hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
+    items: getBooleanItems(),
+    decorate: "consent.contact_.hasParentalResponsibility"
+  }) %}
+
+  {# Add conditional html for ‘Foster carer’ option #}
+  {% set items = injectConditionalHtml(parentalRelationshipItems, ParentalRelationship.Fosterer, fosterCarerHtml) %}
+
+  {# Add conditional html for ‘Other’ option #}
+  {% set items = injectConditionalHtml(items, ParentalRelationship.Other, otherHtml) %}
+
+  {{ radios({
+    fieldset: {
+      legend: { text: __("consent.contact.relationship.label") }
+    },
+    items: items,
+    decorate: "consent.contact_.relationship"
+  }) }}
+
+  {{ input({
+    label: { text: __("consent.contact.email.label") },
+    hint: { text: __("consent.contact.email.hint") },
+    decorate: "consent.contact_.email"
+  }) }}
+
+  {{ input({
+    label: { text: __("consent.contact.tel.label") + " (optional)" },
+    hint: { text: __("consent.contact.tel.hint") },
+    decorate: "consent.contact_.tel"
+  }) }}
+
+  {{ checkboxes({
+    items: [{
+      text: __("consent.contact.sms.label"),
+      value: true
+    }],
+    decorate: "consent.contact_.sms"
+  }) }}
+{% endblock %}

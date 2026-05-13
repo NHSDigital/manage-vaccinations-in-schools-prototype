@@ -3,7 +3,7 @@
 {% set title = __("clinicBooking.extraTime.title", firstName) %}
 
 {% block form %}
-  {# Ask for a reason if the parent says the child does need extra time #}
+  {# Ask for a reason if the contact says the child does need extra time #}
   {%- set yesHtml = input({
     label: { text: __("clinicBooking.extraTime.reason.label") },
     decorate: "appointment.extraTimeReason"

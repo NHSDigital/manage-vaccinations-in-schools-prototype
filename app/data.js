@@ -1,10 +1,10 @@
 import batches from '../.data/batches.json' with { type: 'json' }
 import clinicBookings from '../.data/clinic-bookings.json' with { type: 'json' }
 import clinics from '../.data/clinics.json' with { type: 'json' }
+import contacts from '../.data/contacts.json' with { type: 'json' }
 import instructions from '../.data/instructions.json' with { type: 'json' }
 import moves from '../.data/moves.json' with { type: 'json' }
 import notices from '../.data/notices.json' with { type: 'json' }
-import parents from '../.data/parents.json' with { type: 'json' }
 import patientSessions from '../.data/patient-sessions.json' with { type: 'json' }
 import patients from '../.data/patients.json' with { type: 'json' }
 import pdsRecords from '../.data/pds-records.json' with { type: 'json' }
@@ -35,12 +35,12 @@ const data = {
   batches,
   clinicBookings,
   clinics,
+  contacts,
   defaultBatches: {},
   downloads: {},
   instructions,
   moves,
   notices,
-  parents,
   patients,
   patientSessions,
   pdsRecords,
