@@ -97,7 +97,9 @@ export const giveOrRefuseConsentController = {
     )
     consent = new Consent(consent, data)
 
-    return response.redirect(`${consent.parentUri}/new/child`)
+    return request.session.save((error) => {
+      if (!error) response.redirect(`${consent.parentUri}/new/child`)
+    })
   },
 
   /**
