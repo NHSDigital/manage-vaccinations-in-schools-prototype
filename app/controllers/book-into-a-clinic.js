@@ -1,5 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
+import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
 import { ParentalRelationship, SessionStatus, SessionType } from '../enums.js'
@@ -381,7 +382,7 @@ export const bookIntoClinicController = {
         ([formattedTime, availability]) => {
           appointmentTimeItems.push({
             text: formattedTime,
-            value: formatTime(availability.date, false),
+            value: availability.date.toISOString(),
             hint: {
               text: __mf('clinicBooking.time.nurses', {
                 count: availability.count
@@ -491,6 +492,17 @@ export const bookIntoClinicController = {
         currentAppointment.session_id = request.body.transaction.sessionChoice
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
+    } else if (view === 'appointment-time') {
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = booking?.findAppointment(appointment_uuid)
+      const appointmentLengthInMinutes =
+        Session.findOne(appointment.session_id, data)?.appointmentLength ?? 10
+
+      const startAt = new Date(request.body.transaction.time)
+      const endAt = addMinutes(startAt, appointmentLengthInMinutes)
+      _.merge(appointment, { startAt, endAt })
+
+      ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'add-another') {
       // If the user elected to add another, create the new appointment and override the default redirect
       const addAnother = request.body.transaction.addAnother === 'true'
