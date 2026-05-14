@@ -13,9 +13,9 @@ export const Country = Object.fromEntries(
  * @enum {string}
  */
 export const AcademicYear = {
-  2023: '2023 to 2024',
   2024: '2024 to 2025',
-  2025: '2025 to 2026'
+  2025: '2025 to 2026',
+  2026: '2026 to 2027'
 }
 
 /**
