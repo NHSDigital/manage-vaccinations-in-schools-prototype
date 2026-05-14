@@ -67,7 +67,9 @@ export const bookIntoClinicController = {
     // Redirect to the first page in the booking journey (after the start page, that is)
     const redirectUrl = `${firstAppointment.uri.new}/child`
 
-    return response.redirect(redirectUrl)
+    return request.session.save((error) => {
+      if (!error) response.redirect(redirectUrl)
+    })
   },
 
   /**
