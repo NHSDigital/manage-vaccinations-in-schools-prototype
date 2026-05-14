@@ -235,6 +235,14 @@ export class ClinicBooking {
           )
         }
 
+        // Willing to accept flu injection as alternative?
+        appointment.fluAlternative =
+          stringToBoolean(appointment.fluAlternative) || false
+
+        // Gelatine free, or either type of MMR vaccine?
+        appointment.mmrAlternative =
+          stringToBoolean(appointment.mmrAlternative) || false
+
         // Impairments
         if (appointment?.child?.impairments) {
           appointment.child.impairments = stringToArray(

@@ -298,10 +298,7 @@ export const en = {
     fluVaccineType: {
       label: 'Flu vaccine'
     },
-    fluAlternative: {
-      label: 'Flu alternative accepted?'
-    },
-    mmrAlternative: {
+    mmrVaccineType: {
       label: 'MMR vaccine'
     },
     homeAddress: {

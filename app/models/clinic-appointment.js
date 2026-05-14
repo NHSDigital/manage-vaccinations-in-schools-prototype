@@ -237,6 +237,18 @@ export class ClinicAppointment {
 
     const session = Session.findOne(this.session_id, this.context)
 
+    let fluVaccineType
+    switch (this.fluDecision) {
+      case ReplyDecision.Given:
+        fluVaccineType = this.fluAlternative
+          ? 'Nasal or injected vaccine'
+          : 'Nasal vaccine only'
+        break
+      case ReplyDecision.OnlyAlternativeInjection:
+        fluVaccineType = 'Injected vaccine only'
+        break
+    }
+
     return {
       nameAndAge: [
         this.fullName,
@@ -246,15 +258,10 @@ export class ClinicAppointment {
         .join('<br>'),
       homeAddress: this.child.formatted.address,
       parentalRelationship: this.parent?.formatted.relationship,
-      ...(this.fluDecision && this.fluDecision !== ReplyDecision.NoResponse
-        ? { fluVaccineType: this.fluDecision }
-        : {}),
-      ...(this.fluAlternative !== undefined
-        ? { fluAlternative: this.fluAlternative ? 'Yes' : 'No' }
-        : {}),
+      ...(fluVaccineType ? { fluVaccineType } : {}),
       ...(this.mmrAlternative !== undefined
         ? {
-            mmrAlternative: this.mmrAlternative
+            mmrVaccineType: this.mmrAlternative
               ? 'Must not contain gelatine'
               : 'No preference'
           }
