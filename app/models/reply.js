@@ -85,11 +85,15 @@ export class Reply {
     this.method = options?.method
     this.selfConsent = options?.selfConsent
     this.note = options?.note || ''
-    this.contact_ = options?.contact_ && new Contact(options.contact_)
     this.contact_uuid = options?.contact_uuid
     this.patient_uuid = options?.patient_uuid
     this.programme_id = options?.programme_id
     this.session_id = options?.session_id
+
+    // For reasons of simplicity, we use `contact_` this to store contact
+    // details in the parental consent journey.
+    // TODO: Find out why contact() setter doesn’t work for this purpose
+    this.contact_ = options?.contact_ && new Contact(options.contact_)
 
     // Some values only valid if the consent request was received
     if (this.delivered) {
