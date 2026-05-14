@@ -77,7 +77,7 @@ export const getAllAppointmentPaths = (
         : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: () => {
-          const searchTerm = sessionData.transaction.preferredLocation
+          const searchTerm = sessionData.transaction?.preferredLocation
           const searchType = getLocationSearchType(searchTerm)
           switch (searchType) {
             case LocationSearchType.Postcode:
@@ -99,7 +99,8 @@ export const getAllAppointmentPaths = (
       [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {}
+      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/check-appointment`]: {}
     }
   })
 

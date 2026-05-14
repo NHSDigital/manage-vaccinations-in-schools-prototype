@@ -291,6 +291,24 @@ export const en = {
     },
     vaccinations: {
       label: 'Vaccinations'
+    },
+    extraTime: {
+      label: 'Is extra time needed?'
+    },
+    fluVaccineType: {
+      label: 'Flu vaccine'
+    },
+    fluAlternative: {
+      label: 'Flu alternative accepted?'
+    },
+    mmrAlternative: {
+      label: 'MMR vaccine'
+    },
+    homeAddress: {
+      label: 'Home address'
+    },
+    parentalRelationship: {
+      label: 'Your relationship'
     }
   },
   clinicBooking: {
@@ -485,6 +503,30 @@ export const en = {
       },
       nurses:
         '{count, plural, =0 {No nurses available} one {1 nurse available} other {{count} nurses available}}'
+    },
+    'check-appointment': {
+      title: 'Check %s’s appointment details',
+      summary: {
+        child: 'Child details',
+        vaccination: 'Vaccination details',
+        appointment: 'Appointment details'
+      },
+      confirm: 'Confirm'
+    },
+    addAnother: {
+      title: 'Add, change, or remove appointments',
+      summary: {
+        title: 'Appointments',
+        child: {
+          label: 'Child'
+        }
+      },
+      question: 'Do you want to add another child?'
+    },
+    removeAppointment: {
+      title: 'Are you sure you want to remove %s’s appointment?',
+      confirm: 'Yes, remove this appointment',
+      cancel: 'No, return to the previous page'
     },
     parent: {
       title: 'About you',

@@ -12,6 +12,7 @@ import {
 import { formatDate } from '../utils/date.js'
 import {
   formatLinkWithSecondaryText,
+  formatWithSecondaryText,
   stringToArray,
   stringToBoolean
 } from '../utils/string.js'
@@ -243,6 +244,26 @@ export class ClinicAppointment {
       ]
         .filter(Boolean)
         .join('<br>'),
+      homeAddress: this.child.formatted.address,
+      parentalRelationship: this.parent?.formatted.relationship,
+      ...(this.fluDecision && this.fluDecision !== ReplyDecision.NoResponse
+        ? { fluVaccineType: this.fluDecision }
+        : {}),
+      ...(this.fluAlternative !== undefined
+        ? { fluAlternative: this.fluAlternative ? 'Yes' : 'No' }
+        : {}),
+      ...(this.mmrAlternative !== undefined
+        ? {
+            mmrAlternative: this.mmrAlternative
+              ? 'Must not contain gelatine'
+              : 'No preference'
+          }
+        : {}),
+      extraTime: formatWithSecondaryText(
+        this.needsExtraTime ? 'Yes' : 'No',
+        this.extraTimeReason,
+        true
+      ),
       location: Object.values(session?.clinic?.location ?? {})
         .filter(Boolean)
         .join(', '),
@@ -257,19 +278,32 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get the parent for this appointment's child
+   *
+   * @returns {Parent} parent with the correct relationship to this appointment's child
+   */
+  get parent() {
+    // Take most details from the parent in the booking
+    const parent = new Parent(this.booking?.parent ?? {})
+    if (parent) {
+      parent.relationship = this.parentalRelationship
+      parent.relationshipOther = this.parentalRelationshipOther
+      parent.hasParentalResponsibility = this.parentHasParentalResponsibility
+    }
+
+    return parent
+  }
+
+  /**
    * Get formatted links
    *
    * @returns {object} Formatted links
    */
   get link() {
-    const parent = new Parent({
-      fullName: this.booking?.parent?.fullName,
-      relationship: this.parentalRelationship
-    })
     return {
-      summary: formatLinkWithSecondaryText(
-        this.uri,
-        parent.fullNameAndRelationship,
+      unmatched: formatLinkWithSecondaryText(
+        this.uri.unmatched,
+        this.parent.fullNameAndRelationship,
         `for ${this.child.fullName}`
       )
     }
@@ -287,10 +321,13 @@ export class ClinicAppointment {
   /**
    * Get URI, without the context of the session
    *
-   * @returns {string} URI
+   * @returns {object} an object with various URIs for this appointment
    */
   get uri() {
-    return `/appointments/${this.uuid}`
+    return {
+      unmatched: `/appointments/${this.uuid}`,
+      new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`
+    }
   }
 
   /**
