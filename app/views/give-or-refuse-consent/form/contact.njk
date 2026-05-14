@@ -14,6 +14,15 @@
 
   {%- set fosterCarerHtml = radios({
     fieldset: {
+      legend: { text: __("consent.contact.hasParentalResponsibility.delegatedLabel") }
+    },
+    hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
+    items: getBooleanItems(),
+    decorate: "consent.contact_.hasParentalResponsibility"
+  }) %}
+
+  {%- set guardianHtml = radios({
+    fieldset: {
       legend: { text: __("consent.contact.hasParentalResponsibility.label") }
     },
     hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
@@ -35,6 +44,9 @@
 
   {# Add conditional html for ‘Foster carer’ option #}
   {% set items = injectConditionalHtml(parentalRelationshipItems, ParentalRelationship.Fosterer, fosterCarerHtml) %}
+
+  {# Add conditional html for ‘Guardian’ option #}
+  {% set items = injectConditionalHtml(items, ParentalRelationship.Guardian, guardianHtml) %}
 
   {# Add conditional html for ‘Other’ option #}
   {% set items = injectConditionalHtml(items, ParentalRelationship.Other, otherHtml) %}

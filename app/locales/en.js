@@ -373,6 +373,7 @@ export const en = {
       title: 'What is your relationship to %s?',
       hasParentalResponsibility: {
         label: 'Do you have parental responsibility?',
+        delegatedLabel: 'Do you have delegated authority?',
         hint: 'This means you have legal rights and duties relating to the child'
       },
       relationshipOther: {
@@ -561,6 +562,7 @@ export const en = {
       },
       hasParentalResponsibility: {
         label: 'Do you have parental responsibility?',
+        delegatedLabel: 'Do you have delegated authority?',
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
@@ -686,7 +688,7 @@ export const en = {
     'parental-responsibility': {
       title: 'You cannot give or refuse consent through this service',
       description:
-        'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
+        'To give or refuse consent for a child’s vaccination, you need to have parental responsibility or delegated authority.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
     new: {
       'check-answers': {
@@ -889,6 +891,7 @@ export const en = {
       },
       hasParentalResponsibility: {
         label: 'Do you have parental responsibility?',
+        delegatedLabel: 'Do you have delegated authority?',
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
@@ -1424,7 +1427,8 @@ export const en = {
       label: 'Relationship'
     },
     hasParentalResponsibility: {
-      label: 'Parental responsibility',
+      label: 'Has parental responsibility?',
+      delegatedLabel: 'Has delegated authority?',
       hint: 'They have the legal rights and duties relating to the child'
     },
     email: {

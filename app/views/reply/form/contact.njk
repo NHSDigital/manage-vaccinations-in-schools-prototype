@@ -12,6 +12,45 @@
     title: title
   }) }}
 
+  {%- set fosterCarerHtml = radios({
+    fieldset: {
+      legend: { text: __("contact.hasParentalResponsibility.delegatedLabel") }
+    },
+    hint: { text: __("contact.hasParentalResponsibility.hint") },
+    items: getBooleanItems(),
+    decorate: "reply.contact.hasParentalResponsibility"
+  }) %}
+
+  {%- set guardianHtml = radios({
+    fieldset: {
+      legend: { text: __("contact.hasParentalResponsibility.label") }
+    },
+    hint: { text: __("contact.hasParentalResponsibility.hint") },
+    items: getBooleanItems(),
+    decorate: "reply.contact.hasParentalResponsibility"
+  }) %}
+
+  {%- set otherHtml = input({
+    label: { text: __("contact.relationshipOther.label") },
+    decorate: "reply.contact.relationshipOther"
+  }) + radios({
+    fieldset: {
+      legend: { text: __("contact.hasParentalResponsibility.label") }
+    },
+    hint: { text: __("contact.hasParentalResponsibility.hint") },
+    items: getBooleanItems(),
+    decorate: "reply.contact.hasParentalResponsibility"
+  }) %}
+
+  {# Add conditional html for ‘Foster carer’ option #}
+  {% set items = injectConditionalHtml(parentalRelationshipItems, ParentalRelationship.Fosterer, fosterCarerHtml) %}
+
+  {# Add conditional html for ‘Guardian’ option #}
+  {% set items = injectConditionalHtml(items, ParentalRelationship.Guardian, guardianHtml) %}
+
+  {# Add conditional html for ‘Other’ option #}
+  {% set items = injectConditionalHtml(items, ParentalRelationship.Other, otherHtml) %}
+
   {{ input({
     label: { text: __("contact.fullName.label") },
     decorate: "reply.contact.fullName"
@@ -22,26 +61,7 @@
     fieldset: {
       legend: { text: __("contact.relationship.label") }
     },
-    items: enumItems(ParentalRelationship) | pop | pop | push({
-      text: ParentalRelationship.Other,
-      conditional: {
-        html: input({
-          label: { text: __("contact.relationshipOther.label") },
-          decorate: "reply.contact.relationshipOther"
-        }) + radios({
-          fieldset: {
-            legend: { text: __("contact.hasParentalResponsibility.label") }
-          },
-          hint: { text: __("contact.hasParentalResponsibility.hint") },
-          items: [{
-            text: "Yes"
-          }, {
-            text: "No"
-          }],
-          decorate: "reply.contact.hasParentalResponsibility"
-        })
-      }
-    }),
+    items: items,
     decorate: "reply.contact.relationship"
   }) }}
 
