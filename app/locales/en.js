@@ -2018,6 +2018,7 @@ export const en = {
     vaccinations: {
       label: 'Vaccinations',
       title: 'Vaccinations',
+      total: 'Total vaccinations for this cohort',
       team: 'Monthly vaccinations by %s'
     },
     consent: {
