@@ -22,6 +22,12 @@
     </app-auto-submit>
 
     <div class="nhsuk-grid-column-three-quarters">
+      {{ appHeading({
+        title: __("report.vaccinations.total"),
+        level: 2,
+        size: "m"
+      }) }}
+
       <div class="nhsuk-grid-row nhsuk-card-group">
         <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
           {{ appDataCard({
@@ -60,11 +66,8 @@
 
       {{ table({
         responsive: true,
-        card: {
-          feature: true,
-          heading: __("report.vaccinations.team", data.team.ods),
-          headingLevel: 2
-        },
+        caption: __("report.vaccinations.team", data.team.ods),
+        captionSize: "m",
         head: [
           {
             text: "Month"
