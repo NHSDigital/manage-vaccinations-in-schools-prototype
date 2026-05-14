@@ -327,7 +327,7 @@ export const bookIntoClinicController = {
       response.locals.clinicDateItems = clinicDateItems
       response.locals.clinicSummary = {
         location: scheduledClinicSessions.at(0)?.formatted.location,
-        date: 'To be decided'
+        date: '—'
       }
     } else if (view === 'appointment-time-range') {
       const session = Session.findOne(appointment.session_id, data)
