@@ -314,8 +314,8 @@ export const NotifySmsStatus = {
 export const ParentalRelationship = {
   Mum: 'Mum',
   Dad: 'Dad',
-  Guardian: 'Guardian',
   Fosterer: 'Foster carer',
+  Guardian: 'Guardian',
   Other: 'Other',
   Unknown: 'Unknown'
 }
