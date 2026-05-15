@@ -57,7 +57,12 @@ export class Autocomplete extends Component {
   /**
    * Get enhanced information about each option
    *
-   * @returns {object} Enhanced options
+   * @returns {{
+   *   name: string;
+   *   value: string;
+   *   append: string;
+   *   hint: string;
+   * }[]} Enhanced options
    */
   get enhancedOptions() {
     return this.options.map((option) => ({
@@ -86,17 +91,15 @@ export class Autocomplete extends Component {
   /**
    * HTML for suggestion
    *
-   * @template T
+   * @template {string | number | boolean} T
    * @param {T} value - Current value
-   * @param {Array} options - Available options
+   * @param {typeof this.enhancedOptions} options - Available options
    * @returns {string} HTML for suggestion
    */
   suggestion(value, options) {
     const option = options.find(({ name }) => name === value)
     if (option) {
-      const label = option.append
-        ? `${value} – ${option.append}`
-        : String(value)
+      const label = option.append ? `${value} – ${option.append}` : `${value}`
       return option.hint
         ? `${label}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
         : label
