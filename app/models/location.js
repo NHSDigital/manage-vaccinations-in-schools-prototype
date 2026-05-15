@@ -5,9 +5,7 @@ import { SessionPresets } from '../enums.js'
 import { Programme, Team } from '../models.js'
 
 /**
- * @class Location
- * @param {object} options - Options
- * @param {object} [context] - Context
+ * @typedef {object} LocationOptions
  * @property {string} [name] - Name
  * @property {string} [id] - Location ID
  * @property {string} [addressLine1] - Address line 1
@@ -17,7 +15,15 @@ import { Programme, Team } from '../models.js'
  * @property {string} [team_id] - Team ID
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  */
+
+/**
+ * @class Location
+ */
 export class Location {
+  /**
+   * @param {LocationOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('?#####')

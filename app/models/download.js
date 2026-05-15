@@ -27,10 +27,7 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Vaccination report download
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} DownloadOptions
  * @property {string} [id] - Download ID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created download
@@ -50,7 +47,15 @@ import {
  * @property {Array<string>} [team_ids] - Team IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
+
+/**
+ * @class Vaccination report download
+ */
 export class Download {
+  /**
+   * @param {DownloadOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })

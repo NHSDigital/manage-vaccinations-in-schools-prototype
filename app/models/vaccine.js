@@ -10,10 +10,7 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Vaccine
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} VaccineOptions
  * @property {string} [snomed] - SNOMED code
  * @property {string} [type] - Type
  * @property {string} [brand] - Brand
@@ -27,7 +24,15 @@ import {
  * @property {object} [healthQuestions] - Health questions
  * @property {Array<PreScreenQuestion>} [preScreenQuestions] - Pre-screening questions
  */
+
+/**
+ * @class Vaccine
+ */
 export class Vaccine {
+  /**
+   * @param {VaccineOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.snomed = options?.snomed || faker.string.numeric(14)

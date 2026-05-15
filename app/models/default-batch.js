@@ -1,10 +1,19 @@
 import { Batch, Session } from '../models.js'
 
 /**
+ * @typedef {object} DefaultBatchOptions
+ * @property {string} [session_id] - Session ID
+ */
+
+/**
  * @class Default Batch
  * @augments Batch
  */
 export class DefaultBatch extends Batch {
+  /**
+   * @param {DefaultBatchOptions & BatchOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     super(options, context)
 
@@ -95,3 +104,7 @@ export class DefaultBatch extends Batch {
     context.defaultBatches[id] = defaultBatch
   }
 }
+
+/**
+ * @import { BatchOptions } from './batch.js'
+ */

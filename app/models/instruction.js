@@ -3,18 +3,23 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { today } from '../utils/date.js'
 
 /**
- * @class Instruction
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} [uuid] - UUID
+ * @typedef {object} InstructionOptions
+ * @property {string} [uuid] - Instruction UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who performed instruction
  * @property {InstructionOutcome} [outcome] - Outcome
  * @property {string} [patientSession_uuid] - Patient session UUID
  * @property {string} [programme_id] - Programme ID
  */
+
+/**
+ * @class Instruction
+ */
 export class Instruction {
+  /**
+   * @param {InstructionOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

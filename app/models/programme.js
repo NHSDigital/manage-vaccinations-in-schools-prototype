@@ -11,12 +11,9 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Programme
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {ProgrammeType} type - Programme type
- * @property {string} [id] - ID
+ * @typedef {object} ProgrammeOptions
+ * @property {string} [id] - Programme ID
+ * @property {ProgrammeType} [type] - Programme type
  * @property {boolean} [hidden] - Hidden
  * @property {string} [name] - Name
  * @property {string} [title] - Title
@@ -32,11 +29,19 @@ import {
  * @property {boolean} [nhseSyncable] - Vaccination records can be synced
  * @property {Array<string>} [vaccine_snomeds] - Vaccines administered
  */
+
+/**
+ * @class Programme
+ */
 export class Programme {
+  /**
+   * @param {ProgrammeOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
-    this.type = options?.type
     this.id = options?.id
+    this.type = options?.type
     this.hidden = options?.hidden || false
     this.name = options?.name
     this.title = options?.title

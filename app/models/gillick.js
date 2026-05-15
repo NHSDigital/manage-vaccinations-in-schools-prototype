@@ -3,8 +3,8 @@ import { today } from '../utils/date.js'
 import { stringToBoolean } from '../utils/string.js'
 
 /**
- * @class Gillick assessment
- * @property {string} [createdAt] - Created date
+ * @typedef {object} GillickOptions
+ * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created session
  * @property {Date} [updatedAt] - Updated date
  * @property {boolean} [q1] - Question 1
@@ -14,7 +14,14 @@ import { stringToBoolean } from '../utils/string.js'
  * @property {boolean} [q5] - Question 5
  * @property {string} [note] - Assessment note
  */
+
+/**
+ * @class Gillick assessment
+ */
 export class Gillick {
+  /**
+   * @param {GillickOptions} options - Options
+   */
   constructor(options) {
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.createdBy_uid = options?.createdBy_uid

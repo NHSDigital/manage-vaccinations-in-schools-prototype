@@ -34,15 +34,20 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Patient Programme
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} PatientProgrammeOptions
  * @property {boolean} [invitedToClinic] - Invited to clinic
  * @property {string} [patient_uuid] - Patient UUID
  * @property {string} [programme_id] - Programme ID
  */
+
+/**
+ * @class Patient Programme
+ */
 export class PatientProgramme {
+  /**
+   * @param {PatientProgrammeOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.invitedToClinic = options?.invitedToClinic

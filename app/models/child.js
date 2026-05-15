@@ -22,11 +22,8 @@ import {
 import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
 
 /**
- * @class Child
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {string} [uuid] - UUID
- * @property {object} [context] - Context
+ * @typedef {object} ChildOptions
+ * @property {string} [uuid] - Child UUID
  * @property {string} [firstName] - First name
  * @property {string} [lastName] - Last name
  * @property {string} [preferredFirstName] - Preferred first name
@@ -49,7 +46,15 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @property {string} [registrationGroup] - Registration group
  * @property {string} [school_id] - School
  */
+
+/**
+ * @class Child
+ */
 export class Child {
+  /**
+   * @param {ChildOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

@@ -7,10 +7,7 @@ import { today } from '../utils/date.js'
 import { stringToBoolean } from '../utils/string.js'
 
 /**
- * @class Team
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} TeamOptions
  * @property {string} [id] - Team ID
  * @property {string} [ods] - ODS code
  * @property {Date} [updatedAt] - Updated date
@@ -18,14 +15,22 @@ import { stringToBoolean } from '../utils/string.js'
  * @property {string} [email] - Email address
  * @property {string} [tel] - Phone number
  * @property {string} [privacyPolicyUrl] - Privacy policy URL
- * @property {number} [sessionOpenWeeks] - Weeks before session to request consent
- * @property {number} [sessionReminderWeeks] - Days before sending first reminder
+ * @property {number} [sessionOpenWeeks] - Weeks before request consent
+ * @property {number} [sessionReminderWeeks] - Weeks before send first reminder
  * @property {boolean} [sessionRegistration] - Should sessions have registration
  * @property {string} [password] - Shared password
  * @property {Array<string>} [clinic_ids] - Clinic IDs
  * @property {Array<string>} [school_ids] - School URNs
  */
+
+/**
+ * @class Team
+ */
 export class Team {
+  /**
+   * @param {TeamOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('###')

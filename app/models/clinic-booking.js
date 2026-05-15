@@ -6,18 +6,23 @@ import { today } from '../utils/date.js'
 import { formatCode, stringToArray, stringToBoolean } from '../utils/string.js'
 
 /**
- * @class ClinicBooking
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} ClinicBookingOptions
  * @property {string} [uuid] - Clinic booking UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [bookingReference] - Booking reference number
  * @property {Array<string>} [invited_programme_ids] - IDs of programmes for which child was invited
  * @property {Contact} [contact] - Contact details for the booking; see appointments for parental relationship details
- * @property {Array<ClinicAppointment>} [appointments] - Appointments created in this booking (one per child)
+ * @property {Array<ClinicAppointment>} [appointments] - Appointments in this booking (one per child)
+ */
+
+/**
+ * @class ClinicBooking
  */
 export class ClinicBooking {
+  /**
+   * @param {ClinicBookingOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

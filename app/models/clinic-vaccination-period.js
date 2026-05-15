@@ -8,20 +8,24 @@ import {
 } from '../utils/date.js'
 
 /**
- * @class ClinicVaccinationPeriod
- * @param {object} options - property values
+ * @typedef {object} ClinicVaccinationPeriodOptions
  * @property {string} [uuid] - Vaccination period UUID
  * @property {Date} [startAt] - Start time of first appointment slot
  * @property {Date} [endAt] - End time of final appointment slot
  * @property {number} [vaccinatorCount] - The number of staff vaccinating in parallel during this period
  */
+
+/**
+ * @class ClinicVaccinationPeriod
+ */
 export class ClinicVaccinationPeriod {
+  /**
+   * @param {ClinicVaccinationPeriodOptions} options - Options
+   */
   constructor(options) {
     this.uuid = options?.uuid || faker.string.uuid()
-
     this.startAt = options?.startAt && new Date(options.startAt)
     this.endAt = options?.endAt && new Date(options.endAt)
-
     this.vaccinatorCount = options?.vaccinatorCount
   }
 

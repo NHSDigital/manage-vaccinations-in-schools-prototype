@@ -49,11 +49,8 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Vaccination
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} [uuid] - UUID
+ * @typedef {object} VaccinationOptions
+ * @property {string} [uuid] - Vaccination UUID
  * @property {Date} [createdAt] - Created date
  * @property {object} [createdAt_] - Created date (from `dateInput`)
  * @property {string} [createdBy_uid] - User who performed vaccination
@@ -63,6 +60,10 @@ import {
  * @property {string} [suppliedBy_uid] - Who supplied the vaccine
  * @property {Date} [nhseSyncedAt] - Date synced with NHS England API
  * @property {LocationType} [locationType] - Location
+ * @property {string} [locationName] - Location name
+ * @property {string} [addressLine1] - Address line 1
+ * @property {string} [addressLine2] - Address line 2
+ * @property {string} [addressLevel1] - Address level 2
  * @property {string} [country] - Country (in UK)
  * @property {string} [countryOther] - Country (outside UK)
  * @property {boolean} [selfId] - Child confirmed their identity?
@@ -85,10 +86,18 @@ import {
  * @property {string} [programme_id] - Programme ID
  * @property {string} [programmeOther] - Non-NHS programme name
  * @property {string} [batch_id] - Batch ID
- * @property {string} [variant] - Programme variant
+ * @property {boolean} [variant] - Is programme variant?
  * @property {string} [vaccine_snomed] - Vaccine SNOMED code
  */
+
+/**
+ * @class Vaccination
+ */
 export class Vaccination {
+  /**
+   * @param {VaccinationOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

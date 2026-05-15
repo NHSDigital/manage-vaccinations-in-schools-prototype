@@ -36,11 +36,8 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class ClinicAppointment
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context, for access to patients, programmes, etc.
- * @property {string} [uuid] - Unique ID for this clinic appointment
+ * @typedef {object} ClinicAppointmentOptions
+ * @property {string} [uuid] - Clinic appointment UUID
  * @property {string} [booking_uuid] - Unique ID for the booking under which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {Child} [child] - Child details recorded from form input values
@@ -51,14 +48,22 @@ import {
  * @property {Date} [startAt] - Slot start time
  * @property {Date} [endAt] - Slot end time
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
- * @property {ReplyDecision} fluDecision - whether to use nasal or injected flu vaccine
- * @property {boolean} [fluAlternative] - accept the alternative flu vaccine if nasal not suitable?
- * @property {boolean} [mmrAlternative] - want the vaccine that doesn't contain gelatine?
+ * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
+ * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
+ * @property {boolean} [mmrAlternative] - Wants vaccine that doesn’t contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
- * @property {boolean} archived - Has this appointment been archived?
+ * @property {boolean} [archived] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
  */
+
+/**
+ * @class ClinicAppointment
+ */
 export class ClinicAppointment {
+  /**
+   * @param {ClinicAppointmentOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

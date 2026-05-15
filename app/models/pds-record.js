@@ -12,17 +12,23 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class PDS record
- * @augments Child
- * @param {object} options - Options
- * @param {object} [context] - Context
+ * @typedef {object} PDSRecordOptions
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
  */
+
+/**
+ * @class PDS record
+ * @augments Child
+ */
 export class PDSRecord extends Child {
+  /**
+   * @param {PDSRecordOptions & ChildOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     super(options, context)
 
@@ -196,3 +202,7 @@ export class PDSRecord extends Child {
     return updatedPdsRecord
   }
 }
+
+/**
+ * @import { ChildOptions } from './child.js'
+ */
