@@ -19,8 +19,7 @@ export function tokenize(object, keys) {
 /**
  * Check if a value is empty
  *
- * @template T
- * @param {T} value - Value to check
+ * @param {unknown} value - Value to check
  * @returns {boolean} Value is empty
  */
 export const isEmpty = (value) => {
