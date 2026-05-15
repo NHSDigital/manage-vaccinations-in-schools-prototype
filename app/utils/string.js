@@ -30,9 +30,9 @@ export function camelToKebabCase(string) {
 /**
  * Convert string to boolean
  *
- * @template T
- * @param {T} value - Value to test
- * @returns {boolean|T} Boolean
+ * @template {string | boolean} T
+ * @param {T | Array<T>} value - Value to test
+ * @returns {boolean} Boolean
  */
 export function stringToBoolean(value) {
   // Ensure single checkbox returns boolean not an array with _unchecked
@@ -46,8 +46,8 @@ export function stringToBoolean(value) {
 /**
  * Convert string to array
  *
- * @template T
- * @param {T} value - Value to test
+ * @template {string | boolean} T
+ * @param {T | Array<T>} value - Value to test
  * @returns {Array<T>} Array
  */
 export function stringToArray(value) {
