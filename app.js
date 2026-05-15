@@ -1,7 +1,10 @@
+import autoprefixer from 'autoprefixer'
 import sessionInDatabase from 'connect-pg-simple'
+import { sassPlugin } from 'esbuild-sass-plugin'
 import session from 'express-session'
-import NHSPrototypeKit from 'nhsuk-prototype-kit'
+import NHSPrototypeKit, { config } from 'nhsuk-prototype-kit'
 import { Pool } from 'pg'
+import postcss from 'postcss'
 
 import sessionDataDefaults from './app/data.js'
 import filters from './app/filters.js'
@@ -10,6 +13,12 @@ import routes from './app/routes.js'
 
 const { DATABASE_URL, NODE_ENV } = process.env
 
+const processor = postcss([
+  autoprefixer({
+    env: 'stylesheets'
+  })
+])
+
 const prototype = await NHSPrototypeKit.init({
   buildOptions: {
     entryPoints: [
@@ -17,6 +26,22 @@ const prototype = await NHSPrototypeKit.init({
       'app/assets/javascripts/*.js'
     ],
     external: ['/nhsuk-prototype-kit/*'],
+    plugins: [
+      sassPlugin({
+        embedded: true,
+        loadPaths: config.modulePaths,
+        quietDeps: true,
+        sourceMap: true,
+        sourceMapIncludeSources: true,
+        async transform(css, resolveDir, filePath) {
+          const result = await processor.process(css, {
+            from: filePath
+          })
+
+          return result.css
+        }
+      })
+    ],
     tsconfigRaw: {}
   },
   filters,

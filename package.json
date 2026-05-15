@@ -29,9 +29,11 @@
     "@x-govuk/govuk-prototype-filters": "^2.1.0",
     "@x-govuk/govuk-prototype-wizard": "^0.4.0",
     "accessible-autocomplete": "^3.0.1",
+    "autoprefixer": "^10.5.0",
     "connect-pg-simple": "^10.0.0",
     "countries-and-timezones": "^3.9.0",
     "date-fns": "^4.1.0",
+    "esbuild-sass-plugin": "^3.7.0",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "i18n": "^0.15.3",
@@ -41,6 +43,7 @@
     "nhsuk-frontend": "^10.4.2",
     "nhsuk-prototype-kit": "^8.2.3",
     "pg": "^8.20.0",
+    "postcss": "^8.5.14",
     "response-time": "^2.3.4"
   },
   "devDependencies": {
@@ -49,6 +52,7 @@
     "@types/express-session": "^1.19.0",
     "@types/lodash": "^4.17.24",
     "@x-govuk/eslint-config": "^0.0.2",
+    "postcss-scss": "^4.0.9",
     "prettier": "^3.8.1",
     "stylelint": "^16.26.1",
     "stylelint-config-gds": "^2.0.0",

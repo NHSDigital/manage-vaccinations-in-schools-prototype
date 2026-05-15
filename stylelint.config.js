@@ -3,6 +3,12 @@
  */
 export default {
   extends: 'stylelint-config-gds/scss',
+  overrides: [
+    {
+      customSyntax: 'postcss-scss',
+      files: ['**/*.scss']
+    }
+  ],
   plugins: ['stylelint-order'],
   rules: {
     /**
