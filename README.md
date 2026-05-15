@@ -4,7 +4,7 @@ A point of care (POC) prototype, built using the [NHS.UK Prototype Rig](https://
 
 Point of Care Systems record data when someone is vaccinated, including product and batch details, and the recording of adverse reactions.
 
-<https://digital.nhs.uk/coronavirus/vaccinations/training-and-onboarding/point-of-care>
+<https://digital.nhs.uk/services/vaccinations-point-of-care>
 
 ## Requirements
 
