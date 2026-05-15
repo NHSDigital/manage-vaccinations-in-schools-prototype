@@ -2657,7 +2657,7 @@ export const en = {
     },
     school_id: {
       label: 'School URN',
-      title: 'Select a school'
+      title: 'Enter the school'
     },
     yearGroups: {
       label: 'Year groups',
@@ -2667,7 +2667,7 @@ export const en = {
       label: 'Clinic location',
       title: 'Where will this session be held?',
       search: {
-        label: 'Select a clinic location'
+        label: 'Enter the clinic location'
       }
     },
     vaccinationPeriods: {
