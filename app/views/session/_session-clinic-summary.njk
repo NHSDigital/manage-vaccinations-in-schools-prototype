@@ -12,8 +12,7 @@
       heading: __("session.tally.appointments.total.label"),
       headingLevel: 4,
       compact: true,
-      data: session.totalAppointmentCount,
-      href: session.uri + "/edit"
+      data: session.totalAppointmentCount
     }) }}
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -22,8 +21,7 @@
       headingLevel: 4,
       colour: "white" if session.availableAppointmentCount > 10 else ("orange" if session.availableAppointmentCount > 0 else "red"),
       compact: true,
-      data: session.availableAppointmentCount,
-      href: session.uri + "/edit"
+      data: session.availableAppointmentCount
     }) }}
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -31,8 +29,7 @@
       heading: __("session.tally.vaccinators.maximum.label") if session.hasVariableVaccinatorCounts else __("session.tally.vaccinators.consistent.label"),
       headingLevel: 4,
       compact: true,
-      data: session.maximumVaccinatorCount,
-      href: session.uri + "/edit"
+      data: session.maximumVaccinatorCount
     }) }}
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -41,8 +38,7 @@
       headingLevel: 4,
       colour: "orange" if session.daysLeftToBook < 7 and session.daysLeftToBook > 0,
       compact: true,
-      data: session.daysLeftToBook,
-      href: session.uri + "/edit"
+      data: session.daysLeftToBook
     }) }}
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">

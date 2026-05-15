@@ -21,6 +21,7 @@ import {
 import {
   Clinic,
   ClinicAppointment,
+  ClinicBooking,
   ClinicVaccinationPeriod,
   Consent,
   PatientSession,
@@ -599,9 +600,9 @@ export class Session {
       )
     }
 
-    const appointments = this.patientSessions.map(
-      ({ clinicAppointment }) => clinicAppointment
-    )
+    const appointments = ClinicBooking.findAll(this.context)
+      ?.flatMap(({ appointments }) => appointments)
+      .filter(({ session_id }) => session_id === this.id)
 
     return appointments
   }
@@ -613,7 +614,7 @@ export class Session {
    */
   get unmatchedAppointments() {
     const appointments = this.appointments
-    return appointments.filter((patient_uuid) => !patient_uuid)
+    return appointments.filter(({ patient_uuid }) => !patient_uuid)
   }
 
   /**
