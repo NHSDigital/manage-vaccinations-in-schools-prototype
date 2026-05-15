@@ -1,4 +1,4 @@
-import 'connect-flash'
+import 'express-flash'
 import 'express-session'
 import {
   ClinicBooking,
@@ -12,11 +12,6 @@ import {
 declare module 'express-serve-static-core' {
   interface Locals extends ApplicationLocals {
     data: Record<string, any> & ApplicationData
-  }
-
-  interface Request {
-    flash(message?: string): { [key: string]: string[] }
-    flash(event: string, message: string | string[]): any
   }
 }
 
