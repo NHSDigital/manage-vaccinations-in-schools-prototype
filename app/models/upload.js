@@ -14,22 +14,30 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Upload
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} UploadOptions
  * @property {string} [id] - Upload ID
  * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created upload
  * @property {Date} [updatedAt] - Updated date
+ * @property {string} [updatedBy_uid] - User who updated upload
  * @property {string} [fileName] - Original file name
  * @property {number} [progress] - Upload import progress
  * @property {object} [validations] - File validations
+ * @property {Array<number>} [yearGroups] - Year groups
+ * @property {string} [school_id] - School IDs
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  */
+
+/**
+ * @class Upload
+ */
 export class Upload {
+  /**
+   * @param {UploadOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })

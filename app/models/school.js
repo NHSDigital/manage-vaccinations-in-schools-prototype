@@ -12,17 +12,23 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class School
- * @augments Location
- * @param {object} options - Options
- * @param {object} [context] - Context
+ * @typedef {object} SchoolOptions
  * @property {string} [urn] - URN
  * @property {boolean} [sen] - SEN school
  * @property {string} [site] - Site code
  * @property {SchoolPhase} [phase] - Phase
  * @property {Array<number>} [yearGroups] - Year groups
  */
+
+/**
+ * @class School
+ * @augments Location
+ */
 export class School extends Location {
+  /**
+   * @param {SchoolOptions & LocationOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     super(options, context)
 
@@ -288,4 +294,5 @@ export class School extends Location {
 
 /**
  * @import { SchoolPhase } from '../enums.js'
+ * @import { LocationOptions } from './location.js'
  */

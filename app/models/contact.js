@@ -5,11 +5,8 @@ import { Patient } from '../models.js'
 import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 
 /**
- * @class Contact
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} [uuid] - UUID
+ * @typedef {object} ContactOptions
+ * @property {string} [uuid] - Contact UUID
  * @property {string} [fullName] - Full name
  * @property {ParentalRelationship} [relationship] - Relationship to child
  * @property {string} [relationshipOther] - Other relationship to child
@@ -24,7 +21,15 @@ import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
  * @property {string} [contactPreferenceDetails] - Contact method details
  * @property {string} [patient_uuid] - Patient UUID
  */
+
+/**
+ * @class Contact
+ */
 export class Contact {
+  /**
+   * @param {ContactOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

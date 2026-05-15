@@ -3,8 +3,8 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { formatCode, formatLink } from '../utils/string.js'
 
 /**
- * @class User
- * @property {string} [uid] - User ID
+ * @typedef {object} UserOptions
+ * @property {string} [uid] - User UID
  * @property {string} [firstName] - First/given name
  * @property {string} [lastName] - Last/family name
  * @property {string} [email] - Email address
@@ -13,7 +13,14 @@ import { formatCode, formatLink } from '../utils/string.js'
  * @property {Array<VaccineMethod>} [vaccineMethods] - Vaccine methods
  * @property {object} [vaccinations] - Vaccination count
  */
+
+/**
+ * @class User
+ */
 export class User {
+  /**
+   * @param {UserOptions} options
+   */
   constructor(options) {
     this.uid = options?.uid || faker.string.numeric(12)
     this.firstName = options?.firstName

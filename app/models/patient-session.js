@@ -66,11 +66,8 @@ import {
 } from '../utils/triage.js'
 
 /**
- * @class Patient Session
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} [uuid] - UUID
+ * @typedef {object} PatientSessionOptions
+ * @property {string} [uuid] - Patient session UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created patient session
  * @property {Date} [updatedAt] - Updated date
@@ -82,7 +79,15 @@ import {
  * @property {string} [programme_id] - Programme ID
  * @property {string} [session_id] - Session ID
  */
+
+/**
+ * @class Patient Session
+ */
 export class PatientSession {
+  /**
+   * @param {PatientSessionOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

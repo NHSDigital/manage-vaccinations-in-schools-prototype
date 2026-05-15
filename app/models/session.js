@@ -55,28 +55,27 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Session
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} [id] - ID
+ * @typedef {object} SessionOptions
+ * @property {string} [id] - School ID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created session
+ * @property {SessionType} [type] - Session type
  * @property {Date} [date] - Dates
  * @property {object} [date_] - Dates (from `dateInput`s)
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
- * @property {string<SessionMMRConsent>} [mmrConsent] - Does session use MMR outbreak comms?
+ * @property {SessionMMRConsent} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {boolean} [registration] - Does session have registration?
  *
  *   Clinics only
- * @property {string} [clinic_id] - Clinic ID i.e. the venue
- * @property {Array<ClinicVaccinationPeriod>} vaccinationPeriods - vaccination periods and staffing in this clinic
- * @property {number} [appointmentLength] - standard length of the clinic appointment, in minutes
+ * @property {string} [clinic_id] - Clinic ID
+ * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
+ * @property {number} [appointmentLength] - Standard length of the clinic appointment, in minutes
  *
  *   Schools only
  * @property {string} [school_id] - School URN
- * @property {Array<string>} [yearGroups] - Year groups
+ * @property {Array<number>} [yearGroups] - Year groups
+ * @property {Array<string>} [yearGroups_] - Year groups (override)
  * @property {Date} [openAt] - Date consent window opens
  * @property {object} [openAt_] - Date consent window opens (from `dateInput`)
  * @property {boolean} [closed] - Session closed
@@ -85,7 +84,15 @@ import {
  * @property {boolean} [nationalProtocol] - Enable national protocol
  * @property {boolean} [psdProtocol] - Enable PSD protocol
  */
+
+/**
+ * @class Session
+ */
 export class Session {
+  /**
+   * @param {SessionOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('###')

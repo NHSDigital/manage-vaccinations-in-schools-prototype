@@ -38,15 +38,12 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Patient record
- * @augments Child
- * @param {object} options - Options
- * @param {object} [context] - Context
+ * @typedef {object} PatientOptions
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
- * @property {Patient} [pendingChanges] - Pending changes to record values
+ * @property {Partial<Child>} [pendingChanges] - Pending changes to record values
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
@@ -56,7 +53,16 @@ import {
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
+
+/**
+ * @class Patient record
+ * @augments Child
+ */
 export class Patient extends Child {
+  /**
+   * @param {PatientOptions & ChildOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     super(options, context)
 
@@ -886,4 +892,5 @@ export class Patient extends Child {
 /**
  * @import { ArchiveRecordReason } from '../enums.js'
  * @import { Notice } from '../models.js'
+ * @import { ChildOptions } from './child.js'
  */

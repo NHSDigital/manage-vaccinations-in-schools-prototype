@@ -4,17 +4,22 @@ import { Patient } from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 
 /**
- * @class Notice
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} uuid - UUID
+ * @typedef {object} NoticeOptions
+ * @property {string} [uuid] - Notice UUID
  * @property {Date} [createdAt] - Created date
  * @property {Date} [archivedAt] - Archived date
  * @property {NoticeType} [type] - Notice type
  * @property {string} [patient_uuid] - Patient notice applies to
  */
+
+/**
+ * @class Notice
+ */
 export class Notice {
+  /**
+   * @param {NoticeOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

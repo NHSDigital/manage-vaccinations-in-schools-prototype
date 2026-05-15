@@ -11,10 +11,7 @@ import {
 import { formatCode } from '../utils/string.js'
 
 /**
- * @class Batch
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} BatchOptions
  * @property {string} [id] - Batch ID
  * @property {Date} [createdAt] - Created date
  * @property {Date} [updatedAt] - Updated date
@@ -23,7 +20,15 @@ import { formatCode } from '../utils/string.js'
  * @property {object} [expiry_] - Expiry date (from `dateInput`)
  * @property {string} [vaccine_snomed] - Vaccine SNOMED code
  */
+
+/**
+ * @class Batch
+ */
 export class Batch {
+  /**
+   * @param {BatchOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('??####')

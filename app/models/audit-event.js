@@ -23,10 +23,7 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Audit event
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
+ * @typedef {object} AuditEventOptions
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created event
  * @property {string} [name] - Name
@@ -41,9 +38,18 @@ import {
  * @property {string} [patient_uuid] - Patient UUID
  * @property {Array<string>} [programme_ids] - Programme IDs
  * @property {string} [session_id] - Session ID
+ * @property {string} [team_id] - Team ID
  * @property {string} [vaccination_uuid] - Vaccination UUID
  */
+
+/**
+ * @class Audit event
+ */
 export class AuditEvent {
+  /**
+   * @param {AuditEventOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()

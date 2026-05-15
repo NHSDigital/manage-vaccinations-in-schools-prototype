@@ -5,11 +5,8 @@ import { Patient, Team } from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 
 /**
- * @class Move
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} uuid - UUID
+ * @typedef {object} MoveOptions
+ * @property {string} [uuid] - Move UUID
  * @property {Date} [createdAt] - Reported date
  * @property {Date} [updatedAt] - Updated date
  * @property {boolean} [ignored] - Reported move is ignored
@@ -19,7 +16,15 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
  * @property {string} [to_urn] - Proposed school URN (moving to)
  * @property {string} [patient_uuid] - Patient UUID
  */
+
+/**
+ * @class Move
+ */
 export class Move {
+  /**
+   * @param {MoveOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()

@@ -39,11 +39,8 @@ import {
 } from '../utils/string.js'
 
 /**
- * @class Reply
- * @param {object} options - Options
- * @param {object} [context] - Context
- * @property {object} [context] - Context
- * @property {string} [uuid] - UUID
+ * @typedef {object} ReplyOptions
+ * @property {string} [uuid] - Reply UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created reply
  * @property {Date} [updatedAt] - Updated date
@@ -53,25 +50,35 @@ import {
  * @property {boolean} [alternative] - Consent for alternative vaccine
  * @property {boolean} [confirmed] - Decision confirmed
  * @property {boolean} [consultation] - Consultation requested
- * @property {boolean} ethnicity - Answered ethnicity questions
- * @property {boolean} declined - Reply declines consent
- * @property {boolean} given - Reply gives consent
- * @property {boolean} refused - Reply refuses consent
- * @property {boolean} invalid - Reply is invalid
+ * @property {boolean} [ethnicity] - Answered ethnicity questions
+ * @property {boolean} [declined] - Reply declines consent
+ * @property {boolean} [given] - Reply gives consent
+ * @property {boolean} [refused] - Reply refuses consent
+ * @property {boolean} [invalid] - Reply is invalid
  * @property {ReplyMethod} [method] - Reply method
  * @property {object} [healthAnswers] - Answers to health questions
- * @property {Array} [triageNote] - Triage note for answered health questions
+ * @property {object} [firstDose] - First dose
+ * @property {object} [secondDose] - Second dose
+ * @property {string} [triageNote] - Triage note for answered health questions
  * @property {ReplyRefusal} [refusalReason] - Refusal reason
  * @property {string} [refusalReasonOther] - Other refusal reason
  * @property {string} [refusalReasonDetails] - Refusal reason details
  * @property {boolean} [selfConsent] - Reply given by child
  * @property {string} [note] - Note about this response
  * @property {string} [contact_uuid] - Contact UUID
- * @property {string} patient_uuid - Patient UUID
+ * @property {string} [patient_uuid] - Patient UUID
  * @property {string} [programme_id] - Programme ID
- * @property {string} session_id - Session ID
+ * @property {string} [session_id] - Session ID
+ */
+
+/**
+ * @class Reply
  */
 export class Reply {
+  /**
+   * @param {ReplyOptions} options - Options
+   * @param {object} [context] - Context
+   */
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
