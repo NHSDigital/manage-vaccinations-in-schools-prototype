@@ -488,8 +488,8 @@ export const en = {
         label: 'Available time ranges'
       },
       range: {
-        slotsAvailable:
-          '{count, plural, =0 {No slots remaining} one {1 slot remaining} other {{count} slots remaining}}'
+        appointmentsAvailable:
+          '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
       }
     },
     time: {
@@ -500,8 +500,8 @@ export const en = {
       times: {
         label: 'Available appointment times'
       },
-      nurses:
-        '{count, plural, =0 {No nurses available} one {1 nurse available} other {{count} nurses available}}'
+      appointmentsAvailable:
+        '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
     },
     'check-appointment': {
       title: 'Check %s’s appointment details',
@@ -513,14 +513,15 @@ export const en = {
       confirm: 'Confirm'
     },
     addAnother: {
-      title: 'Add, change, or remove appointments',
+      title:
+        '{count, plural, one {Add or change an appointment} other {Add, change or remove appointments}}',
       summary: {
         title: 'Appointments',
         child: {
           label: 'Child'
         }
       },
-      question: 'Do you want to add another child?'
+      question: 'Do you want to add an appointment for another child?'
     },
     removeAppointment: {
       title: 'Are you sure you want to remove %s’s appointment?',

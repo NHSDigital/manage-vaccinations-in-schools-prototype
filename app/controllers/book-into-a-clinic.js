@@ -346,9 +346,12 @@ export const bookIntoClinicController = {
             text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
             value: startHourNumber,
             hint: {
-              text: __mf('clinicBooking.timeRange.range.slotsAvailable', {
-                count: times.length
-              })
+              text: __mf(
+                'clinicBooking.timeRange.range.appointmentsAvailable',
+                {
+                  count: times.length
+                }
+              )
             }
           })
         }
@@ -386,7 +389,7 @@ export const bookIntoClinicController = {
             text: formattedTime,
             value: availability.date.toISOString(),
             hint: {
-              text: __mf('clinicBooking.time.nurses', {
+              text: __mf('clinicBooking.time.appointmentsAvailable', {
                 count: availability.count
               })
             }
