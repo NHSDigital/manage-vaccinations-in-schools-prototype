@@ -514,7 +514,7 @@ export const en = {
     },
     addAnother: {
       title:
-        '{count, plural, one {Add or change an appointment} other {Add, change or remove appointments}}',
+        '{count, plural, one {Add or change an appointment} other {Add, change or delete appointments}}',
       summary: {
         title: 'Appointments',
         child: {
@@ -523,9 +523,9 @@ export const en = {
       },
       question: 'Do you want to add an appointment for another child?'
     },
-    removeAppointment: {
-      title: 'Are you sure you want to remove %s’s appointment?',
-      confirm: 'Yes, remove this appointment',
+    deleteAppointment: {
+      title: 'Are you sure you want to delete %s’s appointment?',
+      confirm: 'Yes, delete this appointment',
       cancel: 'No, return to the previous page'
     },
     contact: {

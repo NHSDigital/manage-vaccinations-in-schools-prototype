@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.removeAppointment.title", firstName) %}
+{% set title = __("clinicBooking.deleteAppointment.title", firstName) %}
 
 {% block form %}
   {{ appHeading({
@@ -25,11 +25,11 @@
 {% block afterForm %}
   {{ appButtonGroup({
     buttons: [{
-      text: __("clinicBooking.removeAppointment.confirm"),
+      text: __("clinicBooking.deleteAppointment.confirm"),
       variant: "warning"
     }],
     links: [{
-      text: __("clinicBooking.removeAppointment.cancel"),
+      text: __("clinicBooking.deleteAppointment.cancel"),
       href: booking.uri.new + "/add-another"
     }]
   }) }}

@@ -526,7 +526,7 @@ export const bookIntoClinicController = {
 
         paths.next = `${appointment.uri.new}/child`
       }
-    } else if (view === 'remove-appointment') {
+    } else if (view === 'delete-appointment') {
       // The user's chosen to remove an appointment
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       booking.removeAppointment(String(appointment_uuid))
