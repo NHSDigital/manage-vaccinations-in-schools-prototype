@@ -72,6 +72,13 @@
           {% endcall %}
         {% endif %}
 
+        {% if view === "report" and session.type === SessionType.Clinic and session.status === SessionStatus.Planned %}
+          {{ actionLink({
+            href: session.uri + "/add-child",
+            text: "Add a child to this clinic"
+          }) }}
+        {% endif %}
+
         {% for patientSession in results.page %}
           {% set reportStatusHtml %}
             {% set ids = data.programme_id or session.programme_ids %}
