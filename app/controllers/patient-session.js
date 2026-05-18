@@ -1,4 +1,5 @@
 import {
+  AuditEventType,
   ConsentOutcome,
   ConsentWindow,
   InstructionOutcome,
@@ -388,6 +389,7 @@ export const patientSessionController = {
     patientSession.saveNote({
       note,
       pinned,
+      type: AuditEventType.SessionNote,
       createdBy_uid: account.uid
     })
 
