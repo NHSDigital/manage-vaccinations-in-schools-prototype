@@ -1,6 +1,11 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { ReplyDecision } from '../enums.js'
+import {
+  ProgrammeType,
+  ReplyDecision,
+  VaccineCriteria,
+  VaccineMethod
+} from '../enums.js'
 import {
   Child,
   ClinicBooking,
@@ -184,17 +189,35 @@ export class ClinicAppointment {
    * @returns {Array} Health questions
    */
   getHealthQuestionsForSelectedProgrammes(programmeContext) {
-    // Logic is: programme -> vaccine (matched on programme type) -> health questions
-
-    // NB: given we don't have information about consent for nasal vs. injection, or for
-    //     gelatine, we can end up asking more questions here than we might need to. :/
     const vaccinesForSelectedProgrammes = []
     for (const programme of this.#getSelectedProgrammes(programmeContext)) {
-      vaccinesForSelectedProgrammes.push(
-        ...Object.values(programmeContext.vaccines).filter(
-          (v) => v.type === programme.type
+      let agreedProgrammeVaccines = Object.values(
+        programmeContext.vaccines
+      ).filter((vaccine) => vaccine.type === programme.type)
+
+      if (programme.type === ProgrammeType.Flu) {
+        // Get the right vaccine(s) for flu, according to types of flu vaccine agreed to
+        if (this.fluDecision === ReplyDecision.OnlyAlternativeInjection) {
+          agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
+            ({ method }) => method === VaccineMethod.Injection
+          )
+        } else if (!this.fluAlternative) {
+          agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
+            ({ method }) => method === VaccineMethod.Intranasal
+          )
+        }
+      } else if (programme.type === ProgrammeType.MMR) {
+        // Get the right vaccine for MMR or MMRV, according to gelatine content agreed to
+        agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
+          ({ criteria }) =>
+            criteria ===
+            (this.mmrAlternative
+              ? VaccineCriteria.AlternativeInjection
+              : VaccineCriteria.Injection)
         )
-      )
+      }
+
+      vaccinesForSelectedProgrammes.push(...agreedProgrammeVaccines)
     }
 
     // Collate the questions from the vaccines, making sure we don't duplicate them
