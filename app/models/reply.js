@@ -12,7 +12,7 @@ import {
   ReplyDecision,
   ReplyMethod,
   ReplyRefusal,
-  VaccineCriteria
+  VaccineMethod
 } from '../enums.js'
 import {
   Child,
@@ -281,10 +281,10 @@ export class Reply {
    */
   get healthQuestionsForDecision() {
     const { Flu, HPV, MenACWY, TdIPV } = ProgrammeType
+    // TODO: is this consent reply really only ever for the session's first programme?
     const programme = this.session.programmes[0]
 
     const healthQuestionsForDecision = new Map()
-    let consentedMethod
     let consentedVaccine
 
     // Consent given for flu programme with method of vaccination
@@ -293,15 +293,26 @@ export class Reply {
         (programme) => programme.type === Flu
       )
 
-      // If no consent for alternative injection or only consent for injection
-      if (!this.alternative) {
-        consentedMethod =
-          this.decision === ReplyDecision.OnlyAlternativeInjection
-            ? VaccineCriteria.AlternativeInjection
-            : VaccineCriteria.Intranasal
-        consentedVaccine = Object.values(vaccines).find(
-          (programme) => programme.method === consentedMethod
-        )
+      switch (this.decision) {
+        case ReplyDecision.OnlyAlternativeInjection:
+          // Injection only was chosen
+          consentedVaccine = consentedVaccine.filter(
+            ({ method }) => method === VaccineMethod.Injection
+          )
+          break
+        case ReplyDecision.Given: {
+          // Nasal chosen, but was the alternative injection also accepted?
+          if (!this.alternative) {
+            consentedVaccine = consentedVaccine.filter(
+              ({ method }) => method === VaccineMethod.Intranasal
+            )
+          }
+          break
+        }
+        default:
+          // Presumably refused consent
+          consentedVaccine = []
+          break
       }
     }
 
@@ -327,7 +338,7 @@ export class Reply {
     }
 
     // Consent given for all programmes
-    if (ReplyDecision.Given && !consentedVaccine) {
+    if (this.decision === ReplyDecision.Given && !consentedVaccine) {
       consentedVaccine = this.session.vaccines
     }
 
