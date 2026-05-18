@@ -716,8 +716,6 @@ export const sessionController = {
       session = Session.update(session_id, request.body.session, data.wizard)
     }
 
-    let nextPage = paths.next
-
     if (session.type === SessionType.Clinic) {
       // Add the first vaccination period, if not already there
       if (!session.vaccinationPeriods?.length) {
@@ -754,7 +752,7 @@ export const sessionController = {
           session.addVaccinationPeriod()
           Session.update(session_id, session, data.wizard)
 
-          nextPage = request.originalUrl
+          paths.next = request.originalUrl
         } else if (action.startsWith('remove-period-')) {
           // Remove a vaccination period
           const index = parseInt(action.substring('remove-period-'.length))
@@ -762,7 +760,7 @@ export const sessionController = {
           session.removeVaccinationPeriod(period_id)
           Session.update(session_id, session, data.wizard)
 
-          nextPage = request.originalUrl
+          paths.next = request.originalUrl
         }
       } else if (view === 'vaccinators') {
         if (
@@ -789,7 +787,9 @@ export const sessionController = {
       }
     }
 
-    return response.redirect(nextPage)
+    return request.session.save((error) => {
+      if (!error) response.redirect(paths.next)
+    })
   },
 
   /**
