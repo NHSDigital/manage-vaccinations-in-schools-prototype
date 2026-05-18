@@ -1,5 +1,6 @@
 import {
   PreScreenQuestion,
+  ProgrammeType,
   VaccineMethod,
   VaccinationProtocol,
   VaccineCriteria,
@@ -11,7 +12,7 @@ export default {
   // https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1107978/Influenza-green-book-chapter19-16September22.pdf
   '43208811000001106': {
     snomed: '43208811000001106',
-    type: 'Flu',
+    type: ProgrammeType.Flu,
     brand: 'Fluenz Trivalent',
     manufacturer: 'AstraZeneca UK Ltd',
     leaflet: {
@@ -52,7 +53,7 @@ export default {
   },
   '40085011000001101': {
     snomed: '40085011000001101',
-    type: 'Flu',
+    type: ProgrammeType.Flu,
     brand: 'Cell-based Quadrivalent',
     manufacturer: 'Seqirus UK Limited',
     leaflet: {
@@ -92,7 +93,7 @@ export default {
   // https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1065283/HPV-greenbook-chapter-18a.pdf
   '33493111000001108': {
     snomed: '33493111000001108',
-    type: 'HPV',
+    type: ProgrammeType.HPV,
     brand: 'Gardasil 9',
     manufacturer: 'Merck Sharp & Dohme (UK) Ltd',
     leaflet: {
@@ -127,7 +128,7 @@ export default {
   // https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/147952/Green-Book-Chapter-15.pdf
   '7374311000001101': {
     snomed: '7374311000001101',
-    type: 'TdIPV',
+    type: ProgrammeType.TdIPV,
     brand: 'Revaxis',
     manufacturer: 'Sanofi',
     leaflet: {
@@ -164,7 +165,7 @@ export default {
   // https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1076053/Meningococcal-greenbook-chapter-22_17May2022.pdf
   '39779611000001104': {
     snomed: '39779611000001104',
-    type: 'MenACWY',
+    type: ProgrammeType.MenACWY,
     brand: 'MenQuadfi',
     manufacturer: 'Sanofi',
     leaflet: {
@@ -201,7 +202,7 @@ export default {
   // MMR vaccines
   '13968211000001108': {
     snomed: '13968211000001108',
-    type: 'MMR',
+    type: ProgrammeType.MMR,
     brand: 'M-M-RvaxPro',
     manufacturer: 'Merck Sharp & Dohme (UK) Ltd',
     leaflet: {
@@ -235,7 +236,7 @@ export default {
   },
   '34925111000001104': {
     snomed: '34925111000001104',
-    type: 'MMR',
+    type: ProgrammeType.MMR,
     brand: 'Priorix',
     manufacturer: 'GlaxoSmithKline UK Ltd',
     leaflet: {
