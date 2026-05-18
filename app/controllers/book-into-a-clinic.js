@@ -3,8 +3,14 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
-import { ParentalRelationship, SessionStatus, SessionType } from '../enums.js'
-import { ClinicBooking, Session } from '../models.js'
+import {
+  ParentalRelationship,
+  ProgrammeType,
+  ReplyDecision,
+  SessionStatus,
+  SessionType
+} from '../enums.js'
+import { ClinicBooking, Programme, Session } from '../models.js'
 import {
   getAllAppointmentPaths,
   getHealthQuestionPaths,
@@ -405,6 +411,29 @@ export const bookIntoClinicController = {
     if (view.startsWith('health-question-')) {
       key = kebabToCamelCase(view.replace('health-question-', ''))
       view = 'health-question'
+
+      // The immuneSystem health question, if asked, needs to say which programmes apply
+      if (key == 'immuneSystem') {
+        const mmrVariant = appointment.child.canBeOfferedMmrv ? 'MMRV' : 'MMR'
+        const fluCanBeNasal =
+          appointment.fluDecision !== ReplyDecision.OnlyAlternativeInjection
+        const possibleLiveProgrammeTypes = [
+          ProgrammeType.MMR,
+          ...(fluCanBeNasal ? [ProgrammeType.Flu] : [])
+        ]
+        const selectedLiveVaccineProgrammeNames =
+          appointment.selected_programme_ids
+            .map((id) => Programme.findOne(id, data))
+            .filter(({ type }) => possibleLiveProgrammeTypes.includes(type))
+            .map(({ name }) =>
+              name.replace('MMR', mmrVariant).replace('Flu', 'nasal spray flu')
+            )
+
+        response.locals.liveVaccines = {
+          count: selectedLiveVaccineProgrammeNames.length,
+          vaccineNames: selectedLiveVaccineProgrammeNames.join(' and ')
+        }
+      }
     }
 
     // Only ask for details if question does not have sub-questions

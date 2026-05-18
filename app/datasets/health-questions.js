@@ -73,6 +73,8 @@ export const healthQuestions = {
   immuneSystem: {
     label:
       'Does the child have a disease or treatment that severely affects their immune system?',
+    hintMulti:
+      '{count, plural, one {The {vaccineNames} vaccine is a live vaccine. It is not suitable for people who have serious problems with their immune systems.} other {The {vaccineNames} vaccines are live vaccines. They are not suitable for people who have serious problems with their immune systems.}}',
     hint: 'The %s vaccine is a live vaccine. It is not suitable for people who have serious problems with their immune systems.',
     options: false,
     detailsHint: false

@@ -1,8 +1,20 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("healthQuestions." + key + ".label") %}
-{% set vaccineName = "nasal spray flu" if false else "MMR" %} {# CONCERN: need to replace `"Flu" in session.presetNames` #}
-{% set hint = __("healthQuestions." + key + ".hint", vaccineName) %}
+{#
+  The nasal flu vaccine and both of the MMR vaccines are live vaccines and not suitable
+  for immunocompromised children. If we're showing this page for the immuneSystem health
+  question, we need to know which vaccine types to say are live vaccines. Could be:
+   - nasal spray flu vaccine is
+   - MMR vaccine is
+   - nasal spray flu and MMR vaccines are
+#}
+{% if key === "immuneSystem" %}
+  {# TODO: Move this next line into the controller and update it for the logic above #}
+  {% set hint = __mf("healthQuestions." + key + ".hintMulti", liveVaccines) %}
+{% else %}
+  {% set hint = __("healthQuestions." + key + ".hint") %}
+{% endif %}
 {% set detailsHint = __("healthQuestions." + key + ".detailsHint") %}
 
 {% block form %}
