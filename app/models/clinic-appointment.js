@@ -10,12 +10,7 @@ import {
   Session
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
-import {
-  formatLinkWithSecondaryText,
-  formatWithSecondaryText,
-  stringToArray,
-  stringToBoolean
-} from '../utils/string.js'
+import { formatLinkWithSecondaryText, stringToArray } from '../utils/string.js'
 
 /**
  * @class ClinicAppointment
@@ -26,8 +21,6 @@ import {
  * @property {string} booking_uuid - Unique ID for the booking under which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
  * @property {import('./child.js').Child} [child] - child details recorded from form input values
- * @property {boolean} needsExtraTime - Does the child need extra time for their vaccinations?
- * @property {string} [extraTimeReason] - The reason why the child needs extra time for their appointment
  * @property {import('../enums.js').ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
  * @property {string} [parentalRelationshipOther] - User-defined parental relationship to the child for this appointment
  * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
@@ -48,9 +41,6 @@ export class ClinicAppointment {
     this.booking_uuid = options?.booking_uuid
     this.patient_uuid = options?.patient_uuid
     this.child = (options?.child && new Child(options.child)) || new Child({})
-
-    this.needsExtraTime = stringToBoolean(options?.needsExtraTime)
-    this.extraTimeReason = options?.extraTimeReason
 
     this.parentalRelationship = options?.parentalRelationship
     this.parentalRelationshipOther = options?.parentalRelationshipOther
@@ -266,11 +256,6 @@ export class ClinicAppointment {
               : 'No preference'
           }
         : {}),
-      extraTime: formatWithSecondaryText(
-        this.needsExtraTime ? 'Yes' : 'No',
-        this.extraTimeReason,
-        true
-      ),
       location: Object.values(session?.clinic?.location ?? {})
         .filter(Boolean)
         .join(', '),

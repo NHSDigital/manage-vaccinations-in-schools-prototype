@@ -101,21 +101,9 @@ export function generateClinicAppointment(patient, session, booking) {
     }
   }
 
-  // Extra time requirement (and reason)
-  const needsExtraTime = faker.datatype.boolean(0.2)
-  let extraTimeReason
-  if (needsExtraTime) {
-    const phobia = faker.helpers.weightedArrayElement([
-      { value: 'needles', weight: 90 },
-      { value: 'nurses', weight: 8 },
-      { value: 'vaccines', weight: 2 }
-    ])
-    extraTimeReason = `Suffers from anxiety regarding ${phobia}`
-  }
-
   // Appointment time
   const startAt = faker.helpers.arrayElement(session.availableAppointmentTimes)
-  const slotsCovered = 1 // TODO: needsExtraTime ? 2 : 1
+  const slotsCovered = 1 // TODO: take into account health answers
   const endAt = addMinutes(startAt, clinicSlotLength * slotsCovered)
 
   // Have the child signed up for whatever they were invited for
@@ -126,8 +114,6 @@ export function generateClinicAppointment(patient, session, booking) {
     booking_uuid,
     patient_uuid,
     child,
-    needsExtraTime,
-    extraTimeReason,
     parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility,
