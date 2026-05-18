@@ -583,10 +583,6 @@ export const en = {
       no: 'No',
       details: 'Give details'
     },
-    'check-answers': {
-      confirm: 'Confirm',
-      title: 'Check and confirm'
-    },
     confirmation: {
       title: 'Booking complete',
       subtitle: '<p>Your reference number:<br><strong>%s</strong></p>'

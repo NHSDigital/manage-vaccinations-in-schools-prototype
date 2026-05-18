@@ -154,9 +154,6 @@ export const bookIntoClinicController = {
       },
       [`/${booking_uuid}/new/contact-preference`]: {},
 
-      // Check answers
-      [`/${booking_uuid}/new/check-answers`]: {},
-
       // Health questions (optional)
       [`/${booking_uuid}/new/offer-health-questions`]: {
         [`/${booking_uuid}/new/confirmation`]: {
