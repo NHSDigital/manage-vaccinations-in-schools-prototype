@@ -12,6 +12,7 @@ import {
   ReplyDecision,
   ReplyMethod,
   ReplyRefusal,
+  VaccineCriteria,
   VaccineMethod
 } from '../enums.js'
 import {
@@ -280,7 +281,7 @@ export class Reply {
    * @returns {Array} Health questions
    */
   get healthQuestionsForDecision() {
-    const { Flu, HPV, MenACWY, TdIPV } = ProgrammeType
+    const { Flu, HPV, MenACWY, TdIPV, MMR } = ProgrammeType
     // TODO: is this consent reply really only ever for the session's first programme?
     const programme = this.session.programmes[0]
 
@@ -319,26 +320,37 @@ export class Reply {
     // Consent given for HPV programme
     if (programme?.type === HPV) {
       consentedVaccine = Object.values(vaccines).find(
-        (programme) => programme.type === HPV
+        ({ type }) => type === HPV
       )
     }
 
     // Consent given for MenACWY programme only
     if (this.decision === ReplyDecision.OnlyMenACWY) {
       consentedVaccine = Object.values(vaccines).find(
-        (programme) => programme.type === MenACWY
+        ({ type }) => type === MenACWY
       )
     }
 
     // Consent given for Td/IPV programme only
     if (this.decision === ReplyDecision.OnlyTdIPV) {
       consentedVaccine = Object.values(vaccines).find(
-        (programme) => programme.type === TdIPV
+        ({ type }) => type === TdIPV
       )
     }
 
+    // Consent given for MMR programme (gelatine-free, or either vaccine)
+    if (programme?.type == MMR) {
+      const allowedCriteria = [
+        VaccineCriteria.AlternativeInjection,
+        ...(this.alternative ? [] : [VaccineCriteria.Injection])
+      ]
+      consentedVaccine = Object.values(vaccines)
+        .filter(({ type }) => type === ProgrammeType.MMR)
+        .filter(({ criteria }) => allowedCriteria.includes(criteria))
+    }
+
     // Consent given for all programmes
-    if (this.decision === ReplyDecision.Given && !consentedVaccine) {
+    if (!consentedVaccine) {
       consentedVaccine = this.session.vaccines
     }
 
