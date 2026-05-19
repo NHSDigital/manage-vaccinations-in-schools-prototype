@@ -631,7 +631,12 @@ export const patientController = {
     delete data.clinicPatient_ids
 
     // Get back to the filter page as we left it
-    return response.redirect(`/patients${queryToQueryString(request.query)}`)
+    return request.session.save((error) => {
+      const returnUri = `/patients${queryToQueryString(request.query)}`
+      if (!error) {
+        response.redirect(returnUri)
+      }
+    })
   },
 
   /**
