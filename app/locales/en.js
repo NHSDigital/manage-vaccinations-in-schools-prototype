@@ -370,7 +370,8 @@ export const en = {
       title: 'What is your relationship to %s?',
       hasParentalResponsibility: {
         label: 'Do you have parental responsibility?',
-        delegatedLabel: 'Do you have delegated authority?',
+        delegatedLabel:
+          'Do you have delegated authority to consent to immunisations?',
         hint: 'This means you have legal rights and duties relating to the child'
       },
       relationshipOther: {
@@ -553,7 +554,8 @@ export const en = {
       },
       hasParentalResponsibility: {
         label: 'Do you have parental responsibility?',
-        delegatedLabel: 'Do you have delegated authority?',
+        delegatedLabel:
+          'Do you have delegated authority to consent to immunisations?',
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
@@ -675,7 +677,7 @@ export const en = {
     'parental-responsibility': {
       title: 'You cannot give or refuse consent through this service',
       description:
-        'To give or refuse consent for a child’s vaccination, you need to have parental responsibility or delegated authority.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
+        'To give or refuse consent for a child’s vaccination, you need to have parental responsibility or delegated authority to consent to immunisations.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
     new: {
       'check-answers': {
@@ -878,7 +880,8 @@ export const en = {
       },
       hasParentalResponsibility: {
         label: 'Do you have parental responsibility?',
-        delegatedLabel: 'Do you have delegated authority?',
+        delegatedLabel:
+          'Do you have delegated authority to consent to immunisations?',
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
@@ -1415,7 +1418,7 @@ export const en = {
     },
     hasParentalResponsibility: {
       label: 'Has parental responsibility?',
-      delegatedLabel: 'Has delegated authority?',
+      delegatedLabel: 'Has delegated authority to consent to immunisations?',
       hint: 'They have the legal rights and duties relating to the child'
     },
     email: {
