@@ -1343,8 +1343,8 @@ export const en = {
     },
     pinned: {
       label: 'Pinned',
-      title: 'Do you want to pin this note?',
-      hint: 'Pinned notes show at the top of session pages and on search results within a session'
+      title: 'Pin note',
+      hint: 'Pin note to the top of session pages and search results'
     },
     outcome: {
       label: 'Outcome'
@@ -1751,16 +1751,16 @@ export const en = {
     notes: {
       label: 'Notes',
       new: {
-        title: 'Add a session note',
-        confirm: 'Save session note',
-        success: 'Session note added'
+        title: 'Add a note',
+        confirm: 'Save note',
+        success: 'Note added'
       }
     },
     pinnedNotes: {
-      label: 'Session notes'
+      label: 'Pinned session notes'
     },
     pinnedNote: {
-      label: 'Session note'
+      label: 'Pinned session note'
     },
     patientProgramme: {
       label: 'View child’s %s record'

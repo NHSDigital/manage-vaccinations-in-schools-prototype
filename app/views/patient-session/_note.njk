@@ -4,7 +4,8 @@
 }) %}
   {{ textarea({
     label: {
-      text: __("event.note.label")
+      text: __("event.note.label"),
+      size: "s"
     },
     hint: {
       text: __("event.note.hint")
@@ -15,13 +16,48 @@
 
   {{ radios({
     fieldset: {
-      legend: { text: __("event.pinned.title") }
+      legend: {
+        text: "What do you want to add this note to?",
+        size: "s"
+      }
     },
-    hint: { text: __("event.pinned.hint") },
-    inline: true,
-    items: getBooleanItems(),
-    decorate: "pinned"
+    items: [{
+      text: "Programme",
+      value: AuditEventType.ProgrammeNote,
+      conditional: {
+        html: checkboxes({
+          items: programmeItems,
+          decorate: "programme_ids"
+        })
+      }
+    } if session.programmes.length > 1 else {
+      text: session.programmeNames.titleCase + " programme",
+      value: AuditEventType.ProgrammeNote
+    }, {
+      text: "Session",
+      value: AuditEventType.SessionNote,
+      conditional: {
+        html: checkboxes({
+          items: [{
+            text: __("event.pinned.title"),
+            hint: { text: __("event.pinned.hint") },
+            value: true
+          }],
+          decorate: "pinned"
+        })
+      }
+    }, {
+      text: "Child record",
+      value: AuditEventType.RecordNote
+    }],
+    decorate: "type"
   }) }}
+
+  {{ input({
+    type: "hidden",
+    value: session.programme_ids[0],
+    decorate: "programme_ids"
+  }) if session.programmes.length == 1 }}
 
   {{ button({
     text: __("patientSession.notes.new.confirm"),

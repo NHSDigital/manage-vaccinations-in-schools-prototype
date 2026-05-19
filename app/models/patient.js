@@ -187,6 +187,11 @@ export class Patient extends Child {
     return [...contacts.values()]
   }
 
+  /**
+   * Get child record events
+   *
+   * @returns {Array<AuditEvent>} Child record events
+   */
   get recordEvents() {
     const recordEvents = []
 
@@ -242,7 +247,7 @@ export class Patient extends Child {
       .filter(({ type }) =>
         [AuditEventType.Record, AuditEventType.RecordNote].includes(type)
       )
-      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
@@ -671,6 +676,7 @@ export class Patient extends Child {
     if (patientSession?.session) {
       this.addEvent({
         name: activity.session.added(patientSession.session),
+        type: AuditEventType.ProgrammeNote,
         createdAt: patientSession.session.openAt,
         createdBy_uid: patientSession.session.createdBy_uid,
         programme_ids: patientSession.session.programme_ids
@@ -691,6 +697,7 @@ export class Patient extends Child {
     for (const contact of this.contacts) {
       this.addEvent({
         name: activity.notify['invite-clinic'](contact),
+        type: AuditEventType.ProgrammeNote,
         messageRecipient: contact,
         messageTemplate: 'invite-clinic',
         patient_uuid: this.uuid,
@@ -712,6 +719,7 @@ export class Patient extends Child {
       ) {
         this.addEvent({
           name: activity.notify.invite(contact),
+          type: AuditEventType.ProgrammeNote,
           messageRecipient: contact,
           messageTemplate: 'invite',
           createdAt: patientSession.session.openAt,
@@ -747,6 +755,7 @@ export class Patient extends Child {
     this.reply_uuids.push(reply.uuid)
     this.addEvent({
       name,
+      type: AuditEventType.ProgrammeNote,
       createdAt: isNew ? reply.createdAt : today(),
       createdBy_uid: reply.createdBy_uid,
       programme_ids: [reply.programme_id]
@@ -764,6 +773,7 @@ export class Patient extends Child {
     this.addEvent({
       name: activity.vaccination.recorded(vaccination),
       note: vaccination.note,
+      type: AuditEventType.ProgrammeNote,
       createdAt: vaccination.updatedAt || vaccination.createdAt,
       createdBy_uid: vaccination.createdBy_uid,
       programme_ids: [vaccination.programme_id]
