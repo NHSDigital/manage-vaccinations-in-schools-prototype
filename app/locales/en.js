@@ -293,9 +293,6 @@ export const en = {
     vaccinations: {
       label: 'Vaccinations'
     },
-    extraTime: {
-      label: 'Is extra time needed?'
-    },
     fluVaccineType: {
       label: 'Flu vaccine'
     },
@@ -427,13 +424,6 @@ export const en = {
       },
       no: {
         label: '%s can have either type of vaccine'
-      }
-    },
-    extraTime: {
-      title: 'Does %s need extra time for their vaccination?',
-      hint: 'For example, they need longer than usual because they’re anxious about injections',
-      reason: {
-        label: 'Reason for needing extra time'
       }
     },
     preferredLocation: {
@@ -582,10 +572,6 @@ export const en = {
       yes: 'Yes',
       no: 'No',
       details: 'Give details'
-    },
-    'check-answers': {
-      confirm: 'Confirm',
-      title: 'Check and confirm'
     },
     confirmation: {
       title: 'Booking complete',

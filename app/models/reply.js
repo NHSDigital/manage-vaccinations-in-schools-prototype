@@ -12,7 +12,8 @@ import {
   ReplyDecision,
   ReplyMethod,
   ReplyRefusal,
-  VaccineCriteria
+  VaccineCriteria,
+  VaccineMethod
 } from '../enums.js'
 import {
   Child,
@@ -280,11 +281,11 @@ export class Reply {
    * @returns {Array} Health questions
    */
   get healthQuestionsForDecision() {
-    const { Flu, HPV, MenACWY, TdIPV } = ProgrammeType
+    const { Flu, HPV, MenACWY, TdIPV, MMR } = ProgrammeType
+    // TODO: is this consent reply really only ever for the session's first programme?
     const programme = this.session.programmes[0]
 
     const healthQuestionsForDecision = new Map()
-    let consentedMethod
     let consentedVaccine
 
     // Consent given for flu programme with method of vaccination
@@ -293,41 +294,63 @@ export class Reply {
         (programme) => programme.type === Flu
       )
 
-      // If no consent for alternative injection or only consent for injection
-      if (!this.alternative) {
-        consentedMethod =
-          this.decision === ReplyDecision.OnlyAlternativeInjection
-            ? VaccineCriteria.AlternativeInjection
-            : VaccineCriteria.Intranasal
-        consentedVaccine = Object.values(vaccines).find(
-          (programme) => programme.method === consentedMethod
-        )
+      switch (this.decision) {
+        case ReplyDecision.OnlyAlternativeInjection:
+          // Injection only was chosen
+          consentedVaccine = consentedVaccine.filter(
+            ({ method }) => method === VaccineMethod.Injection
+          )
+          break
+        case ReplyDecision.Given: {
+          // Nasal chosen, but was the alternative injection also accepted?
+          if (!this.alternative) {
+            consentedVaccine = consentedVaccine.filter(
+              ({ method }) => method === VaccineMethod.Intranasal
+            )
+          }
+          break
+        }
+        default:
+          // Presumably refused consent
+          consentedVaccine = []
+          break
       }
     }
 
     // Consent given for HPV programme
     if (programme?.type === HPV) {
       consentedVaccine = Object.values(vaccines).find(
-        (programme) => programme.type === HPV
+        ({ type }) => type === HPV
       )
     }
 
     // Consent given for MenACWY programme only
     if (this.decision === ReplyDecision.OnlyMenACWY) {
       consentedVaccine = Object.values(vaccines).find(
-        (programme) => programme.type === MenACWY
+        ({ type }) => type === MenACWY
       )
     }
 
     // Consent given for Td/IPV programme only
     if (this.decision === ReplyDecision.OnlyTdIPV) {
       consentedVaccine = Object.values(vaccines).find(
-        (programme) => programme.type === TdIPV
+        ({ type }) => type === TdIPV
       )
     }
 
+    // Consent given for MMR programme (gelatine-free, or either vaccine)
+    if (programme?.type == MMR) {
+      const allowedCriteria = [
+        VaccineCriteria.AlternativeInjection,
+        ...(this.alternative ? [] : [VaccineCriteria.Injection])
+      ]
+      consentedVaccine = Object.values(vaccines)
+        .filter(({ type }) => type === ProgrammeType.MMR)
+        .filter(({ criteria }) => allowedCriteria.includes(criteria))
+    }
+
     // Consent given for all programmes
-    if (ReplyDecision.Given && !consentedVaccine) {
+    if (!consentedVaccine) {
       consentedVaccine = this.session.vaccines
     }
 

@@ -63,7 +63,6 @@ export const getAllAppointmentPaths = (
             [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
           }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/extra-time`]: {},
 
       // Clinic and slot selection
       ...(appointments[0].uuid !== appointment_uuid &&
