@@ -157,6 +157,7 @@ export default () => {
 
       timelineItems.push({
         headingText: formatMarkdown(auditEvent.name),
+        isPinnedItem: auditEvent.pinned,
         isPastItem: auditEvent.isPastEvent,
         html:
           auditEvent.note &&

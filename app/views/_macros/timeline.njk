@@ -6,8 +6,9 @@
   {% set headingLevel = params.headingLevel if params.headingLevel else 3 %}
   {% set headingBold = "nhsuk-u-font-weight-bold" if item.active else "" %}
   {% set isPastItem = "app-timeline__item--past" if item.isPastItem else "" %}
+  {% set isPinnedItem = "app-timeline__item--pinned" if item.isPinnedItem else "" %}
 
-  <li class="app-timeline__item {{ isPastItem | trim }}">
+  <li class="app-timeline__item {{ isPastItem | trim }} {{ isPinnedItem | trim }}">
     {% if item.active or item.isPastItem %}
       <svg class="app-timeline__badge" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
         <circle cx="14" cy="14" r="13" fill="#005EB8"/>
