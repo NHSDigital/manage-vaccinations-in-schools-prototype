@@ -155,7 +155,7 @@ export const activityController = {
             name: activity.note.created(AuditEventType.SessionNote),
             note: 'Mum phoned to say child will be arriving at school at 11am',
             createdBy_uid,
-            programme_ids: ['flu']
+            session_id: session.id
           }),
           auditEvent({
             name: activity.note.created(AuditEventType.RecordNote),

@@ -150,8 +150,13 @@ export class PatientSession {
   get auditEvents() {
     return this.patient?.events
       .map((auditEvent) => new AuditEvent(auditEvent, this.context))
-      .filter(({ programme_ids }) =>
-        programme_ids?.some((id) => this.session?.programme_ids.includes(id))
+      .filter(
+        ({ programme_ids, session_id }) =>
+          (programme_ids &&
+            programme_ids.some((id) =>
+              this.session?.programme_ids.includes(id)
+            )) ||
+          session_id === this.session_id
       )
   }
 
@@ -161,9 +166,13 @@ export class PatientSession {
    * @returns {object} Events grouped by date
    */
   get auditEventLog() {
-    return this.auditEvents.sort((a, b) =>
-      getDateValueDifference(b.createdAt, a.createdAt)
-    )
+    return [...this.auditEvents].sort((a, b) => {
+      if (a.pinned !== b.pinned) {
+        // Show pinned items first
+        return a.pinned ? -1 : 1
+      }
+      return getDateValueDifference(b.createdAt, a.createdAt)
+    })
   }
 
   /**
@@ -173,6 +182,7 @@ export class PatientSession {
    */
   get triageNotes() {
     return this.auditEvents
+      .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       .filter(({ outcome }) => outcome)
   }
@@ -184,7 +194,7 @@ export class PatientSession {
    */
   get pinnedNotes() {
     return this.auditEvents
-      .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
+      .filter(({ session_id }) => session_id === this.session_id)
       .filter(({ pinned }) => pinned)
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
@@ -1148,8 +1158,10 @@ export class PatientSession {
       name: activity.note.created(event.type),
       note: event.note,
       pinned: event.pinned,
+      type: event.type || AuditEventType.SessionNote,
       createdBy_uid: event.createdBy_uid,
-      programme_ids: this.session?.programme_ids
+      programme_ids: event.programme_ids,
+      session_id: event.session_id
     })
   }
 

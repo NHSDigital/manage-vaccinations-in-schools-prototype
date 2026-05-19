@@ -26,17 +26,6 @@
 
   {% include "patient-session/_note.njk" %}
 
-  {% if patientSession.pinnedNotes.length %}
-    {% for auditEvent in patientSession.pinnedNotes %}
-      {{ card({
-        classes: "app-card--orange",
-        heading: auditEvent.name,
-        headingLevel: 3,
-        descriptionHtml: appEvent({ auditEvent: auditEvent, showProgrammes: true })
-      }) }}
-    {% endfor %}
-  {% endif %}
-
   {{ appTimeline({
     items: timelineItems(patientSession.auditEventLog)
   }) }}

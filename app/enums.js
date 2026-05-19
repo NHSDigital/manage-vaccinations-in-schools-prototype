@@ -54,6 +54,7 @@ export const AuditEventType = {
   Notice: 'Notice',
   Reminder: 'Reminder',
   Record: 'Change to child record',
+  ProgrammeNote: 'Programme note',
   RecordNote: 'Child record note',
   SessionNote: 'Session note'
 }

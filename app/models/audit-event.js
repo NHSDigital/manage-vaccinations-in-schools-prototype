@@ -53,7 +53,7 @@ export class AuditEvent {
     this.name = options.name
     this.note = options.note
     this.type = options?.type
-    this.pinned = stringToBoolean(options?.pinned)
+    this.pinned = stringToBoolean(options?.pinned) || false
     this.messageRecipient = options?.messageRecipient
     this.messageTemplate = options?.messageTemplate
     this.updatedFields = options?.updatedFields

@@ -140,6 +140,13 @@ export const patientSessionController = {
       ]
     ]
 
+    response.locals.programmeItems = [
+      ...patientSession.siblingPatientSessions.map((patientSession) => ({
+        text: patientSession.programme.name,
+        value: patientSession.programme_id
+      }))
+    ]
+
     response.locals.referrer = patientSession.uri
     response.locals.patientProgramme = patientProgramme
     response.locals.patientSession = patientSession
@@ -382,15 +389,24 @@ export const patientSessionController = {
    */
   note(request, response) {
     const { account } = request.app.locals
-    const { note, pinned } = request.body
+    let { note, pinned, type, programme_ids } = request.body
     const { data } = request.session
     const { __, back, patientSession } = response.locals
+
+    programme_ids = Array.isArray(programme_ids)
+      ? programme_ids
+      : [programme_ids]
 
     patientSession.saveNote({
       note,
       pinned,
-      type: AuditEventType.SessionNote,
-      createdBy_uid: account.uid
+      type,
+      createdBy_uid: account.uid,
+      session_id:
+        type === AuditEventType.SessionNote && patientSession.session_id,
+      programme_ids:
+        type === AuditEventType.ProgrammeNote &&
+        programme_ids?.filter((programme_id) => programme_id !== '_unchecked')
     })
 
     // Clean up session data

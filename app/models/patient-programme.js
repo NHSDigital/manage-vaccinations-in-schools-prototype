@@ -1,6 +1,7 @@
 import { addMonths, addWeeks } from 'date-fns'
 
 import {
+  AuditEventType,
   PatientClinicStatus,
   PatientConsentStatus,
   PatientDeferredStatus,
@@ -111,10 +112,11 @@ export class PatientProgramme {
   get auditEvents() {
     return this.patient.events
       .map((auditEvent) => new AuditEvent(auditEvent, this.context))
+      .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) =>
         programme_ids?.some((id) => this.programme_id === id)
       )
-      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
