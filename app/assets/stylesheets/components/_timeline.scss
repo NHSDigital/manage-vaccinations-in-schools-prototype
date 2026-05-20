@@ -94,7 +94,7 @@ $_timeline-border-width: 2px;
       border-color: nhsuk-colour("blue");
     }
 
-    &--pinned blockquote {
+    &--highlighted blockquote {
       padding-right: nhsuk-spacing(3);
       border-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 10%);
       background-color: nhsuk-tint(nhsuk-colour("warm-yellow"), 70%);

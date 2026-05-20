@@ -1341,11 +1341,6 @@ export const en = {
       label: 'Note',
       hint: 'Notes are visible to all users, and cannot be edited or deleted'
     },
-    pinned: {
-      label: 'Pinned',
-      title: 'Pin note',
-      hint: 'Pin note to the top of session pages and search results'
-    },
     outcome: {
       label: 'Outcome'
     }
@@ -1746,7 +1741,7 @@ export const en = {
       title: 'Child record'
     },
     events: {
-      title: 'Session notes and activity'
+      title: 'Activity and notes'
     },
     notes: {
       label: 'Notes',
@@ -1756,11 +1751,12 @@ export const en = {
         success: 'Note added'
       }
     },
-    pinnedNotes: {
-      label: 'Pinned session notes'
+    sessionNotes: {
+      label: 'Session notes'
     },
-    pinnedNote: {
-      label: 'Pinned session note'
+    sessionNote: {
+      label: 'Session note',
+      hint: 'The most recent session note is shown at the top of session pages and in search results'
     },
     patientProgramme: {
       label: 'View child’s %s record'
