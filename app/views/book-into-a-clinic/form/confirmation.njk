@@ -13,25 +13,14 @@
       }) }}
 
       {% call insetText() %}
-        <p>
-          Make a note of your booking reference number if you have not entered an email
-          address or mobile number. You’ll need it to view, change, or cancel your appointment.
-        </p>
+        {{ __("clinicBooking.confirmation.makeANote") | nhsukMarkdown }}
       {% endcall %}
 
       <h2 class="nhsuk-heading-l">
-        What happens next?
+        {{ __("clinicBooking.confirmation.whatNext.title") }}
       </h2>
 
-      <p>
-        If you entered an email address, you’ll get a confirmation email with your booking details.
-      </p>
-
-      <p>
-        This email will contain your booking reference number and a link to change or cancel your
-        appointment. You will also be able to answer any unanswered health questions via this link.
-        Doing this ahead of the clinic will save time on the day.
-      </p>
+      {{ __("clinicBooking.confirmation.whatNext.description") | nhsukMarkdown }}
     </div>
   </div>
 {% endblock %}
