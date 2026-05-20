@@ -26,8 +26,13 @@
   {{ super() }}
 
   {{ appHeading({
-    title: title
+    title: title,
+    classes: "nhsuk-u-margin-bottom-2"
   }) }}
+
+  <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+    <strong>{{ __("child.dob.label") }}:</strong> {{ patient.dobWithAge }}
+  </p>
 
   {% set primaryRows = [[
     {
