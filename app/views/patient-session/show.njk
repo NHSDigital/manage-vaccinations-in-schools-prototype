@@ -13,10 +13,7 @@
     }, {
       text: __("session.report.title"),
       href: session.uri + "/report"
-    }, {
-      text: __("session." + activity + ".label"),
-      href: session.uri + "/" + activity
-    } if activity]
+    }]
   }) }}
 {% endblock %}
 
@@ -54,10 +51,10 @@
 
       {% include "patient-session/_report.njk" %}
 
-      {% for auditEvent in patientSession.pinnedNotes %}
+      {% for auditEvent in patientSession.sessionNotes %}
         {{ card({
           classes: "nhsuk-u-margin-top-2 app-card--orange",
-          heading: __("patientSession.pinnedNote.label"),
+          heading: __("patientSession.sessionNote.label"),
           headingLevel: 3,
           descriptionHtml: appEvent({ auditEvent: auditEvent, showProgrammes: true })
         }) }}
