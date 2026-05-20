@@ -389,7 +389,7 @@ export const patientSessionController = {
    */
   note(request, response) {
     const { account } = request.app.locals
-    let { note, pinned, type, programme_ids } = request.body
+    let { note, type, programme_ids } = request.body
     const { data } = request.session
     const { __, back, patientSession } = response.locals
 
@@ -399,7 +399,6 @@ export const patientSessionController = {
 
     patientSession.saveNote({
       note,
-      pinned,
       type,
       createdBy_uid: account.uid,
       session_id:

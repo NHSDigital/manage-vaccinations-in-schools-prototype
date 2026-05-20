@@ -22,6 +22,10 @@
       }
     },
     items: [{
+      text: "Session",
+      value: AuditEventType.SessionNote,
+      hint: { text: __("patientSession.sessionNote.hint") }
+    }, {
       text: "Programme",
       value: AuditEventType.ProgrammeNote,
       conditional: {
@@ -33,19 +37,6 @@
     } if session.programmes.length > 1 else {
       text: session.programmeNames.titleCase + " programme",
       value: AuditEventType.ProgrammeNote
-    }, {
-      text: "Session",
-      value: AuditEventType.SessionNote,
-      conditional: {
-        html: checkboxes({
-          items: [{
-            text: __("event.pinned.title"),
-            hint: { text: __("event.pinned.hint") },
-            value: true
-          }],
-          decorate: "pinned"
-        })
-      }
     }, {
       text: "Child record",
       value: AuditEventType.RecordNote

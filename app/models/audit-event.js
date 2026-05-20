@@ -19,8 +19,7 @@ import { getScreenOutcomeStatus } from '../utils/status.js'
 import {
   formatTag,
   formatMarkdown,
-  formatWithSecondaryText,
-  stringToBoolean
+  formatWithSecondaryText
 } from '../utils/string.js'
 
 /**
@@ -33,7 +32,6 @@ import {
  * @property {string} name - Name
  * @property {string} [note] - Note
  * @property {import('../enums.js').AuditEventType} [type] - Audit event type
- * @property {boolean} [pinned] - Pinned
  * @property {object} [messageRecipient] - Message recipient
  * @property {string} [messageTemplate] - Message template
  * @property {Array} [updatedFields] - Updated fields
@@ -53,7 +51,6 @@ export class AuditEvent {
     this.name = options.name
     this.note = options.note
     this.type = options?.type
-    this.pinned = stringToBoolean(options?.pinned) || false
     this.messageRecipient = options?.messageRecipient
     this.messageTemplate = options?.messageTemplate
     this.updatedFields = options?.updatedFields

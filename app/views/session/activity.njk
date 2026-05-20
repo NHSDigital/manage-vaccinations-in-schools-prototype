@@ -117,14 +117,14 @@
                   value: reportStatusHtml
                 },
                 notes: {
-                  label: __("patientSession.pinnedNote.label"),
+                  label: __("patientSession.sessionNotes.label"),
                   value: appEvent({
-                    auditEvent: patientSession.pinnedNotes[0],
+                    auditEvent: patientSession.sessionNotes[0],
                     showProgrammes: false,
                     truncate: 300,
                     patientSession: patientSession
                   })
-                } if patientSession.pinnedNotes[0]
+                } if patientSession.sessionNotes[0]
               })
             }) }}
 

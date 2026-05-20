@@ -3,6 +3,7 @@ import { decorate } from 'nhsuk-decorated-components'
 
 import { healthQuestions } from './datasets/health-questions.js'
 import {
+  AuditEventType,
   InstructionOutcome,
   PatientConsentStatus,
   PatientRefusedStatus,
@@ -157,7 +158,7 @@ export default () => {
 
       timelineItems.push({
         headingText: formatMarkdown(auditEvent.name),
-        isPinnedItem: auditEvent.pinned,
+        isHighlightedItem: auditEvent.type === AuditEventType.SessionNote,
         isPastItem: auditEvent.isPastEvent,
         html:
           auditEvent.note &&

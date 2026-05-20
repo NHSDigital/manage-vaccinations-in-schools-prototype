@@ -166,11 +166,7 @@ export class PatientSession {
    * @returns {object} Events grouped by date
    */
   get auditEventLog() {
-    return [...this.auditEvents].sort((a, b) => {
-      if (a.pinned !== b.pinned) {
-        // Show pinned items first
-        return a.pinned ? -1 : 1
-      }
+    return this.auditEvents.sort((a, b) => {
       return getDateValueDifference(b.createdAt, a.createdAt)
     })
   }
@@ -188,14 +184,14 @@ export class PatientSession {
   }
 
   /**
-   * Get pinned session notes
+   * Get session notes
    *
    * @returns {Array<import('./audit-event.js').AuditEvent>} Audit event
    */
-  get pinnedNotes() {
+  get sessionNotes() {
     return this.auditEvents
+      .filter(({ type }) => type === AuditEventType.SessionNote)
       .filter(({ session_id }) => session_id === this.session_id)
-      .filter(({ pinned }) => pinned)
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
@@ -1157,7 +1153,6 @@ export class PatientSession {
     this.patient?.addEvent({
       name: activity.note.created(event.type),
       note: event.note,
-      pinned: event.pinned,
       type: event.type || AuditEventType.SessionNote,
       createdBy_uid: event.createdBy_uid,
       programme_ids: event.programme_ids,
