@@ -427,10 +427,11 @@ export const en = {
       title: 'Do you want %s to have an MMR vaccine without gelatine?',
       hint: 'One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.',
       yes: {
-        label: 'I want %s to have the vaccine that does not contain gelatine'
+        label:
+          'I want my child to have the vaccine that does not contain gelatine'
       },
       no: {
-        label: '%s can have either type of vaccine'
+        label: 'My child can have either type of vaccine'
       }
     },
     preferredLocation: {
