@@ -31,7 +31,7 @@ export const Adjustment = {
   Privacy: 'Needs a private space',
   HomeVisit: 'Needs a home visit',
   Other: 'Other reasonable adjustment',
-  None: 'No adjustments required'
+  None: 'None'
 }
 
 /**

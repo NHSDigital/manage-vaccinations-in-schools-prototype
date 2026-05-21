@@ -18,6 +18,7 @@ import {
 import { formatDate } from '../utils/date.js'
 import {
   formatLinkWithSecondaryText,
+  formatList,
   formatOther,
   stringToArray
 } from '../utils/string.js'
@@ -292,16 +293,14 @@ export class ClinicAppointment {
               : 'No preference'
           }
         : {}),
-      location: Object.values(session?.clinic?.location ?? {})
-        .filter(Boolean)
-        .join(', '),
+      location: session?.clinic?.formatted.nameAndAddress,
       locationName: session?.clinic?.name,
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
-      vaccinations: this.#getSelectedProgrammes(this.context)
-        .map((programme) => programme.nameTag)
-        .join(' ')
+      vaccinations: formatList(
+        this.#getSelectedProgrammes(this.context).map(({ name }) => name)
+      )
     }
   }
 
