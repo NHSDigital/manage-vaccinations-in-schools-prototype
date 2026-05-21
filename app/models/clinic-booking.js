@@ -236,12 +236,16 @@ export class ClinicBooking {
         }
 
         // Willing to accept flu injection as alternative?
-        appointment.fluAlternative =
-          stringToBoolean(appointment.fluAlternative) || false
+        if (appointment?.fluAlternative) {
+          appointment.fluAlternative =
+            stringToBoolean(appointment.fluAlternative) || false
+        }
 
         // Gelatine free, or either type of MMR vaccine?
-        appointment.mmrAlternative =
-          stringToBoolean(appointment.mmrAlternative) || false
+        if (appointment?.mmrAlternative) {
+          appointment.mmrAlternative =
+            stringToBoolean(appointment.mmrAlternative) || false
+        }
 
         // Impairments
         if (appointment?.child?.impairments) {
@@ -255,6 +259,13 @@ export class ClinicBooking {
           appointment.child.adjustments = stringToArray(
             appointment.child.adjustments
           )
+        }
+
+        // Contact has parental responsibility?
+        if (appointment?.parentHasParentalResponsibility) {
+          appointment.parentHasParentalResponsibility =
+            stringToBoolean(appointment.parentHasParentalResponsibility) ||
+            false
         }
       }
     }

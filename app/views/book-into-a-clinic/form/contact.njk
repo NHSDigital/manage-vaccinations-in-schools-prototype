@@ -16,6 +16,8 @@
       decorate: "booking.contact.fullName"
     }) }}
 
+    {% include "book-into-a-clinic/form/_parental-relationship.njk" %}
+
     {{ input({
       label: { text: __("clinicBooking.contact.email.label") },
       hint: { text: __("clinicBooking.contact.email.hint") },

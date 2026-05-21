@@ -278,6 +278,12 @@ export const en = {
     nameAndAge: {
       label: 'Child'
     },
+    fullName: {
+      label: 'Full name'
+    },
+    dob: {
+      label: 'Date of birth'
+    },
     location: {
       label: 'Clinic location'
     },
@@ -387,12 +393,12 @@ export const en = {
         'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
     programmes: {
-      title: 'Do you consent to %s having the following vaccinations?',
+      title:
+        '{count, plural, one {Do you consent to {firstName} having the following vaccination?} other {Do you consent to {firstName} having the following vaccinations?}}',
       description: {
         matched:
           'While invited for {{ programmeNames }} vaccination, our records show that {{ firstName }} is also eligible for other vaccinations.'
       },
-      label: 'Select the vaccinations that you consent to %s having',
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
@@ -499,7 +505,8 @@ export const en = {
       summary: {
         child: 'Child details',
         vaccination: 'Vaccination details',
-        appointment: 'Appointment details'
+        appointment: 'Appointment details',
+        contact: 'Contact details'
       },
       confirm: 'Confirm'
     },

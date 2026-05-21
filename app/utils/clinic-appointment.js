@@ -26,27 +26,7 @@ export const getAllAppointmentPaths = (
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
     return {
-      // Child details
-      [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
-      ...(appointments[0].uuid !== appointment_uuid &&
-      getPreviousAddressItems(appointments).length > 2
-        ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]:
-                () => sessionData.transaction.addressChoice !== 'new'
-            }
-          }
-        : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/parental-relationship`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
-          data: 'appointment.parentHasParentalResponsibility',
-          value: 'false'
-        }
-      },
-
-      // Vaccinations (and types) and other appointment-length influences
+      // Vaccinations wanted
       [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {},
       ...(sessionData.appointment?.selected_programme_ids?.includes('flu')
         ? {
@@ -99,6 +79,30 @@ export const getAllAppointmentPaths = (
       [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {},
+
+      // Child details
+      [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
+      ...(appointments[0].uuid !== appointment_uuid &&
+      getPreviousAddressItems(appointments).length > 2
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]: {
+              [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () =>
+                sessionData.transaction.addressChoice !== 'new'
+            }
+          }
+        : {}),
+      [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
+
+      // Parent contact details
+      [`/${booking_uuid}/new/${appointment_uuid}/contact`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
+          data: 'appointment.parentHasParentalResponsibility',
+          value: 'false'
+        }
+      },
+      [`/${booking_uuid}/new/contact-preference`]: {},
+
       [`/${booking_uuid}/new/${appointment_uuid}/check-appointment`]: {}
     }
   })
