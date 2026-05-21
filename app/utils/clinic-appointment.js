@@ -93,6 +93,8 @@ export const getAllAppointmentPaths = (
           }
         : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {},
 
       // Parent contact details
       [`/${booking_uuid}/new/${appointment_uuid}/contact`]: {
