@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
+  ParentalRelationship,
   ProgrammeType,
   ReplyDecision,
   VaccineCriteria,
@@ -15,7 +16,11 @@ import {
   Session
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
-import { formatLinkWithSecondaryText, stringToArray } from '../utils/string.js'
+import {
+  formatLinkWithSecondaryText,
+  formatOther,
+  stringToArray
+} from '../utils/string.js'
 
 /**
  * @class ClinicAppointment
@@ -261,6 +266,13 @@ export class ClinicAppointment {
         fluVaccineType = 'Injected vaccine only'
         break
     }
+    const parentalRelationship =
+      this.parentalRelationship === ParentalRelationship.Other
+        ? formatOther(
+            ParentalRelationship.Other,
+            this.parentalRelationshipOther
+          )
+        : this.parentalRelationship
 
     return {
       nameAndAge: [
@@ -269,8 +281,9 @@ export class ClinicAppointment {
       ]
         .filter(Boolean)
         .join('<br>'),
+      dob: this.child.formatted.dob,
       homeAddress: this.child.formatted.address,
-      parentalRelationship: this.contact?.formatted.relationship,
+      parentalRelationship,
       ...(fluVaccineType ? { fluVaccineType } : {}),
       ...(this.mmrAlternative !== undefined
         ? {

@@ -1,29 +1,22 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.programmes.title", firstName) %}
+{% set title = __mf("clinicBooking.programmes.title", {
+  count: programmeItems.length,
+  firstName: firstName
+}) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title,
-    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
-  }) }}
-
-  {{
-    __("clinicBooking.programmes.description.matched",
-      {
-        firstName: firstName,
-        programmeNames: data.clinicInvite.programmeNames
-      }) | nhsukMarkdown
-  }}
-
   {{ checkboxes({
     fieldset: {
       legend: {
-        text: __("clinicBooking.programmes.label", firstName),
-        size: "m"
+        html: appHeading({
+          title: title,
+          caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+        }),
+        size: "l"
       }
     },
-    hint: { text: __("clinicBooking.programmes.hint") },
+    hint: { text: __("clinicBooking.programmes.hint") } if programmeItems.length > 1,
     items: programmeItems,
     decorate: "appointment.selected_programme_ids"
   }) }}

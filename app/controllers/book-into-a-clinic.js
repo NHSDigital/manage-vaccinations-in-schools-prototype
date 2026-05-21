@@ -13,7 +13,6 @@ import {
 import { ClinicBooking, Programme, Session } from '../models.js'
 import {
   getAllAppointmentPaths,
-  getHealthQuestionPaths,
   getPreviousAddressItems,
   getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
@@ -71,7 +70,7 @@ export const bookIntoClinicController = {
     const firstAppointment = booking.appointments[0]
 
     // Redirect to the first page in the booking journey (after the start page, that is)
-    const redirectUrl = `${firstAppointment.uri.new}/child`
+    const redirectUrl = `${firstAppointment.uri.new}/programmes`
 
     return request.session.save((error) => {
       if (!error) response.redirect(redirectUrl)
@@ -84,32 +83,6 @@ export const bookIntoClinicController = {
   readForm(request, response, next) {
     const { appointment_uuid, booking_uuid } = request.params
     const { data, referrer } = request.session
-
-    /**
-     * NOTE:
-     *
-     * The nature of the journey here is complex, as there are two separate sections in which we need to
-     * iterate over children. Or over appointments, if you want to think of it that way (each child has
-     * their own appointment). And the second iteration - the health questions - has pages that are
-     * dependent on the answers given during the appointment booking (specifically, the choice of vaccines
-     * per child).
-     *
-     * So, it goes:
-     * - Start page
-     * - How many children?
-     *   - Child name         <-- first page of the per-child appointment journey
-     *   - Child DOB
-     *   - ...
-     *   - Appointment time   <-- final page of the per-child appointment journey; iterate to next child if required
-     * - Contact info
-     * - Check answers
-     * - Health questions?
-     *   - Health question 1  <-- first page of the per-child health question journey
-     *   - ...
-     *   - Health question n  <-- final page of the per-child health question journey; iterate to next child if required
-     * - Confirmation
-     *
-     */
 
     // Create objects on the global context to allow us to check branching conditions, etc.
     // And make them available to the view.
@@ -151,31 +124,6 @@ export const bookIntoClinicController = {
         request.session.data,
         booking.appointments
       ),
-      [`/${booking_uuid}/new/add-another`]: {},
-
-      // Contact journey
-      [`/${booking_uuid}/new/contact`]: {
-        [`/${booking_uuid}/new/offer-health-questions`]: () =>
-          !request.session.data.booking?.contact?.tel
-      },
-      [`/${booking_uuid}/new/contact-preference`]: {},
-
-      // Health questions (optional)
-      [`/${booking_uuid}/new/offer-health-questions`]: {
-        [`/${booking_uuid}/new/confirmation`]: {
-          data: 'transaction.optedIntoHealthQuestions',
-          value: 'false'
-        }
-      },
-
-      // For each child being booked in, and their selected vaccinations, ask the
-      // relevant health questions and impairments/adjustments questions
-      ...getHealthQuestionPaths(
-        `/${booking_uuid}/new/`,
-        String(booking_uuid),
-        data.wizard,
-        data
-      ),
 
       // Confirmation! \o/
       [`/${booking_uuid}/new/confirmation`]: {}
@@ -213,8 +161,8 @@ export const bookIntoClinicController = {
         booking.appointments,
         data
       )
-    } else if (view === 'parental-relationship') {
-      // Prepare the radio options for the parental relationship page
+    } else if (view === 'parental-relationship' || view === 'contact') {
+      // Prepare the radio options for the parental relationship
       response.locals.parentalRelationshipItems = Object.values(
         ParentalRelationship
       )
@@ -224,47 +172,28 @@ export const bookIntoClinicController = {
           value: relationship
         }))
     } else if (view === 'programmes') {
-      response.locals.programmeItems = [
-        {
-          text: 'Flu',
-          value: 'flu',
+      // Create radio options for the programmes invited to (or flu if we've got none)
+      let programmes = data.clinicInvite.programme_ids
+        .map((programme_id) => Programme.findOne(programme_id, data))
+        .filter(Boolean)
+      programmes = programmes.length
+        ? programmes
+        : Programme.findOne('flu', data)
+
+      response.locals.programmeItems = programmes.map((programme) => {
+        const hint =
+          programme.type === ProgrammeType.MMR &&
+          appointment.child.canBeOfferedMmrv
+            ? programme.information.hintMmrv
+            : programme.information.hint
+        return {
+          text: programme.name,
+          value: programme.id,
           hint: {
-            text: 'Protects against flu, which can sometimes cause serious problems, such as pneumonia'
+            text: hint
           }
-        },
-        {
-          text: 'HPV',
-          value: 'hpv',
-          hint: {
-            text: 'Protects against human papillomavirus, some types of which are linked to an increased risk of certain types of cancer'
-          }
-        },
-        {
-          text: 'MenACWY',
-          value: 'menacwy',
-          hint: {
-            text: 'Protects against life-threatening illnesses like meningitis and sepsis'
-          }
-        },
-        {
-          text: 'Td/IPV',
-          value: 'td-ipv',
-          hint: { text: 'Protects against tetanus, diphtheria and polio' }
-        },
-        appointment.child.canBeOfferedMmrv
-          ? {
-              text: 'MMRV',
-              value: 'mmr',
-              hint: {
-                text: 'Protects against measles, mumps, rubella and varicella (chickenpox)'
-              }
-            }
-          : {
-              text: 'MMR',
-              value: 'mmr',
-              hint: { text: 'Protects against measles, mumps and rubella' }
-            }
-      ].filter(({ value }) => ['flu', 'mmr'].includes(value)) // test with these for now
+        }
+      })
     } else if (view === 'clinic-location') {
       const scheduledClinics = Session.findAll(data).filter(
         (session) =>

@@ -15,15 +15,14 @@
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {
-      nameAndAge: {
+      fullName: {
         href: appointment.uri.new + "/child"
+      },
+      dob: {
+        href: appointment.uri.new + "/dob"
       },
       homeAddress: {
         href: appointment.uri.new + "/address"
-      },
-      parentalRelationship: {
-        href: appointment.uri.new + "/parental-relationship",
-        value: wizardAppointment.formatted.parentalRelationship
       }
     })
   }) }}
@@ -62,6 +61,39 @@
       },
       timeSlot: {
         href: appointment.uri.new + "/appointment-time-range"
+      }
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.check-appointment.summary.contact"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(booking.contact, {
+      fullName: {
+        href: appointment.uri.new + "/contact"
+      },
+      relationship: {
+        href: appointment.uri.new + "/contact",
+        value: wizardAppointment.formatted.parentalRelationship
+      },
+      hasParentalResponsibility: {
+        href: appointment.uri.new + "/contact",
+        value: wizardAppointment.parentHasParentalResponsibility
+      },
+      email: {
+        href: appointment.uri.new + "/contact"
+      },
+      tel: {
+        href: appointment.uri.new + "/contact"
+      },
+      sms: {
+        href: appointment.uri.new + "/contact"
+      },
+      contactPreference: {
+        href: booking.uri.new + "/contact-preference"
       }
     })
   }) }}
