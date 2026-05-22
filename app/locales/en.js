@@ -2423,7 +2423,7 @@ export const en = {
     new: {
       label: 'Add a new session',
       'check-answers': {
-        confirm: 'Add session',
+        confirm: 'Add this session',
         title: 'Check and confirm'
       },
       success: '{{session.name}} created'
