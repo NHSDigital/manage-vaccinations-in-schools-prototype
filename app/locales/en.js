@@ -752,8 +752,8 @@ export const en = {
         label: 'Reasonable adjustments',
         title:
           'Will your child need any of the following adjustments during their vaccination?',
-        guideDog: {
-          label: 'A guide dog'
+        assistanceAnimal: {
+          label: 'Their assistance animal, for example a guide dog'
         },
         distraction: {
           label: 'A distraction while having the vaccination'

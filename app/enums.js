@@ -23,7 +23,7 @@ export const AcademicYear = {
  * @enum {string}
  */
 export const Adjustment = {
-  GuideDog: 'Has a guide dog',
+  AssistanceAnimal: 'Has an assistance animal',
   Distraction: 'Needs a distraction while having the vaccination',
   ExtendedAppointment: 'Needs an extended appointment',
   FirstAppointment: 'Needs the first appointment',

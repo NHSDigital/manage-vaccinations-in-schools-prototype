@@ -62,7 +62,7 @@ export function generateChild() {
   }
 
   if (impairments?.includes(Impairment.Vision)) {
-    adjustments = [Adjustment.GuideDog]
+    adjustments = [Adjustment.AssistanceAnimal]
   }
 
   // Name
