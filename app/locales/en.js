@@ -1562,8 +1562,12 @@ export const en = {
     results: {
       summary:
         '{count, plural, =0 {No children matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> record} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> children}}',
-      inviteToClinic:
-        '{count, plural, one {Invite 1 child to a clinic} other {Invite {count} children to a clinic}}'
+      inviteToClinic: {
+        title:
+          '{count, plural, one {Invite this child to a clinic?} other {Invite these children to a clinic?}}',
+        hint: 'You’ll be able to check for scheduled clinic sessions before sending the invites.',
+        link: '{count, plural, one {Invite 1 child to a clinic} other {Invite {count} children to a clinic}}'
+      }
     },
     search: {
       label: 'Find children',

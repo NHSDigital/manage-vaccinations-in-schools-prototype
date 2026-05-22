@@ -45,10 +45,19 @@
           }) | safe
         }) }}
 
-        {{ actionLink({
-          text: __mf("patient.results.inviteToClinic", { count: results.count }),
-          href: "/patients/invite-to-clinic" + query | asQueryString
-        }) if showingClinicReady and results.count > 0 }}
+        {% if showingClinicReady and results.count > 0 %}
+          {{ appHeading({
+            level: 3,
+            size: "s",
+            title: __mf("patient.results.inviteToClinic.title", { count: results.count }),
+            summary: __("patient.results.inviteToClinic.hint")
+          }) }}
+
+          {{ actionLink({
+            text: __mf("patient.results.inviteToClinic.link", { count: results.count }),
+            href: "/patients/invite-to-clinic" + query | asQueryString
+          }) }}
+        {% endif %}
 
         {% for patient in results.page %}
           {% set reportStatusHtml -%}
