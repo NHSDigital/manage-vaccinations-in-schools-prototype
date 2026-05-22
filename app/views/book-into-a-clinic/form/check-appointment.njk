@@ -35,7 +35,7 @@
 
   {{ summaryList({
     card: {
-      heading: __("clinicBooking.check-appointment.summary.vaccination"),
+      heading: __("clinicBooking.check-appointment.summary.appointment"),
       headingSize: "m"
     },
     lastRowBorder: false,
@@ -48,17 +48,7 @@
       },
       mmrVaccineType: {
         href: appointment.uri.new + "/mmr-alternative"
-      }
-    })
-  }) }}
-
-  {{ summaryList({
-    card: {
-      heading: __("clinicBooking.check-appointment.summary.appointment"),
-      headingSize: "m"
-    },
-    lastRowBorder: false,
-    rows: summaryRows(appointment, {
+      },
       location: {
         href: appointment.uri.new + "/clinic-location"
       },

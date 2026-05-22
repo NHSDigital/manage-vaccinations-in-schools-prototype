@@ -502,10 +502,9 @@ export const en = {
         '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
     },
     'check-appointment': {
-      title: 'Check %s’s appointment details',
+      title: 'Check and confirm %s’s appointment details',
       summary: {
         child: 'Child details',
-        vaccination: 'Vaccination details',
         appointment: 'Appointment details',
         contact: 'Contact details'
       },
