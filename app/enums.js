@@ -238,7 +238,7 @@ export const Impairment = {
   Mobility: 'Mobility',
   Memory: 'Memory',
   MentalHealth: 'Mental health',
-  Communicative: 'Social and/or communication differences',
+  Communicative: 'Social or communication differences',
   Other: 'Other',
   None: 'None'
 }

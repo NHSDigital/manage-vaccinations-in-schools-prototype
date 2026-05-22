@@ -318,12 +318,12 @@ export const en = {
       intro:
         'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.',
       programmes:
-        'Clinics have recently been set up to offer {{programmeNames}} vaccinations, but your child may be able to catch up on any outstanding vaccinations during their appointment.',
+        'Clinics have recently been set up to offer {{programmeNames}} vaccinations. However, at their appointment your child can also have vaccinations that they previously missed.',
       confirm: 'Start now',
       otherMethods: {
         title: 'Other ways to book an appointment',
         description:
-          'The quickest way to book an appointment is online, using this form. This will take less than 5 minutes per child.\n\nIf you cannot use this form, you can book an appointment by phoning %s.'
+          'The quickest way to book an appointment is online, using this form. This will take less than 5 minutes.\n\nIf you cannot use this form, you can book an appointment by phoning %s.'
       }
     },
     childCount: {
@@ -540,7 +540,7 @@ export const en = {
         hint: 'Someone from the vaccinations team might call you if they have questions'
       },
       sms: {
-        label: 'Tick this box if you’d like to get updates by text message'
+        label: 'Confirm if you want appointment updates by text message'
       },
       contactPreference: {
         title: 'If we need to contact you',
@@ -585,7 +585,7 @@ export const en = {
       makeANote:
         'Make a note of your booking reference number. You will need it if you change or cancel your appointment.',
       whatNext: {
-        title: 'What happens next?',
+        title: 'What happens next',
         description: 'You’ll get a booking confirmation email or text message.'
       }
     },
