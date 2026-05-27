@@ -6,12 +6,13 @@ import {
   AppointmentAbandonmentReason,
   ClinicAppointmentStatus,
   ParentalRelationship,
+  PatientClinicStatus,
   ProgrammeType,
   ReplyDecision,
   SessionStatus,
   SessionType
 } from '../enums.js'
-import { ClinicBooking, Programme, Session } from '../models.js'
+import { ClinicBooking, Patient, Programme, Session } from '../models.js'
 import {
   getAllAppointmentPaths,
   getPreviousAddressItems,
@@ -56,15 +57,37 @@ export const bookIntoClinicController = {
       request.query
     )
     const { data } = request.session
+    const { patient_uuid } = request.params
 
-    // Read the invited programme IDs from the querystring and store them
     let programme_ids
-    if (programme_id) {
-      programme_ids = Array.isArray(programme_id)
-        ? programme_id
-        : [programme_id]
+    if (patient_uuid) {
+      // Starting the booking process from the child record, so no querystring with invited
+      // programmes; use the child's clinic-ready programmes as the basis instead
+      const patient = Patient.findOne(patient_uuid, data)
+      if (patient) {
+        const canBeOfferedMmrv = patient.canBeOfferedMmrv
+        programme_ids = Object.values(patient.programmes)
+          .filter(({ clinicStatus }) =>
+            [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
+              String(clinicStatus)
+            )
+          )
+          .map(({ programme_id }) =>
+            programme_id === 'mmr' && canBeOfferedMmrv ? 'mmrv' : programme_id
+          )
+      }
     } else {
-      // default to all programmes if none supplied
+      // Starting the booking from the parent's invite link; read the invited programme IDs
+      // from the querystring
+      if (programme_id) {
+        programme_ids = Array.isArray(programme_id)
+          ? programme_id
+          : [programme_id]
+      }
+    }
+
+    // Default to all programmes if none supplied
+    if (!programme_ids) {
       programme_ids = Programme.findAll(data)
         .filter(({ hidden }) => !hidden)
         .map(({ id }) => id)
@@ -92,6 +115,8 @@ export const bookIntoClinicController = {
       programmeNames: programmes.map(({ name }) => name),
       invitedForMmrv: useMmrv
     }
+
+    response.locals.patient_uuid = patient_uuid
 
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
     const nextPath =
