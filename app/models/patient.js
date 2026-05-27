@@ -666,13 +666,16 @@ export class Patient extends Child {
   addToSession(patientSession) {
     this.patientSession_uuids.push(patientSession.uuid)
 
-    const session = patientSession.session
-    this.addEvent({
-      name: activity.session.added(session),
-      createdAt: session.openAt,
-      createdBy_uid: session.createdBy_uid,
-      programme_ids: session.programme_ids
-    })
+    patientSession = PatientSession.findOne(patientSession.uuid, this.context)
+
+    if (patientSession?.session) {
+      this.addEvent({
+        name: activity.session.added(patientSession.session),
+        createdAt: patientSession.session.openAt,
+        createdBy_uid: patientSession.session.createdBy_uid,
+        programme_ids: patientSession.session.programme_ids
+      })
+    }
   }
 
   /**
