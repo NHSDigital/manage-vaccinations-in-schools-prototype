@@ -14,18 +14,14 @@
       
       {{ __("clinicBooking.start.programmes", { programmeNames: data.clinicInvite.programmeNames }) | nhsukMarkdown }}
 
-      <h2 class="nhsuk-heading-l">
-        {{ __("clinicBooking.start.confirm.title") }}
-      </h2>
-
       {{ button({
-        text: __("clinicBooking.start.confirm.buttonText"),
+        text: __("clinicBooking.start.confirm"),
         href: "/book-into-a-clinic/new"
       }) }}
 
-      <h3 class="nhsuk-heading-m">
+      <h2>
         {{ __("clinicBooking.start.otherMethods.title") }}
-      </h3>
+      </h2>
 
       {{ __("clinicBooking.start.otherMethods.description", bookingPhoneNumber) | nhsukMarkdown }}
     </div>
