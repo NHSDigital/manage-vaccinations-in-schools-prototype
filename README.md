@@ -1,10 +1,8 @@
 # Manage vaccinations in schools prototype
 
-A point of care (POC) prototype, built using the [NHS.UK Prototype Rig](https://github.com/x-govuk/nhsuk-prototype-rig).
+Manage vaccinations in schools (Mavis) is a digital tool designed to help school age immunisation service (SAIS) teams manage their vaccination programmes end to end.
 
-Point of Care Systems record data when someone is vaccinated, including product and batch details, and the recording of adverse reactions.
-
-<https://digital.nhs.uk/coronavirus/vaccinations/training-and-onboarding/point-of-care>
+This is a prototype of the service, built using the [NHS prototype kit](https://prototype-kit.service-manual.nhs.uk).
 
 ## Requirements
 
