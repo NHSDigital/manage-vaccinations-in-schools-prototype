@@ -1,4 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { formatDuration, intervalToDuration } from 'date-fns'
 
 import {
   Adjustment,
@@ -287,6 +288,17 @@ export class ClinicAppointment {
     }
 
     return adjustments.length && !adjustments.includes(Adjustment.None)
+  }
+
+  /**
+   * Get duration of appointment
+   *
+   * @returns {string} Formatted duration
+   */
+  get duration() {
+    return formatDuration(
+      intervalToDuration({ start: this.startAt, end: this.endAt })
+    )
   }
 
   /**

@@ -334,9 +334,7 @@ export class PatientSession {
    */
   get clinicAppointment() {
     if (this.session.type !== SessionType.Clinic) {
-      throw new Error(
-        'Clinic appointments are only relevant to clinic sessions'
-      )
+      return
     }
 
     return ClinicBooking.findAll(this.context)

@@ -1811,6 +1811,10 @@ export const en = {
     session: {
       label: 'Session'
     },
+    clinicAppointment: {
+      title: 'Clinic appointment',
+      label: 'Appointment slot'
+    },
     yearGroup: {
       label: 'Year group'
     },

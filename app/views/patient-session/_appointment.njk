@@ -1,0 +1,18 @@
+{% call card({
+  heading: __("patientSession.clinicAppointment.title"),
+  headingSize: "m"
+}) %}
+  {# Description #}
+{% filter nhsukMarkdown %}
+  {{ patientSession.clinicAppointment.formatted.dateAndTime }}
+  ({{ patientSession.clinicAppointment.duration }})
+{% endfilter %}
+
+  {{ summaryList({
+    lastRowBorder: false,
+    rows: summaryRows(patientSession.clinicAppointment.child, {
+      impairments: {},
+      adjustments: {}
+    })
+  }) if patientSession.clinicAppointment.child.formatted.impairments or patientSession.clinicAppointment.child.formatted.adjustments }}
+{% endcall %}
