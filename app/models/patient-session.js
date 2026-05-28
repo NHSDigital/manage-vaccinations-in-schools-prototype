@@ -371,9 +371,10 @@ export class PatientSession {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
     const alternativeVaccine = this.programme?.alternativeVaccine
 
-    // Need consent response(s) before we can determine the chosen method
+    // Need consent response(s) or a clinic appointment before we can determine
+    // the chosen method.
     // We only want to instruct on patients being vaccinated using nasal spray
-    if (!this.consentGiven) {
+    if (!this.clinicAppointment && !this.consentGiven) {
       return
     }
 
@@ -383,7 +384,7 @@ export class PatientSession {
     }
 
     // Administered vaccine was the alternative
-    if (this.alternative) {
+    if (this.clinicAppointment?.alternative || this.alternative) {
       return alternativeVaccine
     }
 
@@ -415,7 +416,7 @@ export class PatientSession {
     }
 
     // Need consent response(s) before we can determine the chosen method
-    if (!this.consentGiven) {
+    if (!this.clinicAppointment && !this.consentGiven) {
       return
     }
 

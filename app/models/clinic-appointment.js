@@ -291,6 +291,18 @@ export class ClinicAppointment {
   }
 
   /**
+   * Administer alternative vaccine
+   *
+   * @returns {boolean} Administer alternative vaccine
+   */
+  get alternative() {
+    return (
+      this.fluDecision === ReplyDecision.OnlyAlternativeInjection ||
+      this.mmrAlternative
+    )
+  }
+
+  /**
    * Get duration of appointment
    *
    * @returns {string} Formatted duration
