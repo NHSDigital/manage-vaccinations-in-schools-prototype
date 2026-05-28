@@ -309,8 +309,20 @@ export class Child {
             : yearGroup,
         schoolName: this?.school && this.school.name
       }),
-      adjustments: this.adjustments && formatList(this.adjustments),
-      impairments: this.impairments && formatList(this.impairments)
+      adjustments:
+        this.adjustments &&
+        formatList(
+          this.adjustments.filter(
+            (adjustment) => adjustment !== Adjustment.None
+          )
+        ),
+      impairments:
+        this.impairments &&
+        formatList(
+          this.impairments.filter(
+            (impairment) => impairment !== Impairment.None
+          )
+        )
     }
   }
 
