@@ -171,6 +171,11 @@ export const getConfirmedConsentOutcome = (reply, session) => {
  * @returns {ConsentOutcome} Consent outcome
  */
 export const getConsentOutcome = (patientSession) => {
+  // If patient is 16+, assume consent given
+  if (patientSession.patient.post16) {
+    return ConsentOutcome.Given
+  }
+
   // Get valid replies
   const validReplies = Object.values(patientSession.replies).filter(
     ({ invalid }) => !invalid
