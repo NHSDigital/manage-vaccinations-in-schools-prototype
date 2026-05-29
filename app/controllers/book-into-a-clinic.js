@@ -210,7 +210,11 @@ export const bookIntoClinicController = {
         scheduledClinics,
         (session) => session.clinic_id
       )
-      let distanceToClinic = 0.5
+
+      let outOfArea = faker.datatype.boolean(0.5)
+      response.locals.outOfArea = outOfArea
+
+      let distanceToClinic = outOfArea ? 100.5 : 0.5
       const clinicLocationItems = []
       Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
         const firstSession = sessions.reduce((earliest, current) => {
@@ -221,7 +225,7 @@ export const bookIntoClinicController = {
           text: sessions[0].formatted.location,
           value: clinic_id,
           hint: {
-            text: `${distanceToClinic} miles away, next date is ${firstSession.formatted.date}`
+            text: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
           }
         })
         distanceToClinic += 2.1
