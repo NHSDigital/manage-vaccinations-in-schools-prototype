@@ -371,10 +371,10 @@ export class PatientSession {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
     const alternativeVaccine = this.programme?.alternativeVaccine
 
-    // Need consent response(s) or a clinic appointment before we can determine
+    // Need consent response (or a clinic appointment) before we can determine
     // the chosen method.
     // We only want to instruct on patients being vaccinated using nasal spray
-    if (!this.clinicAppointment && !this.consentGiven) {
+    if (!this.consentGiven) {
       return
     }
 
@@ -416,7 +416,7 @@ export class PatientSession {
     }
 
     // Need consent response(s) before we can determine the chosen method
-    if (!this.clinicAppointment && !this.consentGiven) {
+    if (!this.consentGiven) {
       return
     }
 
@@ -679,6 +679,10 @@ export class PatientSession {
    * @returns {boolean} Consent has been given
    */
   get consentGiven() {
+    if (this.clinicAppointment) {
+      return true
+    }
+
     return [
       ConsentOutcome.Given,
       ConsentOutcome.GivenForAlternativeInjection,
@@ -730,7 +734,9 @@ export class PatientSession {
 
     switch (this.screen) {
       case ScreenOutcome.NeedsTriage:
-        return `You need to decide if it’s safe to vaccinate ${patient.firstName}.`
+        return this.clinicAppointment
+          ? `You need to review the health questions with the parent to decide if it’s safe to vaccinate ${patient.firstName}.`
+          : `You need to decide if it’s safe to vaccinate ${patient.firstName}.`
       case ScreenOutcome.InviteToClinic:
         return `${user.fullName} decided that ${patient.firstName}’s vaccination should take place at a clinic.`
       case ScreenOutcome.DelayVaccination:
@@ -1055,6 +1061,7 @@ export class PatientSession {
     this.patient?.addEvent({
       name: activity.triage.decision(event),
       note: event.note,
+      type: AuditEventType.ProgrammeNote,
       outcome: event.outcome,
       outcomeAt_: event.outcomeAt_,
       createdAt: event.createdAt,

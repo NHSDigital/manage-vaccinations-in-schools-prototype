@@ -123,10 +123,15 @@ export const getScreenOutcome = (patientSession) => {
     .filter((event) => event.outcome)
     .at(-1)
 
-  // Triage completed without any answers to health questions
   if (responsesToTriage.length === 0) {
+    // Triage completed without any answers to health questions
     if (lastTriageNoteWithOutcome) {
       return lastTriageNoteWithOutcome.outcome
+    }
+
+    // Clinic appointment without answers to health questions
+    if (patientSession.clinicAppointment) {
+      return ScreenOutcome.NeedsTriage
     }
 
     return false

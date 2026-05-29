@@ -7,6 +7,17 @@
   {# Description #}
   {{ patientSession.screenDescription | nhsukMarkdown }}
 
+  {% if not patientSession.consentHealthAnswers %}
+    {{ appHeading({
+      classes: "nhsuk-u-margin-bottom-2",
+      level: 3,
+      size: "s",
+      title: "Health questions"
+    }) }}
+
+    {{ patientSession.vaccine.formatted.healthQuestions | nhsukMarkdown }}
+  {% endif %}
+
   {# Actions #}
   {{ actionLink({
     text: __("triage.edit.title"),
@@ -56,9 +67,11 @@
     }) }}
   {% endif %}
 
-  {% if options.needsTriage %}
-    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
+  {% if options.needsTriage and not triageNoteRows.length %}
+    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
+  {% endif %}
 
+  {% if options.needsTriage %}
     {% set psdRadiosHtml = radios({
       fieldset: { legend: { text: __("triage.psd.label") } },
       inline: true,
