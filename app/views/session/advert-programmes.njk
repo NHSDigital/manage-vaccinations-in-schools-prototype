@@ -1,0 +1,19 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.advertise.programmes.title") %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title
+        }),
+        size: "l"
+      }
+    },
+    hint: { text: __("session.advertise.programmes.hint") },
+    items: programmeItems,
+    decorate: "clinicAdvert.selected_programme_ids"
+  }) }}
+{% endblock %}

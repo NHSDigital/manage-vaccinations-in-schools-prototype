@@ -19,6 +19,12 @@
     href: "/sessions/new"
   }) }}
 
+  {{ actionLink({
+    text: __("session.advertise.label"),
+    href: "/sessions/advertise",
+    classes: "nhsuk-u-margin-left-5"
+  }) if clinicsAreScheduled }}
+
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
       {{ appSessionSearch({

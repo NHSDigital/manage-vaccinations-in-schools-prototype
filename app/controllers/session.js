@@ -10,6 +10,7 @@ import {
   RegistrationOutcome,
   SchoolPhase,
   SessionPresetName,
+  SessionStatus,
   SessionType,
   VaccineMethod
 } from '../enums.js'
@@ -19,18 +20,28 @@ import {
   Instruction,
   PatientSession,
   Patient,
+  Programme,
   School,
   Session,
   Team
 } from '../models.js'
+import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
   convertIsoDateToObject,
   getDateValueDifference,
   today
 } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import {
+  ConjunctionType,
+  programmeNamesListForSentence
+} from '../utils/programme.js'
 import { getSessionYearGroups } from '../utils/session.js'
-import { formatYearGroup } from '../utils/string.js'
+import {
+  formatMonospace,
+  formatYearGroup,
+  stringToArray
+} from '../utils/string.js'
 
 export const sessionController = {
   /**
@@ -85,7 +96,14 @@ export const sessionController = {
    * @type {import("express").RequestHandler}
    */
   readAll(request, response, next) {
-    response.locals.sessions = Session.findAll(request.session.data)
+    const sessions = Session.findAll(request.session.data)
+    const scheduledClinics = sessions.filter(
+      (session) =>
+        session.type === SessionType.Clinic &&
+        session.status === SessionStatus.Planned
+    )
+    response.locals.sessions = sessions
+    response.locals.clinicsAreScheduled = scheduledClinics.length > 0
 
     return next()
   },
@@ -122,6 +140,90 @@ export const sessionController = {
     )
 
     return response.redirect(`${session.uri}/new/type`)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  advertise(request, response) {
+    // Handling a GET for /sessions/advertise
+    const { data } = request.session
+    const { __mf } = response.locals
+
+    // Any refresh will reset stuff
+    delete data.clinicAdvert
+
+    // Set up the programme radio buttons
+    const sessions = Session.findAll(data)
+    const scheduledClinics = sessions.filter(
+      (session) =>
+        session.type === SessionType.Clinic &&
+        session.status === SessionStatus.Planned
+    )
+    const scheduledProgrammes = scheduledClinics
+      .flatMap(({ programme_ids }) => programme_ids)
+      .sort((a, b) => a.localeCompare(b))
+    const programmeFrequencyMap = _.countBy(scheduledProgrammes)
+
+    response.locals.programmeItems = Object.entries(programmeFrequencyMap).map(
+      ([programme_id, count]) => ({
+        text: Programme.findOne(programme_id, data)?.name,
+        value: programme_id,
+        hint: {
+          text: __mf('session.advertise.programmes.programme.hint', { count })
+        }
+      })
+    )
+
+    return response.render('session/advert-programmes')
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  updateAdvertLink(request, response) {
+    // Handling a POST for /sessions/advertise
+    const { clinicAdvert } = request.session.data
+    const { data } = request.session
+
+    clinicAdvert.selected_programme_ids = stringToArray(
+      clinicAdvert.selected_programme_ids
+    )
+
+    clinicAdvert.link = formatMonospace(
+      `https://www.manage-vaccinations-in-schools.nhs.uk${getClinicInviteUrlForProgrammes(clinicAdvert.selected_programme_ids)}`
+    )
+    clinicAdvert.programmeNames = programmeNamesListForSentence(
+      clinicAdvert.selected_programme_ids,
+      ConjunctionType.and,
+      data
+    )
+
+    return response.redirect('/sessions/advert-link')
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  showAdvertLink(request, response) {
+    // Handling a GET for /sessions/advert-link
+
+    return response.render('session/advert-link')
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  copyAdvertLink(request, response) {
+    // Handling a POST for /sessions/advert-link
+    const action = request.body.action
+    if (action === 'return') {
+      return response.redirect('/sessions')
+    }
+
+    request.session.data.clinicAdvert.copied = true
+
+    return response.redirect('/sessions/advert-link')
   },
 
   /**

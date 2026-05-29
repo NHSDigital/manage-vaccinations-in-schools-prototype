@@ -11,6 +11,11 @@ router.post('/', session.filter)
 
 router.get('/new', session.new)
 
+router.get('/advertise', session.advertise)
+router.post('/advertise', session.updateAdvertLink)
+router.get('/advert-link', session.showAdvertLink)
+router.post('/advert-link', session.copyAdvertLink)
+
 router.param('session_id', session.read)
 
 router.get('/:session_id/download', download.new(DownloadType.Session))

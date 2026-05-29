@@ -1,0 +1,24 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+.nhsuk-copy-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.nhsuk-copy-text {
+  margin-bottom: 0;
+  word-break: break-all;
+}
+
+.nhsuk-copy-button {
+  display: none;
+  flex-shrink: 0; /* prevent the button being squashed */
+  margin-bottom: 0;
+}
+
+// Show the Copy button only when JavaScript is enabled
+.js-enabled .nhsuk-copy-button {
+  display: inline-block;
+}

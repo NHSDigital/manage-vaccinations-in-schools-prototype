@@ -1,0 +1,34 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.advertise.link.title") %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {% set linkHtml %}
+    <div class="nhsuk-copy-container">
+      <span class="nhsuk-copy-text nhsuk-body">
+        {{ data.clinicAdvert.link | safe }}
+      </span>
+
+      {{ button({
+        text: __("session.advertise.link.copied.label") if data.clinicAdvert.copied else __("session.advertise.link.copy.label"),
+        name: "action",
+        value: "copy",
+        variant: "reverse"
+      }) }}
+    </div>
+  {% endset %}
+
+  {{ panel({
+    titleText: title,
+    html: linkHtml
+  }) }}
+
+  {{ __("session.advertise.link.description", { programmeNames: data.clinicAdvert.programmeNames }) | nhsukMarkdown }}
+
+  {{ button({
+    text: __("session.advertise.link.confirm"),
+    name: "action",
+    value: "return"
+  }) }}
+{% endblock %}
