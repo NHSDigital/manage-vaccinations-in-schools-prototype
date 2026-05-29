@@ -2797,6 +2797,28 @@ export const en = {
       confirm: 'Send clinic invitations',
       success:
         '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
+    },
+    advertise: {
+      label: 'Advertise scheduled clinics',
+      programmes: {
+        title: 'Select the clinic programmes to advertise',
+        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
+        programme: {
+          hint: '{count, plural, one {1 clinic session is scheduled} other {{count} clinic sessions are scheduled}}'
+        }
+      },
+      link: {
+        title: 'Copy this link into your advert',
+        copy: {
+          label: 'Copy'
+        },
+        copied: {
+          label: 'Copied'
+        },
+        description:
+          'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session.',
+        confirm: 'Return to the sessions page'
+      }
     }
   },
   texts: {

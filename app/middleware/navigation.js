@@ -1,6 +1,6 @@
 import { SessionPresetName } from '../enums.js'
 import { Session } from '../models.js'
-import { getClinicInviteUrl } from '../utils/clinic-booking.js'
+import { getClinicInviteUrlForPresets } from '../utils/clinic-booking.js'
 import { formatDate, today } from '../utils/date.js'
 import { getSessionConsentUrl } from '../utils/session.js'
 
@@ -29,15 +29,15 @@ export const navigation = (request, response, next) => {
       'MMR(V)': getSessionConsentUrl(sessions, SessionPresetName.MMR)
     },
     clinicInviteUrl: {
-      Flu: getClinicInviteUrl([SessionPresetName.Flu]),
-      HPV: getClinicInviteUrl([SessionPresetName.HPV]),
-      Doubles: getClinicInviteUrl([SessionPresetName.Doubles]),
-      'MMR(V)': getClinicInviteUrl([SessionPresetName.MMR]),
-      'adolescent programmes': getClinicInviteUrl([
+      Flu: getClinicInviteUrlForPresets([SessionPresetName.Flu]),
+      HPV: getClinicInviteUrlForPresets([SessionPresetName.HPV]),
+      Doubles: getClinicInviteUrlForPresets([SessionPresetName.Doubles]),
+      'MMR(V)': getClinicInviteUrlForPresets([SessionPresetName.MMR]),
+      'adolescent programmes': getClinicInviteUrlForPresets([
         SessionPresetName.HPV,
         SessionPresetName.Doubles
       ]),
-      'all but flu': getClinicInviteUrl([
+      'all but flu': getClinicInviteUrlForPresets([
         SessionPresetName.HPV,
         SessionPresetName.Doubles,
         SessionPresetName.MMR
