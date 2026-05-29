@@ -125,9 +125,11 @@ export class PatientProgramme {
    * @returns {Array<import('./patient-session.js').PatientSession>} Patient sessions
    */
   get patientSessions() {
-    return this.patient?.patientSessions.filter(
-      (patientSession) => patientSession?.programme_id === this.programme_id
-    )
+    return this.patient?.patientSessions
+      .filter(
+        (patientSession) => patientSession?.programme_id === this.programme_id
+      )
+      .sort((a, b) => getDateValueDifference(a.session.date, b.session.date))
   }
 
   /**

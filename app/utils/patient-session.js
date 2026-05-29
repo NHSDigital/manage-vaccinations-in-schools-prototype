@@ -148,7 +148,7 @@ export const getReportOutcome = (patientSession) => {
     }
   }
 
-  // Has triage outcome
+  // Keep in triage
   if (patientSession.screen === ScreenOutcome.NeedsTriage) {
     return PatientStatus.Triage
   }

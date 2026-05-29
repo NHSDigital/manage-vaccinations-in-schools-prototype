@@ -68,7 +68,9 @@
         {% include "patient-session/_gillick.njk" %}
       {% endif %}
 
-      {% include "patient-session/_consent.njk" %}
+      {% if not patientSession.clinicAppointment %}
+        {% include "patient-session/_consent.njk" %}
+      {% endif %}
 
       {% if options.canTriage %}
         {% include "patient-session/_triage.njk" %}
