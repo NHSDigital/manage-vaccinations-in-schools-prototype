@@ -25,4 +25,27 @@
     hint: { text: __("clinicBooking.child.lastName.hint") },
     decorate: "appointment.child.lastName"
   }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: { text: __("clinicBooking.child.hasPreferredName.label") }
+    },
+    items: [{
+      text: __("clinicBooking.child.hasPreferredName.yes"),
+      value: true,
+      conditional: {
+        html: input({
+          label: { text: __("clinicBooking.child.preferredFirstName.label") + " (optional)" },
+          decorate: "appointment.child.preferredFirstName"
+        }) + input({
+          label: { text: __("clinicBooking.child.preferredLastName.label") + " (optional)" },
+          decorate: "appointment.child.preferredLastName"
+        })
+      }
+    }, {
+      text: __("clinicBooking.child.hasPreferredName.no"),
+      value: false
+    }],
+    decorate: "transaction.preferredNameChoice"
+  }) }}
 {% endblock %}

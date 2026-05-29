@@ -355,6 +355,17 @@ export const en = {
       lastName: {
         label: 'Last name',
         hint: 'Or family name'
+      },
+      hasPreferredName: {
+        label: 'Do they prefer to be known by a different name?',
+        yes: 'Yes',
+        no: 'No'
+      },
+      preferredFirstName: {
+        label: 'Preferred first name'
+      },
+      preferredLastName: {
+        label: 'Preferred last name'
       }
     },
     dob: {
@@ -451,7 +462,12 @@ export const en = {
     },
     clinicLocation: {
       title: 'Choose a clinic location for %s’s appointment',
-      hint: 'The following clinics are ordered by distance from %s'
+      hint: 'The following clinics are ordered by distance from %s',
+      outOfArea: {
+        title: 'Reduce your travel time',
+        description:
+          'All available clinics are over 100 miles from your preferred location.\n\nTo find clinics that are closer, contact your local health organisation by calling {{team.tel}}, or email {{team.email}}.'
+      }
     },
     clinicDate: {
       title: 'Choose a clinic date for %s’s appointment',

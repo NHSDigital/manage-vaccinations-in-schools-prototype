@@ -21,7 +21,12 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
-import { formatHour, formatTime, kebabToCamelCase } from '../utils/string.js'
+import {
+  formatHour,
+  formatTime,
+  kebabToCamelCase,
+  stringToBoolean
+} from '../utils/string.js'
 
 export const bookIntoClinicController = {
   setupServiceHeader(request, response, next) {
@@ -205,7 +210,11 @@ export const bookIntoClinicController = {
         scheduledClinics,
         (session) => session.clinic_id
       )
-      let distanceToClinic = 0.5
+
+      let outOfArea = faker.datatype.boolean(0.5)
+      response.locals.outOfArea = outOfArea
+
+      let distanceToClinic = outOfArea ? 100.5 : 0.5
       const clinicLocationItems = []
       Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
         const firstSession = sessions.reduce((earliest, current) => {
@@ -216,7 +225,7 @@ export const bookIntoClinicController = {
           text: sessions[0].formatted.location,
           value: clinic_id,
           hint: {
-            text: `${distanceToClinic} miles away, next date is ${firstSession.formatted.date}`
+            text: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
           }
         })
         distanceToClinic += 2.1
@@ -422,6 +431,17 @@ export const bookIntoClinicController = {
       const firstAppointment = booking.appointments[0]
       const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
       paths.next = firstAppointmentUrl
+    } else if (view === 'child') {
+      if (!stringToBoolean(request.body.transaction?.preferredNameChoice)) {
+        // If the parent's backed out of using the child's preferred name (say, from the check answers page), then
+        // clear it out of the appointment
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const currentAppointment = booking?.findAppointment(appointment_uuid)
+        delete currentAppointment?.child?.preferredFirstName
+        delete currentAppointment?.child?.preferredLastName
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      }
     } else if (
       view === 'address-selection' &&
       request.body.transaction.addressChoice !== 'new'

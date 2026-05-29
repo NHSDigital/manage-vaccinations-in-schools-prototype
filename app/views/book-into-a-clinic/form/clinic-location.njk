@@ -17,4 +17,10 @@
     items: clinicLocationItems,
     decorate: "transaction.clinic_id"
   }) }}
+
+  {{ warningCallout({
+    heading: __("clinicBooking.clinicLocation.outOfArea.title"),
+    html: __("clinicBooking.clinicLocation.outOfArea.description", { team: data.team }) | nhsukMarkdown
+  }) if outOfArea }}
+
 {% endblock %}
