@@ -79,10 +79,28 @@ export class Reply {
     this.createdBy_uid = options?.createdBy_uid
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.child = options?.child && new Child(options.child)
+    this.alternative =
+      options?.alternative && stringToBoolean(options?.alternative)
     this.confirmed = stringToBoolean(options?.confirmed)
+    this.consultation = stringToBoolean(options?.consultation)
     this.decision =
       this.confirmed === true ? ReplyDecision.Refused : options?.decision
     this.ethnicity = stringToBoolean(options?.ethnicity)
+    this.declined = this.decision === ReplyDecision.Declined
+    this.given = [
+      ReplyDecision.Given,
+      ReplyDecision.OnlyAlternativeInjection,
+      ReplyDecision.OnlyMenACWY,
+      ReplyDecision.OnlyTdIPV
+    ].includes(this.decision)
+    this.refused = [
+      ReplyDecision.AlreadyVaccinated,
+      ReplyDecision.Refused
+    ].includes(this.decision)
+    this.invalid =
+      this?.decision === ReplyDecision.NoResponse
+        ? false // Don’t show non response as invalid
+        : stringToBoolean(options?.invalid) || false
     this.method = options?.method
     this.selfConsent = options?.selfConsent
     this.note = options?.note || ''
@@ -96,53 +114,13 @@ export class Reply {
     // TODO: Find out why contact() setter doesn’t work for this purpose
     this.contact_ = options?.contact_ && new Contact(options.contact_)
 
-    // Some values only valid if the consent request was received
-    if (this.delivered) {
-      this.decision =
-        options?.refusalReason === ReplyRefusal.AlreadyVaccinatedMMR
-          ? ReplyDecision.AlreadyVaccinated
-          : this.decision
-      this.alternative =
-        options?.alternative && stringToBoolean(options?.alternative)
-      this.consultation = stringToBoolean(options?.consultation)
-      this.declined = this.decision === ReplyDecision.Declined
-      this.given = [
-        ReplyDecision.Given,
-        ReplyDecision.OnlyAlternativeInjection,
-        ReplyDecision.OnlyMenACWY,
-        ReplyDecision.OnlyTdIPV
-      ].includes(this.decision)
-      this.refused = [
-        ReplyDecision.AlreadyVaccinated,
-        ReplyDecision.Refused
-      ].includes(this.decision)
+    // Given options
+    if (this.given) {
       this.healthAnswers = this.given && options?.healthAnswers
       this.triageNote = this.given && options?.triageNote
-      this.invalid =
-        this?.decision === ReplyDecision.NoResponse
-          ? false // Don’t show non response as invalid
-          : stringToBoolean(options?.invalid) || false
     }
 
-    if (
-      [ReplyDecision.AlreadyVaccinated, ReplyDecision.Refused].includes(
-        this.decision
-      )
-    ) {
-      this.firstDose = options?.firstDose && new Vaccination(options.firstDose)
-
-      if (options?.firstDose?.scheduled) {
-        this.firstDose.createdAt = addMonths(this.child?.dob, 12)
-      }
-
-      this.secondDose =
-        options?.secondDose && new Vaccination(options.secondDose)
-
-      if (options?.secondDose?.scheduled) {
-        this.secondDose.createdAt = addMonths(this.child?.dob, 40)
-      }
-    }
-
+    // Refusal options
     if (
       [
         ReplyDecision.Declined,
@@ -163,6 +141,33 @@ export class Reply {
         )
       ) {
         this.refusalReasonDetails = options?.refusalReasonDetails || ''
+      }
+    }
+
+    // Already vaccinated response
+    if (this.delivered) {
+      this.decision =
+        options?.refusalReason === ReplyRefusal.AlreadyVaccinatedMMR
+          ? ReplyDecision.AlreadyVaccinated
+          : this.decision
+    }
+
+    if (
+      [ReplyDecision.AlreadyVaccinated, ReplyDecision.Refused].includes(
+        this.decision
+      )
+    ) {
+      this.firstDose = options?.firstDose && new Vaccination(options.firstDose)
+
+      if (options?.firstDose?.scheduled) {
+        this.firstDose.createdAt = addMonths(this.child?.dob, 12)
+      }
+
+      this.secondDose =
+        options?.secondDose && new Vaccination(options.secondDose)
+
+      if (options?.secondDose?.scheduled) {
+        this.secondDose.createdAt = addMonths(this.child?.dob, 40)
       }
     }
   }
