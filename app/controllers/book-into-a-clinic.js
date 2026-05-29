@@ -21,7 +21,12 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
-import { formatHour, formatTime, kebabToCamelCase } from '../utils/string.js'
+import {
+  formatHour,
+  formatTime,
+  kebabToCamelCase,
+  stringToBoolean
+} from '../utils/string.js'
 
 export const bookIntoClinicController = {
   setupServiceHeader(request, response, next) {
@@ -422,6 +427,17 @@ export const bookIntoClinicController = {
       const firstAppointment = booking.appointments[0]
       const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
       paths.next = firstAppointmentUrl
+    } else if (view === 'child') {
+      if (!stringToBoolean(request.body.transaction?.preferredNameChoice)) {
+        // If the parent's backed out of using the child's preferred name (say, from the check answers page), then
+        // clear it out of the appointment
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const currentAppointment = booking?.findAppointment(appointment_uuid)
+        delete currentAppointment?.child?.preferredFirstName
+        delete currentAppointment?.child?.preferredLastName
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      }
     } else if (
       view === 'address-selection' &&
       request.body.transaction.addressChoice !== 'new'

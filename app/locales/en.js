@@ -355,6 +355,17 @@ export const en = {
       lastName: {
         label: 'Last name',
         hint: 'Or family name'
+      },
+      hasPreferredName: {
+        label: 'Do they prefer to be known by a different name?',
+        yes: 'Yes',
+        no: 'No'
+      },
+      preferredFirstName: {
+        label: 'Preferred first name'
+      },
+      preferredLastName: {
+        label: 'Preferred last name'
       }
     },
     dob: {
