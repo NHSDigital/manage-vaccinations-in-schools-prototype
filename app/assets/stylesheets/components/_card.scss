@@ -21,116 +21,114 @@ $_orange-border-colour: nhsuk-tint(nhsuk-colour("warm-yellow"), 10%);
 $_orange-border-hover-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 10%);
 $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
 
-.app-card {
-  &--blue {
-    border-color: $_blue-border-colour;
-    color: $_blue-text-colour;
-    background-color: $_blue-background-colour;
+.app-card--blue {
+  border-color: $_blue-border-colour;
+  color: $_blue-text-colour;
+  background-color: $_blue-background-colour;
 
-    &.nhsuk-card--clickable {
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-colour;
-    }
-
-    &.nhsuk-card--clickable:hover,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
-      border-color: $_blue-border-hover-colour;
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-hover-colour;
-    }
-
-    &.nhsuk-card--clickable:active,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
-      box-shadow: none;
-    }
+  &.nhsuk-card--clickable {
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-colour;
   }
 
-  &--green {
-    border-color: $_green-border-colour;
-    color: $_green-text-colour;
-    background-color: $_green-background-colour;
-
-    &.nhsuk-card--clickable {
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-colour;
-    }
-
-    &.nhsuk-card--clickable:hover,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
-      border-color: $_green-border-hover-colour;
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-hover-colour;
-    }
-
-    &.nhsuk-card--clickable:active,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
-      box-shadow: none;
-    }
+  &.nhsuk-card--clickable:hover,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+    border-color: $_blue-border-hover-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_blue-border-hover-colour;
   }
 
-  &--orange {
-    border-color: $_orange-border-colour;
-    color: $_orange-text-colour;
-    background-color: $_orange-background-colour;
+  &.nhsuk-card--clickable:active,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+    box-shadow: none;
+  }
+}
 
-    &.nhsuk-card--clickable {
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-colour;
-    }
+.app-card--green {
+  border-color: $_green-border-colour;
+  color: $_green-text-colour;
+  background-color: $_green-background-colour;
 
-    &.nhsuk-card--clickable:hover,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
-      border-color: $_orange-border-hover-colour;
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-hover-colour;
-    }
-
-    &.nhsuk-card--clickable:active,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
-      box-shadow: none;
-    }
-
-    blockquote {
-      border-color: nhsuk-colour("warm-yellow");
-    }
+  &.nhsuk-card--clickable {
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-colour;
   }
 
-  &--red {
-    border-color: $_red-border-colour;
-    color: $_red-text-colour;
-    background-color: $_red-background-colour;
-
-    &.nhsuk-card--clickable {
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-colour;
-    }
-
-    &.nhsuk-card--clickable:hover,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
-      border-color: $_red-border-hover-colour;
-      box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-hover-colour;
-    }
-
-    &.nhsuk-card--clickable:active,
-    &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
-    &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
-      box-shadow: none;
-    }
+  &.nhsuk-card--clickable:hover,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+    border-color: $_green-border-hover-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_green-border-hover-colour;
   }
 
-  &--blue,
-  &--green,
-  &--orange,
-  &--red {
-    .nhsuk-card__link,
-    .nhsuk-card__link:hover {
-      color: inherit;
-    }
+  &.nhsuk-card--clickable:active,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+    box-shadow: none;
+  }
+}
+
+.app-card--orange {
+  border-color: $_orange-border-colour;
+  color: $_orange-text-colour;
+  background-color: $_orange-background-colour;
+
+  &.nhsuk-card--clickable {
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-colour;
   }
 
-  &--offset {
-    background-color: rgba(nhsuk-colour("grey-5"), 0.5);
+  &.nhsuk-card--clickable:hover,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+    border-color: $_orange-border-hover-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_orange-border-hover-colour;
   }
+
+  &.nhsuk-card--clickable:active,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+    box-shadow: none;
+  }
+
+  blockquote {
+    border-color: nhsuk-colour("warm-yellow");
+  }
+}
+
+.app-card--red {
+  border-color: $_red-border-colour;
+  color: $_red-text-colour;
+  background-color: $_red-background-colour;
+
+  &.nhsuk-card--clickable {
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-colour;
+  }
+
+  &.nhsuk-card--clickable:hover,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:hover),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:hover) {
+    border-color: $_red-border-hover-colour;
+    box-shadow: 0 $nhsuk-card-border-bottom-width 0 $_red-border-hover-colour;
+  }
+
+  &.nhsuk-card--clickable:active,
+  &.nhsuk-card--clickable:has(.nhsuk-card__heading a:active),
+  &.nhsuk-card--clickable:has(.nhsuk-card__link:active) {
+    box-shadow: none;
+  }
+}
+
+.app-card--blue,
+.app-card--green,
+.app-card--orange,
+.app-card--red {
+  .nhsuk-card__link,
+  .nhsuk-card__link:hover {
+    color: inherit;
+  }
+}
+
+.app-card--offset {
+  background-color: rgb(nhsuk-colour("grey-5"), 0.5);
 }
 
 .app-card--compact {
