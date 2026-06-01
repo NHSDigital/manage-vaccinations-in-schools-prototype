@@ -1,0 +1,28 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.clinicDistance.title") %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {% set panelHtml %}
+    {{ __("clinicBooking.clinicDistance.description", {
+      postcode: data.transaction.preferredPostcode,
+      team: data.team
+    }) | nhsukMarkdown }}
+
+    <div class="nhsuk-button-group">
+      {{ button({
+        text: __("clinicBooking.clinicDistance.confirm"),
+        variant: "reverse"
+      }) }}
+      <a href="{{ paths.back }}">Try another location</a>
+    </div>
+  {% endset %}
+
+  {{ panel({
+    titleText: title,
+    titleSize: "l",
+    variant: "interruption",
+    html: panelHtml
+  }) }}
+{% endblock %}

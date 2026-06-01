@@ -68,6 +68,7 @@ export const bookIntoClinicController = {
    */
   new(request, response) {
     const { data } = request.session
+    data.transaction = {}
 
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create({}, data.wizard)
@@ -211,10 +212,7 @@ export const bookIntoClinicController = {
         (session) => session.clinic_id
       )
 
-      let outOfArea = faker.datatype.boolean(0.5)
-      response.locals.outOfArea = outOfArea
-
-      let distanceToClinic = outOfArea ? 100.5 : 0.5
+      let distanceToClinic = data.transaction?.outOfArea ? 100.5 : 0.5
       const clinicLocationItems = []
       Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
         const firstSession = sessions.reduce((earliest, current) => {

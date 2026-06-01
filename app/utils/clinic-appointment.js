@@ -62,9 +62,11 @@ export const getAllAppointmentPaths = (
             case LocationSearchType.Postcode:
             case LocationSearchType.Outcode:
               sessionData.transaction.preferredPostcode = searchTerm
+              sessionData.transaction.outOfArea = false
               return true
             case LocationSearchType.Place:
             default:
+              sessionData.transaction.outOfArea = true
               return false
           }
         }
@@ -75,6 +77,7 @@ export const getAllAppointmentPaths = (
           value: 'retry'
         }
       },
+      [`/${booking_uuid}/new/${appointment_uuid}/clinic-distance`]: {}, // only used for place matching path (for demo/test purposes)
       [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
