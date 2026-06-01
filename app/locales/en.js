@@ -2636,6 +2636,7 @@ export const en = {
         label: '{{programme.name}} ({{vaccineCriteria}})'
       },
       appointments: {
+        label: 'Clinic details',
         total: {
           label: 'Total appointments'
         },
@@ -2741,8 +2742,9 @@ export const en = {
       label: 'Number of appointments'
     },
     appointments: {
+      label: 'Appointments',
       available: {
-        label: 'Available appointments by hour'
+        label: 'Summary by hour'
       }
     },
     location: {

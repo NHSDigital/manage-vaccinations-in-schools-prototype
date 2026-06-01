@@ -136,8 +136,8 @@
     {% include "session/_session-clinic-summary.njk" %}
   {% endset %}
   {% set tabItems = tabItems | push({
-    label: "Appointments",
-    id: "Planning",
+    label: __("session.tally.appointments.label"),
+    id: "Appointments",
     panel: {
       html: planningHtml
     }

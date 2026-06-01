@@ -352,7 +352,7 @@ export class ClinicAppointment {
    */
   get uri() {
     return {
-      unmatched: `/appointments/${this.uuid}`,
+      unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`
     }
   }

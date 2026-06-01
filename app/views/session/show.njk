@@ -24,17 +24,6 @@
     {% include "session/_session-activity-summary.njk" %}
   {% endif %}
 
-  {% if session.type === SessionType.Clinic %}
-    {% set sessionAvailabilityRows = appointmentAvailabilityRows(session) %}
-    {{ summaryList({
-      card: {
-        heading: __("session.appointments.available.label"),
-        headingLevel: 3
-      },
-      rows: sessionAvailabilityRows
-    }) if sessionAvailabilityRows.length > 0 }}
-  {% endif %}
-
   {% call card({
     heading: __("session.summary"),
     headingLevel: 3,

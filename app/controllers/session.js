@@ -67,6 +67,15 @@ export const sessionController = {
           ...(session.consents.length && { icon: 'alert' }),
           current: view === undefined
         },
+        ...(session.type === SessionType.Clinic
+          ? [
+              {
+                text: __('session.appointments.label'),
+                href: `${session.uri}/appointments`,
+                current: view === 'appointments'
+              }
+            ]
+          : []),
         {
           text: __('session.report.label'),
           href: `${session.uri}/report`,

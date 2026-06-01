@@ -1,0 +1,16 @@
+{% extends "_layouts/session.njk" %}
+
+{% set title = session.shortName %}
+{% set heading = title %}
+{% set caption = session.formatted.date %}
+
+{% block content %}
+  {% set sessionAvailabilityRows = appointmentAvailabilityRows(session) %}
+  {{ summaryList({
+    card: {
+      heading: __("session.appointments.available.label"),
+      headingLevel: 3
+    },
+    rows: sessionAvailabilityRows
+  }) if sessionAvailabilityRows.length > 0 }}
+{% endblock %}

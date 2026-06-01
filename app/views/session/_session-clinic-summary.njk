@@ -1,5 +1,5 @@
 {{ appHeading({
-  title: "Appointments",
+  title: __("session.tally.appointments.label"),
   level: 3,
   size: "m"
 }) }}
@@ -48,7 +48,7 @@
       colour: "orange" if session.unmatchedAppointments.length > 0,
       compact: true,
       data: session.unmatchedAppointments.length,
-      href: session.uri + "/appointments"
+      href: session.uri + "/unmatched-appointments"
     }) }}
   </div>
   {% for programme in session.programmes %}
