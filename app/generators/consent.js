@@ -112,7 +112,6 @@ export function generateConsent(
         to: sessionClosedBeforeToday ? session.closeAt : nowAt
       }),
     child,
-    contact,
     decision,
     method,
     ...(decision === ReplyDecision.Given && { alternative }),

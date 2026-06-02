@@ -180,6 +180,7 @@ export class Patient extends Child {
     // Add any new contacts found in consent replies
     Object.values(this.replies)
       .filter(({ selfConsent }) => !selfConsent)
+      .filter(({ contact }) => contact)
       .forEach(({ contact }) => {
         contacts.set(contact.uuid, new Contact(contact))
       })
