@@ -1,6 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
+  Adjustment,
+  Impairment,
   ParentalRelationship,
   ProgrammeType,
   ReplyDecision,
@@ -17,9 +19,11 @@ import {
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
+  formatLink,
   formatLinkWithSecondaryText,
   formatList,
   formatOther,
+  formatSecondaryText,
   stringToArray
 } from '../utils/string.js'
 
@@ -238,6 +242,64 @@ export class ClinicAppointment {
   }
 
   /**
+   * Does this appointment cover the slot whose start time is given?
+   *
+   * @param {Date} slotStartTime - the time of the slot we're comparing to
+   * @returns {boolean} True if this appointment covers the slot, or false otherwise
+   */
+  coversSlot(slotStartTime) {
+    return slotStartTime >= this.startAt && slotStartTime < this.endAt
+  }
+
+  /**
+   * Get any impairments reported for this appointment's child/patient
+   *
+   * @returns {Array<Impairment>} the child or patient's impairments
+   */
+  get impairments() {
+    const patient = this.patient
+    return patient ? patient.impairments : this.child.impairments
+  }
+
+  /**
+   * Get any impairments reported for this appointment's child/patient
+   *
+   * @returns {Array<Adjustment>} the child or patient's impairments
+   */
+  get adjustments() {
+    const patient = this.patient
+    return patient ? patient.adjustments : this.child.adjustments
+  }
+
+  /**
+   * Does this child have impairments that could affect their vaccination?
+   *
+   * @returns {boolean} True if they have any impairments, false otherwise
+   */
+  get hasImpairments() {
+    const impairments = this.impairments
+    if (!impairments) {
+      return false
+    }
+
+    return impairments.length && !impairments.includes(Impairment.None)
+  }
+
+  /**
+   * Does this child require adjustments when being vaccinated?
+   *
+   * @returns {boolean} True if adjustments are required, false otherwise
+   */
+  get requiresAdjustments() {
+    const adjustments = this.adjustments
+    if (!adjustments) {
+      return false
+    }
+
+    return adjustments.length && !adjustments.includes(Adjustment.None)
+  }
+
+  /**
    * Get various formatted values for display in the page
    *
    * @returns {object} Formatted values
@@ -298,9 +360,30 @@ export class ClinicAppointment {
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
+      programmeTags: this.#getSelectedProgrammes(this.context)
+        .flatMap(({ nameTag }) => nameTag)
+        .join(' '),
       vaccinations: formatList(
         this.#getSelectedProgrammes(this.context).map(({ name }) => name)
-      )
+      ),
+      ...(this.requiresAdjustments
+        ? {
+            adjustmentsCount: formatSecondaryText(
+              this.adjustments.length === 1
+                ? '1 adjustment required'
+                : `${this.adjustments.length} adjustments required`
+            )
+          }
+        : {}),
+      ...(this.hasImpairments
+        ? {
+            impairmentsCount: formatSecondaryText(
+              this.impairments.length === 1
+                ? '1 impairment noted'
+                : `${this.impairments.length} impairments noted`
+            )
+          }
+        : {})
     }
   }
 
@@ -332,7 +415,8 @@ export class ClinicAppointment {
         this.uri.unmatched,
         this.contact.fullNameAndRelationship,
         `for ${this.child.fullName}`
-      )
+      ),
+      patientSession: formatLink(this.uri.matched, this.fullName)
     }
   }
 
@@ -352,6 +436,7 @@ export class ClinicAppointment {
    */
   get uri() {
     return {
+      matched: `/sessions/${this.session_id}/patients/${this.patient?.nhsNumber}/${this.selected_programme_ids[0]}`,
       unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`
     }

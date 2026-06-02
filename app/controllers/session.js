@@ -39,6 +39,7 @@ import {
 import { getSessionYearGroups } from '../utils/session.js'
 import {
   formatMonospace,
+  formatTime,
   formatYearGroup,
   stringToArray
 } from '../utils/string.js'
@@ -616,6 +617,67 @@ export const sessionController = {
     }
 
     return response.redirect(`/sessions/${session_id}/${view}?${params}`)
+  },
+
+  showAppointments(request, response, next) {
+    const { session } = response.locals
+    const allAppointments = session.appointments
+
+    // Feed the view all of the information (incl. headers) it needs to present in the day view
+    const vaccinationPeriodTables = []
+    for (const vaccinationPeriod of session.vaccinationPeriods) {
+      const allSlotTimes = [
+        ...new Set(
+          vaccinationPeriod
+            .allAppointmentTimes(session.appointmentLength)
+            .map((time) => time.getTime())
+        )
+      ].map((time) => new Date(time))
+
+      const headers = [
+        'Time',
+        ...Array(vaccinationPeriod.vaccinatorCount)
+          .keys()
+          .map((index) => `Vaccinator ${index + 1}`)
+      ]
+
+      const rows = allSlotTimes.map((time) => {
+        const rowValues = []
+        rowValues.push({
+          header: headers[0],
+          timeSlot: formatTime(time, false)
+        })
+        rowValues.push(
+          ...allAppointments
+            .filter((appointment) => appointment.coversSlot(time))
+            .map((appointment, index) => ({
+              header: headers[index + rowValues.length],
+              appointment
+            }))
+        )
+        rowValues.push(
+          ...Array(vaccinationPeriod.vaccinatorCount - rowValues.length + 1)
+            .keys()
+            .map((index) => ({
+              header: headers[index + rowValues.length],
+              appointment: null
+            }))
+        )
+
+        return { time, rowValues }
+      })
+
+      vaccinationPeriodTables.push({
+        vaccinationPeriod,
+        periodNumber: vaccinationPeriodTables.length + 1,
+        headers,
+        rows
+      })
+    }
+
+    response.locals.vaccinationPeriodTables = vaccinationPeriodTables
+
+    next()
   },
 
   /**

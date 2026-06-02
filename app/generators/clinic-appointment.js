@@ -6,8 +6,6 @@ import { ClinicAppointment } from '../models.js'
 
 import { generateContact } from './contact.js'
 
-const clinicSlotLength = Number(process.env.CLINIC_SLOT_LENGTH) || 10
-
 /**
  * Generate fake clinic appointment
  *
@@ -29,7 +27,11 @@ export function generateClinicAppointment(patient, session, booking) {
     child = {
       firstName: patient.firstName,
       lastName: patient.lastName,
-      dob: patient.dob
+      dob: patient.dob,
+      adjustments: [...patient.adjustments],
+      adjustmentsOther: patient.adjustmentsOther,
+      impairments: [...patient.impairments],
+      impairmentsOther: patient.impairmentsOther
     }
   } else {
     // Unmatched appointment; no patient ID, and get one of the details 'wrong'
@@ -48,7 +50,11 @@ export function generateClinicAppointment(patient, session, booking) {
       dob:
         wrongness === 'dob'
           ? addYears(patient.dob, faker.helpers.arrayElement([-2, -1, 1, 2]))
-          : patient.dob
+          : patient.dob,
+      adjustments: [...patient.adjustments],
+      adjustmentsOther: patient.adjustmentsOther,
+      impairments: [...patient.impairments],
+      impairmentsOther: patient.impairmentsOther
     }
   }
 
@@ -104,7 +110,7 @@ export function generateClinicAppointment(patient, session, booking) {
   // Appointment time
   const startAt = faker.helpers.arrayElement(session.availableAppointmentTimes)
   const slotsCovered = 1 // TODO: take into account health answers
-  const endAt = addMinutes(startAt, clinicSlotLength * slotsCovered)
+  const endAt = addMinutes(startAt, session.appointmentLength * slotsCovered)
 
   // Have the child signed up for whatever they were invited for
   const selected_programme_ids = patient.clinicProgramme_ids

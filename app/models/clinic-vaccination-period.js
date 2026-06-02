@@ -93,6 +93,27 @@ export class ClinicVaccinationPeriod {
   }
 
   /**
+   * Get formatted values
+   *
+   * @returns {object} Formatted values
+   */
+  get formatted() {
+    return {
+      startAndEndTimes: `${this.startAt_.hour}:${this.startAt_.minute} to ${this.endAt_.hour}:${this.endAt_.minute}`
+    }
+  }
+
+  /**
+   * Get namespace
+   *
+   * @returns {string} Namespace
+   */
+  get ns() {
+    // TODO: add this to the locale file
+    return 'clinicVaccinationPeriod'
+  }
+
+  /**
    * Get all appointment slot start times, replicated for the number of vaccinators
    *
    * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes

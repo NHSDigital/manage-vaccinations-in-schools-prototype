@@ -135,7 +135,8 @@ export function formatLinkWithSecondaryText(href, text, secondary) {
   }
 
   if (secondary) {
-    html += `<br><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">${secondary}</span>`
+    html += '<br>'
+    html += formatSecondaryText(secondary)
   }
 
   return `<span>${html}</span>`
@@ -154,10 +155,20 @@ export function formatWithSecondaryText(text, secondary, breakLine = true) {
 
   if (secondary) {
     html += breakLine ? '<br>' : ''
-    html += `<span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">${secondary}</span>`
+    html += formatSecondaryText(secondary)
   }
 
   return `<span>${html}</span>`
+}
+
+/**
+ * Format text as secondary text
+ *
+ * @param {string} [secondary] - Secondary text
+ * @returns {string} Formatted HTML
+ */
+export function formatSecondaryText(secondary) {
+  return `<span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">${secondary}</span>`
 }
 
 /**
