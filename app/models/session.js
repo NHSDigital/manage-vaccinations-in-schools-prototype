@@ -608,6 +608,18 @@ export class Session {
   }
 
   /**
+   * Get the clinic appointments that will involve vaccination to the given programme
+   *
+   * @param {string} programme_id - the ID of the programme whose appointments we're interested in
+   * @returns {Array<ClinicAppointment>} the clinic appointments that include vaccination for the given programme
+   */
+  programmeAppointments(programme_id) {
+    return this.appointments.filter((appointment) =>
+      appointment.selected_programme_ids.includes(programme_id)
+    )
+  }
+
+  /**
    * Get all appointments for this clinic with unmatched child details
    *
    * @returns {Array<ClinicAppointment>} - the appointments made for unmatched children
