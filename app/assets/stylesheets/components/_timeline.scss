@@ -124,10 +124,8 @@ $_timeline-border-width: 2px;
   }
 }
 
-.app-timeline__content {
-  :last-child {
-    margin-bottom: 0;
-  }
+.app-timeline__content:last-child {
+  margin-bottom: 0;
 }
 
 .app-timeline__description {
@@ -136,13 +134,13 @@ $_timeline-border-width: 2px;
 
   @include nhsuk-responsive-margin(3, "bottom");
   @include nhsuk-font-size(16);
-}
 
-.nhsuk-tag {
-  border-color: inherit;
-  color: inherit;
+  .nhsuk-tag {
+    border-color: inherit;
+    color: inherit;
 
-  &:last-of-type {
-    margin-right: nhsuk-spacing(2);
+    &:last-of-type {
+      margin-right: nhsuk-spacing(2);
+    }
   }
 }
