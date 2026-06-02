@@ -1,33 +1,4 @@
-{% extends "template.njk" %}
-
-{#- Components -#}
-{%- from "action-link/macro.njk" import actionLink %}
-{%- from "back-link/macro.njk" import backLink %}
-{%- from "breadcrumb/macro.njk" import breadcrumb %}
-{%- from "card/macro.njk" import card %}
-{%- from "contents-list/macro.njk" import contentsList %}
-{%- from "details/macro.njk" import details %}
-{%- from "do-dont-list/macro.njk" import list %}
-{%- from "error-message/macro.njk" import errorMessage %}
-{%- from "error-summary/macro.njk" import errorSummary %}
-{%- from "fieldset/macro.njk" import fieldset %}
-{%- from "footer/macro.njk" import footer %}
-{%- from "header/macro.njk" import header %}
-{%- from "hero/macro.njk" import hero %}
-{%- from "hint/macro.njk" import hint %}
-{%- from "images/macro.njk" import image %}
-{%- from "inset-text/macro.njk" import insetText %}
-{%- from "label/macro.njk" import label %}
-{%- from "notification-banner/macro.njk" import notificationBanner %}
-{%- from "pagination/macro.njk" import pagination %}
-{%- from "panel/macro.njk" import panel with context %}
-{%- from "skip-link/macro.njk" import skipLink %}
-{%- from "summary-list/macro.njk" import summaryList %}
-{%- from "tables/macro.njk" import table %}
-{%- from "tabs/macro.njk" import tabs %}
-{%- from "tag/macro.njk" import tag %}
-{%- from "task-list/macro.njk" import taskList %}
-{%- from "warning-callout/macro.njk" import warningCallout %}
+{% extends "template-with-imports.njk" %}
 
 {#- Decorated components -#}
 {%- from "x-nhsuk/decorated/button/macro.njk" import button with context %}
@@ -50,7 +21,6 @@
 {%- from "_macros/environment.njk" import appEnvironment %}
 {%- from "_macros/event.njk" import appEvent %}
 {%- from "_macros/heading.njk" import appHeading %}
-{%- from "_macros/search-input.njk" import appSearchInput with context %}
 {%- from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
 {%- from "_macros/status.njk" import appStatus %}
 {%- from "_macros/timeline.njk" import appTimeline with context %}

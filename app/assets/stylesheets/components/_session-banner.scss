@@ -26,7 +26,7 @@
   }
 
   .nhsuk-notification-banner__link {
-    @include nhsuk-link-style-white;
+    @include nhsuk-link-style-reverse;
   }
 
   .nhsuk-notification-banner__heading {
