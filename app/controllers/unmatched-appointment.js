@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { ClinicBooking, Session } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
-export const appointmentController = {
+export const unmatchedAppointmentController = {
   read(request, response, next, appointment_uuid) {
     console.log(`read: ${appointment_uuid}`)
 
@@ -31,8 +31,8 @@ export const appointmentController = {
 
     response.locals.appointments = appointments
     response.locals.appointmentsPath = session_id
-      ? `/sessions/${session_id}/appointments`
-      : '/appointments'
+      ? `/sessions/${session_id}/unmatched-appointments`
+      : '/unmatched-appointments'
     response.locals.results = getResults(appointments, request.query)
     response.locals.pages = getPagination(appointments, request.query)
 

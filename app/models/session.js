@@ -1006,7 +1006,7 @@ export class Session {
       let lastVaccinatorCount = -1
       let hasVariableVaccinatorCounts = false
       this.vaccinationPeriods.forEach((vaccinationPeriod, periodIndex) => {
-        const thisPeriod = `${vaccinationPeriod.startAt_.hour}:${vaccinationPeriod.startAt_.minute} to ${vaccinationPeriod.endAt_.hour}:${vaccinationPeriod.endAt_.minute}`
+        const thisPeriod = vaccinationPeriod.formatted.startAndEndTimes
         const thisVaccinatorCount = vaccinationPeriod.vaccinatorCount || 0
 
         startAndEndTimes += thisPeriod

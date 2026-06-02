@@ -1,0 +1,87 @@
+{% extends "_layouts/session.njk" %}
+
+{% set title = session.shortName %}
+{% set heading = title %}
+{% set caption = session.formatted.date %}
+
+{% block content %}
+  {% macro buildSlotHtml(appointment, time) %}
+    {% if appointment !== null %}
+      {% if appointment.patient_uuid %}
+        {{ appointment.link.patientSession | safe }}
+      {% else %}
+        {{ appointment.link.unmatched | safe }}
+      {% endif %}
+      <br>
+      {{ appointment.formatted.programmeTags | safe }}
+      {% if appointment.requiresAdjustments %}
+        <br>
+        {{ appointment.formatted.adjustmentsCount | safe }}
+      {% endif %}
+      {% if appointment.hasImpairments %}
+        <br>
+        {{ appointment.formatted.impairmentsCount | safe }}
+      {% endif %}
+    {% else %}
+      <a href="#">Book</a>
+    {% endif %}  
+  {% endmacro %}
+
+  {# Full calendar-like view of the vaccination periods' appointments and empty slots #}
+  {% for vaccinationPeriodTable in vaccinationPeriodTables %}
+    {# Create the column headers #}
+    {% set tableHeaders = [] %}
+    {% for header in vaccinationPeriodTable.headers %}
+      {% set tableHeaders = tableHeaders | push({
+        text: header
+      }) %}
+    {% endfor %}
+
+    {# Create the rows of appointments and empty slots #}
+    {% set tableRows = [] %}
+    {% for row in vaccinationPeriodTable.rows %}
+      {% set rowValues = [] %}
+      {% for rowValue in row.rowValues %}
+        {% set rowValues = rowValues | push(
+          {
+            header: rowValue.header,
+            text: rowValue.timeSlot
+          }
+          if rowValue.timeSlot else
+          {
+            header: rowValue.header,
+            html: buildSlotHtml(rowValue.appointment, row.time)
+          }
+        ) %}
+      {% endfor %}
+      {% set tableRows = tableRows | push(rowValues) %}
+    {% endfor %}
+
+    {% set periodHeading = "Vaccination period " + vaccinationPeriodTable.periodNumber if vaccinationPeriodTables.length > 1 else "All appointments" %}
+    {{ table({
+      id: "appointments",
+      responsive: true,
+      firstCellIsHeader: true,
+      card: {
+        headingHtml: appHeading({
+          title: periodHeading,
+          summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes
+        }),
+        headingLevel: 3
+      },
+      head: tableHeaders,
+      rows: tableRows
+    }) }}
+  {% endfor %}
+
+  {# Summary of availability by hour #}
+  {% set sessionAvailabilityRows = appointmentAvailabilityRows(session) %}
+  {{ summaryList({
+    card: {
+      heading: __("session.appointments.available.label"),
+      headingLevel: 3
+    },
+    rows: sessionAvailabilityRows
+  }) if sessionAvailabilityRows.length > 0 }}
+
+{% endblock %}

@@ -31,7 +31,7 @@
     {% set appointmentRows = appointmentRows | push([
       {
         header: __("appointments.summary.label"),
-        html: appointment.link.unmatched | replace("/appointments", appointmentsPath)
+        html: appointment.link.unmatched | replace("/unmatched-appointments", appointmentsPath)
       },
       {
         header: __("appointments.location.label"),

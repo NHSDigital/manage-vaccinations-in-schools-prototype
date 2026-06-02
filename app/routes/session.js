@@ -40,6 +40,8 @@ router.post('/:session_id/cancel', session.cancelSession)
 router.all('/:session_id/:view', session.readPatientSessions)
 router.post('/:session_id/:view', session.filterPatientSessions)
 
+router.get('/:session_id/appointments', session.showAppointments)
+
 router.get('/:session_id{/:view}', session.show)
 
 export const sessionRoutes = router
