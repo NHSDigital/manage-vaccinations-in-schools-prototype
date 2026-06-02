@@ -92,7 +92,7 @@
   color: $nhsuk-reverse-text-colour;
 
   .app-secondary-navigation__link {
-    @include nhsuk-link-style-white;
+    @include nhsuk-link-style-reverse;
 
     &[aria-current] {
       box-shadow: inset $nhsuk-border-width 0 $nhsuk-reverse-text-colour;

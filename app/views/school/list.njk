@@ -19,8 +19,11 @@
         heading: __("school.search.label") ,
         headingLevel: 3
       }) %}
-        {{ appSearchInput({
-          label: { text: __("search.label") },
+        {{ searchInput({
+          label: {
+            text: __("search.label"),
+            size: "s"
+          },
           attributes: {
             formaction: params.formaction,
             formmethod: "post"
