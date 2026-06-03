@@ -1,3 +1,5 @@
+import { isToday } from 'date-fns'
+
 import {
   ConsentOutcome,
   InstructionOutcome,
@@ -116,8 +118,10 @@ export const getReportOutcome = (patientSession) => {
         VaccinationOutcome.Absent,
         VaccinationOutcome.Refused,
         VaccinationOutcome.Unwell
-      ].includes(patientSession.outcome)
+      ].includes(patientSession.outcome) &&
+      isToday(patientSession.lastVaccinationOutcome?.createdAt)
     ) {
+      // ‘Could not vaccinate’ only applies on the day it was recorded
       return PatientStatus.Deferred
     }
   }
