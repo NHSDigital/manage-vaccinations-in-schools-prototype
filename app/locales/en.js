@@ -2461,6 +2461,9 @@ export const en = {
       cancel: 'No, return to the session page',
       success: '{{session.name}} cancelled'
     },
+    makeActive: {
+      success: 'Session is now in progress'
+    },
     academicYear: {
       label: 'Academic year'
     },
