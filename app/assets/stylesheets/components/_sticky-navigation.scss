@@ -5,11 +5,11 @@
   border-bottom: 1px solid $nhsuk-border-colour;
   background: nhsuk-colour("grey-5");
 
-  .app-secondary-navigation {
+  .app-section-navigation {
     margin: 0;
   }
 
-  .app-secondary-navigation__list {
+  .app-section-navigation__list {
     box-shadow: none;
 
     @include nhsuk-media-query($until: tablet) {

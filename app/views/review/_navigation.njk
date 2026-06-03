@@ -1,31 +1,34 @@
-{% from "_macros/count.njk" import appCount %}
 {% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+{% from "_macros/section-navigation.njk" import appSectionNavigation %}
 
 {% macro reviewNavigation(params) %}
   {{ appHeading({
     title: __("review.list.title")
   }) }}
 
-  {{ appSecondaryNavigation({
+  {{ appSectionNavigation({
     items: [
       {
-        text: __("notice.list.label") + appCount(data.counts.notices),
+        text: __("notice.list.label"),
+        badge: { text: data.counts.notices },
         href: "/notices",
         current: params.view == "notice"
       },
       {
-        text: __("consent.list.label") + appCount(data.counts.consents),
+        text: __("consent.list.label"),
+        badge: { text: data.counts.consents },
         href: "/consents",
         current: params.view == "consent"
       },
       {
-        text: __("appointments.list.label") + appCount(data.counts.appointments),
+        text: __("appointments.list.label"),
+        badge: { text: data.counts.appointments },
         href: "/unmatched-appointments",
         current: params.view == "appointments"
       },
       {
-        text: __("move.list.label") + appCount(data.counts.moves),
+        text: __("move.list.label"),
+        badge: { text: data.counts.moves },
         href: "/moves",
         current: params.view == "move"
       }

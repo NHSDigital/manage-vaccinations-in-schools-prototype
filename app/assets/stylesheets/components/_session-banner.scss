@@ -33,14 +33,14 @@
     color: $nhsuk-reverse-text-colour;
   }
 
-  .app-secondary-navigation {
+  .app-section-navigation {
     margin: 0;
     border-bottom: 0 none;
     background: nhsuk-shade($nhsuk-brand-colour, 20%);
     box-shadow: 0 -1px 0 0 $nhsuk-secondary-border-colour;
   }
 
-  .app-secondary-navigation__list {
+  .app-section-navigation__list {
     box-shadow: none;
 
     @include nhsuk-media-query($until: tablet) {
@@ -77,11 +77,11 @@
       @include nhsuk-font-size(22);
     }
 
-    .app-secondary-navigation {
+    .app-section-navigation {
       box-shadow: none;
     }
 
-    .app-secondary-navigation__list {
+    .app-section-navigation__list {
       @include nhsuk-font-size(16);
     }
   }

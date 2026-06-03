@@ -1,11 +1,15 @@
+@use "sass:color";
 @use "../vendor/nhsuk-frontend" as *;
 
-.app-header__navigation-item--with-count {
-  .app-count {
+.app-header__navigation-item--with-badge {
+  .app-badge {
     min-width: nhsuk-spacing(4);
     margin-left: nhsuk-spacing(1);
     padding-top: 5px;
     padding-bottom: 3px;
+
+    color: nhsuk-colour("white");
+    background-color: color.scale(color.scale(nhsuk-colour("blue"), $lightness: -50%), $alpha: -60%);
 
     @include nhsuk-font(14, $line-height: 1);
   }

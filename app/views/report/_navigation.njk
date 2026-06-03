@@ -1,6 +1,5 @@
-{% from "_macros/count.njk" import appCount %}
 {% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+{% from "_macros/section-navigation.njk" import appSectionNavigation %}
 
 {% macro reportNavigation(params) %}
   {{ appHeading({
@@ -8,7 +7,7 @@
     summary: __("report.list.summary")
   }) }}
 
-  {{ appSecondaryNavigation({
+  {{ appSectionNavigation({
     items: [
       {
         text: __("report.vaccinations.label"),

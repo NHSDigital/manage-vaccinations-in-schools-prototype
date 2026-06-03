@@ -43,16 +43,15 @@
 {#- Application macros -#}
 {%- from "_macros/action-list.njk" import appActionList %}
 {%- from "_macros/add-another.njk" import appAddAnother %}
+{%- from "_macros/badge.njk" import appBadge %}
 {%- from "_macros/button-group.njk" import appButtonGroup with context %}
-{%- from "_macros/count.njk" import appCount %}
 {%- from "_macros/data-card.njk" import appDataCard with context %}
 {%- from "_macros/environment.njk" import appEnvironment %}
 {%- from "_macros/event.njk" import appEvent %}
 {%- from "_macros/heading.njk" import appHeading %}
-{%- from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+{%- from "_macros/section-navigation.njk" import appSectionNavigation %}
 {%- from "_macros/status.njk" import appStatus %}
 {%- from "_macros/timeline.njk" import appTimeline with context %}
-{%- from "_macros/sub-navigation.njk" import appSubNavigation %}
 
 {% set assetsName = assetsName | default("application") %}
 
@@ -95,9 +94,11 @@
           active: navigation.activeSection == "sessions"
         },
         {
-          classes: "app-header__navigation-item--with-count",
+          classes: "app-header__navigation-item--with-badge",
           href: "/reviews",
-          html: __("review.list.label") + appCount(data.counts.review),
+          html: __("review.list.label") + appBadge({
+            text: data.counts.review
+          }),
           active: navigation.activeSection == "reviews"
         },
         {
