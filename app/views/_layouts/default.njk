@@ -1,4 +1,30 @@
-{% extends "template-with-imports.njk" %}
+{% extends "template.njk" %}
+
+{#- Components -#}
+{%- from "action-link/macro.njk" import actionLink %}
+{%- from "back-link/macro.njk" import backLink %}
+{%- from "breadcrumb/macro.njk" import breadcrumb %}
+{%- from "card/macro.njk" import card %}
+{%- from "contents-list/macro.njk" import contentsList %}
+{%- from "details/macro.njk" import details %}
+{%- from "error-message/macro.njk" import errorMessage %}
+{%- from "error-summary/macro.njk" import errorSummary %}
+{%- from "fieldset/macro.njk" import fieldset %}
+{%- from "footer/macro.njk" import footer %}
+{%- from "header/macro.njk" import header %}
+{%- from "hero/macro.njk" import hero %}
+{%- from "hint/macro.njk" import hint %}
+{%- from "inset-text/macro.njk" import insetText %}
+{%- from "label/macro.njk" import label %}
+{%- from "notification-banner/macro.njk" import notificationBanner %}
+{%- from "pagination/macro.njk" import pagination %}
+{%- from "panel/macro.njk" import panel with context %}
+{%- from "skip-link/macro.njk" import skipLink %}
+{%- from "summary-list/macro.njk" import summaryList %}
+{%- from "tables/macro.njk" import table %}
+{%- from "tabs/macro.njk" import tabs %}
+{%- from "tag/macro.njk" import tag %}
+{%- from "warning-callout/macro.njk" import warningCallout %}
 
 {#- Decorated components -#}
 {%- from "x-nhsuk/decorated/button/macro.njk" import button with context %}
@@ -11,6 +37,9 @@
 {%- from "x-nhsuk/decorated/radios/macro.njk" import radios with context %}
 {%- from "x-nhsuk/decorated/select/macro.njk" import select with context %}
 {%- from "x-nhsuk/decorated/textarea/macro.njk" import textarea with context %}
+
+{#- TODO: Make a decorated component -#}
+{%- from "search-input/macro.njk" import searchInput %}
 
 {#- Application macros -#}
 {%- from "_macros/action-list.njk" import appActionList %}
