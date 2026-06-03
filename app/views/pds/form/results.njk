@@ -17,7 +17,7 @@
     {{ summaryList({
       card: {
         classes: "app-card--compact",
-        heading: pdsRecord.fullAndPreferredNames | highlightQuery(data.q),
+        heading: pdsRecord.fullAndPreferredNames | highlightQuery(data.q) | safe,
         headingSize: "s",
         headingLevel: 4,
         href: pdsRecord.uri,

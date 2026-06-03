@@ -84,7 +84,7 @@
 
           {% call card({
             classes: "app-card--compact",
-            heading: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q),
+            heading: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
             headingSize: "s",
             headingLevel: 4,
             clickable: not showRegistration,

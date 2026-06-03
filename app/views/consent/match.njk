@@ -77,7 +77,7 @@
           {{ summaryList({
             card: {
               classes: "app-card--compact",
-              heading: patient.fullName | highlightQuery(data.q),
+              heading: patient.fullName | highlightQuery(data.q) | safe,
               headingLevel: 4,
               clickable: true,
               href: consentPath + "/link?patient_uuid=" + patient.uuid

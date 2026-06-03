@@ -86,7 +86,7 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: patient.fullAndPreferredNames | highlightQuery(data.q),
+            heading: patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
             headingSize: "s",
             headingLevel: 4,
             href: patient.uri,

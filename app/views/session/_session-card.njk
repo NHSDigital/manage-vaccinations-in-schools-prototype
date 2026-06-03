@@ -1,7 +1,7 @@
 {{ summaryList({
   card: {
     classes: "app-card--compact",
-    heading: session.location.name | highlightQuery(data.q),
+    heading: session.location.name | highlightQuery(data.q) | safe,
     headingSize: "s",
     headingLevel: 4,
     href: session.uri,

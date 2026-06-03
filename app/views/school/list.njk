@@ -97,7 +97,7 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: school.name | highlightQuery(data.q),
+            heading: school.name | highlightQuery(data.q) | safe,
             headingSize: "s",
             headingLevel: 4,
             href: school.uri,
