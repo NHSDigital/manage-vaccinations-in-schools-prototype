@@ -466,4 +466,33 @@ export class ClinicAppointment {
     const { context, ...rest } = this
     return rest
   }
+
+  /**
+   * Find all
+   *
+   * @param {object} context - Context
+   * @returns {Array<ClinicAppointment>|undefined} Clinic appointments
+   * @static
+   */
+  static findAll(context) {
+    return ClinicBooking.findAll(context).flatMap(
+      ({ appointments }) => appointments
+    )
+  }
+
+  /**
+   * Find one
+   *
+   * @param {string|string[]} appointment_uuid - ClinicAppointment UUID
+   * @param {object} context - Context
+   * @returns {ClinicAppointment|undefined} Clinic appointment
+   * @static
+   */
+  static findOne(appointment_uuid, context) {
+    appointment_uuid = String(appointment_uuid)
+
+    return ClinicAppointment.findAll(context).find(
+      ({ uuid }) => uuid === appointment_uuid
+    )
+  }
 }

@@ -236,15 +236,22 @@ export const en = {
     }
   },
   appointments: {
+    label: 'Clinic appointment',
     list: {
       label: 'Clinic appointments',
       title: 'Unmatched clinic appointments'
+    },
+    show: {
+      title: 'Clinic appointment booked by %s'
     },
     count: {
       total:
         '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {{count} unmatched clinic appointments}}',
       session:
         '{count, plural, =0 {No unmatched clinic appointments at {location}} one {1 unmatched clinic appointment at {location}} other {{count} unmatched clinic appointments at {location}}}'
+    },
+    add: {
+      label: 'Create new record'
     },
     results:
       '{count, plural, =0 {No unmatched appointments matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointment} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointments}}',
@@ -310,6 +317,9 @@ export const en = {
     },
     parentalRelationship: {
       label: 'Your relationship'
+    },
+    programmeTags: {
+      label: 'Programmes'
     }
   },
   clinicBooking: {

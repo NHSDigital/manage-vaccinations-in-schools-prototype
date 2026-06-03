@@ -1,11 +1,30 @@
 import _ from 'lodash'
 
-import { ClinicBooking, Session } from '../models.js'
+import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const unmatchedAppointmentController = {
   read(request, response, next, appointment_uuid) {
-    console.log(`read: ${appointment_uuid}`)
+    const { session_id } = request.params
+    const { referrer } = request.session
+
+    const appointment = ClinicAppointment.findOne(
+      appointment_uuid,
+      request.session.data
+    )
+    const back = session_id
+      ? `/sessions/${session_id}/unmatched-appointments`
+      : '/unmatched-appointments'
+
+    response.locals.back = referrer || back
+    response.locals.appointment = appointment
+
+    response.locals.appointmentPath = session_id
+      ? `/sessions/${session_id}${appointment.uri.unmatched}`
+      : appointment.uri.unmatched
+    response.locals.appointmentsPath = session_id
+      ? `/sessions/${session_id}/unmatched-appointments`
+      : '/unmatched-appointments'
 
     next()
   },

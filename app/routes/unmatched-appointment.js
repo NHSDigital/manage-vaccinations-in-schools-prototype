@@ -15,6 +15,6 @@ router.param('appointment_uuid', controller.read)
 // router.post('/:appointment_uuid/link', controller.link)
 // router.post('/:appointment_uuid/add', controller.add)
 
-// router.get('/:appointment_uuid{/:view}', controller.show)
+router.get('/:appointment_uuid{/:view}', controller.show)
 
 export const unmatchedAppointmentRoutes = router
