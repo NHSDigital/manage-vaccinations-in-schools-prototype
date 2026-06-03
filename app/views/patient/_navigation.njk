@@ -1,6 +1,6 @@
 {% from "_macros/action-list.njk" import appActionList %}
 {% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+{% from "_macros/section-navigation.njk" import appSectionNavigation %}
 
 {% macro patientNavigation(params) %}
   {{ appHeading({
@@ -16,8 +16,8 @@
     }]
   }) if patient.archived }}
 
-  {{ appSecondaryNavigation({
-    items: secondaryNavigationItems
+  {{ appSectionNavigation({
+    items: sectionNavigationItems
   }) }}
 
   <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">

@@ -48,7 +48,7 @@ export const patientController = {
 
     response.locals.recordTitle = recordTitle
 
-    response.locals.secondaryNavigationItems = [
+    response.locals.sectionNavigationItems = [
       {
         text: recordTitle,
         href: patient.uri,

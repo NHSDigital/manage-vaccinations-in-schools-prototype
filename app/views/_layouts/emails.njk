@@ -27,9 +27,19 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter">
-      {{ appSubNavigation({
-        items: navigationItems
-      }) }}
+      {% for theme, items in navigationItems | groupby("theme") %}
+        {{ appHeading({
+          classes: "nhsuk-u-margin-bottom-2",
+          title: theme,
+          level: 3,
+          size: "xs"
+        }) }}
+        {{ appSectionNavigation({
+          small: true,
+          vertical: true,
+          items: items
+        }) }}
+      {% endfor %}
     </div>
 
     <div class="nhsuk-grid-column-three-quarters">

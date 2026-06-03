@@ -1,6 +1,6 @@
 {% from "nhsuk/components/warning-callout/macro.njk" import warningCallout %}
 {% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
+{% from "_macros/section-navigation.njk" import appSectionNavigation %}
 
 {% macro schoolNavigation(params) %}
   {{ appHeading({
@@ -15,7 +15,7 @@
   }) if school.statusDescription }}
 
   {% if params.school.id != "888888" and params.school.id != "999999" %}
-    {{ appSecondaryNavigation({
+    {{ appSectionNavigation({
       items: [
         {
           text: __("school.show.label"),
