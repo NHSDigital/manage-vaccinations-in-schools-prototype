@@ -683,6 +683,15 @@ export class PatientSession {
       return true
     }
 
+    return this.consentGivenInResponse
+  }
+
+  /**
+   * Consent has been given in a consent response
+   *
+   * @returns {boolean} Consent has been given in a consent response
+   */
+  get consentGivenInResponse() {
     return [
       ConsentOutcome.Given,
       ConsentOutcome.GivenForAlternativeInjection,

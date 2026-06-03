@@ -35,8 +35,10 @@ export const patientSessionController = {
     )
 
     const {
+      clinicAppointment,
       consent,
       consentGiven,
+      consentGivenInResponse,
       patient,
       programme,
       record,
@@ -57,6 +59,12 @@ export const patientSessionController = {
     const patientProgramme = Object.values(patient.programmes).find(
       (patientProgramme) => patientProgramme.programme_id === programme_id
     )
+
+    // Only show consent responses in clinics if prior consent response
+    let showConsent = true
+    if (clinicAppointment && !consentGivenInResponse) {
+      showConsent = false
+    }
 
     // National protocol
     // Nurses can record all vaccines
@@ -96,6 +104,8 @@ export const patientSessionController = {
         consent === ConsentOutcome.NoResponse,
       // Perform Gillick assessment
       canGillick: session.isActive && !vaccinated && !consentGiven,
+      // Show consent options and previous responses
+      showConsent,
       // Patient can be triaged
       canTriage: consentGiven,
       // Patient needs triage
