@@ -1,6 +1,12 @@
 import _ from 'lodash'
 
-import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
+import {
+  ClinicAppointment,
+  ClinicBooking,
+  Patient,
+  PatientSession,
+  Session
+} from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const unmatchedAppointmentController = {
@@ -145,41 +151,54 @@ export const unmatchedAppointmentController = {
   //   response.redirect(consentsPath)
   // },
 
-  // add(request, response) {
-  //   const { consent_uuid } = request.params
-  //   const { data } = request.session
-  //   const { __, consent, consentsPath } = response.locals
+  add(request, response) {
+    const { appointment_uuid } = request.params
+    const { data } = request.session
+    const { __, appointmentsPath } = response.locals
 
-  //   // Create patient
-  //   const patient = Patient.create(consent.child, data)
+    // Get the booking we'll need to update
+    const booking = ClinicBooking.findOne(
+      response.locals.appointment.booking_uuid,
+      data
+    )
+    const appointment = booking.findAppointment(appointment_uuid)
 
-  //   // Create and add patient session
-  //   const patientSession = PatientSession.create(
-  //     {
-  //       patient_uuid: patient.uuid,
-  //       programme_id: consent.programme_id,
-  //       session_id: consent.session_id
-  //     },
-  //     data
-  //   )
+    // Create patient
+    const patient = Patient.create(appointment.child, data)
 
-  //   // Add to session
-  //   patient.addToSession(patientSession)
+    // Create and add patient session for each programme they've signed up for
+    for (const programme_id of appointment.selected_programme_ids) {
+      const patientSession = PatientSession.create(
+        {
+          patient_uuid: patient.uuid,
+          programme_id: programme_id,
+          session_id: appointment.session_id
+        },
+        data
+      )
 
-  //   // Invite contact to give consent
-  //   patient.requestConsent(patientSession)
+      // Add to session
+      patient.addToSession(patientSession)
+    }
 
-  //   // Link consent with patient record
-  //   consent.linkToPatient(patient)
+    // Link appointment to patient record
+    appointment.patient_uuid = patient.uuid
 
-  //   // Update session data
-  //   Consent.update(consent_uuid, consent, data)
-  //   Patient.update(patient.uuid, patient, data)
+    // Update session data
+    ClinicBooking.update(booking.uuid, booking, data)
+    Patient.update(patient.uuid, patient, data)
 
-  //   request.flash('success', __(`consent.add.success`, { consent, patient }))
+    // Update the review badges
+    data.counts.appointments--
+    data.counts.review--
 
-  //   response.redirect(consentsPath)
-  // },
+    request.flash(
+      'success',
+      __(`consent.add.success`, { appointment, patient })
+    )
+
+    response.redirect(appointmentsPath)
+  },
 
   archive(request, response) {
     const { note } = request.body.appointment
@@ -190,12 +209,12 @@ export const unmatchedAppointmentController = {
     // Clean up session data
     delete data.appointment
 
-    // Update session data
     const booking_uuid = ClinicAppointment.findOne(
       appointment_uuid,
       data
     )?.booking_uuid
     if (booking_uuid) {
+      // Update session data
       const booking = ClinicBooking.findOne(booking_uuid, data)
       const appointment = booking.findAppointment(appointment_uuid)
       appointment.archived = true
@@ -203,6 +222,7 @@ export const unmatchedAppointmentController = {
 
       ClinicBooking.update(booking_uuid, booking, data)
 
+      // Update the review badges
       data.counts.appointments--
       data.counts.review--
 

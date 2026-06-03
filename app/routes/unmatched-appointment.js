@@ -13,7 +13,7 @@ router.param('appointment_uuid', controller.read)
 
 router.post('/:appointment_uuid/archive', controller.archive)
 // router.post('/:appointment_uuid/link', controller.link)
-// router.post('/:appointment_uuid/add', controller.add)
+router.post('/:appointment_uuid/add', controller.add)
 
 router.get('/:appointment_uuid{/:view}', controller.show)
 
