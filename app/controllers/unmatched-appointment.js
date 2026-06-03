@@ -33,7 +33,9 @@ export const unmatchedAppointmentController = {
     const { session_id } = request.params
     let appointments = ClinicBooking.findAll(request.session.data)
       ?.flatMap(({ appointments }) => appointments)
-      .filter(({ patient_uuid }) => !patient_uuid)
+      .filter(
+        (appointment) => !appointment.patient_uuid && !appointment.archived
+      )
 
     // Sort
     appointments = _.sortBy(appointments, 'startAt')
@@ -66,7 +68,7 @@ export const unmatchedAppointmentController = {
 
   list(request, response) {
     response.render('appointments/list')
-  }
+  },
 
   // readMatches(request, response, next) {
   //   let { hasMissingNhsNumber, page, limit, q } = request.query
@@ -179,20 +181,37 @@ export const unmatchedAppointmentController = {
   //   response.redirect(consentsPath)
   // },
 
-  // invalidate(request, response) {
-  //   const { note } = request.body.consent
-  //   const { consent_uuid } = request.params
-  //   const { data } = request.session
-  //   const { __, consentsPath } = response.locals
+  archive(request, response) {
+    const { note } = request.body.appointment
+    const { appointment_uuid } = request.params
+    const { data } = request.session
+    const { __, appointmentsPath } = response.locals
 
-  //   // Clean up session data
-  //   delete data.consent
+    // Clean up session data
+    delete data.appointment
 
-  //   // Update session data
-  //   const consent = Consent.update(consent_uuid, { invalid: true, note }, data)
+    // Update session data
+    const booking_uuid = ClinicAppointment.findOne(
+      appointment_uuid,
+      data
+    )?.booking_uuid
+    if (booking_uuid) {
+      const booking = ClinicBooking.findOne(booking_uuid, data)
+      const appointment = booking.findAppointment(appointment_uuid)
+      appointment.archived = true
+      appointment.note = note
 
-  //   request.flash('success', __(`consent.invalidate.success`, { consent }))
+      ClinicBooking.update(booking_uuid, booking, data)
 
-  //   response.redirect(consentsPath)
-  // }
+      data.counts.appointments--
+      data.counts.review--
+
+      request.flash(
+        'success',
+        __(`appointments.archive.success`, { appointment })
+      )
+    }
+
+    response.redirect(appointmentsPath)
+  }
 }

@@ -48,6 +48,8 @@ import {
  * @property {boolean} fluAlternative - accept the alternative flu vaccine if nasal not suitable?
  * @property {boolean} mmrAlternative - want the vaccine that doesn't contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
+ * @property {boolean} archived - Has this appointment been archived?
+ * @property {string} [note] - Note about this clinic appointment
  */
 export class ClinicAppointment {
   constructor(options, context) {
@@ -75,6 +77,9 @@ export class ClinicAppointment {
     this.fluAlternative = options?.fluAlternative
     this.mmrAlternative = options?.mmrAlternative
     this.healthAnswers = options?.healthAnswers || {}
+
+    this.archived = options?.archived
+    this.note = options?.note
   }
 
   /**

@@ -273,8 +273,18 @@ export const en = {
     match: {
       label: 'Match'
     },
+    note: {
+      label: 'Notes'
+    },
     archive: {
-      label: 'Archive'
+      label: 'Archive',
+      caption: 'Clinic appointment booked by {{appointment.contact.fullName}}',
+      title: 'Archive response',
+      description:
+        'The unmatched clinic appointment will be hidden. This cannot be undone.',
+      confirm: 'Archive this appointment',
+      success:
+        'Clinic appointment booked by {{appointment.contact.fullName}} archived'
     }
   },
   clinicAppointment: {

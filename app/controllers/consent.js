@@ -212,6 +212,9 @@ export const consentController = {
     // Update session data
     const consent = Consent.update(consent_uuid, { invalid: true, note }, data)
 
+    data.counts.consents--
+    data.counts.review--
+
     request.flash('success', __(`consent.invalidate.success`, { consent }))
 
     return response.redirect(consentsPath)
