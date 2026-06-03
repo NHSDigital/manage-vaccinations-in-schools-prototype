@@ -68,7 +68,7 @@
         {% include "patient-session/_gillick.njk" %}
       {% endif %}
 
-      {% if not patientSession.clinicAppointment %}
+      {% if options.showConsent %}
         {% include "patient-session/_consent.njk" %}
       {% endif %}
 
