@@ -109,8 +109,8 @@ export const bookIntoClinicController = {
         response.locals.childNumber =
           booking.appointments.indexOf(currentAppointment) + 1
         response.locals.childCount = booking.appointments.length
-        response.locals.firstName = currentAppointment.firstName || 'your child'
-        response.locals.fullName = currentAppointment.fullName || 'your child'
+        response.locals.firstName = 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
+        response.locals.fullName = 'your child' // TODO: use currentAppointment.fullName if multi-child bookings
       }
     }
 
