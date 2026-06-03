@@ -55,18 +55,20 @@ export const getRegistrationOutcome = (patientSession) => {
  * Check if registration is needed prior to recording vaccination
  *
  * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @returns {boolean|undefined} Ready to record outcome
+ * @returns {boolean} Ready to record outcome
  */
 export const getRecordOutcome = (patientSession) => {
   const { register, report, session } = patientSession
 
-  if (report !== PatientStatus.Vaccinated) {
+  if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {
     if (session.registration && register === RegistrationOutcome.Pending) {
       return false
     }
 
     return true
   }
+
+  return false
 }
 
 /**
