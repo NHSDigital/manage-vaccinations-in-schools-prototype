@@ -1026,6 +1026,20 @@ export const sessionController = {
   /**
    * @type {import("express").RequestHandler}
    */
+  makeActive(request, response) {
+    const { __, session } = response.locals
+    const { data } = request.session
+
+    Session.update(session.id, { date: today() }, data)
+
+    request.flash('success', __('session.makeActive.success'))
+
+    return response.redirect(session.uri)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
   inviteToClinic(request, response) {
     const { account } = request.app.locals
     const { session_id } = request.params

@@ -34,4 +34,23 @@
       </form>
     </main>
   </div>
+
+  {% if not session.isActive %}
+  <form class="app-dev-tools" action="{{ session.uri }}/status" method="post">
+    <div class="nhsuk-width-container">
+      {{ appHeading({
+        title: "Prototype tools",
+        size: "s"
+      }) }}
+
+      {{ "Vaccinations can only be recorded if a session is in progress. If you want to test vaccination recording, you can set this session as in progress for today." | nhsukMarkdown }}
+
+      {{ button({
+        classes: "nhsuk-u-margin-bottom-0",
+        text: "Set session in progress for today",
+        variant: "secondary"
+      }) }}
+    </div>
+  </form>
+  {% endif %}
 {% endblock %}
