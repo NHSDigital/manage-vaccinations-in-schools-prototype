@@ -162,16 +162,6 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get the programmes for which this child is eligible
-   *
-   * @returns {Array<Programme>} Programmes from which contact can choose
-   */
-  get eligibleProgrammes() {
-    const programme_ids = this.patient?.clinicReadyProgramme_ids ?? []
-    return ClinicAppointment.#getProgrammesFromIDs(programme_ids, this.context)
-  }
-
-  /**
    * Convert an array of programme IDs to actual programme objects
    *
    * @param {Array<string>} programmeIDs
