@@ -16,28 +16,30 @@
   {% endif %}
 
   {# Actions #}
-  {{ actionLink({
-    text: __("reply.new.title"),
-    href: patientSession.uri + "/replies/new?referrer=" + referrer
-  }) if not isVaccinated }}
+  {% if not isVaccinated and not patientSession.patient.post16 %}
+    {{ actionLink({
+      text: __("reply.new.title"),
+      href: patientSession.uri + "/replies/new?referrer=" + referrer
+    }) if not isVaccinated }}
 
-  {{ appButtonGroup({
-    buttons: [{
-      text: __("remind.new.title"),
-      variant: "secondary",
-      attributes: {
-        formaction: patientSession.uri + "/new/remind",
-        formmethod: "post"
-      }
-    } if options.canRemind, {
-      text: __("patientSession.invite.label"),
-      variant: "secondary",
-      attributes: {
-        formaction: patientSession.uri + "/new/invite",
-        formmethod: "post"
-      }
-    }]
-  }) if not isVaccinated and not patientSession.patient.post16 }}
+    {{ appButtonGroup({
+      buttons: [{
+        text: __("remind.new.title"),
+        variant: "secondary",
+        attributes: {
+          formaction: patientSession.uri + "/new/remind",
+          formmethod: "post"
+        }
+      } if options.canRemind, {
+        text: __("patientSession.invite.label"),
+        variant: "secondary",
+        attributes: {
+          formaction: patientSession.uri + "/new/invite",
+          formmethod: "post"
+        }
+      }]
+    }) }}
+  {% endif %}
 
   {% if patientSession.replies | length %}
     {# Requests with responses or requests that couldn’t be delivered #}
