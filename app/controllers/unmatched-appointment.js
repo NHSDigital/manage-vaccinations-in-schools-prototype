@@ -250,7 +250,7 @@ export const unmatchedAppointmentController = {
 
     request.flash(
       'success',
-      __(`consent.add.success`, { appointment, patient })
+      __(`appointments.add.success`, { appointment, patient })
     )
 
     return response.redirect(appointmentsPath)
