@@ -679,15 +679,17 @@ export class PatientSession {
    * @returns {boolean} Consent has been given
    */
   get consentGiven() {
-    if (this.clinicAppointment) {
+    if (this.consent) {
+      return [
+        ConsentOutcome.Given,
+        ConsentOutcome.GivenForAlternativeInjection,
+        ConsentOutcome.GivenForIntranasal
+      ].includes(this.consent)
+    } else if (this.clinicAppointment) {
       return true
     }
 
-    return [
-      ConsentOutcome.Given,
-      ConsentOutcome.GivenForAlternativeInjection,
-      ConsentOutcome.GivenForIntranasal
-    ].includes(this.consent)
+    return false
   }
 
   /**
