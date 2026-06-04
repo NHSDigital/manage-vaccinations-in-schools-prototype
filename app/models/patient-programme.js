@@ -511,6 +511,8 @@ export class PatientProgramme {
           : `Eligible from 1 September ${this.year}`
       case PatientStatus.Vaccinated:
         return `Vaccinated on ${this.lastVaccinationGiven.formatted.createdAt_dateShort}`
+      case PatientStatus.Triage:
+        return this.lastPatientSession.patientTriage
       case PatientStatus.Due:
         return this.lastPatientSession.vaccineCriteria
       case PatientStatus.Deferred:

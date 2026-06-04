@@ -19,7 +19,8 @@ import {
   VaccinationOutcome,
   ProgrammeType,
   PatientClinicStatus,
-  SessionType
+  SessionType,
+  PatientTriageStatus
 } from '../enums.js'
 import {
   AuditEvent,
@@ -39,10 +40,11 @@ import {
   getSessionOutcome
 } from '../utils/patient-session.js'
 import {
+  countAnswersNeedingTriage,
   getConsentOutcome,
   getConsentHealthAnswers,
   getConsentRefusalReasons,
-  countAnswersNeedingTriage
+  getRepliesWithHealthAnswers
 } from '../utils/reply.js'
 import {
   getConsentOutcomeStatus,
@@ -539,6 +541,24 @@ export class PatientSession {
         return PatientRefusedStatus.Conflict
       case ConsentOutcome.Refused:
         return PatientRefusedStatus.Refusal
+    }
+  }
+
+  /**
+   * Get patient triage status
+   *
+   * @returns {PatientTriageStatus|undefined} Patient triage status
+   */
+  get patientTriage() {
+    const responses = Object.values(this.responses)
+    const responsesToTriage = getRepliesWithHealthAnswers(responses)
+
+    if (this.screen === ScreenOutcome.NeedsTriage) {
+      if (responsesToTriage.length > 0) {
+        return PatientTriageStatus.Responses
+      } else if (this.clinicAppointment) {
+        return PatientTriageStatus.Consultation
+      }
     }
   }
 
