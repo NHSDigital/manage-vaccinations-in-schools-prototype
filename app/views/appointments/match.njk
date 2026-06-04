@@ -15,7 +15,7 @@
   }) }}
 
   <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-third" data-module="app-sticky">
+    <aside class="nhsuk-grid-column-one-third" data-module="app-sticky">
       {% call card({
         feature: true,
         heading: __("appointments.label"),
@@ -45,7 +45,7 @@
           text: __("appointments.add.label")
         }) }}
       {% endcall %}
-    </div>
+    </aside>
 
     <div class="nhsuk-grid-column-two-thirds">
       {{ appPatientSearch({
