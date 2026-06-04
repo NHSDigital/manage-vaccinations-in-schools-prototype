@@ -186,6 +186,9 @@ export const en = {
     fullName: {
       label: 'Full name'
     },
+    fullFriendlyName: {
+      label: 'Full name'
+    },
     preferredFirstName: {
       label: 'Preferred first name'
     },

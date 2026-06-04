@@ -102,7 +102,7 @@ export class Child {
   }
 
   /**
-   * Get full name
+   * Get full name formatted for SAIS team-facing pages
    *
    * @returns {string} Full name
    */
@@ -110,6 +110,17 @@ export class Child {
     if (!this.firstName || !this.lastName) return ''
 
     return [this.lastName.toUpperCase(), this.firstName].join(', ')
+  }
+
+  /**
+   * Get full name formatted for parent-facing pages
+   *
+   * @returns {string} Full name
+   */
+  get fullFriendlyName() {
+    if (!this.firstName || !this.lastName) return ''
+
+    return [this.firstName, this.lastName].join(' ')
   }
 
   /**
