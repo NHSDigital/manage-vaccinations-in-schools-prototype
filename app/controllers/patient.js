@@ -697,20 +697,24 @@ export const patientController = {
     const { data } = request.session
     const { patient } = response.locals
 
-    let presetNames
+    let presetNames, appointmentLength
     switch (programme_id) {
       case 'flu':
         presetNames = SessionPresetName.Flu
+        appointmentLength = 5
         break
       case 'hpv':
         presetNames = SessionPresetName.HPV
+        appointmentLength = 10
         break
       case 'menacwy':
       case 'td-ipv':
         presetNames = SessionPresetName.Doubles
+        appointmentLength = 10
         break
       case 'mmr':
         presetNames = SessionPresetName.MMR
+        appointmentLength = 10
         break
       default:
     }
@@ -721,10 +725,23 @@ export const patientController = {
         date: today(),
         type: SessionType.Clinic,
         presetNames,
-        clinic_id: 'X99999'
+        clinic_id: 'X99999',
+        appointmentLength
       },
       data
     )
+
+    let startAt = new Date(session.date)
+    startAt.setUTCHours(9, 0, 0, 0)
+    let endAt = new Date(session.date)
+    endAt.setUTCHours(12, 0, 0, 0)
+    session.addVaccinationPeriod({
+      startAt,
+      endAt,
+      vaccinatorCount: 5
+    })
+
+    Session.update(session.id, session, data)
 
     const createdPatientSession = PatientSession.create(
       {
