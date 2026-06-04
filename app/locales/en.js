@@ -236,15 +236,27 @@ export const en = {
     }
   },
   appointments: {
+    label: 'Clinic appointment',
     list: {
       label: 'Clinic appointments',
       title: 'Unmatched clinic appointments'
+    },
+    show: {
+      title: 'Clinic appointment made by %s'
     },
     count: {
       total:
         '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {{count} unmatched clinic appointments}}',
       session:
         '{count, plural, =0 {No unmatched clinic appointments at {location}} one {1 unmatched clinic appointment at {location}} other {{count} unmatched clinic appointments at {location}}}'
+    },
+    add: {
+      label: 'Create new record',
+      title: 'Create a new child record from this clinic appointment?',
+      caption: 'Clinic appointment made by {{contact.fullName}}',
+      confirm: 'Create a new child record',
+      success:
+        '[{{patient.fullName}}]({{patient.uri}})’s record created from a clinic appointment made by {{appointment.contact.fullName}}'
     },
     results:
       '{count, plural, =0 {No unmatched appointments matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointment} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointments}}',
@@ -263,11 +275,39 @@ export const en = {
     vaccinations: {
       label: 'Programmes'
     },
+    link: {
+      title: 'Link clinic appointment with child record?',
+      caption: 'Clinic appointment made by {{contact.fullName}}',
+      summary: 'Compare child details',
+      confirm: 'Link appointment with record',
+      success:
+        'Clinic appointment made by {{appointment.contact.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
+    },
     match: {
-      label: 'Match'
+      label: 'Match',
+      title: 'Search for a child record to match with {{child.fullName}}',
+      caption: 'Consent response from {{contact.formatted.fullName}}',
+      child: {
+        fullAndPreferredNames: {
+          label: 'Child’s name'
+        }
+      },
+      contact: {
+        label: 'Parent'
+      }
+    },
+    note: {
+      label: 'Notes'
     },
     archive: {
-      label: 'Archive'
+      label: 'Archive',
+      caption: 'Clinic appointment made by {{appointment.contact.fullName}}',
+      title: 'Archive response',
+      description:
+        'The unmatched clinic appointment will be hidden. This cannot be undone.',
+      confirm: 'Archive this appointment',
+      success:
+        'Clinic appointment made by {{appointment.contact.fullName}} archived'
     }
   },
   clinicAppointment: {
@@ -310,6 +350,9 @@ export const en = {
     },
     parentalRelationship: {
       label: 'Your relationship'
+    },
+    programmeTags: {
+      label: 'Programmes'
     }
   },
   clinicBooking: {

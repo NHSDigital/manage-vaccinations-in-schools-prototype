@@ -1,0 +1,66 @@
+{% extends "_layouts/form.njk" %}
+
+{% set gridColumns = "full" %}
+{% set title = __("appointments.link.title") %}
+{% set confirmButtonText = __("appointments.link.confirm") %}
+{% set paths = { back: appointmentPath + "/match" } %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ appHeading({
+    caption: __("appointments.link.caption", { contact: appointment.contact } ),
+    title: title
+  }) }}
+
+  <div class="nhsuk-grid-row nhsuk-card-group">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      {{ summaryList({
+        card: {
+          feature: true,
+          heading: __("appointments.label"),
+          headingSize: "m"
+        },
+        lastRowBorder: false,
+        rows: summaryRows(appointment.child, {
+          fullName: {
+            value: appointment.child.fullName | highlightDifference(patient.fullName)
+          },
+          dob: {
+            value: appointment.child.formatted.dob | highlightDifference(patient.formatted.dob)
+          },
+          address: {
+            value: appointment.child.formatted.address | highlightDifference(patient.formatted.address)
+          },
+          schoolName: {
+            value: appointment.child.formatted.schoolName | highlightDifference(patient.formatted.schoolName)
+          },
+          gpSurgery: {
+            value: appointment.child.formatted.gpSurgery | highlightDifference(patient.formatted.gpSurgery)
+          },
+          contact: {
+            value: appointment.contact.fullNameAndRelationship
+          }
+        })
+      }) }}
+    </div>
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      {{ summaryList({
+        card: {
+          feature: true,
+          heading: __("patient.label"),
+          headingSize: "m"
+        },
+        lastRowBorder: false,
+        rows: summaryRows(patient, {
+          fullName: {},
+          dob: {},
+          address: {},
+          schoolName: {},
+          gpSurgery: {},
+          contacts: {}
+        })
+      }) if patient }}
+    </div>
+  </div>
+{% endblock %}

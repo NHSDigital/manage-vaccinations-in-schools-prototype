@@ -591,18 +591,21 @@ export class Session {
   /**
    * Get all appointments for this clinic
    *
-   * @returns {Array<ClinicAppointment>} - the appointments made for unmatched children
+   * @returns {Array<ClinicAppointment>} - the appointments made for this session
    */
   get appointments() {
     if (this.type !== SessionType.Clinic) {
       throw new Error(
-        'Unmatched clinic appointments are only relevant to clinic sessions'
+        'Clinic appointments are only relevant to clinic sessions'
       )
     }
 
     const appointments = ClinicBooking.findAll(this.context)
       ?.flatMap(({ appointments }) => appointments)
-      .filter(({ session_id }) => session_id === this.id)
+      .filter(
+        (appointment) =>
+          appointment.session_id === this.id && !appointment.archived
+      )
 
     return appointments
   }

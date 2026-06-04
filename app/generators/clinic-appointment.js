@@ -28,6 +28,9 @@ export function generateClinicAppointment(patient, session, booking) {
       firstName: patient.firstName,
       lastName: patient.lastName,
       dob: patient.dob,
+      address: {
+        ...patient.address
+      },
       adjustments: [...patient.adjustments],
       adjustmentsOther: patient.adjustmentsOther,
       impairments: [...patient.impairments],
@@ -41,16 +44,15 @@ export function generateClinicAppointment(patient, session, booking) {
       'dob'
     ])
     child = {
-      firstName:
-        wrongness === 'firstName'
-          ? faker.person.firstName()
-          : patient.firstName,
-      lastName:
-        wrongness === 'lastName' ? faker.person.lastName() : patient.lastName,
+      firstName: patient.firstName + (wrongness === 'firstName' ? 'e' : ''),
+      lastName: patient.lastName + (wrongness === 'lastName' ? 's' : ''),
       dob:
         wrongness === 'dob'
           ? addYears(patient.dob, faker.helpers.arrayElement([-2, -1, 1, 2]))
           : patient.dob,
+      address: {
+        ...patient.address
+      },
       adjustments: [...patient.adjustments],
       adjustmentsOther: patient.adjustmentsOther,
       impairments: [...patient.impairments],

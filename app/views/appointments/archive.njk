@@ -1,0 +1,22 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonVariant = "warning" %}
+{% set confirmButtonText = __("appointments.archive.confirm") %}
+{% set title = __("appointments.archive.title") %}
+
+{% block form %}
+  {{ appHeading({
+    caption: __("appointments.archive.caption", { appointment: appointment }),
+    title: title
+  }) }}
+
+  {{ __("appointments.archive.description") | nhsukMarkdown }}
+
+  {{ textarea({
+    label: {
+      classes: "nhsuk-label--m nhsuk-u-margin-bottom-2",
+      text: __("appointments.note.label")
+    },
+    decorate: "appointment.note"
+  }) }}
+{% endblock %}

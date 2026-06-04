@@ -1,0 +1,76 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("appointments.show.title", appointment.contact.formatted.fullName) %}
+
+{% block content %}
+  <div class="nhsuk-u-width-three-quarters">
+    {{ super() }}
+
+    {{ appHeading({
+      title: title
+    }) }}
+
+    {{ appActionList({
+      items: [{
+        text: __("appointments.match.label"),
+        href: appointmentPath + "/match?referrer=" + appointmentPath
+      }, {
+        text: __("appointments.add.label"),
+        href: appointmentPath + "/add?referrer=" + appointmentPath
+      }, {
+        text: __("appointments.archive.label"),
+        href: appointmentPath + "/archive?referrer=" + appointmentPath
+      }]
+    }) }}
+
+    {{ summaryList({
+      card: {
+        heading: __("appointments.label"),
+        headingSize: "m"
+      },
+      lastRowBorder: false,
+      rows: summaryRows(appointment, {
+        programmeTags: {},
+        fluVaccineType: {},
+        mmrVaccineType: {},
+        location: {},
+        date: {},
+        timeSlot: {}
+      })
+    }) }}
+
+    {{ summaryList({
+      card: {
+        heading: __("contact.label"),
+        headingSize: "m"
+      },
+      lastRowBorder: false,
+      rows: summaryRows(appointment.contact, {
+        fullName: {},
+        relationship: {},
+        hasParentalResponsibility: {},
+        email: {},
+        tel: {},
+        contactPreference: {},
+        sms: {}
+      })
+    }) if appointment.contact }}
+
+    {{ summaryList({
+      card: {
+        heading: __("child.label"),
+        headingSize: "m"
+      },
+      lastRowBorder: false,
+      rows: summaryRows(appointment.child, {
+        fullName: {},
+        preferredFirstName: {},
+        preferredLastName: {},
+        dob: {},
+        address: {},
+        gpSurgery: {},
+        schoolName: {}
+      })
+    }) if appointment.child }}
+  </div>
+{% endblock %}

@@ -48,6 +48,8 @@ import {
  * @property {boolean} fluAlternative - accept the alternative flu vaccine if nasal not suitable?
  * @property {boolean} mmrAlternative - want the vaccine that doesn't contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
+ * @property {boolean} archived - Has this appointment been archived?
+ * @property {string} [note] - Note about this clinic appointment
  */
 export class ClinicAppointment {
   constructor(options, context) {
@@ -75,6 +77,9 @@ export class ClinicAppointment {
     this.fluAlternative = options?.fluAlternative
     this.mmrAlternative = options?.mmrAlternative
     this.healthAnswers = options?.healthAnswers || {}
+
+    this.archived = options?.archived
+    this.note = options?.note
   }
 
   /**
@@ -465,5 +470,34 @@ export class ClinicAppointment {
   toJSON() {
     const { context, ...rest } = this
     return rest
+  }
+
+  /**
+   * Find all
+   *
+   * @param {object} context - Context
+   * @returns {Array<ClinicAppointment>|undefined} Clinic appointments
+   * @static
+   */
+  static findAll(context) {
+    return ClinicBooking.findAll(context).flatMap(
+      ({ appointments }) => appointments
+    )
+  }
+
+  /**
+   * Find one
+   *
+   * @param {string|string[]} appointment_uuid - ClinicAppointment UUID
+   * @param {object} context - Context
+   * @returns {ClinicAppointment|undefined} Clinic appointment
+   * @static
+   */
+  static findOne(appointment_uuid, context) {
+    appointment_uuid = String(appointment_uuid)
+
+    return ClinicAppointment.findAll(context).find(
+      ({ uuid }) => uuid === appointment_uuid
+    )
   }
 }
