@@ -70,9 +70,7 @@
 
       {% include "patient-session/_consent.njk" %}
 
-      {% if options.canTriage %}
-        {% include "patient-session/_triage.njk" %}
-      {% endif %}
+      {% include "patient-session/_triage.njk" %}
 
       {% if options.hasInstruct %}
         {% include "patient-session/_instruct.njk" %}
