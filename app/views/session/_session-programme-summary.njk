@@ -13,6 +13,7 @@
   }) }}
 
   <div class="nhsuk-grid-row nhsuk-card-group">
+    {% if session.type == SessionType.School %}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({
         heading: PatientStatus.Consent,
@@ -23,6 +24,7 @@
         href: session.uri + "/report?report=" + PatientStatus.Consent + "&programme_id=" + programme.id
       }) }}
     </div>
+    {% endif %}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({
         heading: PatientStatus.Triage,
