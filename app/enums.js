@@ -363,6 +363,15 @@ export const PatientConsentStatus = {
  * @readonly
  * @enum {string}
  */
+export const PatientTriageStatus = {
+  Responses: 'Review health questions',
+  Consultation: 'Triage in person'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const PatientDueStatus = {
   Only: 'Due vaccination',
   First: 'Due 1st dose',

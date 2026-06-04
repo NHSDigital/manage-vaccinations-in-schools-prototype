@@ -122,6 +122,7 @@ export const patientController = {
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
       patientRefused: request.query.patientRefused || 'none',
+      patientTriage: request.query.patientTriage || 'none',
       patientVaccinated: request.query.patientVaccinated || 'none',
       vaccineCriteria: request.query.vaccineCriteria || 'none'
     }
@@ -174,6 +175,7 @@ export const patientController = {
       [PatientStatus.Deferred]: 'patientDeferred',
       [PatientStatus.Due]: 'vaccineCriteria',
       [PatientStatus.Refused]: 'patientRefused',
+      [PatientStatus.Triage]: 'patientTriage',
       [PatientStatus.Vaccinated]: 'patientVaccinated'
     })) {
       if (filters.report === patientStatus && filters[status] !== 'none') {
@@ -245,6 +247,7 @@ export const patientController = {
     delete data.patientConsent
     delete data.patientDeferred
     delete data.patientRefused
+    delete data.patientTriage
     delete data.patientVaccinated
     delete data.programme_id
     delete data.q
@@ -319,6 +322,7 @@ export const patientController = {
       'patientConsent',
       'patientDeferred',
       'patientRefused',
+      'patientTriage',
       'patientVaccinated',
       'programme_id',
       'vaccineCriteria',

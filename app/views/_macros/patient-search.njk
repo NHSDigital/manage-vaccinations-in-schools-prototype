@@ -141,7 +141,14 @@
           })
         } if data.report == PatientStatus.Refused
       }, {
-        text: PatientStatus.Triage
+        text: PatientStatus.Triage,
+        conditional: {
+          html: checkboxes({
+            small: true,
+            items: enumItems(PatientTriageStatus),
+            decorate: "patientTriage"
+          })
+        } if data.report == PatientStatus.Triage
       }, {
         text: PatientStatus.Due,
         conditional: {

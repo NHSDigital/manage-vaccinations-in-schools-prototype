@@ -49,7 +49,7 @@ export function getRepliesWithHealthAnswers(replies) {
   return replies.filter(
     (reply) =>
       reply.healthAnswers &&
-      Object.values(reply.healthAnswers).some((value) => value.answer !== 'No')
+      Object.values(reply.healthAnswers).some((value) => value?.answer !== 'No')
   )
 }
 
