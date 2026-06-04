@@ -275,8 +275,26 @@ export const en = {
     vaccinations: {
       label: 'Programmes'
     },
+    link: {
+      title: 'Link clinic appointment with child record?',
+      caption: 'Clinic appointment made by {{contact.fullName}}',
+      summary: 'Compare child details',
+      confirm: 'Link appointment with record',
+      success:
+        'Clinic appointment made by {{appointment.contact.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
+    },
     match: {
-      label: 'Match'
+      label: 'Match',
+      title: 'Search for a child record to match with {{child.fullName}}',
+      caption: 'Consent response from {{contact.formatted.fullName}}',
+      child: {
+        fullAndPreferredNames: {
+          label: 'Child’s name'
+        }
+      },
+      contact: {
+        label: 'Parent'
+      }
     },
     note: {
       label: 'Notes'

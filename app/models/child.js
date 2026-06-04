@@ -109,7 +109,7 @@ export class Child {
   get fullName() {
     if (!this.firstName || !this.lastName) return ''
 
-    return [this.firstName, this.lastName].join(' ')
+    return [this.lastName.toUpperCase(), this.firstName].join(', ')
   }
 
   /**

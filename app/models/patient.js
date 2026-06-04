@@ -29,6 +29,7 @@ import { getPreferredNames } from '../utils/reply.js'
 import {
   formatLink,
   formatLinkWithSecondaryText,
+  formatList,
   formatNhsNumber,
   formatOther,
   formatWithSecondaryText,
@@ -483,7 +484,10 @@ export class Patient extends Child {
         : 'No reminders sent',
       clinicProgramme_ids: this.clinicProgramme_ids
         .map((id) => this.programmes[id].programme.nameTag)
-        .join(' ')
+        .join(' '),
+      contacts: formatList(
+        this.contacts.map((contact) => contact.fullNameAndRelationship)
+      )
     }
   }
 
