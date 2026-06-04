@@ -753,11 +753,12 @@ export class PatientSession {
 
     const triageNote = triageNotes.at(-1)
     const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
+    const person = this.patient.post16 ? 'child' : 'parent'
 
     switch (this.screen) {
       case ScreenOutcome.NeedsTriage:
         return this.clinicAppointment
-          ? `You need to review the health questions with the parent to decide if it’s safe to vaccinate ${patient.firstName}.`
+          ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patient.firstName}.`
           : `You need to decide if it’s safe to vaccinate ${patient.firstName}.`
       case ScreenOutcome.InviteToClinic:
         return `${user.fullName} decided that ${patient.firstName}’s vaccination should take place at a clinic.`
