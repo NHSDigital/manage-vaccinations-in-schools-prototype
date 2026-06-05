@@ -759,11 +759,16 @@ export const sessionController = {
    */
   readForm(type) {
     return (request, response, next) => {
-      const { session_id } = request.params
+      const { session_id, view } = request.params
       const { data, referrer } = request.session
       let { team } = response.locals
 
       team = Team.findOne(team?.id || '001', data)
+
+      // Force saving of the session type before we fork based on it; avoid race condition
+      if (view === 'type' && request.method === 'POST') {
+        request.session.save(() => {})
+      }
 
       // Setup wizard if not already setup
       let session = Session.findOne(session_id, data.wizard)
