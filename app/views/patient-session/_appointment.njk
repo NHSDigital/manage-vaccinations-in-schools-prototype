@@ -1,6 +1,14 @@
 {% call card({
   heading: __("patientSession.clinicAppointment.title"),
-  headingSize: "m"
+  headingSize: "m",
+  actions: {
+    items: [
+      {
+        text: __("patientSession.clinicAppointment.edit.label"),
+        href: patientSession.clinicAppointment.uri.edit
+      }
+    ]
+  } if patientSession.session.status === SessionStatus.Planned
 }) %}
   {# Description #}
 {% filter nhsukMarkdown %}

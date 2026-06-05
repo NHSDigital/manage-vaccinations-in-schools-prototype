@@ -1859,7 +1859,10 @@ export const en = {
     },
     clinicAppointment: {
       title: 'Clinic appointment',
-      label: 'Appointment slot'
+      label: 'Appointment time',
+      edit: {
+        label: 'Edit appointment'
+      }
     },
     yearGroup: {
       label: 'Year group'

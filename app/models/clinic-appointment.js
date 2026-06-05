@@ -479,7 +479,8 @@ export class ClinicAppointment {
     return {
       matched: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}`,
       unmatched: `/unmatched-appointments/${this.uuid}`,
-      new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`
+      new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
+      edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`
     }
   }
 
