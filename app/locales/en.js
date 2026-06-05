@@ -503,7 +503,7 @@ export const en = {
       tryAgain: 'None of these — try another town, city, or postcode'
     },
     sessionSelection: {
-      title: 'Choose a clinic location and date for %s’s appointment',
+      title: 'Choose a clinic for %s’s appointment',
       hint: 'Select the same location and date as an earlier child, or find a different clinic.'
     },
     clinicDistance: {
@@ -513,7 +513,7 @@ export const en = {
       confirm: 'Continue anyway'
     },
     clinicLocation: {
-      title: 'Choose a clinic location for %s’s appointment',
+      title: 'Choose a clinic for %s’s appointment',
       hint: 'The following clinics are ordered by distance from %s',
       outOfArea: {
         title: 'Reduce your travel time',
