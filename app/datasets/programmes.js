@@ -51,7 +51,7 @@ export default {
         'Use this service to give or refuse consent for your child to have a flu vaccination.\n\nThis vaccination is recommended for school age children every year.\n\n## About the children’s flu vaccine\n\nThe children’s flu vaccine helps protect children against flu. Vaccinating children also protects others who are vulnerable to flu, such as babies and older people.\n\nThe vaccine is given as a nasal spray. This gives the most effective protection.\n\nSome children can have an injection instead, for example if they:\n\n- have had a serious allergic reaction to a previous dose of the nasal spray vaccine\n- have a severe egg allergy\n- have asthma that’s being treated with long-term steroid tablets\n- do not use gelatine or other animal products',
       description:
         'The vaccine protects against flu, which can cause serious health problems such as bronchitis and pneumonia. It is recommended for children from Reception to Year 11 every year.',
-      hint: 'Protects against flu, which can sometimes cause serious problems, such as pneumonia',
+      hint: 'Protects against flu, which can cause serious health problems like bronchitis',
       url: 'https://www.nhs.uk/vaccinations/child-flu-vaccine/'
     },
     guidance: {
@@ -75,7 +75,7 @@ export default {
         'The HPV vaccine helps to prevent HPV related cancers from developing in boys and girls.\n\nThe number of doses you need depends on your age and how well your immune system works. Young people usually only need 1 dose.',
       description:
         'The HPV vaccine helps protect boys and girls against cancers caused by HPV, including:\n- cervical cancer\n- some mouth and throat (head and neck) cancers\n- some cancers of the anal and genital areas\n\nThe HPV vaccine has been given to girls since 2008. Following its success at helping prevent cervical cancers, it was introduced to boys in 2019 to help prevent HPV-related cancers that affect them.\n\nYoung people usually only need 1 dose.',
-      hint: 'Protects against human papillomavirus, some types of which are linked to an increased risk of certain types of cancer',
+      hint: 'Protects against certain cancers, such as cervical, mouth or throat cancers',
       url: 'https://www.nhs.uk/conditions/vaccinations/hpv-human-papillomavirus-vaccine/'
     },
     guidance: {
