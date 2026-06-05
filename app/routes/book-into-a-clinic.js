@@ -23,8 +23,10 @@ router.get(
 )
 router.get('/:booking_uuid/new/:view', bookIntoClinic.showForm)
 
-// TODO: save the completed booking to the global context
-// router.post('/:booking_uuid/new/check-answers', bookIntoClinic.update)
+router.post(
+  '/:booking_uuid/new/:appointment_uuid/check-answers',
+  bookIntoClinic.update
+)
 
 router.post(
   '/:booking_uuid/new/:appointment_uuid/:view',

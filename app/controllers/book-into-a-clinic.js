@@ -96,6 +96,26 @@ export const bookIntoClinicController = {
   /**
    * @type {import("express").RequestHandler}
    */
+  update(request, response) {
+    const { booking_uuid } = request.params
+    const { data } = request.session
+    const { booking, paths } = response.locals
+
+    // Clean up session data
+    delete data.booking
+    delete data.appointment
+    delete data.transaction
+    delete data.clinicInvite
+
+    // Save to the global context
+    ClinicBooking.update(booking_uuid, booking, data)
+
+    return response.redirect(paths.next)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
   readForm(request, response, next) {
     const { appointment_uuid, booking_uuid } = request.params
     const { data, referrer } = request.session
@@ -161,10 +181,7 @@ export const bookIntoClinicController = {
     let { booking_uuid } = request.params
     let view = String(request.params.view)
 
-    if (view === 'child') {
-      console.log(request.originalUrl)
-      console.log(JSON.stringify(appointment, null, 2))
-    } else if (view === 'address-selection') {
+    if (view === 'address-selection') {
       // Build the options for the selection of a home address address from those already entered
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       response.locals.previousAddressItems = getPreviousAddressItems(
