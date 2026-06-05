@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMinutes, addYears } from 'date-fns'
 
-import { ParentalRelationship } from '../enums.js'
+import { ParentalRelationship, ReplyDecision } from '../enums.js'
 import { ClinicAppointment } from '../models.js'
 
 import { generateContact } from './contact.js'
@@ -116,6 +116,19 @@ export function generateClinicAppointment(patient, session, booking) {
 
   // Have the child signed up for whatever they were invited for
   const selected_programme_ids = patient.clinicProgramme_ids
+  let fluDecision, fluAlternative, mmrAlternative
+  if (selected_programme_ids.includes('flu')) {
+    fluDecision = faker.helpers.weightedArrayElement([
+      { value: ReplyDecision.Given, weight: 95 },
+      { value: ReplyDecision.OnlyAlternativeInjection, weight: 5 }
+    ])
+    if (fluDecision === ReplyDecision.Given) {
+      fluAlternative = faker.datatype.boolean(0.5)
+    }
+  }
+  if (selected_programme_ids.includes('mmr')) {
+    mmrAlternative = faker.datatype.boolean(0.15)
+  }
 
   return booking.addAppointment({
     uuid,
@@ -128,6 +141,9 @@ export function generateClinicAppointment(patient, session, booking) {
     session_id,
     startAt,
     endAt,
-    selected_programme_ids
+    selected_programme_ids,
+    fluDecision,
+    fluAlternative,
+    mmrAlternative
   })
 }
