@@ -494,14 +494,17 @@ export const sessionController = {
     }
 
     // Sort
-    results = _.sortBy(results, 'patient.lastName')
+    results =
+      session.type === SessionType.Clinic && view === 'record'
+        ? _.sortBy(results, 'clinicAppointment.startAt')
+        : _.sortBy(results, 'patient.lastName')
 
     // Ensure MenACWY is the patient session linked to from session activity
     results = results.sort((a, b) =>
       a.programme.name.localeCompare(b.programme.name)
     )
 
-    // Show only one patient session per programme
+    // Show only one patient session per patient
     results = _.uniqBy(results, 'patient.nhsn')
 
     // Results
