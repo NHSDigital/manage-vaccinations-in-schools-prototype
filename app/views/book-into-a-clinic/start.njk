@@ -12,8 +12,6 @@
 
       {{ __("clinicBooking.start.intro") | nhsukMarkdown }}
       
-      {{ __("clinicBooking.start.programmes", { programmeNames: data.clinicInvite.programmeNames }) | nhsukMarkdown }}
-
       {{ button({
         text: __("clinicBooking.start.confirm"),
         href: "/book-into-a-clinic/new"

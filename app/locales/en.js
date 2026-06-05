@@ -362,9 +362,7 @@ export const en = {
     start: {
       title: 'Book an appointment for your child’s vaccination',
       intro:
-        'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.',
-      programmes:
-        'Clinics have recently been set up to offer {{programmeNames}} vaccinations. However, at their appointment your child can also have vaccinations that they previously missed.',
+        'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.\n\nAt their appointment, your child can also have other vaccinations that they previously missed.',
       confirm: 'Start now',
       otherMethods: {
         title: 'Other ways to book an appointment',
