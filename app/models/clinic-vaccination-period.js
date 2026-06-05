@@ -98,8 +98,15 @@ export class ClinicVaccinationPeriod {
    * @returns {object} Formatted values
    */
   get formatted() {
+    const startAndEndTimes = `${this.startAt_.hour}:${this.startAt_.minute} to ${this.endAt_.hour}:${this.endAt_.minute}`
+    const vaccinators =
+      this.vaccinatorCount === 1
+        ? '1 vaccinator'
+        : `${this.vaccinatorCount} vaccinators`
+
     return {
-      startAndEndTimes: `${this.startAt_.hour}:${this.startAt_.minute} to ${this.endAt_.hour}:${this.endAt_.minute}`
+      startAndEndTimes,
+      vaccinators
     }
   }
 

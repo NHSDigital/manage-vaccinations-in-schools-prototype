@@ -13,7 +13,7 @@
         {{ appointment.link.unmatched | safe }}
       {% endif %}
       <br>
-      {{ appointment.formatted.programmeTags | safe }}
+      {{ appointment.formatted.methodSummary | safe }}
       {% if appointment.requiresAdjustments %}
         <br>
         {{ appointment.formatted.adjustmentsCount | safe }}
@@ -57,7 +57,7 @@
       card: {
         headingHtml: appHeading({
           title: periodHeading,
-          summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes
+          summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators
         }),
         headingLevel: 3
       },

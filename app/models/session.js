@@ -722,7 +722,7 @@ export class Session {
   }
 
   /**
-   * Get session programmes
+   * Get the programmes targeted by this session
    *
    * @returns {Array<Programme>} Programmes
    */
@@ -730,6 +730,25 @@ export class Session {
     return this.programme_ids
       .map((id) => Programme.findOne(id, this.context))
       .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  /**
+   * Get the programmes with clinic appointments booked for them
+   *
+   * @returns {Array<Programme>} Programmes
+   */
+  get bookedProgrammes() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to get booked programmes')
+    }
+
+    return [
+      ...new Set(
+        this.appointments.flatMap(
+          (appointment) => appointment.selected_programme_ids
+        )
+      )
+    ].map((id) => Programme.findOne(id, this.context))
   }
 
   /**
