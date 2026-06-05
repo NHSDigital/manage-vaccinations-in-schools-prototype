@@ -15,6 +15,7 @@ import {
  * @property {object} [context] - Context
  * @property {string} uuid - Clinic booking UUID
  * @property {string} bookingReference - Booking reference number
+ * @property {Array<string>} invited_programme_ids - IDs of programmes for which child was invited
  * @property {Contact} contact - Contact details for the booking; see appointments for parental relationship details
  * @property {Array<ClinicAppointment>} appointments - the appointments created in this booking (one per child)
  */
@@ -24,6 +25,10 @@ export class ClinicBooking {
     this.uuid = options?.uuid || faker.string.uuid()
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
+    this.invited_programme_ids = options?.invited_programme_ids
+      ? [...options.invited_programme_ids]
+      : []
+
     this.contact =
       (options?.contact && new Contact(options.contact)) ?? new Contact({})
 

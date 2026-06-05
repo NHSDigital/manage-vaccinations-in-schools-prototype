@@ -78,7 +78,10 @@ export const bookIntoClinicController = {
     data.transaction = {}
 
     // Create a new clinic booking in the wizard context
-    const booking = ClinicBooking.create({}, data.wizard)
+    const booking = ClinicBooking.create(
+      { invited_programme_ids: data.clinicInvite.programme_ids },
+      data.wizard
+    )
     booking.addAppointment()
     const firstAppointment = booking.appointments[0]
 
