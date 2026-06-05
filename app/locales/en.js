@@ -574,7 +574,7 @@ export const en = {
       appointmentsAvailable:
         '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
     },
-    'check-appointment': {
+    'check-answers': {
       title: 'Check and confirm %s’s appointment details',
       summary: {
         child: 'Child details',

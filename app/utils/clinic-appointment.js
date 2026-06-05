@@ -108,7 +108,7 @@ export const getAllAppointmentPaths = (
       },
       [`/${booking_uuid}/new/contact-preference`]: {},
 
-      [`/${booking_uuid}/new/${appointment_uuid}/check-appointment`]: {}
+      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {}
     }
   })
 
