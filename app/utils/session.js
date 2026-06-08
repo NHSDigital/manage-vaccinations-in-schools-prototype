@@ -21,6 +21,11 @@ import { today } from './date.js'
 export const getConsentWindow = (session) => {
   const nowAt = today()
 
+  // There are no consent windows for clinic sessions
+  if (session.clinic_id) {
+    return ConsentWindow.None
+  }
+
   switch (true) {
     // Opening (open date is after today)
     case isAfter(session.openAt, nowAt):
