@@ -16,6 +16,10 @@ import {
   getPreviousAddressItems,
   getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
+import {
+  getBookableClinicSessions,
+  getScheduledClinicLocationItems
+} from '../utils/clinic-booking.js'
 import { setMidday } from '../utils/date.js'
 import {
   ConjunctionType,
@@ -50,24 +54,41 @@ export const bookIntoClinicController = {
       programme_ids = Array.isArray(programme_id)
         ? programme_id
         : [programme_id]
+    } else {
+      programme_ids = Programme.findAll(data)
+        .filter(({ hidden }) => !hidden)
+        .map(({ id }) => id)
+    }
 
-      data.clinicInvite = {
-        programme_ids,
-        programmes: Programme.findAll(data)
-          .map((programme) => {
-            delete programme.context
-            return programme
-          })
-          .filter(({ id }) => programme_ids.includes(id)),
-        programmeNames: programmeNamesListForSentence(
+    // Track details of the invite for pages that need to show the invited programmes
+    data.clinicInvite = {
+      programme_ids,
+      programmes: Programme.findAll(data)
+        .map((programme) => {
+          delete programme.context
+          return programme
+        })
+        .filter(({ id }) => programme_ids.includes(id)),
+      programmeNames: {
+        and: programmeNamesListForSentence(
           programme_ids,
           ConjunctionType.and,
+          data
+        ),
+        or: programmeNamesListForSentence(
+          programme_ids,
+          ConjunctionType.or,
           data
         )
       }
     }
 
-    response.redirect(`/book-into-a-clinic/start`)
+    const bookableSessions = getBookableClinicSessions(data, programme_ids)
+    response.redirect(
+      bookableSessions.length > 0
+        ? '/book-into-a-clinic/start'
+        : '/book-into-a-clinic/availability'
+    )
   },
 
   /**
@@ -227,34 +248,18 @@ export const bookIntoClinicController = {
           }
         }
       })
+    } else if (view === 'availability') {
+      response.locals.programmeNames = programmeNamesListForSentence(
+        appointment.selected_programme_ids,
+        ConjunctionType.or,
+        data
+      )
     } else if (view === 'clinic-location') {
-      const scheduledClinics = Session.findAll(data).filter(
-        (session) =>
-          session.type === SessionType.Clinic &&
-          session.status === SessionStatus.Planned
+      const clinicLocationItems = getScheduledClinicLocationItems(
+        data,
+        appointment.selected_programme_ids,
+        data.transaction?.outOfArea
       )
-
-      const sessionsByLocation = _.groupBy(
-        scheduledClinics,
-        (session) => session.clinic_id
-      )
-
-      let distanceToClinic = data.transaction?.outOfArea ? 100.5 : 0.5
-      const clinicLocationItems = []
-      Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
-        const firstSession = sessions.reduce((earliest, current) => {
-          return current.date < earliest.date ? current : earliest
-        })
-
-        clinicLocationItems.push({
-          text: sessions[0].formatted.location,
-          value: clinic_id,
-          hint: {
-            text: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
-          }
-        })
-        distanceToClinic += 2.1
-      })
       response.locals.clinicLocationItems = clinicLocationItems
     } else if (view === 'clinic-date') {
       const scheduledClinicSessions = _.sortBy(
@@ -367,6 +372,12 @@ export const bookIntoClinicController = {
         location: session.formatted.location,
         date: session.formatted.date
       }
+    } else if (view === 'fully-booked') {
+      response.locals.programmeNames = programmeNamesListForSentence(
+        appointment.selected_programme_ids,
+        ConjunctionType.and,
+        data
+      )
     }
 
     // All health questions use the same view

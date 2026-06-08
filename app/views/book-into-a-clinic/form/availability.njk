@@ -1,0 +1,16 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __mf("clinicBooking.availability.title.selected", { count: appointment.selected_programme_ids.length }) %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {% call insetText() %}
+    {{ __("clinicBooking.availability.problem", { programmes: programmeNames }) | nhsukMarkdown }}
+  {% endcall %}
+
+  {{ __("clinicBooking.availability.guidance", { team: data.team }) | nhsukMarkdown }}
+{% endblock %}

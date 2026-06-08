@@ -283,6 +283,19 @@ export class Session {
   }
 
   /**
+   * Is this clinic session still open to booking?
+   *
+   * @returns {boolean} True if still open to booking, or false otherwise
+   */
+  get isOpenToBooking() {
+    return (
+      this.type === SessionType.Clinic &&
+      this.isPlanned &&
+      this.daysLeftToBook >= 1
+    )
+  }
+
+  /**
    * Is active session
    *
    * @returns {boolean} Is active session

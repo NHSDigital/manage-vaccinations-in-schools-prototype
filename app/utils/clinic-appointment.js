@@ -3,8 +3,9 @@ import _ from 'lodash'
 import { LocationSearchType, ReplyDecision } from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 
+import { getBookableClinicSessions } from './clinic-booking.js'
 import { getLocationSearchType } from './geolocation.js'
-import { camelToKebabCase } from './string.js'
+import { camelToKebabCase, stringToArray } from './string.js'
 
 /**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
@@ -27,7 +28,16 @@ export const getAllAppointmentPaths = (
     const appointment_uuid = appointment.uuid
     return {
       // Vaccinations wanted
-      [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/availability`]: () => {
+          const programme_ids = stringToArray(
+            sessionData.appointment?.selected_programme_ids
+          )
+          return (
+            getBookableClinicSessions(sessionData, programme_ids).length === 0
+          )
+        }
+      },
       ...(sessionData.appointment?.selected_programme_ids?.includes('flu')
         ? {
             [`/${booking_uuid}/new/${appointment_uuid}/flu-choice`]: {}
@@ -44,7 +54,7 @@ export const getAllAppointmentPaths = (
           }
         : {}),
 
-      // Clinic and slot selection
+      // Clinic location preference
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
         ? {
@@ -78,10 +88,48 @@ export const getAllAppointmentPaths = (
         }
       },
       [`/${booking_uuid}/new/${appointment_uuid}/clinic-distance`]: {}, // only used for place matching path (for demo/test purposes)
-      [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {},
+
+      // Session and slot selection
+      [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+          return (
+            getBookableClinicSessions(
+              sessionData,
+              appointment.selected_programme_ids
+            ).length === 0
+          )
+        }
+      },
+      [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+          return (
+            getBookableClinicSessions(
+              sessionData,
+              appointment.selected_programme_ids
+            ).length === 0
+          )
+        }
+      },
+      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+          return (
+            getBookableClinicSessions(
+              sessionData,
+              appointment.selected_programme_ids
+            ).length === 0
+          )
+        }
+      },
+      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+          return (
+            getBookableClinicSessions(
+              sessionData,
+              appointment.selected_programme_ids
+            ).length === 0
+          )
+        }
+      },
 
       // Child details
       [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},

@@ -1,5 +1,8 @@
+import _ from 'lodash'
+
 import programmesData from '../datasets/programmes.js'
-import { SessionPresets } from '../enums.js'
+import { SessionPresets, SessionStatus, SessionType } from '../enums.js'
+import { Session } from '../models.js'
 
 /**
  * Generate a URL to book into a clinic for vaccination in the given presets' programmes
@@ -31,4 +34,63 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
   }
 
   return `/book-into-a-clinic/?${searchParams.toString()}`
+}
+
+/**
+ * Get a list of clinic sessions serving any of the given programmes and that are open to booking
+ *
+ * @param {object} context - the data context for the models to check
+ * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
+ * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
+ */
+export const getBookableClinicSessions = (context, programme_ids) => {
+  const scheduledClinics = Session.findAll(context).filter(
+    (session) =>
+      session.type === SessionType.Clinic &&
+      session.status === SessionStatus.Planned &&
+      session.programme_ids.some((id) => programme_ids.includes(id)) &&
+      session.isOpenToBooking &&
+      session.availableAppointmentCount > 0
+  )
+
+  return scheduledClinics
+}
+
+/**
+ * Get the clinic location options to present to the user
+ *
+ * @param {object} context - the data context for the models to check
+ * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
+ * @param {boolean|undefined} fakeOutOfArea - flag to say whether to pretend all clinics are a long way away
+ * @returns {Array<object>} a set of radio buttons to present to the user, one per location
+ */
+export const getScheduledClinicLocationItems = (
+  context,
+  programme_ids,
+  fakeOutOfArea
+) => {
+  const scheduledClinics = getBookableClinicSessions(context, programme_ids)
+  const sessionsByLocation = _.groupBy(
+    scheduledClinics,
+    (session) => session.clinic_id
+  )
+
+  let distanceToClinic = fakeOutOfArea ? 100.5 : 0.5
+  const clinicLocationItems = []
+  Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
+    const firstSession = sessions.reduce((earliest, current) => {
+      return current.date < earliest.date ? current : earliest
+    })
+
+    clinicLocationItems.push({
+      text: sessions[0].formatted.location,
+      value: clinic_id,
+      hint: {
+        text: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
+      }
+    })
+    distanceToClinic += 2.1
+  })
+
+  return clinicLocationItems
 }
