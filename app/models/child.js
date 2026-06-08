@@ -48,6 +48,7 @@ import {
  * @property {boolean} [immunocompromised] - Immunocompromised
  * @property {object} [address] - Address
  * @property {string} [gpSurgery] - GP surgery
+ * @property {number} [academicYearGroup] - Academic year group (override)
  * @property {string} [registrationGroup] - Registration group
  * @property {string} [school_id] - School
  */
@@ -80,6 +81,7 @@ export class Child {
     this.immunocompromised = options?.immunocompromised
     this.address = options?.address
     this.gpSurgery = options?.gpSurgery
+    this.academicYearGroup = options?.academicYearGroup || this.yearGroup
     this.registrationGroup = options?.registrationGroup
 
     if (!this.agedOutOfProgrammes) {
@@ -229,7 +231,7 @@ export class Child {
    */
   get yearGroup() {
     if (!this.agedOutOfProgrammes) {
-      return getYearGroup(this.dob)
+      return this.academicYearGroup || getYearGroup(this.dob)
     }
   }
 

@@ -389,7 +389,16 @@ export const patientController = {
       patient = Patient.create(patient, data.wizard)
     }
 
-    response.locals.patient = new Patient(patient, data)
+    patient = new Patient(patient, data)
+
+    response.locals.patient = patient
+
+    response.locals.academicYearGroupItems = patient.school.yearGroups.map(
+      (yearGroup) => ({
+        text: formatYearGroup(yearGroup),
+        value: yearGroup
+      })
+    )
 
     response.locals.paths = {
       back: `${patient.uri}/edit`,

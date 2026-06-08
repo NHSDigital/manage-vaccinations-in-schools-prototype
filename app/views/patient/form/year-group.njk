@@ -1,0 +1,19 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("patient.yearGroup.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--l",
+        html: appHeading({
+          caption: patient.fullName,
+          title: title
+        })
+      }
+    },
+    items: academicYearGroupItems,
+    decorate: "patient.academicYearGroup"
+  }) }}
+{% endblock %}
