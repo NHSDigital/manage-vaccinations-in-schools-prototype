@@ -3672,10 +3672,9 @@ export const en = {
       label: 'Source'
     },
     duplicates: {
-      count:
-        '{count, plural, =0 {} one {+# duplicate} other {+# duplicates}}',
+      count: '{count, plural, =0 {} one {+# duplicate} other {+# duplicates}}',
       canonical: {
-        heading: 'Canonical record'
+        heading: 'Main record'
       },
       reportProblem: 'Report a problem with this duplicate set',
       list: {
@@ -3684,10 +3683,10 @@ export const en = {
       }
     },
     canonicalRole: {
-      label: 'Canonical record',
+      label: 'Main record',
       yes: 'Yes',
       no: 'No',
-      view: 'View canonical record'
+      view: 'View main record'
     },
     duplicateRecords: {
       label: 'Duplicate records',
