@@ -2864,7 +2864,7 @@ export const en = {
         title: 'Select the clinic programmes to advertise',
         hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
         programme: {
-          hint: '{count, plural, one {1 clinic session is scheduled} other {{count} clinic sessions are scheduled}}'
+          hint: '{count, plural, =0 {No clinic sessions are scheduled} one {1 clinic session is scheduled} other {{count} clinic sessions are scheduled}}'
         }
       },
       link: {

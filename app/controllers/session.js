@@ -170,20 +170,30 @@ export const sessionController = {
         session.type === SessionType.Clinic &&
         session.status === SessionStatus.Planned
     )
-    const scheduledProgrammes = scheduledClinics
-      .flatMap(({ programme_ids }) => programme_ids)
-      .sort((a, b) => a.localeCompare(b))
+    const scheduledProgrammes = scheduledClinics.flatMap(
+      ({ programme_ids }) => programme_ids
+    )
     const programmeFrequencyMap = _.countBy(scheduledProgrammes)
 
-    response.locals.programmeItems = Object.entries(programmeFrequencyMap).map(
-      ([programme_id, count]) => ({
+    // Offer even those programmes with no clinics scheduled
+    const allProgrammes = Programme.findAll(data).filter(
+      (programme) => !programme.hidden
+    )
+    allProgrammes.forEach((programme) => {
+      if (!programmeFrequencyMap[programme.id]) {
+        programmeFrequencyMap[programme.id] = 0
+      }
+    })
+
+    response.locals.programmeItems = Object.entries(programmeFrequencyMap)
+      .map(([programme_id, count]) => ({
         text: Programme.findOne(programme_id, data)?.name,
         value: programme_id,
         hint: {
           text: __mf('session.advertise.programmes.programme.hint', { count })
         }
-      })
-    )
+      }))
+      .sort((a, b) => a.text.localeCompare(b.text))
 
     return response.render('session/advert-programmes')
   },
