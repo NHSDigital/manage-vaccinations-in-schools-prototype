@@ -2853,16 +2853,16 @@ export const en = {
         '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
     },
     advertise: {
-      label: 'Advertise scheduled clinics',
+      label: 'Create a link to scheduled clinics',
       programmes: {
-        title: 'Select the clinic programmes to advertise',
+        title: 'Select the clinic programmes for your link',
         hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
         programme: {
           hint: '{count, plural, =0 {No clinics are scheduled} one {1 clinic is scheduled} other {{count} clinics are scheduled}}'
         }
       },
       link: {
-        title: 'Copy this link into your advert',
+        title: 'Copy this link',
         copy: {
           label: 'Copy link'
         },
@@ -2870,7 +2870,7 @@ export const en = {
           label: 'Copied link'
         },
         description:
-          'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session.',
+          'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session. It can be pasted anywhere you need to promote clinic vaccinations.',
         confirm: 'Return to the sessions page'
       }
     }
