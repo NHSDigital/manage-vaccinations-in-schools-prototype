@@ -12,10 +12,26 @@
 
       {{ __("clinicBooking.start.intro") | nhsukMarkdown }}
       
-      {{ __("clinicBooking.start.programmes", { programmeNames: data.clinicInvite.programmeNames }) | nhsukMarkdown }}
+      {% if data.clinicInvite.programme_ids.length > 1 %}
+        <h2>About the vaccinations</h2>
+      {% endif %}
+
+      {% for programme in data.clinicInvite.programmes %}
+        {% if data.clinicInvite.programme_ids.length > 1 %}
+          <h3>{{ programme.name }}</h3>
+        {% else %}
+          <h2>About the {{ programme.name | replace('Flu', 'flu') }} vaccination</h2>
+        {% endif %}
+
+        {{ __("clinicBooking.start.programme." + programme.id) | nhsukMarkdown }}
+      {% endfor %}
+
+      <h2>{{ __("clinicBooking.start.online.title") }}</h2>
+      
+      {{ __("clinicBooking.start.online.description") | nhsukMarkdown }}
 
       {{ button({
-        text: __("clinicBooking.start.confirm"),
+        text: __("clinicBooking.start.online.confirm"),
         href: "/book-into-a-clinic/new"
       }) }}
 

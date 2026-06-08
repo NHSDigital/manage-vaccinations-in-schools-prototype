@@ -362,14 +362,26 @@ export const en = {
     start: {
       title: 'Book an appointment for your child’s vaccination',
       intro:
-        'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.',
-      programmes:
-        'Clinics have recently been set up to offer {{programmeNames}} vaccinations. However, at their appointment your child can also have vaccinations that they previously missed.',
-      confirm: 'Start now',
+        'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.\n\nAt their appointment, your child can also have other vaccinations that they previously missed.',
+      programme: {
+        flu: 'This vaccine protects against flu, which can cause serious health problems such as bronchitis and pneumonia.\n\nWhen you book an appointment, you can choose either:\n\n- a quick and painless nasal spray - this contains gelatine, derived from pigs (porcine gelatine)\n- an injection - this does not contain gelatine, so is suitable for people who cannot have gelatine for religious, dietary or other reasons\n\nYou can [find out more about the children’s flu vaccine](https://www.nhs.uk/vaccinations/child-flu-vaccine/).\n\nYou can also find:\n\n- [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/flu-vaccination-leaflets-and-posters), including in other languages\n- [information about the use of gelatine in the flu vaccine on GOV.UK](https://www.gov.uk/government/publications/vaccines-and-porcine-gelatine), including the views of faith communities',
+        hpv: 'This vaccine helps protect boys and girls against:\n\n- cancers caused by HPV\n- genital warts\n\nYou can:\n\n- [find out more about the HPV vaccine](https://www.nhs.uk/vaccinations/hpv-vaccine/)\n- find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/hpv-vaccine-vaccination-guide-leaflet), including in other languages',
+        menacwy:
+          'The MenACWY vaccine helps protect against life-threatening illnesses including meningitis, sepsis and septicaemia (blood poisoning).\n\nYou can:\n\n- [find out more about the MenACWY vaccine](https://www.nhs.uk/vaccinations/menacwy-vaccine/)\n- find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/menacwy-vaccine-information-for-young-people), including in other languages',
+        mmr: 'This vaccine protects against measles, mumps and rubella.\n\nResearch has shown there is no link between this vaccine and autism.\n\nIf you’re sure your child has already had the full 2 doses of the vaccine, [tell us you do not consent to this vaccination](#).\n\nYou can:\n\n- [find out more about the MMR vaccine](https://www.nhs.uk/vaccinations/mmr-vaccine/)\n- find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/mmr-for-all-general-leaflet), including in other languages',
+        'td-ipv':
+          'The Td/IPV vaccine (3-in-1 teenage booster) helps protect against tetanus, diphtheria and polio. It boosts the protection provided by the [6-in-1 vaccine](https://www.nhs.uk/vaccinations/6-in-1-vaccine/) and [4-in-1 pre-school booster](https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/) vaccine.\n\nYou can:\n\n- [find out more about the Td/IPV vaccine](https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster)\n- you can also find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/a-guide-to-the-3-in-1-teenage-booster-tdipv), including in other languages'
+      },
+      online: {
+        title: 'Book online',
+        description:
+          'The quickest way to book an appointment is online, using this form. It will take less than 5 minutes.',
+        confirm: 'Start now'
+      },
       otherMethods: {
         title: 'Other ways to book an appointment',
         description:
-          'The quickest way to book an appointment is online, using this form. This will take less than 5 minutes.\n\nIf you cannot use this form, you can book an appointment by phoning %s.'
+          'If you cannot use this form, you can book an appointment by phoning %s.'
       }
     },
     childCount: {
@@ -503,23 +515,19 @@ export const en = {
       tryAgain: 'None of these — try another town, city, or postcode'
     },
     sessionSelection: {
-      title: 'Choose a clinic location and date for %s’s appointment',
+      title: 'Choose a clinic for %s’s appointment',
       hint: 'Select the same location and date as an earlier child, or find a different clinic.'
     },
     clinicDistance: {
       title: 'All available clinics are more than 100 miles away',
       description:
-        'All available clinics are more than 100 miles from your preferred location of {{postcode}}. If you are sure you have entered the correct location and want to continue, you can do so.\n\nAlternatively, to find clinics that are closer, you can contact your local health organisation by calling {{team.tel}}, or emailing {{team.email}}.',
-      confirm: 'Continue anyway'
+        'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+      confirm: 'Continue anyway',
+      cancel: 'Try another location'
     },
     clinicLocation: {
-      title: 'Choose a clinic location for %s’s appointment',
-      hint: 'The following clinics are ordered by distance from %s',
-      outOfArea: {
-        title: 'Reduce your travel time',
-        description:
-          'All available clinics are over 100 miles from your preferred location.\n\nTo find clinics that are closer, contact your local health organisation by calling {{team.tel}}, or emailing {{team.email}}.'
-      }
+      title: 'Choose a clinic for %s’s appointment',
+      hint: 'The following clinics are ordered by distance from %s'
     },
     clinicDate: {
       title: 'Choose a clinic date for %s’s appointment',
@@ -2859,16 +2867,16 @@ export const en = {
         '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
     },
     advertise: {
-      label: 'Advertise scheduled clinics',
+      label: 'Create a link to scheduled clinics',
       programmes: {
-        title: 'Select the clinic programmes to advertise',
+        title: 'Select the clinic programmes for your link',
         hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
         programme: {
           hint: '{count, plural, =0 {No clinics are scheduled} one {1 clinic is scheduled} other {{count} clinics are scheduled}}'
         }
       },
       link: {
-        title: 'Copy this link into your advert',
+        title: 'Copy this link',
         copy: {
           label: 'Copy link'
         },
@@ -2876,7 +2884,7 @@ export const en = {
           label: 'Copied link'
         },
         description:
-          'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session.',
+          'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session. It can be pasted anywhere you need to promote clinic vaccinations.',
         confirm: 'Return to the sessions page'
       }
     }

@@ -37,12 +37,7 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import { getSessionYearGroups } from '../utils/session.js'
-import {
-  formatMonospace,
-  formatTime,
-  formatYearGroup,
-  stringToArray
-} from '../utils/string.js'
+import { formatTime, formatYearGroup, stringToArray } from '../utils/string.js'
 
 export const sessionController = {
   /**
