@@ -507,17 +507,13 @@ export const en = {
     clinicDistance: {
       title: 'All available clinics are more than 100 miles away',
       description:
-        'All available clinics are more than 100 miles from your preferred location of {{postcode}}. If you are sure you have entered the correct location and want to continue, you can do so.\n\nAlternatively, to find clinics that are closer, you can contact your local health organisation by calling {{team.tel}}, or emailing {{team.email}}.',
-      confirm: 'Continue anyway'
+        'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+      confirm: 'Continue anyway',
+      cancel: 'Try another location'
     },
     clinicLocation: {
       title: 'Choose a clinic for %s’s appointment',
-      hint: 'The following clinics are ordered by distance from %s',
-      outOfArea: {
-        title: 'Reduce your travel time',
-        description:
-          'All available clinics are over 100 miles from your preferred location.\n\nTo find clinics that are closer, contact your local health organisation by calling {{team.tel}}, or emailing {{team.email}}.'
-      }
+      hint: 'The following clinics are ordered by distance from %s'
     },
     clinicDate: {
       title: 'Choose a clinic date for %s’s appointment',
