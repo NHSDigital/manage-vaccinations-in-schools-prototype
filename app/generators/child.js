@@ -133,7 +133,7 @@ export function generateChild() {
   }
 
   // Add examples of children in post-16 education
-  if (faker.datatype.boolean(0.005)) {
+  if (faker.datatype.boolean(0.0025)) {
     dob = faker.date.birthdate({ min: 17, max: 18, mode: 'age' })
     school_id = '888888'
   }
