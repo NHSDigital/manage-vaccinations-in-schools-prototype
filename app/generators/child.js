@@ -107,13 +107,12 @@ export function generateChild() {
     // Children generally receive adolescent vaccinations when younger
     // Note: This means flu cohorts will skew more towards younger children
     const ageOnCutOff = faker.helpers.weightedArrayElement([
-      { value: 11, weight: 12 },
-      { value: 12, weight: 8 },
-      { value: 13, weight: 4 },
+      { value: 11, weight: 20 },
+      { value: 12, weight: 10 },
+      { value: 13, weight: 5 },
       { value: 14, weight: 2 },
       { value: 15, weight: 1 },
-      { value: 16, weight: 1 },
-      { value: 17, weight: 1 }
+      { value: 16, weight: 1 }
     ])
 
     // Calculate birth year
@@ -134,7 +133,7 @@ export function generateChild() {
   }
 
   // Add examples of children in post-16 education
-  if (faker.datatype.boolean(0.05)) {
+  if (faker.datatype.boolean(0.01)) {
     dob = faker.date.birthdate({ min: 17, max: 18, mode: 'age' })
     school_id = '888888'
   }
