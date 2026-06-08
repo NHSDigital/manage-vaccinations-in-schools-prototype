@@ -1729,7 +1729,12 @@ export const en = {
       label: 'School'
     },
     yearGroup: {
-      label: 'Year group'
+      label: 'Year group',
+      title: 'What year group is the child in?'
+    },
+    registrationGroup: {
+      label: 'Registration group',
+      title: 'What registration group is the child in?'
     },
     yearGroupWithRegistration: {
       label: 'Year group'

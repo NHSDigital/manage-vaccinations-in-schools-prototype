@@ -1,0 +1,15 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("patient.registrationGroup.title") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      isPageHeading: true,
+      text: __("patient.registrationGroup.title"),
+      size: "l"
+    },
+    decorate: "patient.registrationGroup",
+    width: 5
+  }) }}
+{% endblock %}

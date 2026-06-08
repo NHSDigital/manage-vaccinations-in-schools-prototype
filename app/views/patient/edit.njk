@@ -100,6 +100,32 @@
       }
     }, {
       key: {
+        text: __("patient.yearGroup.label")
+      },
+      value: {
+        text: patient.formatted.yearGroup
+      },
+      actions: {
+        items: [{
+          text: __("actions.change"),
+          href: "edit/year-group"
+        }]
+      }
+    }, {
+      key: {
+        text: __("patient.registrationGroup.label")
+      },
+      value: {
+        text: patient.registrationGroup or "Not provided"
+      },
+      actions: {
+        items: [{
+          text: __("actions.change"),
+          href: "edit/registration-group"
+        }]
+      }
+    }, {
+      key: {
         text: __("patient.gpSurgery.label")
       },
       value: {
