@@ -21,12 +21,12 @@ export function generateVaccination(patientSession, programme, batch, users) {
   let sequence
 
   const outcome = faker.helpers.weightedArrayElement([
-    { value: VaccinationOutcome.Vaccinated, weight: 7 },
+    { value: VaccinationOutcome.Vaccinated, weight: 4 },
     { value: VaccinationOutcome.PartVaccinated, weight: 1 },
-    { value: VaccinationOutcome.Absent, weight: 1 },
+    { value: VaccinationOutcome.Absent, weight: 2 },
     { value: VaccinationOutcome.DoNotVaccinate, weight: 1 },
-    { value: VaccinationOutcome.Refused, weight: 1 },
-    { value: VaccinationOutcome.Unwell, weight: 1 }
+    { value: VaccinationOutcome.Refused, weight: 2 },
+    { value: VaccinationOutcome.Unwell, weight: 2 }
   ])
 
   if (programme.sequence) {
