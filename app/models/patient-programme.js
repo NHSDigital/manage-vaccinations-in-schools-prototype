@@ -1,4 +1,4 @@
-import { addMonths, addWeeks } from 'date-fns'
+import { addMonths, addWeeks, isAfter } from 'date-fns'
 
 import {
   AuditEventType,
@@ -95,7 +95,14 @@ export class PatientProgramme {
     }
 
     if (this.programme.type === ProgrammeType.Flu) {
-      return getCurrentAcademicYear()
+      const academicYear = getCurrentAcademicYear()
+
+      // If flu season has finished, make eligible for next year’s programme
+      if (isAfter(today(), `${academicYear + 1}-03-31`)) {
+        return academicYear + 1
+      }
+
+      return academicYear
     }
 
     const yearsUntilEligible =
