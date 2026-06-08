@@ -41,7 +41,7 @@
     },
     {
       header: __("vaccination.age.label"),
-      text: patient.dob | age(at=vaccination.createdAt)
+      text: patient.dob | ageInWords(at=vaccination.createdAt)
     },
     {
       header: __("vaccination.outcome.label"),
@@ -78,7 +78,7 @@
       },
       {
         header: __("vaccination.age.label"),
-        text: patient.dob | age(at=duplicate.createdAt)
+        text: patient.dob | ageInWords(at=duplicate.createdAt)
       },
       {
         header: __("vaccination.outcome.label"),

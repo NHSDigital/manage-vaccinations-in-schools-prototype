@@ -1,6 +1,7 @@
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import _ from 'lodash'
 
+import { getAgeInWords } from './utils/date.js'
 import { ordinal } from './utils/number.js'
 import { queryToQueryString } from './utils/querystring.js'
 import {
@@ -76,6 +77,18 @@ export default (env) => {
    */
   filters.ordinal = (number) => {
     return ordinal(number)
+  }
+
+  /**
+   * Age between two dates, in two verbose units
+   *
+   * @param {Date|string} dob - Date of birth
+   * @param {object} [kwargs] - Keyword arguments
+   * @param {Date|string} [kwargs.at] - Date to measure age at
+   * @returns {string} e.g. "11 months and 13 days", "1 year and 1 month"
+   */
+  filters.ageInWords = (dob, kwargs) => {
+    return getAgeInWords(dob, kwargs?.at)
   }
 
   /**
