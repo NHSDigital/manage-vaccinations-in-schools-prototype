@@ -460,7 +460,10 @@ export const SessionPresetName = {
   Flu: 'Flu',
   HPV: 'HPV',
   Doubles: 'Doubles',
-  MMR: 'MMR(V)'
+  MMR: 'MMR(V)',
+  AutumnCatchup: 'Flu and MMR(V)',
+  SpringCatchup: 'HPV and MMR(V)',
+  SummerCatchup: 'HPV, MenACWY, Td/IPV and MMR(V)'
 }
 
 /**
@@ -476,6 +479,7 @@ export const SessionMMRConsent = {
  * @typedef {object} SessionPreset
  * @property {SessionPresetName} name - Session preset name
  * @property {boolean} active - Whether preset is active
+ * @property {boolean} [clinicOnly] - Whether preset is for clinics only
  * @property {boolean} [adolescent] - Adolescent programme flag
  * @property {Array<ProgrammeType>} programmeTypes - Preset programme types
  * @property {SchoolTerm} term - School term to schedule session
@@ -516,6 +520,35 @@ export const SessionPresets = [
     programmeTypes: [ProgrammeType.MMR],
     term: SchoolTerm.Spring,
     slug: 'mmr'
+  },
+  {
+    name: SessionPresetName.AutumnCatchup,
+    active: true,
+    clinicOnly: true,
+    programmeTypes: [ProgrammeType.Flu, ProgrammeType.MMR],
+    term: SchoolTerm.Autumn,
+    slug: 'autumn-catch-up'
+  },
+  {
+    name: SessionPresetName.SpringCatchup,
+    active: true,
+    clinicOnly: true,
+    programmeTypes: [ProgrammeType.HPV, ProgrammeType.MMR],
+    term: SchoolTerm.Spring,
+    slug: 'spring-catch-up'
+  },
+  {
+    name: SessionPresetName.SummerCatchup,
+    active: true,
+    clinicOnly: true,
+    programmeTypes: [
+      ProgrammeType.HPV,
+      ProgrammeType.MenACWY,
+      ProgrammeType.TdIPV,
+      ProgrammeType.MMR
+    ],
+    term: SchoolTerm.Summer,
+    slug: 'summer-catch-up'
   }
 ]
 
