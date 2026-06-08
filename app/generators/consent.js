@@ -49,7 +49,7 @@ export function generateConsent(
   // Decision
   const decision = faker.helpers.weightedArrayElement([
     { value: ReplyDecision.Given, weight: 10 },
-    { value: ReplyDecision.Declined, weight: 3 },
+    { value: ReplyDecision.Declined, weight: 1 },
     { value: ReplyDecision.Refused, weight: 1 },
     ...([ProgrammeType.Flu, ProgrammeType.MMR].includes(programme.type)
       ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 2 }]
