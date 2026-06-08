@@ -40,6 +40,7 @@ export const bookIntoClinicController = {
   },
 
   readProgrammes(request, response) {
+    // Handling GET request for '/'
     const { data } = request.session
 
     // Read the invited programme IDs from the querystring and store them
@@ -52,6 +53,12 @@ export const bookIntoClinicController = {
 
       data.clinicInvite = {
         programme_ids,
+        programmes: Programme.findAll(data)
+          .map((programme) => {
+            delete programme.context
+            return programme
+          })
+          .filter(({ id }) => programme_ids.includes(id)),
         programmeNames: programmeNamesListForSentence(
           programme_ids,
           ConjunctionType.and,

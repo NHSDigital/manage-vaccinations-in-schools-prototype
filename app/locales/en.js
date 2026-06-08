@@ -363,11 +363,25 @@ export const en = {
       title: 'Book an appointment for your child’s vaccination',
       intro:
         'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.\n\nAt their appointment, your child can also have other vaccinations that they previously missed.',
-      confirm: 'Start now',
+      programme: {
+        flu: 'This vaccine protects against flu, which can cause serious health problems such as bronchitis and pneumonia.\n\nWhen you book an appointment, you can choose either:\n\n- a quick and painless nasal spray - this contains gelatine, derived from pigs (porcine gelatine)\n- an injection - this does not contain gelatine, so is suitable for people who cannot have gelatine for religious, dietary or other reasons\n\nYou can [find out more about the children’s flu vaccine](https://www.nhs.uk/vaccinations/child-flu-vaccine/).\n\nYou can also find:\n\n- [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/flu-vaccination-leaflets-and-posters), including in other languages\n- [information about the use of gelatine in the flu vaccine on GOV.UK](https://www.gov.uk/government/publications/vaccines-and-porcine-gelatine), including the views of faith communities',
+        hpv: 'This vaccine helps protect boys and girls against:\n\n- cancers caused by HPV\n- genital warts\n\nYou can:\n\n- [find out more about the HPV vaccine](https://www.nhs.uk/vaccinations/hpv-vaccine/)\n- find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/hpv-vaccine-vaccination-guide-leaflet), including in other languages',
+        menacwy:
+          'The MenACWY vaccine helps protect against life-threatening illnesses including meningitis, sepsis and septicaemia (blood poisoning).\n\nYou can:\n\n- [find out more about the MenACWY vaccine](https://www.nhs.uk/vaccinations/menacwy-vaccine/)\n- find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/menacwy-vaccine-information-for-young-people), including in other languages',
+        mmr: 'This vaccine protects against measles, mumps and rubella.\n\nResearch has shown there is no link between this vaccine and autism.\n\nIf you’re sure your child has already had the full 2 doses of the vaccine, [tell us you do not consent to this vaccination](#).\n\nYou can:\n\n- [find out more about the MMR vaccine](https://www.nhs.uk/vaccinations/mmr-vaccine/)\n- find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/mmr-for-all-general-leaflet), including in other languages',
+        'td-ipv':
+          'The Td/IPV vaccine (3-in-1 teenage booster) helps protect against tetanus, diphtheria and polio. It boosts the protection provided by the [6-in-1 vaccine](https://www.nhs.uk/vaccinations/6-in-1-vaccine/) and [4-in-1 pre-school booster](https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/) vaccine.\n\nYou can:\n\n- [find out more about the Td/IPV vaccine](https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster)\n- you can also find a range of [information resources about the vaccine on GOV.UK](https://www.gov.uk/government/publications/a-guide-to-the-3-in-1-teenage-booster-tdipv), including in other languages'
+      },
+      online: {
+        title: 'Book online',
+        description:
+          'The quickest way to book an appointment is online, using this form. It will take less than 5 minutes.',
+        confirm: 'Start now'
+      },
       otherMethods: {
         title: 'Other ways to book an appointment',
         description:
-          'The quickest way to book an appointment is online, using this form. This will take less than 5 minutes.\n\nIf you cannot use this form, you can book an appointment by phoning %s.'
+          'If you cannot use this form, you can book an appointment by phoning %s.'
       }
     },
     childCount: {
