@@ -33,14 +33,14 @@ export const navigation = (request, response, next) => {
       HPV: getClinicInviteUrlForPresets([SessionPresetName.HPV]),
       Doubles: getClinicInviteUrlForPresets([SessionPresetName.Doubles]),
       'MMR(V)': getClinicInviteUrlForPresets([SessionPresetName.MMR]),
-      'adolescent programmes': getClinicInviteUrlForPresets([
-        SessionPresetName.HPV,
-        SessionPresetName.Doubles
+      'Flu and MMR(V)': getClinicInviteUrlForPresets([
+        SessionPresetName.AutumnCatchup
       ]),
-      'all but flu': getClinicInviteUrlForPresets([
-        SessionPresetName.HPV,
-        SessionPresetName.Doubles,
-        SessionPresetName.MMR
+      'HPV and MMR(V)': getClinicInviteUrlForPresets([
+        SessionPresetName.SpringCatchup
+      ]),
+      'HPV, MenACWY, Td/IPV and MMR(V)': getClinicInviteUrlForPresets([
+        SessionPresetName.SummerCatchup
       ])
     }
   }
