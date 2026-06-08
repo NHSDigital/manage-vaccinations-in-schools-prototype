@@ -20,12 +20,7 @@ import { formatParentalRelationship } from './string.js'
  * @returns {object} Health answer
  */
 const enrichWithRealisticAnswer = (key, healthCondition) => {
-  // Asthma is a more common health condition
-  const useAnswer = faker.helpers.maybe(() => true, {
-    probability: key.startsWith('asthma') ? 0.5 : 0.2
-  })
-
-  if (healthConditions[healthCondition][key] && useAnswer) {
+  if (healthConditions[healthCondition][key]) {
     return {
       answer: 'Yes',
       details: healthConditions[healthCondition][key]
