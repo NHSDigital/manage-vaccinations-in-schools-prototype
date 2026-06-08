@@ -725,7 +725,7 @@ export const patientController = {
         date: today(),
         type: SessionType.Clinic,
         presetNames,
-        clinic_id: 'X99999',
+        clinic_id: 'M84008',
         appointmentLength
       },
       data

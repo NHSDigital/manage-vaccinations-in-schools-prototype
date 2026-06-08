@@ -19,17 +19,6 @@ export default {
     team_id: '001',
     presetNames
   },
-  M84012: {
-    id: 'M84012',
-    name: 'Park Leys Medical Practice',
-    addressLine1: 'Keresley Green Medical Centre',
-    addressLine2: '',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV6 2FL',
-    tel: '024 76332636',
-    team_id: '001',
-    presetNames
-  },
   M84016: {
     id: 'M84016',
     name: 'Wolston Surgery',
@@ -38,17 +27,6 @@ export default {
     addressLevel1: 'Coventry',
     postalCode: 'CV8 3HG',
     tel: '024 76542192',
-    team_id: '001',
-    presetNames
-  },
-  M86001: {
-    id: 'M86001',
-    name: 'Willenhall Primary Care Centre',
-    addressLine1: 'Remembrance Road',
-    addressLine2: '',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV3 3DG',
-    tel: '024 76302082',
     team_id: '001',
     presetNames
   },
@@ -96,28 +74,6 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86008: {
-    id: 'M86008',
-    name: 'The Gables Medicentre',
-    addressLine1: '268 Holbrook Lane',
-    addressLine2: '',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV6 4DD',
-    tel: '024 76688340',
-    team_id: '001',
-    presetNames
-  },
-  M86009: {
-    id: 'M86009',
-    name: 'Engleton House Surgery',
-    addressLine1: '2 Villa Road',
-    addressLine2: '',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV6 3HZ',
-    tel: '024 76592012',
-    team_id: '001',
-    presetNames
-  },
   M86010: {
     id: 'M86010',
     name: 'Forrest Medical Centre',
@@ -148,17 +104,6 @@ export default {
     addressLevel1: 'Coventry',
     postalCode: 'CV2 5EP',
     tel: '024 76266370',
-    team_id: '001',
-    presetNames
-  },
-  M86015: {
-    id: 'M86015',
-    name: 'Kenyon Medical Centre',
-    addressLine1: '15 Chace Avenue',
-    addressLine2: 'Willenhall',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV3 3AD',
-    tel: '024 76307024',
     team_id: '001',
     presetNames
   },
@@ -206,17 +151,6 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86027: {
-    id: 'M86027',
-    name: 'The Cheylesmore Surgery',
-    addressLine1: '51 Quinton Park',
-    addressLine2: '',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV3 5PZ',
-    tel: '024 76502255',
-    team_id: '001',
-    presetNames
-  },
   M86028: {
     id: 'M86028',
     name: 'Central Medical Centre',
@@ -236,17 +170,6 @@ export default {
     addressLevel1: 'Coventry',
     postalCode: 'CV1 3HQ',
     tel: '024 76228606',
-    team_id: '001',
-    presetNames
-  },
-  M86030: {
-    id: 'M86030',
-    name: 'Kensington Road Surgery',
-    addressLine1: '148 Kensington Road',
-    addressLine2: '',
-    addressLevel1: 'Coventry',
-    postalCode: 'CV5 6HY',
-    tel: '024 76672466',
     team_id: '001',
     presetNames
   },
@@ -434,15 +357,6 @@ export default {
     addressLevel1: 'Coventry',
     postalCode: 'CV2 3NF',
     tel: '024 76455943',
-    team_id: '001',
-    presetNames
-  },
-  X99999: {
-    id: 'X99999',
-    name: 'The Kenilworth Centre',
-    addressLine1: 'Abbey End',
-    addressLevel1: 'Kenilworth',
-    postalCode: 'CV8 1QJ',
     team_id: '001',
     presetNames
   }
