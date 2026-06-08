@@ -210,9 +210,7 @@ export const sessionController = {
       clinicAdvert.selected_programme_ids
     )
 
-    clinicAdvert.link = formatMonospace(
-      `https://www.manage-vaccinations-in-schools.nhs.uk${getClinicInviteUrlForProgrammes(clinicAdvert.selected_programme_ids)}`
-    )
+    clinicAdvert.link = `https://www.manage-vaccinations-in-schools.nhs.uk${getClinicInviteUrlForProgrammes(clinicAdvert.selected_programme_ids)}`
     clinicAdvert.programmeNames = programmeNamesListForSentence(
       clinicAdvert.selected_programme_ids,
       ConjunctionType.and,
@@ -236,14 +234,12 @@ export const sessionController = {
    */
   copyAdvertLink(request, response) {
     // Handling a POST for /sessions/advert-link
-    const action = request.body.action
-    if (action === 'return') {
-      return response.redirect('/sessions')
-    }
+    const { data } = request.session
 
-    request.session.data.clinicAdvert.copied = true
+    // Tidy up
+    delete data.clinicAdvert
 
-    return response.redirect('/sessions/advert-link')
+    return response.redirect('/sessions')
   },
 
   /**

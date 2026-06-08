@@ -2870,10 +2870,10 @@ export const en = {
       link: {
         title: 'Copy this link into your advert',
         copy: {
-          label: 'Copy'
+          label: 'Copy link'
         },
         copied: {
-          label: 'Copied'
+          label: 'Copied link'
         },
         description:
           'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session.',

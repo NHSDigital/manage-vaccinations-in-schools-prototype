@@ -4,6 +4,7 @@ import {
   createAll,
   Button,
   Checkboxes,
+  Code,
   ErrorSummary,
   FileUpload,
   Header,
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   createAll(Autocomplete)
   createAll(Button, { preventDoubleClick: true })
   createAll(Checkboxes)
+  createAll(Code)
   createAll(ErrorSummary)
   createAll(FileUpload)
   createAll(Header)

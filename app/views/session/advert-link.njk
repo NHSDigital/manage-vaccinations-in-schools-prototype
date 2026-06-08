@@ -4,24 +4,15 @@
 {% set hideConfirmButton = true %}
 
 {% block form %}
-  {% set linkHtml %}
-    <div class="nhsuk-copy-container">
-      <span class="nhsuk-copy-text nhsuk-body">
-        {{ data.clinicAdvert.link | safe }}
-      </span>
+  {{ appHeading({
+    title: title
+  }) }}
 
-      {{ button({
-        text: __("session.advertise.link.copied.label") if data.clinicAdvert.copied else __("session.advertise.link.copy.label"),
-        name: "action",
-        value: "copy",
-        variant: "reverse"
-      }) }}
-    </div>
-  {% endset %}
-
-  {{ panel({
-    titleText: title,
-    html: linkHtml
+  {{ code({
+    text: data.clinicAdvert.link,
+    button: true,
+    copyButtonText: __("session.advertise.link.copy.label"),
+    copiedButtonText: __("session.advertise.link.copied.label")
   }) }}
 
   {{ __("session.advertise.link.description", { programmeNames: data.clinicAdvert.programmeNames }) | nhsukMarkdown }}
