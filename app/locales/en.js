@@ -1500,7 +1500,7 @@ export const en = {
     hasParentalResponsibility: {
       label: 'Has parental responsibility?',
       delegatedLabel: 'Has delegated authority to consent to immunisations?',
-      hint: 'They have the legal rights and duties relating to the child'
+      hint: 'They have legal rights and duties relating to the child'
     },
     email: {
       label: 'Email address'
