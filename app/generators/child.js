@@ -111,8 +111,8 @@ export function generateChild() {
       { value: 12, weight: 10 },
       { value: 13, weight: 5 },
       { value: 14, weight: 2 },
-      { value: 15, weight: 1 },
-      { value: 16, weight: 1 }
+      { value: 15, weight: 1 }
+      // { value: 16, weight: 1 }
     ])
 
     // Calculate birth year
@@ -132,11 +132,11 @@ export function generateChild() {
     school_id = faker.helpers.arrayElement(['888888', '999999'])
   }
 
-  // Add examples of children in post-16 education
-  if (faker.datatype.boolean(0.0025)) {
-    dob = faker.date.birthdate({ min: 17, max: 18, mode: 'age' })
-    school_id = '888888'
-  }
+  // // Add examples of children in post-16 education
+  // if (faker.datatype.boolean(0.0025)) {
+  //   dob = faker.date.birthdate({ min: 17, max: 18, mode: 'age' })
+  //   school_id = '888888'
+  // }
 
   // Add examples of children who have aged out (over 18)
   if (faker.datatype.boolean(0.1)) {
