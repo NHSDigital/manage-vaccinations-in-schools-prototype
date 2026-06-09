@@ -350,25 +350,6 @@ export class ClinicAppointment {
         break
     }
 
-    const nasalSprayCount = [
-      ConsentVaccineCriteria.IntranasalOnly,
-      ConsentVaccineCriteria.IntranasalPreferred
-    ].includes(fluVaccineType)
-      ? 1
-      : 0
-    const injectionCount = this.selected_programme_ids.length - nasalSprayCount
-
-    const nasalSummary = nasalSprayCount ? 'Nasal spray' : undefined
-    const injectionsSummary = injectionCount
-      ? injectionCount > 1
-        ? `${injectionCount} injections`
-        : '1 injection'
-      : undefined
-    const methodSummary =
-      nasalSummary && injectionsSummary
-        ? [nasalSummary, injectionsSummary].join(' and ')
-        : nasalSummary || injectionsSummary
-
     const parentalRelationship =
       this.parentalRelationship === ParentalRelationship.Other
         ? formatOther(
@@ -406,7 +387,6 @@ export class ClinicAppointment {
       vaccinations: formatList(
         this.#getSelectedProgrammes(this.context).map(({ name }) => name)
       ),
-      methodSummary: formatSecondaryText(methodSummary),
       ...(this.requiresAdjustments
         ? {
             adjustmentsCount: formatSecondaryText(

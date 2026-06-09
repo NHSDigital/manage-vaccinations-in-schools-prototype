@@ -13,7 +13,7 @@
         {{ appointment.link.unmatched | safe }}
       {% endif %}
       <br>
-      {{ appointment.formatted.methodSummary | safe }}
+      {{ appointment.formatted.programmeTags | safe }}
       {% if appointment.requiresAdjustments %}
         <br>
         {{ appointment.formatted.adjustmentsCount | safe }}

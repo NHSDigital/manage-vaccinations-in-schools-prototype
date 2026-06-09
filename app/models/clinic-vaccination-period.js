@@ -146,22 +146,4 @@ export class ClinicVaccinationPeriod {
       )
     return appointmentStartTimes
   }
-
-  /**
-   * Get all appointment slot start times grouped by the hour in which they start
-   *
-   * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
-   * @returns {Dictionary<Date[]>} - appointment start times grouped by the hour in which they start
-   */
-  appointmentTimesByHour(appointmentLengthInMinutes) {
-    const appointmentStartTimes = this.allAppointmentTimes(
-      appointmentLengthInMinutes
-    )
-
-    return _.groupBy(appointmentStartTimes, (time) => time.getHours())
-  }
 }
-
-/**
- * @import { Dictionary } from 'lodash'
- */
