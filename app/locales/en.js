@@ -2806,10 +2806,7 @@ export const en = {
       label: 'Number of appointments'
     },
     appointments: {
-      label: 'Appointments',
-      available: {
-        label: 'Summary by hour'
-      }
+      label: 'Appointments'
     },
     location: {
       label: 'Location',

@@ -64,15 +64,4 @@
       rows: tableRows
     }) }}
   {% endfor %}
-
-  {# Summary of availability by hour #}
-  {% set sessionAvailabilityRows = appointmentAvailabilityRows(session) %}
-  {{ summaryList({
-    card: {
-      heading: __("session.appointments.available.label"),
-      headingLevel: 3
-    },
-    rows: sessionAvailabilityRows
-  }) if sessionAvailabilityRows.length > 0 }}
-
 {% endblock %}
