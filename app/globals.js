@@ -6,8 +6,7 @@ import {
   AuditEventType,
   InstructionOutcome,
   PatientConsentStatus,
-  PatientRefusedStatus,
-  SessionType
+  PatientRefusedStatus
 } from './enums.js'
 import { en } from './locales/en.js'
 import { Location, User } from './models.js'
@@ -302,32 +301,6 @@ export default () => {
     }
 
     return errorsList
-  }
-
-  /**
-   * Get clinic appointment availability (by hour) for summary list rows
-   *
-   * @param {import('./models.js').Session} session - the clinic session
-   * @returns {Array|undefined} - Summary rows parameter for summary list component
-   */
-  globals.appointmentAvailabilityRows = function (session) {
-    if (session.type !== SessionType.Clinic) {
-      return
-    }
-
-    const summaryRows = []
-    const appointmentTimesByHour = session.appointmentTimesByHour
-    for (const [hour, appointmentTimes] of Object.entries(
-      appointmentTimesByHour
-    )) {
-      summaryRows.push({
-        border: undefined,
-        key: { text: `${hour}:00 to ${parseInt(hour) + 1}:00` },
-        value: { text: `${appointmentTimes.length} available` }
-      })
-    }
-
-    return summaryRows
   }
 
   /**
