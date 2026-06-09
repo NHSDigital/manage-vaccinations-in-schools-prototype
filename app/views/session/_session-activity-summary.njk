@@ -1,6 +1,6 @@
 {% set sessionActivityRows = [] %}
 
-{% if sessionActivityRow("getConsent") %}
+{% if sessionActivityRow("getConsent") and session.school_id %}
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("getConsent")) %}
 {% endif %}
 
