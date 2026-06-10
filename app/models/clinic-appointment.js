@@ -434,10 +434,11 @@ export class ClinicAppointment {
     return {
       unmatched: formatLinkWithSecondaryText(
         this.uri.unmatched,
-        this.contact.fullNameAndRelationship,
-        `for ${this.child.fullName}`
+        this.child.fullName,
+        `via ${this.contact.fullNameAndRelationship}`
       ),
-      patientSession: formatLink(this.uri.matched, this.fullName)
+      patientSession: formatLink(this.uri.matched, this.patient?.fullName),
+      extend: formatLink(this.uri.extend, 'Extend')
     }
   }
 
@@ -460,7 +461,8 @@ export class ClinicAppointment {
       matched: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}`,
       unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
-      edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`
+      edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`,
+      extend: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}/length`
     }
   }
 

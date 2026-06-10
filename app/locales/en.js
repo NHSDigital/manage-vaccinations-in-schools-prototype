@@ -264,7 +264,7 @@ export const en = {
     results:
       '{count, plural, =0 {No unmatched appointments matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointment} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointments}}',
     summary: {
-      label: 'Response'
+      label: 'Appointment'
     },
     location: {
       label: 'Clinic location'

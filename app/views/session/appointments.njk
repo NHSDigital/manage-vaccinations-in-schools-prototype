@@ -5,12 +5,13 @@
 {% set caption = session.formatted.date %}
 
 {% block content %}
-  {% macro buildSlotHtml(appointment, time) %}
+  {% macro buildSlotHtml(appointment, time, canExtend) %}
     {% if appointment !== null %}
       {% if appointment.patient_uuid %}
         {{ appointment.link.patientSession | safe }}
       {% else %}
         {{ appointment.link.unmatched | safe }}
+        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"> (unmatched)</span>
       {% endif %}
       <br>
       {{ appointment.formatted.programmeTags | safe }}
@@ -21,6 +22,10 @@
       {% if appointment.hasImpairments %}
         <br>
         {{ appointment.formatted.impairmentsCount | safe }}
+      {% endif %}
+      {% if canExtend %}
+        <br>
+        {{ appointment.link.extend | safe }}
       {% endif %}
     {% else %}
       <a href="#">Book</a>
@@ -42,7 +47,7 @@
           if rowValue.timeSlot else
           {
             header: rowValue.header,
-            html: buildSlotHtml(rowValue.appointment, row.time)
+            html: buildSlotHtml(rowValue.appointment, row.time, rowValue.canExtend)
           }
         ) %}
       {% endfor %}
