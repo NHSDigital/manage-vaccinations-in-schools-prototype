@@ -391,3 +391,41 @@ export function getYearGroup(date, academicYear) {
   // Determine the year group
   return ageOnStartOfYear - 4
 }
+
+/**
+ * Strip the seconds and milliseconds from the given time
+ *
+ * @param {Date} time - the time slot time to standardise
+ * @returns {Date} the result stripping seconds and milliseconds
+ */
+function getPreciseSlotTime(time) {
+  const preciseTime = new Date(time)
+  preciseTime.setSeconds(0, 0)
+  return preciseTime
+}
+
+/**
+ *
+ * @param {Array<Date>} availableSlots - the times of all booked appointments in a session or period
+ * @param {Array<Date>} bookedSlots - the times of all slots in the session or period
+ * @param {number} appointmentLength - the length of a slot in minutes
+ * @returns {Array<Date>} an array of the booked slot times that can be extended
+ */
+export function getExtendableAppointmentTimes(
+  availableSlots,
+  bookedSlots,
+  appointmentLength
+) {
+  const appointmentLengthInMilliseconds = appointmentLength * 60 * 1000
+
+  const preciseAvailableSlots = new Set(
+    availableSlots.map((slot) => getPreciseSlotTime(slot).getTime())
+  )
+
+  return bookedSlots.filter((slot) => {
+    const currentSlotTime = getPreciseSlotTime(slot).getTime()
+    const nextSlotTime = currentSlotTime + appointmentLengthInMilliseconds
+
+    return preciseAvailableSlots.has(nextSlotTime)
+  })
+}
