@@ -384,6 +384,24 @@ export const en = {
           'If you cannot use this form, you can book an appointment by phoning %s.'
       }
     },
+    availability: {
+      title: {
+        invited: 'Book an appointment for your child’s vaccination',
+        selected:
+          '{count, plural, one {There are no clinics scheduled for your preferred vaccination} other {There are no clinics scheduled for your preferred vaccinations}}'
+      },
+      problem:
+        'There are no clinics scheduled for {{ programmes }} vaccinations at this time.',
+      guidance:
+        'Contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+    },
+    fullyBooked: {
+      title: 'All clinics are now fully booked',
+      problem:
+        'All clinics scheduled for {{ programmes }} vaccinations are fully booked.',
+      guidance:
+        'Contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+    },
     childCount: {
       title: 'How many children do you need to book appointments for?',
       description:
@@ -574,7 +592,7 @@ export const en = {
       appointmentsAvailable:
         '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
     },
-    'check-appointment': {
+    'check-answers': {
       title: 'Check and confirm %s’s appointment details',
       summary: {
         child: 'Child details',
