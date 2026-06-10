@@ -11,6 +11,7 @@
         {{ appointment.link.patientSession | safe }}
       {% else %}
         {{ appointment.link.unmatched | safe }}
+        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"> (unmatched)</span>
       {% endif %}
       <br>
       {{ appointment.formatted.programmeTags | safe }}

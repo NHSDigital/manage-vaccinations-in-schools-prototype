@@ -434,8 +434,8 @@ export class ClinicAppointment {
     return {
       unmatched: formatLinkWithSecondaryText(
         this.uri.unmatched,
-        this.contact.fullNameAndRelationship,
-        `for ${this.child.fullName}`
+        this.child.fullName,
+        `via ${this.contact.fullNameAndRelationship}`
       ),
       patientSession: formatLink(this.uri.matched, this.fullName)
     }
