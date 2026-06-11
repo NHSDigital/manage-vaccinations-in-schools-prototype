@@ -9,7 +9,7 @@
       {% set patientRows = patientRows | push([
         {
           header: __("patient.fullName.label"),
-          html: patient.vaccination.link.fullNameAndNhsn if upload.type == UploadType.Report else patient.formatted.fullNameAndNhsn,
+          html: patient.vaccinations[0].link.fullNameAndNhsn if upload.type == UploadType.Report else patient.formatted.fullNameAndNhsn,
           attributes: {
             width: "30%"
           }
@@ -28,7 +28,7 @@
         } if upload.type == UploadType.School,
         {
           header: __("vaccination.createdAt.label"),
-          text: patient.vaccination.formatted.createdAt_dateShort
+          text: patient.vaccinations[0].formatted.createdAt_dateShort
         } if upload.type == UploadType.Report
       ]) %}
     {% endfor %}

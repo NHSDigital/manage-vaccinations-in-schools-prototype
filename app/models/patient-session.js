@@ -1060,7 +1060,7 @@ export class PatientSession {
   /**
    * Assess Gillick competence
    *
-   * @param {Gillick} gillick - gillick
+   * @param {Partial<Gillick>} gillick - gillick
    */
   assessGillick(gillick) {
     this.patient?.addEvent({
@@ -1079,7 +1079,7 @@ export class PatientSession {
   /**
    * Record triage
    *
-   * @param {AuditEvent} event - Event
+   * @param {Partial<AuditEvent>} event - Event
    */
   recordTriage(event) {
     this.patient?.addEvent({
@@ -1142,7 +1142,7 @@ export class PatientSession {
   /**
    * Register attendance
    *
-   * @param {AuditEvent} event - Event
+   * @param {Partial<AuditEvent>} event - Event
    * @param {RegistrationOutcome} register - Registration
    */
   registerAttendance(event, register) {
@@ -1162,7 +1162,7 @@ export class PatientSession {
   /**
    * Record pre-screening interview
    *
-   * @param {AuditEvent} event - Event
+   * @param {Partial<AuditEvent>} event - Event
    */
   preScreen(event) {
     this.patient?.addEvent({
@@ -1177,7 +1177,7 @@ export class PatientSession {
   /**
    * Save note
    *
-   * @param {AuditEvent} event - Event
+   * @param {Partial<AuditEvent>} event - Event
    */
   saveNote(event) {
     this.patient?.addEvent({
@@ -1193,7 +1193,7 @@ export class PatientSession {
   /**
    * Send reminder
    *
-   * @param {AuditEvent} event - Event
+   * @param {Partial<AuditEvent>} event - Event
    * @param {Contact} contact - Contact
    */
   sendReminder(event, contact) {

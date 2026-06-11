@@ -50,11 +50,12 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readProgrammes(request, response) {
-    // Handling GET request for '/'
+    const { programme_id } = /** @type {{ programme_id?: string }} */ (
+      request.query
+    )
     const { data } = request.session
 
     // Read the invited programme IDs from the querystring and store them
-    const { programme_id } = request.query
     let programme_ids
     if (programme_id) {
       programme_ids = Array.isArray(programme_id)

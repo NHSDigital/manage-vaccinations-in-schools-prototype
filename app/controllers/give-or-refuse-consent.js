@@ -10,7 +10,11 @@ import {
 } from '../enums.js'
 import { Consent, Patient, Session } from '../models.js'
 import { getHealthQuestionPaths } from '../utils/consent.js'
-import { formatList, kebabToCamelCase } from '../utils/string.js'
+import {
+  formatList,
+  kebabToCamelCase,
+  stringToBoolean
+} from '../utils/string.js'
 
 export const giveOrRefuseConsentController = {
   /**
@@ -181,7 +185,7 @@ export const giveOrRefuseConsentController = {
       [`/${session_id}/${consent_uuid}/new/check-answers`]: {},
       [`/${session_id}/${consent_uuid}/new/ethnicity`]: {
         [`/${session_id}/${consent_uuid}/new/confirmation`]: () =>
-          request.session.data.consent?.ethnicity === 'false'
+          stringToBoolean(request.session.data.consent?.ethnicity) === false
       },
       [`/${session_id}/${consent_uuid}/new/ethnic-group`]: {},
       [`/${session_id}/${consent_uuid}/new/ethnic-background`]: {},

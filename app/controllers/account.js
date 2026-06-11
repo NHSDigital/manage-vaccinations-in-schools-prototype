@@ -4,15 +4,14 @@ export const accountController = {
    */
   changeRole(request, response) {
     const { account } = request.app.locals
+    const { referrer } = /** @type {{ referrer?: string }} */ (request.query)
 
     request.session.data.token = {
       ...account,
       ...{ role: request.body.role }
     }
 
-    return response.redirect(
-      /** @type {string} */ (request.query.referrer || '/home')
-    )
+    return response.redirect(referrer || '/home')
   },
 
   /**

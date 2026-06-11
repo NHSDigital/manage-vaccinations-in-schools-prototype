@@ -2,7 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMinutes, addYears } from 'date-fns'
 
 import { ParentalRelationship, ReplyDecision } from '../enums.js'
-import { ClinicAppointment } from '../models.js'
+import { Child, ClinicAppointment } from '../models.js'
 
 import { generateContact } from './contact.js'
 
@@ -24,7 +24,7 @@ export function generateClinicAppointment(patient, session, booking) {
     // Matched appointment
     patient_uuid = patient.uuid
 
-    child = {
+    child = new Child({
       firstName: patient.firstName,
       lastName: patient.lastName,
       dob: patient.dob,
@@ -35,7 +35,7 @@ export function generateClinicAppointment(patient, session, booking) {
       adjustmentsOther: patient.adjustmentsOther,
       impairments: [...patient.impairments],
       impairmentsOther: patient.impairmentsOther
-    }
+    })
   } else {
     // Unmatched appointment; no patient ID, and get one of the details 'wrong'
     const wrongness = faker.helpers.arrayElement([
@@ -43,7 +43,7 @@ export function generateClinicAppointment(patient, session, booking) {
       'lastName',
       'dob'
     ])
-    child = {
+    child = new Child({
       firstName: patient.firstName + (wrongness === 'firstName' ? 'e' : ''),
       lastName: patient.lastName + (wrongness === 'lastName' ? 's' : ''),
       dob:
@@ -57,7 +57,7 @@ export function generateClinicAppointment(patient, session, booking) {
       adjustmentsOther: patient.adjustmentsOther,
       impairments: [...patient.impairments],
       impairmentsOther: patient.impairmentsOther
-    }
+    })
   }
 
   // Set up the relationship to the child for this appointment. If the booking
@@ -71,7 +71,7 @@ export function generateClinicAppointment(patient, session, booking) {
     booking.contact =
       patient.contacts[0] ||
       patient.contacts[1] ||
-      generateContact(child.lastName, faker.datatype.boolean(0.5))
+      generateContact(child, faker.datatype.boolean(0.5))
     // ...and their relationship to this child
     parentalRelationship = booking.contact.relationship
     parentalRelationshipOther = booking.contact.relationshipOther

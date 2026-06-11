@@ -154,7 +154,7 @@ export function generateChild() {
 
   // Registration group
   let registrationGroup
-  const hasRegistrationGroup = String(school_id).startsWith('13')
+  const hasRegistrationGroup = school_id.startsWith('13')
   if (hasRegistrationGroup) {
     const yearGroup = getYearGroup(dob)
     const registration = faker.string.alpha({

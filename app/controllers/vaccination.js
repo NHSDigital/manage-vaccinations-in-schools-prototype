@@ -26,7 +26,9 @@ export const vaccinationController = {
    * @type {RequestParamHandler}
    */
   read(request, response, next, vaccination_uuid) {
-    const { programme_id } = request.params
+    const { programme_id } = /** @type {{ programme_id?: string }} */ (
+      request.params
+    )
 
     const programme = Programme.findOne(programme_id, request.session.data)
     const vaccination = Vaccination.findOne(
@@ -125,7 +127,7 @@ export const vaccinationController = {
     if (defaultBatch) {
       data.defaultBatchId = defaultBatch.id
     }
-    data.patientSession_uuid = patientSession_uuid
+    data.patientSession_uuid = String(patientSession_uuid)
 
     // Used logged in user as vaccinator, or default to example user
     const createdBy_uid = account.uid

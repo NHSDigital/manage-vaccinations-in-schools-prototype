@@ -129,7 +129,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
     return ConsentOutcome.NoResponse
   }
 
-  if (reply.decision === reply.refused && reply.confirmed) {
+  if (reply.decision === ReplyDecision.Refused && reply.confirmed) {
     return ConsentOutcome.FinalRefusal
   }
 

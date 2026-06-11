@@ -26,6 +26,7 @@ export const activityController = {
     const auditEvent = (event) => new AuditEvent(event, data)
     const createdBy_uid = account.uid
     const gillickCompetent = new Gillick({
+      createdBy_uid,
       q1: true,
       q2: true,
       q3: true,
@@ -33,6 +34,7 @@ export const activityController = {
       q5: true
     })
     const gillickNotCompetent = new Gillick({
+      createdBy_uid,
       q1: true,
       q2: true,
       q3: true,
@@ -70,7 +72,7 @@ export const activityController = {
     )
 
     // Contact for use in Notify activities; force having both email and phone
-    const contact = generateContact(patient?.lastName)
+    const contact = generateContact(patient)
     contact.email =
       contact.email ||
       `${contact.fullName.replace(' ', '.').toLowerCase()}@example.com`

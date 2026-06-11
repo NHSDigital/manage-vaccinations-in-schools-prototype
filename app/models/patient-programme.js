@@ -401,7 +401,7 @@ export class PatientProgramme {
   /**
    * Get dose sequence code
    *
-   * @returns {number} Dose sequence code
+   * @returns {string} Dose sequence code
    */
   get sequence() {
     if (
