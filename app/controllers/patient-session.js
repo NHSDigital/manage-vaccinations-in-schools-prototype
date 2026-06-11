@@ -426,7 +426,7 @@ export const patientSessionController = {
 
     request.session.data.cancellation = {}
 
-    return response.redirect(`${patientSession.uri}/cancel/comms`)
+    return response.redirect(`${patientSession.uri}/cancel/rebooking`)
   },
 
   /**
@@ -437,9 +437,9 @@ export const patientSessionController = {
     const { patientSession } = response.locals
 
     response.locals.back =
-      view === 'comms'
+      view === 'rebooking'
         ? patientSession.uri
-        : `${patientSession.uri}/cancel/comms`
+        : `${patientSession.uri}/cancel/rebooking`
 
     return response.render(`patient-session/cancel/${view}`)
   },
@@ -455,11 +455,11 @@ export const patientSessionController = {
 
     // Where next?
     const next =
-      view === 'comms'
+      view === 'rebooking'
         ? `${patientSession.uri}/cancel/confirm`
         : patientSession.uri
 
-    if (view === 'comms') {
+    if (view === 'rebooking') {
       // Sanitise the boolean from the radio
       cancellation.offerRebooking = stringToBoolean(cancellation.offerRebooking)
     } else if (view === 'confirm') {

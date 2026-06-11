@@ -1889,15 +1889,15 @@ export const en = {
       },
       cancel: {
         label: 'Cancel appointment',
-        comms: {
+        rebooking: {
           title: 'Do you want to offer rebooking?',
-          hint: '{count, plural, one {1 appointment is available at another clinic targeting the same programmes.} other {{count} appointments are available at other clinics targeting the same programmes.}}',
+          hint: '{count, plural, =0 {No appointments are available at other clinics targeting the same programmes.} one {1 appointment is available at another clinic targeting the same programmes.} other {{count} appointments are available at other clinics targeting the same programmes.}}',
           yes: 'Yes, include a link to rebook in the cancellation message',
           no: 'No, tell the parent they’ll be invited again later'
         },
         confirm: {
           title: 'Are you sure you want to cancel this appointment?',
-          details: 'Cancellation summary',
+          details: 'Summary',
           confirm: 'Yes, cancel this appointment',
           cancel: 'No, return to the child in session page',
           success: 'Cancelled appointment'

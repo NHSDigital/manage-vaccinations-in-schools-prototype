@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("patientSession.clinicAppointment.cancel.comms.title") %}
+{% set title = __("patientSession.clinicAppointment.cancel.rebooking.title") %}
 
 {% block form %}
   {{ radios({
@@ -13,15 +13,15 @@
       }
     },
     hint: {
-      text: __mf("patientSession.clinicAppointment.cancel.comms.hint", { count: 47 })
+      text: __mf("patientSession.clinicAppointment.cancel.rebooking.hint", { count: 47 })
     },
     items: [
     {
-      text: __("patientSession.clinicAppointment.cancel.comms.yes"),
+      text: __("patientSession.clinicAppointment.cancel.rebooking.yes"),
       value: true
     },
     {
-      text: __("patientSession.clinicAppointment.cancel.comms.no"),
+      text: __("patientSession.clinicAppointment.cancel.rebooking.no"),
       value: false
     }
     ],
