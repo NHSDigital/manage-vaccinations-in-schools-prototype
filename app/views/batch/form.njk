@@ -1,11 +1,11 @@
 {% extends "_layouts/form.njk" %}
 
-{% set confirmButtonText = __("batch." + type + ".confirm") %}
-{% set title = __("batch." + type + ".title", { batch: batch }) %}
+{% set confirmButtonText = __("batch.new.confirm") %}
+{% set title = __("batch.new.title") %}
 
 {% block form %}
   {{ appHeading({
-    caption: batch.vaccine.brand,
+    caption: vaccine.brand,
     title: title
   }) }}
 

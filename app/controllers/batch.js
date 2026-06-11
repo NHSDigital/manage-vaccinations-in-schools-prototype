@@ -8,22 +8,15 @@ export const batchController = {
     const batch = Batch.findOne(batch_id, request.session.data)
 
     response.locals.batch = batch
-    response.locals.paths = {
-      back: '/vaccines',
-      next: '/vaccines'
-    }
 
     next()
   },
 
   /**
-   * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @type {import("express").RequestHandler}
    */
-  form(type) {
-    return (request, response) => {
-      response.render('batch/form', { type })
-    }
+  form(request, response) {
+    return response.render('batch/form')
   },
 
   /**
