@@ -5,10 +5,17 @@ export const vaccineController = {
    * @type {import("express").RequestParamHandler}
    */
   read(request, response, next, vaccine_snomed) {
-    response.locals.vaccine = Vaccine.findOne(
-      vaccine_snomed,
-      request.session.data
-    )
+    const vaccine = Vaccine.findOne(vaccine_snomed, request.session.data)
+
+    if (!vaccine) {
+      return next('route')
+    }
+
+    response.locals.vaccine = vaccine
+    response.locals.paths = {
+      back: '/vaccines',
+      next: '/vaccines'
+    }
 
     next()
   },

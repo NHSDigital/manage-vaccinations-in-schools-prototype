@@ -12,7 +12,6 @@ import { rollover } from './middleware/rollover.js'
 import { team } from './middleware/team.js'
 import { accountRoutes } from './routes/account.js'
 import { activityRoutes } from './routes/activity.js'
-import { batchRoutes } from './routes/batch.js'
 import { bookIntoClinicRoutes } from './routes/book-into-a-clinic.js'
 import { clinicBookingRoutes } from './routes/clinic-booking.js'
 import { clinicRoutes } from './routes/clinic.js'
@@ -89,6 +88,5 @@ router.use('/uploads/:upload_id/vaccinations', vaccinationRoutes)
 router.use('/uploads/:upload_id/patients', patientRoutes)
 router.use('/users', userRoutes)
 router.use('/vaccines', vaccineRoutes)
-router.use('/vaccines/:vaccine_snomed/batches', batchRoutes)
 
 export default router

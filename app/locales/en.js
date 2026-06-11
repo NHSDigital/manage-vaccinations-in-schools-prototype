@@ -120,11 +120,6 @@ export const en = {
       confirm: 'Add batch',
       success: 'Batch {{batch.id}} added'
     },
-    edit: {
-      title: 'Edit batch {{batch.id}}',
-      confirm: 'Save changes',
-      success: 'Batch {{batch.id}} updated'
-    },
     action: {
       title: 'Are you sure you want to %s this batch?',
       description: 'This cannot be undone.',
