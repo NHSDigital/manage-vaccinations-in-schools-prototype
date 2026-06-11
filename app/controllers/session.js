@@ -38,7 +38,12 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import { getSessionYearGroups } from '../utils/session.js'
-import { formatTime, formatYearGroup, stringToArray } from '../utils/string.js'
+import {
+  formatTime,
+  formatYearGroup,
+  stringToArray,
+  stringToBoolean
+} from '../utils/string.js'
 
 export const sessionController = {
   /**
@@ -1125,5 +1130,81 @@ export const sessionController = {
     )
 
     return response.redirect(session.uri)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  startCancel(request, response) {
+    const { session } = response.locals
+    const { data } = request.session
+
+    data.cancellation = {}
+
+    return response.redirect(
+      session.type === SessionType.Clinic && session.hasAppointments
+        ? `${session.uri}/cancel/appointments`
+        : `${session.uri}/cancel/confirm`
+    )
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  showCancel(request, response) {
+    const { view } = request.params
+    const { session } = response.locals
+
+    let back
+    switch (view) {
+      case 'appointments':
+        back = session.uri
+        break
+      case 'rebooking':
+        back = `${session.uri}/cancel/appointments`
+        break
+      case 'confirm':
+        back = session.hasAppointments
+          ? `${session.uri}/cancel/rebooking`
+          : session.uri
+        break
+    }
+
+    return response.render(`session/cancel/${view}`, { back })
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  updateCancel(request, response) {
+    const { view } = request.params
+    const { data } = request.session
+    const { __, session } = response.locals
+
+    let next
+    switch (view) {
+      case 'appointments':
+        next = `${session.uri}/cancel/rebooking`
+        break
+      case 'rebooking':
+        next = `${session.uri}/cancel/confirm`
+        break
+      case 'confirm':
+        next = '/sessions'
+        break
+    }
+
+    if (view === 'rebooking') {
+      data.cancellation.offerRebooking = stringToBoolean(
+        data.cancellation.offerRebooking
+      )
+    } else if (view === 'confirm') {
+      request.flash('message', __('session.cancel.success', { session }))
+
+      // TODO: mirror the live service by setting a Cancelled status instead
+      Session.delete(session.id, data)
+    }
+
+    return response.redirect(next)
   }
 }

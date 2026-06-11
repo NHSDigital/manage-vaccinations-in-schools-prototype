@@ -24,7 +24,7 @@
       date: {},
       timeSlot: {},
       offerRebooking: {
-        value: data.cancellation.offerRebooking
+        value: "Yes" if data.cancellation.offerRebooking else "No"
       }
     })
   }) }}

@@ -449,23 +449,6 @@ export class Session {
   }
 
   /**
-   * Get the number of appointments that have been booked in this clinic,
-   * regardless of their length
-   *
-   * @returns {number} - the number of clinic appointments booked
-   */
-  get bookedAppointmentCount() {
-    if (this.type !== SessionType.Clinic) {
-      return 0
-    }
-
-    // TODO: calculate this value from the actual appointments; it's not as simple
-    // as subtracting the available appointments from the total, as some appointments
-    // may be longer than the default/minimum.
-    return this.totalAppointmentCount - this.availableAppointmentCount
-  }
-
-  /**
    * Get the number of days contacts have left to book their child into this clinic
    *
    * @returns {number} - the number of days before appointment booking closes
@@ -570,6 +553,27 @@ export class Session {
       (this.bookedAppointmentTimes.length / this.allAppointmentTimes.length) *
         100
     )
+  }
+
+  /**
+   * Does the clinic have any active (non-archived) appointments booked?
+   *
+   * @returns {boolean} true if there are active appointments, false otherwise
+   */
+  get hasAppointments() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error(
+        'Clinic appointments are only relevant to clinic sessions'
+      )
+    }
+
+    // Same logic as in this.appointments but quicker to return
+    return ClinicBooking.findAll(this.context)
+      ?.flatMap(({ appointments }) => appointments)
+      .some(
+        (appointment) =>
+          appointment.session_id === this.id && !appointment.archived
+      )
   }
 
   /**

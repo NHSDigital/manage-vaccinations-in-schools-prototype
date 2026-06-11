@@ -1,0 +1,30 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __mf("session.cancel.bookings.title", { count: session.appointments.length }) %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {% set panelHtml %}
+    {{ __mf("session.cancel.bookings.notification", { count: session.appointments.length }) | nhsukMarkdown }}
+
+    {{ __("session.cancel.bookings.choice") | nhsukMarkdown }}
+
+    {{ appButtonGroup({
+      buttons: [{
+        text: __("session.cancel.bookings.confirm"),
+        variant: "reverse"
+      }],
+      links: [{
+        text: __("session.cancel.bookings.cancel"),
+        href: session.uri
+      }]
+    }) }}
+  {% endset %}
+
+  {{ panel({
+    titleText: title,
+    titleSize: "l",
+    variant: "interruption",
+    html: panelHtml
+  }) }}
+{% endblock %}

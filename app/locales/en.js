@@ -2544,15 +2544,36 @@ export const en = {
       success: '{{session.name}} updated'
     },
     cancel: {
-      title: 'Are you sure you want to cancel this session?',
-      warningTitle: 'Cancelling appointments',
-      appointmentsMade:
-        '{appointmentCount, plural, =0 {No children are booked for this session.} one {There is <b>{appointmentCount} child</b> already booked for this session.} other {There are <b>{appointmentCount} children</b> already booked for this session.}}',
-      notificationConsequence:
-        'If you cancel it, their parent or guardian will be notified and asked to book another clinic session.',
-      confirm: 'Yes, cancel this session',
-      cancel: 'No, return to the session page',
+      bookings: {
+        title:
+          '{count, plural, one {There is 1 appointment already booked for this session} other {There are {count} appointments already booked for this session}}',
+        notification:
+          '{count, plural, one {The parent will be informed of the cancellation by email, text message or both.} other {Parents will be informed of the cancellation by email, text message or both.}}',
+        choice:
+          'If you continue, you will be given the choice to offer rebooking immediately or at a later date.',
+        confirm: 'Continue',
+        cancel: 'Return to the session page'
+      },
+      rebooking: {
+        title: 'Do you want to offer rebooking?',
+        hint: '{count, plural, =0 {No appointments are available at other clinics targeting the same programmes.} one {1 appointment is available at another clinic targeting the same programmes.} other {{count} appointments are available at other clinics targeting the same programmes.}}',
+        yes: 'Yes, include a link to rebook in the cancellation message',
+        no: 'No, tell the parent they’ll be invited again later'
+      },
+      confirmation: {
+        title: 'Are you sure you want to cancel this session?',
+        details: 'Summary',
+        confirm: 'Yes, cancel this session',
+        cancel: 'No, return to the session page',
+        appointmentsAffected: '{count, plural, =0 {None} other {{count}}}'
+      },
       success: '{{session.name}} cancelled'
+    },
+    offerRebooking: {
+      label: 'Offer rebooking?'
+    },
+    appointmentsAffected: {
+      label: 'Appointments affected'
     },
     makeActive: {
       success: 'Session is now in progress'
