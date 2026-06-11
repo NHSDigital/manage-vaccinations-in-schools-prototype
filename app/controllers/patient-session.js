@@ -17,6 +17,7 @@ import {
   Vaccination
 } from '../models.js'
 import { today } from '../utils/date.js'
+import { stringToBoolean } from '../utils/string.js'
 
 export const patientSessionController = {
   /**
@@ -415,5 +416,68 @@ export const patientSessionController = {
     )
 
     return response.redirect(back)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  startCancel(request, response) {
+    const { patientSession } = response.locals
+
+    request.session.data.cancellation = {}
+
+    return response.redirect(`${patientSession.uri}/cancel/comms`)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  showCancel(request, response) {
+    const { view } = request.params
+    const { patientSession } = response.locals
+
+    response.locals.back =
+      view === 'comms'
+        ? patientSession.uri
+        : `${patientSession.uri}/cancel/comms`
+
+    return response.render(`patient-session/cancel/${view}`)
+  },
+
+  /**
+   * @type {import("express").RequestHandler}
+   */
+  updateCancel(request, response) {
+    const { account } = request.app.locals
+    const { __, patientSession } = response.locals
+    const { cancellation } = request.session.data
+    const { view } = request.params
+
+    // Where next?
+    const next =
+      view === 'comms'
+        ? `${patientSession.uri}/cancel/confirm`
+        : patientSession.uri
+
+    if (view === 'comms') {
+      // Sanitise the boolean from the radio
+      cancellation.offerRebooking = stringToBoolean(cancellation.offerRebooking)
+    } else if (view === 'confirm') {
+      // Carry out the cancellation
+      patientSession.clinicAppointment.cancelAppointment(
+        account,
+        cancellation.offerRebooking
+      )
+
+      // Tidy up
+      delete request.session.data.cancellation
+
+      request.flash(
+        'success',
+        __('patientSession.clinicAppointment.cancel.confirm.success')
+      )
+    }
+
+    return response.redirect(next)
   }
 }

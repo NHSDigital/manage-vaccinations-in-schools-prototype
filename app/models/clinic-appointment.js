@@ -16,8 +16,10 @@ import {
   ClinicBooking,
   Contact,
   Patient,
+  PatientSession,
   Programme,
-  Session
+  Session,
+  User
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
@@ -125,6 +127,41 @@ export class ClinicAppointment {
       }
     } catch (error) {
       console.error('ClinicAppointment.patient', error.message)
+    }
+  }
+
+  /**
+   * Get all patient sessions associated with this appointment
+   *
+   * @returns {Array<PatientSession>} - the patient sessions for the programmes booked in for
+   */
+  get patientSessions() {
+    if (!this.patient_uuid) {
+      return []
+    }
+
+    return PatientSession.findAll(this.context).filter(
+      (patientSession) =>
+        patientSession.patient_uuid === this.patient_uuid &&
+        patientSession.session_id === this.session_id
+    )
+  }
+
+  /**
+   * Cancel the appointment, logging the event and removing associated patient sessions
+   *
+   * @param {User} account - the user carrying out the removal
+   * @param {boolean} offeredRebooking - true if the parent was offered immediate rebooking, or false if they'll be invited again later
+   */
+  cancelAppointment(account, offeredRebooking) {
+    // TODO: code this
+    console.log(
+      `TODO: code the cancellation of an appointment (${offeredRebooking})`
+    )
+
+    // TODO: check that removeFromSession is an appropriate thing to call; feels like it's not enough to record a cancellation
+    for (const patientSession of this.patientSessions) {
+      patientSession.removeFromSession({ createdBy_uid: account.uid })
     }
   }
 
@@ -462,6 +499,7 @@ export class ClinicAppointment {
       unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
       edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`,
+      cancel: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/cancel`,
       extend: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}/length`
     }
   }

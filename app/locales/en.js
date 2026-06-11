@@ -351,6 +351,9 @@ export const en = {
     },
     programmeTags: {
       label: 'Programmes'
+    },
+    offerRebooking: {
+      label: 'Offer rebooking?'
     }
   },
   clinicBooking: {
@@ -1883,6 +1886,22 @@ export const en = {
       label: 'Appointment time',
       edit: {
         label: 'Edit appointment'
+      },
+      cancel: {
+        label: 'Cancel appointment',
+        comms: {
+          title: 'Do you want to offer rebooking?',
+          hint: '{count, plural, one {1 appointment is available at another clinic targeting the same programmes.} other {{count} appointments are available at other clinics targeting the same programmes.}}',
+          yes: 'Yes, include a link to rebook in the cancellation message',
+          no: 'No, tell the parent they’ll be invited again later'
+        },
+        confirm: {
+          title: 'Are you sure you want to cancel this appointment?',
+          details: 'Cancellation summary',
+          confirm: 'Yes, cancel this appointment',
+          cancel: 'No, return to the child in session page',
+          success: 'Cancelled appointment'
+        }
       }
     },
     yearGroup: {
