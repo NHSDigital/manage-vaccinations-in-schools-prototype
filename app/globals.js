@@ -156,7 +156,7 @@ export default () => {
       }
 
       timelineItems.push({
-        headingText: formatMarkdown(auditEvent.name),
+        headingText: auditEvent.name,
         isHighlightedItem: auditEvent.type === AuditEventType.SessionNote,
         isPastItem: auditEvent.isPastEvent,
         html:
