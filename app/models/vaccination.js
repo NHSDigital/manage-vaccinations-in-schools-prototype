@@ -110,7 +110,8 @@ export class Vaccination {
     this.suppliedBy_uid = options?.suppliedBy_uid
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.locationType = options?.locationType
-    this.country = options?.country
+    this.locationName = options?.locationName
+    this.country = options?.country || 'England'
     this.countryOther = this.country === 'Other' && options?.countryOther
     this.selfId = options?.selfId && stringToBoolean(options.selfId)
     this.identifiedBy = this.selfId !== true && options?.identifiedBy
@@ -123,14 +124,13 @@ export class Vaccination {
     this.injectionMethod = options?.injectionMethod
     this.injectionSite = options?.injectionSite
     this.source = options?.source || VaccinationSource.Service
-    this.dose = this.given ? options?.dose || '' : undefined
+    this.dose = this.given ? Number(options?.dose) : undefined
     this.sequence = options?.sequence
     this.protocol = this.given
       ? options?.protocol || VaccinationProtocol.PGD
       : undefined
     this.scheduled = stringToBoolean(options.scheduled)
     this.note = options?.note || ''
-    this.country = 'England'
     this.clinic_id = options?.clinic_id
     this.school_id = options?.school_id
     this.patient_uuid = options?.patient_uuid
@@ -138,11 +138,12 @@ export class Vaccination {
     this.programme_id = options?.programme_id
     this.programmeOther = options?.programmeOther
     this.batch_id = this.given ? options?.batch_id || '' : undefined
-    this.variant = options?.variant && stringToBoolean(options.variant)
+    this.variant = options?.variant
+      ? stringToBoolean(options.variant)
+      : undefined
     this.vaccine_snomed = options?.vaccine_snomed
 
     if (this.outcome === VaccinationOutcome.AlreadyVaccinated) {
-      this.locationName = options?.locationName
       this.addressLine1 = options?.addressLine1
       this.addressLine2 = options?.addressLine2
       this.addressLevel1 = options?.addressLevel1
@@ -211,7 +212,7 @@ export class Vaccination {
   get batch() {
     try {
       if (this.batch_id) {
-        return new Batch(this.batch_id, this.context)
+        return Batch.findOne(this.batch_id, this.context)
       }
     } catch (error) {
       console.error('Vaccination.batch', error.message)

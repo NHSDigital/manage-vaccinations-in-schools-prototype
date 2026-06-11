@@ -46,8 +46,8 @@ export function stringToBoolean(value) {
 /**
  * Convert string to array
  *
- * @template {string | boolean} T
- * @param {T | Array<T>} value - Value to test
+ * @template {string|number|boolean} T
+ * @param {T|Array<T>} value - Value to test
  * @returns {Array<T>} Array
  */
 export function stringToArray(value) {

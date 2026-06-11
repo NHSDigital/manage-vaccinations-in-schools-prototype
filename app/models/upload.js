@@ -10,7 +10,8 @@ import {
   formatProgress,
   formatTag,
   formatWithSecondaryText,
-  formatYearGroup
+  formatYearGroup,
+  stringToArray
 } from '../utils/string.js'
 
 /**
@@ -53,7 +54,7 @@ export class Upload {
     this.patient_uuids = options?.patient_uuids || []
 
     if (this.type === UploadType.School) {
-      this.yearGroups = options?.yearGroups
+      this.yearGroups = stringToArray(options?.yearGroups)
       this.school_id = options?.school_id
     }
   }
@@ -100,22 +101,8 @@ export class Upload {
       )
 
       if (this.type === UploadType.Report) {
-        patients = patients
-          .filter((patient) => patient.vaccinations.length > 0)
-          .map((patient) => {
-            patient.vaccination = patient.vaccinations[0]
-            return patient
-          })
+        patients = patients.filter((patient) => patient.vaccinations.length > 0)
       }
-
-      // Simulate a subset of patient records being new
-      // Use the existence of a second contact as a proxy for this
-      patients = patients.map((patient) => {
-        patient.isNew =
-          patient.contacts[1] !== undefined && !patient.hasPendingChanges
-        patient.hasMatch = !patient.contacts[1] && !patient.hasPendingChanges
-        return patient
-      })
 
       return patients
     }
@@ -227,11 +214,7 @@ export class Upload {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const yearGroups =
-      this.yearGroups &&
-      this.yearGroups
-        .filter((yearGroup) => yearGroup !== '_unchecked')
-        .map((yearGroup) => formatYearGroup(yearGroup))
+    const yearGroups = this.yearGroups?.map((item) => formatYearGroup(item))
 
     const createdAt = formatDate(this.createdAt, {
       day: 'numeric',

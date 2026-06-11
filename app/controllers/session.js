@@ -378,7 +378,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readPatientSessions(request, response, next) {
     const { account } = request.app.locals
@@ -1223,4 +1223,5 @@ export const sessionController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
+ * @import { PatientFilterQuery } from '../../typings/index.d.ts'
  */

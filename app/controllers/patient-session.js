@@ -245,9 +245,6 @@ export const patientSessionController = {
       patientSession.patient.recordVaccination(vaccination)
     }
 
-    // Clean up session data
-    delete data.patientSession?.register
-
     request.flash(
       'message',
       __(`patientSession.registration.success.${patientSession.register}`, {

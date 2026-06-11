@@ -153,6 +153,28 @@ export class Patient extends Child {
   }
 
   /**
+   * When uploaded presents as a new record
+   *
+   * Use the presence of a second contact and no pending changes as a proxy
+   *
+   * @returns {boolean} Is a new patient record
+   */
+  get uploadIsNew() {
+    return this.contacts[1] !== undefined && !this.hasPendingChanges
+  }
+
+  /**
+   * When uploaded presents as a matching record
+   *
+   * Use the absence of a second contact and pending changes as a proxy
+   *
+   * @returns {boolean} Is a new patient record
+   */
+  get uploadHasMatch() {
+    return !this.contacts[1] && !this.hasPendingChanges
+  }
+
+  /**
    * Get full name, formatted as LASTNAME, Firstname
    *
    * @returns {string} Full name
@@ -207,7 +229,7 @@ export class Patient extends Child {
       new AuditEvent({
         type: AuditEventType.Record,
         name: 'Child record imported',
-        createdAt: '2025-08-01T12:00:00'
+        createdAt: new Date('2025-08-01T12:00:00')
       })
     )
 
@@ -216,7 +238,7 @@ export class Patient extends Child {
         new AuditEvent({
           type: AuditEventType.Record,
           name: 'Record flagged as sensitive',
-          createdAt: '2025-08-01T12:00:00'
+          createdAt: new Date('2025-08-01T12:00:00')
         })
       )
     }

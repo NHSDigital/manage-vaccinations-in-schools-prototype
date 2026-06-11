@@ -112,7 +112,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readPatients(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
@@ -562,4 +562,5 @@ export const schoolController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
+ * @import { PatientFilterQuery } from '../../typings/index.d.ts'
  */

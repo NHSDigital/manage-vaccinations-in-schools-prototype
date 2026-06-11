@@ -81,7 +81,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readAll(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
@@ -516,9 +516,11 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showInviteManyToClinic(request, response) {
+    const { programme_id } = /** @type {{ programme_id?: string }} */ (
+      request.query
+    )
     const { data } = request.session
-    const { clinicPatient_ids } = data
-    const { programme_id } = request.query
+    let clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     const programmes = Programme.findAll(data)
       .filter((programme) => !programme.hidden)
@@ -526,9 +528,7 @@ export const patientController = {
 
     let programme_ids
     if (programme_id) {
-      programme_ids = Array.isArray(programme_id)
-        ? programme_id
-        : [programme_id]
+      programme_ids = stringToArray(programme_id)
     } else {
       programme_ids = programmes.map(({ id }) => id)
     }
@@ -599,7 +599,7 @@ export const patientController = {
     let { clinicProgramme_ids } = request.body
     const { __mf } = response.locals
     const { data } = request.session
-    const { clinicPatient_ids } = data
+    let clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     // Tidy up any _unchecked values
     if (typeof clinicProgramme_ids === 'string') {
@@ -815,4 +815,5 @@ export const patientController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
+ * @import { PatientFilterQuery } from '../../typings/index.d.ts'
  */

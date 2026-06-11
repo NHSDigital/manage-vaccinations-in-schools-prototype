@@ -70,7 +70,7 @@ export class ClinicBooking {
   /**
    * Remove a clinic appointment from this clinic booking
    *
-   * @param {string} appointment_uuid - the unique ID of the clinic appointment to remove
+   * @param {string} appointment_uuid - Appointment UUID to remove
    */
   removeAppointment(appointment_uuid) {
     const index = this.appointments.findIndex(
