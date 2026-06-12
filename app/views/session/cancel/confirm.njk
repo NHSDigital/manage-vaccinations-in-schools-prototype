@@ -15,7 +15,9 @@
     },
     lastRowBorder: false,
     rows: summaryRows(session, {
-      location: {},
+      location: {
+        value: session.clinic.formatted.nameAndAddress
+      },
       date: {},
       programmes: {},
       yearGroups: {},
