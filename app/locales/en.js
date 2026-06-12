@@ -2548,7 +2548,7 @@ export const en = {
         title:
           '{count, plural, one {There is 1 appointment already booked for this session} other {There are {count} appointments already booked for this session}}',
         notification:
-          '{count, plural, one {The parent will be informed of the cancellation by email, text message or both.} other {Parents will be informed of the cancellation by email, text message or both.}}',
+          '{count, plural, one {The parent will receive a message about the cancellation.} other {Parents will receive a message about the cancellation.}}',
         choice:
           'If you continue, you will be given the choice to offer rebooking immediately or at a later date.',
         confirm: 'Continue',
