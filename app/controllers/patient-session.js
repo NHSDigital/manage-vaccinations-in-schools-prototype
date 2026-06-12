@@ -436,6 +436,8 @@ export const patientSessionController = {
     const { view } = request.params
     const { patientSession } = response.locals
 
+    response.locals.appointmentSummary = `${patientSession.clinicAppointment.formatted.programmeNames} clinic appointment for ${patientSession.patient.fullName}`
+
     response.locals.back =
       view === 'rebooking'
         ? patientSession.uri

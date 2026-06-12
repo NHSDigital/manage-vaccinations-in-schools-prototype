@@ -23,6 +23,10 @@ import {
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
+  ConjunctionType,
+  programmeNamesListForSentence
+} from '../utils/programme.js'
+import {
   formatLink,
   formatLinkWithSecondaryText,
   formatList,
@@ -418,6 +422,11 @@ export class ClinicAppointment {
       date: session?.formatted.date ?? '',
       dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
       timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
+      programmeNames: programmeNamesListForSentence(
+        this.selected_programme_ids,
+        ConjunctionType.and,
+        this.context
+      ),
       programmeTags: this.#getSelectedProgrammes(this.context)
         .flatMap(({ nameTag }) => nameTag)
         .join(' '),
