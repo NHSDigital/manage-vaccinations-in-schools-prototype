@@ -32,6 +32,10 @@ router.all('/:session_id/edit/:view', session.readForm('edit'))
 router.get('/:session_id/edit/:view', session.showForm)
 router.post('/:session_id/edit/:view', session.updateForm)
 
+router.get('/:session_id/cancel', session.startCancel)
+router.get('/:session_id/cancel/:view', session.showCancel)
+router.post('/:session_id/cancel/:view', session.updateCancel)
+
 router.post('/:session_id/invite-to-clinic', session.inviteToClinic)
 router.post('/:session_id/instructions', session.giveInstructions)
 router.post('/:session_id/reminders', session.sendReminders)

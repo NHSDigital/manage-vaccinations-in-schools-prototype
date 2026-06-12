@@ -1,0 +1,31 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("patientSession.clinicAppointment.cancel.rebooking.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: appointmentSummary
+        })
+      }
+    },
+    hint: {
+      text: __mf("patientSession.clinicAppointment.cancel.rebooking.hint", { count: 47 })
+    },
+    items: [
+    {
+      text: __("patientSession.clinicAppointment.cancel.rebooking.yes"),
+      value: true
+    },
+    {
+      text: __("patientSession.clinicAppointment.cancel.rebooking.no"),
+      value: false
+    }
+    ],
+    decorate: "cancellation.offerRebooking"
+  }) }}
+
+{% endblock %}

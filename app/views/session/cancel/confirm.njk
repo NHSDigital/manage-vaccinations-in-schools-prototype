@@ -1,0 +1,46 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.cancel.confirmation.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: session.shortName
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("session.cancel.confirmation.details"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(session, {
+      location: {
+        value: session.clinic.formatted.nameAndAddress
+      },
+      date: {},
+      programmes: {},
+      yearGroups: {},
+      appointmentsAffected: {
+        value: __mf("session.cancel.confirmation.appointmentsAffected", { count: session.appointments.length })
+      } if session.type === SessionType.Clinic,
+      offerRebooking: {
+        value: "Yes" if data.cancellation.offerRebooking else "No"
+      } if session.type === SessionType.Clinic and session.hasAppointments
+    })
+  }) }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [{
+      text: __("session.cancel.confirmation.confirm"),
+      variant: "warning"
+    }],
+    links: [{
+      text: __("session.cancel.confirmation.cancel"),
+      href: session.uri
+    }]
+  }) }}
+{% endblock %}
+

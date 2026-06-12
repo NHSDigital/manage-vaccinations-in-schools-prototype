@@ -1,0 +1,31 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.cancel.rebooking.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: session.shortName
+        })
+      }
+    },
+    hint: {
+      text: __mf("session.cancel.rebooking.hint", { count: 0 })
+    },
+    items: [
+    {
+      text: __("session.cancel.rebooking.yes"),
+      value: true
+    },
+    {
+      text: __("session.cancel.rebooking.no"),
+      value: false
+    }
+    ],
+    decorate: "cancellation.offerRebooking"
+  }) }}
+
+{% endblock %}
