@@ -298,7 +298,7 @@ export function formatMillilitres(string) {
 export function formatMonospace(string, noWrap = false) {
   if (!string) return
 
-  const classes = ['app-u-code']
+  const classes = ['nhsuk-u-font-code']
 
   if (noWrap) {
     classes.push('nhsuk-u-nowrap')

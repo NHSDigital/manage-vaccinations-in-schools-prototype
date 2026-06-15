@@ -119,7 +119,7 @@ $_timeline-border-width: 2px;
 
   @include nhsuk-font-size(19);
 
-  &.nhsuk-u-font-weight-bold .app-u-code {
+  &.nhsuk-u-font-weight-bold .nhsuk-u-font-code {
     font-weight: inherit;
   }
 }
