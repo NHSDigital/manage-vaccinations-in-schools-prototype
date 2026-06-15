@@ -3,10 +3,10 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { Batch } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import {
+  formatCode,
   formatHealthQuestions,
   formatList,
-  formatMillilitres,
-  formatMonospace
+  formatMillilitres
 } from '../utils/string.js'
 
 /**
@@ -93,7 +93,7 @@ export class Vaccine {
    */
   get formatted() {
     return {
-      snomed: formatMonospace(this.snomed),
+      snomed: formatCode(this.snomed),
       healthQuestions: formatHealthQuestions(this.healthQuestions),
       preScreenQuestions: formatList(this.preScreenQuestions),
       sideEffects: formatList(this.sideEffects),

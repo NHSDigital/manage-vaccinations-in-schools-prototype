@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { formatLink, formatMonospace } from '../utils/string.js'
+import { formatCode, formatLink } from '../utils/string.js'
 
 /**
  * @class User
@@ -50,7 +50,7 @@ export class User {
    */
   get formatted() {
     return {
-      uid: formatMonospace(this.uid)
+      uid: formatCode(this.uid)
     }
   }
 

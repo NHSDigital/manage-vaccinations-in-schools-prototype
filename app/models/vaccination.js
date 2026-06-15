@@ -36,12 +36,12 @@ import {
   getVaccinationSyncStatus
 } from '../utils/status.js'
 import {
+  formatCode,
   formatIdentifier,
   formatLink,
   formatLinkWithSecondaryText,
   formatMillilitres,
   formatMarkdown,
-  formatMonospace,
   formatSequence,
   formatTag,
   stringToBoolean,
@@ -535,7 +535,7 @@ export class Vaccination {
         true
       ),
       batch: this.batch?.summary,
-      batch_id: formatMonospace(this.batch_id),
+      batch_id: formatCode(this.batch_id),
       dose: formatMillilitres(this.dose),
       sequence: this.sequence && formatSequence(this.sequence),
       vaccine_snomed: this.vaccine_snomed ? this.vaccine?.brand : 'Unknown',

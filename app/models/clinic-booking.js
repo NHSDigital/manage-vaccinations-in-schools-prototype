@@ -2,11 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
 import { ClinicAppointment, Contact } from '../models.js'
-import {
-  formatMonospace,
-  stringToArray,
-  stringToBoolean
-} from '../utils/string.js'
+import { formatCode, stringToArray, stringToBoolean } from '../utils/string.js'
 
 /**
  * @class ClinicBooking
@@ -108,7 +104,7 @@ export class ClinicBooking {
    */
   get formatted() {
     return {
-      bookingReference: formatMonospace(this.bookingReference, true)
+      bookingReference: formatCode(this.bookingReference, true)
     }
   }
 

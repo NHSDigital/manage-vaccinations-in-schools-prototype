@@ -5,8 +5,8 @@ import { Location, Patient, Session } from '../models.js'
 import { formatDate, getDateValueDifference } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
 import {
+  formatCode,
   formatLink,
-  formatMonospace,
   formatYearGroups,
   stringToBoolean
 } from '../utils/string.js'
@@ -138,9 +138,9 @@ export class School extends Location {
       nextSessionDate: formatDate(this.nextSessionDate, { dateStyle: 'full' }),
       patients: filters.plural(this.patients.length, 'child'),
       yearGroups: formatYearGroups(this.yearGroups),
-      id: formatMonospace(this.id),
-      site: formatMonospace(this.site),
-      urn: formatMonospace(this.urn)
+      id: formatCode(this.id),
+      site: formatCode(this.site),
+      urn: formatCode(this.urn)
     }
   }
 

@@ -289,13 +289,13 @@ export function formatMillilitres(string) {
 }
 
 /**
- * Format monospaced
+ * Format with code styling
  *
  * @param {string|number} string - String
  * @param {boolean} [noWrap] - Prevent wrapping
  * @returns {string|undefined} Formatted HTML
  */
-export function formatMonospace(string, noWrap = false) {
+export function formatCode(string, noWrap = false) {
   if (!string) return
 
   const classes = ['nhsuk-u-font-code']
@@ -329,7 +329,7 @@ export function formatNhsNumber(string, invalid) {
       string = `<s>${string}</s>`
     }
 
-    return formatMonospace(string, true)
+    return formatCode(string, true)
   }
 
   return null
