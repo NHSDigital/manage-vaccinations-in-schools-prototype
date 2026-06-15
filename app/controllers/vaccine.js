@@ -21,7 +21,7 @@ export const vaccineController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     response.locals.vaccines = Vaccine.findAll(request.session.data)
@@ -30,14 +30,14 @@ export const vaccineController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     return response.render('vaccine/show')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.render('vaccine/list')
@@ -45,7 +45,7 @@ export const vaccineController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -54,7 +54,7 @@ export const vaccineController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   delete(request, response) {
     const { vaccine_snomed } = request.params

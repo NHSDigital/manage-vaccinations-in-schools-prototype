@@ -19,7 +19,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     response.locals.downloads = Download.findAll(request.session.data)
@@ -28,7 +28,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     const { type } = request.query
@@ -58,7 +58,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -76,7 +76,7 @@ export const downloadController = {
 
   /**
    * @param {string} [type] - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   new(type) {
     return (request, response) => {
@@ -108,17 +108,14 @@ export const downloadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { download_id } = request.params
     const { data } = request.session
     const { __ } = response.locals
 
-    const download = Download.create(
-      data.wizard.downloads[String(download_id)],
-      data
-    )
+    const download = Download.create(data.wizard.downloads[download_id], data)
 
     // Clean up session data
     delete data.download
@@ -129,6 +126,9 @@ export const downloadController = {
     return response.redirect('/downloads')
   },
 
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   readForm(request, response, next) {
     const { download_id } = request.params
     const { data, referrer } = request.session
@@ -211,11 +211,11 @@ export const downloadController = {
       ...(referrer && { back: referrer })
     }
 
-    next()
+    return next()
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -224,7 +224,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response, next) {
     const { download_id } = request.params
@@ -237,7 +237,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   download(request, response) {
     const { data } = request.session

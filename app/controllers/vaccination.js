@@ -42,7 +42,7 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
     const { id, nhsn } = request.params
@@ -51,14 +51,14 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     return response.render('vaccination/show')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   edit(request, response) {
     const { vaccination_uuid } = request.params
@@ -79,7 +79,7 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -187,7 +187,7 @@ export const vaccinationController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -197,7 +197,7 @@ export const vaccinationController = {
 
       // Update session data
       const updates = {
-        ...data.wizard.vaccinations[String(vaccination_uuid)],
+        ...data.wizard.vaccinations[vaccination_uuid],
         ...request.body?.vaccination
       }
 
@@ -255,7 +255,7 @@ export const vaccinationController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -399,7 +399,7 @@ export const vaccinationController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   showForm(type) {
     return (request, response) => {
@@ -410,7 +410,7 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { data } = request.session

@@ -172,7 +172,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -181,7 +181,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
     const { referrer } = request.session
@@ -195,7 +195,7 @@ export const patientSessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   showForm(type) {
     return (request, response) => {
@@ -206,7 +206,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   register(request, response) {
     const { account } = request.app.locals
@@ -260,7 +260,7 @@ export const patientSessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   gillick(type) {
     return (request, response) => {
@@ -287,7 +287,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   preScreen(request, response) {
     const { account } = request.app.locals
@@ -313,7 +313,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   invite(request, response) {
     const { __, back, patient, patientSession } = response.locals
@@ -330,7 +330,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   remind(request, response) {
     const { account } = request.app.locals
@@ -347,7 +347,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   triage(request, response) {
     const { account } = request.app.locals
@@ -384,7 +384,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   note(request, response) {
     const { account } = request.app.locals
@@ -419,7 +419,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   startCancel(request, response) {
     const { patientSession } = response.locals
@@ -430,7 +430,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showCancel(request, response) {
     const { view } = request.params
@@ -447,7 +447,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateCancel(request, response) {
     const { account } = request.app.locals

@@ -41,7 +41,7 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
     const { nhsn, programme_id, session_id } = request.params
@@ -52,14 +52,14 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     return response.render('reply/show')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -96,7 +96,7 @@ export const replyController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -185,7 +185,7 @@ export const replyController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -330,7 +330,7 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -349,7 +349,7 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { respondent } = request.body
@@ -410,7 +410,7 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   followUp(request, response) {
     const { decision } = request.body
@@ -448,7 +448,7 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   invalidate(request, response) {
     const { note } = request.body.reply
@@ -468,7 +468,7 @@ export const replyController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   withdraw(request, response) {
     const { account } = request.app.locals

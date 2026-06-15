@@ -36,7 +36,7 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const { session_id } = request.params
@@ -63,7 +63,7 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -72,14 +72,14 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.render('consent/list')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readMatches(request, response, next) {
     let { hasMissingNhsNumber, q } = request.query
@@ -120,7 +120,7 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterMatches(request, response) {
     const { hasMissingNhsNumber, q } = request.body
@@ -139,7 +139,7 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   link(request, response) {
     const { consent_uuid } = request.params
@@ -159,7 +159,7 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   add(request, response) {
     const { consent_uuid } = request.params
@@ -198,7 +198,7 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   invalidate(request, response) {
     const { note } = request.body.consent

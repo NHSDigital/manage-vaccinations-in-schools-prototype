@@ -21,7 +21,7 @@ export const noticeController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.render('notice/list')
@@ -29,7 +29,7 @@ export const noticeController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -38,7 +38,7 @@ export const noticeController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   archive(request, response) {
     const { notice_uuid } = request.params

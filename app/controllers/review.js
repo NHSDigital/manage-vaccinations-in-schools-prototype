@@ -1,6 +1,6 @@
 export const reviewController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.redirect('/notices')

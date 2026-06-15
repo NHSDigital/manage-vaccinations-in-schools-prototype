@@ -15,7 +15,7 @@ export const clinicBookingController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const clinicBookings = ClinicBooking.findAll(request.session.data)
@@ -31,14 +31,14 @@ export const clinicBookingController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     return response.render('clinic-booking/show')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.render('clinic-booking/list')

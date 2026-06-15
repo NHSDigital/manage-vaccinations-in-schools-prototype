@@ -18,7 +18,7 @@ export const clinicController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   form(type) {
     return (request, response) => {
@@ -28,7 +28,7 @@ export const clinicController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -37,7 +37,7 @@ export const clinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   create(request, response) {
     const { team_id } = request.params
@@ -58,7 +58,7 @@ export const clinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { clinic_id } = request.params
@@ -77,7 +77,7 @@ export const clinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   delete(request, response) {
     const { clinic_id } = request.params

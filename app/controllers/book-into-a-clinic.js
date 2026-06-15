@@ -34,7 +34,7 @@ import {
 
 export const bookIntoClinicController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   setupServiceHeader(request, response, next) {
     const serviceName = 'Book into a clinic'
@@ -47,7 +47,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readProgrammes(request, response) {
     // Handling GET request for '/'
@@ -99,7 +99,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { data } = request.session
@@ -122,7 +122,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { booking_uuid } = request.params
@@ -142,7 +142,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
     const { appointment_uuid, booking_uuid } = request.params
@@ -197,13 +197,12 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const { __, __mf, appointment } = response.locals
     const { data } = request.session
-    let { booking_uuid } = request.params
-    let view = String(request.params.view)
+    let { booking_uuid, view } = request.params
 
     if (view === 'address-selection') {
       // Build the options for the selection of a home address address from those already entered
@@ -425,7 +424,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { booking_uuid, appointment_uuid, view } = request.params
@@ -543,7 +542,7 @@ export const bookIntoClinicController = {
     } else if (view === 'delete-appointment') {
       // The user's chosen to remove an appointment
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      booking.removeAppointment(String(appointment_uuid))
+      booking.removeAppointment(appointment_uuid)
       ClinicBooking.update(booking.uuid, booking, data.wizard)
 
       paths.next = `${booking.uri.new}/add-another`
@@ -556,7 +555,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'start'

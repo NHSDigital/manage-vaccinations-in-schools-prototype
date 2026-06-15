@@ -14,7 +14,7 @@ export const contactController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { patient_uuid } = request.query
@@ -32,7 +32,7 @@ export const contactController = {
 
   /**
    * @param {string} [type] - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -43,10 +43,7 @@ export const contactController = {
       // Update session data
       let contact
       if (type === 'new') {
-        contact = Contact.create(
-          data.wizard.contacts[String(contact_uuid)],
-          data
-        )
+        contact = Contact.create(data.wizard.contacts[contact_uuid], data)
 
         // Add contact to patient contacts
         const patient = Patient.findOne(contact.patient_uuid, data)
@@ -54,7 +51,7 @@ export const contactController = {
       } else {
         contact = Contact.update(
           contact_uuid,
-          data.wizard.contacts[String(contact_uuid)],
+          data.wizard.contacts[contact_uuid],
           data
         )
       }
@@ -71,7 +68,7 @@ export const contactController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -93,12 +90,15 @@ export const contactController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     return response.render(`contact/form/edit`)
   },
 
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   updateForm(request, response, next) {
     const { contact_uuid } = request.params
     const { data } = request.session
@@ -110,7 +110,7 @@ export const contactController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -124,7 +124,7 @@ export const contactController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   delete(request, response) {
     const { contact_uuid } = request.params

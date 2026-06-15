@@ -33,7 +33,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
     const { session } = response.locals
@@ -42,7 +42,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -80,7 +80,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { data } = request.session
@@ -100,7 +100,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { consent_uuid } = request.params
@@ -120,7 +120,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
     const { session_id, consent_uuid } = request.params
@@ -339,10 +339,10 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
-    let view = String(request.params.view)
+    let { view } = request.params
     const { consent } = response.locals
     let key = kebabToCamelCase(view)
 
@@ -368,7 +368,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { decision } = request.body

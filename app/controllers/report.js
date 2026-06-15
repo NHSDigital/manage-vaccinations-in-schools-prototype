@@ -3,7 +3,7 @@ import { formatYearGroup } from '../utils/string.js'
 
 export const reportController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const { gender, yearGroup } = request.query
@@ -76,7 +76,7 @@ export const reportController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'vaccinations'
@@ -85,14 +85,14 @@ export const reportController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.redirect('/reports/vaccinations')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
     const view = request.params.view || 'vaccinations'

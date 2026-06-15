@@ -13,7 +13,7 @@ export const batchController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   form(request, response) {
     return response.render('batch/form')
@@ -21,7 +21,7 @@ export const batchController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -30,7 +30,7 @@ export const batchController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   create(request, response) {
     const { vaccine_snomed } = request.params
@@ -51,7 +51,7 @@ export const batchController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { batch_id } = request.params
@@ -70,7 +70,7 @@ export const batchController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   archive(request, response) {
     const { batch_id } = request.params
