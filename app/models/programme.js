@@ -98,7 +98,7 @@ export class Programme {
   /**
    * Get vaccine(s) used by this programme
    *
-   * @returns {Array<import('./vaccine.js').Vaccine>} Vaccine
+   * @returns {Array<Vaccine>} Vaccine
    */
   get vaccines() {
     return this.vaccine_snomeds.map((snomed) =>

@@ -35,8 +35,8 @@ const enrichWithRealisticAnswer = (key, healthCondition) => {
 /**
  * Get consent responses with answers to health questions
  *
- * @param {Array<import('../models.js').Reply>} replies - Consent responses
- * @returns {Array<import('../models.js').Reply>} Consent responses with answers to health questions
+ * @param {Array<Reply>} replies - Consent responses
+ * @returns {Array<Reply>} Consent responses with answers to health questions
  */
 export function getRepliesWithHealthAnswers(replies) {
   replies = Array.isArray(replies) ? replies : [replies]
@@ -347,7 +347,7 @@ export const getTriageNote = (healthAnswers, healthCondition) => {
 /**
  * Get child’s preferred names, based on information in consent replies
  *
- * @param {Array<import('../models.js').Reply>} replies - Consent replies
+ * @param {Array<Reply>} replies - Consent replies
  * @returns {string|boolean} Names(s)
  */
 export const getPreferredNames = (replies) => {

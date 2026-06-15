@@ -42,7 +42,7 @@ import {
  * @property {DownloadFormat} [format] - Downloaded file format
  * @property {DownloadType} [type] - Download type
  * @property {boolean} [recordOffline] - Include columns for recording offline
- * @property {Array<import('../enums.js').DownloadVariable>} [variables] - Download variables
+ * @property {Array<DownloadVariable>} [variables] - Download variables
  * @property {number} [academicYear] - Programme year
  * @property {string} [programme_id] - Programme ID
  * @property {string} [school_id] - School ID
@@ -578,3 +578,7 @@ export class Download {
     return { buffer, fileName: `${name}.${extension}`, mimetype }
   }
 }
+
+/**
+ * @import { DownloadVariable } from '../enums.js'
+ */

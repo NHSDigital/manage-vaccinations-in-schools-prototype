@@ -98,7 +98,7 @@ export const getSessionActivityCount = (session, filters) => {
  * Get year groups based on intersection of school phase and programme
  *
  * @param {string} school_id - School ID
- * @param {Array<import('../enums.js').SessionPreset>} sessionPresets - Session presets
+ * @param {Array<SessionPreset>} sessionPresets - Session presets
  * @returns {Array<number>} Year groups
  */
 export const getSessionYearGroups = (school_id, sessionPresets) => {
@@ -156,5 +156,6 @@ export function removeSlots(allSlots, slotsToRemove) {
 }
 
 /**
+ * @import { SessionPreset } from '../enums.js'
  * @import { Session } from '../models.js'
  */

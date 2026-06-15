@@ -114,7 +114,7 @@ export class PatientProgramme {
   /**
    * Get audit events for this patient programme
    *
-   * @returns {Array<import('./audit-event.js').AuditEvent>} Audit events
+   * @returns {Array<AuditEvent>} Audit events
    */
   get auditEvents() {
     return this.patient.events
@@ -129,7 +129,7 @@ export class PatientProgramme {
   /**
    * Get patient sessions for this patient programme
    *
-   * @returns {Array<import('./patient-session.js').PatientSession>} Patient sessions
+   * @returns {Array<PatientSession>} Patient sessions
    */
   get patientSessions() {
     return this.patient?.patientSessions
@@ -282,7 +282,7 @@ export class PatientProgramme {
   /**
    * Get vaccination outcomes
    *
-   * @returns {Array<import('./vaccination.js').Vaccination>|undefined} Vaccinations
+   * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get vaccinationOutcomes() {
     return this.patient?.vaccinations.filter(
@@ -304,7 +304,7 @@ export class PatientProgramme {
   /**
    * Get vaccinations given
    *
-   * @returns {Array<import('./vaccination.js').Vaccination>|undefined} Vaccinations
+   * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get vaccinationsGiven() {
     return this.vaccinationOutcomes.filter((vaccination) => vaccination.given)
@@ -313,7 +313,7 @@ export class PatientProgramme {
   /**
    * Get TTCV vaccinations given
    *
-   * @returns {Array<import('./vaccination.js').Vaccination>|undefined} Vaccinations
+   * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get ttcvVaccinationsGiven() {
     return this.patient?.vaccinations
@@ -324,7 +324,7 @@ export class PatientProgramme {
   /**
    * Get other vaccinations given
    *
-   * @returns {Array<import('./vaccination.js').Vaccination>|undefined} Vaccinations
+   * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get otherVaccinationsGiven() {
     return this.patient?.vaccinations

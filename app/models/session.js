@@ -66,7 +66,7 @@ import {
  * @property {object} [date_] - Dates (from `dateInput`s)
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
- * @property {string<import('../enums.js').SessionMMRConsent>} [mmrConsent] - Does session use MMR outbreak comms?
+ * @property {string<SessionMMRConsent>} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {boolean} [registration] - Does session have registration?
  *
  *   Clinics only
@@ -215,7 +215,7 @@ export class Session {
   /**
    * Get consents (unmatched consent responses)
    *
-   * @returns {Array<import('./consent.js').Consent>} Consent
+   * @returns {Array<Consent>} Consent
    */
   get consents() {
     if (this.context.replies) {
@@ -684,7 +684,7 @@ export class Session {
   /**
    * Get session presets
    *
-   * @returns {Array<import('../enums.js').SessionPreset>} Patient sessions
+   * @returns {Array<SessionPreset>} Patient sessions
    */
   get presets() {
     return SessionPresets.filter((sessionPreset) =>
@@ -1240,5 +1240,5 @@ export class Session {
 }
 
 /**
- * @import { RegistrationOutcome } from '../enums.js'
+ * @import { RegistrationOutcome, SessionMMRConsent, SessionPreset } from '../enums.js'
  */

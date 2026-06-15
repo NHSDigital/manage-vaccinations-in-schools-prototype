@@ -147,7 +147,7 @@ export class PatientSession {
   /**
    * Get audit events for patient session
    *
-   * @returns {Array<import('./audit-event.js').AuditEvent>} Audit events
+   * @returns {Array<AuditEvent>} Audit events
    */
   get auditEvents() {
     return this.patient?.events
@@ -176,7 +176,7 @@ export class PatientSession {
   /**
    * Get triage notes
    *
-   * @returns {Array<import('./audit-event.js').AuditEvent>} Audit events
+   * @returns {Array<AuditEvent>} Audit events
    */
   get triageNotes() {
     return this.auditEvents
@@ -188,7 +188,7 @@ export class PatientSession {
   /**
    * Get session notes
    *
-   * @returns {Array<import('./audit-event.js').AuditEvent>} Audit event
+   * @returns {Array<AuditEvent>} Audit event
    */
   get sessionNotes() {
     return this.auditEvents
@@ -200,7 +200,7 @@ export class PatientSession {
   /**
    * Get replies for patient session
    *
-   * @returns {Array<import('./reply.js').Reply>|undefined} Replies
+   * @returns {Array<Reply>|undefined} Replies
    */
   get replies() {
     return this.patient?.replies
@@ -238,7 +238,7 @@ export class PatientSession {
   /**
    * Get responses (consent requests that were delivered)
    *
-   * @returns {Array<import('./reply.js').Reply>|undefined} Responses
+   * @returns {Array<Reply>|undefined} Responses
    */
   get responses() {
     return this.replies?.filter((reply) => reply.delivered)
@@ -636,7 +636,7 @@ export class PatientSession {
   /**
    * Get responses with triage notes for consent health answers
    *
-   * @returns {Array<import('./reply.js').Reply>|undefined} Responses with triage notes
+   * @returns {Array<Reply>|undefined} Responses with triage notes
    */
   get responsesWithTriageNotes() {
     return this.responses?.filter((response) => response.triageNote)
@@ -1043,7 +1043,7 @@ export class PatientSession {
   /**
    * Remove patient from session
    *
-   * @param {Pick<import('./audit-event.js').AuditEvent, 'createdBy_uid'>} event - Event
+   * @param {Pick<AuditEvent, 'createdBy_uid'>} event - Event
    */
   removeFromSession(event) {
     this.patient.patientSession_uuids =
@@ -1211,5 +1211,5 @@ export class PatientSession {
 
 /**
  * @import { InstructionOutcome, ScreenVaccineCriteria } from '../enums.js'
- * @import { Contact, PatientProgramme, Vaccination, Vaccine } from '../models.js'
+ * @import { Contact, PatientProgramme, Reply, Vaccination, Vaccine } from '../models.js'
  */
