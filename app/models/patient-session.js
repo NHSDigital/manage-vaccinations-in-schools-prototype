@@ -68,19 +68,19 @@ import {
 /**
  * @class Patient Session
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
- * @property {string} uuid - UUID
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
+ * @property {string} [uuid] - UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created patient session
  * @property {Date} [updatedAt] - Updated date
  * @property {Gillick} [gillick] - Gillick assessment
  * @property {Array<AuditEvent>} [notes] - Notes
- * @property {boolean} alternative - Administer alternative vaccine
- * @property {string} patient_uuid - Patient UUID
- * @property {string} instruction_uuid - Instruction UUID
- * @property {string} programme_id - Programme ID
- * @property {string} session_id - Session ID
+ * @property {boolean} [alternative] - Administer alternative vaccine
+ * @property {string} [patient_uuid] - Patient UUID
+ * @property {string} [instruction_uuid] - Instruction UUID
+ * @property {string} [programme_id] - Programme ID
+ * @property {string} [session_id] - Session ID
  */
 export class PatientSession {
   constructor(options, context) {

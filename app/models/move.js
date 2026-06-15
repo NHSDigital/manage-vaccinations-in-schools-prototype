@@ -12,12 +12,12 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
  * @property {string} uuid - UUID
  * @property {Date} [createdAt] - Reported date
  * @property {Date} [updatedAt] - Updated date
- * @property {boolean} ignored - Reported move is ignored
- * @property {MoveSource} source - Reporting source
- * @property {string} team_id - Team ID (moving from)
- * @property {string} from_urn - Current school URN (moving from)
- * @property {string} to_urn - Proposed school URN (moving to)
- * @property {string} patient_uuid - Patient UUID
+ * @property {boolean} [ignored] - Reported move is ignored
+ * @property {MoveSource} [source] - Reporting source
+ * @property {string} [team_id] - Team ID (moving from)
+ * @property {string} [from_urn] - Current school URN (moving from)
+ * @property {string} [to_urn] - Proposed school URN (moving to)
+ * @property {string} [patient_uuid] - Patient UUID
  */
 export class Move {
   constructor(options, context) {

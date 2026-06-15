@@ -11,17 +11,17 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
  * @property {string} uuid - UUID
  * @property {Date} [createdAt] - Created date
  * @property {Date} [archivedAt] - Archived date
- * @property {NoticeType} type - Notice type
- * @property {string} patient_uuid - Patient notice applies to
+ * @property {NoticeType} [type] - Notice type
+ * @property {string} [patient_uuid] - Patient notice applies to
  */
 export class Notice {
   constructor(options, context) {
     this.context = context
-    this.uuid = options.uuid || faker.string.uuid()
+    this.uuid = options?.uuid || faker.string.uuid()
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
-    this.type = options.type
-    this.patient_uuid = options.patient_uuid
+    this.type = options?.type
+    this.patient_uuid = options?.patient_uuid
   }
 
   /**

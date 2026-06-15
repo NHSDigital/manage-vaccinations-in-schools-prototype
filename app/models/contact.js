@@ -9,17 +9,17 @@ import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context
- * @property {string} uuid - UUID
+ * @property {string} [uuid] - UUID
  * @property {string} [fullName] - Full name
  * @property {ParentalRelationship} [relationship] - Relationship to child
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
- * @property {boolean} notify - Notify about consent and vaccination events
- * @property {string} tel - Phone number
- * @property {string} email - Email address
- * @property {NotifyEmailStatus} emailStatus - Email status
- * @property {boolean} sms - Get updates via SMS
- * @property {NotifySmsStatus} smsStatus - SMS status
+ * @property {boolean} [notify] - Notify about consent and vaccination events
+ * @property {string} [tel] - Phone number
+ * @property {string} [email] - Email address
+ * @property {NotifyEmailStatus} [emailStatus] - Email status
+ * @property {boolean} [sms] - Get updates via SMS
+ * @property {NotifySmsStatus} [smsStatus] - SMS status
  * @property {boolean} [contactPreference] - Preferred contact method
  * @property {string} [contactPreferenceDetails] - Contact method details
  * @property {string} [patient_uuid] - Patient UUID
@@ -28,8 +28,8 @@ export class Contact {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.fullName = options.fullName || ''
-    this.relationship = options.relationship || ParentalRelationship.Unknown
+    this.fullName = options?.fullName || ''
+    this.relationship = options?.relationship || ParentalRelationship.Unknown
     this.relationshipOther =
       this?.relationship === ParentalRelationship.Other
         ? options?.relationshipOther

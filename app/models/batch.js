@@ -15,7 +15,7 @@ import { formatCode } from '../utils/string.js'
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context
- * @property {string} id - Batch ID
+ * @property {string} [id] - Batch ID
  * @property {Date} [createdAt] - Created date
  * @property {Date} [updatedAt] - Updated date
  * @property {Date} [archivedAt] - Archived date

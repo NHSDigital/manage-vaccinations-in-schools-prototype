@@ -31,7 +31,7 @@ import {
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context
- * @property {string} id - Download ID
+ * @property {string} [id] - Download ID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created download
  * @property {Date} [updatedAt] - Updated date

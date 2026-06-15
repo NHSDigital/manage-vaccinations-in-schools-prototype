@@ -10,7 +10,7 @@ import {
 /**
  * @class ClinicVaccinationPeriod
  * @param {object} options - property values
- * @property {string} uuid - Vaccination period UUID
+ * @property {string} [uuid] - Vaccination period UUID
  * @property {Date} [startAt] - Start time of first appointment slot
  * @property {Date} [startAt_] - Start time of first appointment slot, from dateInput - see getter/setter
  * @property {Date} [endAt] - End time of final appointment slot

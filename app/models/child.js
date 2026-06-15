@@ -34,7 +34,7 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @property {Date} [dob] - Date of birth
  * @property {object} [dob_] - Date of birth (from `dateInput`)
  * @property {Date} [dod] - Date of death
- * @property {Gender} gender - Gender
+ * @property {Gender} [gender] - Gender
  * @property {EthnicGroup} [ethnicGroup] - Ethnic group
  * @property {string} [ethnicGroupOther] - Other ethnic group
  * @property {EthnicBackground} [ethnicBackground] - Ethnic background

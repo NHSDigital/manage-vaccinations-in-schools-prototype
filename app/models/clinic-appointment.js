@@ -40,10 +40,10 @@ import {
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context, for access to patients, programmes, etc.
- * @property {string} uuid - Unique ID for this clinic appointment
- * @property {string} booking_uuid - Unique ID for the booking under which this appointment was made
+ * @property {string} [uuid] - Unique ID for this clinic appointment
+ * @property {string} [booking_uuid] - Unique ID for the booking under which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
- * @property {Child} [child] - child details recorded from form input values
+ * @property {Child} [child] - Child details recorded from form input values
  * @property {ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
  * @property {string} [parentalRelationshipOther] - User-defined parental relationship to the child for this appointment
  * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
@@ -52,8 +52,8 @@ import {
  * @property {Date} [endAt] - Slot end time
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {ReplyDecision} fluDecision - whether to use nasal or injected flu vaccine
- * @property {boolean} fluAlternative - accept the alternative flu vaccine if nasal not suitable?
- * @property {boolean} mmrAlternative - want the vaccine that doesn't contain gelatine?
+ * @property {boolean} [fluAlternative] - accept the alternative flu vaccine if nasal not suitable?
+ * @property {boolean} [mmrAlternative] - want the vaccine that doesn't contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {boolean} archived - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment

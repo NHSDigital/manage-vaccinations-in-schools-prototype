@@ -16,11 +16,11 @@ import {
 /**
  * @class Upload
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
- * @property {string} id - Upload ID
- * @property {UploadStatus} status - Upload status
- * @property {UploadType} type - Upload type
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
+ * @property {string} [id] - Upload ID
+ * @property {UploadStatus} [status] - Upload status
+ * @property {UploadType} [type] - Upload type
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created upload
  * @property {Date} [updatedAt] - Updated date

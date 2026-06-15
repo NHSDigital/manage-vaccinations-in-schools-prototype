@@ -57,9 +57,9 @@ import {
 /**
  * @class Session
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
- * @property {string} id - ID
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
+ * @property {string} [id] - ID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created session
  * @property {Date} [date] - Dates

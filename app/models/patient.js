@@ -41,7 +41,7 @@ import {
  * @class Patient record
  * @augments Child
  * @param {object} options - Options
- * @param {object} [context] - Global context
+ * @param {object} [context] - Context
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
@@ -50,7 +50,7 @@ import {
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
- * @property {Array<AuditEvent>} events - Events
+ * @property {Array<AuditEvent>} [events] - Events
  * @property {Array<string>} [reply_uuids] - Reply IDs
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs

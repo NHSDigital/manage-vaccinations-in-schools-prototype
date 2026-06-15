@@ -16,26 +16,26 @@ import {
  * @param {object} [context] - Context
  * @property {object} [context] - Context
  * @property {ProgrammeType} type - Programme type
- * @property {string} id - ID
- * @property {boolean} hidden - Hidden
- * @property {string} name - Name
- * @property {string} title - Title
+ * @property {string} [id] - ID
+ * @property {boolean} [hidden] - Hidden
+ * @property {string} [name] - Name
+ * @property {string} [title] - Title
  * @property {object} [emailNames] - Email names
- * @property {object} information - NHS.UK programme information
- * @property {object} guidance - GOV.UK guidance
+ * @property {object} [information] - NHS.UK programme information
+ * @property {object} [guidance] - GOV.UK guidance
  * @property {Array<string>} [sequence] - Vaccine dose sequence
  * @property {Array<string>} [immunocompromisedSequence] - Vaccine dose sequence for immunocompromised patients
- * @property {string} sequenceDefault - Default vaccine dose sequence
+ * @property {string} [sequenceDefault] - Default vaccine dose sequence
  * @property {Array<number>} [yearGroups] - All eligible year groups for this programme
  * @property {number} [targetYearGroup] - Year group for routine vaccination
- * @property {boolean} ttcv - Tetanus-toxoid containing vaccination programme
- * @property {boolean} nhseSyncable - Vaccination records can be synced
- * @property {Array<string>} vaccine_snomeds - Vaccines administered
+ * @property {boolean} [ttcv] - Tetanus-toxoid containing vaccination programme
+ * @property {boolean} [nhseSyncable] - Vaccination records can be synced
+ * @property {Array<string>} [vaccine_snomeds] - Vaccines administered
  */
 export class Programme {
   constructor(options, context) {
     this.context = context
-    this.type = options.type
+    this.type = options?.type
     this.id = options?.id
     this.hidden = options?.hidden || false
     this.name = options?.name

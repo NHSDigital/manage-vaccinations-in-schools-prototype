@@ -15,7 +15,7 @@ import {
  * @class PDS record
  * @augments Child
  * @param {object} options - Options
- * @param {object} [context] - Global context
+ * @param {object} [context] - Context
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive

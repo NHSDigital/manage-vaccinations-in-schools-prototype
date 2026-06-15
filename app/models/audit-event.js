@@ -25,11 +25,11 @@ import {
 /**
  * @class Audit event
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created event
- * @property {string} name - Name
+ * @property {string} [name] - Name
  * @property {string} [note] - Note
  * @property {AuditEventType} [type] - Audit event type
  * @property {object} [messageRecipient] - Message recipient
@@ -48,8 +48,8 @@ export class AuditEvent {
     this.context = context
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.createdBy_uid = options?.createdBy_uid
-    this.name = options.name
-    this.note = options.note
+    this.name = options?.name
+    this.note = options?.note
     this.type = options?.type
     this.messageRecipient = options?.messageRecipient
     this.messageTemplate = options?.messageTemplate

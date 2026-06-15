@@ -5,9 +5,9 @@ import { today } from '../utils/date.js'
 /**
  * @class Instruction
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
- * @property {string} uuid - UUID
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
+ * @property {string} [uuid] - UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who performed instruction
  * @property {InstructionOutcome} [outcome] - Outcome

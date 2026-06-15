@@ -9,11 +9,11 @@ import { formatCode, stringToArray, stringToBoolean } from '../utils/string.js'
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context
- * @property {string} uuid - Clinic booking UUID
- * @property {string} bookingReference - Booking reference number
- * @property {Array<string>} invited_programme_ids - IDs of programmes for which child was invited
- * @property {Contact} contact - Contact details for the booking; see appointments for parental relationship details
- * @property {Array<ClinicAppointment>} appointments - the appointments created in this booking (one per child)
+ * @property {string} [uuid] - Clinic booking UUID
+ * @property {string} [bookingReference] - Booking reference number
+ * @property {Array<string>} [invited_programme_ids] - IDs of programmes for which child was invited
+ * @property {Contact} [contact] - Contact details for the booking; see appointments for parental relationship details
+ * @property {Array<ClinicAppointment>} [appointments] - Appointments created in this booking (one per child)
  */
 export class ClinicBooking {
   constructor(options, context) {

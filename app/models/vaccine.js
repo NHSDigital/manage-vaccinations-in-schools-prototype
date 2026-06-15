@@ -14,34 +14,34 @@ import {
  * @param {object} options - Options
  * @param {object} [context] - Context
  * @property {object} [context] - Context
- * @property {string} snomed - SNOMED code
- * @property {string} type - Type
- * @property {string} brand - Brand
- * @property {string} manufacturer - Manufacturer
+ * @property {string} [snomed] - SNOMED code
+ * @property {string} [type] - Type
+ * @property {string} [brand] - Brand
+ * @property {string} [manufacturer] - Manufacturer
  * @property {object} [leaflet] - Leaflet
- * @property {number} dose - Dosage
- * @property {VaccineCriteria} criteria - Criteria
- * @property {VaccineMethod} method - Method
+ * @property {number} [dose] - Dosage
+ * @property {VaccineCriteria} [criteria] - Criteria
+ * @property {VaccineMethod} [method] - Method
  * @property {VaccinationProtocol} [delegationProtocol] - Delegation protocol
- * @property {Array<VaccineSideEffect>} sideEffects - Side effects
- * @property {object} healthQuestions - Health questions
- * @property {Array<PreScreenQuestion>} preScreenQuestions - Pre-screening questions
+ * @property {Array<VaccineSideEffect>} [sideEffects] - Side effects
+ * @property {object} [healthQuestions] - Health questions
+ * @property {Array<PreScreenQuestion>} [preScreenQuestions] - Pre-screening questions
  */
 export class Vaccine {
   constructor(options, context) {
     this.context = context
     this.snomed = options?.snomed || faker.string.numeric(14)
     this.type = options?.type
-    this.brand = options.brand
-    this.manufacturer = options.manufacturer
-    this.leaflet = options.leaflet
-    this.dose = options.dose
-    this.criteria = options.criteria
-    this.method = options.method
-    this.delegationProtocol = options.delegationProtocol
-    this.sideEffects = options.sideEffects
-    this.healthQuestions = options.healthQuestions
-    this.preScreenQuestions = options.preScreenQuestions
+    this.brand = options?.brand
+    this.manufacturer = options?.manufacturer
+    this.leaflet = options?.leaflet
+    this.dose = options?.dose
+    this.criteria = options?.criteria
+    this.method = options?.method
+    this.delegationProtocol = options?.delegationProtocol
+    this.sideEffects = options?.sideEffects
+    this.healthQuestions = options?.healthQuestions
+    this.preScreenQuestions = options?.preScreenQuestions
   }
 
   /**

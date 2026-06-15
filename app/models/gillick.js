@@ -4,7 +4,7 @@ import { stringToBoolean } from '../utils/string.js'
 
 /**
  * @class Gillick assessment
- * @property {string} createdAt - Created date
+ * @property {string} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created session
  * @property {Date} [updatedAt] - Updated date
  * @property {boolean} [q1] - Question 1

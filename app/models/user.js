@@ -4,7 +4,7 @@ import { formatCode, formatLink } from '../utils/string.js'
 
 /**
  * @class User
- * @property {string} uid - User ID
+ * @property {string} [uid] - User ID
  * @property {string} [firstName] - First/given name
  * @property {string} [lastName] - Last/family name
  * @property {string} [email] - Email address

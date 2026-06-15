@@ -36,11 +36,11 @@ import {
 /**
  * @class Patient Programme
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
  * @property {boolean} [invitedToClinic] - Invited to clinic
- * @property {string} patient_uuid - Patient UUID
- * @property {string} programme_id - Programme ID
+ * @property {string} [patient_uuid] - Patient UUID
+ * @property {string} [programme_id] - Programme ID
  */
 export class PatientProgramme {
   constructor(options, context) {

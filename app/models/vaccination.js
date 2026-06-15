@@ -51,9 +51,9 @@ import {
 /**
  * @class Vaccination
  * @param {object} options - Options
- * @param {object} [context] - Global context
- * @property {object} [context] - Global context
- * @property {string} uuid - UUID
+ * @param {object} [context] - Context
+ * @property {object} [context] - Context
+ * @property {string} [uuid] - UUID
  * @property {Date} [createdAt] - Created date
  * @property {object} [createdAt_] - Created date (from `dateInput`)
  * @property {string} [createdBy_uid] - User who performed vaccination
