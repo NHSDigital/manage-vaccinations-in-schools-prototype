@@ -176,8 +176,7 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
 }
 
 .app-card__data {
-  @include nhsuk-font-size(48);
-  @include nhsuk-typography-weight-bold;
+  @include nhsuk-font(48, $weight: bold);
 }
 
 .nhsuk-card--feature > .nhsuk-card__content {
