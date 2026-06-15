@@ -76,7 +76,7 @@ export const downloadController = {
 
   /**
    * @param {string} [type] - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   new(type) {
     return (request, response) => {

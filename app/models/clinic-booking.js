@@ -45,8 +45,8 @@ export class ClinicBooking {
   /**
    * Add a new appointment to this clinic booking
    *
-   * @param {object} options - any specific values to give the new period
-   * @returns {ClinicAppointment} - the new clinic appointment
+   * @param {object} options - Any specific values to give the new period
+   * @returns {ClinicAppointment} New clinic appointment
    */
   addAppointment(options) {
     const appointment = new ClinicAppointment(options, this.context)
@@ -88,8 +88,8 @@ export class ClinicBooking {
   /**
    * Get the appointment with the given unique ID
    *
-   * @param {string|string[]} appointment_uuid - the unique ID of the appointment to get
-   * @returns {ClinicAppointment} - the requested clinic appointment
+   * @param {string|string[]} appointment_uuid - Unique ID of appointment to get
+   * @returns {ClinicAppointment} Requested clinic appointment
    */
   findAppointment(appointment_uuid) {
     return this.appointments.find(

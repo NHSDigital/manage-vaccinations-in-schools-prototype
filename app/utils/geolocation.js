@@ -1,10 +1,10 @@
 import { LocationSearchType } from '../enums.js'
 
 /**
- * Get the type of location represented by the location search term
+ * Get the type of location represented by location search term
  *
- * @param {string} searchTerm - the location that the user entered
- * @returns {LocationSearchType|undefined} the type of value entered by the user
+ * @param {string} searchTerm - Location that user entered
+ * @returns {LocationSearchType|undefined} Type of value entered by user
  */
 export const getLocationSearchType = (searchTerm) => {
   if (!searchTerm) {

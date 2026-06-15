@@ -175,7 +175,7 @@ export class Child {
    *
    * Note: This property makes no assessment of their <b>need</b> for a vaccination
    *
-   * @returns {boolean} - true if can be offered MMRV, or false if they should only receive MMR
+   * @returns {boolean} Can be offered MMRV (`true`) or should only receive MMR (`false`)
    */
   get canBeOfferedMmrv() {
     return this.dob?.getFullYear() >= 2020

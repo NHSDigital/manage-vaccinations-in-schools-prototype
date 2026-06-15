@@ -29,8 +29,8 @@ const ALLOWED_VALUES_FOR_MONTHS = [
 /**
  * Normalise month input as words to it’s number from 1 to 12
  *
- * @param {string} input - month in words or as a number with or without a leading 0
- * @returns {string|undefined} number of the month without a leading 0 or undefined
+ * @param {string} input - Month in words or as a number with or without a leading 0
+ * @returns {string|undefined} Number of the month without a leading 0 or undefined
  */
 function parseMonth(input) {
   if (input == null) return
@@ -395,8 +395,8 @@ export function getYearGroup(date, academicYear) {
 /**
  * Strip the seconds and milliseconds from the given time
  *
- * @param {Date} time - the time slot time to standardise
- * @returns {Date} the result stripping seconds and milliseconds
+ * @param {Date} time - Time slot time to standardise
+ * @returns {Date} Result stripping seconds and milliseconds
  */
 function getPreciseSlotTime(time) {
   const preciseTime = new Date(time)
@@ -405,11 +405,10 @@ function getPreciseSlotTime(time) {
 }
 
 /**
- *
- * @param {Array<Date>} availableSlots - the times of all booked appointments in a session or period
- * @param {Array<Date>} bookedSlots - the times of all slots in the session or period
- * @param {number} appointmentLength - the length of a slot in minutes
- * @returns {Array<Date>} an array of the booked slot times that can be extended
+ * @param {Array<Date>} availableSlots - Times of all booked appointments in a session or period
+ * @param {Array<Date>} bookedSlots - Times of all slots in the session or period
+ * @param {number} appointmentLength - Length of a slot in minutes
+ * @returns {Array<Date>} Array of the booked slot times that can be extended
  */
 export function getExtendableAppointmentTimes(
   availableSlots,

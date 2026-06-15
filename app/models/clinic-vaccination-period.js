@@ -124,7 +124,7 @@ export class ClinicVaccinationPeriod {
    * Get all appointment slot start times, replicated for the number of vaccinators
    *
    * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
-   * @returns {Array<Date>} - all appointment slot start times
+   * @returns {Array<Date>} All appointment slot start times
    */
   allAppointmentTimes(appointmentLengthInMinutes) {
     const totalMinutesInPeriod =

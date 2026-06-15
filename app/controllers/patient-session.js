@@ -195,7 +195,7 @@ export const patientSessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   showForm(type) {
     return (request, response) => {
@@ -260,7 +260,7 @@ export const patientSessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   gillick(type) {
     return (request, response) => {

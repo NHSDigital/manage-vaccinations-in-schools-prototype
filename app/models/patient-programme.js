@@ -199,7 +199,7 @@ export class PatientProgramme {
   /**
    * Can the child be vaccinated (assuming we get the right consent and triage outcomes, if required)?
    *
-   * @returns {boolean} - true if it's ok to invite to clinic for a vaccination based on patient status, or false otherwise
+   * @returns {boolean} OK to invite to clinic for a vaccination based on patient status (`true`), or otherwise (`false`)
    */
   get canVaccinateAtClinic() {
     const { status } = this
@@ -236,7 +236,7 @@ export class PatientProgramme {
   /**
    * Does the patient still have a chance to get vaccinated at school this academic year?
    *
-   * @returns {boolean} - true if there's still a chance for school vaccination, or false otherwise
+   * @returns {boolean} If there's still a chance for school vaccination (`true`), or otherwise (`false`)
    */
   get schoolSessionPending() {
     const school = this.patient?.school
@@ -257,7 +257,7 @@ export class PatientProgramme {
   /**
    * Get the number of clinics scheduled for this programme
    *
-   * @returns {number} - the number of scheduled clinics targeting this programme
+   * @returns {number} Number of scheduled clinics targeting this programme
    */
   get scheduledClinicCount() {
     const scheduledClinics = Session.findAll(this.context)

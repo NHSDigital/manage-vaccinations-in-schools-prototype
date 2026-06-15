@@ -332,7 +332,7 @@ export class PatientSession {
   /**
    * Get the clinic appointment associated with this patient session
    *
-   * @returns {ClinicAppointment|undefined} - the appointment if found, or undefined otherwise
+   * @returns {ClinicAppointment|undefined} Appointment if found, or undefined otherwise
    */
   get clinicAppointment() {
     if (this.session.type !== SessionType.Clinic) {

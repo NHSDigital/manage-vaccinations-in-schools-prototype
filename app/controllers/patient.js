@@ -770,7 +770,7 @@ export const patientController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   vaccination(type) {
     return (request, response) => {

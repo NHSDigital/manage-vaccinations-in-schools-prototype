@@ -123,9 +123,9 @@ export const getSessionYearGroups = (school_id, sessionPresets) => {
 /**
  * Remove a list of slots from a wider list of all possible slots
  *
- * @param {Array<Date>} allSlots - the full set of time slots
- * @param {Array<Date>} slotsToRemove - the slots to remove from allSlots
- * @returns {Array<Date>} - an array of the remaining slots
+ * @param {Array<Date>} allSlots - Full set of time slots
+ * @param {Array<Date>} slotsToRemove - Slots to remove from allSlots
+ * @returns {Array<Date>} Array of remaining slots
  */
 export function removeSlots(allSlots, slotsToRemove) {
   const slotRemovalCounts = new Map()

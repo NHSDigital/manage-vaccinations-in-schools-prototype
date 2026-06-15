@@ -102,7 +102,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -151,7 +151,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -187,7 +187,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   readForm(type) {
     return (request, response, next) => {

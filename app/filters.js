@@ -187,8 +187,8 @@ export default (env) => {
   /**
    * Rebuild the querystring from the request.query object
    *
-   * @param {object} query - the request.query object
-   * @returns {string} - the rebuilt query string
+   * @param {object} query - Request.query object
+   * @returns {string} Rebuilt query string
    */
   filters.asQueryString = function (query) {
     return queryToQueryString(query)

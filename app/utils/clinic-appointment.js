@@ -249,8 +249,8 @@ export const getHealthQuestionPaths = (
  * Get a set of radio items to offer the user when entering address details of
  * the 2nd and subsequent children
  *
- * @param {Array<ClinicAppointment>} appointments - the appointments we're creating
- * @returns {Array<object>} - a set of radio items to display in the address selection page
+ * @param {Array<ClinicAppointment>} appointments - Appointments we’re creating
+ * @returns {Array<object>} Set of radio items to display on address selection page
  */
 export const getPreviousAddressItems = (appointments) => {
   let previousAddressItems = appointments
@@ -285,9 +285,9 @@ export const getPreviousAddressItems = (appointments) => {
  * Get a set of radio items to offer the user when choosing a clinic for
  * the 2nd and subsequent children
  *
- * @param {Array<ClinicAppointment>} appointments - the appointments we're creating
- * @param {object} sessionContext - the context on which the sessions are stored
- * @returns {Array<object>} - a set of radio items to display in the address selection page
+ * @param {Array<ClinicAppointment>} appointments - Appointments we’re creating
+ * @param {object} sessionContext - Context on which the sessions are stored
+ * @returns {Array<object>} Set of radio items to display on the address selection page
  */
 export const getPreviousSessionItems = (appointments, sessionContext) => {
   let previousClinicSessions = appointments

@@ -18,7 +18,7 @@ export const clinicController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   form(type) {
     return (request, response) => {
@@ -28,7 +28,7 @@ export const clinicController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   action(type) {
     return (request, response) => {

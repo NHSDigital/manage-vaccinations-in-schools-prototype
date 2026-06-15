@@ -8,7 +8,7 @@ import { Session } from '../models.js'
  * Generate a URL to book into a clinic for vaccination in the given presets' programmes
  *
  * @param {Array<string>} sessionPresetNames - the presets for which the child has been invited to clinic
- * @returns {string} - path to the start of the clinic booking journey for the given programme
+ * @returns {string} Path to start of clinic booking journey for given programme
  */
 export const getClinicInviteUrlForPresets = (sessionPresetNames) => {
   const sessionPresets = SessionPresets.filter((preset) =>
@@ -24,8 +24,8 @@ export const getClinicInviteUrlForPresets = (sessionPresetNames) => {
 /**
  * Generate a URL to book into a clinic for vaccination in the given programmes
  *
- * @param {Array<string>} programme_ids - the programmes for which the child has been invited to clinic
- * @returns {string} - path to the start of the clinic booking journey for the given programme
+ * @param {Array<string>} programme_ids - Programmes for which child has been invited to clinic
+ * @returns {string} Path to start of clinic booking journey for given programme
  */
 export const getClinicInviteUrlForProgrammes = (programme_ids) => {
   const searchParams = new URLSearchParams()
@@ -59,10 +59,10 @@ export const getBookableClinicSessions = (context, programme_ids) => {
 /**
  * Get the clinic location options to present to the user
  *
- * @param {object} context - the data context for the models to check
- * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
- * @param {boolean|undefined} fakeOutOfArea - flag to say whether to pretend all clinics are a long way away
- * @returns {Array<object>} a set of radio buttons to present to the user, one per location
+ * @param {object} context - Data context for the models to check
+ * @param {Array<string>} programme_ids - Programmes that must be served at the clinics
+ * @param {boolean|undefined} fakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
+ * @returns {Array<object>} Set of radio buttons to present to the user, one per location
  */
 export const getScheduledClinicLocationItems = (
   context,

@@ -90,9 +90,9 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get the booking that this appointment's part of
+   * Get the booking that this appointment’s part of
    *
-   * @returns {ClinicBooking|undefined} - the booking that this is part of
+   * @returns {ClinicBooking|undefined} Booking that this is part of
    */
   get booking() {
     try {
@@ -107,7 +107,7 @@ export class ClinicAppointment {
   /**
    * Get the session in which this appointment has been (or will be) booked
    *
-   * @returns {Session|undefined} - the session in which this appointment is booked
+   * @returns {Session|undefined} Session in which this appointment is booked
    */
   get session() {
     try {
@@ -137,7 +137,7 @@ export class ClinicAppointment {
   /**
    * Get all patient sessions associated with this appointment
    *
-   * @returns {Array<PatientSession>} - the patient sessions for the programmes booked in for
+   * @returns {Array<PatientSession>} Patient sessions for the programmes booked in for
    */
   get patientSessions() {
     if (!this.patient_uuid) {
@@ -500,7 +500,7 @@ export class ClinicAppointment {
   /**
    * Get URI, without the context of the session
    *
-   * @returns {object} an object with various URIs for this appointment
+   * @returns {object} Object with various URIs for this appointment
    */
   get uri() {
     return {

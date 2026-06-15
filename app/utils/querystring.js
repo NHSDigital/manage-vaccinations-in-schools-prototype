@@ -1,8 +1,8 @@
 /**
  * Rebuild the querystring from a request.query object
  *
- * @param {object} query - the request.query object
- * @returns {string} - the rebuilt query string
+ * @param {object} query - request.query object
+ * @returns {string} Rebuilt query string
  */
 export function queryToQueryString(query) {
   if (!query) {

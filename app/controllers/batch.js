@@ -21,7 +21,7 @@ export const batchController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} - Request handler
+   * @returns {RequestHandler} Request handler
    */
   action(type) {
     return (request, response) => {

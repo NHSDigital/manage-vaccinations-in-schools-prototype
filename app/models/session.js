@@ -369,8 +369,8 @@ export class Session {
   /**
    * Get the vaccination period with the given UUID in this clinic session
    *
-   * @param {string} period_uuid - the unique ID of the vaccination period to return
-   * @returns {ClinicVaccinationPeriod} - the vaccination period matching the given UUID
+   * @param {string} period_uuid - Unique ID of the vaccination period to return
+   * @returns {ClinicVaccinationPeriod} Vaccination period matching given UUID
    */
   getVaccinationPeriod(period_uuid) {
     if (this.type !== SessionType.Clinic) {
@@ -385,8 +385,8 @@ export class Session {
   /**
    * Add a new vaccination period to this clinic session
    *
-   * @param {object} options - any specific values to give the new period
-   * @returns {ClinicVaccinationPeriod} - the new vaccination period
+   * @param {object} options - Any specific values to give the new period
+   * @returns {ClinicVaccinationPeriod} New vaccination period
    */
   addVaccinationPeriod(options) {
     if (this.type !== SessionType.Clinic) {
@@ -433,7 +433,7 @@ export class Session {
    * appointment, so we're really returning the session's maximum possible
    * appointment count.
    *
-   * @returns {number} - total number of appointment slots in this clinic session
+   * @returns {number} Total number of appointment slots in this clinic session
    */
   get totalAppointmentCount() {
     return this.allAppointmentTimes.length
@@ -442,7 +442,7 @@ export class Session {
   /**
    * How many appointment slots remain unbooked in this clinic session?
    *
-   * @returns {number} - the number of appointment slots remaining in this clinic session
+   * @returns {number} Number of appointment slots remaining in this clinic session
    */
   get availableAppointmentCount() {
     return this.availableAppointmentTimes.length
@@ -451,7 +451,7 @@ export class Session {
   /**
    * Get the number of days contacts have left to book their child into this clinic
    *
-   * @returns {number} - the number of days before appointment booking closes
+   * @returns {number} Number of days before appointment booking closes
    */
   get daysLeftToBook() {
     if (this.status !== SessionStatus.Planned) {
@@ -471,7 +471,7 @@ export class Session {
   /**
    * Does the clinic have staffing levels that vary across the session?
    *
-   * @returns {boolean} true if staffing levels vary, or false otherwise
+   * @returns {boolean} Staffing levels vary (`true`), or otherwise (`false`)
    */
   get hasVariableVaccinatorCounts() {
     if (this.type !== SessionType.Clinic) {
@@ -487,7 +487,7 @@ export class Session {
   /**
    * Get the maximum number of vaccinators working in this clinic
    *
-   * @returns {number} the maximum number of nurses vaccinating at any point in this clinic
+   * @returns {number} Maximum number of nurses vaccinating at any point in this clinic
    */
   get maximumVaccinatorCount() {
     if (this.type !== SessionType.Clinic) {
@@ -503,7 +503,7 @@ export class Session {
   /**
    * Get a list of all available appointment slot times, including parallel appointments
    *
-   * @returns {Array<Date>} - a list of appointment times available to book
+   * @returns {Array<Date>} List of appointment times available to book
    */
   get availableAppointmentTimes() {
     return removeSlots(this.allAppointmentTimes, this.bookedAppointmentTimes)
@@ -512,7 +512,7 @@ export class Session {
   /**
    * Get a list of all appointment slot times, booked or otherwise, including parallel appointments
    *
-   * @returns {Array<Date>} - the start times of all possible appointments in this clinic
+   * @returns {Array<Date>} Start times of all possible appointments in this clinic
    */
   get allAppointmentTimes() {
     const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
@@ -524,7 +524,7 @@ export class Session {
   /**
    * Get a list of all booked appointment time slots, including parallel appointments
    *
-   * @returns {Array<Date>} - a list of appointment times booked so far
+   * @returns {Array<Date>} List of appointment times booked so far
    */
   get bookedAppointmentTimes() {
     const appointments = this.appointments
@@ -536,7 +536,7 @@ export class Session {
   /**
    * For a clinic session, get the percentage of slots already booked
    *
-   * @returns {number} - the (rounded) percentage of slots booked
+   * @returns {number} (Rounded) percentage of slots booked
    */
   get percentBooked() {
     if (this.type !== SessionType.Clinic) {
@@ -558,7 +558,7 @@ export class Session {
   /**
    * Does the clinic have any active (non-archived) appointments booked?
    *
-   * @returns {boolean} true if there are active appointments, false otherwise
+   * @returns {boolean} Active appointments (`true`), or otherwise (`false`)
    */
   get hasAppointments() {
     if (this.type !== SessionType.Clinic) {
@@ -579,7 +579,7 @@ export class Session {
   /**
    * Get all appointments for this clinic
    *
-   * @returns {Array<ClinicAppointment>} - the appointments made for this session
+   * @returns {Array<ClinicAppointment>} Appointments made for this session
    */
   get appointments() {
     if (this.type !== SessionType.Clinic) {
@@ -601,8 +601,8 @@ export class Session {
   /**
    * Get the clinic appointments that will involve vaccination to the given programme
    *
-   * @param {string} programme_id - the ID of the programme whose appointments we're interested in
-   * @returns {Array<ClinicAppointment>} the clinic appointments that include vaccination for the given programme
+   * @param {string} programme_id - ID of programme whose appointments we’re interested in
+   * @returns {Array<ClinicAppointment>} Clinic appointments that include vaccination for the given programme
    */
   programmeAppointments(programme_id) {
     return this.appointments.filter((appointment) =>
@@ -613,7 +613,7 @@ export class Session {
   /**
    * Get all appointments for this clinic with unmatched child details
    *
-   * @returns {Array<ClinicAppointment>} - the appointments made for unmatched children
+   * @returns {Array<ClinicAppointment>} Appointments made for unmatched children
    */
   get unmatchedAppointments() {
     const appointments = this.appointments
