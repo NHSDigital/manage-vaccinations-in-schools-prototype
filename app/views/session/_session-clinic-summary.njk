@@ -41,16 +41,6 @@
       data: session.daysLeftToBook
     }) }}
   </div>
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: __("session.tally.appointments.unmatched.label"),
-      headingLevel: 4,
-      colour: "orange" if session.unmatchedAppointments.length > 0,
-      compact: true,
-      data: session.unmatchedAppointments.length,
-      href: session.uri + "/unmatched-appointments"
-    }) }}
-  </div>
   {% for programme in session.bookedProgrammes %}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({

@@ -7,23 +7,36 @@
 %}
 
 {% block content %}
+  {# Warn about unmatched consent responses #}
   {{ warningCallout({
     heading: __("consent.title"),
     html: link(session.uri + "/consents", __mf("consent.count", {
       count: session.consents.length
     })) | nhsukMarkdown
-  }) if session.consents.length }}
+  }) if session.type === SessionType.School and session.consents.length }}
 
+  {# Warn about unmatched clinic appointments #}
+  {{ warningCallout({
+    heading: __("appointments.warning.title"),
+    html: link(session.uri + "/unmatched-appointments", __mf("appointments.warning.count", {
+      count: session.unmatchedAppointments.length
+    })) | nhsukMarkdown
+  }) if session.type === SessionType.Clinic and session.unmatchedAppointments.length > 0 }}
+
+  {# Programme tabs (plus clinic details for clinic sessions) #}
   {% include "session/_session-programme-summary.njk" %}
 
+  {# Vaccinations given in this session #}
   {% if session.isActive or session.isCompleted %}
     {% include "session/_session-vaccinated-summary.njk" %}
   {% endif %}
 
+  {# Action required #}
   {% if not session.isUnplanned %}
     {% include "session/_session-activity-summary.njk" %}
   {% endif %}
 
+  {# Session details (and edit/cancel actions, plus offline sheet) #}
   {% call card({
     heading: __("session.summary"),
     headingLevel: 3,
