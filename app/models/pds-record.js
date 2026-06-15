@@ -145,14 +145,12 @@ export class PDSRecord extends Child {
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - PDS record UUID
+   * @param {string} uuid - PDS record UUID
    * @param {object} context - Context
    * @returns {PDSRecord|undefined} PDS record
    * @static
    */
   static findOne(uuid, context) {
-    uuid = String(uuid)
-
     if (context?.pdsRecords?.[uuid]) {
       return new PDSRecord(context.pdsRecords[uuid], context)
     }
@@ -179,15 +177,13 @@ export class PDSRecord extends Child {
   /**
    * Update
    *
-   * @param {string|string[]} uuid - PDS record UUID
+   * @param {string} uuid - PDS record UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {PDSRecord} Updated PDS record
    * @static
    */
   static update(uuid, updates, context) {
-    uuid = String(uuid)
-
     const updatedPdsRecord = _.merge(PDSRecord.findOne(uuid, context), updates)
 
     // Remove patient context

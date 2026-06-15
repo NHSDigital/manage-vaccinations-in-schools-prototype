@@ -195,14 +195,12 @@ export class School extends Location {
   /**
    * Find one
    *
-   * @param {string|string[]} id - School ID
+   * @param {string} id - School ID
    * @param {object} context - Context
    * @returns {School|undefined} School
    * @static
    */
   static findOne(id, context) {
-    id = String(id)
-
     if (context?.schools?.[id]) {
       return new School(context.schools[id], context)
     }
@@ -234,15 +232,13 @@ export class School extends Location {
   /**
    * Update
    *
-   * @param {string|string[]} id - School ID
+   * @param {string} id - School ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {School} Updated school
    * @static
    */
   static update(id, updates, context) {
-    id = String(id)
-
     const updatedSchool = _.mergeWith(
       School.findOne(id, context),
       updates,
@@ -274,13 +270,11 @@ export class School extends Location {
   /**
    * Delete
    *
-   * @param {string|string[]} id - School ID
+   * @param {string} id - School ID
    * @param {object} context - Context
    * @static
    */
   static delete(id, context) {
-    id = String(id)
-
     const school = School.findOne(id, context)
 
     // Remove from team

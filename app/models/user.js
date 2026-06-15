@@ -105,14 +105,12 @@ export class User {
   /**
    * Find one
    *
-   * @param {string|string[]} uid - User UID
+   * @param {string} uid - User UID
    * @param {object} context - Context
    * @returns {User|undefined} User
    * @static
    */
   static findOne(uid, context) {
-    uid = String(uid)
-
     if (context?.users?.[uid]) {
       return new User(context.users[uid])
     }

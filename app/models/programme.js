@@ -287,14 +287,12 @@ export class Programme {
   /**
    * Find one
    *
-   * @param {string|string[]} id - Programme ID
+   * @param {string} id - Programme ID
    * @param {object} context - Context
    * @returns {Programme|undefined} Programme
    * @static
    */
   static findOne(id, context) {
-    id = String(id)
-
     if (context?.programmes?.[id]) {
       return new Programme(context.programmes[id], context)
     }

@@ -625,14 +625,12 @@ export class Vaccination {
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - Vaccination UUID
+   * @param {string} uuid - Vaccination UUID
    * @param {object} context - Context
    * @returns {Vaccination|undefined} Vaccination
    * @static
    */
   static findOne(uuid, context) {
-    uuid = String(uuid)
-
     if (context?.vaccinations?.[uuid]) {
       return new Vaccination(context.vaccinations[uuid], context)
     }
@@ -659,15 +657,13 @@ export class Vaccination {
   /**
    * Update
    *
-   * @param {string|string[]} uuid - Vaccination UUID
+   * @param {string} uuid - Vaccination UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Vaccination} Updated vaccination
    * @static
    */
   static update(uuid, updates, context) {
-    uuid = String(uuid)
-
     const updatedVaccination = Object.assign(
       Vaccination.findOne(uuid, context),
       updates

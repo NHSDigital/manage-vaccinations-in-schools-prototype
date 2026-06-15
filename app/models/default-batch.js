@@ -58,14 +58,12 @@ export class DefaultBatch extends Batch {
   /**
    * Find one
    *
-   * @param {string|string[]} id - Default batch ID
+   * @param {string} id - Default batch ID
    * @param {object} context - Context
    * @returns {DefaultBatch|undefined} Default batch
    * @static
    */
   static findOne(id, context) {
-    id = String(id)
-
     if (context?.defaultBatches?.[id]) {
       return new DefaultBatch(context.defaultBatches[id], context)
     }
@@ -74,24 +72,22 @@ export class DefaultBatch extends Batch {
   /**
    * Delete
    *
-   * @param {string|string[]} id - Default batch ID
+   * @param {string} id - Default batch ID
    * @param {object} context - Context
    * @static
    */
   static delete(id, context) {
-    delete context.defaultBatches[String(id)]
+    delete context.defaultBatches[id]
   }
 
   /**
    * Add default batch to session
    *
-   * @param {string|string[]} id - Batch ID
+   * @param {string} id - Batch ID
    * @param {string} session_id - Session ID
    * @param {object} context - Context
    */
   static addToSession(id, session_id, context) {
-    id = String(id)
-
     const batch = Batch.findOne(id, context)
     delete batch?.context
 

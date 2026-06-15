@@ -545,14 +545,12 @@ export class ClinicAppointment {
   /**
    * Find one
    *
-   * @param {string|string[]} appointment_uuid - ClinicAppointment UUID
+   * @param {string} appointment_uuid - Appointment UUID
    * @param {object} context - Context
    * @returns {ClinicAppointment|undefined} Clinic appointment
    * @static
    */
   static findOne(appointment_uuid, context) {
-    appointment_uuid = String(appointment_uuid)
-
     return ClinicAppointment.findAll(context).find(
       ({ uuid }) => uuid === appointment_uuid
     )

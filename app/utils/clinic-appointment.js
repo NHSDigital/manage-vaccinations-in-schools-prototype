@@ -10,7 +10,7 @@ import { camelToKebabCase, stringToArray } from './string.js'
 /**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
  *
- * @param {string|string[]} booking_uuid - the ID of the booking we're creating
+ * @param {string} booking_uuid - the ID of the booking we're creating
  * @param {object} sessionData - the request.session.data object
  * @param {Array<ClinicAppointment>} appointments - the appointments whose journeys we're mapping
  * @returns {object} An object containing all relevant pages and forks

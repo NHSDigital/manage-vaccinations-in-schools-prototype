@@ -307,14 +307,12 @@ export class Upload {
   /**
    * Find one
    *
-   * @param {string|string[]} id - Upload ID
+   * @param {string} id - Upload ID
    * @param {object} context - Context
    * @returns {Upload|undefined} Upload
    * @static
    */
   static findOne(id, context) {
-    id = String(id)
-
     if (context.uploads?.[id]) {
       return new Upload(context.uploads[id], context)
     }
@@ -341,15 +339,13 @@ export class Upload {
   /**
    * Update
    *
-   * @param {string|string[]} id - Upload ID
+   * @param {string} id - Upload ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Upload} Updated upload
    * @static
    */
   static update(id, updates, context) {
-    id = String(id)
-
     const updatedUpload = Object.assign(Upload.findOne(id, context), updates)
     updatedUpload.updatedAt = today()
 
@@ -368,11 +364,11 @@ export class Upload {
   /**
    * Delete
    *
-   * @param {string|string[]} id - Upload ID
+   * @param {string} id - Upload ID
    * @param {object} context - Context
    * @static
    */
   static delete(id, context) {
-    delete context.uploads[String(id)]
+    delete context.uploads[id]
   }
 }

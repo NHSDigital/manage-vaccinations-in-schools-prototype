@@ -136,14 +136,12 @@ export class Team {
   /**
    * Find one
    *
-   * @param {string|string[]} id - Team ID
+   * @param {string} id - Team ID
    * @param {object} context - Context
    * @returns {Team|undefined} Team
    * @static
    */
   static findOne(id, context) {
-    id = String(id)
-
     if (context?.teams?.[id]) {
       return new Team(context.teams[id], context)
     }
@@ -152,15 +150,13 @@ export class Team {
   /**
    * Update
    *
-   * @param {string|string[]} id - Team ID
+   * @param {string} id - Team ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Team} Team
    * @static
    */
   static update(id, updates, context) {
-    id = String(id)
-
     const updatedTeam = Object.assign(Team.findOne(id, context), updates)
     updatedTeam.updatedAt = today()
 
