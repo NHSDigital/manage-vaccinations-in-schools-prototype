@@ -126,7 +126,6 @@ export const getScreenOutcome = (patientSession) => {
   if (responsesToTriage.length === 0) {
     // Triage completed without any ‘Yes’ answers to health questions
     if (lastTriageNoteWithOutcome) {
-      console.log(lastTriageNoteWithOutcome)
       return lastTriageNoteWithOutcome.outcome
     }
 
