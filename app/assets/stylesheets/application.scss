@@ -1,5 +1,6 @@
 // Import NHS.UK frontend
 @forward "vendor/nhsuk-frontend" with (
+  $nhsuk-assets-path: "/nhsuk-frontend/assets/",
   $nhsuk-page-width: 1100px,
   $nhsuk-grid-widths: (
     one-fifth: 20%,
