@@ -128,7 +128,7 @@ export const vaccinationController = {
     data.patientSession_uuid = patientSession_uuid
 
     // Used logged in user as vaccinator, or default to example user
-    const createdBy_uid = account.uid || '000123456789'
+    const createdBy_uid = account.uid
     const role = account.role || UserRole.Nurse
 
     // Nurses always use PGD protocol

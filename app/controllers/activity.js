@@ -20,10 +20,11 @@ export const activityController = {
    * @type {RequestHandler}
    */
   list(request, response) {
+    const { account } = request.app.locals
     const { data } = request.session
 
     const auditEvent = (event) => new AuditEvent(event, data)
-    const createdBy_uid = Object.values(data.users)[0].uid
+    const createdBy_uid = account.uid
     const gillickCompetent = new Gillick({
       q1: true,
       q2: true,

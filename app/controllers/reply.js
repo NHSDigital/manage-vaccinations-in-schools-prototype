@@ -139,7 +139,7 @@ export const replyController = {
               patientSession_uuid: patientSession.uuid,
               programme_id: patientSession.programme.id,
               session_id: patientSession.session.id,
-              createdBy_uid: account.uid || '000123456789',
+              createdBy_uid: account.uid,
               createdAt_: vaccination.createdAt_,
               clinic_id: vaccination.clinic_id,
               school_id: vaccination.school_id,
