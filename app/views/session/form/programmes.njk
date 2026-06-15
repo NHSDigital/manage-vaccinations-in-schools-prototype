@@ -5,10 +5,12 @@
 {% block form %}
   {% set presetNameItems = [] %}
   {% for preset in SessionPresets %}
-    {% set presetNameItems = presetNameItems | push({
-      text: preset.programmeTypes | formatList,
-      value: preset.name
-    }) %}
+    {% if not preset.clinicOnly %}
+      {% set presetNameItems = presetNameItems | push({
+        text: preset.programmeTypes | formatList,
+        value: preset.name
+      }) %}
+    {% endif %}
   {% endfor %}
 
   {{ checkboxes({
