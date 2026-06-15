@@ -4,7 +4,8 @@ import { User } from '../models.js'
 export const authentication = (request, response, next) => {
   const { data } = request.session
 
-  const user = data.token ? new User(data.token) : {}
+  // Get user from logged in user, or default to last user in session data
+  const user = data.token ? new User(data.token) : User.findAll(data).at(-1)
 
   // Vaccine method(s)
   if ([UserRole.Nurse, UserRole.NursePrescriber].includes(user.role)) {
