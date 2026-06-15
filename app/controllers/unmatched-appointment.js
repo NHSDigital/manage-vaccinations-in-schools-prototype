@@ -46,7 +46,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const { session_id } = request.params
@@ -80,7 +80,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -89,14 +89,14 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.render('appointments/list')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readMatches(request, response, next) {
     let { hasMissingNhsNumber, q } = request.query
@@ -137,7 +137,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterMatches(request, response) {
     const { hasMissingNhsNumber, q } = request.body
@@ -156,7 +156,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   link(request, response) {
     const { appointment_uuid } = request.params
@@ -205,7 +205,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   add(request, response) {
     const { appointment_uuid } = request.params
@@ -257,7 +257,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   archive(request, response) {
     const { note } = request.body.appointment

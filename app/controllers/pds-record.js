@@ -7,14 +7,14 @@ import { getResults, getPagination } from '../utils/pagination.js'
 
 export const pdsRecordController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
     return response.redirect('/patients')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   start(request, response) {
     const { data } = request.session
@@ -47,7 +47,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { pdsRecord_uuid } = request.params
@@ -57,7 +57,7 @@ export const pdsRecordController = {
     // Update session data
     const pdsRecord = PDSRecord.update(
       pdsRecord_uuid,
-      data.wizard.pdsRecords[String(pdsRecord_uuid)],
+      data.wizard.pdsRecords[pdsRecord_uuid],
       data.wizard
     )
 
@@ -78,7 +78,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const { q } = request.query
@@ -108,7 +108,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
     const { pdsRecord_uuid } = request.params
@@ -157,7 +157,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     let { view } = request.params
@@ -166,7 +166,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response, next) {
     const { pdsRecord_uuid } = request.params

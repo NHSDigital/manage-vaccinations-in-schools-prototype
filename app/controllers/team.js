@@ -26,7 +26,7 @@ export const teamController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
     const { team_id } = request.params
@@ -35,7 +35,7 @@ export const teamController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -44,7 +44,7 @@ export const teamController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
     const { view } = request.params
@@ -65,7 +65,7 @@ export const teamController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readSchool(request, response, next) {
     const { school_id } = request.params
@@ -77,14 +77,14 @@ export const teamController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showSchool(request, response) {
     return response.render(`team/school`)
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const view = request.params.view || 'contact'
@@ -93,7 +93,7 @@ export const teamController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { team_id } = request.params

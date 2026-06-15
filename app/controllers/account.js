@@ -1,6 +1,6 @@
 export const accountController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   changeRole(request, response) {
     const { account } = request.app.locals
@@ -16,14 +16,14 @@ export const accountController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   cis2(request, response) {
     return response.redirect('/account/change-role')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   login(request, response) {
     const { account } = request.app.locals
@@ -37,7 +37,7 @@ export const accountController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   logout(request, response) {
     // Delete role selected when signing in via CIS2

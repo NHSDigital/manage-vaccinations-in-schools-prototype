@@ -17,7 +17,7 @@ import {
 
 export const activityController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     const { account } = request.app.locals

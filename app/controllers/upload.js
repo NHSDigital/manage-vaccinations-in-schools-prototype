@@ -17,7 +17,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     response.locals.uploads = Upload.findAll(request.session.data)
@@ -26,7 +26,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -35,7 +35,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     const { status, type } = request.query
@@ -71,7 +71,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -102,7 +102,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -118,7 +118,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -151,7 +151,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -162,7 +162,7 @@ export const uploadController = {
       // Update session data
       let upload = Upload.update(
         upload_id,
-        data.wizard.uploads[String(upload_id)],
+        data.wizard.uploads[upload_id],
         data.wizard
       )
 
@@ -187,7 +187,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -250,7 +250,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -259,7 +259,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { upload_id } = request.params
@@ -272,7 +272,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   delete(request, response) {
     const { upload_id } = request.params
@@ -287,7 +287,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   approve(request, response) {
     const { account } = request.app.locals
@@ -310,7 +310,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   removeRelationships(request, response) {
     const { __, upload } = response.locals

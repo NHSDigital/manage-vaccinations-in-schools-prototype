@@ -21,7 +21,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     response.locals.schools = School.findAll(request.session.data)
@@ -30,7 +30,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -40,7 +40,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   new(type) {
     return (request, response) => {
@@ -59,7 +59,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     const { phase, q } = request.query
@@ -95,7 +95,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -112,7 +112,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readPatients(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
@@ -281,7 +281,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterPatients(request, response) {
     const { school } = response.locals
@@ -323,7 +323,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readSessions(request, response) {
     const { school } = response.locals
@@ -334,7 +334,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   edit(request, response) {
     const { school_id } = request.params
@@ -356,7 +356,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -367,7 +367,7 @@ export const schoolController = {
       // Update session data
       const school = School.update(
         school_id,
-        data.wizard.schools[String(school_id)],
+        data.wizard.schools[school_id],
         data
       )
 
@@ -384,7 +384,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -442,7 +442,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -451,7 +451,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { school_id, view } = request.params
@@ -501,7 +501,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   action(type) {
     return (request, response) => {
@@ -510,7 +510,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   delete(request, response) {
     const { school_id } = request.params
@@ -527,7 +527,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   inviteToClinic(request, response) {
     const { school_id } = request.params

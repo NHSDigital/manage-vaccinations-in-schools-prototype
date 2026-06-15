@@ -3,7 +3,7 @@ import { Notice } from '../models.js'
 
 export const homeController = {
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
     const { account } = request.app.locals
@@ -16,7 +16,7 @@ export const homeController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   dashboard(request, response) {
     const { account } = request.app.locals
@@ -32,7 +32,7 @@ export const homeController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   start(request, response) {
     return response.render('start')

@@ -104,7 +104,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const sessions = Session.findAll(request.session.data)
@@ -120,7 +120,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     let { view } = request.params
@@ -135,7 +135,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -154,7 +154,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   advertise(request, response) {
     // Handling a GET for /sessions/advertise
@@ -200,7 +200,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateAdvertLink(request, response) {
     // Handling a POST for /sessions/advertise
@@ -222,7 +222,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showAdvertLink(request, response) {
     // Handling a GET for /sessions/advert-link
@@ -231,7 +231,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   copyAdvertLink(request, response) {
     // Handling a POST for /sessions/advert-link
@@ -244,7 +244,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     const { programme_id, q } = request.query
@@ -348,7 +348,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filter(request, response) {
     const params = new URLSearchParams()
@@ -378,7 +378,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readPatientSessions(request, response, next) {
     const { account } = request.app.locals
@@ -596,7 +596,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterPatientSessions(request, response) {
     const { session_id, view } = request.params
@@ -637,7 +637,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showAppointments(request, response, next) {
     const { session } = response.locals
@@ -715,7 +715,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   edit(request, response) {
     const { session_id } = request.params
@@ -762,7 +762,7 @@ export const sessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   update(type) {
     return (request, response) => {
@@ -791,7 +791,7 @@ export const sessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -912,7 +912,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -921,7 +921,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { session_id, view } = request.params
@@ -1011,7 +1011,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   giveInstructions(request, response) {
     const { account } = request.app.locals
@@ -1043,7 +1043,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   sendReminders(request, response) {
     const { __, session } = response.locals
@@ -1054,7 +1054,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   cancelSession(request, response) {
     const { __, session } = response.locals
@@ -1069,7 +1069,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   makeActive(request, response) {
     const { __, session } = response.locals
@@ -1083,7 +1083,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   inviteToClinic(request, response) {
     const { account } = request.app.locals
@@ -1145,7 +1145,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   startCancel(request, response) {
     const { session } = response.locals
@@ -1161,7 +1161,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showCancel(request, response) {
     const { view } = request.params
@@ -1186,7 +1186,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateCancel(request, response) {
     const { view } = request.params

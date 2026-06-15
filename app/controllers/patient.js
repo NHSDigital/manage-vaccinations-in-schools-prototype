@@ -81,7 +81,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
@@ -262,7 +262,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     const { patient } = response.locals
@@ -299,14 +299,14 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
     return response.render('patient/list')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -346,7 +346,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   edit(request, response) {
     const { patient_uuid } = request.params
@@ -367,7 +367,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { account } = request.app.locals
@@ -396,7 +396,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
     const { patient_uuid } = request.params
@@ -419,7 +419,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
     let { view } = request.params
@@ -434,7 +434,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
     const { patient_uuid } = request.params
@@ -447,7 +447,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   readProgramme(request, response, next) {
     const { programme_id } = request.params
@@ -467,14 +467,14 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showProgramme(request, response) {
     return response.render(`patient/programme`)
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   inviteOneToClinic(request, response) {
     const { patient_uuid } = request.params
@@ -513,7 +513,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   showInviteManyToClinic(request, response) {
     const { data } = request.session
@@ -593,7 +593,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   inviteManyToClinic(request, response) {
     let { clinicProgramme_ids } = request.body
@@ -651,7 +651,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   archive(request, response) {
     const { account } = request.app.locals
@@ -674,7 +674,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   note(request, response) {
     const { account } = request.app.locals
@@ -696,7 +696,7 @@ export const patientController = {
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   record(request, response) {
     const { account } = request.app.locals
@@ -774,7 +774,7 @@ export const patientController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {RequestHandler} Request handler
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   vaccination(type) {
     return (request, response) => {

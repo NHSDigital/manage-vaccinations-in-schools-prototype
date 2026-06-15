@@ -1,6 +1,9 @@
 import { Batch, DefaultBatch, Session, Vaccine } from '../models.js'
 
 export const defaultBatchController = {
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   read(request, response, next) {
     const { data } = request.session
     const { session_id, vaccine_snomed } = request.params
@@ -22,18 +25,18 @@ export const defaultBatchController = {
       next: `/sessions/${session_id}/record`
     }
 
-    next()
+    return next()
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
     return response.render('default-batch/edit')
   },
 
   /**
-   * @type {RequestHandler}
+   * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
     const { data } = request.session
