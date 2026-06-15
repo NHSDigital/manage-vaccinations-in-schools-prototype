@@ -29,7 +29,7 @@ import { formatYearGroup, stringToArray } from '../utils/string.js'
 
 export const patientController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, patient_uuid) {
     const { data } = request.session
@@ -80,6 +80,9 @@ export const patientController = {
     next()
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   readAll(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
     const { data } = request.session
@@ -255,11 +258,11 @@ export const patientController = {
     delete data.vaccineCriteria
     delete data.yearGroup
 
-    next()
+    return next()
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const { patient } = response.locals
@@ -296,14 +299,14 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('patient/list')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -343,7 +346,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   edit(request, response) {
     const { patient_uuid } = request.params
@@ -364,7 +367,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { patient_uuid } = request.params
@@ -389,7 +392,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readForm(request, response, next) {
     const { patient_uuid } = request.params
@@ -412,7 +415,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     let { view } = request.params
@@ -427,7 +430,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { patient_uuid } = request.params
@@ -440,7 +443,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readProgramme(request, response, next) {
     const { programme_id } = request.params
@@ -460,14 +463,14 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showProgramme(request, response) {
     return response.render(`patient/programme`)
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   inviteOneToClinic(request, response) {
     const { patient_uuid } = request.params
@@ -506,7 +509,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showInviteManyToClinic(request, response) {
     const { data } = request.session
@@ -586,7 +589,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   inviteManyToClinic(request, response) {
     let { clinicProgramme_ids } = request.body
@@ -644,7 +647,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   archive(request, response) {
     const { account } = request.app.locals
@@ -667,7 +670,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   note(request, response) {
     const { account } = request.app.locals
@@ -689,7 +692,7 @@ export const patientController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   record(request, response) {
     const { account } = request.app.locals
@@ -767,7 +770,7 @@ export const patientController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   vaccination(type) {
     return (request, response) => {
@@ -805,3 +808,7 @@ export const patientController = {
     }
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

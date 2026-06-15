@@ -11,7 +11,7 @@ import { getResults, getPagination } from '../utils/pagination.js'
 
 export const unmatchedAppointmentController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, appointment_uuid) {
     const { patient_uuid } = request.query
@@ -46,7 +46,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     const { session_id } = request.params
@@ -80,7 +80,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -89,14 +89,14 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('appointments/list')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readMatches(request, response, next) {
     let { hasMissingNhsNumber, q } = request.query
@@ -137,7 +137,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterMatches(request, response) {
     const { hasMissingNhsNumber, q } = request.body
@@ -156,7 +156,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   link(request, response) {
     const { appointment_uuid } = request.params
@@ -205,7 +205,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   add(request, response) {
     const { appointment_uuid } = request.params
@@ -257,7 +257,7 @@ export const unmatchedAppointmentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   archive(request, response) {
     const { note } = request.body.appointment
@@ -294,3 +294,7 @@ export const unmatchedAppointmentController = {
     return response.redirect(appointmentsPath)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

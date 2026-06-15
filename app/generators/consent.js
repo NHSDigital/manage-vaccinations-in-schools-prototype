@@ -19,10 +19,10 @@ import {
 /**
  * Generate fake consent
  *
- * @param {import('../models.js').Programme} programme - Programme
- * @param {import('../models.js').Session} session - Session
- * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @param {import('../models.js').Contact} contact - Contact
+ * @param {Programme} programme - Programme
+ * @param {Session} session - Session
+ * @param {PatientSession} patientSession - Patient session
+ * @param {Contact} contact - Contact
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
  * @returns {Consent|undefined} Consent
  */
@@ -148,3 +148,7 @@ export function generateConsent(
     session_id: session.id
   })
 }
+
+/**
+ * @import { Contact, PatientSession, Programme, Session } from '../models.js'
+ */

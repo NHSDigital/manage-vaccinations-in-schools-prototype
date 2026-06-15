@@ -10,7 +10,7 @@ import { today } from '../utils/date.js'
  * @property {string} uuid - UUID
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who performed instruction
- * @property {import('../enums.js').InstructionOutcome} [outcome] - Outcome
+ * @property {InstructionOutcome} [outcome] - Outcome
  * @property {string} [patientSession_uuid] - Patient session UUID
  * @property {string} [programme_id] - Programme ID
  */
@@ -58,3 +58,7 @@ export class Instruction {
     return createdInstruction
   }
 }
+
+/**
+ * @import { InstructionOutcome } from '../enums.js'
+ */

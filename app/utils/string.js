@@ -338,7 +338,7 @@ export function formatNhsNumber(string, invalid) {
 /**
  * Format contact name with optional display of contact details
  *
- * @param {import('../models.js').Contact} contact - Contact
+ * @param {Contact} contact - Contact
  * @param {boolean} [includeContactDetails] - Include contact details
  * @returns {string|undefined} Formatted contact HTML
  */
@@ -399,7 +399,7 @@ export function formatIdentifier(identifiedBy) {
 /**
  * Format parental relationship, falling back to name else unknown
  *
- * @param {import('../models.js').Contact} contact - Contact
+ * @param {Contact} contact - Contact
  * @returns {string|undefined} Formatted parental relationship HTML
  */
 export function formatParentalRelationship(contact) {
@@ -574,3 +574,7 @@ export function formatTime(date, hour12 = true) {
     })
     .toLowerCase()
 }
+
+/**
+ * @import { Contact } from '../models.js'
+ */

@@ -142,7 +142,7 @@ export class PatientProgramme {
   /**
    * Get most recent patient session
    *
-   * @returns {import('./patient-session.js').PatientSession|undefined} Patient session
+   * @returns {PatientSession|undefined} Patient session
    */
   get lastPatientSession() {
     if (this.patientSessions?.length > 0) {
@@ -293,7 +293,7 @@ export class PatientProgramme {
   /**
    * Get last vaccination outcome
    *
-   * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
+   * @returns {Vaccination|undefined} Vaccination
    */
   get lastVaccinationOutcome() {
     if (this.vaccinationOutcomes?.length > 0) {
@@ -335,7 +335,7 @@ export class PatientProgramme {
   /**
    * Get last vaccination outcome
    *
-   * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
+   * @returns {Vaccination|undefined} Vaccination
    */
   get lastVaccinationGiven() {
     if (this.vaccinationsGiven?.length > 0) {
@@ -538,7 +538,7 @@ export class PatientProgramme {
   /**
    * Get vaccine to administer (or was administered) in this patient session
    *
-   * @returns {import('../enums.js').RecordVaccineCriteria} Vaccine criteria
+   * @returns {RecordVaccineCriteria} Vaccine criteria
    */
   get vaccineCriteria() {
     return this.lastPatientSession.vaccineCriteria
@@ -582,3 +582,8 @@ export class PatientProgramme {
     return `/patients/${this.patient_uuid}/programmes/${this.programme_id}`
   }
 }
+
+/**
+ * @import { RecordVaccineCriteria } from '../enums.js'
+ * @import { PatientSession } from '../models.js'
+ */

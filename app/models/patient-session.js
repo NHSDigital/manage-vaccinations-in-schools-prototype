@@ -116,7 +116,7 @@ export class PatientSession {
   /**
    * Get patient programme
    *
-   * @returns {import('./patient-programme.js').PatientProgramme|undefined} Patient programme
+   * @returns {PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
     return this.patient?.programmes[this.programme_id]
@@ -286,7 +286,7 @@ export class PatientSession {
   /**
    * Get vaccination criteria consented to use if safe to vaccinate
    *
-   * @returns {import('../enums.js').ScreenVaccineCriteria|boolean|undefined} Criteria
+   * @returns {ScreenVaccineCriteria|boolean|undefined} Criteria
    */
   get screenVaccineCriteria() {
     if (this.programme && this.responses) {
@@ -367,7 +367,7 @@ export class PatientSession {
    * For all programmes besides flu, this will be an injection.
    * For the flu programme, this depends on consent responses
    *
-   * @returns {import('./vaccine.js').Vaccine|undefined} Vaccine method
+   * @returns {Vaccine|undefined} Vaccine method
    */
   get vaccine() {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
@@ -409,7 +409,7 @@ export class PatientSession {
    * For all programmes besides flu, this will be an injection.
    * For the flu programme, this depends on consent responses
    *
-   * @returns {import('../enums.js').RecordVaccineCriteria|undefined} Vaccination method
+   * @returns {RecordVaccineCriteria|undefined} Vaccination method
    */
   get vaccineCriteria() {
     // If no programme does not offer alternatives, don’t return a method
@@ -471,7 +471,7 @@ export class PatientSession {
   /**
    * Get vaccinations for patient session
    *
-   * @returns {Array<import('./vaccination.js').Vaccination>|undefined} Vaccinations
+   * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get vaccinationOutcomes() {
     try {
@@ -488,7 +488,7 @@ export class PatientSession {
   /**
    * Get last recorded vaccination
    *
-   * @returns {import('./vaccination.js').Vaccination|undefined} Vaccination
+   * @returns {Vaccination|undefined} Vaccination
    */
   get lastVaccinationOutcome() {
     if (this.vaccinationOutcomes && this.vaccinationOutcomes.length > 0) {
@@ -804,7 +804,7 @@ export class PatientSession {
   /**
    * Get instruction outcome
    *
-   * @returns {import('../enums.js').InstructionOutcome|boolean} Instruction outcome
+   * @returns {InstructionOutcome|boolean} Instruction outcome
    */
   get instruct() {
     return getInstructionOutcome(this)
@@ -813,7 +813,7 @@ export class PatientSession {
   /**
    * Get registration outcome
    *
-   * @returns {import('../enums.js').RegistrationOutcome} Registration outcome
+   * @returns {RegistrationOutcome} Registration outcome
    */
   get register() {
     return getRegistrationOutcome(this)
@@ -849,7 +849,7 @@ export class PatientSession {
   /**
    * Get vaccination (session) outcome
    *
-   * @returns {import('../enums.js').VaccinationOutcome|undefined} Vaccination (session) outcome
+   * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
    */
   get outcome() {
     return getSessionOutcome(this)
@@ -1078,7 +1078,7 @@ export class PatientSession {
   /**
    * Record triage
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
+   * @param {AuditEvent} event - Event
    */
   recordTriage(event) {
     this.patient?.addEvent({
@@ -1141,7 +1141,7 @@ export class PatientSession {
   /**
    * Register attendance
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
+   * @param {AuditEvent} event - Event
    * @param {RegistrationOutcome} register - Registration
    */
   registerAttendance(event, register) {
@@ -1161,7 +1161,7 @@ export class PatientSession {
   /**
    * Record pre-screening interview
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
+   * @param {AuditEvent} event - Event
    */
   preScreen(event) {
     this.patient?.addEvent({
@@ -1176,7 +1176,7 @@ export class PatientSession {
   /**
    * Save note
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
+   * @param {AuditEvent} event - Event
    */
   saveNote(event) {
     this.patient?.addEvent({
@@ -1192,8 +1192,8 @@ export class PatientSession {
   /**
    * Send reminder
    *
-   * @param {import('../models.js').AuditEvent} event - Event
-   * @param {import('../models.js').Contact} contact - Contact
+   * @param {AuditEvent} event - Event
+   * @param {Contact} contact - Contact
    */
   sendReminder(event, contact) {
     this.patient?.addEvent({
@@ -1208,3 +1208,8 @@ export class PatientSession {
     })
   }
 }
+
+/**
+ * @import { InstructionOutcome, ScreenVaccineCriteria } from '../enums.js'
+ * @import { Contact, PatientProgramme, Vaccination, Vaccine } from '../models.js'
+ */

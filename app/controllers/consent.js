@@ -5,7 +5,7 @@ import { getResults, getPagination } from '../utils/pagination.js'
 
 export const consentController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, consent_uuid) {
     const { patient_uuid } = request.query
@@ -36,7 +36,7 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     const { session_id } = request.params
@@ -63,7 +63,7 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -72,14 +72,14 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('consent/list')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readMatches(request, response, next) {
     let { hasMissingNhsNumber, q } = request.query
@@ -120,7 +120,7 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterMatches(request, response) {
     const { hasMissingNhsNumber, q } = request.body
@@ -139,7 +139,7 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   link(request, response) {
     const { consent_uuid } = request.params
@@ -159,7 +159,7 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   add(request, response) {
     const { consent_uuid } = request.params
@@ -198,7 +198,7 @@ export const consentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   invalidate(request, response) {
     const { note } = request.body.consent
@@ -220,3 +220,7 @@ export const consentController = {
     return response.redirect(consentsPath)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

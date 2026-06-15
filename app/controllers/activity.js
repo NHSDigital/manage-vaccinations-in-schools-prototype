@@ -17,7 +17,7 @@ import {
 
 export const activityController = {
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     const { data } = request.session
@@ -355,3 +355,7 @@ export const activityController = {
     return response.render('activity/list', { activityLog })
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */

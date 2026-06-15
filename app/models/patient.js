@@ -47,10 +47,10 @@ import {
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Patient} [pendingChanges] - Pending changes to record values
- * @property {import('../enums.js').ArchiveRecordReason} [archiveReason] - Archival reason
+ * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
- * @property {Array<import('./audit-event.js').AuditEvent>} events - Events
+ * @property {Array<AuditEvent>} events - Events
  * @property {Array<string>} [reply_uuids] - Reply IDs
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
@@ -657,7 +657,7 @@ export class Patient extends Child {
   /**
    * Add contact to patient
    *
-   * @param {import('../models').Contact} contact - Contact
+   * @param {Contact} contact - Contact
    */
   addContact(contact) {
     this.contact_uuids.push(contact.uuid)
@@ -671,7 +671,7 @@ export class Patient extends Child {
   /**
    * Add patient to session
    *
-   * @param {import('./patient-session.js').PatientSession} patientSession - PatientSession
+   * @param {PatientSession} patientSession - PatientSession
    */
   addToSession(patientSession) {
     this.patientSession_uuids.push(patientSession.uuid)
@@ -714,7 +714,7 @@ export class Patient extends Child {
   /**
    * Invite contact to give consent
    *
-   * @param {import('./patient-session.js').PatientSession} patientSession - Patient session
+   * @param {PatientSession} patientSession - Patient session
    */
   requestConsent(patientSession) {
     for (const contact of this.contacts) {
@@ -770,7 +770,7 @@ export class Patient extends Child {
   /**
    * Record vaccination
    *
-   * @param {import('./vaccination.js').Vaccination} vaccination - Vaccination
+   * @param {Vaccination} vaccination - Vaccination
    */
   recordVaccination(vaccination) {
     this.vaccination_uuids.push(vaccination.uuid)
@@ -832,7 +832,7 @@ export class Patient extends Child {
   /**
    * Save note
    *
-   * @param {import('./audit-event.js').AuditEvent} event - Event
+   * @param {AuditEvent} event - Event
    */
   saveNote(event) {
     this.addEvent({
@@ -846,7 +846,7 @@ export class Patient extends Child {
   /**
    * Add notice
    *
-   * @param {import('./notice.js').Notice} notice - Notice
+   * @param {Notice} notice - Notice
    */
   addNotice(notice) {
     let name
@@ -881,3 +881,8 @@ export class Patient extends Child {
     })
   }
 }
+
+/**
+ * @import { ArchiveRecordReason } from '../enums.js'
+ * @import { Notice } from '../models.js'
+ */

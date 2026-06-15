@@ -2,7 +2,7 @@ import { Contact, Patient } from '../models.js'
 
 export const contactController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, contact_uuid) {
     response.locals.contact = Contact.findOne(
@@ -14,7 +14,7 @@ export const contactController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { patient_uuid } = request.query
@@ -32,7 +32,7 @@ export const contactController = {
 
   /**
    * @param {string} [type] - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   update(type) {
     return (request, response) => {
@@ -71,7 +71,7 @@ export const contactController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -93,7 +93,7 @@ export const contactController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     return response.render(`contact/form/edit`)
@@ -110,7 +110,7 @@ export const contactController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -124,7 +124,7 @@ export const contactController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   delete(request, response) {
     const { contact_uuid } = request.params
@@ -138,3 +138,7 @@ export const contactController = {
     return response.redirect(`/patients/${contact.patient_uuid}/contacts`)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

@@ -43,8 +43,8 @@ import {
  * @property {string} uuid - Unique ID for this clinic appointment
  * @property {string} booking_uuid - Unique ID for the booking under which this appointment was made
  * @property {string} [patient_uuid] - Patient UUID (if matched to a patient record)
- * @property {import('./child.js').Child} [child] - child details recorded from form input values
- * @property {import('../enums.js').ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
+ * @property {Child} [child] - child details recorded from form input values
+ * @property {ParentalRelationship} [parentalRelationship] - The relationship of the person booking the appointment to the child
  * @property {string} [parentalRelationshipOther] - User-defined parental relationship to the child for this appointment
  * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked

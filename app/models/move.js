@@ -13,7 +13,7 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
  * @property {Date} [createdAt] - Reported date
  * @property {Date} [updatedAt] - Updated date
  * @property {boolean} ignored - Reported move is ignored
- * @property {import('../enums.js').MoveSource} source - Reporting source
+ * @property {MoveSource} source - Reporting source
  * @property {string} team_id - Team ID (moving from)
  * @property {string} from_urn - Current school URN (moving from)
  * @property {string} to_urn - Proposed school URN (moving to)
@@ -184,3 +184,7 @@ export class Move {
     Move.delete(uuid, context)
   }
 }
+
+/**
+ * @import { MoveSource } from '../enums.js'
+ */

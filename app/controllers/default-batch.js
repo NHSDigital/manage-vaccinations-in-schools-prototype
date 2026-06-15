@@ -26,14 +26,14 @@ export const defaultBatchController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     return response.render('default-batch/edit')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { data } = request.session
@@ -51,3 +51,7 @@ export const defaultBatchController = {
     return response.redirect(paths.next)
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */

@@ -2,7 +2,7 @@ import { Batch, DefaultBatch } from '../models.js'
 
 export const batchController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, batch_id) {
     const batch = Batch.findOne(batch_id, request.session.data)
@@ -13,7 +13,7 @@ export const batchController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   form(request, response) {
     return response.render('batch/form')
@@ -21,7 +21,7 @@ export const batchController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -30,7 +30,7 @@ export const batchController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   create(request, response) {
     const { vaccine_snomed } = request.params
@@ -51,7 +51,7 @@ export const batchController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { batch_id } = request.params
@@ -70,7 +70,7 @@ export const batchController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   archive(request, response) {
     const { batch_id } = request.params
@@ -88,3 +88,7 @@ export const batchController = {
     return response.redirect('/vaccines')
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

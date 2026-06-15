@@ -21,7 +21,7 @@ import { stringToBoolean } from '../utils/string.js'
 
 export const patientSessionController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, nhsn) {
     const { account } = request.app.locals
@@ -172,7 +172,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -181,7 +181,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readForm(request, response, next) {
     const { referrer } = request.session
@@ -195,7 +195,7 @@ export const patientSessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   showForm(type) {
     return (request, response) => {
@@ -206,7 +206,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   register(request, response) {
     const { account } = request.app.locals
@@ -260,7 +260,7 @@ export const patientSessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   gillick(type) {
     return (request, response) => {
@@ -287,7 +287,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   preScreen(request, response) {
     const { account } = request.app.locals
@@ -313,7 +313,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   invite(request, response) {
     const { __, back, patient, patientSession } = response.locals
@@ -330,7 +330,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   remind(request, response) {
     const { account } = request.app.locals
@@ -347,7 +347,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   triage(request, response) {
     const { account } = request.app.locals
@@ -384,7 +384,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   note(request, response) {
     const { account } = request.app.locals
@@ -419,7 +419,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   startCancel(request, response) {
     const { patientSession } = response.locals
@@ -430,7 +430,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showCancel(request, response) {
     const { view } = request.params
@@ -447,7 +447,7 @@ export const patientSessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateCancel(request, response) {
     const { account } = request.app.locals
@@ -483,3 +483,7 @@ export const patientSessionController = {
     return response.redirect(next)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

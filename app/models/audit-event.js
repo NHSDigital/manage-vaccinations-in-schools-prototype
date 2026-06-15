@@ -31,7 +31,7 @@ import {
  * @property {string} [createdBy_uid] - User who created event
  * @property {string} name - Name
  * @property {string} [note] - Note
- * @property {import('../enums.js').AuditEventType} [type] - Audit event type
+ * @property {AuditEventType} [type] - Audit event type
  * @property {object} [messageRecipient] - Message recipient
  * @property {string} [messageTemplate] - Message template
  * @property {Array} [updatedFields] - Updated fields
@@ -252,3 +252,7 @@ export class AuditEvent {
     return 'event'
   }
 }
+
+/**
+ * @import { AuditEventType } from '../enums.js'
+ */

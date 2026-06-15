@@ -2,7 +2,7 @@ import { School, Team } from '../models.js'
 
 export const teamController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, team_id) {
     const { view } = request.params
@@ -26,7 +26,7 @@ export const teamController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   redirect(request, response) {
     const { team_id } = request.params
@@ -35,7 +35,7 @@ export const teamController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -44,7 +44,7 @@ export const teamController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readForm(request, response, next) {
     const { view } = request.params
@@ -65,7 +65,7 @@ export const teamController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readSchool(request, response, next) {
     const { school_id } = request.params
@@ -77,14 +77,14 @@ export const teamController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showSchool(request, response) {
     return response.render(`team/school`)
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const view = request.params.view || 'contact'
@@ -93,7 +93,7 @@ export const teamController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { team_id } = request.params
@@ -111,3 +111,7 @@ export const teamController = {
     return response.redirect(paths.next)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

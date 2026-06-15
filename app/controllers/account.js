@@ -2,7 +2,7 @@ import { UserRole } from '../enums.js'
 
 export const accountController = {
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   changeRole(request, response) {
     request.session.data.token.role = request.body.role
@@ -13,7 +13,7 @@ export const accountController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   cis2(request, response) {
     const { data } = request.session
@@ -27,7 +27,7 @@ export const accountController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   login(request, response) {
     const { data } = request.session
@@ -42,7 +42,7 @@ export const accountController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   logout(request, response) {
     delete request.session.data.token
@@ -50,3 +50,7 @@ export const accountController = {
     return response.redirect('/start')
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */

@@ -13,7 +13,7 @@ import {
 const thisAcademicYear = Object.values(AcademicYear).at(-1)
 
 /**
- * @returns {import("i18n").LocaleCatalog}
+ * @returns {LocaleCatalog}
  */
 export const en = {
   actions: {
@@ -3737,3 +3737,7 @@ export const en = {
     }
   }
 }
+
+/**
+ * @import { LocaleCatalog } from 'i18n'
+ */

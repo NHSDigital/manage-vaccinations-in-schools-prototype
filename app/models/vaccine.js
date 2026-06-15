@@ -20,12 +20,12 @@ import {
  * @property {string} manufacturer - Manufacturer
  * @property {object} [leaflet] - Leaflet
  * @property {number} dose - Dosage
- * @property {import('../enums.js').VaccineCriteria} criteria - Criteria
- * @property {import('../enums.js').VaccineMethod} method - Method
- * @property {import('../enums.js').VaccinationProtocol} [delegationProtocol] - Delegation protocol
- * @property {Array<import('../enums.js').VaccineSideEffect>} sideEffects - Side effects
+ * @property {VaccineCriteria} criteria - Criteria
+ * @property {VaccineMethod} method - Method
+ * @property {VaccinationProtocol} [delegationProtocol] - Delegation protocol
+ * @property {Array<VaccineSideEffect>} sideEffects - Side effects
  * @property {object} healthQuestions - Health questions
- * @property {Array<import('../enums.js').PreScreenQuestion>} preScreenQuestions - Pre-screening questions
+ * @property {Array<PreScreenQuestion>} preScreenQuestions - Pre-screening questions
  */
 export class Vaccine {
   constructor(options, context) {
@@ -159,3 +159,7 @@ export class Vaccine {
     delete context.vaccines[String(snomed)]
   }
 }
+
+/**
+ * @import { PreScreenQuestion, VaccinationProtocol, VaccineCriteria, VaccineSideEffect, VaccineMethod } from '../enums.js'
+ */

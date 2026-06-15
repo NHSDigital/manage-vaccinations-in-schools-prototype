@@ -25,7 +25,7 @@ import {
 
 export const replyController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, reply_uuid) {
     const { nhsn, programme_id } = request.params
@@ -41,7 +41,7 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   redirect(request, response) {
     const { nhsn, programme_id, session_id } = request.params
@@ -52,14 +52,14 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     return response.render('reply/show')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -96,7 +96,7 @@ export const replyController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   update(type) {
     return (request, response) => {
@@ -185,7 +185,7 @@ export const replyController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -330,7 +330,7 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -349,7 +349,7 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { respondent } = request.body
@@ -410,7 +410,7 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   followUp(request, response) {
     const { decision } = request.body
@@ -448,7 +448,7 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   invalidate(request, response) {
     const { note } = request.body.reply
@@ -468,7 +468,7 @@ export const replyController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   withdraw(request, response) {
     const { account } = request.app.locals
@@ -522,3 +522,7 @@ export const replyController = {
     return response.redirect(patientSession.uri)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

@@ -93,7 +93,7 @@ export function getInstructionOutcomeStatus(instruct) {
  * Get patient status properties
  *
  * @param {PatientStatus} report - Patient status
- * @param {import('../enums.js').PatientDueStatus} [vaccinationDue] - Patient due status
+ * @param {PatientDueStatus} [vaccinationDue] - Patient due status
  * @returns {object} Status properties
  */
 export function getPatientStatus(report, vaccinationDue) {
@@ -315,3 +315,7 @@ export function getVaccinationOutcomeStatus(outcome) {
     text: outcome
   }
 }
+
+/**
+ * @import { PatientDueStatus } from '../enums.js'
+ */

@@ -8,7 +8,7 @@ import { formatYearGroup } from '../utils/string.js'
 
 export const uploadController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, upload_id) {
     response.locals.upload = Upload.findOne(upload_id, request.session.data)
@@ -17,7 +17,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     response.locals.uploads = Upload.findAll(request.session.data)
@@ -26,7 +26,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -35,7 +35,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     const { status, type } = request.query
@@ -71,7 +71,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -102,7 +102,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -118,7 +118,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -151,7 +151,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   update(type) {
     return (request, response) => {
@@ -187,7 +187,7 @@ export const uploadController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -250,7 +250,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -259,7 +259,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { upload_id } = request.params
@@ -272,7 +272,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   delete(request, response) {
     const { upload_id } = request.params
@@ -287,7 +287,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   approve(request, response) {
     const { account } = request.app.locals
@@ -310,7 +310,7 @@ export const uploadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   removeRelationships(request, response) {
     const { __, upload } = response.locals
@@ -320,3 +320,7 @@ export const uploadController = {
     return response.redirect(upload.uri)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */
