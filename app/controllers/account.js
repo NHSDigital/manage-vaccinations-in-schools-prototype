@@ -1,11 +1,14 @@
-import { UserRole } from '../enums.js'
-
 export const accountController = {
   /**
    * @type {RequestHandler}
    */
   changeRole(request, response) {
-    request.session.data.token.role = request.body.role
+    const { account } = request.app.locals
+
+    request.session.data.token = {
+      ...account,
+      ...{ role: request.body.role }
+    }
 
     return response.redirect(
       /** @type {string} */ (request.query.referrer || '/home')
@@ -16,13 +19,6 @@ export const accountController = {
    * @type {RequestHandler}
    */
   cis2(request, response) {
-    const { data } = request.session
-
-    const user = Object.values(data.users).at(-1)
-    user.role = UserRole.Nurse
-
-    request.session.data.token = user
-
     return response.redirect('/account/change-role')
   },
 
@@ -30,13 +26,12 @@ export const accountController = {
    * @type {RequestHandler}
    */
   login(request, response) {
-    const { data } = request.session
-    const { role } = request.query
+    const { account } = request.app.locals
 
-    const user = Object.values(data.users).at(-1)
-    user.role = role || UserRole.Nurse
-
-    request.session.data.token = user
+    request.session.data.token = {
+      ...account,
+      ...{ role: request.query.role }
+    }
 
     return response.redirect('/home')
   },
@@ -45,7 +40,8 @@ export const accountController = {
    * @type {RequestHandler}
    */
   logout(request, response) {
-    delete request.session.data.token
+    // Delete role selected when signing in via CIS2
+    delete request.session.data.role
 
     return response.redirect('/start')
   }
