@@ -199,7 +199,7 @@ export class Programme {
   /**
    * Get patient session programme statuses
    *
-   * @param {import('../enums.js').PatientStatus} patientStatus - Patient status
+   * @param {PatientStatus} patientStatus - Patient status
    * @returns {Array<PatientSession>} Patient session programme statuses
    */
   report(patientStatus) {
@@ -295,3 +295,7 @@ export class Programme {
     }
   }
 }
+
+/**
+ * @import { PatientStatus } from '../enums.js'
+ */

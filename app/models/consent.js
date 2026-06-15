@@ -82,10 +82,14 @@ export class Consent extends Reply {
   /**
    * Link consent with patient record
    *
-   * @param {import('./patient.js').Patient} patient - Patient
+   * @param {Patient} patient - Patient
    */
   linkToPatient(patient) {
     this.patient_uuid = patient.uuid
     patient.addReply(this)
   }
 }
+
+/**
+ * @import { Patient } from '../models.js'
+ */

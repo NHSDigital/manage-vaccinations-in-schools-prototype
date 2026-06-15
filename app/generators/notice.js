@@ -3,8 +3,8 @@ import { Notice } from '../models.js'
 /**
  * Generate fake notice
  *
- * @param {import('../models.js').Patient} patient - Patient
- * @param {import('../enums.js').NoticeType} type - Notice type
+ * @param {Patient} patient - Patient
+ * @param {NoticeType} type - Notice type
  * @returns {Notice} Notice
  */
 export function generateNotice(patient, type) {
@@ -13,3 +13,8 @@ export function generateNotice(patient, type) {
     patient_uuid: patient?.uuid
   })
 }
+
+/**
+ * @import { NoticeType } from '../enums.js'
+ * @import { Patient } from '../models.js'
+ */

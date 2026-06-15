@@ -3,7 +3,7 @@ import { Notice } from '../models.js'
 
 export const homeController = {
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   redirect(request, response) {
     const { account } = request.app.locals
@@ -16,7 +16,7 @@ export const homeController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   dashboard(request, response) {
     const { account } = request.app.locals
@@ -32,9 +32,13 @@ export const homeController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   start(request, response) {
     return response.render('start')
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */

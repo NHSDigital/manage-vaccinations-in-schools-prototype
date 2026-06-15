@@ -2,7 +2,7 @@ import { Clinic } from '../models.js'
 
 export const clinicController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, clinic_id) {
     const clinic = Clinic.findOne(clinic_id, request.session.data)
@@ -18,7 +18,7 @@ export const clinicController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   form(type) {
     return (request, response) => {
@@ -28,7 +28,7 @@ export const clinicController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -37,7 +37,7 @@ export const clinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   create(request, response) {
     const { team_id } = request.params
@@ -58,7 +58,7 @@ export const clinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { clinic_id } = request.params
@@ -77,7 +77,7 @@ export const clinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   delete(request, response) {
     const { clinic_id } = request.params
@@ -91,3 +91,7 @@ export const clinicController = {
     return response.redirect(paths.next)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

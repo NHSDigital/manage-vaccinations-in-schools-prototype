@@ -6,10 +6,10 @@ import { removeDays } from '../utils/date.js'
 /**
  * Generate fake instruction
  *
- * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @param {import('../models.js').Programme} programme - Programme
- * @param {import('../models.js').Session} session - Session
- * @param {Array<import('../models.js').User>} users - Users
+ * @param {PatientSession} patientSession - Patient session
+ * @param {Programme} programme - Programme
+ * @param {Session} session - Session
+ * @param {Array<User>} users - Users
  * @returns {Instruction} Instruction
  */
 export function generateInstruction(patientSession, programme, session, users) {
@@ -22,3 +22,7 @@ export function generateInstruction(patientSession, programme, session, users) {
     patientSession_uuid: patientSession.uuid
   })
 }
+
+/**
+ * @import { PatientSession, Programme, Session, User } from '../models.js'
+ */

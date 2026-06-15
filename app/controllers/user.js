@@ -2,7 +2,7 @@ import { User } from '../models.js'
 
 export const userController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, user_uid) {
     response.locals.user = User.findOne(user_uid, request.session.data)
@@ -11,7 +11,7 @@ export const userController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     response.locals.users = User.findAll(request.session.data)
@@ -20,16 +20,20 @@ export const userController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     return response.render('user/show')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('user/list')
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

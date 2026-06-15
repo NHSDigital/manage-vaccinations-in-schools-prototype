@@ -11,7 +11,7 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
  * @property {string} uuid - UUID
  * @property {Date} [createdAt] - Created date
  * @property {Date} [archivedAt] - Archived date
- * @property {import('../enums.js').NoticeType} type - Notice type
+ * @property {NoticeType} type - Notice type
  * @property {string} patient_uuid - Patient notice applies to
  */
 export class Notice {
@@ -120,3 +120,7 @@ export class Notice {
     return archivedNotice
   }
 }
+
+/**
+ * @import { NoticeType } from '../enums.js'
+ */

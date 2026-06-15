@@ -8,9 +8,9 @@ import { formatCode, formatLink } from '../utils/string.js'
  * @property {string} [firstName] - First/given name
  * @property {string} [lastName] - Last/family name
  * @property {string} [email] - Email address
- * @property {import('../enums.js').UserRole} [role] - User role
+ * @property {UserRole} [role] - User role
  * @property {boolean} [canPrescribe] - Can provide PSD instruction
- * @property {Array<import('../enums.js').VaccineMethod>} [vaccineMethods] - Vaccine methods
+ * @property {Array<VaccineMethod>} [vaccineMethods] - Vaccine methods
  * @property {object} [vaccinations] - Vaccination count
  */
 export class User {
@@ -111,3 +111,7 @@ export class User {
     }
   }
 }
+
+/**
+ * @import { UserRole, VaccineMethod } from '../enums.js'
+ */

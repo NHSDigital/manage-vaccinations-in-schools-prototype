@@ -7,10 +7,10 @@ import { Vaccination } from '../models.js'
 /**
  * Generate fake vaccination
  *
- * @param {import('../models.js').PatientSession} patientSession - Patient session
- * @param {import('../models.js').Programme} programme - Programme
- * @param {import('../models.js').Batch} batch - Batch
- * @param {Array<import('../models.js').User>} users - Users
+ * @param {PatientSession} patientSession - Patient session
+ * @param {Programme} programme - Programme
+ * @param {Batch} batch - Batch
+ * @param {Array<User>} users - Users
  * @returns {Vaccination} Vaccination
  */
 export function generateVaccination(patientSession, programme, batch, users) {
@@ -76,3 +76,7 @@ export function generateVaccination(patientSession, programme, batch, users) {
     })
   })
 }
+
+/**
+ * @import { Batch, PatientSession, Programme, User } from '../models.js'
+ */

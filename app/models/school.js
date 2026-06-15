@@ -19,7 +19,7 @@ import {
  * @property {string} [urn] - URN
  * @property {boolean} [sen] - SEN school
  * @property {string} [site] - Site code
- * @property {import('../enums.js').SchoolPhase} [phase] - Phase
+ * @property {SchoolPhase} [phase] - Phase
  * @property {Array<number>} [yearGroups] - Year groups
  */
 export class School extends Location {
@@ -285,3 +285,7 @@ export class School extends Location {
     delete context.schools[id]
   }
 }
+
+/**
+ * @import { SchoolPhase } from '../enums.js'
+ */

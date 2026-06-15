@@ -1222,7 +1222,7 @@ export class Session {
    * Update register
    *
    * @param {string} patient_uuid
-   * @param {import('../enums.js').RegistrationOutcome} registration
+   * @param {RegistrationOutcome} registration
    */
   updateRegister(patient_uuid, registration) {
     this.register[patient_uuid] = registration
@@ -1238,3 +1238,7 @@ export class Session {
     delete context.sessions[String(id)]
   }
 }
+
+/**
+ * @import { RegistrationOutcome } from '../enums.js'
+ */

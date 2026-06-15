@@ -510,7 +510,7 @@ export default () => {
   /**
    * Get vaccinator summary table row items
    *
-   * @param {import('./models.js').Session} session - Session
+   * @param {Session} session - Session
    * @returns {Array} Table row items
    */
   globals.vaccinationTableRows = function (session) {
@@ -641,3 +641,7 @@ export default () => {
 
   return globals
 }
+
+/**
+ * @import { Session } from './models.js'
+ */

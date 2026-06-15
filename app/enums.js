@@ -2,7 +2,7 @@ import { getAllCountries } from 'countries-and-timezones'
 
 /**
  * @readonly
- * @enum {import('countries-and-timezones').Country}
+ * @enum {CountryData}
  */
 export const Country = Object.fromEntries(
   Object.entries(getAllCountries()).map(([key, value]) => [key, value.name])
@@ -872,3 +872,7 @@ export const LocationSearchType = {
   Outcode: 'Outcode',
   Place: 'Place'
 }
+
+/**
+ * @import { Country as CountryData } from 'countries-and-timezones'
+ */

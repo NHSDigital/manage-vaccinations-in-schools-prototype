@@ -5,7 +5,7 @@ import { getResults, getPagination } from '../utils/pagination.js'
 
 export const moveController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, move_uuid) {
     response.locals.move = Move.findOne(move_uuid, request.session.data)
@@ -14,7 +14,7 @@ export const moveController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     let moves = Move.findAll(request.session.data)
@@ -30,21 +30,21 @@ export const moveController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     return response.render('move/show')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('move/list')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { decision } = request.body
@@ -64,3 +64,7 @@ export const moveController = {
     return response.redirect('/moves')
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

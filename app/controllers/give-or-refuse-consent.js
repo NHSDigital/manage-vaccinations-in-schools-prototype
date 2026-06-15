@@ -14,7 +14,7 @@ import { formatList, kebabToCamelCase } from '../utils/string.js'
 
 export const giveOrRefuseConsentController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, session_id) {
     const session = Session.findOne(session_id, request.session.data)
@@ -33,7 +33,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   redirect(request, response) {
     const { session } = response.locals
@@ -42,7 +42,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -80,7 +80,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { data } = request.session
@@ -100,7 +100,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { consent_uuid } = request.params
@@ -120,7 +120,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readForm(request, response, next) {
     const { session_id, consent_uuid } = request.params
@@ -339,7 +339,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     let view = String(request.params.view)
@@ -368,7 +368,7 @@ export const giveOrRefuseConsentController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { decision } = request.body
@@ -397,3 +397,7 @@ export const giveOrRefuseConsentController = {
     return response.redirect(paths.next)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

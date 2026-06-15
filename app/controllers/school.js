@@ -9,7 +9,7 @@ import { formatYearGroup } from '../utils/string.js'
 
 export const schoolController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, school_id) {
     const { data } = request.session
@@ -21,7 +21,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     response.locals.schools = School.findAll(request.session.data)
@@ -30,7 +30,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'show'
@@ -40,7 +40,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   new(type) {
     return (request, response) => {
@@ -59,7 +59,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     const { phase, q } = request.query
@@ -95,7 +95,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -112,7 +112,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readPatients(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
@@ -281,7 +281,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterPatients(request, response) {
     const { school } = response.locals
@@ -323,7 +323,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readSessions(request, response) {
     const { school } = response.locals
@@ -334,7 +334,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   edit(request, response) {
     const { school_id } = request.params
@@ -356,7 +356,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   update(type) {
     return (request, response) => {
@@ -384,7 +384,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -442,7 +442,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -451,7 +451,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { school_id, view } = request.params
@@ -501,7 +501,7 @@ export const schoolController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -510,7 +510,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   delete(request, response) {
     const { school_id } = request.params
@@ -527,7 +527,7 @@ export const schoolController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   inviteToClinic(request, response) {
     const { school_id } = request.params
@@ -559,3 +559,7 @@ export const schoolController = {
     return response.redirect(school.uri)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

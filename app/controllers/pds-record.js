@@ -7,14 +7,14 @@ import { getResults, getPagination } from '../utils/pagination.js'
 
 export const pdsRecordController = {
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   redirect(request, response) {
     return response.redirect('/patients')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   start(request, response) {
     const { data } = request.session
@@ -36,7 +36,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, pdsRecord_uuid) {
     const { data } = request.session
@@ -47,7 +47,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { pdsRecord_uuid } = request.params
@@ -77,6 +77,9 @@ export const pdsRecordController = {
     return response.redirect(patient.uri)
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   readAll(request, response, next) {
     const { q } = request.query
     const { data } = request.session
@@ -101,9 +104,12 @@ export const pdsRecordController = {
     // Clean up session data
     delete data.q
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   readForm(request, response, next) {
     const { pdsRecord_uuid } = request.params
     const { data, referrer } = request.session
@@ -147,11 +153,11 @@ export const pdsRecordController = {
       ...(referrer && { back: referrer })
     }
 
-    next()
+    return next()
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     let { view } = request.params
@@ -160,7 +166,7 @@ export const pdsRecordController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response, next) {
     const { pdsRecord_uuid } = request.params
@@ -178,3 +184,7 @@ export const pdsRecordController = {
     return paths?.next ? response.redirect(paths.next) : next()
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

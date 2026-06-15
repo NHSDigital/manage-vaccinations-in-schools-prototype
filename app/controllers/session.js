@@ -47,7 +47,7 @@ import {
 
 export const sessionController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, session_id) {
     const { view } = request.params
@@ -104,7 +104,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     const sessions = Session.findAll(request.session.data)
@@ -120,7 +120,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     let { view } = request.params
@@ -135,7 +135,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -154,7 +154,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   advertise(request, response) {
     // Handling a GET for /sessions/advertise
@@ -200,7 +200,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateAdvertLink(request, response) {
     // Handling a POST for /sessions/advertise
@@ -222,7 +222,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showAdvertLink(request, response) {
     // Handling a GET for /sessions/advert-link
@@ -231,7 +231,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   copyAdvertLink(request, response) {
     // Handling a POST for /sessions/advert-link
@@ -244,7 +244,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     const { programme_id, q } = request.query
@@ -348,7 +348,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filter(request, response) {
     const params = new URLSearchParams()
@@ -377,6 +377,9 @@ export const sessionController = {
     return response.redirect(`/sessions?${params}`)
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   readPatientSessions(request, response, next) {
     const { account } = request.app.locals
     const { view } = request.params
@@ -589,11 +592,11 @@ export const sessionController = {
     delete data.vaccineCriteria
     delete data.yearGroup
 
-    next()
+    return next()
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterPatientSessions(request, response) {
     const { session_id, view } = request.params
@@ -633,6 +636,9 @@ export const sessionController = {
     return response.redirect(`/sessions/${session_id}/${view}?${params}`)
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   showAppointments(request, response, next) {
     const { session } = response.locals
     const allAppointments = session.appointments
@@ -705,11 +711,11 @@ export const sessionController = {
 
     response.locals.vaccinationPeriodTables = vaccinationPeriodTables
 
-    next()
+    return next()
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   edit(request, response) {
     const { session_id } = request.params
@@ -750,7 +756,7 @@ export const sessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   update(type) {
     return (request, response) => {
@@ -779,7 +785,7 @@ export const sessionController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -900,7 +906,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -909,7 +915,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { session_id, view } = request.params
@@ -999,7 +1005,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   giveInstructions(request, response) {
     const { account } = request.app.locals
@@ -1031,7 +1037,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   sendReminders(request, response) {
     const { __, session } = response.locals
@@ -1042,7 +1048,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   cancelSession(request, response) {
     const { __, session } = response.locals
@@ -1057,7 +1063,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   makeActive(request, response) {
     const { __, session } = response.locals
@@ -1071,7 +1077,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   inviteToClinic(request, response) {
     const { account } = request.app.locals
@@ -1133,7 +1139,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   startCancel(request, response) {
     const { session } = response.locals
@@ -1149,7 +1155,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showCancel(request, response) {
     const { view } = request.params
@@ -1174,7 +1180,7 @@ export const sessionController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateCancel(request, response) {
     const { view } = request.params
@@ -1208,3 +1214,7 @@ export const sessionController = {
     return response.redirect(next)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

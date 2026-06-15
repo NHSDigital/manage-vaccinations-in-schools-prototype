@@ -15,7 +15,7 @@ import { today } from './date.js'
 /**
  * Get consent window (is it open, opening or closed)
  *
- * @param {import('../models.js').Session} session - Session
+ * @param {Session} session - Session
  * @returns {string} Consent window key and value
  */
 export const getConsentWindow = (session) => {
@@ -44,7 +44,7 @@ export const getConsentWindow = (session) => {
 /**
  * Get consent URL
  *
- * @param {import('../models.js').Session[]} sessions - Sessions
+ * @param {Array<Session>} sessions - Sessions
  * @param {string} [presetName] - Session preset name
  * @param {boolean} [isSchool] - Get school session
  * @returns {object|undefined} Consent window key and value
@@ -69,7 +69,7 @@ export const getSessionConsentUrl = (
 /**
  * Filter array where key has a value
  *
- * @param {import('../models.js').Session} session - Session
+ * @param {Session} session - Session
  * @param {Array<object>} filters - Filters
  * @returns {number} Number
  */
@@ -154,3 +154,7 @@ export function removeSlots(allSlots, slotsToRemove) {
     return false
   })
 }
+
+/**
+ * @import { Session } from '../models.js'
+ */

@@ -7,7 +7,7 @@ import { getResults, getPagination } from '../utils/pagination.js'
 
 export const downloadController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, download_id) {
     response.locals.download = Download.findOne(
@@ -19,7 +19,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     response.locals.downloads = Download.findAll(request.session.data)
@@ -28,7 +28,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     const { type } = request.query
@@ -58,7 +58,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterList(request, response) {
     const params = new URLSearchParams()
@@ -76,7 +76,7 @@ export const downloadController = {
 
   /**
    * @param {string} [type] - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   new(type) {
     return (request, response) => {
@@ -108,7 +108,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { download_id } = request.params
@@ -215,7 +215,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const { view } = request.params
@@ -223,6 +223,9 @@ export const downloadController = {
     return response.render(`download/form/${view}`)
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   updateForm(request, response, next) {
     const { download_id } = request.params
     const { data } = request.session
@@ -234,7 +237,7 @@ export const downloadController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   download(request, response) {
     const { data } = request.session
@@ -249,3 +252,7 @@ export const downloadController = {
     return response.end(buffer)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

@@ -33,6 +33,9 @@ import {
 } from '../utils/string.js'
 
 export const bookIntoClinicController = {
+  /**
+   * @type {RequestHandler}
+   */
   setupServiceHeader(request, response, next) {
     const serviceName = 'Book into a clinic'
 
@@ -40,9 +43,12 @@ export const bookIntoClinicController = {
     response.locals.serviceName = serviceName
     response.locals.headerOptions = { service: { text: serviceName } }
 
-    next()
+    return next()
   },
 
+  /**
+   * @type {RequestHandler}
+   */
   readProgrammes(request, response) {
     // Handling GET request for '/'
     const { data } = request.session
@@ -84,7 +90,8 @@ export const bookIntoClinicController = {
     }
 
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
-    response.redirect(
+
+    return response.redirect(
       bookableSessions.length > 0
         ? '/book-into-a-clinic/start'
         : '/book-into-a-clinic/availability'
@@ -92,7 +99,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { data } = request.session
@@ -115,7 +122,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   update(request, response) {
     const { booking_uuid } = request.params
@@ -135,7 +142,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readForm(request, response, next) {
     const { appointment_uuid, booking_uuid } = request.params
@@ -194,7 +201,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   showForm(request, response) {
     const { __, __mf, appointment } = response.locals
@@ -422,7 +429,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { booking_uuid, appointment_uuid, view } = request.params
@@ -553,7 +560,7 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'start'
@@ -566,3 +573,7 @@ export const bookIntoClinicController = {
     return response.render(`book-into-a-clinic/${view}`)
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */

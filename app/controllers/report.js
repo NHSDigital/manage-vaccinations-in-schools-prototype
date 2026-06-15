@@ -2,6 +2,9 @@ import { Programme, Vaccination } from '../models.js'
 import { formatYearGroup } from '../utils/string.js'
 
 export const reportController = {
+  /**
+   * @type {RequestHandler}
+   */
   readAll(request, response, next) {
     const { gender, yearGroup } = request.query
     const programme_id = request.query.programme_id || 'flu'
@@ -69,11 +72,11 @@ export const reportController = {
     delete data.programme_id
     delete data.yearGroup
 
-    next()
+    return next()
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     const view = request.params.view || 'vaccinations'
@@ -82,14 +85,14 @@ export const reportController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.redirect('/reports/vaccinations')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   filterList(request, response) {
     const view = request.params.view || 'vaccinations'
@@ -120,3 +123,7 @@ export const reportController = {
     return response.redirect(`/reports/${view}?${params}`)
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */

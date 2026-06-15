@@ -23,7 +23,7 @@ import { formatSequence } from '../utils/string.js'
 
 export const vaccinationController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, vaccination_uuid) {
     const { programme_id } = request.params
@@ -42,7 +42,7 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   redirect(request, response) {
     const { id, nhsn } = request.params
@@ -51,14 +51,14 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     return response.render('vaccination/show')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   edit(request, response) {
     const { vaccination_uuid } = request.params
@@ -79,7 +79,7 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   new(request, response) {
     const { account } = request.app.locals
@@ -187,7 +187,7 @@ export const vaccinationController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   update(type) {
     return (request, response) => {
@@ -255,7 +255,7 @@ export const vaccinationController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   readForm(type) {
     return (request, response, next) => {
@@ -399,7 +399,7 @@ export const vaccinationController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   showForm(type) {
     return (request, response) => {
@@ -410,7 +410,7 @@ export const vaccinationController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   updateForm(request, response) {
     const { data } = request.session
@@ -462,3 +462,7 @@ export const vaccinationController = {
     return response.redirect(redirect)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

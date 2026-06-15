@@ -2,7 +2,7 @@ import { Vaccine } from '../models.js'
 
 export const vaccineController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, vaccine_snomed) {
     const vaccine = Vaccine.findOne(vaccine_snomed, request.session.data)
@@ -21,7 +21,7 @@ export const vaccineController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   readAll(request, response, next) {
     response.locals.vaccines = Vaccine.findAll(request.session.data)
@@ -30,14 +30,14 @@ export const vaccineController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   show(request, response) {
     return response.render('vaccine/show')
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('vaccine/list')
@@ -45,7 +45,7 @@ export const vaccineController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -54,7 +54,7 @@ export const vaccineController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   delete(request, response) {
     const { vaccine_snomed } = request.params
@@ -68,3 +68,7 @@ export const vaccineController = {
     return response.redirect('/vaccines')
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

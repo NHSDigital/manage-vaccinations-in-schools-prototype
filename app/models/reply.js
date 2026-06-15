@@ -47,8 +47,8 @@ import {
  * @property {Date} [createdAt] - Created date
  * @property {string} [createdBy_uid] - User who created reply
  * @property {Date} [updatedAt] - Updated date
- * @property {import('./models.js').Child} [child] - Child
- * @property {import('./models.js').Contact} [contact_] - Parent or guardian
+ * @property {Child} [child] - Child
+ * @property {Contact} [contact_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
  * @property {boolean} [alternative] - Consent for alternative vaccine
  * @property {boolean} [confirmed] - Decision confirmed

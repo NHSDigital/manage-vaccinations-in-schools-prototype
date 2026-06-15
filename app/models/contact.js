@@ -17,9 +17,9 @@ import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
  * @property {boolean} notify - Notify about consent and vaccination events
  * @property {string} tel - Phone number
  * @property {string} email - Email address
- * @property {import('../enums.js').NotifyEmailStatus} emailStatus - Email status
+ * @property {NotifyEmailStatus} emailStatus - Email status
  * @property {boolean} sms - Get updates via SMS
- * @property {import('../enums.js').NotifySmsStatus} smsStatus - SMS status
+ * @property {NotifySmsStatus} smsStatus - SMS status
  * @property {boolean} [contactPreference] - Preferred contact method
  * @property {string} [contactPreferenceDetails] - Contact method details
  * @property {string} [patient_uuid] - Patient UUID
@@ -208,3 +208,7 @@ export class Contact {
     delete context.contacts[String(uuid)]
   }
 }
+
+/**
+ * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
+ */

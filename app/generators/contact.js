@@ -10,7 +10,7 @@ import { Contact } from '../models.js'
 /**
  * Generate fake contact
  *
- * @param {import('../models.js').Child|import('../models.js').Patient} patient - Child
+ * @param {Child|Patient} patient - Child
  * @param {boolean} [isMum] - Contact is child’s mother
  * @returns {Contact} Contact
  */
@@ -85,3 +85,7 @@ export function generateContact(patient, isMum) {
     patient_uuid: patient.uuid
   })
 }
+
+/**
+ * @import { Child, Patient } from '../models.js'
+ */

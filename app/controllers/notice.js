@@ -2,7 +2,7 @@ import { Notice } from '../models.js'
 
 export const noticeController = {
   /**
-   * @type {import("express").RequestParamHandler}
+   * @type {RequestParamHandler}
    */
   read(request, response, next, notice_uuid) {
     const notice = Notice.findOne(notice_uuid, request.session.data)
@@ -21,7 +21,7 @@ export const noticeController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   list(request, response) {
     return response.render('notice/list')
@@ -29,7 +29,7 @@ export const noticeController = {
 
   /**
    * @param {string} type - Form type
-   * @returns {import("express").RequestHandler} - Request handler
+   * @returns {RequestHandler} - Request handler
    */
   action(type) {
     return (request, response) => {
@@ -38,7 +38,7 @@ export const noticeController = {
   },
 
   /**
-   * @type {import("express").RequestHandler}
+   * @type {RequestHandler}
    */
   archive(request, response) {
     const { notice_uuid } = request.params
@@ -52,3 +52,7 @@ export const noticeController = {
     return response.redirect(paths.next)
   }
 }
+
+/**
+ * @import { RequestHandler, RequestParamHandler } from 'express'
+ */

@@ -9,9 +9,9 @@ import { today } from '../utils/date.js'
  * Generate fake upload
  *
  * @param {Array<string>} patient_uuids - Patients
- * @param {import('../models.js').User} user - User
- * @param {import('../enums.js').UploadType} [type] - Upload type
- * @param {import('../models.js').School} [school] - School
+ * @param {User} user - User
+ * @param {UploadType} [type] - Upload type
+ * @param {School} [school] - School
  * @returns {Upload} Upload
  */
 export function generateUpload(
@@ -84,3 +84,7 @@ export function generateUpload(
     })
   })
 }
+
+/**
+ * @import { School, User } from '../models.js'
+ */

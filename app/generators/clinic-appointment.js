@@ -9,9 +9,9 @@ import { generateContact } from './contact.js'
 /**
  * Generate fake clinic appointment
  *
- * @param {import('../models.js').Patient} patient - The patient for whom the appointment is being created
- * @param {import('../models.js').Session} session - The clinic session into which we're booking the patient
- * @param {import('../models.js').ClinicBooking} booking - The booking this appointment will belong to
+ * @param {Patient} patient - The patient for whom the appointment is being created
+ * @param {Session} session - The clinic session into which we're booking the patient
+ * @param {ClinicBooking} booking - The booking this appointment will belong to
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
 export function generateClinicAppointment(patient, session, booking) {
@@ -147,3 +147,7 @@ export function generateClinicAppointment(patient, session, booking) {
     mmrAlternative
   })
 }
+
+/**
+ * @import { ClinicBooking, Patient, Session } from '../models.js'
+ */

@@ -51,7 +51,7 @@ export function getRepliesWithHealthAnswers(replies) {
 /**
  * Get combined answers to health questions
  *
- * @param {import('../models.js').PatientSession} patientSession - Patient session
+ * @param {PatientSession} patientSession - Patient session
  * @returns {object|undefined} Combined answers to health questions
  */
 export function getConsentHealthAnswers(patientSession) {
@@ -116,8 +116,8 @@ export function getConsentHealthAnswers(patientSession) {
 /**
  * Get consent outcome
  *
- * @param {import('../models.js').Reply} reply - Reply
- * @param {import('../models.js').Session} session - Session
+ * @param {Reply} reply - Reply
+ * @param {Session} session - Session
  * @returns {ConsentOutcome} Consent outcome
  */
 export const getConfirmedConsentOutcome = (reply, session) => {
@@ -162,7 +162,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
 /**
  * Get consent outcome
  *
- * @param {import('../models.js').PatientSession} patientSession - Patient session
+ * @param {PatientSession} patientSession - Patient session
  * @returns {ConsentOutcome} Consent outcome
  */
 export const getConsentOutcome = (patientSession) => {
@@ -275,7 +275,7 @@ export const getConsentOutcome = (patientSession) => {
 /**
  * Get combined refusal reasons
  *
- * @param {import('../models.js').PatientSession} patientSession - Patient session
+ * @param {PatientSession} patientSession - Patient session
  * @returns {Array<ReplyRefusal>} Refusal reasons
  */
 export const getConsentRefusalReasons = (patientSession) => {
@@ -303,7 +303,7 @@ export const getConsentRefusalReasons = (patientSession) => {
 /**
  * Get faked answers for health questions needed for a vaccine
  *
- * @param {import('../models.js').Vaccine} vaccine - Vaccine
+ * @param {Vaccine} vaccine - Vaccine
  * @param {string} healthCondition - Health condition
  * @returns {object|undefined} Health answers
  */
@@ -414,3 +414,7 @@ export const countAnswersNeedingTriage = (healthAnswers) => {
     .flatMap(([, answer]) => (Array.isArray(answer) ? answer : [answer]))
     .filter((answer) => answer.answer === 'Yes').length
 }
+
+/**
+ * @import { PatientSession, Reply, Session, Vaccine } from '../models.js'
+ */

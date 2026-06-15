@@ -34,10 +34,10 @@ import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
  * @property {Date} [dob] - Date of birth
  * @property {object} [dob_] - Date of birth (from `dateInput`)
  * @property {Date} [dod] - Date of death
- * @property {import('../enums.js').Gender} gender - Gender
+ * @property {Gender} gender - Gender
  * @property {EthnicGroup} [ethnicGroup] - Ethnic group
  * @property {string} [ethnicGroupOther] - Other ethnic group
- * @property {import('../enums.js').EthnicBackground} [ethnicBackground] - Ethnic background
+ * @property {EthnicBackground} [ethnicBackground] - Ethnic background
  * @property {string} [ethnicBackgroundOther] - Other ethnic background
  * @property {Array<Adjustment>} [adjustments] - Reasonable adjustments
  * @property {string} [adjustmentsOther] - Other adjustment
@@ -346,3 +346,7 @@ export class Child {
     return 'child'
   }
 }
+
+/**
+ * @import { Gender, EthnicBackground } from '../enums.js'
+ */

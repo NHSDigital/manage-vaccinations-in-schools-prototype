@@ -304,7 +304,7 @@ export class Vaccination {
   /**
    * Get patient
    *
-   * @returns {import('../models.js').Patient|undefined} Patient
+   * @returns {Patient|undefined} Patient
    */
   get patient() {
     if (this.patient_uuid) {
@@ -317,7 +317,7 @@ export class Vaccination {
   /**
    * Get session
    *
-   * @returns {import('../models.js').Session|undefined} Session
+   * @returns {Session|undefined} Session
    */
   get session() {
     if (this.patientSession) {
@@ -683,3 +683,7 @@ export class Vaccination {
     return updatedVaccination
   }
 }
+
+/**
+ * @import { Session } from '../models.js'
+ */
