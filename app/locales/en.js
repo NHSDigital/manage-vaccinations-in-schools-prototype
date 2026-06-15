@@ -401,7 +401,7 @@ export const en = {
     fullyBooked: {
       title: 'All clinics are now fully booked',
       problem:
-        'All clinics scheduled for {{ programmes }} vaccinations are fully booked.',
+        'All clinics scheduled for {{ programmes }} vaccinations are now fully booked.',
       guidance:
         'Contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },

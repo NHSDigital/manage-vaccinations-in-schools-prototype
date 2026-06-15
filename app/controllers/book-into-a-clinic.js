@@ -160,10 +160,6 @@ export const bookIntoClinicController = {
         const currentAppointment = booking.findAppointment(appointment_uuid)
         response.locals.appointment = currentAppointment
 
-        // The check-answers page needs a version of the appointment that can find its booking on the context
-        response.locals.wizardAppointment =
-          wizardBooking?.findAppointment(appointment_uuid)
-
         response.locals.childNumber =
           booking.appointments.indexOf(currentAppointment) + 1
         response.locals.childCount = booking.appointments.length
