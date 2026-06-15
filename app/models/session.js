@@ -1190,14 +1190,12 @@ export class Session {
   /**
    * Find one
    *
-   * @param {string|string[]} id - Session ID
+   * @param {string} id - Session ID
    * @param {object} context - Context
    * @returns {Session|undefined} Session
    * @static
    */
   static findOne(id, context) {
-    id = String(id)
-
     if (context?.sessions?.[id]) {
       return new Session(context.sessions[id], context)
     }
@@ -1224,15 +1222,13 @@ export class Session {
   /**
    * Update
    *
-   * @param {string|string[]} id - Session ID
+   * @param {string} id - Session ID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Session} Updated session
    * @static
    */
   static update(id, updates, context) {
-    id = String(id)
-
     const updatedSession = _.mergeWith(
       Session.findOne(id, context),
       updates,
@@ -1270,11 +1266,11 @@ export class Session {
   /**
    * Delete the session with the given ID
    *
-   * @param {string|string[]} id - the ID of the session to delete
+   * @param {string} id - Session ID
    * @param {object} context - the context on which the session is stored
    */
   static delete(id, context) {
-    delete context.sessions[String(id)]
+    delete context.sessions[id]
   }
 }
 

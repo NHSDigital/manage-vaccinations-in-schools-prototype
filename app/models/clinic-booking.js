@@ -97,13 +97,11 @@ export class ClinicBooking {
   /**
    * Get the appointment with the given unique ID
    *
-   * @param {string|string[]} appointment_uuid - Unique ID of appointment to get
+   * @param {string} appointment_uuid - Appointment UUID
    * @returns {ClinicAppointment} Requested clinic appointment
    */
   findAppointment(appointment_uuid) {
-    return this.appointments.find(
-      ({ uuid }) => uuid === String(appointment_uuid)
-    )
+    return this.appointments.find(({ uuid }) => uuid === appointment_uuid)
   }
 
   /**
@@ -154,14 +152,12 @@ export class ClinicBooking {
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - ClinicBooking UUID
+   * @param {string} uuid - ClinicBooking UUID
    * @param {object} context - Context
    * @returns {ClinicBooking|undefined} Clinic booking
    * @static
    */
   static findOne(uuid, context) {
-    uuid = String(uuid)
-
     if (context?.clinicBookings?.[uuid]) {
       return new ClinicBooking(context.clinicBookings[uuid], context)
     }
@@ -187,15 +183,13 @@ export class ClinicBooking {
   /**
    * Update
    *
-   * @param {string|string[]} uuid - ClinicBooking UUID
+   * @param {string} uuid - ClinicBooking UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {ClinicBooking} Updated booking
    * @static
    */
   static update(uuid, updates, context) {
-    uuid = String(uuid)
-
     // Sanitise any _unchecked checkbox values
     ClinicBooking.#sanitiseCheckboxUpdates(updates)
 
@@ -284,11 +278,11 @@ export class ClinicBooking {
   /**
    * Delete
    *
-   * @param {string|string[]} uuid - Clinic booking UUID
+   * @param {string} uuid - Clinic booking UUID
    * @param {object} context - Context
    * @static
    */
   static delete(uuid, context) {
-    delete context.clinicBookings[String(uuid)]
+    delete context.clinicBookings[uuid]
   }
 }

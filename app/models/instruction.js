@@ -32,14 +32,12 @@ export class Instruction {
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - Instruction UUID
+   * @param {string} uuid - Instruction UUID
    * @param {object} context - Context
    * @returns {Instruction|undefined} Instruction
    * @static
    */
   static findOne(uuid, context) {
-    uuid = String(uuid)
-
     if (context?.instructions?.[uuid]) {
       return new Instruction(context.instructions[uuid], context)
     }

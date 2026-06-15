@@ -984,14 +984,12 @@ export class PatientSession {
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - Patient UUID
+   * @param {string} uuid - Patient UUID
    * @param {object} context - Context
    * @returns {PatientSession|undefined} Patient
    * @static
    */
   static findOne(uuid, context) {
-    uuid = String(uuid)
-
     if (context?.patientSessions?.[uuid]) {
       return new PatientSession(context.patientSessions[uuid], context)
     }
@@ -1018,15 +1016,13 @@ export class PatientSession {
   /**
    * Update
    *
-   * @param {string|string[]} uuid - Patient UUID
+   * @param {string} uuid - Patient UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {PatientSession} Updated patient session
    * @static
    */
   static update(uuid, updates, context) {
-    uuid = String(uuid)
-
     const updatedPatientSession = Object.assign(
       PatientSession.findOne(uuid, context),
       updates

@@ -142,14 +142,12 @@ export class Contact {
   /**
    * Find one
    *
-   * @param {string|string[]} uuid - Contact UUID
+   * @param {string} uuid - Contact UUID
    * @param {object} context - Context
    * @returns {Contact|undefined} Contact
    * @static
    */
   static findOne(uuid, context) {
-    uuid = String(uuid)
-
     if (context?.contacts?.[uuid]) {
       return new Contact(context.contacts[uuid], context)
     }
@@ -176,15 +174,13 @@ export class Contact {
   /**
    * Update
    *
-   * @param {string|string[]} uuid - Contact UUID
+   * @param {string} uuid - Contact UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
    * @returns {Contact} Updated contact
    * @static
    */
   static update(uuid, updates, context) {
-    uuid = String(uuid)
-
     const updatedContact = Object.assign(
       Contact.findOne(uuid, context),
       updates
@@ -205,12 +201,12 @@ export class Contact {
   /**
    * Delete
    *
-   * @param {string|string[]} uuid - Contact UUID
+   * @param {string} uuid - Contact UUID
    * @param {object} context - Context
    * @static
    */
   static delete(uuid, context) {
-    delete context.contacts[String(uuid)]
+    delete context.contacts[uuid]
   }
 }
 
