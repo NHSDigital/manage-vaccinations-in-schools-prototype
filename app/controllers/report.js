@@ -103,7 +103,7 @@ export const reportController = {
     for (const key of ['programme_id']) {
       const value = request.body[key]
       if (value) {
-        params.append(key, String(value))
+        params.append(key, value)
       }
     }
 
@@ -115,7 +115,7 @@ export const reportController = {
         values
           .filter((item) => item !== '_unchecked')
           .forEach((value) => {
-            params.append(key, String(value))
+            params.append(key, value)
           })
       }
     }

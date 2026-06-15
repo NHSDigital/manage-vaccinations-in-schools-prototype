@@ -357,7 +357,7 @@ export const sessionController = {
     for (const key of ['academicYear', 'q', 'status', 'type']) {
       const value = request.body[key]
       if (value) {
-        params.append(key, String(value))
+        params.append(key, value)
       }
     }
 
@@ -369,7 +369,7 @@ export const sessionController = {
         values
           .filter((item) => item !== '_unchecked')
           .forEach((value) => {
-            params.append(key, String(value))
+            params.append(key, value)
           })
       }
     }
@@ -606,7 +606,7 @@ export const sessionController = {
     for (const key of ['q', 'clinicStatus', 'instruct', 'register', 'report']) {
       const value = request.body[key]
       if (value) {
-        params.append(key, String(value))
+        params.append(key, value)
       }
     }
 
@@ -628,7 +628,7 @@ export const sessionController = {
         values
           .filter((item) => item !== '_unchecked')
           .forEach((value) => {
-            params.append(key, String(value))
+            params.append(key, value)
           })
       }
     }

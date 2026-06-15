@@ -104,7 +104,7 @@ export const schoolController = {
     for (const key of ['phase', 'q']) {
       const value = request.body[key]
       if (value) {
-        params.append(key, String(value))
+        params.append(key, value)
       }
     }
 
@@ -292,7 +292,7 @@ export const schoolController = {
     for (const key of ['q', 'report', 'clinicStatus']) {
       const value = request.body[key]
       if (value) {
-        params.append(key, String(value))
+        params.append(key, value)
       }
     }
 
@@ -314,7 +314,7 @@ export const schoolController = {
         values
           .filter((item) => item !== '_unchecked')
           .forEach((value) => {
-            params.append(key, String(value))
+            params.append(key, value)
           })
       }
     }

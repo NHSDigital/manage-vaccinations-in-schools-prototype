@@ -67,7 +67,7 @@ export const downloadController = {
     for (const key of ['type']) {
       const value = request.body[key]
       if (value) {
-        params.append(key, String(value))
+        params.append(key, value)
       }
     }
 
