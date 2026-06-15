@@ -8,7 +8,7 @@ import {
   formatDate,
   today
 } from '../utils/date.js'
-import { formatMonospace } from '../utils/string.js'
+import { formatCode } from '../utils/string.js'
 
 /**
  * @class Batch
@@ -100,7 +100,7 @@ export class Batch {
     const createdAt = formatDate(this.createdAt, { dateStyle: 'long' })
     const updatedAt = formatDate(this.updatedAt, { dateStyle: 'long' })
     const expiry = formatDate(this.expiry, { dateStyle: 'long' })
-    const id = formatMonospace(this.id)
+    const id = formatCode(this.id)
 
     return { createdAt, updatedAt, expiry, id }
   }
