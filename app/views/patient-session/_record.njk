@@ -21,38 +21,38 @@
     fieldset: {
       legend: {
         classes: "nhsuk-u-font-size-22",
-        text: __("patientSession.preScreen.selfId.label", {
+        text: __("preScreen.selfId.label", {
           patient: patient
         }),
         size: "s"
       }
     },
     items: [{
-      text: __("patientSession.preScreen.selfId.true"),
+      text: __("preScreen.selfId.true"),
       value: true
     }, {
-      text: __("patientSession.preScreen.selfId.false"),
+      text: __("preScreen.selfId.false"),
       value: false,
       conditional: {
         html: input({
           label: {
-            text: __("patientSession.preScreen.identifiedBy.name.title")
+            text: __("preScreen.identifiedBy.name.title")
           },
           width: 20,
-          decorate: "patientSession.preScreen.identifiedBy.name"
+          decorate: "preScreen.identifiedBy.name"
         }) + input({
           label: {
-            text: __("patientSession.preScreen.identifiedBy.relationship.title")
+            text: __("preScreen.identifiedBy.relationship.title")
           },
           hint: {
-            text: __("patientSession.preScreen.identifiedBy.relationship.hint")
+            text: __("preScreen.identifiedBy.relationship.hint")
           },
           width: 20,
-          decorate: "patientSession.preScreen.identifiedBy.relationship"
+          decorate: "preScreen.identifiedBy.relationship"
         })
       }
     }],
-    decorate: "patientSession.preScreen.selfId"
+    decorate: "preScreen.selfId"
   }) }}
 
   <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
@@ -61,13 +61,13 @@
     classes: "nhsuk-u-margin-bottom-2",
     level: 4,
     size: "s",
-    title: __("patientSession.preScreen.label", {
+    title: __("preScreen.label", {
       patient: patient
     })
   }) }}
 
 {% filter nhsukMarkdown %}
-{{ __("patientSession.preScreen.description", { patient: patient }) }}
+{{ __("preScreen.description", { patient: patient }) }}
 {% for question in patientSession.vaccine.preScreenQuestions %}
 - {{ question }}
 {% endfor %}
@@ -75,26 +75,26 @@
 
   {{ checkboxes({
     items: [{
-      text: __("patientSession.preScreen.check.label")
+      text: __("preScreen.check.label")
     }],
-    decorate: ["patientSession", "preScreen", "check"],
+    decorate: ["preScreen", "check"],
     _validate: {
       presence: {
-        message: __("patientSession.preScreen.check.error")
+        message: __("preScreen.check.error")
       }
     }
   }) }}
 
   {{ textarea({
-    label: { text: __("patientSession.preScreen.note.label") + " (optional)" },
+    label: { text: __("preScreen.note.label") + " (optional)" },
     rows: 2,
-    decorate: "patientSession.preScreen.note"
+    decorate: "preScreen.note"
   }) }}
 
   {{ select({
-    label: { text: __("patientSession.preScreen.suppliedBy.title") },
-    items: userItems(data.users, patientSession.preScreen.suppliedBy),
-    decorate: "patientSession.preScreen.suppliedBy_uid",
+    label: { text: __("preScreen.suppliedBy.title") },
+    items: userItems(data.users, preScreen.suppliedBy),
+    decorate: "preScreen.suppliedBy_uid",
     attributes: {
       "data-module": "app-autocomplete"
     }
@@ -104,7 +104,7 @@
 
   {% set vaccinationSiteHtml = radios({
     fieldset: {
-      legend: { text: __("patientSession.preScreen.injectionSite.label") }
+      legend: { text: __("preScreen.injectionSite.label") }
     },
     items: [{
       text: VaccinationSite.ArmLeftUpper
@@ -113,14 +113,14 @@
     }, {
       text: VaccinationSite.Other
     }],
-    decorate: "patientSession.preScreen.injectionSite",
+    decorate: "preScreen.injectionSite",
     _validate: {
       conditional: {
         dependentOn: {
-          name: "[patientSession][preScreen][ready]",
+          name: "[preScreen][ready]",
           value: true
         },
-        message: __("patientSession.preScreen.injectionSite.error")
+        message: __("preScreen.injectionSite.error")
       }
     }
   }) %}
@@ -129,7 +129,7 @@
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m nhsuk-u-font-size-22",
-        text: __("patientSession.preScreen.ready.label", {
+        text: __("preScreen.ready.label", {
           patient: patient,
           programme: patientSession.programme,
           method: patientSession.vaccine.method | lower
@@ -138,31 +138,31 @@
     },
     items: [
       {
-        text: __("patientSession.preScreen.ready.yes"),
+        text: __("preScreen.ready.yes"),
         value: true,
         conditional: {
           html: vaccinationSiteHtml
         } if patientSession.vaccine.criteria != VaccineCriteria.Intranasal
       },
       {
-        text: __("patientSession.preScreen.ready.no"),
+        text: __("preScreen.ready.no"),
         value: false
       },
       {
         divider: "or"
       } if canRecordAlternativeVaccine,
       {
-        text: __("patientSession.preScreen.ready.alternative"),
+        text: __("preScreen.ready.alternative"),
         value: "alternative",
         conditional: {
           html: vaccinationSiteHtml
         }
       } if canRecordAlternativeVaccine
     ],
-    decorate: "patientSession.preScreen.ready",
+    decorate: "preScreen.ready",
     _validate: {
       presence: {
-        message: __("patientSession.preScreen.ready.error", {
+        message: __("preScreen.ready.error", {
           programme: patientSession.programme
         })
       }
@@ -170,7 +170,7 @@
   }) }}
 
   {{ button({
-    text: __("patientSession.preScreen.confirm"),
+    text: __("preScreen.confirm"),
     attributes: {
       formaction: patientSession.uri + "/new/pre-screen?referrer=" + referrer
     }

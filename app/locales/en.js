@@ -1966,55 +1966,6 @@ export const en = {
       requests: 'Consent requests',
       responses: 'Consent responses'
     },
-    preScreen: {
-      label: 'Pre-screening checks',
-      description: 'Have you checked that {{patient.firstName}}:',
-      selfId: {
-        label: 'Has {{patient.firstName}} confirmed their identity?',
-        true: 'Yes',
-        false: 'No, it was confirmed by somebody else'
-      },
-      identifiedBy: {
-        label: 'Identified by',
-        name: {
-          label: 'Name',
-          title: 'What is the person’s name?'
-        },
-        relationship: {
-          label: 'Relationship to child',
-          title: 'What is their relationship to the child?',
-          hint: 'For example, parent, teacher or teaching assistant'
-        }
-      },
-      suppliedBy: {
-        label: 'Supplier',
-        title:
-          'Which nurse identified and pre-screened the child and supplied the vaccine?'
-      },
-      check: {
-        error:
-          'Select if the child has confirmed all pre-screening statements are true',
-        label: 'I have checked that the above statements are true'
-      },
-      ready: {
-        error:
-          'Select if the child is ready for their {{programme.nameSentenceCase}} {{method}}',
-        label:
-          'Is {{patient.firstName}} ready for their {{programme.nameSentenceCase}} {{method}}?',
-        hint: 'Pre-screening checks must be completed for vaccination to go ahead',
-        yes: 'Yes',
-        no: 'No',
-        alternative: 'No – but they can have the injected flu vaccine instead'
-      },
-      injectionSite: {
-        error: 'Select an injection site',
-        label: 'Where will the injection be given?'
-      },
-      confirm: 'Continue',
-      note: {
-        label: 'Pre-screening notes'
-      }
-    },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',
       titleWithMethod:
@@ -2138,6 +2089,55 @@ export const en = {
       no: {
         label: 'No – search for another child'
       }
+    }
+  },
+  preScreen: {
+    label: 'Pre-screening checks',
+    description: 'Have you checked that {{patient.firstName}}:',
+    selfId: {
+      label: 'Has {{patient.firstName}} confirmed their identity?',
+      true: 'Yes',
+      false: 'No, it was confirmed by somebody else'
+    },
+    identifiedBy: {
+      label: 'Identified by',
+      name: {
+        label: 'Name',
+        title: 'What is the person’s name?'
+      },
+      relationship: {
+        label: 'Relationship to child',
+        title: 'What is their relationship to the child?',
+        hint: 'For example, parent, teacher or teaching assistant'
+      }
+    },
+    suppliedBy: {
+      label: 'Supplier',
+      title:
+        'Which nurse identified and pre-screened the child and supplied the vaccine?'
+    },
+    check: {
+      error:
+        'Select if the child has confirmed all pre-screening statements are true',
+      label: 'I have checked that the above statements are true'
+    },
+    ready: {
+      error:
+        'Select if the child is ready for their {{programme.nameSentenceCase}} {{method}}',
+      label:
+        'Is {{patient.firstName}} ready for their {{programme.nameSentenceCase}} {{method}}?',
+      hint: 'Pre-screening checks must be completed for vaccination to go ahead',
+      yes: 'Yes',
+      no: 'No',
+      alternative: 'No – but they can have the injected flu vaccine instead'
+    },
+    injectionSite: {
+      error: 'Select an injection site',
+      label: 'Where will the injection be given?'
+    },
+    confirm: 'Continue',
+    note: {
+      label: 'Pre-screening notes'
     }
   },
   programme: {

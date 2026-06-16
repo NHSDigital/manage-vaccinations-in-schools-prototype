@@ -291,7 +291,7 @@ export const patientSessionController = {
    */
   preScreen(request, response) {
     const { account } = request.app.locals
-    const { preScreen } = request.body.patientSession
+    const { preScreen } = request.body
     const { data } = request.session
     const { patientSession, programme } = response.locals
 

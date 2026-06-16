@@ -92,7 +92,7 @@ export const vaccinationController = {
     )
     const { session, programme, vaccine, instruction } = patientSession
     const { identifiedBy, injectionSite, ready, selfId, suppliedBy_uid } =
-      data.patientSession.preScreen
+      data.preScreen
 
     // Check for default batch
     const defaultBatch = DefaultBatch.findAll(data)
