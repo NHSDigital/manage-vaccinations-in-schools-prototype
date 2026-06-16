@@ -59,6 +59,12 @@ export const activityController = {
     const vaccinationGiven = Vaccination.findAll(data).find(
       (vaccination) => vaccination.given
     )
+    const vaccinationUpdated = Vaccination.findAll(data).find(
+      (vaccination) =>
+        vaccination.given &&
+        vaccination.uuid !== vaccinationGiven.uuid &&
+        vaccination.batch_id !== vaccinationGiven.batch_id
+    )
     const vaccinationNotGiven = Vaccination.findAll(data).find(
       (vaccination) => !vaccination.given
     )
@@ -348,6 +354,22 @@ export const activityController = {
             createdBy_uid,
             programme_ids: [vaccinationGiven?.programme_id],
             vaccination_uuid: vaccinationGiven?.uuid
+          }),
+          auditEvent({
+            name: activity.vaccination.updated,
+            updatedFields: [
+              {
+                key: 'vaccination.batch_id.label',
+                before: vaccinationGiven?.formatted.batch_id,
+                after: vaccinationUpdated?.formatted.batch_id
+              },
+              {
+                key: 'vaccination.note.label',
+                before: '(Empty)',
+                after: 'Child reported feeling light headed'
+              }
+            ],
+            createdBy_uid
           })
         ]
       }
