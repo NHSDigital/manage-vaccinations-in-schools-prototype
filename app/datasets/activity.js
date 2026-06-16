@@ -108,6 +108,7 @@ export default {
       vaccination.given
         ? `Vaccinated with ${vaccination.vaccine?.brand}`
         : `${PatientStatus.Deferred}: ${lowerCaseFirst(vaccination.outcome)}`,
-    uploaded: 'Vaccination record uploaded'
+    uploaded: 'Vaccination record uploaded',
+    updated: 'Vaccination record updated manually'
   }
 }
