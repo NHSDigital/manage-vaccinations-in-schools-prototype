@@ -86,5 +86,14 @@
         totalAppointments: {}
       })
     }) }}
+
+    {% if appointmentsToCancel.length > 0 %}
+      {% set detailsHtml = __mf("session.edit.appointments.cancellation.description", { count: appointmentsToCancel.length }) | nhsukMarkdown %}
+
+      {{ warningCallout({
+        heading: __("session.edit.appointments.cancellation.title"),
+        html: detailsHtml
+      }) }}
+    {% endif %}
   {% endif %}
 {% endblock %}

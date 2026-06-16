@@ -2,6 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import _ from 'lodash'
 
 import { ClinicAppointment, Contact } from '../models.js'
+import { today } from '../utils/date.js'
 import { formatCode, stringToArray, stringToBoolean } from '../utils/string.js'
 
 /**
@@ -10,6 +11,7 @@ import { formatCode, stringToArray, stringToBoolean } from '../utils/string.js'
  * @param {object} [context] - Context
  * @property {object} [context] - Context
  * @property {string} [uuid] - Clinic booking UUID
+ * @property {Date} [createdAt] - Created date
  * @property {string} [bookingReference] - Booking reference number
  * @property {Array<string>} [invited_programme_ids] - IDs of programmes for which child was invited
  * @property {Contact} [contact] - Contact details for the booking; see appointments for parental relationship details
@@ -19,6 +21,8 @@ export class ClinicBooking {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
+    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
+
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
     this.invited_programme_ids = options?.invited_programme_ids
