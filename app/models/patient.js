@@ -605,6 +605,7 @@ export class Patient extends Child {
         name: activity.patient.updated(),
         type: AuditEventType.Record,
         createdAt: today(),
+        createdBy_uid: updates.createdBy_uid,
         updatedFields
       })
     }

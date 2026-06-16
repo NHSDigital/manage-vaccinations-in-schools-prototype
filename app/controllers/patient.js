@@ -370,6 +370,7 @@ export const patientController = {
    * @type {RequestHandler}
    */
   update(request, response) {
+    const { account } = request.app.locals
     const { patient_uuid } = request.params
     const { data, referrer } = request.session
     const { __ } = response.locals
@@ -377,7 +378,10 @@ export const patientController = {
     // Update session data
     const patient = Patient.update(
       patient_uuid,
-      data.wizard.patients[String(patient_uuid)],
+      {
+        ...data.wizard.patients[String(patient_uuid)],
+        ...{ createdBy_uid: account.uid }
+      },
       data,
       true
     )
