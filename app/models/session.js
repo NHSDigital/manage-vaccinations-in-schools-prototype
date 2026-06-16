@@ -621,6 +621,38 @@ export class Session {
   }
 
   /**
+   * Get a list of the appointments already made but for which we don't have capacity
+   *
+   * @returns {Array<ClinicAppointment>} - the appointments we'll need to cancel
+   */
+  get appointmentsToCancel() {
+    const allAppointmentsByTime = _.groupBy(this.appointments, (appointment) =>
+      appointment.startAt.getTime()
+    )
+
+    const appointmentsWithoutVaccinators = []
+    Object.entries(allAppointmentsByTime).forEach(([key, appointments]) => {
+      const startAt = new Date()
+      startAt.setTime(Number(key))
+      const vaccinationPeriod = this.vaccinationPeriods.find((period) =>
+        period.includesAppointmentTime(startAt, this.appointmentLength)
+      )
+      if (!vaccinationPeriod) {
+        // No longer part of a vaccination period, so cancel all appointments at this time
+        appointmentsWithoutVaccinators.push(...appointments)
+      } else if (vaccinationPeriod.vaccinatorCount < appointments.length) {
+        // Not enough vaccinators at this time, so those who booked first get to keep their appointments
+        appointments = _.sortBy(appointments, 'booking.createdAt')
+        appointmentsWithoutVaccinators.push(
+          ...appointments.slice(vaccinationPeriod.vaccinatorCount)
+        )
+      }
+    })
+
+    return appointmentsWithoutVaccinators
+  }
+
+  /**
    * Get school
    *
    * @returns {School|undefined} School

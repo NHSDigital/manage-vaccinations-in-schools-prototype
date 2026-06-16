@@ -745,8 +745,14 @@ export const sessionController = {
       }
     }
 
+    const sessionWithFullContext = new Session(session, data)
+    if (session.type === SessionType.Clinic) {
+      response.locals.appointmentsToCancel =
+        sessionWithFullContext.appointmentsToCancel
+    }
+
     // Give access to the data needed for the summaryRows
-    response.locals.session = new Session(session, data)
+    response.locals.session = sessionWithFullContext
 
     // Show back link to session page
     response.locals.back = session.uri

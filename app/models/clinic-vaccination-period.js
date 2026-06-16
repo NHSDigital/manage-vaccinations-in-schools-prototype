@@ -12,9 +12,7 @@ import {
  * @param {object} options - property values
  * @property {string} [uuid] - Vaccination period UUID
  * @property {Date} [startAt] - Start time of first appointment slot
- * @property {Date} [startAt_] - Start time of first appointment slot, from dateInput - see getter/setter
  * @property {Date} [endAt] - End time of final appointment slot
- * @property {Date} [endAt_] - End time of final appointment slot, from dateInput - see getter/setter
  * @property {number} [vaccinatorCount] - The number of staff vaccinating in parallel during this period
  */
 export class ClinicVaccinationPeriod {
@@ -22,9 +20,7 @@ export class ClinicVaccinationPeriod {
     this.uuid = options?.uuid || faker.string.uuid()
 
     this.startAt = options?.startAt && new Date(options.startAt)
-    this.startAt_ = options?.startAt_
     this.endAt = options?.endAt && new Date(options.endAt)
-    this.endAt_ = options?.endAt_
 
     this.vaccinatorCount = options?.vaccinatorCount
   }
@@ -90,6 +86,26 @@ export class ClinicVaccinationPeriod {
     if (object) {
       this.endAt = convertObjectToIsoDate(object)
     }
+  }
+
+  /**
+   * Does the given appointment start time fall within this period?
+   *
+   * @param {Date} appointmentTime - the start time of appointment
+   * @param {number} appointmentLengthInMinutes - the length of slots in minutes
+   * @returns {boolean} - true if the slot falls within this period, or false otherwise
+   */
+  includesAppointmentTime(appointmentTime, appointmentLengthInMinutes) {
+    const firstSlotTime = this.startAt.getTime()
+    const lastSlotTime = addMinutes(
+      this.endAt,
+      -appointmentLengthInMinutes
+    ).getTime()
+
+    return (
+      appointmentTime.getTime() >= firstSlotTime &&
+      appointmentTime.getTime() <= lastSlotTime
+    )
   }
 
   /**
