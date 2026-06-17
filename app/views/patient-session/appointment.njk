@@ -1,9 +1,9 @@
 {% extends "_layouts/session.njk" %}
 
-{% set title = patient.initials + " – " + session.shortName + " – " + __("patientSession.events.title") %}
+{% set title = patient.initials + " – " + session.shortName + " – " + __("patientSession.appointment.title") %}
 {% set heading = patientSession.patient.fullName %}
 {% set stickyBanner = true %}
-{% set view = "events" %}
+{% set view = "appointment" %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -21,9 +21,9 @@
 {% block content %}
   {{ super() }}
 
-  {% include "patient-session/_note.njk" %}
+  {# Details of the appointment as it stands #}
+  {% include "patient-session/_appointment.njk" %}
 
-  {{ appTimeline({
-    items: timelineItems(patientSession.auditEventLog)
-  }) }}
+  {# Details of additional programmes that could be offered #}
+  {% include "patient-session/_catch-up.njk" %}
 {% endblock %}

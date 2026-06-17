@@ -29,6 +29,7 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import {
+  formatContact,
   formatFullName,
   formatLink,
   formatLinkWithSecondaryText,
@@ -468,6 +469,7 @@ export class ClinicAppointment {
       dob: this.child.formatted.dob,
       homeAddress: this.child.formatted.address,
       parentalRelationship,
+      contactDetails: formatContact(this.contact, true),
       ...(fluVaccineType ? { fluVaccineType } : {}),
       ...(this.mmrAlternative !== undefined
         ? {

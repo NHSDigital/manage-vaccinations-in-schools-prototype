@@ -60,10 +60,6 @@
         }) }}
       {% endfor %}
 
-      {% if patientSession.clinicAppointment %}
-        {% include "patient-session/_appointment.njk" %}
-      {% endif %}
-
       {% if options.canGillick or patientSession.gillick %}
         {% include "patient-session/_gillick.njk" %}
       {% endif %}

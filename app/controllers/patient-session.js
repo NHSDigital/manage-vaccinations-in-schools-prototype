@@ -6,6 +6,7 @@ import {
   PatientStatus,
   PreScreenQuestion,
   RegistrationOutcome,
+  SessionType,
   UserRole,
   VaccinationOutcome,
   VaccineMethod
@@ -122,6 +123,13 @@ export const patientSessionController = {
 
     const view = request.path.split('/').at(-1)
     response.locals.navigationItems = [
+      ...(session.type === SessionType.Clinic && [
+        {
+          text: __('patientSession.appointment.title'),
+          href: `${patientSession.uri}/appointment`,
+          current: view === 'appointment'
+        }
+      ]),
       ...patientSession.siblingPatientSessions.map((patientSession) => ({
         ...(patientSession.report === PatientStatus.Vaccinated && {
           icon: 'tick'
@@ -129,15 +137,14 @@ export const patientSessionController = {
         text: patientSession.programme.name,
         href: patientSession.uri,
         current:
-          view !== 'events' && patientSession.programme_id === programme_id
+          !['appointment', 'events'].includes(view) &&
+          patientSession.programme_id === programme_id
       })),
-      ...[
-        {
-          text: __('patientSession.events.title'),
-          href: `${patientSession.uri}/events`,
-          current: view === 'events'
-        }
-      ]
+      {
+        text: __('patientSession.events.title'),
+        href: `${patientSession.uri}/events`,
+        current: view === 'events'
+      }
     ]
 
     response.locals.programmeItems = [

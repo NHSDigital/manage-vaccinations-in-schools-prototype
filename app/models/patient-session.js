@@ -32,7 +32,12 @@ import {
   Programme,
   Session
 } from '../models.js'
-import { getDateValueDifference, getYearGroup, today } from '../utils/date.js'
+import {
+  formatDate,
+  getDateValueDifference,
+  getYearGroup,
+  today
+} from '../utils/date.js'
 import {
   getInstructionOutcome,
   getRegistrationOutcome,
@@ -946,7 +951,12 @@ export class PatientSession {
       report: this.patientProgramme?.formatted.programmeStatus,
       outstandingVaccinations: filters.formatList(outstandingVaccinations),
       vaccineCriteria: formatVaccineCriteria(this.vaccineCriteria),
-      yearGroup: formattedYearGroup
+      yearGroup: formattedYearGroup,
+      creationTime: formatDate(this.createdAt, {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      })
     }
   }
 
