@@ -74,7 +74,7 @@
   {{ actionLink({
     text: __("session.new.label"),
     href: "/sessions/new"
-  }) }}
+  }) if school.isOpen }}
 
   {% if activeSession %}
     {{ appHeading({

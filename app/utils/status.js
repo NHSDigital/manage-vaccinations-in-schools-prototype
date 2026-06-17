@@ -5,6 +5,7 @@ import {
   PatientStatus,
   RegistrationOutcome,
   ReplyDecision,
+  SchoolStatus,
   ScreenOutcome,
   UploadStatus,
   VaccinationOutcome,
@@ -189,6 +190,28 @@ export function getReplyDecisionStatus(decision) {
   return {
     colour,
     text
+  }
+}
+
+export function getSchoolStatus(status) {
+  let colour
+  switch (status) {
+    case SchoolStatus.Open:
+      colour = 'white'
+      break
+    case SchoolStatus.Opening:
+    case SchoolStatus.Closing:
+      colour = 'yellow'
+      break
+    case SchoolStatus.Closed:
+      colour = 'grey'
+      break
+    default:
+  }
+
+  return {
+    colour,
+    text: status
   }
 }
 

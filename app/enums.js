@@ -470,6 +470,29 @@ export const SessionPresetName = {
  * @readonly
  * @enum {string}
  */
+export const SchoolStatus = {
+  Open: 'Open',
+  Opening: 'Opening soon',
+  Closed: 'Closed',
+  Closing: 'Closing soon'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const SchoolClosureReason = {
+  Amalgamated: 'Amalgamated',
+  Closed: 'Closed',
+  Merged: 'Merged',
+  Split: 'Split',
+  Succeeded: 'Succeeded'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const SessionMMRConsent = {
   Standard: 'Standard request',
   Outbreak: 'Outbreak request'

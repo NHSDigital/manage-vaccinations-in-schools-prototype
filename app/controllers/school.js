@@ -59,10 +59,10 @@ export const schoolController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, SchoolFilterQuery>}
    */
   list(request, response) {
-    const { phase, q } = request.query
+    const { option, phase, q } = request.query
     const { data } = request.session
     const { schools } = response.locals
 
@@ -75,9 +75,21 @@ export const schoolController = {
       )
     }
 
+    // Filter by status (only show open schools by default)
+    if (!option) {
+      results = results.filter((school) => school.isOpen)
+    }
+
     // Filter by phase
     if (phase && phase !== 'none') {
       results = results.filter((school) => school.phase === phase)
+    }
+
+    // Filter by display option
+    for (const key of ['isClosed']) {
+      if (option?.includes(key)) {
+        results = results.filter((school) => school[key])
+      }
     }
 
     // Sort
@@ -88,6 +100,7 @@ export const schoolController = {
     response.locals.pages = getPagination(results, request.query, 40)
 
     // Clean up session data
+    delete data.option
     delete data.q
     delete data.phase
 
@@ -105,6 +118,19 @@ export const schoolController = {
       const value = request.body[key]
       if (value) {
         params.append(key, value)
+      }
+    }
+
+    // Checkboxes
+    for (const key of ['option']) {
+      const value = request.body[key]
+      const values = Array.isArray(value) ? value : [value]
+      if (value) {
+        values
+          .filter((item) => item !== '_unchecked')
+          .forEach((value) => {
+            params.append(key, value)
+          })
       }
     }
 
@@ -562,5 +588,5 @@ export const schoolController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
- * @import { PatientFilterQuery } from '../../typings/index.d.ts'
+ * @import { PatientFilterQuery, SchoolFilterQuery } from '../../typings/index.d.ts'
  */

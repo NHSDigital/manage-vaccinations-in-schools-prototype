@@ -245,7 +245,7 @@ export class PatientProgramme {
    */
   get schoolSessionPending() {
     const school = this.patient?.school
-    if (school?.homeOrUnknown) {
+    if (school?.isHomeOrUnknown) {
       return false
     }
 

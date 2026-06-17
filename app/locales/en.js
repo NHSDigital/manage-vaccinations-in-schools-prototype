@@ -2454,7 +2454,9 @@ export const en = {
     count:
       '{count, plural, =0 {no {phase} school} one {# no {phase} schools} other{# {phase} schools}}',
     search: {
-      label: 'Find school'
+      label: 'Find school',
+      showOnly: 'Show only',
+      isClosed: 'Closed schools'
     },
     name: {
       label: 'Name',
@@ -2467,6 +2469,10 @@ export const en = {
     sen: {
       label: 'SEN school',
       title: 'Is this a special educational needs (SEN) school?'
+    },
+    status: {
+      label: 'Status',
+      title: 'Establishment status'
     },
     yearGroups: {
       label: 'Year groups',

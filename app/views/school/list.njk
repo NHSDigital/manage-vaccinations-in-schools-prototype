@@ -55,6 +55,23 @@
           decorate: "programme_id"
         }) if programmeItems }}
 
+        {{ checkboxes({
+          fieldset: {
+            legend: {
+              text: __("school.search.showOnly"),
+              size: "s"
+            }
+          },
+          small: true,
+          items: [
+            {
+              value: "isClosed",
+              text: __("school.search.isClosed")
+            }
+          ],
+          decorate: "option"
+        }) }}
+
         {{ appButtonGroup({
           buttons: [{
             text: __("search.confirm"),
@@ -70,7 +87,7 @@
             href: "/schools",
             small: true,
             variant: "secondary"
-          } if data.q or data.phase]
+          } if data.q or data.phase or data.option]
         }) }}
       {% endcall %}
     </app-auto-submit>
@@ -103,9 +120,11 @@
             href: school.uri,
             clickable: true
           },
+          lastRowBorder: false,
           rows: summaryRows(school, {
             patients: {},
             id: {},
+            status: {},
             phase: {},
             address: {},
             nextSessionDate: {}
