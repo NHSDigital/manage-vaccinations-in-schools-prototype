@@ -14,3 +14,9 @@ export interface PatientFilterQuery {
   vaccineCriteria?: string
   yearGroup?: string | string[]
 }
+
+export interface SchoolFilterQuery {
+  option?: string | string[]
+  phase?: string | string[]
+  q?: string
+}

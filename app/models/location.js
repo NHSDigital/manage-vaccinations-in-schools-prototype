@@ -33,7 +33,7 @@ export class Location {
     this.addressLevel1 = options?.addressLevel1
     this.postalCode = options?.postalCode
     this.team_id = options?.team_id
-    this.presetNames = options?.presetNames
+    this.presetNames = options?.presetNames || []
   }
 
   /**

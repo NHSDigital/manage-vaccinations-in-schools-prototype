@@ -2,7 +2,6 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import gpSurgeries from '../datasets/clinics.js'
 import firstNames from '../datasets/first-names.js'
-import schools from '../datasets/schools.js'
 import { Adjustment, Gender, Impairment } from '../enums.js'
 import { Child } from '../models.js'
 import { getCurrentAcademicYear, getYearGroup } from '../utils/date.js'
@@ -10,9 +9,10 @@ import { getCurrentAcademicYear, getYearGroup } from '../utils/date.js'
 /**
  * Generate fake child
  *
+ * @param {Array<School>} schools - Schools
  * @returns {Child} Child
  */
-export function generateChild() {
+export function generateChild(schools) {
   // Gender
   const gender = faker.helpers.weightedArrayElement([
     { value: Gender.Male, weight: 50 },
@@ -81,12 +81,12 @@ export function generateChild() {
   }
 
   // Date of birth and school
-  const primarySchools = Object.values(schools).filter(
-    ({ phase }) => phase === 'Primary'
-  )
-  const secondarySchools = Object.values(schools).filter(
-    ({ phase }) => phase === 'Secondary'
-  )
+  const primarySchools = Object.values(schools)
+    .filter(({ isOpen }) => isOpen)
+    .filter(({ phase }) => phase === 'Primary')
+  const secondarySchools = Object.values(schools)
+    .filter(({ isOpen }) => isOpen)
+    .filter(({ phase }) => phase === 'Secondary')
   const phase = faker.helpers.arrayElement(['Primary', 'Secondary'])
   let dob, school_id
   if (phase === 'Primary') {
@@ -186,3 +186,7 @@ export function generateChild() {
     school_id
   })
 }
+
+/**
+ * @import { School } from '../models.js'
+ */

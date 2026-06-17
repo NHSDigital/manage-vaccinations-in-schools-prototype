@@ -1,3 +1,4 @@
+{% from "nhsuk/components/warning-callout/macro.njk" import warningCallout %}
 {% from "_macros/heading.njk" import appHeading %}
 {% from "_macros/secondary-navigation.njk" import appSecondaryNavigation %}
 
@@ -6,6 +7,12 @@
     title: params.school.location.name,
     summary: school.formatted.address
   }) }}
+
+  {{ warningCallout({
+    classes: "nhsuk-u-margin-bottom-4",
+    heading: school.status,
+    html: school.statusDescription | nhsukMarkdown
+  }) if school.statusDescription }}
 
   {% if params.school.id != "888888" and params.school.id != "999999" %}
     {{ appSecondaryNavigation({

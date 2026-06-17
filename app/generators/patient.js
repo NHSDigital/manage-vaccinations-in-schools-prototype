@@ -3,16 +3,13 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import schools from '../datasets/schools.js'
 import { Patient } from '../models.js'
 
-import { generateChild } from './child.js'
-
 /**
  * Generate fake patient record
  *
+ * @param {Child} child - Child
  * @returns {Patient} Patient record
  */
-export function generatePatient() {
-  const child = generateChild()
-
+export function generatePatient(child) {
   // Pending changes
   const pendingChanges = {}
   const hasPendingChanges = faker.datatype.boolean(0.025)
@@ -41,3 +38,7 @@ export function generatePatient() {
     pendingChanges
   })
 }
+
+/**
+ * @import { Child } from '../models.js'
+ */

@@ -1,12 +1,16 @@
 import { default as filters } from '@x-govuk/govuk-prototype-filters'
+import { isAfter, isBefore } from 'date-fns'
 import _ from 'lodash'
 
+import { SchoolClosureReason, SchoolStatus } from '../enums.js'
 import { Location, Patient, Session } from '../models.js'
-import { formatDate, getDateValueDifference } from '../utils/date.js'
+import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
+import { getSchoolStatus } from '../utils/status.js'
 import {
   formatCode,
   formatLink,
+  formatTag,
   formatYearGroups,
   stringToBoolean
 } from '../utils/string.js'
@@ -14,9 +18,13 @@ import {
 /**
  * @typedef {object} SchoolOptions
  * @property {string} [urn] - URN
+ * @property {Date} [openAt] - Date school opened (or will open)
+ * @property {Date} [closeAt] - Date school closed (or will close)
+ * @property {SchoolClosureReason} [closeReason] - Reason school closed
+ * @property {Array<string>} [linkedUrns] - GIAS linked URNs
+ * @property {SchoolPhase} [phase] - Phase
  * @property {boolean} [sen] - SEN school
  * @property {string} [site] - Site code
- * @property {SchoolPhase} [phase] - Phase
  * @property {Array<number>} [yearGroups] - Year groups
  */
 
@@ -33,11 +41,14 @@ export class School extends Location {
     super(options, context)
 
     this.urn = options?.urn && String(options.urn)
+    this.openAt = options?.openAt && new Date(options.openAt)
+    this.closeAt = options?.closeAt && new Date(options.closeAt)
+    this.closeReason = options?.closeReason
+    this.linkedUrns = options?.linkedUrns || []
+    this.phase = options?.phase
     this.sen = stringToBoolean(options?.sen) || false
     this.site = options?.site
-    this.phase = options?.phase
     this.yearGroups = options?.yearGroups || []
-    this.homeOrUnknown = ['888888', '999999'].includes(this.urn)
   }
 
   /**
@@ -87,6 +98,115 @@ export class School extends Location {
   }
 
   /**
+   * Get linked schools
+   *
+   * @returns {Array<School>} Linked schools
+   */
+  get linkedSchools() {
+    return this.linkedUrns.map((urn) => School.findOne(urn, this.context))
+  }
+
+  /**
+   * Get GIAS establishment status (based on school closure date)
+   *
+   * @returns {SchoolStatus|undefined} GIAS establishment status
+   */
+  get status() {
+    if (this.isHomeOrUnknown) {
+      return
+    }
+
+    switch (true) {
+      case this.openAt && isAfter(this.openAt, today()):
+        return SchoolStatus.Opening
+      case this.closeAt && isAfter(this.closeAt, today()):
+        return SchoolStatus.Closing
+      case this.closeAt && isBefore(this.closeAt, today()):
+        return SchoolStatus.Closed
+      default:
+        return SchoolStatus.Open
+    }
+  }
+
+  /**
+   * Get expanded description about GIAS establishment status
+   *
+   * @returns {string|undefined} Status description
+   */
+  get statusDescription() {
+    if (this.status === SchoolStatus.Open) {
+      return
+    }
+
+    let preface
+    const closing = this.status === SchoolStatus.Closing
+    const opening = this.status === SchoolStatus.Opening
+    const schoolNames = filters.formatList(
+      this.linkedSchools.map((school) => school.formatted.nameAndUrn)
+    )
+
+    if (opening) {
+      return this.linkedSchools.length
+        ? `This school will open on ${this.formatted.openAt}, succeeding ${schoolNames}.`
+        : `This school will open on ${this.formatted.openAt}.`
+    }
+
+    switch (this.closeReason) {
+      case SchoolClosureReason.Amalgamated:
+        preface = closing
+          ? `This school will be amalgamated with ${schoolNames}`
+          : `This school was amalgamated with ${schoolNames}`
+        break
+      case SchoolClosureReason.Closed:
+        preface = closing ? `This school will close` : `This school closed`
+        break
+      case SchoolClosureReason.Merged:
+        preface = closing
+          ? `This school will merge with ${schoolNames}`
+          : `This school merged with ${schoolNames}`
+        break
+      case SchoolClosureReason.Succeeded:
+        preface = closing
+          ? `This school will be succeeded by ${schoolNames}`
+          : `This school was succeeded by ${schoolNames}`
+        break
+      case SchoolClosureReason.Split:
+        preface = closing
+          ? `This school will split into ${schoolNames}`
+          : `This school was split into ${schoolNames}`
+    }
+
+    return `${preface} on ${this.formatted.closeAt}.`
+  }
+
+  /**
+   * Is home-educated or unknown school
+   *
+   * @returns {boolean} Home-educated or unknown school
+   */
+  get isHomeOrUnknown() {
+    return ['888888', '999999'].includes(this.urn)
+  }
+
+  /**
+   * Is a closed school (schools that are opening soon are considered open)
+   *
+   * @returns {boolean} Closed school
+   */
+  get isClosed() {
+    return this.status === SchoolStatus.Closed
+  }
+
+  /**
+   * Is an open school (schools that are opening soon are considered open)
+   *
+   * @returns {boolean} Open school
+   */
+  get isOpen() {
+    return !this.isClosed
+  }
+
+  /**
    * Get school pupils to invite to a (clinic) session
    *
    * @param {string} programmeId - Programme ID
@@ -118,7 +238,11 @@ export class School extends Location {
    */
   get nextSessionDate() {
     if (this.sessions?.length > 0) {
-      return this.sessions.at(-1).date
+      const lastSessionDate = this.sessions.at(-1).date
+
+      if (isBefore(today(), lastSessionDate)) {
+        return lastSessionDate
+      }
     }
   }
 
@@ -139,14 +263,20 @@ export class School extends Location {
    * @returns {object} Formatted values
    */
   get formatted() {
+    const id = formatCode(this.id)
+
     return {
       ...super.formatted,
+      urn: formatCode(this.urn),
+      id,
+      openAt: this.openAt && formatDate(this.openAt, { dateStyle: 'long' }),
+      closeAt: this.closeAt && formatDate(this.closeAt, { dateStyle: 'long' }),
+      nameAndUrn: `${this.name} (${id})`,
       nextSessionDate: formatDate(this.nextSessionDate, { dateStyle: 'full' }),
       patients: filters.plural(this.patients.length, 'child'),
-      yearGroups: formatYearGroups(this.yearGroups),
-      id: formatCode(this.id),
       site: formatCode(this.site),
-      urn: formatCode(this.urn)
+      status: this.status && formatTag(getSchoolStatus(this.status)),
+      yearGroups: formatYearGroups(this.yearGroups)
     }
   }
 
