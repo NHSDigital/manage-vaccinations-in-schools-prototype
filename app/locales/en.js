@@ -3382,9 +3382,7 @@ export const en = {
     list: {
       label: 'School moves',
       title: 'School moves',
-      description: 'Review children who have moved schools',
-      introduction:
-        'When imported records or a new consent response indicates that a child has changed school, Mavis flags this as a school move.\n\nYou can then review the new information and confirm the school move or ignore it.'
+      description: 'Review children who have moved schools'
     },
     show: {
       title: 'Review school move',

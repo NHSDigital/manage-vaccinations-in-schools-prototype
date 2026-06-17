@@ -13,14 +13,10 @@
     view: "move"
   }) }}
 
-  <div class="nhsuk-u-reading-width">
-    {{ __("move.list.introduction") | nhsukMarkdown }}
-
-    {{ actionLink({
-      text: __("move.download.label"),
-      href: "/moves/download?referrer=/moves"
-    }) }}
-  </div>
+  {{ actionLink({
+    text: __("move.download.label"),
+    href: "/moves/download?referrer=/moves"
+  }) }}
 
   {% set resultRows = [] %}
   {% for move in results.page %}
