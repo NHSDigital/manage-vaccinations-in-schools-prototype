@@ -91,12 +91,14 @@ export const bookIntoClinicController = {
     }
 
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
-
-    return response.redirect(
+    const nextPath =
       bookableSessions.length > 0
         ? '/book-into-a-clinic/start'
         : '/book-into-a-clinic/availability'
-    )
+
+    return request.session.save((error) => {
+      if (!error) response.redirect(nextPath)
+    })
   },
 
   /**
