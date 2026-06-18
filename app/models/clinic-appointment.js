@@ -21,7 +21,6 @@ import {
   Session,
   User
 } from '../models.js'
-import { formatDate } from '../utils/date.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
@@ -32,6 +31,7 @@ import {
   formatList,
   formatOther,
   formatSecondaryText,
+  formatTime,
   stringToArray
 } from '../utils/string.js'
 
@@ -371,16 +371,8 @@ export class ClinicAppointment {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const formattedStartTime = formatDate(this.startAt, {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
-    })
-    const formattedEndTime = formatDate(this.endAt, {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
-    })
+    const formattedStartTime = formatTime(this.startAt)
+    const formattedEndTime = formatTime(this.endAt)
 
     const session = Session.findOne(this.session_id, this.context)
 
