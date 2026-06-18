@@ -67,25 +67,6 @@ export const teamController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  readSchool(request, response, next) {
-    const { school_id } = request.params
-
-    const school = School.findOne(school_id, request.session.data)
-    response.locals.school = school
-
-    return next()
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showSchool(request, response) {
-    return response.render(`team/school`)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
   showForm(request, response) {
     const view = request.params.view || 'contact'
 

@@ -12,9 +12,6 @@ router.all('/:team_id/edit/:view', team.readForm)
 router.get('/:team_id/edit/:view', team.showForm)
 router.post('/:team_id/edit/:view', team.updateForm)
 
-router.all('/:team_id/schools/:school_id', team.readSchool)
-router.get('/:team_id/schools/:school_id', team.showSchool)
-
 router.get('/:team_id{/:view}', team.show)
 
 export const teamRoutes = router
