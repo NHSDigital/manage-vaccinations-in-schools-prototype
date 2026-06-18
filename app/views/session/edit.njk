@@ -69,10 +69,10 @@
           href: session.uri + "/edit/programmes"
         },
         location: {
-          href: session.uri + "/edit/clinic"
+          href: session.uri + "/edit/clinic" if not session.hasAppointments
         },
         date: {
-          href: session.uri + "/edit/date"
+          href: session.uri + "/edit/date" if not session.hasAppointments
         },
         vaccinationPeriods: {
           href: session.uri + "/edit/vaccination-periods"
@@ -81,9 +81,12 @@
           href: session.uri + "/edit/vaccinators"
         },
         appointmentLength: {
-          href: session.uri + "/edit/appointment-length"
+          href: session.uri + "/edit/appointment-length" if not session.hasAppointments
         },
-        totalAppointments: {}
+        totalAppointments: {},
+        registration: {
+          href: session.uri + "/edit/registration"
+        }
       })
     }) }}
 
