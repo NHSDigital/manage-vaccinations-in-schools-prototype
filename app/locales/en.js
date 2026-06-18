@@ -2951,7 +2951,7 @@ export const en = {
           label: 'Copied link'
         },
         description:
-          'The link will allow parents to book appointments for {{programmeNames}} vaccinations at a clinic session. It can be pasted anywhere you need to promote clinic vaccinations.',
+          'The link takes parents to a form where they can book their {{programmeNames}} vaccinations. It can be pasted anywhere you need to promote clinic vaccinations.',
         confirm: 'Return to the sessions page'
       }
     }

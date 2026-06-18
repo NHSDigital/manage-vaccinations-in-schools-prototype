@@ -22,7 +22,7 @@ export const programmeNamesListForSentence = (
   conjunctionType,
   context
 ) => {
-  const formatter = new Intl.ListFormat('en', {
+  const formatter = new Intl.ListFormat('en-GB', {
     style: 'long',
     type: conjunctionType
   })
