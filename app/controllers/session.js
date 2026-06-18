@@ -195,6 +195,8 @@ export const sessionController = {
       }))
       .sort((a, b) => a.text.localeCompare(b.text))
 
+    response.locals.back = '/sessions'
+
     return response.render('session/advert-programmes')
   },
 
@@ -225,6 +227,7 @@ export const sessionController = {
    */
   showAdvertLink(request, response) {
     // Handling a GET for /sessions/advert-link
+    response.locals.back = '/sessions/advertise'
 
     return response.render('session/advert-link')
   },
