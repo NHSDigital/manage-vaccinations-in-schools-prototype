@@ -566,13 +566,30 @@ export function formatHour(hour) {
  */
 export function formatTime(date, hour12 = true) {
   const locale = i18n.getLocale()
-  return date
-    .toLocaleTimeString(locale, {
+
+  if (!hour12) {
+    return date.toLocaleTimeString(locale, {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: hour12
+      hour12: false
     })
-    .toLowerCase()
+  }
+
+  // NHS style: lowercase am/pm with no space, full stop between hours and
+  // minutes, omit :00, and use midday/midnight for noon/midnight.
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+
+  if (minutes === 0) {
+    if (hours === 0) return 'midnight'
+    if (hours === 12) return 'midday'
+  }
+
+  const period = hours < 12 ? 'am' : 'pm'
+  const hours12 = hours % 12 || 12
+  return minutes === 0
+    ? `${hours12}${period}`
+    : `${hours12}.${minutes.toString().padStart(2, '0')}${period}`
 }
 
 /**
