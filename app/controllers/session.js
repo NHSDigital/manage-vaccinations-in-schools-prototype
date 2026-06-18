@@ -44,6 +44,7 @@ import {
   stringToArray,
   stringToBoolean
 } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const sessionController = {
   /**
@@ -353,28 +354,11 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filter(request, response) {
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['academicYear', 'q', 'status', 'type']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of ['programme_id']) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(
+      request,
+      ['academicYear', 'q', 'status', 'type'],
+      ['programme_id']
+    )
 
     return response.redirect(`/sessions?${params}`)
   },
@@ -602,38 +586,22 @@ export const sessionController = {
    */
   filterPatientSessions(request, response) {
     const { session_id, view } = request.params
-    const params = new URLSearchParams()
 
-    // Radios
-    for (const key of ['q', 'clinicStatus', 'instruct', 'register', 'report']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of [
-      'option',
-      'patientConsent',
-      'patientDeferred',
-      'patientRefused',
-      'patientTriage',
-      'patientVaccinated',
-      'programme_id',
-      'vaccineCriteria',
-      'yearGroup'
-    ]) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(
+      request,
+      ['clinicStatus', 'instruct', 'q', 'register', 'report'],
+      [
+        'option',
+        'patientConsent',
+        'patientDeferred',
+        'patientRefused',
+        'patientTriage',
+        'patientVaccinated',
+        'programme_id',
+        'vaccineCriteria',
+        'yearGroup'
+      ]
+    )
 
     return response.redirect(`/sessions/${session_id}/${view}?${params}`)
   },

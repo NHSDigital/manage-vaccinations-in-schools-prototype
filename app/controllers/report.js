@@ -1,5 +1,6 @@
 import { Programme, Vaccination } from '../models.js'
 import { formatYearGroup } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const reportController = {
   /**
@@ -97,28 +98,11 @@ export const reportController = {
   filterList(request, response) {
     const view = request.params.view || 'vaccinations'
 
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['programme_id']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of ['gender', 'yearGroup']) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(
+      request,
+      ['programme_id'],
+      ['gender', 'yearGroup']
+    )
 
     return response.redirect(`/reports/${view}?${params}`)
   }

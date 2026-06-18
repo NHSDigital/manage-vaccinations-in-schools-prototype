@@ -4,6 +4,7 @@ import { AcademicYear, DownloadFormat, DownloadType } from '../enums.js'
 import { Download, Programme, Team } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const downloadController = {
   /**
@@ -61,15 +62,7 @@ export const downloadController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['type']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
+    const params = getFilterParams(request, ['type'])
 
     return response.redirect(`/downloads?${params}`)
   },

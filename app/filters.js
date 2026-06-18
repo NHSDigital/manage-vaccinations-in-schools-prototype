@@ -2,13 +2,13 @@ import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import _ from 'lodash'
 
 import { ordinal } from './utils/number.js'
-import { queryToQueryString } from './utils/querystring.js'
 import {
   formatHighlight,
   formatList,
   formatMarkdown,
   formatYearGroup
 } from './utils/string.js'
+import { formatQueryString } from './utils/url.js'
 
 /**
  * Prototype specific filters for use in Nunjucks templates.
@@ -191,7 +191,7 @@ export default (env) => {
    * @returns {string} Rebuilt query string
    */
   filters.asQueryString = function (query) {
-    return queryToQueryString(query)
+    return formatQueryString(query)
   }
 
   return filters

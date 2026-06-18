@@ -6,6 +6,7 @@ import { Patient, School } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { formatYearGroup } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const schoolController = {
   /**
@@ -111,28 +112,7 @@ export const schoolController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['phase', 'q']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of ['option']) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(request, ['phase', 'q'], ['option'])
 
     return response.redirect(`/schools?${params}`)
   },
@@ -312,38 +292,21 @@ export const schoolController = {
   filterPatients(request, response) {
     const { school } = response.locals
 
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['q', 'report', 'clinicStatus']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of [
-      'option',
-      'patientConsent',
-      'patientDeferred',
-      'patientRefused',
-      'patientTriage',
-      'patientVaccinated',
-      'programme_id',
-      'vaccineCriteria',
-      'yearGroup'
-    ]) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(
+      request,
+      ['clinicStatus', 'q', 'report'],
+      [
+        'option',
+        'patientConsent',
+        'patientDeferred',
+        'patientRefused',
+        'patientTriage',
+        'patientVaccinated',
+        'programme_id',
+        'vaccineCriteria',
+        'yearGroup'
+      ]
+    )
 
     return response.redirect(`${school.uri}?${params}`)
   },

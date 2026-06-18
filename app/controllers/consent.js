@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import { Consent, PatientSession, Patient, Session } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const consentController = {
   /**
@@ -79,27 +80,35 @@ export const consentController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readMatches(request, response, next) {
-    let { hasMissingNhsNumber, q } = request.query
+    let { option, q } = request.query
     const { data } = request.session
 
-    let patients = Patient.findAll(data)
+    const patients = Patient.findAll(data)
 
     // Sort
-    patients = _.sortBy(patients, 'lastName')
+    let results = _.sortBy(patients, 'lastName')
 
     // Query
     if (q) {
-      patients = patients.filter((patient) =>
+      results = results.filter((patient) =>
         patient.tokenized.includes(String(q).toLowerCase())
       )
     }
 
-    // Filter by missing NHS number
-    if (hasMissingNhsNumber) {
-      patients = patients.filter((patient) => patient.hasMissingNhsNumber)
+    // Filter by display option
+    for (const key of [
+      'agedOutOfProgrammes',
+      'archived',
+      'hasImpairment',
+      'hasAdjustment',
+      'hasMissingNhsNumber'
+    ]) {
+      if (option?.includes(key)) {
+        results = results.filter((patient) => patient[key])
+      }
     }
 
     // Toggle initial view
@@ -109,11 +118,11 @@ export const consentController = {
 
     // Results
     response.locals.patients = patients
-    response.locals.results = getResults(patients, request.query)
-    response.locals.pages = getPagination(patients, request.query)
+    response.locals.results = getResults(results, request.query)
+    response.locals.pages = getPagination(results, request.query)
 
     // Clean up session data
-    delete data.hasMissingNhsNumber
+    delete data.option
     delete data.q
 
     return next()
@@ -123,17 +132,9 @@ export const consentController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterMatches(request, response) {
-    const { hasMissingNhsNumber, q } = request.body
     const { consent } = response.locals
-    const params = new URLSearchParams()
 
-    if (q) {
-      params.append('q', String(q))
-    }
-
-    if (hasMissingNhsNumber?.includes('true')) {
-      params.append('hasMissingNhsNumber', 'true')
-    }
+    const params = getFilterParams(request, ['q'], ['option'])
 
     return response.redirect(`${consent.uri}/match?${params}`)
   },
@@ -223,4 +224,5 @@ export const consentController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
+ * @import { PatientFilterQuery } from '../../typings/index.d.ts'
  */

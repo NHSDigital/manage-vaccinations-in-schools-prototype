@@ -24,8 +24,8 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
-import { queryToQueryString } from '../utils/querystring.js'
 import { formatYearGroup, stringToArray } from '../utils/string.js'
+import { getFilterParams, formatQueryString } from '../utils/url.js'
 
 export const patientController = {
   /**
@@ -309,38 +309,21 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['q', 'report', 'clinicStatus']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of [
-      'option',
-      'patientConsent',
-      'patientDeferred',
-      'patientRefused',
-      'patientTriage',
-      'patientVaccinated',
-      'programme_id',
-      'vaccineCriteria',
-      'yearGroup'
-    ]) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(
+      request,
+      ['clinicStatus', 'q', 'report'],
+      [
+        'option',
+        'patientConsent',
+        'patientDeferred',
+        'patientRefused',
+        'patientTriage',
+        'patientVaccinated',
+        'programme_id',
+        'vaccineCriteria',
+        'yearGroup'
+      ]
+    )
 
     return response.redirect(`/patients?${params}`)
   },
@@ -643,9 +626,8 @@ export const patientController = {
 
     // Get back to the filter page as we left it
     return request.session.save((error) => {
-      const returnUri = `/patients${queryToQueryString(request.query)}`
       if (!error) {
-        response.redirect(returnUri)
+        response.redirect(`/patients${formatQueryString(request.query)}`)
       }
     })
   },
