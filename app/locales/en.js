@@ -3057,9 +3057,49 @@ export const en = {
     },
     sessions: {
       title: 'Sessions',
-      defaults: 'Session defaults',
-      password: 'Shared password',
-      text: 'You can change these values when scheduling new sessions.'
+      school: {
+        title: 'School sessions',
+        text: 'You can change these values when scheduling new school sessions.',
+        defaults: 'School session defaults'
+      },
+      clinic: {
+        title: 'Clinic sessions',
+        text: 'You can change these values when scheduling new clinics.',
+        defaults: 'Clinic session defaults'
+      },
+      password: 'Shared password'
+    },
+    sessionOpenWeeks: {
+      title: 'When should parents get a request to give consent?',
+      label: 'Consent request',
+      hint: 'Enter the number of weeks before the first session takes place'
+    },
+    sessionReminderWeeks: {
+      title: 'When should parents get a reminder to give consent?',
+      label: 'Consent reminders',
+      hint: 'Enter the number of weeks before a session takes place'
+    },
+    schoolSessionRegistration: {
+      title:
+        'Register children’s attendance before recording vaccinations in school?',
+      label: 'Register attendance'
+    },
+    clinicSessionRegistration: {
+      title:
+        'Register children’s attendance before recording vaccinations at a clinic?',
+      label: 'Register attendance'
+    },
+    nasalSprayDuration: {
+      title:
+        'How much time should be given for a nasal spray at clinic sessions?',
+      label: 'Nasal spray appointment length',
+      hint: 'Enter the number of minutes to give each nasal spray'
+    },
+    injectionDuration: {
+      title:
+        'How much time should be given for an injection at clinic sessions?',
+      label: 'Injection appointment length',
+      hint: 'Enter the number of minutes to give each injection'
     },
     reminders: {
       title: 'Consent reminders'
@@ -3079,21 +3119,6 @@ export const en = {
     privacyPolicyUrl: {
       label: 'Privacy policy',
       hint: 'Linked to from consent forms and consent request emails'
-    },
-    sessionOpenWeeks: {
-      title: 'When should parents get a request to give consent?',
-      label: 'Consent request',
-      hint: 'Enter the number of weeks before the first session takes place'
-    },
-    sessionReminderWeeks: {
-      title: 'When should parents get a reminder to give consent?',
-      label: 'Consent reminders',
-      hint: 'Enter the number of weeks before a session takes place'
-    },
-    sessionRegistration: {
-      title:
-        'Do you want to register children’s attendance before recording vaccinations?',
-      label: 'Register attendance'
     },
     password: {
       label: 'Shared password',

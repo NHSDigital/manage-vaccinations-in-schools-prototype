@@ -144,7 +144,6 @@ export const sessionController = {
     const session = Session.create(
       {
         // TODO: This needs contextual team data to work
-        registration: data.team.sessionRegistration,
         createdBy_uid: account.uid
       },
       data.wizard
@@ -928,8 +927,24 @@ export const sessionController = {
     const { data } = request.session
     const { paths } = response.locals
 
-    // Update values in the session model
     let session = Session.findOne(session_id, data.wizard)
+    if (view === 'type') {
+      // Inject the relevant registration default, if not already set, or if changing session type
+      if (
+        session.registration === undefined ||
+        session?.type !== request.body.session.type
+      ) {
+        let { team } = response.locals
+        team = Team.findOne(team?.id || '001', data)
+
+        request.body.session.registration =
+          request.body.session.type === SessionType.School
+            ? team.schoolSessionRegistration
+            : team.clinicSessionRegistration
+      }
+    }
+
+    // Update values in the session model
     if (request.body.session) {
       session = Session.update(session_id, request.body.session, data.wizard)
     }

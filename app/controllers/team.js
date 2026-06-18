@@ -1,4 +1,4 @@
-import { School, Team } from '../models.js'
+import { Team } from '../models.js'
 
 export const teamController = {
   /**
@@ -52,7 +52,8 @@ export const teamController = {
 
     const referrers = {
       contact: `${team.uri}/contact`,
-      sessions: `${team.uri}/sessions`,
+      'school-sessions': `${team.uri}/sessions`,
+      'clinic-sessions': `${team.uri}/sessions`,
       password: `${team.uri}/sessions`
     }
 
@@ -62,25 +63,6 @@ export const teamController = {
     }
 
     return next()
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  readSchool(request, response, next) {
-    const { school_id } = request.params
-
-    const school = School.findOne(school_id, request.session.data)
-    response.locals.school = school
-
-    return next()
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showSchool(request, response) {
-    return response.render(`team/school`)
   },
 
   /**

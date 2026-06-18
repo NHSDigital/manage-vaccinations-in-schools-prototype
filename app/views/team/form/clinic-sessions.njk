@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("team.sessions.title") %}
+{% set title = __("team.sessions.clinic.title") %}
 
 {% block form %}
   {{ appHeading({
@@ -9,7 +9,7 @@
   }) }}
 
   {{ insetText({
-    text: __("team.sessions.text")
+    text: __("team.sessions.clinic.text")
   }) }}
 
   {{ input({
@@ -18,12 +18,12 @@
     },
     label: {
       classes: "nhsuk-label--m",
-      text: __("team.sessionOpenWeeks.title")
+      text: __("team.nasalSprayDuration.title")
     },
-    hint: { text: __("team.sessionOpenWeeks.hint") },
-    suffix: "weeks",
+    hint: { text: __("team.nasalSprayDuration.hint") },
+    suffix: "minutes",
     width: 2,
-    decorate: "team.sessionOpenWeeks"
+    decorate: "team.clinicNasalSprayDuration"
   }) }}
 
   {{ input({
@@ -32,23 +32,23 @@
     },
     label: {
       classes: "nhsuk-label--m",
-      text: __("team.sessionReminderWeeks.title")
+      text: __("team.injectionDuration.title")
     },
-    hint: { text: __("team.sessionReminderWeeks.hint") },
-    suffix: "weeks",
+    hint: { text: __("team.injectionDuration.hint") },
+    suffix: "minutes",
     width: 2,
-    decorate: "team.sessionReminderWeeks"
+    decorate: "team.clinicInjectionDuration"
   }) }}
 
   {{ radios({
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
-        text: __("team.sessionRegistration.title")
+        text: __("team.clinicSessionRegistration.title")
       }
     },
     inline: true,
     items: getBooleanItems(),
-    decorate: "team.sessionRegistration"
+    decorate: "team.clinicSessionRegistration"
   }) }}
 {% endblock %}

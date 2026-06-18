@@ -106,7 +106,6 @@ export class Session {
 
     if (this.type === SessionType.Clinic) {
       this.clinic_id = options?.clinic_id
-      this.registration = false
       this.vaccinationPeriods = options?.vaccinationPeriods
         ? options.vaccinationPeriods.map(
             (period) => new ClinicVaccinationPeriod(period)
@@ -131,10 +130,11 @@ export class Session {
       this.mmrConsent = this.presetNames?.includes(SessionPresetName.MMR)
         ? options?.mmrConsent
         : undefined
-      this.registration = stringToBoolean(options?.registration)
-      this.register = options?.register || {}
       this.psdProtocol = stringToBoolean(options?.psdProtocol) || false
     }
+
+    this.registration = stringToBoolean(options?.registration)
+    this.register = options?.register || {}
 
     if (
       this.type === SessionType.School &&
