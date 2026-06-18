@@ -5,6 +5,7 @@ import { Upload } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { formatYearGroup } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const uploadController = {
   /**
@@ -74,28 +75,7 @@ export const uploadController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
-    const params = new URLSearchParams()
-
-    // Radios and text inputs
-    for (const key of ['type']) {
-      const value = request.body[key]
-      if (value) {
-        params.append(key, value)
-      }
-    }
-
-    // Checkboxes
-    for (const key of ['status']) {
-      const value = request.body[key]
-      const values = Array.isArray(value) ? value : [value]
-      if (value) {
-        values
-          .filter((item) => item !== '_unchecked')
-          .forEach((value) => {
-            params.append(key, value)
-          })
-      }
-    }
+    const params = getFilterParams(request, ['type'], ['status'])
 
     return response.redirect(`/uploads?${params}`)
   },
