@@ -26,6 +26,7 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import {
+  formatFullName,
   formatLink,
   formatLinkWithSecondaryText,
   formatList,
@@ -193,12 +194,21 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get full name of the child booked into this appointment
+   * Get full name of the child booked into this appointment, formatted for SAIS teams
    *
    * @returns {string} Child's full name
    */
   get fullName() {
-    return `${this.firstName} ${this.lastName}`
+    return formatFullName(this.firstName, this.lastName, false)
+  }
+
+  /**
+   * Get full name of the child booked into this appointment, formatted for parents
+   *
+   * @returns {string} Child's full name
+   */
+  get fullFriendlyName() {
+    return formatFullName(this.firstName, this.lastName, true)
   }
 
   /**
@@ -371,8 +381,9 @@ export class ClinicAppointment {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const formattedStartTime = formatTime(this.startAt)
-    const formattedEndTime = formatTime(this.endAt)
+    const parentFacingStartTime = formatTime(this.startAt)
+    const parentFacingEndTime = formatTime(this.endAt)
+    const teamFacingStartTime = formatTime(this.startAt, false)
 
     const session = Session.findOne(this.session_id, this.context)
 
@@ -396,6 +407,13 @@ export class ClinicAppointment {
           )
         : this.parentalRelationship
 
+    const programmeNames = programmeNamesListForSentence(
+      this.selected_programme_ids,
+      ConjunctionType.and,
+      this.context
+    )
+    const summary = `${teamFacingStartTime} ${this.fullName} (${programmeNames})`
+
     return {
       nameAndAge: [
         this.fullName,
@@ -417,13 +435,9 @@ export class ClinicAppointment {
       location: session?.clinic?.formatted.nameAndAddress,
       locationName: session?.clinic?.name,
       date: session?.formatted.date ?? '',
-      dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
-      timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
-      programmeNames: programmeNamesListForSentence(
-        this.selected_programme_ids,
-        ConjunctionType.and,
-        this.context
-      ),
+      dateAndTime: `${session?.formatted.date} at ${parentFacingStartTime}`,
+      timeSlot: `${parentFacingStartTime} to ${parentFacingEndTime}`,
+      programmeNames,
       programmeTags: this.#getSelectedProgrammes(this.context)
         .flatMap(({ nameTag }) => nameTag)
         .join(' '),
@@ -447,7 +461,8 @@ export class ClinicAppointment {
                 : `${this.impairments.length} impairments noted`
             )
           }
-        : {})
+        : {}),
+      summary
     }
   }
 
@@ -481,7 +496,14 @@ export class ClinicAppointment {
         `via ${this.contact.fullNameAndRelationship}`
       ),
       patientSession: formatLink(this.uri.matched, this.patient?.fullName),
-      extend: formatLink(this.uri.extend, 'Extend')
+      extend: formatLink(this.uri.extend, 'Extend'),
+      summary: this.patient_uuid
+        ? formatLink(this.uri.matched, this.formatted.summary)
+        : formatLinkWithSecondaryText(
+            this.uri.unmatched,
+            this.formatted.summary,
+            '(unmatched)'
+          )
     }
   }
 

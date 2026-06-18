@@ -718,7 +718,9 @@ export const sessionController = {
     const sessionWithFullContext = new Session(session, data)
     if (session.type === SessionType.Clinic) {
       response.locals.appointmentsToCancel =
-        sessionWithFullContext.appointmentsToCancel
+        sessionWithFullContext.appointmentsToCancel.sort((a, b) =>
+          getDateValueDifference(a.startAt, b.startAt)
+        )
     }
 
     // Give access to the data needed for the summaryRows

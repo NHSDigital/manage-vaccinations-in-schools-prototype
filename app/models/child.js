@@ -19,7 +19,12 @@ import {
   getAge,
   getYearGroup
 } from '../utils/date.js'
-import { formatList, formatYearGroup, stringToArray } from '../utils/string.js'
+import {
+  formatFullName,
+  formatList,
+  formatYearGroup,
+  stringToArray
+} from '../utils/string.js'
 
 /**
  * @typedef {object} ChildOptions
@@ -112,9 +117,7 @@ export class Child {
    * @returns {string} Full name
    */
   get fullName() {
-    if (!this.firstName || !this.lastName) return ''
-
-    return [this.lastName.toUpperCase(), this.firstName].join(', ')
+    return formatFullName(this.firstName, this.lastName, false)
   }
 
   /**
@@ -123,9 +126,7 @@ export class Child {
    * @returns {string} Full name
    */
   get fullFriendlyName() {
-    if (!this.firstName || !this.lastName) return ''
-
-    return [this.firstName, this.lastName].join(' ')
+    return formatFullName(this.firstName, this.lastName, true)
   }
 
   /**

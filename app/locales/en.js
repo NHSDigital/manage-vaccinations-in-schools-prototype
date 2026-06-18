@@ -2556,9 +2556,11 @@ export const en = {
         cancellation: {
           title: 'Appointments will be cancelled',
           description:
-            '{count, plural, one {Changes made to this session will result in the cancellation of **1 appointment**.\n\nA notification will be sent to the parent or guardian of the affected child, inviting them to book a new appointment.} other {Changes made to this session will result in the cancellation of **{count} appointments**.\n\nNotifications will be sent to the parents or guardians of affected children, inviting them to book a new appointment.}}'
+            '{count, plural, one {Changes made to this session will result in the cancellation of **1 appointment**.\n\nA notification will be sent to the parent or guardian of the affected child, inviting them to book a new appointment.} other {Changes made to this session will result in the cancellation of **{count} appointments**.\n\nNotifications will be sent to the parents or guardians of affected children, inviting them to book a new appointment.}}',
+          detailsTitle: 'Affected appointments'
         }
-      }
+      },
+      cancel: 'Return to the session page'
     },
     cancel: {
       bookings: {

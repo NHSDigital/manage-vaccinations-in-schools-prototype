@@ -12,7 +12,7 @@
     {% set appointmentRows = appointmentRows | push([
       {
         header: __("clinicBooking.addAnother.summary.child.label"),
-        html: appointment.fullName
+        html: appointment.fullFriendlyName
       },
       {
         header: __("actions.label"),

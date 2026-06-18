@@ -521,6 +521,22 @@ export function lowerCaseFirst(string) {
 }
 
 /**
+ * Format a child's name in a manner suitable for the given audience
+ *
+ * @param {string} firstName - the person's first name
+ * @param {string} lastName - the person's last name
+ * @param {boolean} parentFacing - true to format naturally for parents, or false to put surname first for SAIS teams
+ * @returns {string} - the formatted name
+ */
+export function formatFullName(firstName, lastName, parentFacing = false) {
+  if (!firstName || !lastName) return ''
+
+  return parentFacing
+    ? [firstName, lastName].join(' ')
+    : [lastName.toUpperCase(), firstName].join(', ')
+}
+
+/**
  * Get programme names that can be used in a sentence
  *
  * @param {string} string - String to change
