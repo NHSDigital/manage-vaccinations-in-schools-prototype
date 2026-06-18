@@ -20,19 +20,38 @@
     <div class="nhsuk-grid-column-three-quarters">
       {{ summaryList({
         card: {
-          heading: __("team.sessions.defaults"),
+          heading: __("team.sessions.school.defaults"),
           headingSize: "m"
         },
         lastRowBorder: false,
         rows: summaryRows(team, {
           sessionOpenWeeks: {
-            href: team.uri + "/edit/sessions"
+            href: team.uri + "/edit/school-sessions"
           },
           sessionReminderWeeks: {
-            href: team.uri + "/edit/sessions"
+            href: team.uri + "/edit/school-sessions"
           },
-          sessionRegistration: {
-            href: team.uri + "/edit/sessions"
+          schoolSessionRegistration: {
+            href: team.uri + "/edit/school-sessions"
+          }
+        })
+      }) }}
+
+      {{ summaryList({
+        card: {
+          heading: __("team.sessions.clinic.defaults"),
+          headingSize: "m"
+        },
+        lastRowBorder: false,
+        rows: summaryRows(team, {
+          nasalSprayDuration: {
+            href: team.uri + "/edit/clinic-sessions"
+          },
+          injectionDuration: {
+            href: team.uri + "/edit/clinic-sessions"
+          },
+          clinicSessionRegistration: {
+            href: team.uri + "/edit/clinic-sessions"
           }
         })
       }) }}

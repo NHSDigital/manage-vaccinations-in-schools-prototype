@@ -707,7 +707,10 @@ export const SessionType = {
 export const TeamDefaults = {
   SessionOpenWeeks: 3,
   SessionReminderWeeks: 1,
-  SessionRegistration: true
+  SchoolSessionRegistration: true,
+  ClinicSessionRegistration: true,
+  NasalSprayDuration: 5,
+  InjectionDuration: 10
 }
 
 /**

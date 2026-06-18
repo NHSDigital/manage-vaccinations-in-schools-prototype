@@ -17,7 +17,10 @@ import { stringToBoolean } from '../utils/string.js'
  * @property {string} [privacyPolicyUrl] - Privacy policy URL
  * @property {number} [sessionOpenWeeks] - Weeks before request consent
  * @property {number} [sessionReminderWeeks] - Weeks before send first reminder
- * @property {boolean} [sessionRegistration] - Should sessions have registration
+ * @property {boolean} [schoolSessionRegistration] - Should school sessions have registration
+ * @property {number} [clinicNasalSprayDuration] - Minutes to allocate each nasal spray
+ * @property {number} [clinicInjectionDuration] - Minutes to allocate each injection
+ * @property {boolean} [clinicSessionRegistration] - Should clinic sessions have registration
  * @property {string} [password] - Shared password
  * @property {Array<string>} [clinic_ids] - Clinic IDs
  * @property {Array<string>} [school_ids] - School URNs
@@ -44,9 +47,17 @@ export class Team {
       Number(options?.sessionOpenWeeks) || TeamDefaults.SessionOpenWeeks
     this.sessionReminderWeeks =
       Number(options?.sessionReminderWeeks) || TeamDefaults.SessionReminderWeeks
-    this.sessionRegistration =
-      stringToBoolean(options.sessionRegistration) ||
-      TeamDefaults.SessionRegistration
+    this.schoolSessionRegistration =
+      stringToBoolean(options.schoolSessionRegistration) ??
+      TeamDefaults.SchoolSessionRegistration
+    this.clinicNasalSprayDuration =
+      Number(options?.clinicNasalSprayDuration) ||
+      TeamDefaults.NasalSprayDuration
+    this.clinicInjectionDuration =
+      Number(options?.clinicInjectionDuration) || TeamDefaults.InjectionDuration
+    this.clinicSessionRegistration =
+      stringToBoolean(options.clinicSessionRegistration) ??
+      TeamDefaults.ClinicSessionRegistration
     this.password = options?.password
     this.clinic_ids = options?.clinic_ids || []
     this.school_ids = options?.school_ids || []
@@ -98,9 +109,20 @@ export class Team {
       'week'
     )
 
+    const nasalSprayDuration = prototypeFilters.plural(
+      this.clinicNasalSprayDuration,
+      'minute'
+    )
+    const injectionDuration = prototypeFilters.plural(
+      this.clinicInjectionDuration,
+      'minute'
+    )
+
     return {
       sessionOpenWeeks: `Send ${sessionOpenWeeks} before first session`,
-      sessionReminderWeeks: `Send ${sessionReminderWeeks} before each session`
+      sessionReminderWeeks: `Send ${sessionReminderWeeks} before each session`,
+      nasalSprayDuration,
+      injectionDuration
     }
   }
 
@@ -157,6 +179,17 @@ export class Team {
    * @static
    */
   static update(id, updates, context) {
+    // Sanitise values from boolean radios
+    if (updates?.schoolSessionRegistration) {
+      updates.schoolSessionRegistration =
+        stringToBoolean(updates.schoolSessionRegistration) || false
+    }
+    if (updates?.clinicSessionRegistration) {
+      updates.clinicSessionRegistration =
+        stringToBoolean(updates.clinicSessionRegistration) || false
+    }
+
+    // Update the team instance
     const updatedTeam = Object.assign(Team.findOne(id, context), updates)
     updatedTeam.updatedAt = today()
 

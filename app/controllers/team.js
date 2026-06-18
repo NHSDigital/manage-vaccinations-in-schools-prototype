@@ -1,4 +1,4 @@
-import { School, Team } from '../models.js'
+import { Team } from '../models.js'
 
 export const teamController = {
   /**
@@ -52,7 +52,8 @@ export const teamController = {
 
     const referrers = {
       contact: `${team.uri}/contact`,
-      sessions: `${team.uri}/sessions`,
+      'school-sessions': `${team.uri}/sessions`,
+      'clinic-sessions': `${team.uri}/sessions`,
       password: `${team.uri}/sessions`
     }
 
