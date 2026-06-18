@@ -142,7 +142,7 @@ export class School extends Location {
     const closing = this.status === SchoolStatus.Closing
     const opening = this.status === SchoolStatus.Opening
     const schoolNames = filters.formatList(
-      this.linkedSchools.map((school) => school.formatted.nameAndUrn)
+      this.linkedSchools.map((school) => school.link.nameAndUrn)
     )
 
     if (opening) {
@@ -287,7 +287,8 @@ export class School extends Location {
    */
   get link() {
     return {
-      name: formatLink(this.uri, this.name)
+      name: formatLink(this.uri, this.name),
+      nameAndUrn: formatLink(this.uri, this.formatted.nameAndUrn)
     }
   }
 
