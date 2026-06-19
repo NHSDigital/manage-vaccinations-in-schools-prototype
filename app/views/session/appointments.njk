@@ -62,9 +62,10 @@
       card: {
         headingHtml: appHeading({
           title: periodHeading,
-          summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators
-        }),
-        headingLevel: 3
+          summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators,
+          level: 2,
+          size: "m"
+        })
       },
       rows: tableRows
     }) }}

@@ -1,7 +1,11 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMinutes, addYears } from 'date-fns'
 
-import { ParentalRelationship, ReplyDecision } from '../enums.js'
+import {
+  ClinicAppointmentStatus,
+  ParentalRelationship,
+  ReplyDecision
+} from '../enums.js'
 import { Child, ClinicAppointment } from '../models.js'
 
 import { generateContact } from './contact.js'
@@ -130,6 +134,8 @@ export function generateClinicAppointment(patient, session, booking) {
     mmrAlternative = faker.datatype.boolean(0.15)
   }
 
+  const status = ClinicAppointmentStatus.Booked
+
   return booking.addAppointment({
     uuid,
     booking_uuid,
@@ -144,7 +150,8 @@ export function generateClinicAppointment(patient, session, booking) {
     selected_programme_ids,
     fluDecision,
     fluAlternative,
-    mmrAlternative
+    mmrAlternative,
+    status
   })
 }
 

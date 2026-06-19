@@ -1,5 +1,6 @@
 import _ from 'lodash'
 
+import { ClinicAppointmentStatus } from '../enums.js'
 import {
   ClinicAppointment,
   ClinicBooking,
@@ -54,7 +55,9 @@ export const unmatchedAppointmentController = {
     let appointments = ClinicBooking.findAll(request.session.data)
       ?.flatMap(({ appointments }) => appointments)
       .filter(
-        (appointment) => !appointment.patient_uuid && !appointment.archived
+        (appointment) =>
+          !appointment.patient_uuid &&
+          appointment.status === ClinicAppointmentStatus.Booked
       )
 
     // Sort
@@ -277,7 +280,7 @@ export const unmatchedAppointmentController = {
       // Update session data
       const booking = ClinicBooking.findOne(booking_uuid, data)
       const appointment = booking.findAppointment(appointment_uuid)
-      appointment.archived = true
+      appointment.status = ClinicAppointmentStatus.Archived
       appointment.note = note
 
       ClinicBooking.update(booking_uuid, booking, data)

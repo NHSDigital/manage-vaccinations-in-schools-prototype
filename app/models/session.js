@@ -16,7 +16,8 @@ import {
   SessionStatus,
   SessionType,
   TeamDefaults,
-  VaccineCriteria
+  VaccineCriteria,
+  ClinicAppointmentStatus
 } from '../enums.js'
 import {
   Clinic,
@@ -563,7 +564,7 @@ export class Session {
   }
 
   /**
-   * Does the clinic have any active (non-archived) appointments booked?
+   * Does the clinic have any active (non-archived, non-cancelled) appointments booked?
    *
    * @returns {boolean} Active appointments (`true`), or otherwise (`false`)
    */
@@ -579,7 +580,8 @@ export class Session {
       ?.flatMap(({ appointments }) => appointments)
       .some(
         (appointment) =>
-          appointment.session_id === this.id && !appointment.archived
+          appointment.session_id === this.id &&
+          appointment.status === ClinicAppointmentStatus.Booked
       )
   }
 
@@ -595,11 +597,13 @@ export class Session {
       )
     }
 
+    // Same logic as in this.hasAppointments but gets the full list
     const appointments = ClinicBooking.findAll(this.context)
       ?.flatMap(({ appointments }) => appointments)
       .filter(
         (appointment) =>
-          appointment.session_id === this.id && !appointment.archived
+          appointment.session_id === this.id &&
+          appointment.status === ClinicAppointmentStatus.Booked
       )
 
     return appointments

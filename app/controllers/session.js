@@ -23,7 +23,8 @@ import {
   Programme,
   School,
   Session,
-  Team
+  Team,
+  ClinicBooking
 } from '../models.js'
 import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
@@ -718,7 +719,9 @@ export const sessionController = {
     const sessionWithFullContext = new Session(session, data)
     if (session.type === SessionType.Clinic) {
       response.locals.appointmentsToCancel =
-        sessionWithFullContext.appointmentsToCancel
+        sessionWithFullContext.appointmentsToCancel.sort((a, b) =>
+          getDateValueDifference(a.startAt, b.startAt)
+        )
     }
 
     // Give access to the data needed for the summaryRows
@@ -736,6 +739,7 @@ export const sessionController = {
    */
   update(type) {
     return (request, response) => {
+      const { account } = request.app.locals
       const { session_id } = request.params
       const { data } = request.session
       const { __ } = response.locals
@@ -746,6 +750,18 @@ export const sessionController = {
         data.wizard.sessions[String(session_id)],
         data
       )
+
+      // Cancel any appointments that can't be honoured
+      if (session.type === SessionType.Clinic) {
+        const offerRebooking = true // TODO: ask the user whether to allow rebooking
+        session.appointmentsToCancel.forEach((appointment) => {
+          const booking = appointment.booking
+          appointment = booking.findAppointment(appointment.uuid)
+          appointment.cancelAppointment(account, offerRebooking)
+
+          ClinicBooking.update(booking.uuid, booking, data)
+        })
+      }
 
       // Clean up session data
       delete data.vaccinationPeriods

@@ -91,12 +91,37 @@
     }) }}
 
     {% if appointmentsToCancel.length > 0 %}
-      {% set detailsHtml = __mf("session.edit.appointments.cancellation.description", { count: appointmentsToCancel.length }) | nhsukMarkdown %}
+      {% set calloutHtml %}
+        {{ __mf("session.edit.appointments.cancellation.description", { count: appointmentsToCancel.length }) | nhsukMarkdown }}
+
+        {% set appointmentLinks = [] %}
+        {% for appointment in appointmentsToCancel %}
+          {% set appointmentLinks = appointmentLinks | push(appointment.link.summary) %}
+        {% endfor %}
+
+        {{ details({
+          summaryText: __("session.edit.appointments.cancellation.detailsTitle"),
+          html: appointmentLinks | nhsukList
+        }) }}
+      {% endset %}
 
       {{ warningCallout({
         heading: __("session.edit.appointments.cancellation.title"),
-        html: detailsHtml
+        html: calloutHtml
       }) }}
     {% endif %}
   {% endif %}
 {% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [{
+      text: confirmButtonText,
+      variant: confirmButtonVariant
+    }],
+    links: [{
+      text: __("session.edit.cancel"),
+      href: session.uri
+    }]
+  }) }}
+{% endblock afterForm %}

@@ -1,13 +1,16 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { formatDuration, intervalToDuration } from 'date-fns'
 
+import activity from '../datasets/activity.js'
 import {
   Adjustment,
+  ClinicAppointmentStatus,
   ConsentVaccineCriteria,
   Impairment,
   ParentalRelationship,
   ProgrammeType,
   ReplyDecision,
+  SessionStatus,
   VaccineCriteria,
   VaccineMethod
 } from '../enums.js'
@@ -26,6 +29,7 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import {
+  formatFullName,
   formatLink,
   formatLinkWithSecondaryText,
   formatList,
@@ -52,7 +56,7 @@ import {
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
  * @property {boolean} [mmrAlternative] - Wants vaccine that doesn’t contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
- * @property {boolean} [archived] - Has this appointment been archived?
+ * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
  */
 
@@ -90,7 +94,7 @@ export class ClinicAppointment {
     this.mmrAlternative = options?.mmrAlternative
     this.healthAnswers = options?.healthAnswers || {}
 
-    this.archived = options?.archived
+    this.status = options?.status ?? ClinicAppointmentStatus.Booked
     this.note = options?.note
   }
 
@@ -160,17 +164,40 @@ export class ClinicAppointment {
    * Cancel the appointment, logging the event and removing associated patient sessions
    *
    * @param {User} account - the user carrying out the removal
-   * @param {boolean} offeredRebooking - true if the parent was offered immediate rebooking, or false if they'll be invited again later
+   * @param {boolean} offerRebooking - true if the parent will be offered immediate rebooking, or false if they'll be invited again later
    */
-  cancelAppointment(account, offeredRebooking) {
-    // TODO: code this
-    console.log(
-      `TODO: code the cancellation of an appointment (${offeredRebooking})`
+  cancelAppointment(account, offerRebooking) {
+    const session = this.session
+    if (
+      ![SessionStatus.Active, SessionStatus.Planned].includes(session?.status)
+    ) {
+      throw new Error(
+        'Session must be scheduled or in progress to cancel an appointment'
+      )
+    }
+
+    // Flag as cancelled
+    this.status = ClinicAppointmentStatus.Cancelled
+    if (!this.patient_uuid) return
+
+    // Strip the relevant patient sessions from the patient record
+    const patient = this.patient
+    const patientSessions = this.patientSessions
+    const patientSessionUuids = patientSessions.map(({ uuid }) => uuid)
+    patient.patientSession_uuids = patient.patientSession_uuids.filter(
+      (uuid) => !patientSessionUuids.includes(uuid)
     )
 
-    // TODO: check that removeFromSession is an appropriate thing to call; feels like it's not enough to record a cancellation
-    for (const patientSession of this.patientSessions) {
-      patientSession.removeFromSession({ createdBy_uid: account.uid })
+    // Record the cancellation in the patient's activity
+    patient.addEvent({
+      name: activity.session.cancelAppointment(session),
+      createdBy_uid: account.uid,
+      programme_ids: this.selected_programme_ids
+    })
+
+    // Re-invite? If so, record that too
+    if (offerRebooking) {
+      patient.inviteToClinic(this.selected_programme_ids)
     }
   }
 
@@ -193,12 +220,39 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get full name of the child booked into this appointment
+   * Get full name of the child booked into this appointment, formatted for SAIS teams
    *
    * @returns {string} Child's full name
    */
   get fullName() {
-    return `${this.firstName} ${this.lastName}`
+    return formatFullName(this.firstName, this.lastName, false)
+  }
+
+  /**
+   * Get full name of the child booked into this appointment, formatted for parents
+   *
+   * @returns {string} Child's full name
+   */
+  get fullFriendlyName() {
+    return formatFullName(this.firstName, this.lastName, true)
+  }
+
+  /**
+   * Has this clinic appointment been archived (was unmatched and archived when reviewed)?
+   *
+   * @returns {boolean} - true if the appointment's been archived, or false otherwise
+   */
+  get archived() {
+    return this.status === ClinicAppointmentStatus.Archived
+  }
+
+  /**
+   * Has this clinic appointment been cancelled?
+   *
+   * @returns {boolean} - true if the appointment's cancelled, or false otherwise
+   */
+  get cancelled() {
+    return this.status === ClinicAppointmentStatus.Cancelled
   }
 
   /**
@@ -371,8 +425,9 @@ export class ClinicAppointment {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const formattedStartTime = formatTime(this.startAt)
-    const formattedEndTime = formatTime(this.endAt)
+    const parentFacingStartTime = formatTime(this.startAt)
+    const parentFacingEndTime = formatTime(this.endAt)
+    const teamFacingStartTime = formatTime(this.startAt, false)
 
     const session = Session.findOne(this.session_id, this.context)
 
@@ -396,6 +451,13 @@ export class ClinicAppointment {
           )
         : this.parentalRelationship
 
+    const programmeNames = programmeNamesListForSentence(
+      this.selected_programme_ids,
+      ConjunctionType.and,
+      this.context
+    )
+    const summary = `${teamFacingStartTime} ${this.fullName} (${programmeNames})`
+
     return {
       nameAndAge: [
         this.fullName,
@@ -417,13 +479,9 @@ export class ClinicAppointment {
       location: session?.clinic?.formatted.nameAndAddress,
       locationName: session?.clinic?.name,
       date: session?.formatted.date ?? '',
-      dateAndTime: `${session?.formatted.date} at ${formattedStartTime}`,
-      timeSlot: `${formattedStartTime} to ${formattedEndTime}`,
-      programmeNames: programmeNamesListForSentence(
-        this.selected_programme_ids,
-        ConjunctionType.and,
-        this.context
-      ),
+      dateAndTime: `${session?.formatted.date} at ${parentFacingStartTime}`,
+      timeSlot: `${parentFacingStartTime} to ${parentFacingEndTime}`,
+      programmeNames,
       programmeTags: this.#getSelectedProgrammes(this.context)
         .flatMap(({ nameTag }) => nameTag)
         .join(' '),
@@ -447,7 +505,8 @@ export class ClinicAppointment {
                 : `${this.impairments.length} impairments noted`
             )
           }
-        : {})
+        : {}),
+      summary
     }
   }
 
@@ -481,7 +540,14 @@ export class ClinicAppointment {
         `via ${this.contact.fullNameAndRelationship}`
       ),
       patientSession: formatLink(this.uri.matched, this.patient?.fullName),
-      extend: formatLink(this.uri.extend, 'Extend')
+      extend: formatLink(this.uri.extend, 'Extend'),
+      summary: this.patient_uuid
+        ? formatLink(this.uri.matched, this.formatted.summary)
+        : formatLinkWithSecondaryText(
+            this.uri.unmatched,
+            this.formatted.summary,
+            '(unmatched)'
+          )
     }
   }
 
