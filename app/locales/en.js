@@ -2019,6 +2019,10 @@ export const en = {
         [RegistrationOutcome.Absent]:
           '{{patientSession.patient.fullName}} has been recorded as absent from today’s session.'
       }
+    },
+    catchUps: {
+      title: 'Catch-up opportunities',
+      none: '%s has no additional catch-up opportunties.'
     }
   },
   pdsRecord: {

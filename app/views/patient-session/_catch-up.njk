@@ -1,37 +1,48 @@
+  {% set appointmentProgrammeIds = [] %}
+  {% if patientSession.clinicAppointment %}
+    {% set appointmentProgrammeIds = patientSession.clinicAppointment.selected_programme_ids %}
+  {% endif %}
+
   {% set patientProgrammeRows = [] %}
   {% for id, patientProgramme in patient.programmes %}
-    {% set patientProgrammeRows = patientProgrammeRows | push([
-      {
-        header: __("patientProgramme.name.label"),
-        html: link(patientProgramme.uri, patientProgramme.programme.name)
-      },
-      {
-        header: __("patientProgramme.status.label"),
-        html: patientProgramme.formatted.status
-      },
-      {
-        header: __("patientProgramme.statusNotes.label"),
-        html: patientProgramme.statusNotes
-      },
-      {
-        header: __("actions.label"),
-        html: link(patientSession.clinicAppointment.uri.addProgramme + patientProgramme.programme.id, "Add to appointment")
-      } ]) %}
+    {% if patientProgramme.canOfferClinicCatchup and not id in appointmentProgrammeIds %}
+      {% set patientProgrammeRows = patientProgrammeRows | push([
+        {
+          header: __("patientProgramme.name.label"),
+          html: link(patientProgramme.uri, patientProgramme.programme.name)
+        },
+        {
+          header: __("patientProgramme.status.label"),
+          html: patientProgramme.formatted.status
+        },
+        {
+          header: __("patientProgramme.statusNotes.label"),
+          html: patientProgramme.statusNotes
+        },
+        {
+          header: __("actions.label"),
+          html: link(patientSession.clinicAppointment.uri.addProgramme + patientProgramme.programme.id, "Add to appointment")
+        } ]) %}
+    {% endif %}
   {% endfor %}
 
   {% call card({
-    heading: "Catch-up opportunities",
+    heading: __("patientSession.catchUps.title"),
     headingLevel: 3
   }) %}
-    {{ table({
-      id: "programmes",
-      responsive: true,
-      head: [
-        { text: __("patientProgramme.name.label") },
-        { text: __("patientProgramme.status.label") },
-        { text: __("patientProgramme.statusNotes.label") },
-        { text: __("actions.label") }
-      ],
-      rows: patientProgrammeRows
-    }) }}
+    {% if patientProgrammeRows.length > 0 %}
+      {{ table({
+        id: "programmes",
+        responsive: true,
+        head: [
+          { text: __("patientProgramme.name.label") },
+          { text: __("patientProgramme.status.label") },
+          { text: __("patientProgramme.statusNotes.label") },
+          { text: __("actions.label") }
+        ],
+        rows: patientProgrammeRows
+      }) }}
+    {% else %}
+      {{ __("patientSession.catchUps.none", patient.firstName) | nhsukMarkdown }}
+    {% endif %}
   {% endcall %}
