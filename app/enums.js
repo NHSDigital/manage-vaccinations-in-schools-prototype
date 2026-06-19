@@ -63,6 +63,16 @@ export const AuditEventType = {
  * @readonly
  * @enum {string}
  */
+export const ClinicAppointmentStatus = {
+  Booked: 'Booked',
+  Archived: 'Archived',
+  Cancelled: 'Cancelled'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentOutcome = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',

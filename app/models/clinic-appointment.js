@@ -3,6 +3,7 @@ import { formatDuration, intervalToDuration } from 'date-fns'
 
 import {
   Adjustment,
+  ClinicAppointmentStatus,
   ConsentVaccineCriteria,
   Impairment,
   ParentalRelationship,
@@ -53,7 +54,7 @@ import {
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
  * @property {boolean} [mmrAlternative] - Wants vaccine that doesn’t contain gelatine?
  * @property {object} [healthAnswers] - Answers to health questions
- * @property {boolean} [archived] - Has this appointment been archived?
+ * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
  */
 
@@ -91,7 +92,7 @@ export class ClinicAppointment {
     this.mmrAlternative = options?.mmrAlternative
     this.healthAnswers = options?.healthAnswers || {}
 
-    this.archived = options?.archived
+    this.status = options?.status ?? ClinicAppointmentStatus.Booked
     this.note = options?.note
   }
 
@@ -209,6 +210,24 @@ export class ClinicAppointment {
    */
   get fullFriendlyName() {
     return formatFullName(this.firstName, this.lastName, true)
+  }
+
+  /**
+   * Has this clinic appointment been archived (was unmatched and archived when reviewed)?
+   *
+   * @returns {boolean} - true if the appointment's been archived, or false otherwise
+   */
+  get archived() {
+    return this.status === ClinicAppointmentStatus.Archived
+  }
+
+  /**
+   * Has this clinic appointment been cancelled?
+   *
+   * @returns {boolean} - true if the appointment's cancelled, or false otherwise
+   */
+  get cancelled() {
+    return this.status === ClinicAppointmentStatus.Cancelled
   }
 
   /**
