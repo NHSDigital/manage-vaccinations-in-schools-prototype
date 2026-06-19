@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { formatDuration, intervalToDuration } from 'date-fns'
 
+import activity from '../datasets/activity.js'
 import {
   Adjustment,
   ClinicAppointmentStatus,
@@ -9,6 +10,7 @@ import {
   ParentalRelationship,
   ProgrammeType,
   ReplyDecision,
+  SessionStatus,
   VaccineCriteria,
   VaccineMethod
 } from '../enums.js'
@@ -162,17 +164,40 @@ export class ClinicAppointment {
    * Cancel the appointment, logging the event and removing associated patient sessions
    *
    * @param {User} account - the user carrying out the removal
-   * @param {boolean} offeredRebooking - true if the parent was offered immediate rebooking, or false if they'll be invited again later
+   * @param {boolean} offerRebooking - true if the parent will be offered immediate rebooking, or false if they'll be invited again later
    */
-  cancelAppointment(account, offeredRebooking) {
-    // TODO: code this
-    console.log(
-      `TODO: code the cancellation of an appointment (${offeredRebooking})`
+  cancelAppointment(account, offerRebooking) {
+    const session = this.session
+    if (
+      ![SessionStatus.Active, SessionStatus.Planned].includes(session?.status)
+    ) {
+      throw new Error(
+        'Session must be scheduled or in progress to cancel an appointment'
+      )
+    }
+
+    // Flag as cancelled
+    this.status = ClinicAppointmentStatus.Cancelled
+    if (!this.patient_uuid) return
+
+    // Strip the relevant patient sessions from the patient record
+    const patient = this.patient
+    const patientSessions = this.patientSessions
+    const patientSessionUuids = patientSessions.map(({ uuid }) => uuid)
+    patient.patientSession_uuids = patient.patientSession_uuids.filter(
+      (uuid) => !patientSessionUuids.includes(uuid)
     )
 
-    // TODO: check that removeFromSession is an appropriate thing to call; feels like it's not enough to record a cancellation
-    for (const patientSession of this.patientSessions) {
-      patientSession.removeFromSession({ createdBy_uid: account.uid })
+    // Record the cancellation in the patient's activity
+    patient.addEvent({
+      name: activity.session.cancelAppointment(session),
+      createdBy_uid: account.uid,
+      programme_ids: this.selected_programme_ids
+    })
+
+    // Re-invite? If so, record that too
+    if (offerRebooking) {
+      patient.inviteToClinic(this.selected_programme_ids)
     }
   }
 

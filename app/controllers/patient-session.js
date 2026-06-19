@@ -11,6 +11,7 @@ import {
   VaccineMethod
 } from '../enums.js'
 import {
+  ClinicBooking,
   Instruction,
   PatientSession,
   Programme,
@@ -449,7 +450,7 @@ export const patientSessionController = {
   updateCancel(request, response) {
     const { account } = request.app.locals
     const { __, patientSession } = response.locals
-    const { cancellation } = request.session.data
+    const { data } = request.session
     const { view } = request.params
 
     // Where next?
@@ -460,16 +461,19 @@ export const patientSessionController = {
 
     if (view === 'rebooking') {
       // Sanitise the boolean from the radio
-      cancellation.offerRebooking = stringToBoolean(cancellation.offerRebooking)
+      data.cancellation.offerRebooking = stringToBoolean(
+        data.cancellation.offerRebooking
+      )
     } else if (view === 'confirm') {
       // Carry out the cancellation
-      patientSession.clinicAppointment.cancelAppointment(
-        account,
-        cancellation.offerRebooking
-      )
+      let appointment = patientSession.clinicAppointment
+      const booking = appointment.booking
+      appointment = booking.findAppointment(appointment.uuid)
+      appointment.cancelAppointment(account, data.cancellation.offerRebooking)
+      ClinicBooking.update(booking.uuid, booking, data)
 
       // Tidy up
-      delete request.session.data.cancellation
+      delete data.cancellation
 
       request.flash(
         'success',

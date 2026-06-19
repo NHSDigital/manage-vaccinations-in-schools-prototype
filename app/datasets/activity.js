@@ -94,7 +94,9 @@ export default {
   session: {
     added: (session) => `Added to the session at ${session?.location.name}`,
     removed: (session) =>
-      `Removed from the session at ${session?.location.name}`
+      `Removed from the session at ${session?.location.name}`,
+    cancelAppointment: (session) =>
+      `Cancelled appointment for clinic at ${session?.location.name}`
   },
   triage: {
     decision: (triage) =>
