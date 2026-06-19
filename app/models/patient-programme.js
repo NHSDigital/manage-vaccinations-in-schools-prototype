@@ -202,6 +202,15 @@ export class PatientProgramme {
   }
 
   /**
+   * If a child's at clinic for other vaccinations, can we also offer this programme?
+   *
+   * @returns {boolean} - true if we can offer this vaccination, false otherwise
+   */
+  get canOfferClinicCatchup() {
+    return this.canVaccinateAtClinic && !this.schoolSessionPending
+  }
+
+  /**
    * Can the child be vaccinated (assuming we get the right consent and triage outcomes, if required)?
    *
    * @returns {boolean} OK to invite to clinic for a vaccination based on patient status (`true`), or otherwise (`false`)

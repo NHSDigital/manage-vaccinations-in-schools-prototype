@@ -1,5 +1,5 @@
 {% call card({
-  heading: __("patientSession.clinicAppointment.title"),
+  heading: __("patientSession.clinicAppointment.title") if patientSession.clinicAppointment else __("patientSession.walkIn.title"),
   headingSize: "m",
   actions: {
     items: [
@@ -12,19 +12,58 @@
         href: patientSession.clinicAppointment.uri.cancel
       }
     ]
-  } if patientSession.session.status === SessionStatus.Planned
+  } if patientSession.clinicAppointment
 }) %}
-  {# Description #}
-{% filter nhsukMarkdown %}
-  {{ patientSession.clinicAppointment.formatted.dateAndTime }}
-  ({{ patientSession.clinicAppointment.duration }})
-{% endfilter %}
 
-  {{ summaryList({
-    lastRowBorder: false,
-    rows: summaryRows(patientSession.clinicAppointment.child, {
-      impairments: {},
-      adjustments: {}
-    })
-  }) if patientSession.clinicAppointment.child.formatted.impairments or patientSession.clinicAppointment.child.formatted.adjustments }}
+  {% if patientSession.clinicAppointment %}
+    {# Pre-booked appointment #}
+    {{ summaryList({
+      lastRowBorder: false,
+      rows: summaryRows(patientSession.clinicAppointment, {
+        child: {
+          value: patient.link.fullName
+        },
+        date: {},
+        timeSlot: {},
+        programmeTags: {},
+        impairments: {
+          value: patientSession.clinicAppointment.child.formatted.impairments
+        },
+        adjustments: {
+          value: patientSession.clinicAppointment.child.formatted.adjustments
+        },
+        contactDetails: {}
+      })
+    }) }}
+  {% else %}
+    {# Walk-in #}
+    {% set programmeTagsHtml = '' %}
+    {% for siblingPatientSession in patientSession.siblingPatientSessions %}
+      {% set programmeTagsHtml = programmeTagsHtml + siblingPatientSession.programme.nameTag + " " %}
+    {% endfor %}
+
+    {{ summaryList({
+      lastRowBorder: false,
+      rows: summaryRows(patient, {
+        child: {
+          label: __("clinicAppointment.child.label"),
+          value: patient.link.fullName
+        },
+        date: {
+          label: __("clinicAppointment.date.label"),
+          value: session.formatted.date
+        },
+        createdAt: {
+          label: __("clinicAppointment.arrivalTime.label"),
+          value: patientSession.formatted.creationTime
+        },
+        programmeTags: {
+          label: __("clinicAppointment.programmeTags.label"),
+          value: programmeTagsHtml
+        },
+        impairments: {},
+        adjustments: {}
+      })
+    }) }}
+  {% endif %}
 {% endcall %}

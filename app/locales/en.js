@@ -324,6 +324,9 @@ export const en = {
     fullName: {
       label: 'Full name'
     },
+    child: {
+      label: 'Child'
+    },
     dob: {
       label: 'Date of birth'
     },
@@ -359,6 +362,18 @@ export const en = {
     },
     offerRebooking: {
       label: 'Offer rebooking?'
+    },
+    impairments: {
+      label: 'Impairments'
+    },
+    adjustments: {
+      label: 'Reasonable adjustments'
+    },
+    contactDetails: {
+      label: 'Contact'
+    },
+    arrivalTime: {
+      label: 'Arrival time'
     }
   },
   clinicBooking: {
@@ -1837,6 +1852,9 @@ export const en = {
     show: {
       title: 'Child record'
     },
+    appointment: {
+      title: 'Appointment'
+    },
     events: {
       title: 'Activity and notes'
     },
@@ -1887,7 +1905,7 @@ export const en = {
       label: 'Session'
     },
     clinicAppointment: {
-      title: 'Clinic appointment',
+      title: 'Appointment details',
       label: 'Appointment time',
       edit: {
         label: 'Edit appointment'
@@ -1908,6 +1926,9 @@ export const en = {
           success: 'Cancelled appointment'
         }
       }
+    },
+    walkIn: {
+      title: 'Walk-in details'
     },
     yearGroup: {
       label: 'Year group'
@@ -1998,6 +2019,10 @@ export const en = {
         [RegistrationOutcome.Absent]:
           '{{patientSession.patient.fullName}} has been recorded as absent from today’s session.'
       }
+    },
+    catchUps: {
+      title: 'Catch-up opportunities',
+      none: '%s has no additional catch-up opportunties.'
     }
   },
   pdsRecord: {

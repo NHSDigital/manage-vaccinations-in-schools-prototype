@@ -29,6 +29,7 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import {
+  formatContact,
   formatFullName,
   formatLink,
   formatLinkWithSecondaryText,
@@ -468,6 +469,7 @@ export class ClinicAppointment {
       dob: this.child.formatted.dob,
       homeAddress: this.child.formatted.address,
       parentalRelationship,
+      contactDetails: formatContact(this.contact, true),
       ...(fluVaccineType ? { fluVaccineType } : {}),
       ...(this.mmrAlternative !== undefined
         ? {
@@ -572,7 +574,8 @@ export class ClinicAppointment {
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
       edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`,
       cancel: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/cancel`,
-      extend: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}/length`
+      extend: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}/length`,
+      addProgramme: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/add-programme/`
     }
   }
 
