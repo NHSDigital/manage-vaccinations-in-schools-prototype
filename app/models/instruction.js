@@ -1,12 +1,10 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { today } from '../utils/date.js'
+import { BaseModel } from './base.js'
 
 /**
- * @typedef {object} InstructionOptions
+ * @typedef {BaseModelOptions & object} InstructionOptions
  * @property {string} [uuid] - Instruction UUID
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who performed instruction
  * @property {InstructionOutcome} [outcome] - Outcome
  * @property {string} [patientSession_uuid] - Patient session UUID
  * @property {string} [programme_id] - Programme ID
@@ -15,53 +13,26 @@ import { today } from '../utils/date.js'
 /**
  * @class Instruction
  */
-export class Instruction {
+export class Instruction extends BaseModel {
+  static contextKey = 'instructions'
+  static identifierKey = 'uuid'
+  static ns = 'instruction'
+
   /**
-   * @param {InstructionOptions} options - Options
+   * @param {BaseModelOptions & InstructionOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
     this.patientSession_uuid = options?.patientSession_uuid
     this.programme_id = options?.programme_id
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Instruction UUID
-   * @param {object} context - Context
-   * @returns {Instruction|undefined} Instruction
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.instructions?.[uuid]) {
-      return new Instruction(context.instructions[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} instruction - Instruction
-   * @param {object} context - Context
-   * @returns {Instruction} Created instruction
-   * @static
-   */
-  static create(instruction, context) {
-    const createdInstruction = new Instruction(instruction)
-
-    // Update context
-    context.instructions = context.instructions || {}
-    context.instructions[createdInstruction.uuid] = createdInstruction
-
-    return createdInstruction
   }
 }
 
 /**
  * @import { InstructionOutcome } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

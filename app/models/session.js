@@ -57,11 +57,11 @@ import {
   stringToBoolean
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} SessionOptions
+ * @typedef {BaseModelOptions & object} SessionOptions
  * @property {string} [id] - School ID
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created session
  * @property {SessionType} [type] - Session type
  * @property {Date} [date] - Dates
  * @property {object} [date_] - Dates (from `dateInput`s)
@@ -91,16 +91,20 @@ import {
 /**
  * @class Session
  */
-export class Session {
+export class Session extends BaseModel {
+  static contextKey = 'sessions'
+  static identifierKey = 'id'
+  static ns = 'session'
+
   /**
    * @param {SessionOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('###')
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
     this.type = options?.type || SessionType.School
     this.date = options?.date && new Date(options.date)
     this.date_ = options?.date_
@@ -1199,102 +1203,12 @@ export class Session {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'session'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/sessions/${this.id}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Session>|undefined} Sessions
-   * @static
-   */
-  static findAll(context) {
-    if (context?.sessions) {
-      return Object.values(context.sessions).map(
-        (session) => new Session(session, context)
-      )
-    }
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} id - Session ID
-   * @param {object} context - Context
-   * @returns {Session|undefined} Session
-   * @static
-   */
-  static findOne(id, context) {
-    if (context?.sessions?.[id]) {
-      return new Session(context.sessions[id], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} session - Session
-   * @param {object} context - Context
-   * @returns {Session} Created session
-   * @static
-   */
-  static create(session, context) {
-    const createdSession = new Session(session)
-
-    // Update context
-    context.sessions = context.sessions || {}
-    context.sessions[createdSession.id] = createdSession
-
-    return createdSession
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} id - Session ID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Session} Updated session
-   * @static
-   */
-  static update(id, updates, context) {
-    const updatedSession = _.mergeWith(
-      Session.findOne(id, context),
-      updates,
-      (oldValue, newValue) => {
-        // Arrays shouldn’t be merged but replaced entirely
-        if (Array.isArray(oldValue)) {
-          return newValue
-        }
-      }
-    )
-    updatedSession.updatedAt = today()
-
-    // Remove session context
-    delete updatedSession.context
-
-    // Delete original session (with previous ID)
-    delete context.sessions[id]
-
-    // Update context
-    context.sessions[updatedSession.id] = updatedSession
-
-    return new Session(updatedSession, context)
   }
 
   /**
@@ -1306,18 +1220,9 @@ export class Session {
   updateRegister(patient_uuid, registration) {
     this.register[patient_uuid] = registration
   }
-
-  /**
-   * Delete the session with the given ID
-   *
-   * @param {string} id - Session ID
-   * @param {object} context - the context on which the session is stored
-   */
-  static delete(id, context) {
-    delete context.sessions[id]
-  }
 }
 
 /**
  * @import { RegistrationOutcome, SessionMMRConsent, SessionPreset } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

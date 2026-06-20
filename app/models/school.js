@@ -1,6 +1,5 @@
 import { default as filters } from '@x-govuk/govuk-prototype-filters'
 import { isAfter, isBefore } from 'date-fns'
-import _ from 'lodash'
 
 import { SchoolClosureReason, SchoolStatus } from '../enums.js'
 import { Location, Patient, Session } from '../models.js'
@@ -17,7 +16,7 @@ import {
 } from '../utils/string.js'
 
 /**
- * @typedef {object} SchoolOptions
+ * @typedef {LocationOptions & object} SchoolOptions
  * @property {string} [urn] - URN
  * @property {Date} [openAt] - Date school opened (or will open)
  * @property {Date} [closeAt] - Date school closed (or will close)
@@ -34,8 +33,12 @@ import {
  * @augments Location
  */
 export class School extends Location {
+  static contextKey = 'schools'
+  static identifierKey = 'id'
+  static ns = 'school'
+
   /**
-   * @param {SchoolOptions & LocationOptions} options - Options
+   * @param {SchoolOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
@@ -294,110 +297,12 @@ export class School extends Location {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'school'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/schools/${this.id}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<School>|undefined} Schools
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.schools).map(
-      (school) => new School(school, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} id - School ID
-   * @param {object} context - Context
-   * @returns {School|undefined} School
-   * @static
-   */
-  static findOne(id, context) {
-    if (context?.schools?.[id]) {
-      return new School(context.schools[id], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {School} school - School
-   * @param {object} context - Context
-   * @returns {School} Created school
-   * @static
-   */
-  static create(school, context) {
-    const createdSchool = new School(school)
-
-    // Update context
-    context.schools = context.schools || {}
-    context.schools[createdSchool.id] = createdSchool
-
-    return createdSchool
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} id - School ID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {School} Updated school
-   * @static
-   */
-  static update(id, updates, context) {
-    const updatedSchool = _.mergeWith(
-      School.findOne(id, context),
-      updates,
-      (oldValue, newValue) => {
-        // Arrays shouldn’t be merged but replaced entirely
-        if (Array.isArray(oldValue)) {
-          return newValue
-        }
-      }
-    )
-
-    // Remove school context
-    delete updatedSchool.context
-
-    // Delete original school (with previous ID)
-    delete context.schools[id]
-
-    // Update context
-    context.schools[updatedSchool.id] = updatedSchool
-
-    return new School(updatedSchool, context)
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} id - School ID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(id, context) {
-    delete context.schools[id]
   }
 }
 

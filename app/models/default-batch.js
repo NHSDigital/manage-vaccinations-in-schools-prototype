@@ -1,7 +1,7 @@
 import { Batch, Session } from '../models.js'
 
 /**
- * @typedef {object} DefaultBatchOptions
+ * @typedef {BatchOptions & object} DefaultBatchOptions
  * @property {string} [session_id] - Session ID
  */
 
@@ -10,8 +10,11 @@ import { Batch, Session } from '../models.js'
  * @augments Batch
  */
 export class DefaultBatch extends Batch {
+  static contextKey = 'defaultBatches'
+  static ns = 'defaultBatch'
+
   /**
-   * @param {DefaultBatchOptions & BatchOptions} options - Options
+   * @param {DefaultBatchOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
@@ -31,53 +34,6 @@ export class DefaultBatch extends Batch {
     } catch (error) {
       console.error('DefaultBatch.session', error.message)
     }
-  }
-
-  /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'defaultBatch'
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<DefaultBatch>|undefined} Default batches
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.defaultBatches).map(
-      (batch) => new DefaultBatch(batch, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} id - Default batch ID
-   * @param {object} context - Context
-   * @returns {DefaultBatch|undefined} Default batch
-   * @static
-   */
-  static findOne(id, context) {
-    if (context?.defaultBatches?.[id]) {
-      return new DefaultBatch(context.defaultBatches[id], context)
-    }
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} id - Default batch ID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(id, context) {
-    delete context.defaultBatches[id]
   }
 
   /**

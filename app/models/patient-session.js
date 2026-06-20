@@ -36,8 +36,7 @@ import {
 import {
   formatDate,
   getDateValueDifference,
-  getYearGroup,
-  today
+  getYearGroup
 } from '../utils/date.js'
 import {
   getInstructionOutcome,
@@ -71,12 +70,11 @@ import {
   getScreenVaccineCriteria
 } from '../utils/triage.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} PatientSessionOptions
+ * @typedef {BaseModelOptions & object} PatientSessionOptions
  * @property {string} [uuid] - Patient session UUID
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created patient session
- * @property {Date} [updatedAt] - Updated date
  * @property {Gillick} [gillick] - Gillick assessment
  * @property {Array<AuditEvent>} [notes] - Notes
  * @property {boolean} [alternative] - Administer alternative vaccine
@@ -89,17 +87,20 @@ import {
 /**
  * @class Patient Session
  */
-export class PatientSession {
+export class PatientSession extends BaseModel {
+  static contextKey = 'patientSessions'
+  static identifierKey = 'uuid'
+  static ns = 'patientSession'
+
   /**
    * @param {PatientSessionOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.gillick = options?.gillick && new Gillick(options.gillick)
     this.notes = options?.notes || []
     this.alternative = options?.alternative || false
@@ -1015,94 +1016,12 @@ export class PatientSession {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'patientSession'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.programme_id}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<PatientSession>|undefined} Patient sessions
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.patientSessions).map(
-      (patientSession) => new PatientSession(patientSession, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Patient UUID
-   * @param {object} context - Context
-   * @returns {PatientSession|undefined} Patient
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.patientSessions?.[uuid]) {
-      return new PatientSession(context.patientSessions[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} patientSession - Patient session
-   * @param {object} context - Context
-   * @returns {PatientSession} Created patient session
-   * @static
-   */
-  static create(patientSession, context) {
-    const createdPatientSession = new PatientSession(patientSession)
-
-    // Update context
-    context.patientSessions = context.patientSessions || {}
-    context.patientSessions[createdPatientSession.uuid] = createdPatientSession
-
-    return createdPatientSession
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - Patient UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {PatientSession} Updated patient session
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedPatientSession = Object.assign(
-      PatientSession.findOne(uuid, context),
-      updates
-    )
-    updatedPatientSession.updatedAt = today()
-
-    // Remove patient context
-    delete updatedPatientSession.context
-
-    // Delete original patient session (with previous UUID)
-    delete context.patientSessions[uuid]
-
-    // Update context
-    context.patientSessions[updatedPatientSession.uuid] = updatedPatientSession
-
-    return updatedPatientSession
   }
 
   /**
@@ -1277,4 +1196,5 @@ export class PatientSession {
 /**
  * @import { InstructionOutcome, ScreenVaccineCriteria } from '../enums.js'
  * @import { Contact, PatientProgramme, Reply, Vaccination, Vaccine } from '../models.js'
+ * @import { BaseModelOptions } from './base.js'
  */

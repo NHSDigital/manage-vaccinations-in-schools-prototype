@@ -1,12 +1,13 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { Patient } from '../models.js'
-import { formatDate, getDateValueDifference, today } from '../utils/date.js'
+import { formatDate } from '../utils/date.js'
+
+import { BaseModel } from './base.js'
 
 /**
- * @typedef {object} NoticeOptions
+ * @typedef {BaseModelOptions & object} NoticeOptions
  * @property {string} [uuid] - Notice UUID
- * @property {Date} [createdAt] - Created date
  * @property {Date} [archivedAt] - Archived date
  * @property {NoticeType} [type] - Notice type
  * @property {string} [patient_uuid] - Patient notice applies to
@@ -15,15 +16,19 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 /**
  * @class Notice
  */
-export class Notice {
+export class Notice extends BaseModel {
+  static contextKey = 'notices'
+  static ns = 'notice'
+
   /**
-   * @param {NoticeOptions} options - Options
+   * @param {BaseModelOptions & NoticeOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
     this.type = options?.type
     this.patient_uuid = options?.patient_uuid
@@ -66,48 +71,12 @@ export class Notice {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'notice'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/notices/${this.uuid}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Notice>|undefined} Notices
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.notices)
-      .map((notice) => new Notice(notice, context))
-      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Notice UUID
-   * @param {object} context - Context
-   * @returns {Notice|undefined} Notice
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.notices?.[uuid]) {
-      return new Notice(context.notices[uuid], context)
-    }
   }
 
   /**
@@ -134,4 +103,5 @@ export class Notice {
 
 /**
  * @import { NoticeType } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

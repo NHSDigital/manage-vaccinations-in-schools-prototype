@@ -1,5 +1,4 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import _ from 'lodash'
 
 import activity from '../datasets/activity.js'
 import programmesData from '../datasets/programmes.js'
@@ -39,7 +38,7 @@ import {
 } from '../utils/string.js'
 
 /**
- * @typedef {object} PatientOptions
+ * @typedef {ChildOptions & object} PatientOptions
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
@@ -60,8 +59,12 @@ import {
  * @augments Child
  */
 export class Patient extends Child {
+  static contextKey = 'patients'
+  static identifierKey = 'uuid'
+  static ns = 'patient'
+
   /**
-   * @param {PatientOptions & ChildOptions} options - Options
+   * @param {PatientOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
@@ -538,91 +541,12 @@ export class Patient extends Child {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'patient'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/patients/${this.uuid}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Patient>|undefined} Patient records
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.patients).map(
-      (patient) => new Patient(patient, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Patient UUID
-   * @param {object} context - Context
-   * @returns {Patient|undefined} Patient record
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.patients?.[uuid]) {
-      return new Patient(context.patients[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @template {Child | Patient} PatientType
-   * @param {PatientType} patient - Patient record
-   * @param {object} context - Context
-   * @returns {Patient} Created patient record
-   * @static
-   */
-  static create(patient, context) {
-    const createdPatient = new Patient(patient)
-
-    // Update context
-    context.patients = context.patients || {}
-    context.patients[createdPatient.uuid] = createdPatient
-
-    return createdPatient
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - Patient record UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Patient} Updated patient record
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedPatient = _.merge(Patient.findOne(uuid, context), updates)
-
-    // Remove patient context
-    delete updatedPatient.context
-
-    // Delete original patient (with previous UUID)
-    delete context.patients[uuid]
-
-    // Update context
-    context.patients[updatedPatient.uuid] = updatedPatient
-
-    return updatedPatient
   }
 
   /**
@@ -635,7 +559,9 @@ export class Patient extends Child {
    * @static
    */
   static archive(uuid, archive, context) {
-    const archivedPatient = Patient.update(uuid, archive, context)
+    const archivedPatient = /** @type {Patient} */ (
+      super.update(uuid, archive, context)
+    )
 
     archivedPatient.addEvent({
       name: activity.patient.archived(archive),

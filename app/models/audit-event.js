@@ -6,7 +6,6 @@ import {
   Programme,
   Session,
   Team,
-  User,
   Vaccination
 } from '../models.js'
 import {
@@ -23,10 +22,10 @@ import {
   stringToArray
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} AuditEventOptions
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created event
+ * @typedef {BaseModelOptions & object} AuditEventOptions
  * @property {string} [name] - Name
  * @property {string} [note] - Note
  * @property {AuditEventType} [type] - Audit event type
@@ -46,15 +45,17 @@ import {
 /**
  * @class Audit event
  */
-export class AuditEvent {
+export class AuditEvent extends BaseModel {
+  static ns = 'event'
+
   /**
    * @param {AuditEventOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
     this.name = options?.name
     this.note = options?.note
     this.type = options?.type
@@ -69,21 +70,6 @@ export class AuditEvent {
     this.session_id = options?.session_id
     this.team_id = options?.team_id || '001'
     this.vaccination_uuid = options?.vaccination_uuid
-  }
-
-  /**
-   * Get user who created event
-   *
-   * @returns {User|undefined} User
-   */
-  get createdBy() {
-    try {
-      if (this.createdBy_uid) {
-        return User.findOne(this.createdBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Upload.createdBy', error.message)
-    }
   }
 
   /**
@@ -269,17 +255,9 @@ export class AuditEvent {
       }
     )
   }
-
-  /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'event'
-  }
 }
 
 /**
  * @import { AuditEventType } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

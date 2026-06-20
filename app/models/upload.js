@@ -2,8 +2,8 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
 import { UploadStatus, UploadType } from '../enums.js'
-import { Move, Patient, School, User } from '../models.js'
-import { formatDate, today } from '../utils/date.js'
+import { Move, Patient, School } from '../models.js'
+import { formatDate } from '../utils/date.js'
 import { getUploadStatus } from '../utils/status.js'
 import {
   formatLink,
@@ -14,15 +14,13 @@ import {
   stringToArray
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} UploadOptions
+ * @typedef {BaseModelOptions & object} UploadOptions
  * @property {string} [id] - Upload ID
  * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created upload
- * @property {Date} [updatedAt] - Updated date
- * @property {string} [updatedBy_uid] - User who updated upload
  * @property {string} [fileName] - Original file name
  * @property {number} [progress] - Upload import progress
  * @property {object} [validations] - File validations
@@ -34,20 +32,22 @@ import {
 /**
  * @class Upload
  */
-export class Upload {
+export class Upload extends BaseModel {
+  static contextKey = 'uploads'
+  static identifierKey = 'id'
+  static ns = 'upload'
+
   /**
    * @param {UploadOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
     this.status = options?.status || UploadStatus.Processing
     this.type = options?.type || UploadType.Cohort
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
-    this.updatedBy_uid = options?.updatedBy_uid
     this.fileName = options?.fileName
     this.progress = options?.progress || 100
     this.validations = options?.validations || []
@@ -56,36 +56,6 @@ export class Upload {
     if (this.type === UploadType.School) {
       this.yearGroups = stringToArray(options?.yearGroups)
       this.school_id = options?.school_id
-    }
-  }
-
-  /**
-   * Get user who created upload
-   *
-   * @returns {User|undefined} User
-   */
-  get createdBy() {
-    try {
-      if (this.createdBy_uid) {
-        return User.findOne(this.createdBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Upload.createdBy', error.message)
-    }
-  }
-
-  /**
-   * Get user who approved upload
-   *
-   * @returns {User|undefined} User
-   */
-  get updatedBy() {
-    try {
-      if (this.updatedBy_uid) {
-        return User.findOne(this.updatedBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Upload.updatedBy', error.message)
     }
   }
 
@@ -280,15 +250,6 @@ export class Upload {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'upload'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -296,85 +257,8 @@ export class Upload {
   get uri() {
     return `/uploads/${this.id}`
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Upload>|undefined} Uploads
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.uploads).map(
-      (upload) => new Upload(upload, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} id - Upload ID
-   * @param {object} context - Context
-   * @returns {Upload|undefined} Upload
-   * @static
-   */
-  static findOne(id, context) {
-    if (context.uploads?.[id]) {
-      return new Upload(context.uploads[id], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} upload - Upload
-   * @param {object} context - Context
-   * @returns {Upload} Created upload
-   * @static
-   */
-  static create(upload, context) {
-    const createdUpload = new Upload(upload)
-
-    // Update context
-    context.uploads = context.uploads || {}
-    context.uploads[createdUpload.id] = createdUpload
-
-    return createdUpload
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} id - Upload ID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Upload} Updated upload
-   * @static
-   */
-  static update(id, updates, context) {
-    const updatedUpload = Object.assign(Upload.findOne(id, context), updates)
-    updatedUpload.updatedAt = today()
-
-    // Remove upload context
-    delete updatedUpload.context
-
-    // Delete original upload (with previous ID)
-    delete context.uploads[id]
-
-    // Update context
-    context.uploads[updatedUpload.id] = updatedUpload
-
-    return updatedUpload
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} id - Upload ID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(id, context) {
-    delete context.uploads[id]
-  }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */

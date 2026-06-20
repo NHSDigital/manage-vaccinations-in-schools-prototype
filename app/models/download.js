@@ -1,17 +1,9 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addSeconds } from 'date-fns'
 import xlsx from 'json-as-xlsx'
-import _ from 'lodash'
 
 import { DownloadFormat, DownloadStatus, DownloadType } from '../enums.js'
-import {
-  Programme,
-  School,
-  Session,
-  Team,
-  Vaccination,
-  User
-} from '../models.js'
+import { Programme, School, Session, Team, Vaccination } from '../models.js'
 import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
@@ -28,12 +20,11 @@ import {
   stringToBoolean
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} DownloadOptions
+ * @typedef {BaseModelOptions & object} DownloadOptions
  * @property {string} [id] - Download ID
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created download
- * @property {Date} [updatedAt] - Updated date
  * @property {Date} [startAt] - Date to start report
  * @property {object} [startAt_] - Date to start report from (from `dateInput`)
  * @property {Date} [endAt] - Date to end report
@@ -53,17 +44,20 @@ import {
 /**
  * @class Vaccination report download
  */
-export class Download {
+export class Download extends BaseModel {
+  static contextKey = 'downloads'
+  static identifierKey = 'id'
+  static ns = 'download'
+
   /**
    * @param {DownloadOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.format = options?.format || DownloadFormat.CSV
     this.type = options?.type || DownloadType.Report
     this.team_ids = stringToArray(options?.team_ids)
@@ -92,21 +86,6 @@ export class Download {
       this.recordOffline = stringToBoolean(options?.recordOffline)
       this.school_id = options?.school_id
       this.session_id = options?.session_id
-    }
-  }
-
-  /**
-   * Get user who created upload
-   *
-   * @returns {User|undefined} User
-   */
-  get createdBy() {
-    try {
-      if (this.createdBy_uid) {
-        return User.findOne(this.createdBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Upload.createdBy', error.message)
     }
   }
 
@@ -460,100 +439,12 @@ export class Download {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'download'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/downloads/${this.id}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Download>|undefined} Downloads
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.downloads).map(
-      (upload) => new Download(upload, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} id - Download ID
-   * @param {object} context - Context
-   * @returns {Download|undefined} Download
-   * @static
-   */
-  static findOne(id, context) {
-    if (context?.downloads?.[id]) {
-      return new Download(context.downloads[id], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} download - Download
-   * @param {object} context - Context
-   * @returns {Download} Created download
-   * @static
-   */
-  static create(download, context) {
-    const createdDownload = new Download(download)
-
-    // Update context
-    context.downloads = context.downloads || {}
-    context.downloads[createdDownload.id] = createdDownload
-
-    return createdDownload
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} id - Download ID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Download} Updated download
-   * @static
-   */
-  static update(id, updates, context) {
-    const updatedDownload = _.mergeWith(
-      Download.findOne(id, context),
-      updates,
-      (oldValue, newValue) => {
-        // Arrays shouldn’t be merged but replaced entirely
-        if (Array.isArray(oldValue)) {
-          return newValue
-        }
-      }
-    )
-    updatedDownload.updatedAt = today()
-
-    // Remove download context
-    delete updatedDownload.context
-
-    // Delete original download (with previous ID)
-    delete context.downloads[id]
-
-    // Update context
-    context.downloads[updatedDownload.id] = updatedDownload
-
-    return updatedDownload
   }
 
   /**
@@ -587,4 +478,5 @@ export class Download {
 
 /**
  * @import { DownloadVariable } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

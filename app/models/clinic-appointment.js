@@ -74,6 +74,7 @@ import {
 /**
  * @class ClinicAppointment
  */
+// TODO: Extend BaseModel (findOne and findAll currently deviate from pattern)
 export class ClinicAppointment {
   /**
    * @param {ClinicAppointmentOptions} options - Options

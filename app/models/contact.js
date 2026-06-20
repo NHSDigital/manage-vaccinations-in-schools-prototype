@@ -4,8 +4,10 @@ import { ParentalRelationship } from '../enums.js'
 import { Patient } from '../models.js'
 import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} ContactOptions
+ * @typedef {BaseModelOptions & object} ContactOptions
  * @property {string} [uuid] - Contact UUID
  * @property {string} [fullName] - Full name
  * @property {ParentalRelationship} [relationship] - Relationship to child
@@ -25,12 +27,18 @@ import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 /**
  * @class Contact
  */
-export class Contact {
+export class Contact extends BaseModel {
+  static contextKey = 'contacts'
+  static identifierKey = 'uuid'
+  static ns = 'contact'
+
   /**
    * @param {ContactOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.fullName = options?.fullName || ''
@@ -109,15 +117,6 @@ export class Contact {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'contact'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -125,102 +124,9 @@ export class Contact {
   get uri() {
     return `/contacts/${this.uuid}`
   }
-
-  /**
-   * Remove `context` so it’s hidden from JSON.stringify, or we’ll get
-   * circular reference issues during saving
-   *
-   * @returns {object} Contact ready to be serialized to JSON
-   */
-  toJSON() {
-    const { context, ...rest } = this
-    return rest
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Contact>|undefined} Contacts
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.contacts).map(
-      (contact) => new Contact(contact, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Contact UUID
-   * @param {object} context - Context
-   * @returns {Contact|undefined} Contact
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.contacts?.[uuid]) {
-      return new Contact(context.contacts[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} contact - Contact
-   * @param {object} context - Context
-   * @returns {Contact} Created contact
-   * @static
-   */
-  static create(contact, context) {
-    const createdContact = new Contact(contact)
-
-    // Update context
-    context.contacts = context.contacts || {}
-    context.contacts[createdContact.uuid] = createdContact
-
-    return createdContact
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - Contact UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Contact} Updated contact
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedContact = Object.assign(
-      Contact.findOne(uuid, context),
-      updates
-    )
-
-    // Remove move context
-    delete updatedContact.context
-
-    // Delete original move (with previous UUID)
-    delete context.contacts[uuid]
-
-    // Update context
-    context.contacts[updatedContact.uuid] = updatedContact
-
-    return updatedContact
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} uuid - Contact UUID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(uuid, context) {
-    delete context.contacts[uuid]
-  }
 }
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

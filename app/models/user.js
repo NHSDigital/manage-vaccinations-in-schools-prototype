@@ -3,10 +3,11 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { UserRole, VaccineMethod } from '../enums.js'
 import { formatCode, formatLink } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
 import { Team } from './team.js'
 
 /**
- * @typedef {object} UserOptions
+ * @typedef {BaseModelOptions & object} UserOptions
  * @property {string} [uid] - User UID
  * @property {string} [firstName] - First/given name
  * @property {string} [lastName] - Last/family name
@@ -19,12 +20,17 @@ import { Team } from './team.js'
 /**
  * @class User
  */
-export class User {
+export class User extends BaseModel {
+  static contextKey = 'users'
+  static ns = 'user'
+
   /**
    * @param {UserOptions} options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uid = options?.uid || faker.string.numeric(12)
     this.firstName = options?.firstName
@@ -149,15 +155,6 @@ export class User {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'user'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -165,29 +162,8 @@ export class User {
   get uri() {
     return `/users/${this.uid}`
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<User>|undefined} Users
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.users).map((user) => new User(user))
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uid - User UID
-   * @param {object} context - Context
-   * @returns {User|undefined} User
-   * @static
-   */
-  static findOne(uid, context) {
-    if (context?.users?.[uid]) {
-      return new User(context.users[uid])
-    }
-  }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */
