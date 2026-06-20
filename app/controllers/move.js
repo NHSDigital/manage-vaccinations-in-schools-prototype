@@ -17,14 +17,14 @@ export const moveController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
-    let moves = Move.findAll(request.session.data)
+    const moves = Move.findAll(request.session.data)
 
     // Sort
-    moves = _.sortBy(moves, 'createdAt')
+    let results = _.sortBy(moves, 'createdAt')
 
     response.locals.moves = moves
-    response.locals.results = getResults(moves, request.query)
-    response.locals.pages = getPagination(moves, request.query)
+    response.locals.results = getResults(results, request.query)
+    response.locals.pages = getPagination(results, request.query)
 
     return next()
   },

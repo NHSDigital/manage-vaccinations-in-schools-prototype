@@ -41,15 +41,15 @@ export const consentController = {
    */
   readAll(request, response, next) {
     const { session_id } = request.params
-    let consents = Consent.findAll(request.session.data)
+    const consents = Consent.findAll(request.session.data)
 
     // Sort
-    consents = _.sortBy(consents, 'createdAt')
+    let results = _.sortBy(consents, 'createdAt')
 
     // Session consents
     if (session_id) {
       const session = Session.findOne(session_id, request.session.data)
-      consents = session.consents
+      results = session.consents
       response.locals.session = session
     }
 
@@ -57,8 +57,8 @@ export const consentController = {
     response.locals.consentsPath = session_id
       ? `/sessions/${session_id}/consents`
       : '/consents'
-    response.locals.results = getResults(consents, request.query)
-    response.locals.pages = getPagination(consents, request.query)
+    response.locals.results = getResults(results, request.query)
+    response.locals.pages = getPagination(results, request.query)
 
     return next()
   },
