@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { generateChild } from '../generators/child.js'
-import { Patient, PDSRecord } from '../models.js'
+import { Patient, PDSRecord, School } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 
 export const pdsRecordController = {
@@ -20,7 +20,7 @@ export const pdsRecordController = {
     const { data } = request.session
 
     if (request.body.nhsn) {
-      const child = generateChild()
+      const child = generateChild(School.findAll(data))
       const pdsRecord = new PDSRecord({ ...child }, data)
 
       // Add entered NHS number
