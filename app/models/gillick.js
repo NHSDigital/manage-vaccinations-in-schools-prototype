@@ -1,12 +1,10 @@
 import { GillickCompetent } from '../enums.js'
-import { today } from '../utils/date.js'
 import { stringToBoolean } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} GillickOptions
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created session
- * @property {Date} [updatedAt] - Updated date
+ * @typedef {BaseModelOptions & object} GillickOptions
  * @property {boolean} [q1] - Question 1
  * @property {boolean} [q2] - Question 2
  * @property {boolean} [q3] - Question 3
@@ -18,14 +16,15 @@ import { stringToBoolean } from '../utils/string.js'
 /**
  * @class Gillick assessment
  */
-export class Gillick {
+export class Gillick extends BaseModel {
+  static ns = 'gillick'
+
   /**
    * @param {GillickOptions} options - Options
    */
   constructor(options) {
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
-    this.updatedAt = options?.createdAt && new Date(options.updatedAt)
+    super(options)
+
     this.q1 = stringToBoolean(options?.q1)
     this.q2 = stringToBoolean(options?.q2)
     this.q3 = stringToBoolean(options?.q3)
@@ -47,13 +46,8 @@ export class Gillick {
       return GillickCompetent.True
     }
   }
-
-  /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'gillick'
-  }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */

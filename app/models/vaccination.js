@@ -48,16 +48,15 @@ import {
   formatWithSecondaryText
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} VaccinationOptions
+ * @typedef {BaseModelOptions & object} VaccinationOptions
  * @property {string} [uuid] - Vaccination UUID
  * @property {string} [assessedBy_uid] - Who assessed child being vaccinated
  * @property {Date} [administeredAt] - Administered date
  * @property {object} [administeredAt_] - Administered date (from `dateInput`)
  * @property {string} [administeredBy_uid] - User who administered vaccination
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created vaccination record
- * @property {Date} [updatedAt] - Updated date
  * @property {Date} [nhseSyncedAt] - Date synced with NHS England API
  * @property {LocationType} [locationType] - Location
  * @property {string} [locationName] - Location name
@@ -93,12 +92,18 @@ import {
 /**
  * @class Vaccination
  */
-export class Vaccination {
+export class Vaccination extends BaseModel {
+  static contextKey = 'vaccinations'
+  static identifierKey = 'uuid'
+  static ns = 'vaccination'
+
   /**
    * @param {VaccinationOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.administeredAt = options?.administeredAt
@@ -106,9 +111,6 @@ export class Vaccination {
       : today()
     this.administeredAt_ = options?.administeredAt_
     this.administeredBy_uid = options?.administeredBy_uid
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.nhseSyncedAt = options?.nhseSyncedAt
       ? new Date(options.nhseSyncedAt)
       : undefined
@@ -353,21 +355,6 @@ export class Vaccination {
       }
     } catch (error) {
       console.error('Vaccination.administeredBy', error.message)
-    }
-  }
-
-  /**
-   * Get user who created vaccination record
-   *
-   * @returns {User|undefined} User
-   */
-  get createdBy() {
-    try {
-      if (this.createdBy_uid) {
-        return User.findOne(this.createdBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Vaccination.createdBy', error.message)
     }
   }
 
@@ -632,15 +619,6 @@ export class Vaccination {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'vaccination'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -648,87 +626,9 @@ export class Vaccination {
   get uri() {
     return `/reports/${this.programme_id}/vaccinations/${this.uuid}`
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Vaccination>|undefined} Vaccinations
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.vaccinations).map(
-      (vaccination) => new Vaccination(vaccination, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Vaccination UUID
-   * @param {object} context - Context
-   * @returns {Vaccination|undefined} Vaccination
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.vaccinations?.[uuid]) {
-      return new Vaccination(context.vaccinations[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} vaccination - Vaccination
-   * @param {object} context - Context
-   * @returns {Vaccination} Created vaccination
-   * @static
-   */
-  static create(vaccination, context) {
-    const createdVaccination = new Vaccination(vaccination)
-
-    // Update context
-    context.vaccinations = context.vaccinations || {}
-    context.vaccinations[createdVaccination.uuid] = createdVaccination
-
-    return createdVaccination
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - Vaccination UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Vaccination} Updated vaccination
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedVaccination = Object.assign(
-      Vaccination.findOne(uuid, context),
-      updates
-    )
-    updatedVaccination.updatedAt = today()
-
-    // Make sure sync isn’t always successful
-    const syncSuccess = Math.random() > 0.3
-    if (syncSuccess && updatedVaccination.given) {
-      updatedVaccination.nhseSyncedAt = today(Math.random() * 60 * 5)
-    }
-
-    // Remove patient context
-    delete updatedVaccination.context
-
-    // Delete original patient (with previous UUID)
-    delete context.vaccinations[uuid]
-
-    // Update context
-    context.vaccinations[updatedVaccination.uuid] = updatedVaccination
-
-    return updatedVaccination
-  }
 }
 
 /**
  * @import { Session } from '../models.js'
+ * @import { BaseModelOptions } from './base.js'
  */

@@ -4,8 +4,10 @@ import programmesData from '../datasets/programmes.js'
 import { SessionPresets } from '../enums.js'
 import { Programme, Team } from '../models.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} LocationOptions
+ * @typedef {BaseModelOptions & object} LocationOptions
  * @property {string} [name] - Name
  * @property {string} [id] - Location ID
  * @property {string} [addressLine1] - Address line 1
@@ -19,12 +21,16 @@ import { Programme, Team } from '../models.js'
 /**
  * @class Location
  */
-export class Location {
+export class Location extends BaseModel {
+  static ns = 'location'
+
   /**
    * @param {LocationOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('?#####')
     this.name = options?.name
@@ -155,17 +161,9 @@ export class Location {
       }
     )
   }
-
-  /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'location'
-  }
 }
 
 /**
  * @import { SessionPreset, SessionPresetName } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

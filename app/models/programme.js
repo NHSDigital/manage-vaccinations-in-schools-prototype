@@ -10,8 +10,10 @@ import {
   sentenceCaseProgrammeName
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} ProgrammeOptions
+ * @typedef {BaseModelOptions & object} ProgrammeOptions
  * @property {string} [id] - Programme ID
  * @property {ProgrammeType} [type] - Programme type
  * @property {boolean} [hidden] - Hidden
@@ -33,12 +35,17 @@ import {
 /**
  * @class Programme
  */
-export class Programme {
+export class Programme extends BaseModel {
+  static contextKey = 'programmes'
+  static ns = 'programme'
+
   /**
    * @param {ProgrammeOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.id = options?.id
     this.type = options?.type
@@ -265,15 +272,6 @@ export class Programme {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'programme'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -281,35 +279,9 @@ export class Programme {
   get uri() {
     return `/reports/${this.id}`
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Programme>|undefined} Programmes
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.programmes).map(
-      (programme) => new Programme(programme, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} id - Programme ID
-   * @param {object} context - Context
-   * @returns {Programme|undefined} Programme
-   * @static
-   */
-  static findOne(id, context) {
-    if (context?.programmes?.[id]) {
-      return new Programme(context.programmes[id], context)
-    }
-  }
 }
 
 /**
  * @import { PatientStatus } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

@@ -7,8 +7,10 @@ import {
   convertObjectToIsoDate
 } from '../utils/date.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} ClinicVaccinationPeriodOptions
+ * @typedef {BaseModelOptions & object} ClinicVaccinationPeriodOptions
  * @property {string} [uuid] - Vaccination period UUID
  * @property {Date} [startAt] - Start time of first appointment slot
  * @property {Date} [endAt] - End time of final appointment slot
@@ -18,11 +20,16 @@ import {
 /**
  * @class ClinicVaccinationPeriod
  */
-export class ClinicVaccinationPeriod {
+export class ClinicVaccinationPeriod extends BaseModel {
+  // TODO: add this to the locale file
+  static ns = 'clinicVaccinationPeriod'
+
   /**
    * @param {ClinicVaccinationPeriodOptions} options - Options
    */
   constructor(options) {
+    super(options)
+
     this.uuid = options?.uuid || faker.string.uuid()
     this.startAt = options?.startAt && new Date(options.startAt)
     this.endAt = options?.endAt && new Date(options.endAt)
@@ -138,16 +145,6 @@ export class ClinicVaccinationPeriod {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    // TODO: add this to the locale file
-    return 'clinicVaccinationPeriod'
-  }
-
-  /**
    * Get all appointment slot start times, replicated for the number of vaccinators
    *
    * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
@@ -174,3 +171,7 @@ export class ClinicVaccinationPeriod {
     return appointmentStartTimes
   }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */

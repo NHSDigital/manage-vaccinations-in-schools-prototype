@@ -9,8 +9,10 @@ import {
   formatMillilitres
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} VaccineOptions
+ * @typedef {BaseModelOptions & object} VaccineOptions
  * @property {string} [snomed] - SNOMED code
  * @property {string} [type] - Type
  * @property {string} [brand] - Brand
@@ -27,12 +29,17 @@ import {
 /**
  * @class Vaccine
  */
-export class Vaccine {
+export class Vaccine extends BaseModel {
+  static contextKey = 'vaccines'
+  static ns = 'vaccine'
+
   /**
    * @param {VaccineOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.snomed = options?.snomed || faker.string.numeric(14)
     this.type = options?.type
@@ -119,15 +126,6 @@ export class Vaccine {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'vaccine'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -135,46 +133,9 @@ export class Vaccine {
   get uri() {
     return `/vaccines/${this.snomed}`
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Vaccine>|undefined} Vaccines
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.vaccines).map(
-      (vaccine) => new Vaccine(vaccine, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} snomed - SNOMED code
-   * @param {object} context - Context
-   * @returns {Vaccine|undefined} Vaccine
-   * @static
-   */
-  static findOne(snomed, context) {
-    if (context?.vaccines?.[snomed]) {
-      return new Vaccine(context.vaccines[snomed], context)
-    }
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} snomed - SNOMED code
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(snomed, context) {
-    delete context.vaccines[snomed]
-  }
 }
 
 /**
  * @import { PreScreenQuestion, VaccinationProtocol, VaccineCriteria, VaccineSideEffect, VaccineMethod } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

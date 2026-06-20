@@ -1,14 +1,13 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import _ from 'lodash'
 
 import { ClinicAppointment, Contact } from '../models.js'
-import { today } from '../utils/date.js'
 import { formatCode, stringToArray } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} ClinicBookingOptions
+ * @typedef {BaseModelOptions & object} ClinicBookingOptions
  * @property {string} [uuid] - Clinic booking UUID
- * @property {Date} [createdAt] - Created date
  * @property {string} [bookingReference] - Booking reference number
  * @property {Array<string>} [invited_programme_ids] - IDs of programmes for which child was invited
  * @property {Contact} [contact] - Contact details for the booking; see appointments for parental relationship details
@@ -18,15 +17,20 @@ import { formatCode, stringToArray } from '../utils/string.js'
 /**
  * @class ClinicBooking
  */
-export class ClinicBooking {
+export class ClinicBooking extends BaseModel {
+  static contextKey = 'clinicBookings'
+  static identifierKey = 'uuid'
+  static ns = 'clinicBooking'
+
   /**
    * @param {ClinicBookingOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
 
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
@@ -124,15 +128,6 @@ export class ClinicBooking {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'clinicBooking'
-  }
-
-  /**
    * Get URI
    *
    * @returns {object} An object containing different URLs for this booking
@@ -143,94 +138,8 @@ export class ClinicBooking {
       debug: `/clinic-bookings/${this.uuid}`
     }
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<ClinicBooking>|undefined} Clinic bookings
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context?.clinicBookings ?? {}).map(
-      (booking) => new ClinicBooking(booking, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - ClinicBooking UUID
-   * @param {object} context - Context
-   * @returns {ClinicBooking|undefined} Clinic booking
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.clinicBookings?.[uuid]) {
-      return new ClinicBooking(context.clinicBookings[uuid], context)
-    }
-  }
-
-  /**
-   * Create a new clinic booking, adding it to the context
-   *
-   * @param {object} booking
-   * @param {object} context
-   * @returns {ClinicBooking} A new clinic booking, added to the context, and possibly with a new UUID
-   */
-  static create(booking, context) {
-    const createdBooking = new ClinicBooking(booking)
-
-    // Update context
-    context.clinicBookings = context.clinicBookings || {}
-    context.clinicBookings[createdBooking.uuid] = createdBooking
-
-    return createdBooking
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - ClinicBooking UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {ClinicBooking} Updated booking
-   * @static
-   */
-  static update(uuid, updates, context) {
-    // Copy updates into the relevant booking
-    const existingBooking = ClinicBooking.findOne(uuid, context)
-    const updatedBooking = _.mergeWith(
-      existingBooking,
-      updates,
-      (oldValue, newValue) => {
-        // Arrays shouldn’t be merged but replaced entirely
-        if (Array.isArray(oldValue)) {
-          return newValue
-        }
-      }
-    )
-
-    // Remove booking context
-    delete updatedBooking.context
-
-    // Delete original booking (with previous UUID)
-    delete context.clinicBookings[uuid]
-
-    // Update context
-    context.clinicBookings[updatedBooking.uuid] = updatedBooking
-
-    return updatedBooking
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} uuid - Clinic booking UUID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(uuid, context) {
-    delete context.clinicBookings[uuid]
-  }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */

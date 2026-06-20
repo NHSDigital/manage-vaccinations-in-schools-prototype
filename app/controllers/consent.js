@@ -43,6 +43,8 @@ export const consentController = {
   readAll(request, response, next) {
     const { session_id } = request.params
     const consents = Consent.findAll(request.session.data)
+      .filter((consent) => !consent.invalid)
+      .filter((consent) => !consent.patient_uuid)
 
     // Sort
     let results = _.sortBy(consents, 'createdAt')

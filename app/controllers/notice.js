@@ -1,4 +1,5 @@
 import { Notice } from '../models.js'
+import { getDateValueDifference } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const noticeController = {
@@ -14,9 +15,9 @@ export const noticeController = {
   },
 
   readAll(request, response, next) {
-    response.locals.notices = Notice.findAll(request.session.data).filter(
-      ({ archivedAt }) => !archivedAt
-    )
+    response.locals.notices = Notice.findAll(request.session.data)
+      .filter(({ archivedAt }) => !archivedAt)
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
 
     next()
   },

@@ -1,6 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMonths } from 'date-fns'
-import _ from 'lodash'
 
 import vaccines from '../datasets/vaccines.js'
 import {
@@ -21,10 +20,9 @@ import {
   Patient,
   Programme,
   Session,
-  User,
   Vaccination
 } from '../models.js'
-import { formatDate, today } from '../utils/date.js'
+import { formatDate } from '../utils/date.js'
 import {
   getConsentOutcomeStatus,
   getReplyDecisionStatus
@@ -38,12 +36,11 @@ import {
   stringToBoolean
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} ReplyOptions
+ * @typedef {BaseModelOptions & object} ReplyOptions
  * @property {string} [uuid] - Reply UUID
- * @property {Date} [createdAt] - Created date
- * @property {string} [createdBy_uid] - User who created reply
- * @property {Date} [updatedAt] - Updated date
  * @property {Child} [child] - Child
  * @property {Contact} [contact_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
@@ -74,17 +71,20 @@ import {
 /**
  * @class Reply
  */
-export class Reply {
+export class Reply extends BaseModel {
+  static contextKey = 'replies'
+  static identifierKey = 'uuid'
+  static ns = 'reply'
+
   /**
    * @param {ReplyOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.createdBy_uid = options?.createdBy_uid
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.child = options?.child && new Child(options.child)
     this.alternative =
       options?.alternative && stringToBoolean(options?.alternative)
@@ -234,21 +234,6 @@ export class Reply {
       this.contact?.tel && this.contact?.smsStatus === NotifySmsStatus.Delivered
 
     return hasEmailGotEmail || hasTelSmsGotSms
-  }
-
-  /**
-   * Get user who created reply
-   *
-   * @returns {User|undefined} User
-   */
-  get createdBy() {
-    try {
-      if (this.createdBy_uid) {
-        return User.findOne(this.createdBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Reply.createdBy', error.message)
-    }
   }
 
   /**
@@ -527,15 +512,6 @@ export class Reply {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'reply'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -552,74 +528,8 @@ export class Reply {
   get publicUri() {
     return `${this.session.consentUrl}/${this.uuid}`
   }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Reply>|undefined} Replies
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.replies).map(
-      (reply) => new Reply(reply, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Reply UUID
-   * @param {object} context - Context
-   * @returns {Reply|undefined} Reply
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.replies?.[uuid]) {
-      return new Reply(context.replies[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {object} reply - Consent
-   * @param {object} context - Context
-   * @returns {Reply} Created reply
-   * @static
-   */
-  static create(reply, context) {
-    const createdReply = new Reply(reply)
-
-    // Update context
-    context.replies = context.replies || {}
-    context.replies[createdReply.uuid] = createdReply
-
-    return createdReply
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - Reply UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Reply} Updated reply
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedReply = _.merge(Reply.findOne(uuid, context), updates)
-    updatedReply.updatedAt = today()
-
-    // Remove reply context
-    delete updatedReply.context
-
-    // Delete original reply (with previous UUID)
-    delete context.replies[uuid]
-
-    // Update context
-    context.replies[updatedReply.uuid] = updatedReply
-
-    return updatedReply
-  }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */

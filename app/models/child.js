@@ -26,11 +26,11 @@ import {
   stringToArray
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} ChildOptions
+ * @typedef {BaseModelOptions & object} ChildOptions
  * @property {string} [uuid] - Child UUID
- * @property {Date} [updatedAt] - Updated date
- * @property {string} [updatedBy_uid] - User who updated record
  * @property {string} [firstName] - First name
  * @property {string} [lastName] - Last name
  * @property {string} [preferredFirstName] - Preferred first name
@@ -58,15 +58,17 @@ import {
 /**
  * @class Child
  */
-export class Child {
+export class Child extends BaseModel {
+  static ns = 'child'
+
   /**
    * @param {ChildOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
-    this.updatedBy_uid = options?.updatedBy_uid
     this.uuid = options?.uuid || faker.string.uuid()
     this.firstName = options?.firstName || ''
     this.lastName = options?.lastName || ''
@@ -367,17 +369,9 @@ export class Child {
       }
     )
   }
-
-  /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'child'
-  }
 }
 
 /**
  * @import { Gender, EthnicBackground } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */

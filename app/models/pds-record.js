@@ -1,5 +1,4 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import _ from 'lodash'
 
 import { Child, Contact } from '../models.js'
 import { tokenize } from '../utils/object.js'
@@ -12,7 +11,7 @@ import {
 } from '../utils/string.js'
 
 /**
- * @typedef {object} PDSRecordOptions
+ * @typedef {ChildOptions & object} PDSRecordOptions
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [invalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
@@ -25,8 +24,12 @@ import {
  * @augments Child
  */
 export class PDSRecord extends Child {
+  static contextKey = 'pdsRecords'
+  static identifierKey = 'uuid'
+  static ns = 'pdsRecord'
+
   /**
-   * @param {PDSRecordOptions & ChildOptions} options - Options
+   * @param {PDSRecordOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
@@ -125,90 +128,12 @@ export class PDSRecord extends Child {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'pdsRecord'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/pds/${this.uuid}/new/result`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<PDSRecord>|undefined} PDS records
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context.pdsRecords).map(
-      (pdsRecord) => new PDSRecord(pdsRecord, context)
-    )
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - PDS record UUID
-   * @param {object} context - Context
-   * @returns {PDSRecord|undefined} PDS record
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.pdsRecords?.[uuid]) {
-      return new PDSRecord(context.pdsRecords[uuid], context)
-    }
-  }
-
-  /**
-   * Create
-   *
-   * @param {PDSRecord} pdsRecord - PDS record
-   * @param {object} context - Context
-   * @returns {PDSRecord} Created PDS record
-   * @static
-   */
-  static create(pdsRecord, context) {
-    const createdRecord = new PDSRecord(pdsRecord)
-
-    // Update context
-    context.pdsRecords = context.pdsRecords || {}
-    context.pdsRecords[createdRecord.uuid] = createdRecord
-
-    return createdRecord
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - PDS record UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {PDSRecord} Updated PDS record
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedPdsRecord = _.merge(PDSRecord.findOne(uuid, context), updates)
-
-    // Remove patient context
-    delete updatedPdsRecord.context
-
-    // Delete original PDS record (with previous UUID)
-    delete context.pdsRecords[uuid]
-
-    // Update context
-    context.pdsRecords[updatedPdsRecord.uuid] = updatedPdsRecord
-
-    return updatedPdsRecord
   }
 }
 

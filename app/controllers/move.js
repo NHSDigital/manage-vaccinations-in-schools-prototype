@@ -18,7 +18,9 @@ export const moveController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
-    const moves = Move.findAll(request.session.data)
+    const moves = Move.findAll(request.session.data).filter(
+      (move) => !move.ignored
+    )
 
     // Sort
     let results = _.sortBy(moves, 'createdAt')

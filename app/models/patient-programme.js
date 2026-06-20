@@ -33,8 +33,10 @@ import {
   formatWithSecondaryText
 } from '../utils/string.js'
 
+import { BaseModel } from './base.js'
+
 /**
- * @typedef {object} PatientProgrammeOptions
+ * @typedef {BaseModelOptions & object} PatientProgrammeOptions
  * @property {boolean} [invitedToClinic] - Invited to clinic
  * @property {string} [patient_uuid] - Patient UUID
  * @property {string} [programme_id] - Programme ID
@@ -43,12 +45,16 @@ import {
 /**
  * @class Patient Programme
  */
-export class PatientProgramme {
+export class PatientProgramme extends BaseModel {
+  static ns = 'patientProgramme'
+
   /**
    * @param {PatientProgrammeOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.invitedToClinic = options?.invitedToClinic
     this.patient_uuid = options?.patient_uuid
@@ -629,15 +635,6 @@ export class PatientProgramme {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'patientProgramme'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
@@ -650,4 +647,5 @@ export class PatientProgramme {
 /**
  * @import { RecordVaccineCriteria } from '../enums.js'
  * @import { PatientSession } from '../models.js'
+ * @import { BaseModelOptions } from './base.js'
  */

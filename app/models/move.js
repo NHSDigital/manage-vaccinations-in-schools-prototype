@@ -2,13 +2,13 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import schools from '../datasets/schools.js'
 import { Patient, Team } from '../models.js'
-import { formatDate, getDateValueDifference, today } from '../utils/date.js'
+import { formatDate } from '../utils/date.js'
+
+import { BaseModel } from './base.js'
 
 /**
- * @typedef {object} MoveOptions
+ * @typedef {BaseModelOptions & object} MoveOptions
  * @property {string} [uuid] - Move UUID
- * @property {Date} [createdAt] - Reported date
- * @property {Date} [updatedAt] - Updated date
  * @property {boolean} [ignored] - Reported move is ignored
  * @property {MoveSource} [source] - Reporting source
  * @property {string} [team_id] - Team ID (moving from)
@@ -20,18 +20,19 @@ import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 /**
  * @class Move
  */
-export class Move {
+export class Move extends BaseModel {
+  static contextKey = 'moves'
+  static ns = 'move'
+
   /**
    * @param {MoveOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    super(options, context)
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
-    this.updatedAt = options?.updatedAt
-      ? new Date(options.updatedAt)
-      : undefined
     this.ignored = options?.ignored || false
     this.source = options?.source
     this.team_id = options?.team_id
@@ -93,85 +94,12 @@ export class Move {
   }
 
   /**
-   * Get namespace
-   *
-   * @returns {string} Namespace
-   */
-  get ns() {
-    return 'move'
-  }
-
-  /**
    * Get URI
    *
    * @returns {string} URI
    */
   get uri() {
     return `/moves/${this.uuid}`
-  }
-
-  /**
-   * Find all
-   *
-   * @param {object} context - Context
-   * @returns {Array<Move>|undefined} Moves
-   * @static
-   */
-  static findAll(context) {
-    return Object.values(context?.moves ?? {})
-      .map((move) => new Move(move, context))
-      .filter((move) => !move.ignored)
-      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
-  }
-
-  /**
-   * Find one
-   *
-   * @param {string} uuid - Move UUID
-   * @param {object} context - Context
-   * @returns {Move|undefined} Move
-   * @static
-   */
-  static findOne(uuid, context) {
-    if (context?.moves?.[uuid]) {
-      return new Move(context.moves[uuid], context)
-    }
-  }
-
-  /**
-   * Update
-   *
-   * @param {string} uuid - Move UUID
-   * @param {object} updates - Updates
-   * @param {object} context - Context
-   * @returns {Move} Updated download
-   * @static
-   */
-  static update(uuid, updates, context) {
-    const updatedMove = Object.assign(Move.findOne(uuid, context), updates)
-    updatedMove.updatedAt = today()
-
-    // Remove move context
-    delete updatedMove.context
-
-    // Delete original move (with previous UUID)
-    delete context.moves[uuid]
-
-    // Update context
-    context.moves[updatedMove.uuid] = updatedMove
-
-    return updatedMove
-  }
-
-  /**
-   * Delete
-   *
-   * @param {string} uuid - Move UUID
-   * @param {object} context - Context
-   * @static
-   */
-  static delete(uuid, context) {
-    delete context.moves[uuid]
   }
 
   /**
@@ -201,4 +129,5 @@ export class Move {
 
 /**
  * @import { MoveSource } from '../enums.js'
+ * @import { BaseModelOptions } from './base.js'
  */
