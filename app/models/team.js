@@ -21,7 +21,6 @@ import { stringToBoolean } from '../utils/string.js'
  * @property {number} [clinicNasalSprayDuration] - Minutes to allocate each nasal spray
  * @property {number} [clinicInjectionDuration] - Minutes to allocate each injection
  * @property {boolean} [clinicSessionRegistration] - Should clinic sessions have registration
- * @property {string} [password] - Shared password
  * @property {Array<string>} [clinic_ids] - Clinic IDs
  * @property {Array<string>} [school_ids] - School URNs
  */
@@ -58,7 +57,6 @@ export class Team {
     this.clinicSessionRegistration =
       stringToBoolean(options.clinicSessionRegistration) ??
       TeamDefaults.ClinicSessionRegistration
-    this.password = options?.password
     this.clinic_ids = options?.clinic_ids || []
     this.school_ids = options?.school_ids || []
   }
