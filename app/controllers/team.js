@@ -53,8 +53,7 @@ export const teamController = {
     const referrers = {
       contact: `${team.uri}/contact`,
       'school-sessions': `${team.uri}/sessions`,
-      'clinic-sessions': `${team.uri}/sessions`,
-      password: `${team.uri}/sessions`
+      'clinic-sessions': `${team.uri}/sessions`
     }
 
     response.locals.paths = {

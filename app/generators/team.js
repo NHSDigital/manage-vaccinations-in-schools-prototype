@@ -20,10 +20,6 @@ export function generateTeam() {
         provider: 'example.nhs.net'
       })
       .toLowerCase(),
-    tel: '01### ######'.replace(/#+/g, (m) => faker.string.numeric(m.length)),
-    password: faker.internet.password({
-      memorable: true,
-      length: 16
-    })
+    tel: '01### ######'.replace(/#+/g, (m) => faker.string.numeric(m.length))
   })
 }

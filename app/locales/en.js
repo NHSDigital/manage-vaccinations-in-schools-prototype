@@ -3116,8 +3116,7 @@ export const en = {
         title: 'Clinic sessions',
         text: 'You can change these values when scheduling new clinics.',
         defaults: 'Clinic session defaults'
-      },
-      password: 'Shared password'
+      }
     },
     sessionOpenWeeks: {
       title: 'When should parents get a request to give consent?',
@@ -3169,11 +3168,6 @@ export const en = {
     privacyPolicyUrl: {
       label: 'Privacy policy',
       hint: 'Linked to from consent forms and consent request emails'
-    },
-    password: {
-      label: 'Shared password',
-      title: 'Shared password',
-      hint: 'Use this password to unlock offline vaccination spreadsheets. Don’t share it with anyone outside your team.'
     }
   },
   triage: {
