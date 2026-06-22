@@ -21,7 +21,7 @@
     hint: { text: __mf("patient.inviteToClinic.clinicCount.hint",
       {
         programmeName: patientProgramme.programme.name | replace("Flu", "flu"),
-        count: patientProgramme.scheduledClinicCount
+        count: patientProgramme.scheduledClinicsCount
       })
     }
   }) %}
@@ -50,7 +50,7 @@
       items: checkboxItems,
       decorate: "clinicProgramme_ids"
     }) }}
-  
+
     {{ warningCallout({
       heading: __("patient.inviteToClinic.scheduledClinicWarning.title"),
       text: __mf("patient.inviteToClinic.scheduledClinicWarning.description",
@@ -69,7 +69,7 @@
       {{ __mf("patient.inviteToClinic.clinicCount.someParagraph",
       {
         programmeName: clinicReadyProgrammes[0].programme.name | replace("Flu", "flu"),
-        count: clinicReadyProgrammes[0].scheduledClinicCount
+        count: clinicReadyProgrammes[0].scheduledClinicsCount
       }) | nhsukMarkdown }}
     {% else %}
       {# Tell the user there are NO clinics available for this child's one clinic-ready programme #}

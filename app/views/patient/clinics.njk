@@ -1,0 +1,63 @@
+{% extends "_layouts/form.njk" %}
+
+{% set paths = { back: patientProgramme.uri } %}
+{% set title = __mf("patientProgramme.activeClinics.title", {
+  programme: patientProgramme.programme.nameSentenceCase,
+  count: patientProgramme.activeClinicsCount
+}) %}
+
+{% if patientProgramme.activeClinicsCount == 0 %}
+  {% set confirmButtonText = __("patientProgramme.newClinicSession.label") %}
+{% elif patientProgramme.activeClinicsCount == 1 %}
+  {% set confirmButtonText = "Add to clinic" %}
+{% endif %}
+
+{% block form %}
+  {% if patientProgramme.activeClinicsCount == 0 %}
+    {{ appHeading({
+      caption: patient.fullName,
+      title: title
+    }) }}
+
+    {{ __("patientProgramme.newClinicSession.description") | nhsukMarkdown }}
+  {% elif patientProgramme.activeClinicsCount == 1 %}
+    {{ appHeading({
+      caption: patient.fullName,
+      title: title
+    }) }}
+
+    {% call insetText({
+      classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4"
+    }) %}
+      <p>
+        <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">{{ patientProgramme.activeClinics[0].clinic.name }}</span>
+        {{ patientProgramme.activeClinics[0].clinic.formatted.address }}
+      </p>
+    {% endcall %}
+
+    {{ input({
+      type: "hidden",
+      value: patientProgramme.activeClinics[0].id,
+      decorate: "session_id"
+    }) }}
+  {% else %}
+    {% call fieldset({
+      legend: {
+        html: appHeading({
+          caption: patient.fullName,
+          title: title
+        })
+      }
+    }) %}
+      <p class="nhsuk-hint">{{ __("patientProgramme.activeClinics.hint", {
+        programme: patientProgramme.programme.nameSentenceCase,
+        count: patientProgramme.activeClinicsCount
+      }) }}</p>
+
+      {{ radios({
+        items: activeClinicsItems,
+        decorate: "session_id"
+      }) }}
+    {% endcall %}
+  {% endif %}
+{% endblock %}

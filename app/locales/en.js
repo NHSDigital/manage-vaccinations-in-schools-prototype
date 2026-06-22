@@ -1825,6 +1825,10 @@ export const en = {
   },
   patientProgramme: {
     label: 'Vaccination programme',
+    addToSession: {
+      success:
+        '{{patient.fullName}}’s added to today’s clinic at {{session.location.name}}'
+    },
     name: {
       label: 'Programme'
     },
@@ -1846,6 +1850,20 @@ export const en = {
     },
     ttcv: {
       label: 'Previous vaccinations for tetanus, diptheria and polio'
+    },
+    activeClinics: {
+      label: 'Add to current clinic session',
+      title:
+        '{count, plural, =0 {There are no {programme} clinics running today} one {Are you sure you want to add this child to the following {programme} clinic?} other {Which {programme} clinic do you want to add the child to?}}',
+      hint: '{{count}} clinics are available today'
+    },
+    newClinicSession: {
+      label: 'Create a new clinic session',
+      description:
+        'You can create a new clinic session and then add children to it.'
+    },
+    inviteToClinic: {
+      label: 'Invite to upcoming clinic session'
     }
   },
   patientSession: {

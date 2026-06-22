@@ -269,16 +269,45 @@ export class PatientProgramme {
   }
 
   /**
-   * Get the number of clinics scheduled for this programme
+   * Get active clinics for this programme
    *
-   * @returns {number} Number of scheduled clinics targeting this programme
+   * @returns {Array<Session>} Active clinics targeting this programme
    */
-  get scheduledClinicCount() {
-    const scheduledClinics = Session.findAll(this.context)
+  get activeClinics() {
+    return Session.findAll(this.context)
+      ?.filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
+      ?.filter(({ type }) => type === SessionType.Clinic)
+      ?.filter(({ status }) => status === SessionStatus.Active)
+  }
+
+  /**
+   * Get number of active clinics for this programme
+   *
+   * @returns {number} Number of active clinics targeting this programme
+   */
+  get activeClinicsCount() {
+    return this.activeClinics?.length || 0
+  }
+
+  /**
+   * Get scheduled clinics for this programme
+   *
+   * @returns {Array<Session>} Scheduled clinics targeting this programme
+   */
+  get scheduledClinics() {
+    return Session.findAll(this.context)
       ?.filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       ?.filter(({ type }) => type === SessionType.Clinic)
       ?.filter(({ status }) => status === SessionStatus.Planned)
-    return scheduledClinics?.length || 0
+  }
+
+  /**
+   * Get number of scheduled clinics for this programme
+   *
+   * @returns {number} Number of scheduled clinics targeting this programme
+   */
+  get scheduledClinicsCount() {
+    return this.scheduledClinics?.length || 0
   }
 
   /**

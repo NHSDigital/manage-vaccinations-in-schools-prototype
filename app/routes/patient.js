@@ -24,10 +24,19 @@ router.post('/:patient_uuid/new/note', patient.note)
 router.post('/:patient_uuid/archive', patient.archive)
 router.post('/:patient_uuid/invite-to-clinic', patient.inviteOneToClinic)
 
-router.all('/:patient_uuid/programmes{/:programme_id}', patient.readProgramme)
-router.get('/:patient_uuid/programmes{/:programme_id}', patient.showProgramme)
+router.all(
+  '/:patient_uuid/programmes/:programme_id{/:view}',
+  patient.readProgramme
+)
+router.get(
+  '/:patient_uuid/programmes/:programme_id{/:view}',
+  patient.showProgramme
+)
 
-router.post('/:patient_uuid/programmes/:programme_id/record', patient.record)
+router.post(
+  '/:patient_uuid/programmes/:programme_id/clinics',
+  patient.addToSession
+)
 
 router.get(
   '/:patient_uuid/programmes/:programme_id/new/vaccination',
