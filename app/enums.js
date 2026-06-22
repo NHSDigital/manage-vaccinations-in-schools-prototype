@@ -832,7 +832,8 @@ export const VaccinationSite = {
 export const VaccinationProtocol = {
   PGD: 'Patient Group Direction (PGD)',
   PSD: 'Patient Specific Direction (PSD)',
-  National: 'National protocol'
+  National: 'National protocol',
+  VGD: 'Vaccine Group Direction (VGD)'
 }
 
 /**
