@@ -1,0 +1,13 @@
+{% extends "_layouts/form.njk" %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [{
+      text: __("form.continue")
+    }],
+    links: [{
+      text: __("clinicBooking.abandon.label"),
+      href: appointment.uri.new + "/not-convenient"
+    }]
+  }) }}
+{% endblock %}

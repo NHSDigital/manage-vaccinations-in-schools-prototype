@@ -608,6 +608,39 @@ export const en = {
       appointmentsAvailable:
         '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
     },
+    abandon: {
+      label: 'I cannot find a suitable appointment'
+    },
+    notConvenient: {
+      title: 'We’re sorry you’ve not been able to find a convenient clinic',
+      intro:
+        'Tell us the reasons you were unable to find a suitable appointment so that we can improve the clinics we offer.',
+      label: 'Reasons for not booking',
+      hint: 'Select all that apply',
+      otherDetails: 'Give details'
+    },
+    leastConvenient: {
+      title: 'Which was the most important reason?'
+    },
+    convenientDistance: {
+      title: 'How far, in miles, would you consider travelling to a clinic?',
+      input: {
+        suffix: 'miles'
+      }
+    },
+    convenientDays: {
+      title: 'Which days of the week are convenient for you?',
+      hint: 'Select all that apply'
+    },
+    convenientTimes: {
+      title: 'Which times of day are convenient for you?',
+      hint: 'Select all that apply'
+    },
+    thankYou: {
+      title: 'Thank you for your feedback',
+      advice:
+        'You can still use the link in your invitation to check for suitable clinics at a later date.'
+    },
     'check-answers': {
       title: 'Check and confirm %s’s appointment details',
       summary: {

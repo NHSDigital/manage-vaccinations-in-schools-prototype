@@ -1,0 +1,16 @@
+{% extends "_layouts/default.njk" %}
+
+{% set paths = { back: false } %}
+{% set title = __("clinicBooking.thankYou.title") %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {{ appHeading({
+        title: title
+      }) }}
+
+      {{ __("clinicBooking.thankYou.advice") | nhsukMarkdown }}
+    </div>
+  </div>
+{% endblock %}

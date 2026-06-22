@@ -1,0 +1,18 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __mf("clinicBooking.leastConvenient.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          size: "l"
+        })
+      }
+    },
+    items: enumItems(NoSuitableClinicReason),
+    decorate: "appointment.abandonment.primaryReason"
+  }) }}
+{% endblock %}

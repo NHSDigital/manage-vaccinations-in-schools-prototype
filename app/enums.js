@@ -65,6 +65,7 @@ export const AuditEventType = {
  */
 export const ClinicAppointmentStatus = {
   Booked: 'Booked',
+  Abandoned: 'Not booked',
   Archived: 'Archived',
   Cancelled: 'Cancelled'
 }
@@ -114,6 +115,20 @@ export const ConsentWindow = {
   Open: 'Open',
   Closed: 'Closed',
   None: 'Session not scheduled'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const DayOfTheWeek = {
+  Monday: 'Monday',
+  Tuesday: 'Tuesday',
+  Wednesday: 'Wednesday',
+  Thursday: 'Thursday',
+  Friday: 'Friday',
+  Saturday: 'Saturday',
+  Sunday: 'Sunday'
 }
 
 /**
@@ -276,6 +291,16 @@ export const InstructionOutcome = {
  * @readonly
  * @enum {string}
  */
+export const LocationSearchType = {
+  Postcode: 'Postcode',
+  Outcode: 'Outcode',
+  Place: 'Place'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const LocationType = {
   Clinic: 'Community clinic',
   Home: 'At the child’s home',
@@ -292,6 +317,17 @@ export const MoveSource = {
   Consent: 'Consent response',
   School: 'Class list',
   External: 'Another SAIS team'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const NoSuitableClinicReason = {
+  Distance: 'All clinics are too far from my preferred location',
+  DayOfWeek: 'No appointments are on convenient days for me',
+  TimeOfDay: 'No appointments are at convenient times for me',
+  Other: 'Other'
 }
 
 /**
@@ -338,6 +374,18 @@ export const ParentalRelationship = {
   Guardian: 'Guardian',
   Other: 'Other',
   Unknown: 'Unknown'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const PartOfTheDay = {
+  EarlyMorning: 'Early morning (before 9am)',
+  Morning: 'Morning (9am to midday)',
+  EarlyAfternoon: 'Early afternoon (midday to 3pm)',
+  LateAfternoon: 'Late afternoon (3pm to 6pm)',
+  Evening: 'Evening (after 6pm)'
 }
 
 /**
@@ -907,16 +955,6 @@ export const VaccineSideEffect = {
   Temperature: 'a high temperature',
   TemperatureShiver: 'a high temperature, or feeling hot and shivery',
   Unwell: 'generally feeling unwell'
-}
-
-/**
- * @readonly
- * @enum {string}
- */
-export const LocationSearchType = {
-  Postcode: 'Postcode',
-  Outcode: 'Outcode',
-  Place: 'Place'
 }
 
 /**

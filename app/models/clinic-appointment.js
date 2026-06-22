@@ -7,6 +7,7 @@ import {
   ClinicAppointmentStatus,
   ConsentVaccineCriteria,
   Impairment,
+  NoSuitableClinicReason,
   ParentalRelationship,
   ProgrammeType,
   RegistrationOutcome,
@@ -60,6 +61,8 @@ import {
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
+ * @property {Array<NoSuitableClinicReason>} [abandonmentReasons] - Reasons the parent gave for being unable to find a suitable appointment
+ * @property {string} [abandonmentReasonOther] - the parent's own reason for being unable to find a suitable appointment
  */
 
 /**
@@ -98,6 +101,12 @@ export class ClinicAppointment {
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
     this.note = options?.note
+
+    this.abandonmentReasons =
+      (options?.abandonmentReasons &&
+        stringToArray(options.abandonmentReasons)) ||
+      []
+    this.abandonmentReasonOther = options?.abandonmentReasonOther
   }
 
   /**
@@ -201,6 +210,15 @@ export class ClinicAppointment {
     if (offerRebooking) {
       patient.inviteToClinic(this.selected_programme_ids)
     }
+  }
+
+  /**
+   * Has the parent given up on trying to find a suitable appointment?
+   *
+   * @returns {boolean} - true if abandoned, false otherwise
+   */
+  get isAbandoned() {
+    return this.abandonmentReasons?.length > 0
   }
 
   /**

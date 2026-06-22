@@ -1,0 +1,33 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __mf("clinicBooking.notConvenient.title") %}
+
+{% block form %}
+  {{ appHeading({
+      title: title,
+      size: "l"
+    }) }}
+
+  {{ __("clinicBooking.notConvenient.intro") | nhsukMarkdown }}
+
+  {%- set otherHtml = input({
+    label: { text: __("clinicBooking.notConvenient.otherDetails") },
+    decorate: "appointment.abandonmentReasonOther"
+  }) %}
+  {% set reasonRadioItems = injectConditionalHtml(enumItems(NoSuitableClinicReason), NoSuitableClinicReason.Other, otherHtml) %}
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: __("clinicBooking.notConvenient.label"),
+          level: 2,
+          size: "s"
+        })
+      }
+    },
+    hint: { text: __("clinicBooking.notConvenient.hint") },
+    items: reasonRadioItems,
+    decorate: "appointment.abandonmentReasons"
+  }) }}
+{% endblock %}

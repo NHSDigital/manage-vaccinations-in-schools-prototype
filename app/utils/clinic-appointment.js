@@ -1,6 +1,10 @@
 import _ from 'lodash'
 
-import { LocationSearchType, ReplyDecision } from '../enums.js'
+import {
+  LocationSearchType,
+  NoSuitableClinicReason,
+  ReplyDecision
+} from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
@@ -23,6 +27,10 @@ export const getAllAppointmentPaths = (
   if (!appointments?.length) {
     return {}
   }
+
+  const abandonmentReasons = stringToArray(
+    sessionData.appointment?.abandonmentReasons
+  )
 
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
@@ -156,7 +164,27 @@ export const getAllAppointmentPaths = (
       },
       [`/${booking_uuid}/new/contact-preference`]: {},
 
-      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {}
+      // Reporting the lack of a convenient option
+      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
+        [`/${booking_uuid}/new/confirmation`]: () => !appointment.isAbandoned
+      },
+
+      [`/${booking_uuid}/new/${appointment_uuid}/not-convenient`]: {},
+      ...(abandonmentReasons?.length > 1
+        ? { [`/${booking_uuid}/new/${appointment_uuid}/least-convenient`]: {} }
+        : {}),
+      ...(abandonmentReasons.includes(NoSuitableClinicReason.Distance)
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/convenient-distance`]: {}
+          }
+        : {}),
+      ...(abandonmentReasons.includes(NoSuitableClinicReason.DayOfWeek)
+        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-days`]: {} }
+        : {}),
+      ...(abandonmentReasons.includes(NoSuitableClinicReason.TimeOfDay)
+        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-times`]: {} }
+        : {}),
+      [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: {}
     }
   })
 
