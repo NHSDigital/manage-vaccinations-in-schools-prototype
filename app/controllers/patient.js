@@ -5,7 +5,6 @@ import {
   PatientClinicStatus,
   PatientStatus,
   ProgrammeType,
-  SessionPresetName,
   SessionStatus,
   SessionType,
   VaccinationOutcome
@@ -18,7 +17,6 @@ import {
   PatientSession,
   Session
 } from '../models.js'
-import { today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -279,7 +277,7 @@ export const patientController = {
       // Warn about inviting to any programmes that don't have clinics scheduled
       const programmesWithoutClinics =
         response.locals.clinicReadyProgrammes.filter(
-          (patientProgramme) => patientProgramme.scheduledClinicCount === 0
+          (patientProgramme) => patientProgramme.scheduledClinicsCount === 0
         )
       const formatter = new Intl.ListFormat('en', {
         style: 'long',
@@ -441,9 +439,19 @@ export const patientController = {
       return response.redirect(patient.uri)
     }
 
-    response.locals.patientProgramme = new PatientProgramme(
+    const patientProgramme = new PatientProgramme(
       patient.programmes[String(programme_id)],
       data
+    )
+
+    response.locals.patientProgramme = patientProgramme
+
+    response.locals.activeClinicsItems = patientProgramme.activeClinics.map(
+      (session) => ({
+        text: session.location.name,
+        hint: { text: session.clinic.formatted.address },
+        value: session.id
+      })
     )
 
     return next()
@@ -453,7 +461,9 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showProgramme(request, response) {
-    return response.render(`patient/programme`)
+    const view = request.params.view || 'programme'
+
+    return response.render(`patient/${view}`)
   },
 
   /**
@@ -461,7 +471,7 @@ export const patientController = {
    */
   inviteOneToClinic(request, response) {
     const { patient_uuid } = request.params
-    const { data } = request.session
+    const { data, referrer } = request.session
     const { __ } = response.locals
 
     // Strip any _unchecked value from the selected programme IDs
@@ -492,7 +502,7 @@ export const patientController = {
       })
     )
 
-    return response.redirect(patient.uri)
+    return response.redirect(referrer || patient.uri)
   },
 
   /**
@@ -545,7 +555,7 @@ export const patientController = {
             PatientClinicStatus.Ready
         ).length
       if (clinicReadyChildrenCount > 0) {
-        const scheduledClinicCount = scheduledSessions.filter((session) =>
+        const scheduledClinicsCount = scheduledSessions.filter((session) =>
           session.programme_ids.includes(programme.id)
         ).length
 
@@ -553,7 +563,7 @@ export const patientController = {
           name: programme.name,
           id: programme.id,
           childrenCount: clinicReadyChildrenCount,
-          clinicCount: scheduledClinicCount
+          clinicCount: scheduledClinicsCount
         })
       }
     }
@@ -680,78 +690,46 @@ export const patientController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  record(request, response) {
+  addToSession(request, response) {
     const { account } = request.app.locals
+    const { session_id } = request.body
     const { programme_id } = request.params
     const { data } = request.session
-    const { patient } = response.locals
+    const { __, patient, patientProgramme } = response.locals
 
-    let presetNames, appointmentLength
-    switch (programme_id) {
-      case 'flu':
-        presetNames = SessionPresetName.Flu
-        appointmentLength = 5
-        break
-      case 'hpv':
-        presetNames = SessionPresetName.HPV
-        appointmentLength = 10
-        break
-      case 'menacwy':
-      case 'td-ipv':
-        presetNames = SessionPresetName.Doubles
-        appointmentLength = 10
-        break
-      case 'mmr':
-        presetNames = SessionPresetName.MMR
-        appointmentLength = 10
-        break
-      default:
+    if (patientProgramme.scheduledClinicsCount === 0) {
+      return response.redirect(`/sessions/new`)
     }
 
-    const session = Session.create(
-      {
-        createdBy_uid: account.uid,
-        date: today(),
-        type: SessionType.Clinic,
-        presetNames,
-        clinic_id: 'M84008',
-        appointmentLength
-      },
-      data
-    )
+    // Get session
+    const session = Session.findOne(session_id, data)
 
-    let startAt = new Date(session.date)
-    startAt.setUTCHours(9, 0, 0, 0)
-    let endAt = new Date(session.date)
-    endAt.setUTCHours(12, 0, 0, 0)
-    session.addVaccinationPeriod({
-      startAt,
-      endAt,
-      vaccinatorCount: 5
-    })
-
-    Session.update(session.id, session, data)
-
-    const createdPatientSession = PatientSession.create(
+    // Create and add patient session
+    const patientSession = PatientSession.create(
       {
         createdBy_uid: account.uid,
         patient_uuid: patient.uuid,
         programme_id,
-        session_id: session.id
+        session_id
       },
       data
     )
 
-    patient.addToSession(createdPatientSession)
+    // Add to session
+    patient.addToSession(patientSession)
 
-    Patient.update(patient.uuid, { clinicProgramme_ids: [programme_id] }, data)
+    // Update session data
+    Patient.update(patient.uuid, patient, data)
 
-    const patientSession = PatientSession.findOne(
-      createdPatientSession.uuid,
-      data
+    request.flash(
+      'success',
+      __(`patientProgramme.addToSession.success`, { patient, session })
     )
 
-    return response.redirect(patientSession.uri)
+    // TODO: Should be able to use patientSession.uri here, but it doesn’t work
+    return response.redirect(
+      `/sessions/${session_id}/patients/${patient?.nhsn}/${programme_id}`
+    )
   },
 
   /**

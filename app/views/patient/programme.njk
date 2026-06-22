@@ -70,21 +70,10 @@
       }) }}
     {% endif %}
 
-    {{ appButtonGroup({
-      buttons: [{
-        text: __("patientSession.record.title", {
-          programme: patientProgramme.programme
-        }) | safe,
-        variant: "secondary",
-        attributes: {
-          formaction: patientProgramme.uri + "/record?referrer=" + referrer
-        }
-      }, {
-        text: __("vaccination.new.alreadyVaccinated.title"),
-        href: patientProgramme.uri + "/new/vaccination",
-        variant: "secondary"
-      }]
-    }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.eligible }}
+    {{ actionLink({
+      text: __("vaccination.new.alreadyVaccinated.title"),
+      href: patientProgramme.uri + "/new/vaccination"
+    }) }}
   {% endcall %}
 
   {% if patientProgramme.ttcvVaccinations %}
@@ -126,53 +115,69 @@
         rows: ttcvRows
       }) }}
 
-      {{ button({
+      {{ actionLink({
         text: __("vaccination.new.alreadyVaccinated.ttcv"),
-        href: patientProgramme.uri + "/new/ttcv",
-        variant: "secondary"
+        href: patientProgramme.uri + "/new/ttcv"
       }) }}
     {% endcall %}
   {% endif %}
 
   {% if patientProgramme.patientSessions.length %}
-    {% set patientSessionRows = [] %}
-    {% for patientSession in patientProgramme.patientSessions %}
-      {% set patientSessionRows = patientSessionRows | push([
-        {
-          header: __("session.location.label"),
-          html: link(patientSession.uri, patientSession.session.location.name)
-        },
-        {
-          header: __("session.date.label"),
-          html: patientSession.session.formatted.date if patientSession.session.date else patientSession.session.status
-        },
-        {
-          header: __("patientSession.outcome.label"),
-          html: patientSession.formatted.outcome or "No outcome"
-        }
-      ]) %}
-    {% endfor %}
-
-    {{ table({
-      id: "patient-sessions",
-      sort: "name",
-      responsive: true,
-      card: {
-        heading: __("patientProgramme.patientSessions.label"),
-        headingLevel: 3
-      },
-      head: [
-        {
-          text: __("session.location.label"),
-          attributes: {
-            style: "width: 33%"
+    {% call card({
+      heading: __("patientProgramme.patientSessions.label"),
+      headingLevel: 3
+    }) %}
+      {% set patientSessionRows = [] %}
+      {% for patientSession in patientProgramme.patientSessions %}
+        {% set patientSessionRows = patientSessionRows | push([
+          {
+            header: __("session.location.label"),
+            html: link(patientSession.uri, patientSession.session.location.name)
+          },
+          {
+            header: __("session.date.label"),
+            html: patientSession.session.formatted.date if patientSession.session.date else patientSession.session.status
+          },
+          {
+            header: __("patientSession.outcome.label"),
+            html: patientSession.formatted.outcome or "No outcome"
           }
-        },
-        { text: __("session.date.label") },
-        { text: __("patientSession.outcome.label") }
-      ],
-      rows: patientSessionRows
-    }) }}
+        ]) %}
+      {% endfor %}
+
+      {{ table({
+        id: "patient-sessions",
+        sort: "name",
+        responsive: true,
+        head: [
+          {
+            text: __("session.location.label"),
+            attributes: {
+              style: "width: 33%"
+            }
+          },
+          { text: __("session.date.label") },
+          { text: __("patientSession.outcome.label") }
+        ],
+        rows: patientSessionRows
+      }) }}
+
+      {{ appButtonGroup({
+        buttons: [{
+          text: __("patientProgramme.inviteToClinic.label") | safe,
+          variant: "secondary",
+          decorate: "programme_ids",
+          value: patientProgramme.programme.id,
+          attributes: {
+            formaction: patient.uri + "/invite-to-clinic?referrer=" + patientProgramme.uri
+          }
+        }, {
+          text: __("patientProgramme.activeClinics.label") | safe,
+          variant: "secondary",
+          href: patientProgramme.uri + "/clinics"
+        }]
+      }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.eligible }}
+    {% endcall %}
   {% endif %}
 
   {{ card({

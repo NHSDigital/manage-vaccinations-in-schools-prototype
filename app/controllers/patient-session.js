@@ -32,7 +32,7 @@ export const patientSessionController = {
 
     const patientSession = PatientSession.findAll(request.session.data).find(
       (patientSession) =>
-        patientSession.session.id === session_id &&
+        patientSession.session_id === session_id &&
         patientSession.programme_id === programme_id &&
         patientSession.patient.nhsn === nhsn
     )
