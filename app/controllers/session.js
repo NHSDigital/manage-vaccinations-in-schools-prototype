@@ -11,8 +11,7 @@ import {
   SchoolPhase,
   SessionPresetName,
   SessionStatus,
-  SessionType,
-  VaccineMethod
+  SessionType
 } from '../enums.js'
 import {
   Clinic,
@@ -382,11 +381,6 @@ export const sessionController = {
     response.locals.view = view
 
     let results = session.patientSessions
-
-    // Upgrade permissions according to session delegation settings
-    if (session.nationalProtocol) {
-      account.vaccineMethods.push(VaccineMethod.Injection)
-    }
 
     // Query
     if (q) {

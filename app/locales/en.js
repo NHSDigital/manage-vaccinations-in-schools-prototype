@@ -2675,22 +2675,6 @@ export const en = {
       count:
         '{count, plural, =0 {no children for {programme}} one {# child for {programme}} other {# children for {programme}}}'
     },
-    delegation: {
-      title: 'Delegation'
-    },
-    nationalProtocol: {
-      label: 'Use national protocol',
-      title:
-        'Can healthcare assistants administer the injected flu vaccine using the national protocol?',
-      yes: {
-        label: 'Yes',
-        hint: 'Healthcare assistants can administer an injected flu vaccine when supplied by a nurse'
-      },
-      no: {
-        label: 'No',
-        hint: 'Only nurses can administer the injected flu vaccine'
-      }
-    },
     psdProtocol: {
       label: 'Use patient specific direction (PSD)',
       title:

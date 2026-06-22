@@ -62,14 +62,6 @@ export const patientSessionController = {
       (patientProgramme) => patientProgramme.programme_id === programme_id
     )
 
-    // National protocol
-    // Nurses can record all vaccines
-    // HCAs can record injected flu vaccine, with supplier
-    if (session.nationalProtocol) {
-      // Upgrade permissions for HCAs
-      account.vaccineMethods.push(VaccineMethod.Injection)
-    }
-
     // PSD protocol
     // Nurses can record all vaccines
     // HCAs can record nasal sprays for children with a PSD
@@ -82,12 +74,9 @@ export const patientSessionController = {
       )
     }
 
+    // Nasal spray using PGD
     const userHasAccessor =
-      // Injected vaccine using national protocol
-      (vaccine?.method === VaccineMethod.Injection &&
-        session.nationalProtocol) ||
-      // Nasal spray using PGD
-      (vaccine?.method === VaccineMethod.Intranasal && !session.psdProtocol)
+      vaccine?.method === VaccineMethod.Intranasal && !session.psdProtocol
 
     response.locals.options = {
       // Show outstanding vaccinations

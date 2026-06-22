@@ -83,7 +83,6 @@ import {
  * @property {boolean} [cancelled] - Session was cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
- * @property {boolean} [nationalProtocol] - Enable national protocol
  * @property {boolean} [psdProtocol] - Enable PSD protocol
  */
 
@@ -138,14 +137,6 @@ export class Session {
 
     this.registration = stringToBoolean(options?.registration)
     this.register = options?.register || {}
-
-    if (
-      this.type === SessionType.School &&
-      this.presetNames?.includes(SessionPresetName.Flu)
-    ) {
-      this.nationalProtocol =
-        stringToBoolean(options?.nationalProtocol) || false
-    }
   }
 
   /**
