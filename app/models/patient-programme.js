@@ -262,9 +262,12 @@ export class PatientProgramme {
       ?.filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       ?.at(-1)
     return (
-      ![SessionStatus.Completed, SessionStatus.Closed].includes(
-        latestSchoolSession?.status
-      ) && latestSchoolSession?.academicYear === getCurrentAcademicYear()
+      ![
+        SessionStatus.Completed,
+        SessionStatus.Closed,
+        SessionStatus.Cancelled
+      ].includes(latestSchoolSession?.status) &&
+      latestSchoolSession?.academicYear === getCurrentAcademicYear()
     )
   }
 

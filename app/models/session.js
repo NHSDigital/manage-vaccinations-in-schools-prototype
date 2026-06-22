@@ -80,6 +80,7 @@ import {
  * @property {Date} [openAt] - Date consent window opens
  * @property {object} [openAt_] - Date consent window opens (from `dateInput`)
  * @property {boolean} [closed] - Session closed
+ * @property {boolean} [cancelled] - Session was cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
  * @property {boolean} [nationalProtocol] - Enable national protocol
@@ -104,6 +105,7 @@ export class Session {
     this.date_ = options?.date_
     this.academicYear = options?.academicYear || getCurrentAcademicYear()
     this.presetNames = options?.presetNames
+    this.cancelled = options?.cancelled || false
 
     if (this.type === SessionType.Clinic) {
       this.clinic_id = options?.clinic_id
@@ -346,12 +348,14 @@ export class Session {
    */
   get status() {
     switch (true) {
-      case isSameDay(this.date, setMidday(today())):
-        return SessionStatus.Active
       case this.closed:
         return SessionStatus.Closed
+      case this.cancelled:
+        return SessionStatus.Cancelled
       case !this.date:
         return SessionStatus.Unplanned
+      case isSameDay(this.date, setMidday(today())):
+        return SessionStatus.Active
       case isAfter(setMidday(today()), this.date):
         return SessionStatus.Completed
       default:

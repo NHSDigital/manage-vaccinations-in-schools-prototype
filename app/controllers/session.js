@@ -1178,9 +1178,10 @@ export const sessionController = {
         back = `${session.uri}/cancel/appointments`
         break
       case 'confirm':
-        back = session.hasAppointments
-          ? `${session.uri}/cancel/rebooking`
-          : session.uri
+        back =
+          session.type === SessionType.Clinic && session.hasAppointments
+            ? `${session.uri}/cancel/rebooking`
+            : session.uri
         break
     }
 
@@ -1195,16 +1196,16 @@ export const sessionController = {
     const { data } = request.session
     const { __, session } = response.locals
 
-    let next
+    let nextUrl
     switch (view) {
       case 'appointments':
-        next = `${session.uri}/cancel/rebooking`
+        nextUrl = `${session.uri}/cancel/rebooking`
         break
       case 'rebooking':
-        next = `${session.uri}/cancel/confirm`
+        nextUrl = `${session.uri}/cancel/confirm`
         break
       case 'confirm':
-        next = '/sessions'
+        nextUrl = session.uri
         break
     }
 
@@ -1215,11 +1216,11 @@ export const sessionController = {
     } else if (view === 'confirm') {
       request.flash('message', __('session.cancel.success', { session }))
 
-      // TODO: mirror the live service by setting a Cancelled status instead
-      Session.delete(session.id, data)
+      session.cancelled = true
+      Session.update(session.id, session, data)
     }
 
-    return response.redirect(next)
+    return response.redirect(nextUrl)
   }
 }
 
