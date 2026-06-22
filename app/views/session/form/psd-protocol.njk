@@ -1,0 +1,30 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.psdProtocol.title") %}
+
+{% block form %}
+  {{ radios({
+    formGroup: {
+      classes: "nhsuk-u-margin-bottom-6"
+    },
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--l",
+        html: appHeading({
+          caption: session.location.name,
+          title: title
+        })
+      }
+    },
+    items: [{
+      text: "No",
+      hint: { text: __("session.psdProtocol.no.hint") },
+      value: false
+    }, {
+      text: "Yes",
+      hint: { text: __("session.psdProtocol.yes.hint") },
+      value: true
+    }],
+    decorate: "session.psdProtocol"
+  }) }}
+{% endblock %}

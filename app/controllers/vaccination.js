@@ -138,10 +138,6 @@ export const vaccinationController = {
 
     // HCAs uses different protocol depending on vaccine and programme
     if (role === UserRole.HCA) {
-      if (session.nationalProtocol && !isNasalSpray) {
-        protocol = VaccinationProtocol.National
-      }
-
       if (session.psdProtocol && instruction) {
         protocol = VaccinationProtocol.PSD
       }

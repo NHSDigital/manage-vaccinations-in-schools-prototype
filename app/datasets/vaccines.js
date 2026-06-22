@@ -62,7 +62,7 @@ export default {
     },
     criteria: VaccineCriteria.AlternativeInjection,
     method: VaccineMethod.Injection,
-    delegationProtocol: VaccinationProtocol.National,
+    delegationProtocol: VaccinationProtocol.VGD,
     dose: 0.5,
     sideEffects: [
       VaccineSideEffect.PainSite,
