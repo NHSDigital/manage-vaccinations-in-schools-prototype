@@ -123,13 +123,15 @@ export const patientSessionController = {
 
     const view = request.path.split('/').at(-1)
     response.locals.navigationItems = [
-      ...(session.type === SessionType.Clinic && [
-        {
-          text: __('patientSession.appointment.title'),
-          href: `${patientSession.uri}/appointment`,
-          current: view === 'appointment'
-        }
-      ]),
+      ...(session.type === SessionType.Clinic
+        ? [
+            {
+              text: __('patientSession.appointment.title'),
+              href: `${patientSession.uri}/appointment`,
+              current: view === 'appointment'
+            }
+          ]
+        : []),
       ...patientSession.siblingPatientSessions.map((patientSession) => ({
         ...(patientSession.report === PatientStatus.Vaccinated && {
           icon: 'tick'
