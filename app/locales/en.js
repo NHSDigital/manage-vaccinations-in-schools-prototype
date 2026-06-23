@@ -2157,9 +2157,8 @@ export const en = {
       }
     },
     assessedBy: {
-      label: 'Supplier',
-      title:
-        'Which nurse identified and pre-screened the child and supplied the vaccine?'
+      label: 'Practitioner',
+      title: 'Which nurse identified and pre-screened the child'
     },
     check: {
       error:
@@ -3552,9 +3551,8 @@ export const en = {
       success: 'Vaccination record updated'
     },
     assessedBy: {
-      label: 'Supplier',
-      title:
-        'Which nurse identified and pre-screened the child and supplied vaccine?'
+      label: 'Practitioner',
+      title: 'Which nurse identified and pre-screened the child?'
     },
     administeredAt: {
       label: 'Vaccination date',
