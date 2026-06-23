@@ -45,7 +45,7 @@
       {
         text: __("session.schedule.title") if session.isUnplanned else __("session.edit.title"),
         href: session.uri + "/edit"
-      },
+      } if not session.isCancelled,
       {
         text: __("session.action.cancel"),
         href: session.uri + "/cancel"

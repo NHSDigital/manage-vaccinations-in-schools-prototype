@@ -22,7 +22,8 @@
         {
           header: __("actions.label"),
           html: link(patientSession.clinicAppointment.uri.addProgramme + patientProgramme.programme.id, "Add to appointment")
-        } ]) %}
+        } if not session.isCancelled
+      ]) %}
     {% endif %}
   {% endfor %}
 
@@ -38,7 +39,7 @@
           { text: __("patientProgramme.name.label") },
           { text: __("patientProgramme.status.label") },
           { text: __("patientProgramme.statusNotes.label") },
-          { text: __("actions.label") }
+          { text: __("actions.label") } if not session.isCancelled
         ],
         rows: patientProgrammeRows
       }) }}

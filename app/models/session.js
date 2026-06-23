@@ -333,6 +333,15 @@ export class Session {
   }
 
   /**
+   * Is the session cancelled?
+   *
+   * @returns {boolean} True if cancelled, or false otherwise
+   */
+  get isCancelled() {
+    return this.status === SessionStatus.Cancelled
+  }
+
+  /**
    * Does session occur in the current academic year?
    *
    * @returns {boolean} Session occurs in current academic year
