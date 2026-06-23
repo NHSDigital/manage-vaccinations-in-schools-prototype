@@ -1,10 +1,10 @@
 /**
- * Fully save the session before carrying out the redirect
+ * Fully save session before carrying out redirect
  *
- * @param {Request} request - the Express request
- * @param {Response} response - the Express response
- * @param {string} nextPath - the path to redirect to
- * @returns {object} value to return from the controller's request handler
+ * @param {Request} request - Request
+ * @param {Response} response - Response
+ * @param {string} nextPath - Path to redirect to
+ * @returns {Session & Partial<SessionData>} Value to return from controller’s request handler
  */
 export function saveAndRedirect(request, response, nextPath) {
   return request.session.save((error) => {
@@ -17,4 +17,5 @@ export function saveAndRedirect(request, response, nextPath) {
 
 /**
  * @import { Request, Response } from 'express'
+ * @import { Session, SessionData } from 'express-session'
  */
