@@ -104,6 +104,20 @@
     {% set canInviteToSession = canInviteToSession or patientProgramme.clinicStatus === PatientClinicStatus.Ready %}
   {% endfor %}
 
+  {# Hide invite to clinic link
+    {% call card({
+      heading: __("patient.programmes.label"),
+      headingLevel: 3,
+      actions: {
+        items: [
+          {
+            text: "Invite to clinic",
+            href: patient.uri + "/invite-to-clinic"
+          } if not patient.archived and canInviteToSession
+        ]
+      }
+    }) %}
+  #}
   {% call card({
     heading: __("patient.programmes.label"),
     headingLevel: 3,
