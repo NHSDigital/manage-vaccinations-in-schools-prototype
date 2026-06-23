@@ -23,7 +23,7 @@
         <br>
         {{ appointment.formatted.impairmentsCount | safe }}
       {% endif %}
-      {% if canExtend %}
+      {% if canExtend and not session.isCancelled %}
         <br>
         {{ appointment.link.extend | safe }}
       {% endif %}
