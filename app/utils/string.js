@@ -30,8 +30,8 @@ export function camelToKebabCase(string) {
 /**
  * Convert string to boolean
  *
- * @template {string | boolean} T
- * @param {T | Array<T>} value - Value to test
+ * @template {string|boolean} T
+ * @param {T|Array<T>} value - Value to test
  * @returns {boolean} Boolean
  */
 export function stringToBoolean(value) {
@@ -46,13 +46,21 @@ export function stringToBoolean(value) {
 /**
  * Convert string to array
  *
- * @template {string|number|boolean} T
- * @param {T|Array<T>} value - Value to test
- * @returns {Array<T>} Array
+ * @param {string|Array|undefined} value - Value to test
+ * @returns {Array} Array
  */
 export function stringToArray(value) {
-  const array = Array.isArray(value) ? value : []
-  return array.filter((item) => item !== '_unchecked')
+  if (value === undefined) {
+    return []
+  }
+
+  if (Array.isArray(value)) {
+    return value.includes('_unchecked')
+      ? value.filter((item) => item !== '_unchecked')
+      : value
+  }
+
+  return [value].filter((item) => item !== '_unchecked')
 }
 
 /**

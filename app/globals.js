@@ -589,12 +589,12 @@ export default () => {
       // Allow value to be explicitly set
       let value = rows[key]?.value || formattedValue
 
-      if (typeof value !== 'undefined' && value !== 0 && value?.length !== 0) {
-        // Handle _unchecked checkbox value
-        if (value === '_unchecked') {
-          value = 'None selected'
-        }
+      if (Array.isArray(value) && value?.length === 0) {
+        // Handle empty arrays
+        value = 'None selected'
+      }
 
+      if (typeof value !== 'undefined' && value !== 0 && value?.length !== 0) {
         // Handle falsy values
         if (value === false) {
           value = 'No'

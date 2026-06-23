@@ -6,7 +6,7 @@ import { Patient, School } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
-import { formatYearGroup } from '../utils/string.js'
+import { formatYearGroup, stringToArray } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const schoolController = {
@@ -531,9 +531,8 @@ export const schoolController = {
     const patient_uuids = school.patients.map((patient) => patient.uuid)
 
     // Invite contacts to book into a clinic
-    const clinicProgramme_ids = request.body.clinicProgramme_ids.filter(
-      (item) => item !== '_unchecked'
-    )
+    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
+
     for (const patient_uuid of patient_uuids) {
       const patient = Patient.findOne(patient_uuid, data)
       patient.inviteToClinic(clinicProgramme_ids)

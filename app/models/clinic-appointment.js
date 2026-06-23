@@ -39,7 +39,8 @@ import {
   formatOther,
   formatSecondaryText,
   formatTime,
-  stringToArray
+  stringToArray,
+  stringToBoolean
 } from '../utils/string.js'
 
 /**
@@ -88,20 +89,18 @@ export class ClinicAppointment {
 
     this.parentalRelationship = options?.parentalRelationship
     this.parentalRelationshipOther = options?.parentalRelationshipOther
-    this.parentHasParentalResponsibility =
+    this.parentHasParentalResponsibility = stringToBoolean(
       options?.parentHasParentalResponsibility
+    )
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
     this.endAt = options?.endAt ? new Date(options.endAt) : undefined
 
-    this.selected_programme_ids =
-      (options?.selected_programme_ids &&
-        stringToArray(options.selected_programme_ids)) ||
-      []
+    this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
-    this.fluAlternative = options?.fluAlternative
-    this.mmrAlternative = options?.mmrAlternative
+    this.fluAlternative = stringToBoolean(options?.fluAlternative)
+    this.mmrAlternative = stringToBoolean(options?.mmrAlternative)
     this.healthAnswers = options?.healthAnswers || {}
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked

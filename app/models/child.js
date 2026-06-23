@@ -78,10 +78,8 @@ export class Child {
     this.gender = options?.gender
     this.ethnicGroup = options?.ethnicGroup
     this.ethnicBackground = options?.ethnicBackground
-    this.adjustments =
-      (options?.adjustments && stringToArray(options.adjustments)) || []
-    this.impairments =
-      (options?.impairments && stringToArray(options.impairments)) || []
+    this.adjustments = stringToArray(options?.adjustments)
+    this.impairments = stringToArray(options?.impairments)
     this.immunocompromised = options?.immunocompromised
     this.address = options?.address
     this.gpSurgery = options?.gpSurgery

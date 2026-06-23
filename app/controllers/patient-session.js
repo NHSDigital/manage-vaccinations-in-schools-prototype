@@ -413,9 +413,7 @@ export const patientSessionController = {
       createdBy_uid: account.uid,
       session_id:
         type === AuditEventType.SessionNote && patientSession.session_id,
-      programme_ids:
-        type === AuditEventType.ProgrammeNote &&
-        programme_ids?.filter((programme_id) => programme_id !== '_unchecked')
+      programme_ids: type === AuditEventType.ProgrammeNote && programme_ids
     })
 
     // Clean up session data

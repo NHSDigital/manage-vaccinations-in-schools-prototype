@@ -47,8 +47,8 @@ import {
  * @property {Partial<Child>} [pendingChanges] - Pending changes to record values
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
- * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<AuditEvent>} [events] - Events
+ * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<string>} [reply_uuids] - Reply IDs
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
@@ -78,12 +78,12 @@ export class Patient extends Child {
     this.archiveReasonOther = options?.archiveReasonOther
     this.pendingChanges = options?.pendingChanges || {}
 
-    this.clinicProgramme_ids = options?.clinicProgramme_ids || []
     this.events = options?.events || []
-    this.reply_uuids = options?.reply_uuids || []
-    this.contact_uuids = options?.contact_uuids || []
-    this.patientSession_uuids = options?.patientSession_uuids || []
-    this.vaccination_uuids = options?.vaccination_uuids || []
+    this.clinicProgramme_ids = stringToArray(options?.clinicProgramme_ids)
+    this.reply_uuids = stringToArray(options?.reply_uuids)
+    this.contact_uuids = stringToArray(options?.contact_uuids)
+    this.patientSession_uuids = stringToArray(options?.patientSession_uuids)
+    this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
   }
 
   /**
@@ -611,11 +611,6 @@ export class Patient extends Child {
    * @static
    */
   static update(uuid, updates, context) {
-    // Sanitise any checkbox values in the updates
-    if (updates?.clinicProgramme_ids) {
-      updates.clinicProgramme_ids = stringToArray(updates.clinicProgramme_ids)
-    }
-
     const updatedPatient = _.merge(Patient.findOne(uuid, context), updates)
 
     // Remove patient context
