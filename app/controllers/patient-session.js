@@ -256,7 +256,9 @@ export const patientSessionController = {
         data
       )
 
-      patientSession.patient.recordVaccination(vaccination)
+      patientSession.patient.recordVaccination(
+        Vaccination.findOne(vaccination.uuid, data)
+      )
     }
 
     request.flash(
