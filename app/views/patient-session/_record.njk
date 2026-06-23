@@ -91,14 +91,20 @@
     decorate: "preScreen.note"
   }) }}
 
-  {{ select({
-    label: { text: __("preScreen.assessedBy.title") },
-    items: userItems(data.users, preScreen.assessedBy),
-    decorate: "preScreen.assessedBy_uid",
-    attributes: {
-      "data-module": "app-autocomplete"
-    }
-  }) if options.hasAccessor }}
+  {% if session.fluProtocol == VaccinationProtocol.VGD %}
+    {{ select({
+      label: { text: __("preScreen.assessedBy.title") },
+      items: userItems(data.users, preScreen.assessedBy),
+      decorate: "preScreen.assessedBy_uid",
+      attributes: {
+        "data-module": "app-autocomplete"
+      }
+    }) if options.userIsHCA else input({
+      type: "hidden",
+      value: account.uid,
+      decorate: "preScreen.assessedBy_uid"
+    }) }}
+  {% endif %}
 
   <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 

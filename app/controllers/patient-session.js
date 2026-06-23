@@ -9,6 +9,7 @@ import {
   SessionType,
   UserRole,
   VaccinationOutcome,
+  VaccinationProtocol,
   VaccineMethod
 } from '../enums.js'
 import {
@@ -64,19 +65,24 @@ export const patientSessionController = {
 
     // PSD protocol
     // Nurses can record all vaccines
-    // HCAs can record nasal sprays for children with a PSD
+    // HCAs can only record nasal sprays for children with a PSD
     const userIsHCA = account.role === UserRole.HCA
     const patientHasPsd = patientSession.instruct === InstructionOutcome.Given
-    if (session.psdProtocol && userIsHCA && patientHasPsd === false) {
-      // Downgrade permissions for HCAs as patient doesn’t have a PSD
-      account.vaccineMethods = account.vaccineMethods.filter(
-        (method) => method !== VaccineMethod.Intranasal
-      )
+    if (userIsHCA && !patientHasPsd) {
+      // Remove permissions for HCAs as patient doesn’t have a PSD
+      account.vaccineMethods = []
     }
 
-    // Nasal spray using PGD
-    const userHasAccessor =
-      vaccine?.method === VaccineMethod.Intranasal && !session.psdProtocol
+    // VGD protocol
+    // Nurses can record all vaccines
+    // HCAs can record all vaccines (but must record practitioner)
+    if (userIsHCA && session.fluProtocol === VaccinationProtocol.VGD) {
+      // Remove permissions for HCAs as patient doesn’t have a PSD
+      account.vaccineMethods = [
+        VaccineMethod.Injection,
+        VaccineMethod.Intranasal
+      ]
+    }
 
     response.locals.options = {
       // Show outstanding vaccinations
@@ -97,7 +103,7 @@ export const patientSessionController = {
         session.psdProtocol &&
         patientSession.instruct &&
         patientSession.session.isActive,
-      hasAccessor: userIsHCA && userHasAccessor,
+      userIsHCA,
       canRegister: session.registration && session.isActive,
       canRecord:
         account.vaccineMethods?.includes(patientSession.vaccine?.method) &&

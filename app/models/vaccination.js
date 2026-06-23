@@ -106,7 +106,6 @@ export class Vaccination {
       : today()
     this.administeredAt_ = options?.administeredAt_
     this.administeredBy_uid = options?.administeredBy_uid
-    this.assessedBy_uid = options?.assessedBy_uid
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.createdBy_uid = options?.createdBy_uid
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
@@ -146,6 +145,11 @@ export class Vaccination {
       ? stringToBoolean(options.variant)
       : undefined
     this.vaccine_snomed = options?.vaccine_snomed
+
+    // Only VGD protocol needs a practitioner recording
+    if (this.protocol === VaccinationProtocol.VGD) {
+      this.assessedBy_uid = options?.assessedBy_uid
+    }
 
     if (this.outcome === VaccinationOutcome.AlreadyVaccinated) {
       this.addressLine1 = options?.addressLine1

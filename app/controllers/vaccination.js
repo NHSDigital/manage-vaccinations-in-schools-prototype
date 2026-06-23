@@ -133,8 +133,8 @@ export const vaccinationController = {
     // Used logged in user as vaccinator, or default to example user
     const role = account.role || UserRole.Nurse
 
-    // Nurses always use PGD protocol
-    let protocol = VaccinationProtocol.PGD
+    // Flu programme can have PGD or VGD as protocol
+    let protocol = session.fluProtocol || VaccinationProtocol.PGD
 
     // HCAs uses different protocol depending on vaccine and programme
     if (role === UserRole.HCA) {

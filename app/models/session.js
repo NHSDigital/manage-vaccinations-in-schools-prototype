@@ -134,11 +134,16 @@ export class Session {
       this.mmrConsent = this.presetNames?.includes(SessionPresetName.MMR)
         ? options?.mmrConsent
         : undefined
-      this.psdProtocol = stringToBoolean(options?.psdProtocol) || false
     }
 
+    // Sessions administering the flu programme can use PGD or VGD protocol
     if (this.programme_ids.includes('flu')) {
       this.fluProtocol = options?.fluProtocol || VaccinationProtocol.PGD
+    }
+
+    // PSD protocol can only be enabled if flu protocol is PGD
+    if (this.fluProtocol === VaccinationProtocol.PGD) {
+      this.psdProtocol = stringToBoolean(options?.psdProtocol) || false
     }
 
     this.registration = stringToBoolean(options?.registration)
