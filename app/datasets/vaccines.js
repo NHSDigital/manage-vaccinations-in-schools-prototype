@@ -2,7 +2,6 @@ import {
   PreScreenQuestion,
   ProgrammeType,
   VaccineMethod,
-  VaccinationProtocol,
   VaccineCriteria,
   VaccineSideEffect
 } from '../enums.js'
@@ -21,7 +20,6 @@ export default {
     },
     criteria: VaccineCriteria.Intranasal,
     method: VaccineMethod.Intranasal,
-    delegationProtocol: VaccinationProtocol.PSD,
     dose: 0.2,
     sideEffects: [
       VaccineSideEffect.BlockedNose,
@@ -62,7 +60,6 @@ export default {
     },
     criteria: VaccineCriteria.AlternativeInjection,
     method: VaccineMethod.Injection,
-    delegationProtocol: VaccinationProtocol.VGD,
     dose: 0.5,
     sideEffects: [
       VaccineSideEffect.PainSite,
@@ -102,7 +99,6 @@ export default {
     },
     criteria: VaccineCriteria.Injection,
     method: VaccineMethod.Injection,
-    delegationProtocol: VaccinationProtocol.PSD,
     dose: 0.5,
     sideEffects: [
       VaccineSideEffect.Bruising,
@@ -137,7 +133,6 @@ export default {
     },
     criteria: VaccineCriteria.Injection,
     method: VaccineMethod.Injection,
-    delegationProtocol: VaccinationProtocol.PSD,
     dose: 0.5,
     sideEffects: [
       VaccineSideEffect.PainSite,
@@ -174,7 +169,6 @@ export default {
     },
     criteria: VaccineCriteria.Injection,
     method: VaccineMethod.Injection,
-    delegationProtocol: VaccinationProtocol.PSD,
     dose: 0.5,
     sideEffects: [
       VaccineSideEffect.PainSite,
