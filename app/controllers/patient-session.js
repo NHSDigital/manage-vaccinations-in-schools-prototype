@@ -109,7 +109,7 @@ export const patientSessionController = {
         patientSession.instruct &&
         patientSession.session.isActive,
       hasSupplier: userIsHCA && userHasSupplier,
-      canRegister: session.register && session.isActive,
+      canRegister: session.registration && session.isActive,
       canRecord:
         account.vaccineMethods?.includes(patientSession.vaccine?.method) &&
         record &&
