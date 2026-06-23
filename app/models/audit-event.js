@@ -19,7 +19,8 @@ import { getScreenOutcomeStatus } from '../utils/status.js'
 import {
   formatTag,
   formatMarkdown,
-  formatWithSecondaryText
+  formatWithSecondaryText,
+  stringToArray
 } from '../utils/string.js'
 
 /**
@@ -64,7 +65,7 @@ export class AuditEvent {
     this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)
     this.outcomeAt_ = options?.outcomeAt_
     this.patient_uuid = options?.patient_uuid
-    this.programme_ids = options?.programme_ids
+    this.programme_ids = stringToArray(options?.programme_ids)
     this.session_id = options?.session_id
     this.team_id = options?.team_id || '001'
     this.vaccination_uuid = options?.vaccination_uuid

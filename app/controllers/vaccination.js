@@ -20,7 +20,7 @@ import {
 } from '../models.js'
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
-import { formatSequence } from '../utils/string.js'
+import { formatSequence, stringToArray } from '../utils/string.js'
 
 export const vaccinationController = {
   /**
@@ -448,10 +448,7 @@ export const vaccinationController = {
 
     // Set default batch, if checked
     if (request.body?.defaultBatchId) {
-      let { defaultBatchId } = request.body
-      defaultBatchId = Array.isArray(defaultBatchId)
-        ? defaultBatchId.filter((item) => item !== '_unchecked')
-        : defaultBatchId
+      const defaultBatchId = stringToArray(request.body.defaultBatchId)[0]
 
       if (defaultBatchId) {
         DefaultBatch.addToSession(

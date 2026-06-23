@@ -48,7 +48,7 @@ export class Contact {
     this.tel = options?.tel
     this.email = options?.email
     this.emailStatus = this?.email && options?.emailStatus
-    this.sms = stringToBoolean(options.sms) || false
+    this.sms = stringToBoolean(options.sms)
     this.smsStatus = this?.tel && options?.smsStatus
     this.contactPreference = stringToBoolean(options?.contactPreference)
 

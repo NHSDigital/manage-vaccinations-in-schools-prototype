@@ -490,13 +490,7 @@ export const patientController = {
     const { data, referrer } = request.session
     const { __ } = response.locals
 
-    // Strip any _unchecked value from the selected programme IDs
-    let { clinicProgramme_ids } = request.body
-    if (typeof clinicProgramme_ids === 'string') {
-      clinicProgramme_ids = [clinicProgramme_ids]
-    } else {
-      clinicProgramme_ids = stringToArray(clinicProgramme_ids)
-    }
+    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
 
     // Send comms to contacts and record in audit trail
     const patient = Patient.findOne(patient_uuid, data)
@@ -608,18 +602,11 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   inviteManyToClinic(request, response) {
-    let { clinicProgramme_ids } = request.body
     const { data } = request.session
     const { __mf } = response.locals
 
-    let clinicPatient_ids = stringToArray(data.clinicPatient_ids)
-
-    // Tidy up any _unchecked values
-    if (typeof clinicProgramme_ids === 'string') {
-      clinicProgramme_ids = [clinicProgramme_ids]
-    } else {
-      clinicProgramme_ids = stringToArray(clinicProgramme_ids)
-    }
+    const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
+    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
 
     // Invite each of the children to clinic for the subset of the selected programmes
     // that make sense for that child

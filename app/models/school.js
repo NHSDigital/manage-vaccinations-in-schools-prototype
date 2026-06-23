@@ -12,6 +12,7 @@ import {
   formatLink,
   formatTag,
   formatYearGroups,
+  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 
@@ -44,33 +45,11 @@ export class School extends Location {
     this.openAt = options?.openAt && new Date(options.openAt)
     this.closeAt = options?.closeAt && new Date(options.closeAt)
     this.closeReason = options?.closeReason
-    this.linkedUrns = options?.linkedUrns || []
+    this.linkedUrns = stringToArray(options?.linkedUrns)
     this.phase = options?.phase
     this.sen = stringToBoolean(options?.sen) || false
     this.site = options?.site
-    this.yearGroups = options?.yearGroups || []
-  }
-
-  /**
-   * Get year groups for `checkboxes`s
-   *
-   * @returns {Array<string>} `checkboxes` array values
-   */
-  get yearGroups_() {
-    return this.yearGroups.map((yearGroup) => String(yearGroup))
-  }
-
-  /**
-   * Set year groups from `checkboxes`s
-   *
-   * @param {Array<string>} array - checkboxes array values
-   */
-  set yearGroups_(array) {
-    if (array) {
-      this.yearGroups = array
-        .filter((item) => item !== '_unchecked')
-        .map((yearGroup) => Number(yearGroup))
-    }
+    this.yearGroups = stringToArray(options?.yearGroups).map(Number)
   }
 
   /**
@@ -391,7 +370,7 @@ export class School extends Location {
       School.findOne(id, context),
       updates,
       (oldValue, newValue) => {
-        // yearGroups array shouldn’t be merged but replaced entirely
+        // Arrays shouldn’t be merged but replaced entirely
         if (Array.isArray(oldValue)) {
           return newValue
         }

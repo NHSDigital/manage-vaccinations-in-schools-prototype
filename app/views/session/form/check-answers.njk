@@ -8,6 +8,8 @@
     title: title
   }) }}
 
+  {{ inspect(session) }}
+
   {% if session.type === SessionType.School %}
     {{ summaryList({
       card: {

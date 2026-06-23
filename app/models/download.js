@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addSeconds } from 'date-fns'
 import xlsx from 'json-as-xlsx'
+import _ from 'lodash'
 
 import { DownloadFormat, DownloadStatus, DownloadType } from '../enums.js'
 import {
@@ -23,6 +24,7 @@ import {
   formatList,
   formatProgress,
   formatTag,
+  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 
@@ -64,10 +66,10 @@ export class Download {
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.format = options?.format || DownloadFormat.CSV
     this.type = options?.type || DownloadType.Report
-    this.team_ids = options?.team_ids
+    this.team_ids = stringToArray(options?.team_ids)
 
     if (this.type === DownloadType.Cohort) {
-      this.variables = options?.variables || []
+      this.variables = stringToArray(options?.variables)
     }
 
     if (this.type === DownloadType.Report) {
@@ -76,7 +78,7 @@ export class Download {
 
     if ([DownloadType.Cohort, DownloadType.Report].includes(this.type)) {
       this.programme_id = options?.programme_id
-      this.vaccination_uuids = options?.vaccination_uuids || []
+      this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
     }
 
     if ([DownloadType.Report, DownloadType.Moves].includes(this.type)) {
@@ -145,28 +147,6 @@ export class Download {
   set endAt_(object) {
     if (object) {
       this.endAt = convertObjectToIsoDate(object)
-    }
-  }
-
-  /**
-   * Get variable for `checkboxes`s
-   *
-   * @returns {Array<string>} `checkboxes` array values
-   */
-  get variables_() {
-    return this.variables.map((variable) => String(variable))
-  }
-
-  /**
-   * Set variable from `checkboxes`s
-   *
-   * @param {Array<string>} array - checkboxes array values
-   */
-  set variables_(array) {
-    if (array) {
-      this.variables = array
-        .filter((item) => item !== '_unchecked')
-        .map((variable) => String(variable))
     }
   }
 
@@ -241,9 +221,9 @@ export class Download {
    */
   get teams() {
     if (this.context?.teams && this.team_ids) {
-      return this.team_ids
-        .filter((id) => id !== '_unchecked')
-        .map((id) => new Team(this.context?.teams[id], this.context))
+      return this.team_ids.map(
+        (id) => new Team(this.context?.teams[id], this.context)
+      )
     }
 
     return []
@@ -552,9 +532,15 @@ export class Download {
    * @static
    */
   static update(id, updates, context) {
-    const updatedDownload = Object.assign(
+    const updatedDownload = _.mergeWith(
       Download.findOne(id, context),
-      updates
+      updates,
+      (oldValue, newValue) => {
+        // Arrays shouldn’t be merged but replaced entirely
+        if (Array.isArray(oldValue)) {
+          return newValue
+        }
+      }
     )
     updatedDownload.updatedAt = today()
 

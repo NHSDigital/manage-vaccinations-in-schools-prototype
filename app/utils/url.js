@@ -40,9 +40,7 @@ export function getFilterParams(request, radioKeys = [], checkboxKeys = []) {
   }
 
   for (const key of checkboxKeys) {
-    const values = [request.body[key]]
-      .flat()
-      .filter((value) => value && value !== '_unchecked')
+    const values = [request.body[key]].flat().filter((value) => value)
     values.forEach((value) => params.append(key, value))
   }
 

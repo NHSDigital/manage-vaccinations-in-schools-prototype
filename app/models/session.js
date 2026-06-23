@@ -53,6 +53,7 @@ import {
   formatWithSecondaryText,
   formatYearGroups,
   sentenceCaseProgrammeName,
+  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 
@@ -77,7 +78,6 @@ import {
  *   Schools only
  * @property {string} [school_id] - School URN
  * @property {Array<number>} [yearGroups] - Year groups
- * @property {Array<string>} [yearGroups_] - Year groups (override)
  * @property {Date} [openAt] - Date consent window opens
  * @property {object} [openAt_] - Date consent window opens (from `dateInput`)
  * @property {boolean} [closed] - Session closed
@@ -105,7 +105,7 @@ export class Session {
     this.date = options?.date && new Date(options.date)
     this.date_ = options?.date_
     this.academicYear = options?.academicYear || getCurrentAcademicYear()
-    this.presetNames = options?.presetNames
+    this.presetNames = stringToArray(options?.presetNames)
     this.cancelled = options?.cancelled || false
 
     if (this.type === SessionType.Clinic) {
@@ -120,8 +120,7 @@ export class Session {
 
     if (this.type === SessionType.School) {
       this.school_id = options?.school_id
-      this.yearGroups = options?.yearGroups || []
-      this.yearGroups_ = options?.yearGroups_
+      this.yearGroups = stringToArray(options?.yearGroups).map(Number)
       this.openAt = options?.openAt
         ? new Date(options.openAt)
         : this.date
@@ -690,28 +689,6 @@ export class Session {
       } catch (error) {
         console.error('Session.school', error.message)
       }
-    }
-  }
-
-  /**
-   * Get year groups for `checkboxes`s
-   *
-   * @returns {Array<string>} `checkboxes` array values
-   */
-  get yearGroups_() {
-    return this.yearGroups.map((yearGroup) => String(yearGroup))
-  }
-
-  /**
-   * Set year groups from `checkboxes`s
-   *
-   * @param {Array<string>} array - checkboxes array values
-   */
-  set yearGroups_(array) {
-    if (array) {
-      this.yearGroups = array
-        .filter((item) => item !== '_unchecked')
-        .map((yearGroup) => Number(yearGroup))
     }
   }
 
@@ -1300,7 +1277,7 @@ export class Session {
       Session.findOne(id, context),
       updates,
       (oldValue, newValue) => {
-        // yearGroups array shouldn’t be merged but replaced entirely
+        // Arrays shouldn’t be merged but replaced entirely
         if (Array.isArray(oldValue)) {
           return newValue
         }
