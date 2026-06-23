@@ -1,5 +1,5 @@
-import { saveAndRedirect } from '../utils/redirect.js'
 import { Batch, DefaultBatch } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const batchController = {
   /**
