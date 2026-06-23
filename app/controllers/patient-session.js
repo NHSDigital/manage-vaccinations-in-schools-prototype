@@ -196,10 +196,13 @@ export const patientSessionController = {
    */
   readForm(request, response, next) {
     const { referrer } = request.session
-    const { patientSession } = response.locals
+    const { patientSession, session } = response.locals
 
     // Show back link to referring page, else patient session page
-    response.locals.back = referrer || patientSession.uri
+    response.locals.back =
+      referrer || session.type === SessionType.Clinic
+        ? `${patientSession.uri}/appointment`
+        : patientSession.uri
 
     return next()
   },
