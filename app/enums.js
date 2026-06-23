@@ -721,7 +721,8 @@ export const SessionStatus = {
   Unplanned: 'Not scheduled',
   Planned: 'Scheduled',
   Completed: 'Completed',
-  Closed: 'Closed'
+  Closed: 'Closed',
+  Cancelled: 'Cancelled'
 }
 
 /**

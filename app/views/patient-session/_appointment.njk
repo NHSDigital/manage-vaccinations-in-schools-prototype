@@ -12,7 +12,7 @@
         href: patientSession.clinicAppointment.uri.cancel
       }
     ]
-  } if patientSession.clinicAppointment
+  } if not session.isCancelled and patientSession.clinicAppointment
 }) %}
 
   {% if patientSession.clinicAppointment %}
