@@ -17,7 +17,8 @@ import {
   SessionType,
   TeamDefaults,
   VaccineCriteria,
-  ClinicAppointmentStatus
+  ClinicAppointmentStatus,
+  VaccinationProtocol
 } from '../enums.js'
 import {
   Clinic,
@@ -83,6 +84,7 @@ import {
  * @property {boolean} [cancelled] - Session was cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
+ * @property {VaccinationProtocol} [fluProtocol] - Default protocol for flu programme
  * @property {boolean} [psdProtocol] - Enable PSD protocol
  */
 
@@ -133,6 +135,10 @@ export class Session {
         ? options?.mmrConsent
         : undefined
       this.psdProtocol = stringToBoolean(options?.psdProtocol) || false
+    }
+
+    if (this.programme_ids.includes('flu')) {
+      this.fluProtocol = options?.fluProtocol || VaccinationProtocol.PGD
     }
 
     this.registration = stringToBoolean(options?.registration)

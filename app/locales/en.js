@@ -2675,18 +2675,14 @@ export const en = {
       count:
         '{count, plural, =0 {no children for {programme}} one {# child for {programme}} other {# children for {programme}}}'
     },
+    fluProtocol: {
+      label: 'Protocol',
+      title: 'Which protocol should flu vaccinations be recorded under?'
+    },
     psdProtocol: {
       label: 'Use patient specific direction (PSD)',
       title:
-        'Can healthcare assistants administer the flu nasal spray vaccine using a patient specific direction (PSD)?',
-      yes: {
-        label: 'Yes',
-        hint: 'Healthcare assistants can administer the nasal spray vaccine to children who are covered by a PSD'
-      },
-      no: {
-        label: 'No',
-        hint: 'Healthcare assistants can only administer a nasal spray when supplied by a nurse'
-      }
+        'Can healthcare assistants administer the flu nasal spray vaccine using a patient specific direction (PSD)?'
     },
     'upload-class-list': {
       title: 'Import class lists'

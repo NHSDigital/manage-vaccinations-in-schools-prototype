@@ -1,0 +1,39 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.fluProtocol.title") %}
+
+{% block form %}
+  {% set conditionalHtml = {
+    html: radios({
+      fieldset: {
+        legend: {
+          text: __("session.psdProtocol.title")
+        }
+      },
+      items: getBooleanItems(),
+      decorate: "session.psdProtocol"
+    })
+  } %}
+
+  {{ radios({
+    formGroup: {
+      classes: "nhsuk-u-margin-bottom-6"
+    },
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--l",
+        html: appHeading({
+          caption: session.location.name,
+          title: title
+        })
+      }
+    },
+    items: [{
+      text: VaccinationProtocol.PGD,
+      conditional: conditionalHtml
+    }, {
+      text: VaccinationProtocol.VGD
+    }],
+    decorate: "session.fluProtocol"
+  }) }}
+{% endblock %}
