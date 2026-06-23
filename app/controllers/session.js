@@ -38,6 +38,7 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { getSessionYearGroups } from '../utils/session.js'
 import {
   formatTime,
@@ -1007,9 +1008,7 @@ export const sessionController = {
       }
     }
 
-    return request.session.save((error) => {
-      if (!error) response.redirect(paths.next)
-    })
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**

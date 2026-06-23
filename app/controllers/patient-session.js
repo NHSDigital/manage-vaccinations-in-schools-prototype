@@ -19,6 +19,7 @@ import {
   Vaccination
 } from '../models.js'
 import { today } from '../utils/date.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { stringToBoolean } from '../utils/string.js'
 
 export const patientSessionController = {
@@ -262,7 +263,7 @@ export const patientSessionController = {
       })
     )
 
-    return response.redirect(back)
+    return saveAndRedirect(request, response, back)
   },
 
   /**

@@ -22,6 +22,7 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup, stringToArray } from '../utils/string.js'
 import { getFilterParams, formatQueryString } from '../utils/url.js'
 
@@ -635,11 +636,8 @@ export const patientController = {
     delete data.clinicPatient_ids
 
     // Get back to the filter page as we left it
-    return request.session.save((error) => {
-      if (!error) {
-        response.redirect(`/patients${formatQueryString(request.query)}`)
-      }
-    })
+    const filterUrl = `/patients${formatQueryString(request.query)}`
+    return saveAndRedirect(request, response, filterUrl)
   },
 
   /**
