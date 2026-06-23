@@ -9,6 +9,7 @@ import {
   Session
 } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const unmatchedAppointmentController = {
@@ -156,7 +157,11 @@ export const unmatchedAppointmentController = {
 
     const params = getFilterParams(request, ['q'], ['option'])
 
-    return response.redirect(`${appointment.uri.unmatched}/match?${params}`)
+    return saveAndRedirect(
+      request,
+      response,
+      `${appointment.uri.unmatched}/match?${params}`
+    )
   },
 
   /**
@@ -205,7 +210,7 @@ export const unmatchedAppointmentController = {
       __(`appointments.link.success`, { appointment, patient })
     )
 
-    return response.redirect(appointmentsPath)
+    return saveAndRedirect(request, response, appointmentsPath)
   },
 
   /**
@@ -257,7 +262,7 @@ export const unmatchedAppointmentController = {
       __(`appointments.add.success`, { appointment, patient })
     )
 
-    return response.redirect(appointmentsPath)
+    return saveAndRedirect(request, response, appointmentsPath)
   },
 
   /**
@@ -295,7 +300,7 @@ export const unmatchedAppointmentController = {
       )
     }
 
-    return response.redirect(appointmentsPath)
+    return saveAndRedirect(request, response, appointmentsPath)
   }
 }
 

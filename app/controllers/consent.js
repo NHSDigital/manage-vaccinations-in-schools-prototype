@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import { Consent, PatientSession, Patient, Session } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const consentController = {
@@ -136,7 +137,7 @@ export const consentController = {
 
     const params = getFilterParams(request, ['q'], ['option'])
 
-    return response.redirect(`${consent.uri}/match?${params}`)
+    return saveAndRedirect(request, response, `${consent.uri}/match?${params}`)
   },
 
   /**
@@ -156,7 +157,7 @@ export const consentController = {
 
     request.flash('success', __(`consent.link.success`, { consent, patient }))
 
-    return response.redirect(consentsPath)
+    return saveAndRedirect(request, response, consentsPath)
   },
 
   /**
@@ -195,7 +196,7 @@ export const consentController = {
 
     request.flash('success', __(`consent.add.success`, { consent, patient }))
 
-    return response.redirect(consentsPath)
+    return saveAndRedirect(request, response, consentsPath)
   },
 
   /**
@@ -218,7 +219,7 @@ export const consentController = {
 
     request.flash('success', __(`consent.invalidate.success`, { consent }))
 
-    return response.redirect(consentsPath)
+    return saveAndRedirect(request, response, consentsPath)
   }
 }
 

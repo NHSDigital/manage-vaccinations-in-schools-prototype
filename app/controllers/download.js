@@ -4,6 +4,7 @@ import { AcademicYear, DownloadFormat, DownloadType } from '../enums.js'
 import { Download, Programme, Team } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const downloadController = {
@@ -64,7 +65,7 @@ export const downloadController = {
   filterList(request, response) {
     const params = getFilterParams(request, ['type'])
 
-    return response.redirect(`/downloads?${params}`)
+    return saveAndRedirect(request, response, `/downloads?${params}`)
   },
 
   /**
@@ -85,17 +86,17 @@ export const downloadController = {
       switch (type) {
         case DownloadType.Moves:
           download.type = type
-          response.redirect(`${download.uri}/new/moves`)
+          saveAndRedirect(request, response, `${download.uri}/new/moves`)
           break
         case DownloadType.Session:
           download.type = type
           download.format = DownloadFormat.XLSX
           download.school_id = school_id
           download.session_id = session_id
-          response.redirect(`${download.uri}/new/session`)
+          saveAndRedirect(request, response, `${download.uri}/new/session`)
           break
         default:
-          response.redirect(`${download.uri}/new/type`)
+          saveAndRedirect(request, response, `${download.uri}/new/type`)
       }
     }
   },
@@ -116,7 +117,7 @@ export const downloadController = {
 
     request.flash('message', __(`download.new.message`, { download }))
 
-    return response.redirect('/downloads')
+    return saveAndRedirect(request, response, '/downloads')
   },
 
   /**
@@ -226,7 +227,7 @@ export const downloadController = {
 
     Download.update(download_id, request.body.download, data.wizard)
 
-    return paths.next ? response.redirect(paths.next) : next()
+    return paths.next ? saveAndRedirect(request, response, paths.next) : next()
   },
 
   /**

@@ -16,6 +16,7 @@ import {
   Vaccination
 } from '../models.js'
 import { today } from '../utils/date.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatContact } from '../utils/string.js'
 import {
@@ -46,7 +47,9 @@ export const replyController = {
   redirect(request, response) {
     const { nhsn, programme_id, session_id } = request.params
 
-    return response.redirect(
+    return saveAndRedirect(
+      request,
+      response,
       `/sessions/${session_id}/patients/${nhsn}/${programme_id}`
     )
   },
@@ -91,7 +94,7 @@ export const replyController = {
       next = `${reply.uri}/new/respondent`
     }
 
-    return response.redirect(next)
+    return saveAndRedirect(request, response, next)
   },
 
   /**
@@ -179,7 +182,7 @@ export const replyController = {
         __(`reply.${type}.success`, { reply, patientSession })
       )
 
-      response.redirect(next)
+      saveAndRedirect(request, response, next)
     }
   },
 
@@ -403,7 +406,9 @@ export const replyController = {
       ...request?.body?.vaccination // Wizard values
     }
 
-    return response.redirect(
+    return saveAndRedirect(
+      request,
+      response,
       paths.next ||
         `${patientSession.uri}/replies/${reply_uuid}/new/check-answers`
     )
@@ -418,7 +423,7 @@ export const replyController = {
     const { patientSession, reply } = response.locals
 
     if (decision === 'true') {
-      return response.redirect(`${reply.uri}/edit/outcome`)
+      return saveAndRedirect(request, response, `${reply.uri}/edit/outcome`)
     }
 
     // Store reply that needs marked as invalid
@@ -442,7 +447,9 @@ export const replyController = {
     // Clean up session data
     delete data.decision
 
-    return response.redirect(
+    return saveAndRedirect(
+      request,
+      response,
       `${createdReply.uri}/new/decision?referrer=${reply.uri}`
     )
   },
@@ -464,7 +471,7 @@ export const replyController = {
 
     request.flash('success', __(`reply.invalidate.success`, { reply }))
 
-    return response.redirect(patientSession.uri)
+    return saveAndRedirect(request, response, patientSession.uri)
   },
 
   /**
@@ -519,7 +526,7 @@ export const replyController = {
 
     request.flash('success', __(`reply.withdraw.success`, { reply }))
 
-    return response.redirect(patientSession.uri)
+    return saveAndRedirect(request, response, patientSession.uri)
   }
 }
 

@@ -1,4 +1,5 @@
 import { Batch, DefaultBatch } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const batchController = {
   /**
@@ -47,7 +48,7 @@ export const batchController = {
 
     request.flash('success', __(`batch.new.success`, { batch }))
 
-    return response.redirect('/vaccines')
+    return saveAndRedirect(request, response, '/vaccines')
   },
 
   /**
@@ -66,7 +67,7 @@ export const batchController = {
 
     request.flash('success', __(`batch.edit.success`, { batch }))
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -85,7 +86,7 @@ export const batchController = {
 
     request.flash('success', __(`batch.archive.success`, { batch }))
 
-    return response.redirect('/vaccines')
+    return saveAndRedirect(request, response, '/vaccines')
   }
 }
 

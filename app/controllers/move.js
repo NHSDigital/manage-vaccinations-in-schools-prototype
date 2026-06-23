@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import { Move } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const moveController = {
   /**
@@ -61,7 +62,7 @@ export const moveController = {
 
     request.flash('success', __(`move.${decision}.success`, { move }))
 
-    return response.redirect('/moves')
+    return saveAndRedirect(request, response, '/moves')
   }
 }
 

@@ -25,6 +25,7 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import {
   formatHour,
   formatTime,
@@ -96,9 +97,7 @@ export const bookIntoClinicController = {
         ? '/book-into-a-clinic/start'
         : '/book-into-a-clinic/availability'
 
-    return request.session.save((error) => {
-      if (!error) response.redirect(nextPath)
-    })
+    return saveAndRedirect(request, response, nextPath)
   },
 
   /**
@@ -119,9 +118,7 @@ export const bookIntoClinicController = {
     // Redirect to the first page in the booking journey (after the start page, that is)
     const redirectUrl = `${firstAppointment.uri.new}/programmes`
 
-    return request.session.save((error) => {
-      if (!error) response.redirect(redirectUrl)
-    })
+    return saveAndRedirect(request, response, redirectUrl)
   },
 
   /**
@@ -141,7 +138,7 @@ export const bookIntoClinicController = {
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -551,10 +548,7 @@ export const bookIntoClinicController = {
       paths.next = `${booking.uri.new}/add-another`
     }
 
-    // NB: request.session.save was needed to avoid race condition issues on heroku
-    return request.session.save((error) => {
-      if (!error) response.redirect(paths.next)
-    })
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**

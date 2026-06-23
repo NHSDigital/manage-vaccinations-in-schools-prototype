@@ -38,6 +38,7 @@ import {
   ConjunctionType,
   programmeNamesListForSentence
 } from '../utils/programme.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { getSessionYearGroups } from '../utils/session.js'
 import {
   formatTime,
@@ -151,7 +152,7 @@ export const sessionController = {
       data.wizard
     )
 
-    return response.redirect(`${session.uri}/new/type`)
+    return saveAndRedirect(request, response, `${session.uri}/new/type`)
   },
 
   /**
@@ -221,7 +222,7 @@ export const sessionController = {
       data
     )
 
-    return response.redirect('/sessions/advert-link')
+    return saveAndRedirect(request, response, '/sessions/advert-link')
   },
 
   /**
@@ -244,7 +245,7 @@ export const sessionController = {
     // Tidy up
     delete data.clinicAdvert
 
-    return response.redirect('/sessions')
+    return saveAndRedirect(request, response, '/sessions')
   },
 
   /**
@@ -361,7 +362,7 @@ export const sessionController = {
       ['programme_id']
     )
 
-    return response.redirect(`/sessions?${params}`)
+    return saveAndRedirect(request, response, `/sessions?${params}`)
   },
 
   /**
@@ -604,7 +605,11 @@ export const sessionController = {
       ]
     )
 
-    return response.redirect(`/sessions/${session_id}/${view}?${params}`)
+    return saveAndRedirect(
+      request,
+      response,
+      `/sessions/${session_id}/${view}?${params}`
+    )
   },
 
   /**
@@ -771,7 +776,7 @@ export const sessionController = {
 
       request.flash('success', __(`session.${type}.success`, { session }))
 
-      response.redirect(session.uri)
+      saveAndRedirect(request, response, session.uri)
     }
   },
 
@@ -1007,9 +1012,7 @@ export const sessionController = {
       }
     }
 
-    return request.session.save((error) => {
-      if (!error) response.redirect(paths.next)
-    })
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -1041,7 +1044,7 @@ export const sessionController = {
 
     request.flash('success', __(`session.instructions.success`))
 
-    return response.redirect(`${session.uri}/instruct`)
+    return saveAndRedirect(request, response, `${session.uri}/instruct`)
   },
 
   /**
@@ -1052,7 +1055,7 @@ export const sessionController = {
 
     request.flash('success', __(`session.reminders.success`, { session }))
 
-    return response.redirect(session.uri)
+    return saveAndRedirect(request, response, session.uri)
   },
 
   /**
@@ -1067,7 +1070,7 @@ export const sessionController = {
     //       or we may want to simply set a Cancelled status on the session instead
     Session.delete(session.id, request.session.data)
 
-    return response.redirect('/sessions')
+    return saveAndRedirect(request, response, '/sessions')
   },
 
   /**
@@ -1081,7 +1084,7 @@ export const sessionController = {
 
     request.flash('success', __('session.makeActive.success'))
 
-    return response.redirect(session.uri)
+    return saveAndRedirect(request, response, session.uri)
   },
 
   /**
@@ -1143,7 +1146,7 @@ export const sessionController = {
       })
     )
 
-    return response.redirect(session.uri)
+    return saveAndRedirect(request, response, session.uri)
   },
 
   /**
@@ -1155,7 +1158,9 @@ export const sessionController = {
 
     data.cancellation = {}
 
-    return response.redirect(
+    return saveAndRedirect(
+      request,
+      response,
       session.type === SessionType.Clinic && session.hasAppointments
         ? `${session.uri}/cancel/appointments`
         : `${session.uri}/cancel/confirm`
@@ -1220,7 +1225,7 @@ export const sessionController = {
       Session.update(session.id, session, data)
     }
 
-    return response.redirect(nextUrl)
+    return saveAndRedirect(request, response, nextUrl)
   }
 }
 

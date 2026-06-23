@@ -1,4 +1,5 @@
 import { Batch, DefaultBatch, Session, Vaccine } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const defaultBatchController = {
   /**
@@ -51,7 +52,7 @@ export const defaultBatchController = {
 
     request.flash('success', __(`defaultBatch.edit.success`))
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   }
 }
 

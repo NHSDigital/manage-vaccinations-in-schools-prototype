@@ -4,6 +4,7 @@ import { UploadStatus, UploadType } from '../enums.js'
 import { Upload } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
 
@@ -77,7 +78,7 @@ export const uploadController = {
   filterList(request, response) {
     const params = getFilterParams(request, ['type'], ['status'])
 
-    return response.redirect(`/uploads?${params}`)
+    return saveAndRedirect(request, response, `/uploads?${params}`)
   },
 
   /**
@@ -126,7 +127,11 @@ export const uploadController = {
         : 'file'
       : 'type'
 
-    return response.redirect(`${upload.uri}/new/${data.startPath}`)
+    return saveAndRedirect(
+      request,
+      response,
+      `${upload.uri}/new/${data.startPath}`
+    )
   },
 
   /**
@@ -161,7 +166,7 @@ export const uploadController = {
 
       request.flash('success', __(`upload.${type}.success`))
 
-      response.redirect(referrer || upload.uri)
+      saveAndRedirect(request, response, referrer || upload.uri)
     }
   },
 
@@ -248,7 +253,7 @@ export const uploadController = {
 
     Upload.update(upload_id, request.body.upload, data.wizard)
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -263,7 +268,7 @@ export const uploadController = {
 
     request.flash('success', __(`upload.delete.success`))
 
-    return response.redirect('/uploads')
+    return saveAndRedirect(request, response, '/uploads')
   },
 
   /**
@@ -286,7 +291,7 @@ export const uploadController = {
 
     request.flash('success', __(`upload.approve.success`))
 
-    return response.redirect('/uploads')
+    return saveAndRedirect(request, response, '/uploads')
   },
 
   /**
@@ -297,7 +302,7 @@ export const uploadController = {
 
     request.flash('success', __('upload.removeRelationships.success'))
 
-    return response.redirect(upload.uri)
+    return saveAndRedirect(request, response, upload.uri)
   }
 }
 

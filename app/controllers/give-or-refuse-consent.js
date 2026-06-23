@@ -10,6 +10,7 @@ import {
 } from '../enums.js'
 import { Consent, Patient, Session } from '../models.js'
 import { getHealthQuestionPaths } from '../utils/consent.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import {
   formatList,
   kebabToCamelCase,
@@ -42,7 +43,7 @@ export const giveOrRefuseConsentController = {
   redirect(request, response) {
     const { session } = response.locals
 
-    return response.redirect(`${session.consentUrl}/start`)
+    return saveAndRedirect(request, response, `${session.consentUrl}/start`)
   },
 
   /**
@@ -98,9 +99,7 @@ export const giveOrRefuseConsentController = {
     )
     consent = new Consent(consent, data)
 
-    return request.session.save((error) => {
-      if (!error) response.redirect(`${consent.publicUri}/new/child`)
-    })
+    return saveAndRedirect(request, response, `${consent.publicUri}/new/child`)
   },
 
   /**
@@ -120,7 +119,7 @@ export const giveOrRefuseConsentController = {
       Consent.update(consent_uuid, consent, data.wizard)
     }
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -398,7 +397,7 @@ export const giveOrRefuseConsentController = {
 
     Consent.update(consent_uuid, request.body.consent, data.wizard)
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   }
 }
 

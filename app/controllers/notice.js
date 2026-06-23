@@ -1,4 +1,5 @@
 import { Notice } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const noticeController = {
   /**
@@ -49,7 +50,7 @@ export const noticeController = {
 
     request.flash('success', __(`notice.archive.success`))
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   }
 }
 

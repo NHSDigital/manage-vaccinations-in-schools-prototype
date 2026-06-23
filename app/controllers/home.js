@@ -1,5 +1,6 @@
 import { UserRole } from '../enums.js'
 import { Notice } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const homeController = {
   /**
@@ -9,10 +10,10 @@ export const homeController = {
     const { account } = request.app.locals
 
     if (account.role === UserRole.DataConsumer) {
-      return response.redirect('/reports')
+      return saveAndRedirect(request, response, '/reports')
     }
 
-    return response.redirect('/dashboard')
+    return saveAndRedirect(request, response, '/dashboard')
   },
 
   /**

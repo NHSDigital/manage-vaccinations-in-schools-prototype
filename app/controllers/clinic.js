@@ -1,4 +1,5 @@
 import { Clinic } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const clinicController = {
   /**
@@ -54,7 +55,7 @@ export const clinicController = {
 
     request.flash('success', __(`clinic.new.success`, { clinic }))
 
-    return response.redirect(`${clinic.team.uri}/clinics`)
+    return saveAndRedirect(request, response, `${clinic.team.uri}/clinics`)
   },
 
   /**
@@ -73,7 +74,7 @@ export const clinicController = {
 
     request.flash('success', __(`clinic.edit.success`, { clinic }))
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -88,7 +89,7 @@ export const clinicController = {
 
     request.flash('success', __(`clinic.delete.success`))
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   }
 }
 

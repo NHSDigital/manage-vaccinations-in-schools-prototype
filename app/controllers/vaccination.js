@@ -19,6 +19,7 @@ import {
   Vaccine
 } from '../models.js'
 import { today } from '../utils/date.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { formatSequence } from '../utils/string.js'
 
 export const vaccinationController = {
@@ -49,7 +50,7 @@ export const vaccinationController = {
   redirect(request, response) {
     const { id, nhsn } = request.params
 
-    return response.redirect(`/sessions/${id}/${nhsn}`)
+    return saveAndRedirect(request, response, `/sessions/${id}/${nhsn}`)
   },
 
   /**
@@ -184,7 +185,11 @@ export const vaccinationController = {
       data.wizard
     )
 
-    return response.redirect(`${vaccination.uri}/new/${data.startPath}`)
+    return saveAndRedirect(
+      request,
+      response,
+      `${vaccination.uri}/new/${data.startPath}`
+    )
   },
 
   /**
@@ -251,7 +256,7 @@ export const vaccinationController = {
             : patientSession.uri
       }
 
-      response.redirect(next)
+      saveAndRedirect(request, response, next)
     }
   },
 
@@ -461,7 +466,7 @@ export const vaccinationController = {
 
     const redirect = paths.next || `${vaccination.uri}/new/check-answers`
 
-    return response.redirect(redirect)
+    return saveAndRedirect(request, response, redirect)
   }
 }
 

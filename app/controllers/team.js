@@ -1,4 +1,5 @@
 import { Team } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const teamController = {
   /**
@@ -31,7 +32,7 @@ export const teamController = {
   redirect(request, response) {
     const { team_id } = request.params
 
-    return response.redirect(`${team_id}/contact`)
+    return saveAndRedirect(request, response, `${team_id}/contact`)
   },
 
   /**
@@ -89,7 +90,7 @@ export const teamController = {
 
     request.flash('success', __(`team.edit.success`))
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   }
 }
 
