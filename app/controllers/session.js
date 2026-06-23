@@ -658,7 +658,7 @@ export const sessionController = {
             .map((appointment, index) => ({
               header: headers[index + rowValues.length],
               appointment,
-              canExtend: extendableAppointmentTimes.some(
+              spaceToExtend: extendableAppointmentTimes.some(
                 (extendableTime) =>
                   extendableTime.getTime() === appointment.startAt.getTime()
               )
@@ -670,7 +670,7 @@ export const sessionController = {
             .map((index) => ({
               header: headers[index + rowValues.length],
               appointment: null,
-              canExtend: false
+              spaceToExtend: false
             }))
         )
 

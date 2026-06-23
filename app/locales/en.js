@@ -2035,7 +2035,9 @@ export const en = {
         [RegistrationOutcome.Present]:
           '{{patientSession.patient.fullName}} is attending today’s session.',
         [RegistrationOutcome.Absent]:
-          '{{patientSession.patient.fullName}} has been recorded as absent from today’s session.'
+          '{{patientSession.patient.fullName}} has been recorded as absent from today’s session.',
+        [RegistrationOutcome.Pending]:
+          '{{patientSession.patient.fullName}} has not been registered yet.'
       }
     },
     catchUps: {

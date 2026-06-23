@@ -5,16 +5,34 @@
 {% set caption = session.formatted.date %}
 
 {% block content %}
-  {% macro buildSlotHtml(appointment, time, canExtend) %}
+  {% macro buildSlotHtml(appointment, time, spaceToExtend) %}
     {% if appointment !== null %}
+      {# Link from child’s name #}
       {% if appointment.patient_uuid %}
-        {{ appointment.link.patientSession | safe }}
+        {{ appointment.link.matched | safe }}
       {% else %}
-        {{ appointment.link.unmatched | safe }}
+        {{ appointment.link.unmatched.withoutParent | safe }}
         <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16"> (unmatched)</span>
       {% endif %}
+
+      {# Registration status #}
+      {% if session.isActive and session.registration %}
+        <br>
+        {% if appointment.register %}
+          {{ appointment.formatted.register | safe }}
+        {% else %}
+          {{ tag({
+            text: RegistrationOutcome.Pending,
+            classes: "nhsuk-tag--grey"
+          }) }}
+        {% endif %}
+      {% endif %}
+
+      {# Selected vaccinations #}
       <br>
       {{ appointment.formatted.programmeTags | safe }}
+
+      {# Adjustments and impairements #}
       {% if appointment.requiresAdjustments %}
         <br>
         {{ appointment.formatted.adjustmentsCount | safe }}
@@ -23,7 +41,9 @@
         <br>
         {{ appointment.formatted.impairmentsCount | safe }}
       {% endif %}
-      {% if canExtend and not session.isCancelled %}
+
+      {# Option to extend the appointment #}
+      {% if spaceToExtend and session.isPlanned %}
         <br>
         {{ appointment.link.extend | safe }}
       {% endif %}
@@ -47,7 +67,7 @@
           if rowValue.timeSlot else
           {
             header: rowValue.header,
-            html: buildSlotHtml(rowValue.appointment, row.time, rowValue.canExtend)
+            html: buildSlotHtml(rowValue.appointment, row.time, rowValue.spaceToExtend)
           }
         ) %}
       {% endfor %}

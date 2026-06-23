@@ -709,7 +709,7 @@ export class PatientSession {
    * @returns {boolean} Consent has been given
    */
   get consentGiven() {
-    if (this.consent) {
+    if (this.consent && !this.clinicAppointment) {
       return [
         ConsentOutcome.Given,
         ConsentOutcome.GivenForAlternativeInjection,

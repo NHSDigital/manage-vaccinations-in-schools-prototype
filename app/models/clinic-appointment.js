@@ -9,6 +9,7 @@ import {
   Impairment,
   ParentalRelationship,
   ProgrammeType,
+  RegistrationOutcome,
   ReplyDecision,
   SessionStatus,
   VaccineCriteria,
@@ -350,6 +351,16 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get the registration status for this appointment's child i.e. have they turned up?
+   *
+   * @returns {RegistrationOutcome|undefined} the registration status if a matched child, or undefined if not yet matched
+   */
+  get register() {
+    // Return undefined if not yet matched as registration is tied to a patient record
+    return this.patientSessions.at(0)?.register
+  }
+
+  /**
    * Get any impairments reported for this appointment's child/patient
    *
    * @returns {Array<Impairment>} the child or patient's impairments
@@ -459,6 +470,8 @@ export class ClinicAppointment {
     )
     const summary = `${teamFacingStartTime} ${this.fullName} (${programmeNames})`
 
+    const register = this.patientSessions.at(0)?.formatted?.register
+
     return {
       nameAndAge: [
         this.fullName,
@@ -508,7 +521,8 @@ export class ClinicAppointment {
             )
           }
         : {}),
-      summary
+      summary,
+      register
     }
   }
 
@@ -536,12 +550,15 @@ export class ClinicAppointment {
    */
   get link() {
     return {
-      unmatched: formatLinkWithSecondaryText(
-        this.uri.unmatched,
-        this.child.fullName,
-        `via ${this.contact.fullNameAndRelationship}`
-      ),
-      patientSession: formatLink(this.uri.matched, this.patient?.fullName),
+      unmatched: {
+        withParent: formatLinkWithSecondaryText(
+          this.uri.unmatched,
+          this.child.fullName,
+          `by ${this.contact.fullNameAndRelationship}`
+        ),
+        withoutParent: formatLink(this.uri.unmatched, this.child.fullName)
+      },
+      matched: formatLink(this.uri.matched, this.patient?.fullName),
       extend: formatLink(this.uri.extend, 'Extend'),
       summary: this.patient_uuid
         ? formatLink(this.uri.matched, this.formatted.summary)

@@ -226,6 +226,7 @@ export const vaccinationController = {
         if (data?.token?.vaccinations?.[vaccination.vaccine_snomed]) {
           data.token.vaccinations[vaccination.vaccine_snomed] += 1
         } else {
+          data.token = data.token ?? User.findAll(data).at(-1)
           data.token.vaccinations = {
             [vaccination.vaccine_snomed]: 1
           }

@@ -24,6 +24,11 @@
   {# Details of the appointment as it stands #}
   {% include "patient-session/_appointment.njk" %}
 
+  {# Registration #}
+  {% if options.canRegister %}
+    {% include "patient-session/_register.njk" %}
+  {% endif %}
+  
   {# Details of additional programmes that could be offered #}
   {% include "patient-session/_catch-up.njk" %}
 {% endblock %}

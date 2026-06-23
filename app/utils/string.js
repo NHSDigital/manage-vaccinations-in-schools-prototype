@@ -359,7 +359,7 @@ export function formatContact(contact, includeContactDetails = true) {
 
   // Add email address, if provided
   if (includeContactDetails && contact.email) {
-    string += `<br>${contact.email}`
+    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.email}</span>`
   }
 
   return string
