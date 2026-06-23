@@ -1,4 +1,5 @@
 import { Programme, Vaccination } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
 
@@ -89,7 +90,7 @@ export const reportController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
-    return response.redirect('/reports/vaccinations')
+    return saveAndRedirect(request, response, '/reports/vaccinations')
   },
 
   /**
@@ -104,7 +105,7 @@ export const reportController = {
       ['gender', 'yearGroup']
     )
 
-    return response.redirect(`/reports/${view}?${params}`)
+    return saveAndRedirect(request, response, `/reports/${view}?${params}`)
   }
 }
 

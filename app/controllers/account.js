@@ -1,3 +1,5 @@
+import { saveAndRedirect } from '../utils/redirect.js'
+
 export const accountController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
@@ -11,14 +13,14 @@ export const accountController = {
       ...{ role: request.body.role }
     }
 
-    return response.redirect(referrer || '/home')
+    return saveAndRedirect(request, response, referrer || '/home')
   },
 
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
   cis2(request, response) {
-    return response.redirect('/account/change-role')
+    return saveAndRedirect(request, response, '/account/change-role')
   },
 
   /**
@@ -32,7 +34,7 @@ export const accountController = {
       ...{ role: request.query.role }
     }
 
-    return response.redirect('/home')
+    return saveAndRedirect(request, response, '/home')
   },
 
   /**
@@ -42,7 +44,7 @@ export const accountController = {
     // Delete role selected when signing in via CIS2
     delete request.session.data.role
 
-    return response.redirect('/start')
+    return saveAndRedirect(request, response, '/start')
   }
 }
 

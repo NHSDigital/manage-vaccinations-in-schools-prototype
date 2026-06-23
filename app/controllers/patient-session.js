@@ -290,7 +290,7 @@ export const patientSessionController = {
       // Clean up session data
       delete data.patientSession?.gillick
 
-      response.redirect(back)
+      saveAndRedirect(request, response, back)
     }
   },
 
@@ -315,7 +315,9 @@ export const patientSessionController = {
     // Update patient session
     PatientSession.update(patientSession.uuid, patientSession, data)
 
-    return response.redirect(
+    return saveAndRedirect(
+      request,
+      response,
       `${programme.uri}/vaccinations/new?patientSession_uuid=${patientSession.uuid}`
     )
   },
@@ -334,7 +336,7 @@ export const patientSessionController = {
       __('patientSession.invite.success', { contact: patient.contacts[0] })
     )
 
-    return response.redirect(back)
+    return saveAndRedirect(request, response, back)
   },
 
   /**
@@ -351,7 +353,7 @@ export const patientSessionController = {
       patient.contacts[0]
     )
 
-    return response.redirect(back)
+    return saveAndRedirect(request, response, back)
   },
 
   /**
@@ -388,7 +390,7 @@ export const patientSessionController = {
 
     request.flash('success', __(`triage.edit.success`, { patientSession }))
 
-    return response.redirect(back)
+    return saveAndRedirect(request, response, back)
   },
 
   /**
@@ -423,7 +425,7 @@ export const patientSessionController = {
       __(`patientSession.notes.new.success`, { patientSession })
     )
 
-    return response.redirect(back)
+    return saveAndRedirect(request, response, back)
   },
 
   /**
@@ -434,7 +436,11 @@ export const patientSessionController = {
 
     request.session.data.cancellation = {}
 
-    return response.redirect(`${patientSession.uri}/cancel/rebooking`)
+    return saveAndRedirect(
+      request,
+      response,
+      `${patientSession.uri}/cancel/rebooking`
+    )
   },
 
   /**
@@ -491,7 +497,7 @@ export const patientSessionController = {
       )
     }
 
-    return response.redirect(next)
+    return saveAndRedirect(request, response, next)
   }
 }
 

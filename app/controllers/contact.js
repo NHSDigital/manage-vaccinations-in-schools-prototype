@@ -1,4 +1,5 @@
 import { Contact, Patient } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactController = {
   /**
@@ -27,7 +28,7 @@ export const contactController = {
       data.wizard
     )
 
-    return response.redirect(`${contact.uri}/new`)
+    return saveAndRedirect(request, response, `${contact.uri}/new`)
   },
 
   /**
@@ -62,7 +63,7 @@ export const contactController = {
 
       request.flash('success', __(`contact.${type}.success`, { contact }))
 
-      return response.redirect(back)
+      return saveAndRedirect(request, response, back)
     }
   },
 
@@ -135,7 +136,11 @@ export const contactController = {
 
     request.flash('success', __(`contact.delete.success`))
 
-    return response.redirect(`/patients/${contact.patient_uuid}/contacts`)
+    return saveAndRedirect(
+      request,
+      response,
+      `/patients/${contact.patient_uuid}/contacts`
+    )
   }
 }
 

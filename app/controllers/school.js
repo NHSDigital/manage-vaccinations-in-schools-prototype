@@ -5,6 +5,7 @@ import { PatientStatus } from '../enums.js'
 import { Patient, School } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
 
@@ -52,9 +53,9 @@ export const schoolController = {
 
       if (type === 'site') {
         data.startPath = 'new-site'
-        response.redirect(`${school.uri}/new/site-urn`)
+        saveAndRedirect(request, response, `${school.uri}/new/site-urn`)
       } else {
-        response.redirect(`${school.uri}/new/urn`)
+        saveAndRedirect(request, response, `${school.uri}/new/urn`)
       }
     }
   },
@@ -114,7 +115,7 @@ export const schoolController = {
   filterList(request, response) {
     const params = getFilterParams(request, ['phase', 'q'], ['option'])
 
-    return response.redirect(`/schools?${params}`)
+    return saveAndRedirect(request, response, `/schools?${params}`)
   },
 
   /**
@@ -308,7 +309,7 @@ export const schoolController = {
       ]
     )
 
-    return response.redirect(`${school.uri}?${params}`)
+    return saveAndRedirect(request, response, `${school.uri}?${params}`)
   },
 
   /**
@@ -367,7 +368,7 @@ export const schoolController = {
       // TODO: Add note about site codes if adding a new site
       request.flash('success', __(`school.${type}.success`, { school }))
 
-      response.redirect(`${school.team.uri}/schools`)
+      saveAndRedirect(request, response, `${school.team.uri}/schools`)
     }
   },
 
@@ -485,7 +486,7 @@ export const schoolController = {
 
     School.update(school_id, request.body.school, data.wizard)
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -512,7 +513,7 @@ export const schoolController = {
 
     request.flash('success', __(`school.delete.success`))
 
-    return response.redirect(referrer)
+    return saveAndRedirect(request, response, referrer)
   },
 
   /**
@@ -545,7 +546,7 @@ export const schoolController = {
       })
     )
 
-    return response.redirect(school.uri)
+    return saveAndRedirect(request, response, school.uri)
   }
 }
 

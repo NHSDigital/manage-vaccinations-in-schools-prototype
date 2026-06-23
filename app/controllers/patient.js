@@ -324,7 +324,7 @@ export const patientController = {
       ]
     )
 
-    return response.redirect(`/patients?${params}`)
+    return saveAndRedirect(request, response, `/patients?${params}`)
   },
 
   /**
@@ -374,7 +374,7 @@ export const patientController = {
 
     request.flash('success', __('patient.edit.success'))
 
-    return response.redirect(referrer || patient.uri)
+    return saveAndRedirect(request, response, referrer || patient.uri)
   },
 
   /**
@@ -425,7 +425,7 @@ export const patientController = {
 
     Patient.update(patient_uuid, request.body.patient, data.wizard)
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
@@ -437,7 +437,7 @@ export const patientController = {
     const { patient } = response.locals
 
     if (!programme_id) {
-      return response.redirect(patient.uri)
+      return saveAndRedirect(request, response, patient.uri)
     }
 
     const patientProgramme = new PatientProgramme(
@@ -503,7 +503,7 @@ export const patientController = {
       })
     )
 
-    return response.redirect(referrer || patient.uri)
+    return saveAndRedirect(request, response, referrer || patient.uri)
   },
 
   /**
@@ -660,7 +660,7 @@ export const patientController = {
 
     request.flash('success', __(`patient.archive.success`))
 
-    return response.redirect(patient.uri)
+    return saveAndRedirect(request, response, patient.uri)
   },
 
   /**
@@ -682,7 +682,7 @@ export const patientController = {
 
     request.flash('success', __(`patient.notes.new.success`, { patient }))
 
-    return response.redirect(patient.uri)
+    return saveAndRedirect(request, response, patient.uri)
   },
 
   /**
@@ -696,7 +696,7 @@ export const patientController = {
     const { __, patient, patientProgramme } = response.locals
 
     if (patientProgramme.scheduledClinicsCount === 0) {
-      return response.redirect(`/sessions/new`)
+      return saveAndRedirect(request, response, `/sessions/new`)
     }
 
     // Get session
@@ -724,10 +724,8 @@ export const patientController = {
       __(`patientProgramme.addToSession.success`, { patient, session })
     )
 
-    // TODO: Should be able to use patientSession.uri here, but it doesn’t work
-    return response.redirect(
-      `/sessions/${session_id}/patients/${patient?.nhsn}/${programme_id}`
-    )
+    const returnUri = PatientSession.findOne(patientSession.uuid, data).uri
+    saveAndRedirect(request, response, returnUri)
   },
 
   /**
@@ -764,7 +762,9 @@ export const patientController = {
         startPage = 'variant'
       }
 
-      response.redirect(
+      saveAndRedirect(
+        request,
+        response,
         `${patientProgramme.programme.uri}/vaccinations/${vaccination.uuid}/new/${startPage}?referrer=${patientProgramme.uri}`
       )
     }

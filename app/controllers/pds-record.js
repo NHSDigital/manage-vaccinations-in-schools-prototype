@@ -4,13 +4,14 @@ import _ from 'lodash'
 import { generateChild } from '../generators/child.js'
 import { Patient, PDSRecord, School } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const pdsRecordController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
-    return response.redirect('/patients')
+    return saveAndRedirect(request, response, '/patients')
   },
 
   /**
@@ -29,10 +30,14 @@ export const pdsRecordController = {
       // Add PDS record to wizard data
       PDSRecord.create(pdsRecord, data.wizard)
 
-      return response.redirect(`/pds/${pdsRecord.uuid}/new/result`)
+      return saveAndRedirect(
+        request,
+        response,
+        `/pds/${pdsRecord.uuid}/new/result`
+      )
     }
 
-    return response.redirect(`/pds/new/search`)
+    return saveAndRedirect(request, response, `/pds/new/search`)
   },
 
   /**
@@ -74,7 +79,7 @@ export const pdsRecordController = {
 
     request.flash('success', __(`pdsRecord.new.success`, { patient }))
 
-    return response.redirect(patient.uri)
+    return saveAndRedirect(request, response, patient.uri)
   },
 
   /**
@@ -181,7 +186,7 @@ export const pdsRecordController = {
 
     PDSRecord.update(pdsRecord_uuid, request.body.pdsRecord, data.wizard)
 
-    return paths?.next ? response.redirect(paths.next) : next()
+    return paths?.next ? saveAndRedirect(request, response, paths.next) : next()
   }
 }
 

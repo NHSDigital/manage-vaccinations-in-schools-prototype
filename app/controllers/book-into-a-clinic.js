@@ -138,7 +138,7 @@ export const bookIntoClinicController = {
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
 
-    return response.redirect(paths.next)
+    return saveAndRedirect(request, response, paths.next)
   },
 
   /**

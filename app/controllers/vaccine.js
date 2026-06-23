@@ -1,4 +1,5 @@
 import { Vaccine } from '../models.js'
+import { saveAndRedirect } from '../utils/redirect.js'
 
 export const vaccineController = {
   /**
@@ -65,7 +66,7 @@ export const vaccineController = {
 
     request.flash('success', __(`vaccine.delete.success`))
 
-    return response.redirect('/vaccines')
+    return saveAndRedirect(request, response, '/vaccines')
   }
 }
 
