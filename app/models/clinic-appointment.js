@@ -437,93 +437,130 @@ export class ClinicAppointment {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const parentFacingStartTime = formatTime(this.startAt)
-    const parentFacingEndTime = formatTime(this.endAt)
-    const teamFacingStartTime = formatTime(this.startAt, false)
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          // Shared dynamic helpers (evaluated lazily inside the property checks)
+          const getParentFacingTimes = () => ({
+            start: formatTime(this.startAt),
+            end: formatTime(this.endAt)
+          })
 
-    const session = Session.findOne(this.session_id, this.context)
+          const getSession = () =>
+            Session.findOne(this.session_id, this.context)
 
-    let fluVaccineType
-    switch (this.fluDecision) {
-      case ReplyDecision.Given:
-        fluVaccineType = this.fluAlternative
-          ? ConsentVaccineCriteria.IntranasalPreferred
-          : ConsentVaccineCriteria.IntranasalOnly
-        break
-      case ReplyDecision.OnlyAlternativeInjection:
-        fluVaccineType = ConsentVaccineCriteria.AlternativeFluInjectionOnly
-        break
-    }
+          const getProgrammeNames = () =>
+            programmeNamesListForSentence(
+              this.selected_programme_ids,
+              ConjunctionType.and,
+              this.context
+            )
 
-    const parentalRelationship =
-      this.parentalRelationship === ParentalRelationship.Other
-        ? formatOther(
-            ParentalRelationship.Other,
-            this.parentalRelationshipOther
-          )
-        : this.parentalRelationship
+          switch (prop) {
+            case 'nameAndAge':
+              return [
+                this.fullName,
+                this.patient?.age ? `Age ${this.patient.age}` : null
+              ]
+                .filter(Boolean)
+                .join('<br>')
 
-    const programmeNames = programmeNamesListForSentence(
-      this.selected_programme_ids,
-      ConjunctionType.and,
-      this.context
+            case 'dob':
+              return this.child.formatted.dob
+
+            case 'homeAddress':
+              return this.child.formatted.address
+
+            case 'parentalRelationship':
+              return this.parentalRelationship === ParentalRelationship.Other
+                ? formatOther(
+                    ParentalRelationship.Other,
+                    this.parentalRelationshipOther
+                  )
+                : this.parentalRelationship
+
+            case 'contactDetails':
+              return formatContact(this.contact, true)
+
+            case 'fluVaccineType':
+              switch (this.fluDecision) {
+                case ReplyDecision.Given:
+                  return this.fluAlternative
+                    ? ConsentVaccineCriteria.IntranasalPreferred
+                    : ConsentVaccineCriteria.IntranasalOnly
+                case ReplyDecision.OnlyAlternativeInjection:
+                  return ConsentVaccineCriteria.AlternativeFluInjectionOnly
+                default:
+                  return undefined
+              }
+
+            case 'mmrVaccineType':
+              if (this.mmrAlternative === undefined) return undefined
+              return this.mmrAlternative
+                ? 'Must not contain gelatine'
+                : 'No preference'
+
+            case 'location':
+              return getSession()?.clinic?.formatted.nameAndAddress
+
+            case 'locationName':
+              return getSession()?.clinic?.name
+
+            case 'date':
+              return getSession()?.formatted.date ?? ''
+
+            case 'dateAndTime':
+              return `${getSession()?.formatted.date} at ${getParentFacingTimes().start}`
+
+            case 'timeSlot':
+              return `${getParentFacingTimes().start} to ${getParentFacingTimes().end}`
+
+            case 'programmeNames':
+              return getProgrammeNames()
+
+            case 'programmeTags':
+              return this.#getSelectedProgrammes(this.context)
+                .flatMap(({ nameTag }) => nameTag)
+                .join(' ')
+
+            case 'vaccinations':
+              return formatList(
+                this.#getSelectedProgrammes(this.context).map(
+                  ({ name }) => name
+                )
+              )
+
+            case 'adjustmentsCount':
+              if (!this.requiresAdjustments) return undefined
+              return formatSecondaryText(
+                this.adjustments.length === 1
+                  ? '1 adjustment required'
+                  : `${this.adjustments.length} adjustments required`
+              )
+
+            case 'impairmentsCount':
+              if (!this.hasImpairments) return undefined
+              return formatSecondaryText(
+                this.impairments.length === 1
+                  ? '1 impairment noted'
+                  : `${this.impairments.length} impairments noted`
+              )
+
+            case 'summary': {
+              const teamFacingStartTime = formatTime(this.startAt, false)
+              return `${teamFacingStartTime} ${this.fullName} (${getProgrammeNames()})`
+            }
+
+            case 'register':
+              return this.patientSessions.at(0)?.formatted?.register
+
+            default:
+              return undefined
+          }
+        }
+      }
     )
-    const summary = `${teamFacingStartTime} ${this.fullName} (${programmeNames})`
-
-    const register = this.patientSessions.at(0)?.formatted?.register
-
-    return {
-      nameAndAge: [
-        this.fullName,
-        this.patient?.age ? `Age ${this.patient.age}` : null
-      ]
-        .filter(Boolean)
-        .join('<br>'),
-      dob: this.child.formatted.dob,
-      homeAddress: this.child.formatted.address,
-      parentalRelationship,
-      contactDetails: formatContact(this.contact, true),
-      ...(fluVaccineType ? { fluVaccineType } : {}),
-      ...(this.mmrAlternative !== undefined
-        ? {
-            mmrVaccineType: this.mmrAlternative
-              ? 'Must not contain gelatine'
-              : 'No preference'
-          }
-        : {}),
-      location: session?.clinic?.formatted.nameAndAddress,
-      locationName: session?.clinic?.name,
-      date: session?.formatted.date ?? '',
-      dateAndTime: `${session?.formatted.date} at ${parentFacingStartTime}`,
-      timeSlot: `${parentFacingStartTime} to ${parentFacingEndTime}`,
-      programmeNames,
-      programmeTags: this.#getSelectedProgrammes(this.context)
-        .flatMap(({ nameTag }) => nameTag)
-        .join(' '),
-      vaccinations: formatList(
-        this.#getSelectedProgrammes(this.context).map(({ name }) => name)
-      ),
-      ...(this.requiresAdjustments
-        ? {
-            adjustmentsCount: formatSecondaryText(
-              this.adjustments.length === 1
-                ? '1 adjustment required'
-                : `${this.adjustments.length} adjustments required`
-            )
-          }
-        : {}),
-      ...(this.hasImpairments
-        ? {
-            impairmentsCount: formatSecondaryText(
-              this.impairments.length === 1
-                ? '1 impairment noted'
-                : `${this.impairments.length} impairments noted`
-            )
-          }
-        : {}),
-      summary,
-      register
-    }
   }
 
   /**
