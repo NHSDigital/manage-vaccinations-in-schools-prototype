@@ -915,14 +915,30 @@ export class PatientSession {
    * @returns {object} Status properties
    */
   get status() {
-    return {
-      consent: getConsentOutcomeStatus(this.consent),
-      screen: getScreenOutcomeStatus(this.screen),
-      instruct: getInstructionOutcomeStatus(this.instruct),
-      register: getRegistrationStatus(this.register),
-      outcome: getVaccinationOutcomeStatus(this.outcome),
-      report: this.patientProgramme?.status
-    }
+    // Use lazy evaluation so we call only those functions needed by the client
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'consent':
+              return getConsentOutcomeStatus(this.consent)
+            case 'screen':
+              return getScreenOutcomeStatus(this.screen)
+            case 'instruct':
+              return getInstructionOutcomeStatus(this.instruct)
+            case 'register':
+              return getRegistrationStatus(this.register)
+            case 'outcome':
+              return getVaccinationOutcomeStatus(this.outcome)
+            case 'report':
+              return this.patientProgramme?.status
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
