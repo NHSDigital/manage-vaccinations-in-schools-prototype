@@ -97,13 +97,27 @@ export class Vaccine {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      snomed: formatCode(this.snomed),
-      healthQuestions: formatHealthQuestions(this.healthQuestions),
-      preScreenQuestions: formatList(this.preScreenQuestions),
-      sideEffects: formatList(this.sideEffects),
-      dose: formatMillilitres(this.dose)
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'snomed':
+              return formatCode(this.snomed)
+            case 'healthQuestions':
+              return formatHealthQuestions(this.healthQuestions)
+            case 'preScreenQuestions':
+              return formatList(this.preScreenQuestions)
+            case 'sideEffects':
+              return formatList(this.sideEffects)
+            case 'dose':
+              return formatMillilitres(this.dose)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
