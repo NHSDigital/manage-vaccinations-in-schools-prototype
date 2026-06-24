@@ -947,33 +947,55 @@ export class PatientSession {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const outstandingVaccinations = this.outstandingVaccinations?.map(
-      (vaccination) => vaccination.programme?.name
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'programme':
+              return this.programme?.nameTag
+            case 'consent':
+              return this.consent && formatTag(this.status.consent)
+            case 'screen':
+              return this.screen && formatTag(this.status.screen)
+            case 'instruct':
+              return (
+                this.session?.psdProtocol && formatTag(this.status.instruct)
+              )
+            case 'register':
+              return formatTag(this.status.register)
+            case 'outcome':
+              return this.outcome && formatTag(this.status.outcome)
+            case 'report':
+              return this.patientProgramme?.formatted.programmeStatus
+            case 'outstandingVaccinations': {
+              const outstanding = this.outstandingVaccinations?.map(
+                (vaccination) => vaccination.programme?.name
+              )
+              return filters.formatList(outstanding)
+            }
+            case 'vaccineCriteria':
+              return formatVaccineCriteria(this.vaccineCriteria)
+            case 'yearGroup': {
+              let formattedYearGroup = formatYearGroup(this.yearGroup)
+              formattedYearGroup += this.patient?.registrationGroup
+                ? `, ${this.patient?.registrationGroup}`
+                : ''
+              formattedYearGroup += ` (${AcademicYear[this.session.academicYear]} academic year)`
+              return formattedYearGroup
+            }
+            case 'creationTime':
+              return formatDate(this.createdAt, {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+              })
+            default:
+              return undefined
+          }
+        }
+      }
     )
-
-    let formattedYearGroup = formatYearGroup(this.yearGroup)
-    formattedYearGroup += this.patient?.registrationGroup
-      ? `, ${this.patient?.registrationGroup}`
-      : ''
-    formattedYearGroup += ` (${AcademicYear[this.session.academicYear]} academic year)`
-
-    return {
-      programme: this.programme?.nameTag,
-      consent: this.consent && formatTag(this.status.consent),
-      screen: this.screen && formatTag(this.status.screen),
-      instruct: this.session?.psdProtocol && formatTag(this.status.instruct),
-      register: formatTag(this.status.register),
-      outcome: this.outcome && formatTag(this.status.outcome),
-      report: this.patientProgramme?.formatted.programmeStatus,
-      outstandingVaccinations: filters.formatList(outstandingVaccinations),
-      vaccineCriteria: formatVaccineCriteria(this.vaccineCriteria),
-      yearGroup: formattedYearGroup,
-      creationTime: formatDate(this.createdAt, {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      })
-    }
   }
 
   /**
