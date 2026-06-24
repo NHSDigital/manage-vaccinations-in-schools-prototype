@@ -308,39 +308,60 @@ export class Child {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const yearGroup = formatYearGroup(this.yearGroup)
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          // Multiple properties use the formatted year group, but keep it lazy
+          const getFormattedYearGroup = () => formatYearGroup(this.yearGroup)
 
-    return {
-      dob: formatDate(this.dob, { dateStyle: 'long' }),
-      dod: formatDate(this.dod, { dateStyle: 'long' }),
-      address:
-        this?.address &&
-        Object.values(this.address)
-          .filter((string) => string)
-          .join('<br>'),
-      ...(!this.agedOutOfProgrammes && {
-        yearGroup,
-        yearGroupWithRegistration:
-          this.registrationGroup && yearGroup
-            ? `${yearGroup} (${this.registrationGroup})`
-            : yearGroup,
-        schoolName: this?.school && this.school.name
-      }),
-      adjustments:
-        this.adjustments &&
-        formatList(
-          this.adjustments.filter(
-            (adjustment) => adjustment !== Adjustment.None
-          )
-        ),
-      impairments:
-        this.impairments &&
-        formatList(
-          this.impairments.filter(
-            (impairment) => impairment !== Impairment.None
-          )
-        )
-    }
+          switch (prop) {
+            case 'dob':
+              return formatDate(this.dob, { dateStyle: 'long' })
+            case 'dod':
+              return formatDate(this.dod, { dateStyle: 'long' })
+            case 'address':
+              return (
+                this?.address &&
+                Object.values(this.address).filter(Boolean).join('<br>')
+              )
+            case 'yearGroup':
+              if (this.agedOutOfProgrammes) return undefined
+              return getFormattedYearGroup()
+            case 'yearGroupWithRegistration': {
+              if (this.agedOutOfProgrammes) return undefined
+              const yearGroup = getFormattedYearGroup()
+              return this.registrationGroup && yearGroup
+                ? `${yearGroup} (${this.registrationGroup})`
+                : yearGroup
+            }
+            case 'schoolName':
+              if (this.agedOutOfProgrammes) return undefined
+              return this?.school && this.school.name
+            case 'adjustments':
+              return (
+                this.adjustments &&
+                formatList(
+                  this.adjustments.filter(
+                    (adjustment) => adjustment !== Adjustment.None
+                  )
+                )
+              )
+            case 'impairments':
+              return (
+                this.impairments &&
+                formatList(
+                  this.impairments.filter(
+                    (impairment) => impairment !== Impairment.None
+                  )
+                )
+              )
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
