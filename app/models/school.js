@@ -370,11 +370,6 @@ export class School extends Location {
   static create(school, context) {
     const createdSchool = new School(school)
 
-    // Add to team
-    if (context.teams) {
-      context.teams[createdSchool.team_id].school_ids.push(createdSchool.id)
-    }
-
     // Update context
     context.schools = context.schools || {}
     context.schools[createdSchool.id] = createdSchool
@@ -403,11 +398,6 @@ export class School extends Location {
       }
     )
 
-    // Update team
-    if (context.teams) {
-      context.teams[updatedSchool.team_id].school_ids.push(updatedSchool.id)
-    }
-
     // Remove school context
     delete updatedSchool.context
 
@@ -428,13 +418,6 @@ export class School extends Location {
    * @static
    */
   static delete(id, context) {
-    const school = School.findOne(id, context)
-
-    // Remove from team
-    context.teams[school.team_id].school_ids = context.teams[
-      school.team_id
-    ].school_ids.filter((item) => item !== id)
-
     delete context.schools[id]
   }
 }
