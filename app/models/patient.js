@@ -497,26 +497,43 @@ export class Patient extends Child {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const formattedNhsn = formatNhsNumber(this.nhsn, this.invalid)
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getFormattedNhsn = () =>
+            formatNhsNumber(this.nhsn, this.invalid)
 
-    return {
-      ...super.formatted,
-      fullNameAndNhsn: formatWithSecondaryText(this.fullName, formattedNhsn),
-      nhsn: formattedNhsn,
-      newUrn:
-        this.pendingChanges?.school_id &&
-        schools[this.pendingChanges.school_id].name,
-      archiveReason: formatOther(this.archiveReasonOther, this.archiveReason),
-      lastReminderDate: this.lastReminderDate
-        ? `Last reminder sent on ${this.lastReminderDate}`
-        : 'No reminders sent',
-      clinicProgramme_ids: this.clinicProgramme_ids
-        .map((id) => this.programmes[id].programme.nameTag)
-        .join(' '),
-      contacts: formatList(
-        this.contacts.map((contact) => contact.fullNameAndRelationship)
-      )
-    }
+          switch (prop) {
+            case 'fullNameAndNhsn':
+              return formatWithSecondaryText(this.fullName, getFormattedNhsn())
+            case 'nhsn':
+              return getFormattedNhsn()
+            case 'newUrn':
+              return (
+                this.pendingChanges?.school_id &&
+                schools[this.pendingChanges.school_id].name
+              )
+            case 'archiveReason':
+              return formatOther(this.archiveReasonOther, this.archiveReason)
+            case 'lastReminderDate':
+              return this.lastReminderDate
+                ? `Last reminder sent on ${this.lastReminderDate}`
+                : 'No reminders sent'
+            case 'clinicProgramme_ids':
+              return this.clinicProgramme_ids
+                .map((id) => this.programmes[id].programme.nameTag)
+                .join(' ')
+            case 'contacts':
+              return formatList(
+                this.contacts.map((contact) => contact.fullNameAndRelationship)
+              )
+            default:
+              return super.formatted?.[prop]
+          }
+        }
+      }
+    )
   }
 
   /**
