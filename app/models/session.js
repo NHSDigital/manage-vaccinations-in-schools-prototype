@@ -1049,126 +1049,163 @@ export class Session {
    * @returns {object} Formatted values
    */
   get formatted() {
-    let consentWindow
-    let consentWindowSentence
-    const consentDateStyle = { day: 'numeric', month: 'long' }
-    switch (this.consentWindow) {
-      case ConsentWindow.Opening:
-        consentWindow = `Opens ${formatDate(this.openAt, consentDateStyle)}`
-        consentWindowSentence = `Consent window opens on ${formatDate(this.openAt, consentDateStyle)}.`
-        break
-      case ConsentWindow.Closed:
-        consentWindow = `Closed ${formatDate(this.closeAt, consentDateStyle)}`
-        consentWindowSentence = `Consent window closed on ${formatDate(this.closeAt, consentDateStyle)}.`
-        break
-      case ConsentWindow.Open:
-        consentWindow = `Open from ${formatDate(this.openAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}`
-        consentWindowSentence = `Consent window is open from ${formatDate(this.openAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}.`
-        break
-      default:
-        consentWindow = ''
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          // Shared configuration
+          const consentDateStyle = { day: 'numeric', month: 'long' }
 
-    const nextReminderDate = formatDate(this.nextReminderDate, {
-      dateStyle: 'full'
-    })
+          // Lazily format consent window values
+          const getConsentWindowData = () => {
+            let consentWindow = ''
+            let consentWindowSentence = ''
 
-    const reminderWeeks = filters.plural(this.reminderWeeks, 'week')
-
-    let startAndEndTimes, vaccinatorCounts, totalAppointments
-    if (this.type === SessionType.Clinic) {
-      startAndEndTimes = ''
-      vaccinatorCounts = ''
-      totalAppointments = 0
-
-      let lastVaccinatorCount = -1
-      let hasVariableVaccinatorCounts = false
-      this.vaccinationPeriods.forEach((vaccinationPeriod, periodIndex) => {
-        const thisPeriod = vaccinationPeriod.formatted.startAndEndTimes
-        const thisVaccinatorCount = vaccinationPeriod.vaccinatorCount || 0
-
-        startAndEndTimes += thisPeriod
-        vaccinatorCounts += `${thisVaccinatorCount} from ${thisPeriod}`
-        if (periodIndex < this.vaccinationPeriods.length - 1) {
-          startAndEndTimes += '<br>'
-          vaccinatorCounts += '<br>'
-        }
-
-        hasVariableVaccinatorCounts =
-          hasVariableVaccinatorCounts ||
-          (lastVaccinatorCount !== -1 &&
-            lastVaccinatorCount !== thisVaccinatorCount)
-        lastVaccinatorCount = thisVaccinatorCount
-
-        totalAppointments += vaccinationPeriod.appointmentCount(
-          this.appointmentLength
-        )
-      })
-      if (!hasVariableVaccinatorCounts) {
-        vaccinatorCounts = lastVaccinatorCount.toString()
-      }
-    }
-
-    return {
-      address:
-        this.address &&
-        Object.values(this.address)
-          .filter((string) => string)
-          .join('<br>'),
-      dateShort: formatDate(this.date, {
-        dateStyle: 'long'
-      }),
-      date: formatDate(this.date, {
-        dateStyle: 'full'
-      }),
-      nextDate: formatDate(this.date, {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric'
-      }),
-      openAt: formatDate(this.openAt, {
-        dateStyle: 'full'
-      }),
-      reminderDate: formatDate(this.reminderDate, {
-        dateStyle: 'full'
-      }),
-      nextReminderDate,
-      reminderWeeks: nextReminderDate
-        ? formatWithSecondaryText(
-            `Send ${reminderWeeks} before each session`,
-            `First: ${nextReminderDate}`
-          )
-        : `Send ${reminderWeeks} before each session`,
-      closeAt: formatDate(this.closeAt, { dateStyle: 'full' }),
-      patients: filters.plural(this.patients.length, 'child'),
-      consents:
-        this.consents.length > 0
-          ? filters.plural(this.consents.length, 'child')
-          : undefined,
-      programmes: this.programmes.flatMap(({ nameTag }) => nameTag).join(' '),
-      consentUrl:
-        this.consentUrl &&
-        formatLink(
-          this.consentUrl,
-          'View the online consent form (opens in new tab)',
-          {
-            target: '_blank'
+            switch (this.consentWindow) {
+              case ConsentWindow.Opening:
+                consentWindow = `Opens ${formatDate(this.openAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window opens on ${formatDate(this.openAt, consentDateStyle)}.`
+                break
+              case ConsentWindow.Closed:
+                consentWindow = `Closed ${formatDate(this.closeAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window closed on ${formatDate(this.closeAt, consentDateStyle)}.`
+                break
+              case ConsentWindow.Open:
+                consentWindow = `Open from ${formatDate(this.openAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window is open from ${formatDate(this.openAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}.`
+                break
+            }
+            return { consentWindow, consentWindowSentence }
           }
-        ),
-      consentWindow,
-      consentWindowSentence,
-      location: Object.values(this.location)
-        .filter((string) => string)
-        .join(', '),
-      clinic: this.clinic && this.clinic.name,
-      school: this.school && this.school.name,
-      school_id: this.school && this.school.formatted.id,
-      yearGroups: this.yearGroups && formatYearGroups(this.yearGroups),
-      vaccinationPeriods: startAndEndTimes,
-      vaccinators: vaccinatorCounts,
-      totalAppointments,
-      appointmentLength: `${this.appointmentLength} minutes`
-    }
+
+          // Lazily harvest various things from the vaccination periods
+          const getVaccinationPeriodData = () => {
+            let startAndEndTimes = ''
+            let vaccinatorCounts = ''
+            let totalAppointments = 0
+
+            if (this.type === SessionType.Clinic) {
+              let lastVaccinatorCount = -1
+              let hasVariableVaccinatorCounts = false
+
+              this.vaccinationPeriods.forEach(
+                (vaccinationPeriod, periodIndex) => {
+                  const thisPeriod =
+                    vaccinationPeriod.formatted.startAndEndTimes
+                  const thisVaccinatorCount =
+                    vaccinationPeriod.vaccinatorCount || 0
+
+                  startAndEndTimes += thisPeriod
+                  vaccinatorCounts += `${thisVaccinatorCount} from ${thisPeriod}`
+                  if (periodIndex < this.vaccinationPeriods.length - 1) {
+                    startAndEndTimes += '<br>'
+                    vaccinatorCounts += '<br>'
+                  }
+
+                  hasVariableVaccinatorCounts =
+                    hasVariableVaccinatorCounts ||
+                    (lastVaccinatorCount !== -1 &&
+                      lastVaccinatorCount !== thisVaccinatorCount)
+                  lastVaccinatorCount = thisVaccinatorCount
+
+                  totalAppointments += vaccinationPeriod.appointmentCount(
+                    this.appointmentLength
+                  )
+                }
+              )
+
+              if (!hasVariableVaccinatorCounts) {
+                vaccinatorCounts = lastVaccinatorCount.toString()
+              }
+            }
+
+            return { startAndEndTimes, vaccinatorCounts, totalAppointments }
+          }
+
+          switch (prop) {
+            case 'address':
+              return (
+                this.address &&
+                Object.values(this.address).filter(Boolean).join('<br>')
+              )
+            case 'dateShort':
+              return formatDate(this.date, { dateStyle: 'long' })
+            case 'date':
+              return formatDate(this.date, { dateStyle: 'full' })
+            case 'nextDate':
+              return formatDate(this.date, {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+              })
+            case 'openAt':
+              return formatDate(this.openAt, { dateStyle: 'full' })
+            case 'reminderDate':
+              return formatDate(this.reminderDate, { dateStyle: 'full' })
+            case 'nextReminderDate':
+              return formatDate(this.nextReminderDate, { dateStyle: 'full' })
+            case 'reminderWeeks': {
+              const nextReminder = formatDate(this.nextReminderDate, {
+                dateStyle: 'full'
+              })
+              const reminderWeeksText = filters.plural(
+                this.reminderWeeks,
+                'week'
+              )
+              return nextReminder
+                ? formatWithSecondaryText(
+                    `Send ${reminderWeeksText} before each session`,
+                    `First: ${nextReminder}`
+                  )
+                : `Send ${reminderWeeksText} before each session`
+            }
+            case 'closeAt':
+              return formatDate(this.closeAt, { dateStyle: 'full' })
+            case 'patients':
+              return filters.plural(this.patients.length, 'child')
+            case 'consents':
+              return this.consents.length > 0
+                ? filters.plural(this.consents.length, 'child')
+                : undefined
+            case 'programmes':
+              return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
+            case 'consentUrl':
+              return (
+                this.consentUrl &&
+                formatLink(
+                  this.consentUrl,
+                  'View the online consent form (opens in new tab)',
+                  { target: '_blank' }
+                )
+              )
+            case 'consentWindow':
+              return getConsentWindowData().consentWindow
+            case 'consentWindowSentence':
+              return getConsentWindowData().consentWindowSentence
+            case 'location':
+              return Object.values(this.location).filter(Boolean).join(', ')
+            case 'clinic':
+              return this.clinic && this.clinic.name
+            case 'school':
+              return this.school && this.school.name
+            case 'school_id':
+              return this.school && this.school.formatted.id
+            case 'yearGroups':
+              return this.yearGroups && formatYearGroups(this.yearGroups)
+            case 'vaccinationPeriods':
+              return getVaccinationPeriodData().startAndEndTimes
+            case 'vaccinators':
+              return getVaccinationPeriodData().vaccinatorCounts
+            case 'totalAppointments':
+              return getVaccinationPeriodData().totalAppointments
+            case 'appointmentLength':
+              return `${this.appointmentLength} minutes`
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
