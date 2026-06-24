@@ -217,29 +217,40 @@ export class Programme {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const vaccineList = Array.isArray(this.vaccine_snomeds)
-      ? this.vaccine_snomeds.map(
-          (snomed) => new Vaccine(vaccines[snomed]).brand
-        )
-      : []
-
-    const yearGroups = this.yearGroups.map((yearGroup) =>
-      formatYearGroup(yearGroup)
-    )
-
-    return {
-      consentPdf:
-        this.consentPdf &&
-        formatLink(
-          this.consentPdf,
-          `Download the ${this.name} consent form (PDF)`,
-          {
-            download: 'true'
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'consentPdf':
+              return (
+                this.consentPdf &&
+                formatLink(
+                  this.consentPdf,
+                  `Download the ${this.name} consent form (PDF)`,
+                  { download: 'true' }
+                )
+              )
+            case 'yearGroups': {
+              const formattedYearGroups = this.yearGroups.map((yearGroup) =>
+                formatYearGroup(yearGroup)
+              )
+              return prototypeFilters.formatList(formattedYearGroups)
+            }
+            case 'vaccines': {
+              const vaccineList = Array.isArray(this.vaccine_snomeds)
+                ? this.vaccine_snomeds.map(
+                    (snomed) => new Vaccine(vaccines[snomed]).brand
+                  )
+                : []
+              return vaccineList.join('<br>')
+            }
+            default:
+              return undefined
           }
-        ),
-      yearGroups: prototypeFilters.formatList(yearGroups),
-      vaccines: vaccineList.join('<br>')
-    }
+        }
+      }
+    )
   }
 
   /**

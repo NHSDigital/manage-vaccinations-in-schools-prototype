@@ -263,21 +263,43 @@ export class School extends Location {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const id = formatCode(this.id)
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getId = () => formatCode(this.id)
 
-    return {
-      ...super.formatted,
-      urn: formatCode(this.urn),
-      id,
-      openAt: this.openAt && formatDate(this.openAt, { dateStyle: 'long' }),
-      closeAt: this.closeAt && formatDate(this.closeAt, { dateStyle: 'long' }),
-      nameAndUrn: `${this.name} (${id})`,
-      nextSessionDate: formatDate(this.nextSessionDate, { dateStyle: 'full' }),
-      patients: filters.plural(this.patients.length, 'child'),
-      site: formatCode(this.site),
-      status: this.status && formatTag(getSchoolStatus(this.status)),
-      yearGroups: formatYearGroups(this.yearGroups)
-    }
+          switch (prop) {
+            case 'urn':
+              return formatCode(this.urn)
+            case 'id':
+              return getId()
+            case 'openAt':
+              return (
+                this.openAt && formatDate(this.openAt, { dateStyle: 'long' })
+              )
+            case 'closeAt':
+              return (
+                this.closeAt && formatDate(this.closeAt, { dateStyle: 'long' })
+              )
+            case 'nameAndUrn':
+              return `${this.name} (${getId()})`
+            case 'nextSessionDate':
+              return formatDate(this.nextSessionDate, { dateStyle: 'full' })
+            case 'patients':
+              return filters.plural(this.patients.length, 'child')
+            case 'site':
+              return formatCode(this.site)
+            case 'status':
+              return this.status && formatTag(getSchoolStatus(this.status))
+            case 'yearGroups':
+              return formatYearGroups(this.yearGroups)
+            default:
+              return super.formatted?.[prop]
+          }
+        }
+      }
+    )
   }
 
   /**

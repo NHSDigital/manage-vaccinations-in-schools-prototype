@@ -459,47 +459,71 @@ export class Reply {
    * @returns {object} Formatted values
    */
   get formatted() {
-    let decisionStatus = formatTag(getReplyDecisionStatus(this.decision))
-    if (!this.delivered) {
-      decisionStatus = formatTag(
-        getConsentOutcomeStatus(ConsentOutcome.NotDelivered)
-      )
-    } else if (this.invalid) {
-      decisionStatus = formatWithSecondaryText(
-        formatTag({
-          colour: 'grey',
-          html: `<s>${this.decision}</s>`
-        }),
-        'Invalid',
-        false
-      )
-    } else if (this.confirmed) {
-      decisionStatus = formatWithSecondaryText(
-        decisionStatus,
-        'Confirmed',
-        false
-      )
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getDecisionStatus = () => {
+            let decisionStatus = formatTag(
+              getReplyDecisionStatus(this.decision)
+            )
+            if (!this.delivered) {
+              decisionStatus = formatTag(
+                getConsentOutcomeStatus(ConsentOutcome.NotDelivered)
+              )
+            } else if (this.invalid) {
+              decisionStatus = formatWithSecondaryText(
+                formatTag({
+                  colour: 'grey',
+                  html: `<s>${this.decision}</s>`
+                }),
+                'Invalid',
+                false
+              )
+            } else if (this.confirmed) {
+              decisionStatus = formatWithSecondaryText(
+                decisionStatus,
+                'Confirmed',
+                false
+              )
+            }
+            return decisionStatus
+          }
 
-    return {
-      createdAt: formatDate(this.createdAt, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      createdBy: this.createdBy?.fullName || '',
-      decisionStatus,
-      contact: formatContact(this.contact, true),
-      tel: this.contact && this.contact.tel,
-      email: this.contact && this.contact.email,
-      programme: this.programme?.nameTag,
-      refusalReason: formatOther(this.refusalReasonOther, this.refusalReason),
-      refusalReasonDetails: formatMarkdown(this.refusalReasonDetails),
-      note: formatMarkdown(this.note)
-    }
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })
+            case 'createdBy':
+              return this.createdBy?.fullName || ''
+            case 'decisionStatus':
+              return getDecisionStatus()
+            case 'contact':
+              return formatContact(this.contact, true)
+            case 'tel':
+              return this.contact && this.contact.tel
+            case 'email':
+              return this.contact && this.contact.email
+            case 'programme':
+              return this.programme?.nameTag
+            case 'refusalReason':
+              return formatOther(this.refusalReasonOther, this.refusalReason)
+            case 'refusalReasonDetails':
+              return formatMarkdown(this.refusalReasonDetails)
+            case 'note':
+              return formatMarkdown(this.note)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**

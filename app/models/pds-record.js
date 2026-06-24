@@ -98,17 +98,30 @@ export class PDSRecord extends Child {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const formattedNhsn = formatNhsNumber(this.nhsn, this.invalid)
-    const formattedContacts = this.contacts.map((contact) =>
-      formatContact(contact)
-    )
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getFormattedNhsn = () =>
+            formatNhsNumber(this.nhsn, this.invalid)
 
-    return {
-      ...super.formatted,
-      fullNameAndNhsn: formatWithSecondaryText(this.fullName, formattedNhsn),
-      nhsn: formattedNhsn,
-      contacts: formatList(formattedContacts)
-    }
+          switch (prop) {
+            case 'fullNameAndNhsn':
+              return formatWithSecondaryText(this.fullName, getFormattedNhsn())
+            case 'nhsn':
+              return getFormattedNhsn()
+            case 'contacts': {
+              const formattedContacts = this.contacts.map((contact) =>
+                formatContact(contact)
+              )
+              return formatList(formattedContacts)
+            }
+            default:
+              return super.formatted?.[prop]
+          }
+        }
+      }
+    )
   }
 
   /**
