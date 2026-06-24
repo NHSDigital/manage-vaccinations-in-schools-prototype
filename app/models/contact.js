@@ -89,12 +89,23 @@ export class Contact {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      contactPreference:
-        this.contactPreferenceDetails || this.contactPreference,
-      fullName: this.fullName || 'Name unknown',
-      relationship: formatOther(this.relationshipOther, this.relationship)
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'contactPreference':
+              return this.contactPreferenceDetails || this.contactPreference
+            case 'fullName':
+              return this.fullName || 'Name unknown'
+            case 'relationship':
+              return formatOther(this.relationshipOther, this.relationship)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**

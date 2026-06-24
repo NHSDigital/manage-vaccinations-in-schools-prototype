@@ -426,38 +426,57 @@ export class Download {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      createdAt: formatDate(this.createdAt, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      createdBy: this.createdBy?.fullName,
-      startAt: this.startAt && formatDate(this.startAt, { dateStyle: 'long' }),
-      endAt: this.endAt && formatDate(this.endAt, { dateStyle: 'long' }),
-      startEndAt:
-        this.startAt &&
-        this.endAt &&
-        new Intl.DateTimeFormat('en', {
-          dateStyle: 'long'
-        }).formatRange(this.startAt, this.endAt),
-      status:
-        this.status === DownloadStatus.Processing
-          ? formatProgress(this.progress)
-          : formatTag(getDownloadStatus(this.status)),
-      programme: this.programme?.nameTag,
-      teams:
-        this.teams?.length > 0
-          ? formatList(this.teams.map(({ name }) => name))
-          : this.teams.length,
-      vaccinations: `${this.vaccinations?.length} records`,
-      ...(this.type === DownloadType.Session && {
-        recordOffline: this.recordOffline === true ? 'Yes' : 'No'
-      })
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })
+            case 'createdBy':
+              return this.createdBy?.fullName
+            case 'startAt':
+              return (
+                this.startAt && formatDate(this.startAt, { dateStyle: 'long' })
+              )
+            case 'endAt':
+              return this.endAt && formatDate(this.endAt, { dateStyle: 'long' })
+            case 'startEndAt':
+              return (
+                this.startAt &&
+                this.endAt &&
+                new Intl.DateTimeFormat('en', {
+                  dateStyle: 'long'
+                }).formatRange(this.startAt, this.endAt)
+              )
+            case 'status':
+              return this.status === DownloadStatus.Processing
+                ? formatProgress(this.progress)
+                : formatTag(getDownloadStatus(this.status))
+            case 'programme':
+              return this.programme?.nameTag
+            case 'teams':
+              return this.teams?.length > 0
+                ? formatList(this.teams.map(({ name }) => name))
+                : this.teams.length
+            case 'vaccinations':
+              return `${this.vaccinations?.length} records`
+            case 'recordOffline':
+              if (this.type !== DownloadType.Session) return undefined
+              return this.recordOffline === true ? 'Yes' : 'No'
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**

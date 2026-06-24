@@ -69,14 +69,27 @@ export class Move {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const team = Team.findOne(this.team_id, this.context)
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getTeam = () => Team.findOne(this.team_id, this.context)
 
-    return {
-      createdAt: formatDate(this.createdAt, { dateStyle: 'long' }),
-      team_id: this.team_id ? team.name : 'Unknown team',
-      from_urn: schools[this.from_urn]?.name || 'Unknown school',
-      to_urn: schools[this.to_urn]?.name || 'Unknown school'
-    }
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, { dateStyle: 'long' })
+            case 'team_id':
+              return this.team_id ? getTeam()?.name : 'Unknown team'
+            case 'from_urn':
+              return schools[this.from_urn]?.name || 'Unknown school'
+            case 'to_urn':
+              return schools[this.to_urn]?.name || 'Unknown school'
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
