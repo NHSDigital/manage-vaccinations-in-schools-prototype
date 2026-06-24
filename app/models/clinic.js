@@ -61,9 +61,6 @@ export class Clinic extends Location {
   static create(clinic, context) {
     const createdClinic = new Clinic(clinic)
 
-    // Add to team
-    context.teams[createdClinic.team_id].clinic_ids.push(createdClinic.id)
-
     // Update context
     context.clinics = context.clinics || {}
     context.clinics[createdClinic.id] = createdClinic
@@ -103,13 +100,6 @@ export class Clinic extends Location {
    * @static
    */
   static delete(id, context) {
-    const clinic = Clinic.findOne(id, context)
-
-    // Remove from team
-    context.teams[clinic.team_id].clinic_ids = context.teams[
-      clinic.team_id
-    ].clinic_ids.filter((item) => item !== id)
-
     delete context.clinics[id]
   }
 }

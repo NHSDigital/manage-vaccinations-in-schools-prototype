@@ -21,7 +21,6 @@ import { stringToBoolean } from '../utils/string.js'
  * @property {number} [clinicNasalSprayDuration] - Minutes to allocate each nasal spray
  * @property {number} [clinicInjectionDuration] - Minutes to allocate each injection
  * @property {boolean} [clinicSessionRegistration] - Should clinic sessions have registration
- * @property {Array<string>} [clinic_ids] - Clinic IDs
  */
 
 /**
@@ -56,7 +55,6 @@ export class Team {
     this.clinicSessionRegistration =
       stringToBoolean(options.clinicSessionRegistration) ??
       TeamDefaults.ClinicSessionRegistration
-    this.clinic_ids = options?.clinic_ids || []
   }
 
   /**
@@ -66,9 +64,9 @@ export class Team {
    */
   get clinics() {
     try {
-      return this?.clinic_ids
-        .map((id) => Clinic.findOne(id, this.context))
-        .sort((a, b) => a.name.localeCompare(b.name))
+      return Clinic.findAll(this.context).sort((a, b) =>
+        a.name.localeCompare(b.name)
+      )
     } catch (error) {
       console.error('Team.clinics', error.message)
     }
