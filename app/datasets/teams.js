@@ -1,5 +1,4 @@
 import clinics from './clinics.js'
-import schools from './schools.js'
 
 export default [
   {
@@ -11,8 +10,7 @@ export default [
     privacyPolicyUrl: 'https://www.covwarkpt.nhs.uk/download.cfm?ver=8286',
     clinic_ids: Object.values(clinics)
       .filter((clinic) => clinic.team_id == '001')
-      .map((clinic) => clinic.id),
-    school_ids: Object.keys(schools)
+      .map((clinic) => clinic.id)
   },
   {
     id: '002',
