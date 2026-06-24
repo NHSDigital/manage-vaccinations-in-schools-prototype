@@ -489,88 +489,121 @@ export class Vaccination {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const programme = this.variant
-      ? formatTag({
-          text: this.programmeOrVariantName,
-          colour: 'transparent'
-        })
-      : this.programme?.nameTag
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getProgrammeTag = () => {
+            return this.variant
+              ? formatTag({
+                  text: this.programmeOrVariantName,
+                  colour: 'transparent'
+                })
+              : this.programme?.nameTag
+          }
 
-    return {
-      createdAt: formatDate(this.createdAt, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      createdAt_date: formatDate(this.createdAt, {
-        dateStyle: 'long'
-      }),
-      createdAt_time: formatDate(this.createdAt, {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      createdAt_dateShort: formatDate(this.createdAt, {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      }),
-      createdBy: this.createdBy?.fullName || 'Unknown',
-      suppliedBy: this.suppliedBy?.fullName || '',
-      updatedAt: formatDate(this.updatedAt, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      reportedAt:
-        this.reportedAt &&
-        formatDate(this.reportedAt, {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
-        }),
-      reportedBy: (this.reportedBy && this.reportedBy?.fullName) || '',
-      syncStatus: formatWithSecondaryText(
-        formatTag(getVaccinationSyncStatus(this.syncStatus)),
-        this.syncStatusNotes,
-        true
-      ),
-      batch: this.batch?.summary,
-      batch_id: formatCode(this.batch_id),
-      dose: formatMillilitres(this.dose),
-      sequence: this.sequence && formatSequence(this.sequence),
-      vaccine_snomed: this.vaccine_snomed ? this.vaccine?.brand : 'Unknown',
-      note: formatMarkdown(this.note),
-      outcome: formatTag(getVaccinationOutcomeStatus(this.outcome)),
-      programme: this.programmeOther || programme,
-      programmeWithSequence:
-        this.programmeOther ||
-        formatWithSecondaryText(
-          programme,
-          formatSequence(this.sequence),
-          false
-        ),
-      location:
-        (this?.location &&
-          Object.values(this.location)
-            .filter((string) => string)
-            .join(', ')) ||
-        'Unknown',
-      country: this.countryOther || this.country || 'England',
-      school: this.school && this.school.name,
-      identifiedBy: this.selfId
-        ? 'The child'
-        : formatIdentifier(this.identifiedBy)
-    }
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })
+            case 'createdAt_date':
+              return formatDate(this.createdAt, { dateStyle: 'long' })
+            case 'createdAt_time':
+              return formatDate(this.createdAt, {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })
+            case 'createdAt_dateShort':
+              return formatDate(this.createdAt, {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+              })
+            case 'createdBy':
+              return this.createdBy?.fullName || 'Unknown'
+            case 'suppliedBy':
+              return this.suppliedBy?.fullName || ''
+            case 'updatedAt':
+              return formatDate(this.updatedAt, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })
+            case 'reportedAt':
+              return (
+                this.reportedAt &&
+                formatDate(this.reportedAt, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                })
+              )
+            case 'reportedBy':
+              return this.reportedBy?.fullName || ''
+            case 'syncStatus':
+              return formatWithSecondaryText(
+                formatTag(getVaccinationSyncStatus(this.syncStatus)),
+                this.syncStatusNotes,
+                true
+              )
+            case 'batch':
+              return this.batch?.summary
+            case 'batch_id':
+              return formatCode(this.batch_id)
+            case 'dose':
+              return formatMillilitres(this.dose)
+            case 'sequence':
+              return this.sequence && formatSequence(this.sequence)
+            case 'vaccine_snomed':
+              return this.vaccine_snomed ? this.vaccine?.brand : 'Unknown'
+            case 'note':
+              return formatMarkdown(this.note)
+            case 'outcome':
+              return formatTag(getVaccinationOutcomeStatus(this.outcome))
+            case 'programme':
+              return this.programmeOther || getProgrammeTag()
+            case 'programmeWithSequence':
+              return (
+                this.programmeOther ||
+                formatWithSecondaryText(
+                  getProgrammeTag(),
+                  formatSequence(this.sequence),
+                  false
+                )
+              )
+            case 'location':
+              return (
+                (this?.location &&
+                  Object.values(this.location).filter(Boolean).join(', ')) ||
+                'Unknown'
+              )
+            case 'country':
+              return this.countryOther || this.country || 'England'
+            case 'school':
+              return this.school && this.school.name
+            case 'identifiedBy':
+              return this.selfId
+                ? 'The child'
+                : formatIdentifier(this.identifiedBy)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
