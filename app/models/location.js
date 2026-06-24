@@ -125,26 +125,35 @@ export class Location {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const address =
-      this.address &&
-      Object.values(this.address)
-        .filter((string) => string)
-        .join(', ')
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getAddress = () =>
+            this.address &&
+            Object.values(this.address).filter(Boolean).join(', ')
 
-    return {
-      address,
-      location: Object.values(this.location)
-        .filter((string) => string)
-        .join(', '),
-      nameAndAddress: this.address
-        ? `<span>${this.name}</br>
-            <span class="nhsuk-u-secondary-text-colour">${address}</span>
+          switch (prop) {
+            case 'address':
+              return getAddress()
+            case 'location':
+              return Object.values(this.location).filter(Boolean).join(', ')
+            case 'nameAndAddress':
+              return this.address
+                ? `<span>${this.name}</br>
+            <span class="nhsuk-u-secondary-text-colour">${getAddress()}</span>
           </span>`
-        : this.name,
-      programmes: this.programmes
-        .flatMap((programme) => programme?.nameTag)
-        .join(' ')
-    }
+                : this.name
+            case 'programmes':
+              return this.programmes
+                .flatMap((programme) => programme?.nameTag)
+                .join(' ')
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
