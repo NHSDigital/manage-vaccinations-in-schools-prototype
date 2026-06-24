@@ -596,18 +596,36 @@ export class PatientProgramme {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const status = formatTag(getPatientStatus(this.status, this.vaccinationDue))
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          const getStatusTag = () =>
+            formatTag(getPatientStatus(this.status, this.vaccinationDue))
 
-    return {
-      doseDue: ordinal(this.doseDue),
-      status,
-      statusWithNotes: formatWithSecondaryText(status, this.statusNotes, false),
-      programmeStatus: formatProgrammeStatus(
-        this.programme,
-        getPatientStatus(this.status, this.vaccinationDue),
-        this.statusNotes
-      )
-    }
+          switch (prop) {
+            case 'doseDue':
+              return ordinal(this.doseDue)
+            case 'status':
+              return getStatusTag()
+            case 'statusWithNotes':
+              return formatWithSecondaryText(
+                getStatusTag(),
+                this.statusNotes,
+                false
+              )
+            case 'programmeStatus':
+              return formatProgrammeStatus(
+                this.programme,
+                getPatientStatus(this.status, this.vaccinationDue),
+                this.statusNotes
+              )
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
