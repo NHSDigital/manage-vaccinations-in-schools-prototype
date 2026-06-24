@@ -230,23 +230,43 @@ export class AuditEvent {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      createdAt: formatDate(this.createdAt, { dateStyle: 'long' }),
-      createdBy: this.createdBy_uid && this.createdBy.fullName,
-      datetime: formatDate(this.createdAt, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      note: this.note && formatMarkdown(this.note),
-      outcome: this.outcome && formatTag(getScreenOutcomeStatus(this.outcome)),
-      outcomeAt:
-        this.outcomeAt && formatDate(this.outcomeAt, { dateStyle: 'long' }),
-      programmes: this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, { dateStyle: 'long' })
+            case 'createdBy':
+              return this.createdBy_uid && this.createdBy.fullName
+            case 'datetime':
+              return formatDate(this.createdAt, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })
+            case 'note':
+              return this.note && formatMarkdown(this.note)
+            case 'outcome':
+              return (
+                this.outcome && formatTag(getScreenOutcomeStatus(this.outcome))
+              )
+            case 'outcomeAt':
+              return (
+                this.outcomeAt &&
+                formatDate(this.outcomeAt, { dateStyle: 'long' })
+              )
+            case 'programmes':
+              return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**

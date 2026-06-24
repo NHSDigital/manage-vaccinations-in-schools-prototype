@@ -110,9 +110,19 @@ export class ClinicBooking {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      bookingReference: formatCode(this.bookingReference, true)
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'bookingReference':
+              return formatCode(this.bookingReference, true)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
