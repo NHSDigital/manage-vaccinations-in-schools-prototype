@@ -134,7 +134,7 @@ export class School extends Location {
    * @returns {string|undefined} Status description
    */
   get statusDescription() {
-    if (this.status === SchoolStatus.Open) {
+    if (this.isHomeOrUnknown || this.status === SchoolStatus.Open) {
       return
     }
 
