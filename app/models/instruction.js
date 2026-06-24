@@ -1,13 +1,13 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
+import { PatientSession, Programme } from '../models.js'
+
 import { BaseModel } from './base.js'
 
 /**
  * @typedef {BaseModelOptions & object} InstructionOptions
  * @property {string} [uuid] - Instruction UUID
  * @property {InstructionOutcome} [outcome] - Outcome
- * @property {string} [patientSession_uuid] - Patient session UUID
- * @property {string} [programme_id] - Programme ID
  */
 
 /**
@@ -25,12 +25,29 @@ export class Instruction extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.patientSession_uuid
+
+    /** @type {PatientSession|undefined} */
+    this.patientSession
+
+    /** @type {string|undefined} */
+    this.programme_id
+
+    /** @type {Programme|undefined} */
+    this.programme
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.patientSession_uuid = options?.patientSession_uuid
-    this.programme_id = options?.programme_id
   }
 }
+
+Instruction.relate(
+  'patientSession_uuid',
+  () => PatientSession,
+  'patientSession'
+)
+Instruction.relate('programme_id', () => Programme, 'programme')
 
 /**
  * @import { InstructionOutcome } from '../enums.js'

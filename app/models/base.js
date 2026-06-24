@@ -12,6 +12,7 @@ import {
  */
 export class BaseModel {
   static contextKey = ''
+  static foreignKeys = {}
   static identifierKey = ''
   static ns = ''
 
@@ -20,17 +21,30 @@ export class BaseModel {
    * @param {object} [context] - Context
    */
   constructor(options, context) {
+    /** @type {string|undefined} */
+    this.createdBy_uid
+
+    /** @type {User|undefined} */
+    this.createdBy
+
+    /** @type {string|undefined} */
+    this.updatedBy_uid
+
+    /** @type {User|undefined} */
+    this.updatedBy
+
     this.context = context
     this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
     this.createdAt_ = options?.createdAt_
-    this.createdBy_uid = options?.createdBy_uid
     this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.updatedAt_ = options?.updatedAt_
-    this.updatedBy_uid = options?.updatedBy_uid
-  }
 
-  get createdBy() {
-    return User.findOne(this.createdBy_uid, this.context)
+    // Assign foreign key properties from options
+    for (const key of Object.keys(
+      /** @type {typeof BaseModel} */ (this.constructor).foreignKeys
+    )) {
+      this[key] = options?.[key]
+    }
   }
 
   get createdAt_() {
@@ -43,12 +57,23 @@ export class BaseModel {
     }
   }
 
-  get updatedBy() {
-    return User.findOne(this.updatedBy_uid, this.context)
-  }
-
   get ns() {
     return /** @type {typeof BaseModel} */ (this.constructor).ns
+  }
+
+  static relate(key, getModel, as) {
+    this.foreignKeys = { ...this.foreignKeys, [key]: getModel }
+
+    Object.defineProperty(this.prototype, as, {
+      get() {
+        return getModel().findOne(this[key], this.context)
+      },
+      set(updates) {
+        getModel().update(this[key], updates, this.context)
+      },
+      configurable: true,
+      enumerable: false
+    })
   }
 
   toJSON() {
@@ -109,3 +134,6 @@ export class BaseModel {
     delete context?.[this.contextKey]?.[identifier]
   }
 }
+
+BaseModel.relate('createdBy_uid', () => User, 'createdBy')
+BaseModel.relate('updatedBy_uid', () => User, 'updatedBy')

@@ -35,11 +35,7 @@ import { BaseModel } from './base.js'
  * @property {string} [outcome] - Outcome for activity type
  * @property {Date} [outcomeAt] - Date outcome invalidates
  * @property {object} [outcomeAt_] - Date outcome invalidates (from `dateInput`)
- * @property {string} [patient_uuid] - Patient UUID
  * @property {Array<string>} [programme_ids] - Programme IDs
- * @property {string} [session_id] - Session ID
- * @property {string} [team_id] - Team ID
- * @property {string} [vaccination_uuid] - Vaccination UUID
  */
 
 /**
@@ -55,6 +51,30 @@ export class AuditEvent extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
+    /** @type {string|undefined} */
+    this.session_id
+
+    /** @type {Session|undefined} */
+    this.session
+
+    /** @type {string|undefined} */
+    this.team_id
+
+    /** @type {Team|undefined} */
+    this.team
+
+    /** @type {string|undefined} */
+    this.vaccination_uuid
+
+    /** @type {Vaccination|undefined} */
+    this.vaccination
+
     this.context = context
     this.name = options?.name
     this.note = options?.note
@@ -65,11 +85,7 @@ export class AuditEvent extends BaseModel {
     this.outcome = options?.outcome
     this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)
     this.outcomeAt_ = options?.outcomeAt_
-    this.patient_uuid = options?.patient_uuid
     this.programme_ids = stringToArray(options?.programme_ids)
-    this.session_id = options?.session_id
-    this.team_id = options?.team_id || '001'
-    this.vaccination_uuid = options?.vaccination_uuid
   }
 
   /**
@@ -115,21 +131,6 @@ export class AuditEvent extends BaseModel {
   }
 
   /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('AuditEvent.patient', error.message)
-    }
-  }
-
-  /**
    * Get programmes event relates to
    *
    * @returns {Array<Programme>} Programmes
@@ -142,47 +143,6 @@ export class AuditEvent extends BaseModel {
     }
 
     return []
-  }
-
-  /**
-   * Get session
-   *
-   * @returns {Session|undefined} Session
-   */
-  get session() {
-    try {
-      return Session.findOne(this.session_id, this.context)
-    } catch (error) {
-      console.error('AuditEvent.session', error.message)
-    }
-  }
-
-  /**
-   * Get team
-   *
-   * @returns {Team|undefined} Team
-   */
-  get team() {
-    try {
-      return Team.findOne(this.team_id, this.context)
-    } catch (error) {
-      console.error('AuditEvent.team', error.message)
-    }
-  }
-
-  /**
-   * Get vaccination
-   *
-   * @returns {Vaccination|undefined} Vaccination
-   */
-  get vaccination() {
-    try {
-      if (this.vaccination_uuid) {
-        return Vaccination.findOne(this.vaccination_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('AuditEvent.vaccination', error.message)
-    }
   }
 
   get summary() {
@@ -256,6 +216,11 @@ export class AuditEvent extends BaseModel {
     )
   }
 }
+
+AuditEvent.relate('patient_uuid', () => Patient, 'patient')
+AuditEvent.relate('session_id', () => Session, 'session')
+AuditEvent.relate('team_id', () => Team, 'team')
+AuditEvent.relate('vaccination_uuid', () => Vaccination, 'vaccination')
 
 /**
  * @import { AuditEventType } from '../enums.js'

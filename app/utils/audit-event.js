@@ -8,7 +8,8 @@ import _ from 'lodash'
  * @returns {{ key: string, before: string, after: string }[]} Updated fields
  */
 export function getUpdatedFields(before, after) {
-  const keys = Object.keys(before).filter((key) => !key.includes('_'))
+  const foreignKeys = Object.keys(before.constructor.foreignKeys)
+  const keys = Object.keys(before).filter((key) => !foreignKeys.includes(key))
   const updatedFields = []
 
   for (const key of keys) {

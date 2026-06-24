@@ -31,6 +31,12 @@ export class User extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.team_id
+
+    /** @type {Team|undefined} */
+    this.team
+
     this.context = context
     this.uid = options?.uid || faker.string.numeric(12)
     this.firstName = options?.firstName
@@ -66,19 +72,6 @@ export class User extends BaseModel {
    */
   get nameAndRole() {
     return `${this.fullName} (${this.role})`
-  }
-
-  /**
-   * Get team
-   *
-   * @returns {Team|undefined} Team
-   */
-  get team() {
-    try {
-      return Team.findOne(this.team_id, this.context)
-    } catch (error) {
-      console.error('User.team', error.message)
-    }
   }
 
   /**
@@ -163,6 +156,8 @@ export class User extends BaseModel {
     return `/users/${this.uid}`
   }
 }
+
+User.relate('team_id', () => Team, 'team')
 
 /**
  * @import { BaseModelOptions } from './base.js'

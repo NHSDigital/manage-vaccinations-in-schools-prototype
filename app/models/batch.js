@@ -37,12 +37,17 @@ export class Batch extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.vaccine_snomed
+
+    /** @type {Vaccine|undefined} */
+    this.vaccine
+
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('??####')
     this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
     this.expiry = options?.expiry ? new Date(options.expiry) : undefined
     this.expiry_ = options?.expiry_
-    this.vaccine_snomed = options?.vaccine_snomed
   }
 
   /**
@@ -83,22 +88,6 @@ export class Batch extends BaseModel {
     const prefix = isBefore(this.archivedAt, today()) ? 'Expired' : 'Expires'
 
     return `${this.formatted.id}<br>\n<span class="nhsuk-u-secondary-text-colour">${prefix} ${this.formatted.expiry}</span>`
-  }
-
-  /**
-   * Get vaccine this batch belongs to
-   *
-   * @returns {Vaccine|undefined} Vaccine
-   */
-  get vaccine() {
-    try {
-      const vaccine = this.context?.vaccines[this.vaccine_snomed]
-      if (vaccine) {
-        return new Vaccine(vaccine)
-      }
-    } catch (error) {
-      console.error('Batch.vaccine', error.message)
-    }
   }
 
   /**
@@ -158,6 +147,8 @@ export class Batch extends BaseModel {
     return archivedBatch
   }
 }
+
+Batch.relate('vaccine_snomed', () => Vaccine, 'vaccine')
 
 /**
  * @import { BaseModelOptions } from './base.js'

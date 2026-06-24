@@ -10,7 +10,6 @@ import { BaseModel } from './base.js'
  * @property {string} [uuid] - Notice UUID
  * @property {Date} [archivedAt] - Archived date
  * @property {NoticeType} [type] - Notice type
- * @property {string} [patient_uuid] - Patient notice applies to
  */
 
 /**
@@ -27,26 +26,16 @@ export class Notice extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
     this.type = options?.type
-    this.patient_uuid = options?.patient_uuid
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('Notice.patient', error.message)
-    }
   }
 
   /**
@@ -100,6 +89,8 @@ export class Notice extends BaseModel {
     return archivedNotice
   }
 }
+
+Notice.relate('patient_uuid', () => Patient, 'patient')
 
 /**
  * @import { NoticeType } from '../enums.js'

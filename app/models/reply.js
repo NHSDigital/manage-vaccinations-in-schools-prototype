@@ -62,10 +62,6 @@ import { BaseModel } from './base.js'
  * @property {string} [refusalReasonDetails] - Refusal reason details
  * @property {boolean} [selfConsent] - Reply given by child
  * @property {string} [note] - Note about this response
- * @property {string} [contact_uuid] - Contact UUID
- * @property {string} [patient_uuid] - Patient UUID
- * @property {string} [programme_id] - Programme ID
- * @property {string} [session_id] - Session ID
  */
 
 /**
@@ -82,6 +78,30 @@ export class Reply extends BaseModel {
    */
   constructor(options, context) {
     super(options, context)
+
+    /** @type {string|undefined} */
+    this.contact_uuid
+
+    /** @type {Contact|undefined} */
+    this.contact
+
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
+    /** @type {string|undefined} */
+    this.programme_id
+
+    /** @type {Programme|undefined} */
+    this.programme
+
+    /** @type {string|undefined} */
+    this.session_id
+
+    /** @type {Session|undefined} */
+    this.session
 
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
@@ -366,79 +386,6 @@ export class Reply extends BaseModel {
   }
 
   /**
-   * Get contact
-   *
-   * @returns {Contact|undefined} Contact
-   */
-  get contact() {
-    try {
-      if (this.contact_uuid) {
-        return Contact.findOne(this.contact_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('Reply.contact (get)', error.message)
-    }
-  }
-
-  /**
-   * Set contact
-   */
-  set contact(updates) {
-    try {
-      if (this.contact_uuid) {
-        Contact.update(this.contact_uuid, updates, this.context)
-      }
-    } catch (error) {
-      console.error('Reply.contact (set)', error.message)
-    }
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('Reply.patient', error.message)
-    }
-  }
-
-  /**
-   * Get programme
-   *
-   * @returns {Programme|undefined} User
-   */
-  get programme() {
-    try {
-      if (this.programme_id) {
-        return Programme.findOne(this.programme_id, this.context)
-      }
-    } catch (error) {
-      console.error('Upload.programme', error.message)
-    }
-  }
-
-  /**
-   * Get session
-   *
-   * @returns {Session|undefined} Session
-   */
-  get session() {
-    try {
-      if (this.session_id) {
-        return Session.findOne(this.session_id, this.context)
-      }
-    } catch (error) {
-      console.error('Reply.session', error.message)
-    }
-  }
-
-  /**
    * Get formatted values
    *
    * @returns {object} Formatted values
@@ -529,6 +476,11 @@ export class Reply extends BaseModel {
     return `${this.session.consentUrl}/${this.uuid}`
   }
 }
+
+Reply.relate('contact_uuid', () => Contact, 'contact')
+Reply.relate('patient_uuid', () => Patient, 'patient')
+Reply.relate('programme_id', () => Programme, 'programme')
+Reply.relate('session_id', () => Session, 'session')
 
 /**
  * @import { BaseModelOptions } from './base.js'

@@ -20,20 +20,11 @@ export class DefaultBatch extends Batch {
   constructor(options, context) {
     super(options, context)
 
-    this.session_id = options?.session_id
-  }
+    /** @type {string|undefined} */
+    this.session_id
 
-  /**
-   * Get session
-   *
-   * @returns {Session|undefined} Session
-   */
-  get session() {
-    try {
-      return Session.findOne(this.session_id, this.context)
-    } catch (error) {
-      console.error('DefaultBatch.session', error.message)
-    }
+    /** @type {Session|undefined} */
+    this.session
   }
 
   /**
@@ -56,6 +47,8 @@ export class DefaultBatch extends Batch {
     context.defaultBatches[id] = defaultBatch
   }
 }
+
+DefaultBatch.relate('session_id', () => Session, 'session')
 
 /**
  * @import { BatchOptions } from './batch.js'

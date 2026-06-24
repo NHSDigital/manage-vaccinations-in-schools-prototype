@@ -1,9 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { isBefore } from 'date-fns'
 
-import clinics from '../datasets/clinics.js'
-import schools from '../datasets/schools.js'
-import vaccines from '../datasets/vaccines.js'
 import {
   LocationType,
   ProgrammeType,
@@ -53,10 +50,8 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} VaccinationOptions
  * @property {string} [uuid] - Vaccination UUID
- * @property {string} [assessedBy_uid] - Who assessed child being vaccinated
  * @property {Date} [administeredAt] - Administered date
  * @property {object} [administeredAt_] - Administered date (from `dateInput`)
- * @property {string} [administeredBy_uid] - User who administered vaccination
  * @property {Date} [nhseSyncedAt] - Date synced with NHS England API
  * @property {LocationType} [locationType] - Location
  * @property {string} [locationName] - Location name
@@ -78,15 +73,8 @@ import { BaseModel } from './base.js'
  * @property {string} [protocol] - Protocol
  * @property {boolean} [scheduled] - Vaccination date was on schedule
  * @property {string} [note] - Note
- * @property {string} [clinic_id] - Clinic ID
- * @property {string} [school_id] - School ID
- * @property {string} [patient_uuid] - Patient UUID (used outside of a session)
- * @property {string} [patientSession_uuid] - Patient session UUID
- * @property {string} [programme_id] - Programme ID
  * @property {string} [programmeOther] - Non-NHS programme name
- * @property {string} [batch_id] - Batch ID
  * @property {boolean} [variant] - Is programme variant?
- * @property {string} [vaccine_snomed] - Vaccine SNOMED code
  */
 
 /**
@@ -104,13 +92,66 @@ export class Vaccination extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.administeredBy_uid
+
+    /** @type {User|undefined} */
+    this.administeredBy
+
+    /** @type {string|undefined} */
+    this.assessedBy_uid
+
+    /** @type {User|undefined} */
+    this.assessedBy
+
+    /** @type {string|undefined} */
+    this.batch_id
+
+    /** @type {Batch|undefined} */
+    this.batch
+
+    /** @type {string|undefined} */
+    this.clinic_id
+
+    /** @type {Clinic|undefined} */
+    this.clinic
+
+    /** @type {string|undefined} */
+    this.school_id
+
+    /** @type {School|undefined} */
+    this.school
+
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
+    /** @type {string|undefined} */
+    this.patientSession_uuid
+
+    /** @type {PatientSession|undefined} */
+    this.patientSession
+
+    /** @type {string|undefined} */
+    this.programme_id
+
+    /** @type {Programme|undefined} */
+    this.programme
+
+    /** @type {string|undefined} */
+    this.vaccine_snomed
+
+    /** @type {Vaccine|undefined} */
+    this.vaccine
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.administeredAt = options?.administeredAt
       ? new Date(options.administeredAt)
       : today()
     this.administeredAt_ = options?.administeredAt_
-    this.administeredBy_uid = options?.administeredBy_uid
     this.nhseSyncedAt = options?.nhseSyncedAt
       ? new Date(options.nhseSyncedAt)
       : undefined
@@ -136,22 +177,10 @@ export class Vaccination extends BaseModel {
       : undefined
     this.scheduled = stringToBoolean(options.scheduled)
     this.note = options?.note || ''
-    this.clinic_id = options?.clinic_id
-    this.school_id = options?.school_id
-    this.patient_uuid = options?.patient_uuid
-    this.patientSession_uuid = options?.patientSession_uuid
-    this.programme_id = options?.programme_id
     this.programmeOther = options?.programmeOther
-    this.batch_id = this.given ? options?.batch_id || '' : undefined
     this.variant = options?.variant
       ? stringToBoolean(options.variant)
       : undefined
-    this.vaccine_snomed = options?.vaccine_snomed
-
-    // Only VGD protocol needs a practitioner recording
-    if (this.protocol === VaccinationProtocol.VGD) {
-      this.assessedBy_uid = options?.assessedBy_uid
-    }
 
     if (this.outcome === VaccinationOutcome.AlreadyVaccinated) {
       this.addressLine1 = options?.addressLine1
@@ -213,21 +242,6 @@ export class Vaccination extends BaseModel {
   }
 
   /**
-   * Get batch
-   *
-   * @returns {Batch|undefined} Batch
-   */
-  get batch() {
-    try {
-      if (this.batch_id) {
-        return Batch.findOne(this.batch_id, this.context)
-      }
-    } catch (error) {
-      console.error('Vaccination.batch', error.message)
-    }
-  }
-
-  /**
    * Get batch expiry date for `dateInput`
    *
    * @returns {object|string} `dateInput` object
@@ -245,17 +259,6 @@ export class Vaccination extends BaseModel {
     if (object) {
       this.context.batches[this.batch_id].expiry =
         convertObjectToIsoDate(object)
-    }
-  }
-
-  /**
-   * Get vaccine
-   *
-   * @returns {object|undefined} Vaccine
-   */
-  get vaccine() {
-    if (this.vaccine_snomed) {
-      return new Vaccine(vaccines[this.vaccine_snomed])
     }
   }
 
@@ -307,32 +310,6 @@ export class Vaccination extends BaseModel {
   }
 
   /**
-   * Get patient session
-   *
-   * @returns {PatientSession|undefined} Patient session
-   */
-  get patientSession() {
-    try {
-      return PatientSession.findOne(this.patientSession_uuid, this.context)
-    } catch (error) {
-      console.error('Instruction.patientSession', error.message)
-    }
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    if (this.patient_uuid) {
-      return Patient.findOne(this.patient_uuid, this.context)
-    } else if (this.patientSession_uuid) {
-      return this.patientSession.patient
-    }
-  }
-
-  /**
    * Get session
    *
    * @returns {Session|undefined} Session
@@ -340,71 +317,6 @@ export class Vaccination extends BaseModel {
   get session() {
     if (this.patientSession) {
       return this.patientSession.session
-    }
-  }
-
-  /**
-   * Get user who administered vaccination
-   *
-   * @returns {User|undefined} User
-   */
-  get administeredBy() {
-    try {
-      if (this.createdBy_uid) {
-        return User.findOne(this.administeredBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Vaccination.administeredBy', error.message)
-    }
-  }
-
-  /**
-   * Get user who assessed child being vaccinated
-   *
-   * @returns {User|undefined} User
-   */
-  get assessedBy() {
-    try {
-      if (this.assessedBy_uid) {
-        return User.findOne(this.assessedBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Vaccination.assessedBy', error.message)
-    }
-  }
-
-  /**
-   * Get programme
-   *
-   * @returns {Programme|undefined} Programme
-   */
-  get programme() {
-    try {
-      return Programme.findOne(this.programme_id, this.context)
-    } catch (error) {
-      console.error('Vaccination.programme', error.message)
-    }
-  }
-
-  /**
-   * Get clinic
-   *
-   * @returns {Clinic|undefined} Clinic
-   */
-  get clinic() {
-    if (this.clinic_id) {
-      return new Clinic(clinics[this.clinic_id])
-    }
-  }
-
-  /**
-   * Get school
-   *
-   * @returns {School|undefined} School
-   */
-  get school() {
-    if (this.school_id) {
-      return new School(schools[this.school_id])
     }
   }
 
@@ -555,13 +467,13 @@ export class Vaccination extends BaseModel {
             case 'batch':
               return this.batch?.summary
             case 'batch_id':
-              return formatCode(this.batch_id)
+              return formatCode(this.batch.id)
             case 'dose':
               return formatMillilitres(this.dose)
             case 'sequence':
               return this.sequence && formatSequence(this.sequence)
             case 'vaccine_snomed':
-              return this.vaccine_snomed ? this.vaccine?.brand : 'Unknown'
+              return this.vaccine.snomed ? this.vaccine?.brand : 'Unknown'
             case 'note':
               return formatMarkdown(this.note)
             case 'outcome':
@@ -624,9 +536,23 @@ export class Vaccination extends BaseModel {
    * @returns {string} URI
    */
   get uri() {
-    return `/reports/${this.programme_id}/vaccinations/${this.uuid}`
+    return `/reports/${this.programme.id}/vaccinations/${this.uuid}`
   }
 }
+
+Vaccination.relate('administeredBy_uid', () => User, 'administeredBy')
+Vaccination.relate('assessedBy_uid', () => User, 'assessedBy')
+Vaccination.relate('batch_id', () => Batch, 'batch')
+Vaccination.relate('clinic_id', () => Clinic, 'clinic')
+Vaccination.relate('patient_uuid', () => Patient, 'patient')
+Vaccination.relate(
+  'patientSession_uuid',
+  () => PatientSession,
+  'patientSession'
+)
+Vaccination.relate('programme_id', () => Programme, 'programme')
+Vaccination.relate('school_id', () => School, 'school')
+Vaccination.relate('vaccine_snomed', () => Vaccine, 'vaccine')
 
 /**
  * @import { Session } from '../models.js'
