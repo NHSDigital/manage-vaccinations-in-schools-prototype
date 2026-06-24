@@ -356,16 +356,23 @@ export const patientController = {
     const { data, referrer } = request.session
     const { __, account } = response.locals
 
+    const patient = Patient.findOne(patient_uuid, data)
+
     // Update session data
-    const patient = Patient.update(
+    let updatedPatient = Patient.update(
       patient_uuid,
       {
-        ...data.wizard.patients[String(patient_uuid)],
-        ...{ createdBy_uid: account.uid }
+        ...data.wizard.patients[patient_uuid],
+        ...{ updatedBy_uid: account.uid }
       },
-      data,
-      true
+      data
     )
+
+    // Restore context to updated patient
+    updatedPatient = Patient.findOne(updatedPatient.uuid, data)
+
+    // Update activity log
+    updatedPatient.addAuditRecord(patient)
 
     // Clean up session data
     delete data.patient
@@ -373,7 +380,7 @@ export const patientController = {
 
     request.flash('success', __('patient.edit.success'))
 
-    return saveAndRedirect(request, response, referrer || patient.uri)
+    return saveAndRedirect(request, response, referrer || updatedPatient.uri)
   },
 
   /**

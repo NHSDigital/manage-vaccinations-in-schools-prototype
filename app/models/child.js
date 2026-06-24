@@ -29,6 +29,8 @@ import {
 /**
  * @typedef {object} ChildOptions
  * @property {string} [uuid] - Child UUID
+ * @property {Date} [updatedAt] - Updated date
+ * @property {string} [updatedBy_uid] - User who updated record
  * @property {string} [firstName] - First name
  * @property {string} [lastName] - Last name
  * @property {string} [preferredFirstName] - Preferred first name
@@ -63,6 +65,8 @@ export class Child {
    */
   constructor(options, context) {
     this.context = context
+    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
+    this.updatedBy_uid = options?.updatedBy_uid
     this.uuid = options?.uuid || faker.string.uuid()
     this.firstName = options?.firstName || ''
     this.lastName = options?.lastName || ''

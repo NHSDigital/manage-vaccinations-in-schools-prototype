@@ -23,6 +23,7 @@ import {
   Reply,
   Vaccination
 } from '../models.js'
+import { getUpdatedFields } from '../utils/audit-event.js'
 import { getDateValueDifference, removeDays, today } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
 import { getPreferredNames } from '../utils/reply.js'
@@ -606,50 +607,16 @@ export class Patient extends Child {
    * @param {string} uuid - Patient record UUID
    * @param {object} updates - Updates
    * @param {object} context - Context
-   * @param {boolean} log - Update activity log
    * @returns {Patient} Updated patient record
    * @static
    */
-  static update(uuid, updates, context, log = false) {
+  static update(uuid, updates, context) {
     // Sanitise any checkbox values in the updates
     if (updates?.clinicProgramme_ids) {
       updates.clinicProgramme_ids = stringToArray(updates.clinicProgramme_ids)
     }
 
-    const patient = Patient.findOne(uuid, context)
     const updatedPatient = _.merge(Patient.findOne(uuid, context), updates)
-
-    // Add update to activity log
-    // TODO: Make this work with nested values
-    if (log) {
-      const updatedFields = []
-      const thing = new Patient(updatedPatient, context)
-      for (let key of Object.keys(updates)) {
-        // Prefer ISO 8601 date value instead date input object
-        if (key.endsWith('_')) {
-          key = key.slice(0, -1)
-        }
-
-        const before = patient.formatted?.[key] || patient?.[key]
-        const after = thing.formatted?.[key] || thing?.[key]
-
-        if (!_.isMatch(before, after)) {
-          updatedFields.push({
-            key: `patient.${key}.label`,
-            before: String(before).replace('<br>', ', '),
-            after: String(after).replace('<br>', ', ')
-          })
-        }
-      }
-
-      updatedPatient.addEvent({
-        name: activity.patient.updated(),
-        type: AuditEventType.Record,
-        createdAt: today(),
-        createdBy_uid: updates.createdBy_uid,
-        updatedFields
-      })
-    }
 
     // Remove patient context
     delete updatedPatient.context
@@ -661,15 +628,6 @@ export class Patient extends Child {
     context.patients[updatedPatient.uuid] = updatedPatient
 
     return updatedPatient
-  }
-
-  /**
-   * Add event to activity log
-   *
-   * @param {object} event - Event
-   */
-  addEvent(event) {
-    this.events.push(new AuditEvent(event))
   }
 
   /**
@@ -692,6 +650,34 @@ export class Patient extends Child {
     })
 
     return archivedPatient
+  }
+
+  /**
+   * Add event to activity log
+   *
+   * @param {object} event - Event
+   */
+  addEvent(event) {
+    this.events.push(new AuditEvent(event))
+  }
+
+  /**
+   * Add updates to activity log
+   *
+   * @param {Patient} before - Original values
+   */
+  addAuditRecord(before) {
+    const updatedFields = getUpdatedFields(before, this)
+
+    if (updatedFields.length) {
+      this.addEvent({
+        name: activity.patient.updated(),
+        type: AuditEventType.Record,
+        createdAt: today(),
+        createdBy_uid: this.updatedBy_uid,
+        updatedFields
+      })
+    }
   }
 
   /**
