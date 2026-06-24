@@ -56,9 +56,19 @@ export class User {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      uid: formatCode(this.uid)
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'uid':
+              return formatCode(this.uid)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**

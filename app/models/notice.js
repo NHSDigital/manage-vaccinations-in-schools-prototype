@@ -50,9 +50,19 @@ export class Notice {
    * @returns {object} Formatted values
    */
   get formatted() {
-    return {
-      createdAt: formatDate(this.createdAt, { dateStyle: 'long' })
-    }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, { dateStyle: 'long' })
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
