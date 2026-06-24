@@ -102,12 +102,25 @@ export class Batch {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const createdAt = formatDate(this.createdAt, { dateStyle: 'long' })
-    const updatedAt = formatDate(this.updatedAt, { dateStyle: 'long' })
-    const expiry = formatDate(this.expiry, { dateStyle: 'long' })
-    const id = formatCode(this.id)
-
-    return { createdAt, updatedAt, expiry, id }
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'createdAt':
+              return formatDate(this.createdAt, { dateStyle: 'long' })
+            case 'updatedAt':
+              return formatDate(this.updatedAt, { dateStyle: 'long' })
+            case 'expiry':
+              return formatDate(this.expiry, { dateStyle: 'long' })
+            case 'id':
+              return formatCode(this.id)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**
