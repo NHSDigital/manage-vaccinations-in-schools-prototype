@@ -214,46 +214,69 @@ export class Upload {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const yearGroups = this.yearGroups?.map((item) => formatYearGroup(item))
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          // Lazy formatting of timestamps
+          const getCreatedAt = () =>
+            formatDate(this.createdAt, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })
 
-    const createdAt = formatDate(this.createdAt, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    })
-    const updatedAt = formatDate(this.updatedAt, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    })
+          const getUpdatedAt = () =>
+            formatDate(this.updatedAt, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })
 
-    return {
-      createdAt,
-      createdBy: this.createdBy?.fullName,
-      created: `${createdAt} by ${this.createdBy?.fullName}`,
-      updatedAt,
-      updatedBy: this.updatedBy?.fullName,
-      updated: this.updatedAt && `${updatedAt} by ${this.updatedBy?.fullName}`,
-      ...(this.type === UploadType.School && {
-        school: this.school?.name,
-        yearGroups: prototypeFilters.formatList(yearGroups)
-      }),
-      ...(this.type === UploadType.School && {
-        school: this.school?.name,
-        yearGroups: prototypeFilters.formatList(yearGroups)
-      }),
-      patients: this.patients.length,
-      status:
-        this.status === UploadStatus.Processing
-          ? formatProgress(this.progress)
-          : formatTag(getUploadStatus(this.status))
-    }
+          switch (prop) {
+            case 'createdAt':
+              return getCreatedAt()
+            case 'createdBy':
+              return this.createdBy?.fullName
+            case 'created':
+              return `${getCreatedAt()} by ${this.createdBy?.fullName}`
+            case 'updatedAt':
+              return getUpdatedAt()
+            case 'updatedBy':
+              return this.updatedBy?.fullName
+            case 'updated':
+              return (
+                this.updatedAt &&
+                `${getUpdatedAt()} by ${this.updatedBy?.fullName}`
+              )
+            case 'school':
+              if (this.type !== UploadType.School) return undefined
+              return this.school?.name
+            case 'yearGroups': {
+              if (this.type !== UploadType.School) return undefined
+              const yearGroups = this.yearGroups?.map((item) =>
+                formatYearGroup(item)
+              )
+              return prototypeFilters.formatList(yearGroups)
+            }
+            case 'patients':
+              return this.patients.length
+            case 'status':
+              return this.status === UploadStatus.Processing
+                ? formatProgress(this.progress)
+                : formatTag(getUploadStatus(this.status))
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 
   /**

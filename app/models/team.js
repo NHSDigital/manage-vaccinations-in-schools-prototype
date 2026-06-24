@@ -98,30 +98,41 @@ export class Team {
    * @returns {object} Formatted values
    */
   get formatted() {
-    const sessionOpenWeeks = prototypeFilters.plural(
-      this.sessionOpenWeeks,
-      'week'
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'sessionOpenWeeks': {
+              const weeks = prototypeFilters.plural(
+                this.sessionOpenWeeks,
+                'week'
+              )
+              return `Send ${weeks} before first session`
+            }
+            case 'sessionReminderWeeks': {
+              const weeks = prototypeFilters.plural(
+                this.sessionReminderWeeks,
+                'week'
+              )
+              return `Send ${weeks} before each session`
+            }
+            case 'nasalSprayDuration':
+              return prototypeFilters.plural(
+                this.clinicNasalSprayDuration,
+                'minute'
+              )
+            case 'injectionDuration':
+              return prototypeFilters.plural(
+                this.clinicInjectionDuration,
+                'minute'
+              )
+            default:
+              return undefined
+          }
+        }
+      }
     )
-    const sessionReminderWeeks = prototypeFilters.plural(
-      this.sessionReminderWeeks,
-      'week'
-    )
-
-    const nasalSprayDuration = prototypeFilters.plural(
-      this.clinicNasalSprayDuration,
-      'minute'
-    )
-    const injectionDuration = prototypeFilters.plural(
-      this.clinicInjectionDuration,
-      'minute'
-    )
-
-    return {
-      sessionOpenWeeks: `Send ${sessionOpenWeeks} before first session`,
-      sessionReminderWeeks: `Send ${sessionReminderWeeks} before each session`,
-      nasalSprayDuration,
-      injectionDuration
-    }
   }
 
   /**
