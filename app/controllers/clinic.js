@@ -45,13 +45,15 @@ export const clinicController = {
     const { data } = request.session
     const { __ } = response.locals
 
-    const clinic = Clinic.create(
+    let clinic = Clinic.create(
       {
         ...request.body.clinic,
         team_id
       },
       data
     )
+
+    clinic = Clinic.findOne(clinic.id, data)
 
     request.flash('success', __(`clinic.new.success`, { clinic }))
 

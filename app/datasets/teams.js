@@ -1,5 +1,3 @@
-import clinics from './clinics.js'
-
 export default [
   {
     id: '001',
@@ -7,10 +5,7 @@ export default [
     name: 'Coventry and Warwickshire Partnership NHS Trust',
     email: 'enquiries@covwarkpt.nhs.uk',
     tel: '024 7636 2100',
-    privacyPolicyUrl: 'https://www.covwarkpt.nhs.uk/download.cfm?ver=8286',
-    clinic_ids: Object.values(clinics)
-      .filter((clinic) => clinic.team_id == '001')
-      .map((clinic) => clinic.id)
+    privacyPolicyUrl: 'https://www.covwarkpt.nhs.uk/download.cfm?ver=8286'
   },
   {
     id: '002',
