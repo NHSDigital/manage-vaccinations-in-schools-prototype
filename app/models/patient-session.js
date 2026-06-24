@@ -78,10 +78,6 @@ import { BaseModel } from './base.js'
  * @property {Gillick} [gillick] - Gillick assessment
  * @property {Array<AuditEvent>} [notes] - Notes
  * @property {boolean} [alternative] - Administer alternative vaccine
- * @property {string} [patient_uuid] - Patient UUID
- * @property {string} [instruction_uuid] - Instruction UUID
- * @property {string} [programme_id] - Programme ID
- * @property {string} [session_id] - Session ID
  */
 
 /**
@@ -99,30 +95,35 @@ export class PatientSession extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.instruction_uuid
+
+    /** @type {Patient|undefined} */
+    this.instruction
+
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
+    /** @type {string|undefined} */
+    this.programme_id
+
+    /** @type {Programme|undefined} */
+    this.programme
+
+    /** @type {string|undefined} */
+    this.session_id
+
+    /** @type {Session|undefined} */
+    this.session
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.gillick = options?.gillick && new Gillick(options.gillick)
     this.notes = options?.notes || []
     this.alternative = options?.alternative || false
-    this.patient_uuid = options?.patient_uuid
-    this.instruction_uuid = options?.instruction_uuid
-    this.programme_id = options?.programme_id
-    this.session_id = options?.session_id
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('PatientSession.patient', error.message)
-    }
   }
 
   /**
@@ -141,19 +142,6 @@ export class PatientSession extends BaseModel {
    */
   get yearGroup() {
     return getYearGroup(this.patient?.dob, this.session?.academicYear)
-  }
-
-  /**
-   * Get instruction
-   *
-   * @returns {Instruction|undefined} Instruction
-   */
-  get instruction() {
-    try {
-      return Instruction.findOne(this.instruction_uuid, this.context)
-    } catch (error) {
-      console.error('PatientSession.instruction', error.message)
-    }
   }
 
   /**
@@ -303,32 +291,6 @@ export class PatientSession extends BaseModel {
   get screenVaccineCriteria() {
     if (this.programme && this.responses) {
       return getScreenVaccineCriteria(this.programme, this.responses)
-    }
-  }
-
-  /**
-   * Get programme
-   *
-   * @returns {Programme|undefined} Programme
-   */
-  get programme() {
-    try {
-      return Programme.findOne(this.programme_id, this.context)
-    } catch (error) {
-      console.error('PatientSession.programme', error.message)
-    }
-  }
-
-  /**
-   * Get session
-   *
-   * @returns {Session|undefined} Session
-   */
-  get session() {
-    try {
-      return Session.findOne(this.session_id, this.context)
-    } catch (error) {
-      console.error('PatientSession.session', error.message)
     }
   }
 
@@ -1192,6 +1154,11 @@ export class PatientSession extends BaseModel {
     })
   }
 }
+
+PatientSession.relate('instruction_uuid', () => Instruction, 'instruction')
+PatientSession.relate('patient_uuid', () => Patient, 'patient')
+PatientSession.relate('programme_id', () => Programme, 'programme')
+PatientSession.relate('session_id', () => Session, 'session')
 
 /**
  * @import { InstructionOutcome, ScreenVaccineCriteria } from '../enums.js'

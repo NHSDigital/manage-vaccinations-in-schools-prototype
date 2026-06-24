@@ -34,9 +34,6 @@ import { BaseModel } from './base.js'
  * @property {boolean} [recordOffline] - Include columns for recording offline
  * @property {Array<DownloadVariable>} [variables] - Download variables
  * @property {number} [academicYear] - Programme year
- * @property {string} [programme_id] - Programme ID
- * @property {string} [school_id] - School ID
- * @property {string} [session_id] - Session ID
  * @property {Array<string>} [team_ids] - Team IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
@@ -56,6 +53,24 @@ export class Download extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.programme_id
+
+    /** @type {Programme|undefined} */
+    this.programme
+
+    /** @type {string|undefined} */
+    this.session_id
+
+    /** @type {Session|undefined} */
+    this.session
+
+    /** @type {string|undefined} */
+    this.school_id
+
+    /** @type {School|undefined} */
+    this.school
+
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
     this.format = options?.format || DownloadFormat.CSV
@@ -71,7 +86,6 @@ export class Download extends BaseModel {
     }
 
     if ([DownloadType.Cohort, DownloadType.Report].includes(this.type)) {
-      this.programme_id = options?.programme_id
       this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
     }
 
@@ -84,8 +98,6 @@ export class Download extends BaseModel {
 
     if (this.type === DownloadType.Session) {
       this.recordOffline = stringToBoolean(options?.recordOffline)
-      this.school_id = options?.school_id
-      this.session_id = options?.session_id
     }
   }
 
@@ -148,48 +160,6 @@ export class Download extends BaseModel {
         return `Session spreadsheet`
       default:
         return 'Download'
-    }
-  }
-
-  /**
-   * Get programme
-   *
-   * @returns {Programme|undefined} Programme
-   */
-  get programme() {
-    try {
-      const programme = this.context?.programmes[this.programme_id]
-      if (programme) {
-        return new Programme(programme)
-      }
-    } catch (error) {
-      console.error('Download.programme', error.message)
-    }
-  }
-
-  /**
-   * Get school
-   *
-   * @returns {School|undefined} School
-   */
-  get school() {
-    try {
-      return School.findOne(this.school_id, this.context)
-    } catch (error) {
-      console.error('Download.school', error.message)
-    }
-  }
-
-  /**
-   * Get session
-   *
-   * @returns {Session|undefined} Session
-   */
-  get session() {
-    try {
-      return Session.findOne(this.session_id, this.context)
-    } catch (error) {
-      console.error('Download.session', error.message)
     }
   }
 
@@ -475,6 +445,10 @@ export class Download extends BaseModel {
     return { buffer, fileName: `${name}.${extension}`, mimetype }
   }
 }
+
+Download.relate('programme_id', () => Programme, 'programme')
+Download.relate('school_id', () => School, 'school')
+Download.relate('session_id', () => Session, 'session')
 
 /**
  * @import { DownloadVariable } from '../enums.js'

@@ -38,8 +38,6 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} PatientProgrammeOptions
  * @property {boolean} [invitedToClinic] - Invited to clinic
- * @property {string} [patient_uuid] - Patient UUID
- * @property {string} [programme_id] - Programme ID
  */
 
 /**
@@ -55,44 +53,20 @@ export class PatientProgramme extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
+    /** @type {string|undefined} */
+    this.programme_id
+
+    /** @type {Programme|undefined} */
+    this.programme
+
     this.context = context
     this.invitedToClinic = options?.invitedToClinic
-    this.patient_uuid = options?.patient_uuid
-    this.programme_id = options?.programme_id
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('PatientProgramme.patient', error.message)
-    }
-  }
-
-  /**
-   * Get programme
-   *
-   * @returns {Programme|undefined} Programme
-   */
-  get programme() {
-    try {
-      const programme = Programme.findOne(this.programme_id, this.context)
-
-      if (this.programme_id === 'mmr' && this.patient?.age <= 6) {
-        programme.name = 'MMRV'
-      }
-
-      return programme
-    } catch (error) {
-      console.error('PatientProgramme.programme', error.message)
-    }
   }
 
   /**
@@ -643,6 +617,9 @@ export class PatientProgramme extends BaseModel {
     return `/patients/${this.patient_uuid}/programmes/${this.programme_id}`
   }
 }
+
+PatientProgramme.relate('patient_uuid', () => Patient, 'patient')
+PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
  * @import { RecordVaccineCriteria } from '../enums.js'

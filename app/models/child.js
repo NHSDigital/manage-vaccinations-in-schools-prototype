@@ -1,6 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import schools from '../datasets/schools.js'
 import {
   Adjustment,
   EthnicBackgroundAsian,
@@ -52,7 +51,6 @@ import { BaseModel } from './base.js'
  * @property {string} [gpSurgery] - GP surgery
  * @property {number} [academicYearGroup] - Academic year group (override)
  * @property {string} [registrationGroup] - Registration group
- * @property {string} [school_id] - School
  */
 
 /**
@@ -67,6 +65,12 @@ export class Child extends BaseModel {
    */
   constructor(options, context) {
     super(options, context)
+
+    /** @type {string|undefined} */
+    this.school_id
+
+    /** @type {School|undefined} */
+    this.school
 
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
@@ -87,10 +91,6 @@ export class Child extends BaseModel {
     this.gpSurgery = options?.gpSurgery
     this.academicYearGroup = options?.academicYearGroup || this.yearGroup
     this.registrationGroup = options?.registrationGroup
-
-    if (!this.agedOutOfProgrammes) {
-      this.school_id = options?.school_id
-    }
 
     if (this.ethnicGroup === EthnicGroup.Other) {
       this.ethnicGroupOther = options?.ethnicGroupOther
@@ -287,17 +287,6 @@ export class Child extends BaseModel {
   }
 
   /**
-   * Get school
-   *
-   * @returns {School|undefined} School
-   */
-  get school() {
-    if (this.school_id) {
-      return new School(schools[this.school_id], this.context)
-    }
-  }
-
-  /**
    * Get school name
    *
    * @returns {string|undefined} School name
@@ -370,6 +359,8 @@ export class Child extends BaseModel {
     )
   }
 }
+
+Child.relate('school_id', () => School, 'school')
 
 /**
  * @import { Gender, EthnicBackground } from '../enums.js'

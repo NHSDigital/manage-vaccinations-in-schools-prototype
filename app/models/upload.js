@@ -25,7 +25,6 @@ import { BaseModel } from './base.js'
  * @property {number} [progress] - Upload import progress
  * @property {object} [validations] - File validations
  * @property {Array<number>} [yearGroups] - Year groups
- * @property {string} [school_id] - School IDs
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  */
 
@@ -44,6 +43,12 @@ export class Upload extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.school_id
+
+    /** @type {School|undefined} */
+    this.school
+
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
     this.status = options?.status || UploadStatus.Processing
@@ -55,7 +60,6 @@ export class Upload extends BaseModel {
 
     if (this.type === UploadType.School) {
       this.yearGroups = stringToArray(options?.yearGroups)
-      this.school_id = options?.school_id
     }
   }
 
@@ -136,17 +140,6 @@ export class Upload extends BaseModel {
       return Move.findAll(this.context).filter((move) =>
         this.patient_uuids.includes(move.patient_uuid)
       )
-    }
-  }
-
-  /**
-   * Get school
-   *
-   * @returns {object|undefined} School
-   */
-  get school() {
-    if (this.type === UploadType.School && this.school_id) {
-      return School.findOne(this.school_id, this.context)
     }
   }
 
@@ -258,6 +251,8 @@ export class Upload extends BaseModel {
     return `/uploads/${this.id}`
   }
 }
+
+Upload.relate('school_id', () => School, 'school')
 
 /**
  * @import { BaseModelOptions } from './base.js'

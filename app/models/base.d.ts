@@ -7,6 +7,7 @@ export interface BaseModelOptions {
 
 export class BaseModel {
   static contextKey: string
+  static foreignKeys: Record<string, () => typeof BaseModel>
   static identifierKey: string
   static ns: string
 
@@ -25,13 +26,9 @@ export class BaseModel {
 
   set createdAt_(object: object): void
 
-  /**
-   * Remove `context` so it's hidden from JSON.stringify, or we'll get
-   * circular reference issues during saving
-   *
-   * @returns Object ready to be serialized to JSON
-   */
   toJSON(): Omit<this, 'context'>
+
+  static relate(key: string, getModel: () => typeof BaseModel, as: string): void
 
   static findAll<T extends typeof BaseModel>(
     this: T,

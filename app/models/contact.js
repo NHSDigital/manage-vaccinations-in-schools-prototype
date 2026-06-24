@@ -21,7 +21,6 @@ import { BaseModel } from './base.js'
  * @property {NotifySmsStatus} [smsStatus] - SMS status
  * @property {boolean} [contactPreference] - Preferred contact method
  * @property {string} [contactPreferenceDetails] - Contact method details
- * @property {string} [patient_uuid] - Patient UUID
  */
 
 /**
@@ -38,6 +37,12 @@ export class Contact extends BaseModel {
    */
   constructor(options, context) {
     super(options, context)
+
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
 
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
@@ -63,8 +68,6 @@ export class Contact extends BaseModel {
     if (this.contactPreference) {
       this.contactPreferenceDetails = options?.contactPreferenceDetails
     }
-
-    this.patient_uuid = options?.patient_uuid
   }
 
   /**
@@ -74,21 +77,6 @@ export class Contact extends BaseModel {
    */
   get fullNameAndRelationship() {
     return formatContact(this, false)
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('Contact.patient', error.message)
-    }
   }
 
   /**
@@ -125,6 +113,8 @@ export class Contact extends BaseModel {
     return `/contacts/${this.uuid}`
   }
 }
+
+Contact.relate('patient_uuid', () => Patient, 'patient')
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'

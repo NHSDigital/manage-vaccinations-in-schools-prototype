@@ -1,7 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import schools from '../datasets/schools.js'
-import { Patient, Team } from '../models.js'
+import { Patient, School, Team } from '../models.js'
 import { formatDate } from '../utils/date.js'
 
 import { BaseModel } from './base.js'
@@ -11,10 +10,6 @@ import { BaseModel } from './base.js'
  * @property {string} [uuid] - Move UUID
  * @property {boolean} [ignored] - Reported move is ignored
  * @property {MoveSource} [source] - Reporting source
- * @property {string} [team_id] - Team ID (moving from)
- * @property {string} [from_urn] - Current school URN (moving from)
- * @property {string} [to_urn] - Proposed school URN (moving to)
- * @property {string} [patient_uuid] - Patient UUID
  */
 
 /**
@@ -31,29 +26,34 @@ export class Move extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.from_urn
+
+    /** @type {School|undefined} */
+    this.from
+
+    /** @type {string|undefined} */
+    this.patient_uuid
+
+    /** @type {Patient|undefined} */
+    this.patient
+
+    /** @type {string|undefined} */
+    this.team_id
+
+    /** @type {Team|undefined} */
+    this.team
+
+    /** @type {string|undefined} */
+    this.to_urn
+
+    /** @type {School|undefined} */
+    this.to
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.ignored = options?.ignored || false
     this.source = options?.source
-    this.team_id = options?.team_id
-    this.from_urn = options?.from_urn
-    this.to_urn = options?.to_urn
-    this.patient_uuid = options?.patient_uuid
-  }
-
-  /**
-   * Get patient
-   *
-   * @returns {Patient|undefined} Patient
-   */
-  get patient() {
-    try {
-      if (this.patient_uuid) {
-        return Patient.findOne(this.patient_uuid, this.context)
-      }
-    } catch (error) {
-      console.error('Move.patient', error.message)
-    }
   }
 
   get movement() {
@@ -74,17 +74,15 @@ export class Move extends BaseModel {
       {},
       {
         get: (_target, prop) => {
-          const getTeam = () => Team.findOne(this.team_id, this.context)
-
           switch (prop) {
             case 'createdAt':
               return formatDate(this.createdAt, { dateStyle: 'long' })
             case 'team_id':
-              return this.team_id ? getTeam()?.name : 'Unknown team'
+              return this.team?.name || 'Unknown team'
             case 'from_urn':
-              return schools[this.from_urn]?.name || 'Unknown school'
+              return this.from?.name || 'Unknown school'
             case 'to_urn':
-              return schools[this.to_urn]?.name || 'Unknown school'
+              return this.to?.name || 'Unknown school'
             default:
               return undefined
           }
@@ -126,6 +124,11 @@ export class Move extends BaseModel {
     Move.delete(uuid, context)
   }
 }
+
+Move.relate('from_urn', () => School, 'from')
+Move.relate('patient_uuid', () => Patient, 'patient')
+Move.relate('team_id', () => Team, 'team')
+Move.relate('to_urn', () => School, 'to')
 
 /**
  * @import { MoveSource } from '../enums.js'

@@ -71,12 +71,10 @@ import { BaseModel } from './base.js'
  * @property {boolean} [registration] - Does session have registration?
  *
  *   Clinics only
- * @property {string} [clinic_id] - Clinic ID
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [appointmentLength] - Standard length of the clinic appointment, in minutes
  *
  *   Schools only
- * @property {string} [school_id] - School URN
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Date} [openAt] - Date consent window opens
  * @property {object} [openAt_] - Date consent window opens (from `dateInput`)
@@ -103,6 +101,18 @@ export class Session extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.clinic_id
+
+    /** @type {Clinic|undefined} */
+    this.clinic
+
+    /** @type {string|undefined} */
+    this.school_id
+
+    /** @type {School|undefined} */
+    this.school
+
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('###')
     this.type = options?.type || SessionType.School
@@ -113,7 +123,6 @@ export class Session extends BaseModel {
     this.cancelled = options?.cancelled || false
 
     if (this.type === SessionType.Clinic) {
-      this.clinic_id = options?.clinic_id
       this.vaccinationPeriods = options?.vaccinationPeriods
         ? options.vaccinationPeriods.map(
             (period) => new ClinicVaccinationPeriod(period)
@@ -123,7 +132,6 @@ export class Session extends BaseModel {
     }
 
     if (this.type === SessionType.School) {
-      this.school_id = options?.school_id
       this.yearGroups = stringToArray(options?.yearGroups).map(Number)
       this.openAt = options?.openAt
         ? new Date(options.openAt)
@@ -374,21 +382,6 @@ export class Session extends BaseModel {
         return SessionStatus.Completed
       default:
         return SessionStatus.Planned
-    }
-  }
-
-  /**
-   * Get clinic
-   *
-   * @returns {Clinic|undefined}} Clinic
-   */
-  get clinic() {
-    if (this.clinic_id) {
-      try {
-        return Clinic.findOne(this.clinic_id, this.context)
-      } catch (error) {
-        console.error('Session.clinic', error.message)
-      }
     }
   }
 
@@ -679,21 +672,6 @@ export class Session extends BaseModel {
     })
 
     return appointmentsWithoutVaccinators
-  }
-
-  /**
-   * Get school
-   *
-   * @returns {School|undefined} School
-   */
-  get school() {
-    if (this.school_id) {
-      try {
-        return School.findOne(this.school_id, this.context)
-      } catch (error) {
-        console.error('Session.school', error.message)
-      }
-    }
   }
 
   /**
@@ -1221,6 +1199,9 @@ export class Session extends BaseModel {
     this.register[patient_uuid] = registration
   }
 }
+
+Session.relate('clinic_id', () => Clinic, 'clinic')
+Session.relate('school_id', () => School, 'school')
 
 /**
  * @import { RegistrationOutcome, SessionMMRConsent, SessionPreset } from '../enums.js'

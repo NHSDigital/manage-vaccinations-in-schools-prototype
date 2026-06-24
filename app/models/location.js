@@ -14,7 +14,6 @@ import { BaseModel } from './base.js'
  * @property {string} [addressLine2] - Address line 2
  * @property {string} [addressLevel1] - Address level 1
  * @property {string} [postalCode] - Postcode
- * @property {string} [team_id] - Team ID
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  */
 
@@ -31,6 +30,12 @@ export class Location extends BaseModel {
   constructor(options, context) {
     super(options, context)
 
+    /** @type {string|undefined} */
+    this.team_id
+
+    /** @type {Team|undefined} */
+    this.team
+
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('?#####')
     this.name = options?.name
@@ -38,7 +43,6 @@ export class Location extends BaseModel {
     this.addressLine2 = options?.addressLine2
     this.addressLevel1 = options?.addressLevel1
     this.postalCode = options?.postalCode
-    this.team_id = options?.team_id
     this.presetNames = options?.presetNames || []
   }
 
@@ -67,22 +71,6 @@ export class Location extends BaseModel {
     return {
       name: this.name,
       ...this.address
-    }
-  }
-
-  /**
-   * Get team
-   *
-   * @returns {Team|undefined} Team
-   */
-  get team() {
-    try {
-      const team = this.context?.teams[this.team_id]
-      if (team) {
-        return new Team(team)
-      }
-    } catch (error) {
-      console.error('Location.team', error.message)
     }
   }
 
@@ -162,6 +150,8 @@ export class Location extends BaseModel {
     )
   }
 }
+
+Location.relate('team_id', () => Team, 'team')
 
 /**
  * @import { SessionPreset, SessionPresetName } from '../enums.js'
