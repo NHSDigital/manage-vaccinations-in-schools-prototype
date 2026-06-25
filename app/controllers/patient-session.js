@@ -94,7 +94,8 @@ export const patientSessionController = {
         !session.isActive &&
         consent === ConsentOutcome.NoResponse,
       // Perform Gillick assessment
-      canGillick: session.isActive && !vaccinated && !consentGiven,
+      canGillick:
+        session.isActive && !vaccinated && !consentGiven && !userIsHCA,
       // Perform triage
       canTriage: !userIsHCA,
       // Patient needs triage
