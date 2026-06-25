@@ -563,14 +563,14 @@ export class PatientProgramme {
           ? 'Not eligible for school age immunisation'
           : `Eligible from 1 September ${this.year}`
       case PatientStatus.Vaccinated:
-        return `Vaccinated on ${this.lastVaccinationGiven.formatted.createdAt_dateShort}`
+        return `Vaccinated on ${this.lastVaccinationGiven.formatted.administeredAt_dateShort}`
       case PatientStatus.Triage:
         return this.lastPatientSession.patientTriage
       case PatientStatus.Due:
         return this.lastPatientSession.vaccineCriteria
       case PatientStatus.Deferred:
         return this.lastVaccinationOutcome
-          ? `${this.lastPatientSession.patientDeferred} on ${this.lastVaccinationOutcome.formatted.createdAt_dateShort}`
+          ? `${this.lastPatientSession.patientDeferred} on ${this.lastVaccinationOutcome.formatted.administeredAt_dateShort}`
           : this.lastPatientSession.patientDeferred
       case PatientStatus.Refused:
         return this.lastPatientSession.patientRefused

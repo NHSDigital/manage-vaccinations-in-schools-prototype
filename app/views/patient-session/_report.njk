@@ -13,8 +13,8 @@
   {% for vaccination in patientSession.vaccinationOutcomes | reverse %}
     {% set vaccinationRows = vaccinationRows | push([
       {
-        header: __("vaccination.createdAt_date.label"),
-        html: vaccination.link.createdAt
+        header: __("vaccination.administeredAt_date.label"),
+        html: vaccination.link.administeredAt
       },
       {
         header: __("vaccination.outcome.label"),
@@ -28,7 +28,7 @@
     caption: __("patientSession.vaccinationOutcomes.label"),
     responsive: true,
     head: [
-      { text: __("vaccination.createdAt_date.label") },
+      { text: __("vaccination.administeredAt_date.label") },
       { text: __("vaccination.outcome.label") }
     ],
     rows: vaccinationRows

@@ -39,12 +39,12 @@
       {% for vaccination in patientProgramme.vaccinationsGiven %}
         {% set vaccinationRows = vaccinationRows | push([
           {
-            header: __("vaccination.createdAt.label"),
-            html: vaccination.link.createdAt
+            header: __("vaccination.administeredAt.label"),
+            html: vaccination.link.administeredAt
           },
           {
             header: __("vaccination.age.label"),
-            text: patient.dob | age(at=vaccination.createdAt)
+            text: patient.dob | age(at=vaccination.administeredAt)
           },
           {
             header: __("vaccination.programme.label"),
@@ -61,7 +61,7 @@
         id: "vaccinations",
         responsive: true,
         head: [
-          { text: __("vaccination.createdAt.label") },
+          { text: __("vaccination.administeredAt.label") },
           { text: __("vaccination.age.label") },
           { text: __("vaccination.programme.label") },
           { text: __("vaccination.source.label") }
@@ -85,12 +85,12 @@
       {% for vaccination in patientProgramme.ttcvVaccinations %}
         {% set ttcvRows = ttcvRows | push([
           {
-            header: __("vaccination.createdAt.label"),
-            text: vaccination.formatted.createdAt_date
+            header: __("vaccination.administeredAt.label"),
+            text: vaccination.formatted.administeredAt_date
           },
           {
             header: __("vaccination.age.label"),
-            text: patient.dob | age(at=vaccination.createdAt)
+            text: patient.dob | age(at=vaccination.administeredAt)
           },
           {
             header: __("vaccination.programme.label"),
@@ -107,7 +107,7 @@
         id: "ttcv",
         responsive: true,
         head: [
-          { text: __("vaccination.createdAt.label") },
+          { text: __("vaccination.administeredAt.label") },
           { text: __("vaccination.age.label") },
           { text: __("vaccination.programme.label") },
           { text: __("vaccination.ttcv.label") }

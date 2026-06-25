@@ -235,8 +235,8 @@
       lastRowBorder: false,
       rows: summaryRows(consent, {
         createdAt: {
-          label: __("consent.previousDose.createdAt.label"),
-          value: consent.firstDose.formatted.createdAt_date,
+          label: __("consent.previousDose.administeredAt.label"),
+          value: consent.firstDose.formatted.administeredAt_date,
           href: editPath("previous-dose")
         },
         country: {

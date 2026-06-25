@@ -51,13 +51,13 @@ import {
 /**
  * @typedef {object} VaccinationOptions
  * @property {string} [uuid] - Vaccination UUID
+ * @property {string} [assessedBy_uid] - Who assessed child being vaccinated
+ * @property {Date} [administeredAt] - Administered date
+ * @property {object} [administeredAt_] - Administered date (from `dateInput`)
+ * @property {string} [administeredBy_uid] - User who administered vaccination
  * @property {Date} [createdAt] - Created date
- * @property {object} [createdAt_] - Created date (from `dateInput`)
- * @property {string} [createdBy_uid] - User who performed vaccination
+ * @property {string} [createdBy_uid] - User who created vaccination record
  * @property {Date} [updatedAt] - Updated date
- * @property {Date} [reportedAt] - Reported date
- * @property {string} [reportedBy_uid] - User who reported vaccination
- * @property {string} [suppliedBy_uid] - Who supplied the vaccine
  * @property {Date} [nhseSyncedAt] - Date synced with NHS England API
  * @property {LocationType} [locationType] - Location
  * @property {string} [locationName] - Location name
@@ -101,14 +101,18 @@ export class Vaccination {
   constructor(options, context) {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.createdAt = options?.createdAt && new Date(options.createdAt)
-    this.createdAt_ = options?.createdAt_
+    this.administeredAt = options?.administeredAt
+      ? new Date(options.administeredAt)
+      : today()
+    this.administeredAt_ = options?.administeredAt_
+    this.administeredBy_uid = options?.administeredBy_uid
+    this.assessedBy_uid = options?.assessedBy_uid
+    this.createdAt = options?.createdAt ? new Date(options.createdAt) : today()
+    this.createdBy_uid = options?.createdBy_uid
+    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.nhseSyncedAt = options?.nhseSyncedAt
       ? new Date(options.nhseSyncedAt)
       : undefined
-    this.createdBy_uid = options?.createdBy_uid
-    this.suppliedBy_uid = options?.suppliedBy_uid
-    this.updatedAt = options?.updatedAt && new Date(options.updatedAt)
     this.locationType = options?.locationType
     this.locationName = options?.locationName
     this.country = options?.country || 'England'
@@ -148,29 +152,27 @@ export class Vaccination {
       this.addressLine2 = options?.addressLine2
       this.addressLevel1 = options?.addressLevel1
       this.country = options?.country
-      this.reportedAt = today()
-      this.reportedBy_uid = options?.reportedBy_uid
       this.protocol = undefined
     }
   }
 
   /**
-   * Get created date for `dateInput`
+   * Get administered date for `dateInput`
    *
    * @returns {object|string} `dateInput` object
    */
-  get createdAt_() {
-    return convertIsoDateToObject(this.createdAt)
+  get administeredAt_() {
+    return convertIsoDateToObject(this.administeredAt)
   }
 
   /**
-   * Set created date from `dateInput`
+   * Set administered date from `dateInput`
    *
    * @param {object} object - dateInput object
    */
-  set createdAt_(object) {
+  set administeredAt_(object) {
     if (object) {
-      this.createdAt = convertObjectToIsoDate(object)
+      this.administeredAt = convertObjectToIsoDate(object)
     }
   }
 
@@ -336,7 +338,22 @@ export class Vaccination {
   }
 
   /**
-   * Get user who performed vaccination
+   * Get user who administered vaccination
+   *
+   * @returns {User|undefined} User
+   */
+  get administeredBy() {
+    try {
+      if (this.createdBy_uid) {
+        return User.findOne(this.administeredBy_uid, this.context)
+      }
+    } catch (error) {
+      console.error('Vaccination.administeredBy', error.message)
+    }
+  }
+
+  /**
+   * Get user who created vaccination record
    *
    * @returns {User|undefined} User
    */
@@ -351,32 +368,17 @@ export class Vaccination {
   }
 
   /**
-   * Get user who reported vaccination
+   * Get user who assessed child being vaccinated
    *
    * @returns {User|undefined} User
    */
-  get reportedBy() {
+  get assessedBy() {
     try {
-      if (this.reportedBy_uid) {
-        return User.findOne(this.reportedBy_uid, this.context)
+      if (this.assessedBy_uid) {
+        return User.findOne(this.assessedBy_uid, this.context)
       }
     } catch (error) {
-      console.error('Vaccination.reportedBy', error.message)
-    }
-  }
-
-  /**
-   * Get user who supplied the vaccine
-   *
-   * @returns {User|undefined} User
-   */
-  get suppliedBy() {
-    try {
-      if (this.suppliedBy_uid) {
-        return User.findOne(this.suppliedBy_uid, this.context)
-      }
-    } catch (error) {
-      console.error('Vaccination.suppliedBy', error.message)
+      console.error('Vaccination.assessedBy', error.message)
     }
   }
 
@@ -503,8 +505,8 @@ export class Vaccination {
           }
 
           switch (prop) {
-            case 'createdAt':
-              return formatDate(this.createdAt, {
+            case 'administeredAt':
+              return formatDate(this.administeredAt, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
@@ -512,24 +514,38 @@ export class Vaccination {
                 minute: '2-digit',
                 hour12: true
               })
-            case 'createdAt_date':
-              return formatDate(this.createdAt, { dateStyle: 'long' })
-            case 'createdAt_time':
-              return formatDate(this.createdAt, {
+            case 'administeredAt_date':
+              return formatDate(this.administeredAt, { dateStyle: 'long' })
+            case 'administeredAt_time':
+              return formatDate(this.administeredAt, {
                 hour: 'numeric',
                 minute: '2-digit',
                 hour12: true
               })
-            case 'createdAt_dateShort':
-              return formatDate(this.createdAt, {
+            case 'administeredAt_dateShort':
+              return formatDate(this.administeredAt, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric'
               })
+            case 'assessedBy':
+              return this.assessedBy?.fullName || ''
+            case 'administeredBy':
+              return this.administeredBy?.fullName || ''
+            case 'createdAt':
+              return (
+                this.createdAt &&
+                formatDate(this.createdAt, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                })
+              )
             case 'createdBy':
               return this.createdBy?.fullName || 'Unknown'
-            case 'suppliedBy':
-              return this.suppliedBy?.fullName || ''
             case 'updatedAt':
               return formatDate(this.updatedAt, {
                 day: 'numeric',
@@ -539,20 +555,6 @@ export class Vaccination {
                 minute: '2-digit',
                 hour12: true
               })
-            case 'reportedAt':
-              return (
-                this.reportedAt &&
-                formatDate(this.reportedAt, {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  hour12: true
-                })
-              )
-            case 'reportedBy':
-              return this.reportedBy?.fullName || ''
             case 'syncStatus':
               return formatWithSecondaryText(
                 formatTag(getVaccinationSyncStatus(this.syncStatus)),
@@ -613,7 +615,7 @@ export class Vaccination {
    */
   get link() {
     return {
-      createdAt: formatLink(this.uri, this.formatted.createdAt),
+      administeredAt: formatLink(this.uri, this.formatted.administeredAt),
       fullName: this.patient && formatLink(this.uri, this.patient.fullName),
       fullNameAndNhsn:
         this.patient &&

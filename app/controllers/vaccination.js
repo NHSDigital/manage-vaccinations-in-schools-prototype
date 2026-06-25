@@ -94,7 +94,7 @@ export const vaccinationController = {
       data
     )
     const { session, programme, vaccine, instruction } = patientSession
-    const { identifiedBy, injectionSite, ready, selfId, suppliedBy_uid } =
+    const { assessedBy_uid, identifiedBy, injectionSite, ready, selfId } =
       data.preScreen
 
     // Check for default batch
@@ -131,7 +131,6 @@ export const vaccinationController = {
     data.patientSession_uuid = String(patientSession_uuid)
 
     // Used logged in user as vaccinator, or default to example user
-    const createdBy_uid = account.uid
     const role = account.role || UserRole.Nurse
 
     // Nurses always use PGD protocol
@@ -158,12 +157,14 @@ export const vaccinationController = {
         patientSession_uuid: patientSession.uuid,
         vaccine_snomed: vaccine.snomed,
         createdAt: today(),
-        createdBy_uid,
+        createdBy_uid: account.uid,
+        administeredAt: today(),
+        administeredBy_uid: account.uid,
         ...(injectionSite && {
           dose: vaccine.dose,
           injectionMethod: VaccinationMethod.Intramuscular,
           injectionSite,
-          suppliedBy_uid,
+          assessedBy_uid,
           protocol,
           outcome: VaccinationOutcome.Vaccinated
         }),
@@ -171,7 +172,7 @@ export const vaccinationController = {
           dose: vaccine.dose,
           injectionMethod: VaccinationMethod.Intranasal,
           injectionSite: VaccinationSite.Nose,
-          suppliedBy_uid,
+          assessedBy_uid,
           protocol,
           outcome: VaccinationOutcome.Vaccinated
         }),
@@ -325,7 +326,7 @@ export const vaccinationController = {
                           [`/${vaccination_uuid}/${type}/sequence`]: {}
                         }
                       : {}),
-                    [`/${vaccination_uuid}/${type}/created-at`]: {}
+                    [`/${vaccination_uuid}/${type}/administered-at`]: {}
                   }
                 : {}),
               ...(!vaccination.location && {

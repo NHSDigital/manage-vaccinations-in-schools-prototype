@@ -2156,7 +2156,7 @@ export const en = {
         hint: 'For example, parent, teacher or teaching assistant'
       }
     },
-    suppliedBy: {
+    assessedBy: {
       label: 'Supplier',
       title:
         'Which nurse identified and pre-screened the child and supplied the vaccine?'
@@ -3571,24 +3571,36 @@ export const en = {
       summary: 'Vaccination details',
       success: 'Vaccination record updated'
     },
-    createdAt: {
+    assessedBy: {
+      label: 'Supplier',
+      title:
+        'Which nurse identified and pre-screened the child and supplied vaccine?'
+    },
+    administeredAt: {
       label: 'Vaccination date',
       title:
         'When was the {{session.programmeNames.sentenceCase}} vaccination given?'
     },
-    createdAt_date: {
+    administeredAt_date: {
       label: 'Date',
       hint: 'For example, 27 10 2025'
     },
-    createdAt_time: {
+    administeredAt_time: {
       label: 'Time',
       hint: 'For example, 13 15'
     },
-    reportedAt: {
+    administeredBy: {
+      label: 'Vaccinator',
+      title: 'Who was the vaccinator?'
+    },
+    createdAt: {
       label: 'Reported on'
     },
-    reportedBy: {
+    createdBy: {
       label: 'Reported by'
+    },
+    updatedAt: {
+      label: 'Record updated'
     },
     age: {
       label: 'Age'
@@ -3600,18 +3612,6 @@ export const en = {
     },
     syncStatus: {
       label: 'Synced with NHS England?'
-    },
-    createdBy: {
-      label: 'Vaccinator',
-      title: 'Who was the vaccinator?'
-    },
-    suppliedBy: {
-      label: 'Supplier',
-      title:
-        'Which nurse identified and pre-screened the child and supplied vaccine?'
-    },
-    updatedAt: {
-      label: 'Record updated'
     },
     location: {
       label: 'Location'
