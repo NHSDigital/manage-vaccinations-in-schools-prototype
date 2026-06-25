@@ -63,7 +63,7 @@ export const getRecordOutcome = (patientSession) => {
   const { register, report, session } = patientSession
 
   if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {
-    if (session.registration && register === RegistrationOutcome.Pending) {
+    if (session.registration && register !== RegistrationOutcome.Present) {
       return false
     }
 
