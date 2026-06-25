@@ -200,9 +200,10 @@ export const patientSessionController = {
 
     // Show back link to referring page, else patient session page
     response.locals.back =
-      referrer || session.type === SessionType.Clinic
+      referrer ||
+      (session.type === SessionType.Clinic
         ? `${patientSession.uri}/appointment`
-        : patientSession.uri
+        : patientSession.uri)
 
     return next()
   },
