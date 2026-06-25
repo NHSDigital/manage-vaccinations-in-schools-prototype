@@ -4,7 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set title = patient.fullName + " – " + patient.programmes[programme.slug].name %}
+{% set title = patient.fullName + " – " + patientProgramme.programme.name %}
 {% set formAction = patientProgramme.uri + "/record?referrer=" + referrer %}
 
 {% block beforeContent %}
@@ -26,44 +26,48 @@
     patient: patient
   }) }}
 
+  {% include "patient/_vaccination-record.njk" %}
+
   {% call card({
-    heading: __mf("patientProgramme.vaccinationsGiven.count", {
-      count: patientProgramme.vaccinationsGiven.length
+    heading: __mf("patientProgramme.encounters.count", {
+      count: patientProgramme.canonicalVaccinationOutcomes.length
     }),
     headingLevel: 3
   }) %}
-    {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
-
-    {% if patientProgramme.vaccinationsGiven.length %}
+    {% if patientProgramme.canonicalVaccinationOutcomes.length %}
       {% set vaccinationRows = [] %}
-      {% for vaccination in patientProgramme.vaccinationsGiven %}
+      {% for vaccination in patientProgramme.canonicalVaccinationOutcomes %}
+        {% set sourceHtml = vaccination.source %}
+        {% if vaccination.duplicates.length %}
+          {% set sourceHtml = sourceHtml + '<br><a class="nhsuk-u-font-size-16" href="' + vaccination.uri + '/duplicates">' + __mf("vaccination.duplicates.count", { count: vaccination.duplicates.length }) + '</a>' %}
+        {% endif %}
         {% set vaccinationRows = vaccinationRows | push([
           {
-            header: __("vaccination.createdAt.label"),
+            header: __("patientProgramme.encounters.date.label"),
             html: vaccination.link.createdAt
           },
           {
             header: __("vaccination.age.label"),
-            text: patient.dob | age(at=vaccination.createdAt)
+            text: patient.dob | ageInWords(at=vaccination.createdAt)
           },
           {
-            header: __("vaccination.programme.label"),
-            html: vaccination.formatted.programmeWithSequence
+            header: __("vaccination.outcome.label"),
+            html: vaccination.formatted.outcome
           },
           {
             header: __("vaccination.source.label"),
-            text: vaccination.source
+            html: sourceHtml
           }
         ]) %}
       {% endfor %}
 
       {{ table({
-        id: "vaccinations",
+        id: "encounters",
         responsive: true,
         head: [
-          { text: __("vaccination.createdAt.label") },
+          { text: __("patientProgramme.encounters.date.label") },
           { text: __("vaccination.age.label") },
-          { text: __("vaccination.programme.label") },
+          { text: __("vaccination.outcome.label") },
           { text: __("vaccination.source.label") }
         ],
         rows: vaccinationRows
@@ -90,7 +94,7 @@
           },
           {
             header: __("vaccination.age.label"),
-            text: patient.dob | age(at=vaccination.createdAt)
+            text: patient.dob | ageInWords(at=vaccination.createdAt)
           },
           {
             header: __("vaccination.programme.label"),

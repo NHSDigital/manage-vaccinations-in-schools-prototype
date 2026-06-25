@@ -22,6 +22,8 @@ router.all('/:vaccination_uuid/edit/:view', vaccination.readForm('edit'))
 router.get('/:vaccination_uuid/edit/:view', vaccination.showForm('edit'))
 router.post('/:vaccination_uuid/edit/:view', vaccination.updateForm)
 
+router.get('/:vaccination_uuid/duplicates', vaccination.duplicates)
+
 router.get('/:vaccination_uuid', vaccination.show)
 
 export const vaccinationRoutes = router

@@ -168,6 +168,58 @@ export function getAge(date) {
 }
 
 /**
+ * Get age between two dates as a two-unit verbose string.
+ *
+ * Used on vaccination record views where a dose close to a birthday can be
+ * clinically valid or not depending on the exact day. The patient banner
+ * keeps the shorter single-unit form via `getAge`/`dobWithAge`.
+ *
+ * @param {Date|string} dob - Date of birth
+ * @param {Date|string} at - Date to measure age at
+ * @returns {string} Age in two units, e.g. "11 months and 13 days"
+ */
+export function getAgeInWords(dob, at) {
+  if (!dob || !at) return ''
+
+  const dobDate = dob instanceof Date ? dob : new Date(dob)
+  const atDate = at instanceof Date ? at : new Date(at)
+
+  if (isNaN(dobDate.valueOf()) || isNaN(atDate.valueOf())) return ''
+
+  let years = atDate.getFullYear() - dobDate.getFullYear()
+  let months = atDate.getMonth() - dobDate.getMonth()
+  let days = atDate.getDate() - dobDate.getDate()
+
+  if (days < 0) {
+    months -= 1
+    const lastDayOfPrevMonth = new Date(
+      atDate.getFullYear(),
+      atDate.getMonth(),
+      0
+    ).getDate()
+    days += lastDayOfPrevMonth
+  }
+  if (months < 0) {
+    years -= 1
+    months += 12
+  }
+
+  const unit = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`
+
+  if (years >= 1) {
+    return months > 0
+      ? `${unit(years, 'year')} and ${unit(months, 'month')}`
+      : unit(years, 'year')
+  }
+  if (months >= 1) {
+    return days > 0
+      ? `${unit(months, 'month')} and ${unit(days, 'day')}`
+      : unit(months, 'month')
+  }
+  return unit(days, 'day')
+}
+
+/**
  * Get difference between two date values
  *
  * @param {Date} a - First date
