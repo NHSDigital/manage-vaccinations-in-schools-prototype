@@ -113,7 +113,9 @@ export const patientSessionController = {
       canRecord:
         account.vaccineMethods?.includes(patientSession.vaccine?.method) &&
         record &&
-        session.isActive
+        session.isActive &&
+        (!session.registration ||
+          patientSession.register === RegistrationOutcome.Present)
     }
 
     // Vaccinator has permission to record using the alternative vaccine
