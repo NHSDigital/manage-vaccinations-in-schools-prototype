@@ -22,7 +22,7 @@
   {{ actionLink({
     text: __("triage.edit.title"),
     href: patientSession.uri + "/edit/triage?referrer=" + referrer
-  }) if not options.needsTriage and not isVaccinated }}
+  }) if options.canTriage and not options.needsTriage and not isVaccinated }}
 
   {# Decision table #}
   {% set triageNoteRows = [] %}
@@ -71,7 +71,7 @@
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
   {% endif %}
 
-  {% if options.needsTriage %}
+  {% if options.canTriage and options.needsTriage %}
     {% set psdRadiosHtml = radios({
       fieldset: { legend: { text: __("triage.psd.label") } },
       inline: true,
