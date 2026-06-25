@@ -60,6 +60,8 @@ export function generateVaccination(patientSession, programme, batch, users) {
   return new Vaccination({
     createdAt: patientSession.session.date,
     createdBy_uid: user.uid,
+    administeredAt: patientSession.session.date,
+    administeredBy_uid: user.uid,
     nhseSyncedAt,
     outcome,
     locationName: patientSession.session?.location.name,

@@ -92,13 +92,13 @@
   }) }}
 
   {{ select({
-    label: { text: __("preScreen.suppliedBy.title") },
-    items: userItems(data.users, preScreen.suppliedBy),
-    decorate: "preScreen.suppliedBy_uid",
+    label: { text: __("preScreen.assessedBy.title") },
+    items: userItems(data.users, preScreen.assessedBy),
+    decorate: "preScreen.assessedBy_uid",
     attributes: {
       "data-module": "app-autocomplete"
     }
-  }) if options.hasSupplier }}
+  }) if options.hasAccessor }}
 
   <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 

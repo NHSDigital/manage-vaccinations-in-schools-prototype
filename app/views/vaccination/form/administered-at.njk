@@ -1,0 +1,44 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("vaccination.administeredAt.title") %}
+
+{% block form %}
+  {{ appHeading({
+    caption: vaccination.patient.fullName,
+    title: title
+  }) }}
+
+  {{ dateInput({
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("vaccination.administeredAt_date.label")
+      }
+    },
+    hint: { text: __("vaccination.administeredAt_date.hint") },
+    decorate: "vaccination.administeredAt_"
+  }) }}
+
+  {{ dateInput({
+    fieldset: {
+      legend: {
+        classes: "nhsuk-fieldset__legend--m",
+        text: __("vaccination.administeredAt_time.label")
+      }
+    },
+    hint: { text: __("vaccination.administeredAt_time.hint") },
+    items: [{
+      label: "Hour",
+      width: 2,
+      id: "vaccination-administeredAt_-hour",
+      name: "[vaccination][administeredAt_][hour]",
+      value: vaccination.administeredAt_.hour
+    }, {
+      label: "Minute",
+      width: 2,
+      id: "vaccination-administeredAt_-minute",
+      name: "[vaccination][administeredAt_][minute]",
+      value: vaccination.administeredAt_.minute
+    }]
+  }) if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated }}
+{% endblock %}

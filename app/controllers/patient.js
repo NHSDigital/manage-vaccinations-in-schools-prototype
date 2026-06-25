@@ -749,13 +749,14 @@ export const patientController = {
         {
           outcome: VaccinationOutcome.AlreadyVaccinated,
           patient_uuid: patient.uuid,
-          reportedBy_uid: account.uid,
+          createdBy_uid: account.uid,
+          administeredBy_uid: account.uid,
           ...(type === 'new' && { programme_id })
         },
         data.wizard
       )
 
-      let startPage = 'created-at'
+      let startPage = 'administered-at'
       if (!vaccination.programme_id) {
         startPage = 'programme'
       } else if (patientProgramme.programme.type === ProgrammeType.MMR) {

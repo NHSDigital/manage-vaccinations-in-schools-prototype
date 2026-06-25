@@ -82,7 +82,7 @@ export const patientSessionController = {
       )
     }
 
-    const userHasSupplier =
+    const userHasAccessor =
       // Injected vaccine using national protocol
       (vaccine?.method === VaccineMethod.Injection &&
         session.nationalProtocol) ||
@@ -108,7 +108,7 @@ export const patientSessionController = {
         session.psdProtocol &&
         patientSession.instruct &&
         patientSession.session.isActive,
-      hasSupplier: userIsHCA && userHasSupplier,
+      hasAccessor: userIsHCA && userHasAccessor,
       canRegister: session.registration && session.isActive,
       canRecord:
         account.vaccineMethods?.includes(patientSession.vaccine?.method) &&
@@ -252,7 +252,9 @@ export const patientSessionController = {
           session_id: session.id,
           vaccine_snomed: patientSession.vaccine.snomed,
           createdAt: today(10),
-          createdBy_uid: account.uid
+          createdBy_uid: account.uid,
+          administeredAt: today(10),
+          administeredBy_uid: account.uid
         },
         data
       )

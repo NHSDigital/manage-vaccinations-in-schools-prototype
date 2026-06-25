@@ -27,8 +27,8 @@
           text: patient.formatted.yearGroup
         } if upload.type == UploadType.School,
         {
-          header: __("vaccination.createdAt.label"),
-          text: patient.vaccinations[0].formatted.createdAt_dateShort
+          header: __("vaccination.administeredAt.label"),
+          text: patient.vaccinations[0].formatted.administeredAt_dateShort
         } if upload.type == UploadType.Report
       ]) %}
     {% endfor %}

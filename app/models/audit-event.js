@@ -216,7 +216,7 @@ export class AuditEvent {
    */
   get description() {
     if (this.vaccination) {
-      return `Vaccination given ${this.vaccination.formatted.createdAt_date} by ${this.vaccination.formatted.createdBy}.<br>Record added to Mavis ${this.formatted.datetime} by ${this.formatted.createdBy}.`
+      return `Vaccination given ${this.vaccination.formatted.administeredAt_date} by ${this.vaccination.formatted.administeredBy}.<br>Record added to Mavis ${this.formatted.datetime} by ${this.formatted.createdBy}.`
     } else if (this.createdBy_uid) {
       return [this.formatted.datetime, this.formatted.createdBy].join(` · `)
     }
