@@ -320,7 +320,7 @@ export function getTermDates(year, term) {
  * @returns {Date} Date with time set to midday
  */
 export function setMidday(date) {
-  date.setUTCHours(12, 0, 0, 0)
+  date.setHours(12, 0, 0, 0)
   return date
 }
 
