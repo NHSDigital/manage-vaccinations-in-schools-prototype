@@ -55,13 +55,13 @@ export function convertObjectToIsoDate(object, namePrefix) {
     day = Number(object[`${namePrefix}-day`])
     month = Number(parseMonth(object[`${namePrefix}-month`])) - 1
     year = Number(object[`${namePrefix}-year`])
-    hour = Number(object[`${namePrefix}-hour`])
-    minute = Number(object[`${namePrefix}-minute`])
+    hour = Number(object[`${namePrefix}-hour`]) || 12
+    minute = Number(object[`${namePrefix}-minute`]) || 0
   } else {
     day = Number(object?.day)
     month = Number(parseMonth(object?.month)) - 1
     year = Number(object?.year)
-    hour = Number(object?.hour) || 0
+    hour = Number(object?.hour) || 12
     minute = Number(object?.minute) || 0
   }
 
@@ -69,10 +69,8 @@ export function convertObjectToIsoDate(object, namePrefix) {
     if (!day) {
       return new Date(year, month)
     }
-    const seconds = new Date().getSeconds()
-    const ms = new Date().getMilliseconds()
 
-    return new Date(year, month, day, hour, minute, seconds, ms)
+    return new Date(year, month, day, hour, minute, 0, 0)
   } catch (error) {
     console.error(error.message.split(':')[0])
   }
