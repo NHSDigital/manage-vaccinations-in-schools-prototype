@@ -746,7 +746,7 @@ export class Session {
    */
   get presets() {
     return SessionPresets.filter((sessionPreset) =>
-      this.presetNames.includes(sessionPreset.name)
+      this.presetNames?.includes(sessionPreset.name)
     )
   }
 
