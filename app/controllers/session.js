@@ -217,6 +217,7 @@ export const sessionController = {
     clinicAdvert.link = `https://www.manage-vaccinations-in-schools.nhs.uk${getClinicInviteUrlForProgrammes(clinicAdvert.selected_programme_ids)}`
     clinicAdvert.programmeNames = programmeNamesListForSentence(
       clinicAdvert.selected_programme_ids,
+      false,
       ConjunctionType.and,
       data
     )

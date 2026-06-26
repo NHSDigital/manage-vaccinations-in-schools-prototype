@@ -450,12 +450,17 @@ export class ClinicAppointment {
           const getSession = () =>
             Session.findOne(this.session_id, this.context)
 
-          const getProgrammeNames = () =>
-            programmeNamesListForSentence(
+          const getProgrammeNames = () => {
+            const canBeOfferedMmrv = this.patient_uuid
+              ? this.patient?.canBeOfferedMmrv
+              : this.child?.canBeOfferedMmrv
+            return programmeNamesListForSentence(
               this.selected_programme_ids,
+              canBeOfferedMmrv,
               ConjunctionType.and,
               this.context
             )
+          }
 
           switch (prop) {
             case 'nameAndAge':

@@ -88,7 +88,8 @@ export const bookIntoClinicController = {
     // Track details of the invite for pages that need to show the invited programmes
     data.clinicInvite = {
       programmes,
-      programmeNames: programmes.map(({ name }) => name)
+      programmeNames: programmes.map(({ name }) => name),
+      invitedForMmrv: useMmrv
     }
 
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
@@ -243,8 +244,10 @@ export const bookIntoClinicController = {
         }
       )
     } else if (view === 'availability') {
+      // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
+        data.clinicInvite.invitedForMmrv,
         ConjunctionType.or,
         data
       )
@@ -367,8 +370,10 @@ export const bookIntoClinicController = {
         date: session.formatted.date
       }
     } else if (view === 'fully-booked') {
+      // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
+        data.clinicInvite.invitedForMmrv,
         ConjunctionType.and,
         data
       )
