@@ -1941,7 +1941,8 @@ export const en = {
           details: 'Summary',
           confirm: 'Yes, cancel this appointment',
           cancel: 'No, return to the child in session page',
-          success: 'Cancelled appointment'
+          success:
+            'Clinic appointment cancelled for {{ patientName }} at {{ clinicName }}'
         }
       }
     },

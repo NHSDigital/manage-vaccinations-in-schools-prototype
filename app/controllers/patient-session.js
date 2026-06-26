@@ -471,15 +471,15 @@ export const patientSessionController = {
    */
   updateCancel(request, response) {
     const { account } = request.app.locals
-    const { __, patientSession } = response.locals
+    const { __, patientSession, session } = response.locals
     const { data } = request.session
     const { view } = request.params
 
     // Where next?
-    const next =
+    const nextPage =
       view === 'rebooking'
         ? `${patientSession.uri}/cancel/confirm`
-        : patientSession.uri
+        : session.uri
 
     if (view === 'rebooking') {
       // Sanitise the boolean from the radio
@@ -497,13 +497,17 @@ export const patientSessionController = {
       // Tidy up
       delete data.cancellation
 
+      const { patient } = response.locals
       request.flash(
         'success',
-        __('patientSession.clinicAppointment.cancel.confirm.success')
+        __('patientSession.clinicAppointment.cancel.confirm.success', {
+          patientName: patient.fullName,
+          clinicName: session.formatted.clinic
+        })
       )
     }
 
-    return saveAndRedirect(request, response, next)
+    return saveAndRedirect(request, response, nextPage)
   }
 }
 
