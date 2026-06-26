@@ -2961,7 +2961,7 @@ export const en = {
         '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
     },
     advertise: {
-      label: 'Create a booking link for clinics',
+      label: 'Share a booking link for clinics',
       programmes: {
         title: 'Select the clinic programmes for your link',
         hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
