@@ -59,9 +59,7 @@
       },
       lastRowBorder: false,
       rows: summaryRows(session, {
-        type: {
-          href: session.uri + "/new/type"
-        },
+        type: {},
         programmes: {
           href: session.uri + "/new/programmes"
         },
@@ -71,6 +69,9 @@
         date: {
           href: session.uri + "/new/date"
         },
+        registration: {
+          href: session.uri + "/new/registration"
+        },
         vaccinationPeriods: {
           href: session.uri + "/new/vaccination-periods"
         },
@@ -79,9 +80,6 @@
         },
         appointmentLength: {
           href: session.uri + "/new/appointment-length"
-        },
-        registration: {
-          href: session.uri + "/new/registration"
         },
         totalAppointments: {}
       })
