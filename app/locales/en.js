@@ -2677,12 +2677,12 @@ export const en = {
     },
     fluProtocol: {
       label: 'Protocol',
-      title: 'Which protocol should flu vaccinations be recorded under?'
+      title: 'Which protocol will you use for flu vaccinations in this session?'
     },
     psdProtocol: {
       label: 'Use patient specific direction (PSD)',
       title:
-        'Can healthcare assistants administer the flu nasal spray vaccine using a patient specific direction (PSD)?'
+        'Can healthcare assistants give the nasal spray vaccine using a patient specific direction (PSD)?'
     },
     'upload-class-list': {
       title: 'Import class lists'
