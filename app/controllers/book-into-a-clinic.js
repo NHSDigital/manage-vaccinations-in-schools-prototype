@@ -63,32 +63,33 @@ export const bookIntoClinicController = {
         ? programme_id
         : [programme_id]
     } else {
+      // default to all programmes if none supplied
       programme_ids = Programme.findAll(data)
         .filter(({ hidden }) => !hidden)
         .map(({ id }) => id)
     }
 
+    // Strip out mmrv as a programme id, but keep memory of it so we can adapt content
+    const useMmrv = programme_ids.includes('mmrv')
+    programme_ids = programme_ids.map((id) => (id === 'mmrv' ? 'mmr' : id))
+    const programmes = Programme.findAll(data)
+      .map((programme) => {
+        delete programme.context
+        return programme
+      })
+      .filter(({ id }) => programme_ids.includes(id))
+    if (useMmrv) {
+      const mmrProgramme = programmes.find(({ id }) => id === 'mmr')
+      mmrProgramme.name = 'MMRV'
+      mmrProgramme.id = 'mmrv'
+      mmrProgramme.information.hint = mmrProgramme.information.hintMmrv
+    }
+
     // Track details of the invite for pages that need to show the invited programmes
     data.clinicInvite = {
-      programme_ids,
-      programmes: Programme.findAll(data)
-        .map((programme) => {
-          delete programme.context
-          return programme
-        })
-        .filter(({ id }) => programme_ids.includes(id)),
-      programmeNames: {
-        and: programmeNamesListForSentence(
-          programme_ids,
-          ConjunctionType.and,
-          data
-        ),
-        or: programmeNamesListForSentence(
-          programme_ids,
-          ConjunctionType.or,
-          data
-        )
-      }
+      programmes,
+      programmeNames: programmes.map(({ name }) => name),
+      invitedForMmrv: useMmrv
     }
 
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
@@ -109,7 +110,9 @@ export const bookIntoClinicController = {
 
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create(
-      { invited_programme_ids: data.clinicInvite.programme_ids },
+      {
+        invited_programme_ids: data.clinicInvite.programmes.map(({ id }) => id)
+      },
       data.wizard
     )
     booking.addAppointment()
@@ -229,30 +232,22 @@ export const bookIntoClinicController = {
         }))
     } else if (view === 'programmes') {
       // Create radio options for the programmes invited to (or flu if we've got none)
-      let programmes = data.clinicInvite.programme_ids
-        .map((programme_id) => Programme.findOne(programme_id, data))
-        .filter(Boolean)
-      programmes = programmes.length
-        ? programmes
-        : Programme.findOne('flu', data)
-
-      response.locals.programmeItems = programmes.map((programme) => {
-        const hint =
-          programme.type === ProgrammeType.MMR &&
-          appointment.child.canBeOfferedMmrv
-            ? programme.information.hintMmrv
-            : programme.information.hint
-        return {
-          text: programme.name,
-          value: programme.id,
-          hint: {
-            text: hint
+      response.locals.programmeItems = data.clinicInvite.programmes.map(
+        (programme) => {
+          return {
+            text: programme.name,
+            value: programme.id === 'mmrv' ? 'mmr' : programme.id,
+            hint: {
+              text: programme.information.hint
+            }
           }
         }
-      })
+      )
     } else if (view === 'availability') {
+      // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
+        data.clinicInvite.invitedForMmrv,
         ConjunctionType.or,
         data
       )
@@ -375,8 +370,10 @@ export const bookIntoClinicController = {
         date: session.formatted.date
       }
     } else if (view === 'fully-booked') {
+      // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
+        data.clinicInvite.invitedForMmrv,
         ConjunctionType.and,
         data
       )

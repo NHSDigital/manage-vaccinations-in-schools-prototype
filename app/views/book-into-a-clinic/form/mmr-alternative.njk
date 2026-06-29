@@ -1,6 +1,13 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("clinicBooking.mmrAlternative.title", firstName) %}
+{% set hint = __("clinicBooking.mmrAlternative.hint") %}
+
+{# Replace MMR with MMRV content as necessary #}
+{% if data.clinicInvite.invitedForMmrv %}
+  {% set title = title | replace('MMR', 'MMRV') %}
+  {% set hint = hint | replace('MMR', 'MMRV') %}
+{% endif %}
 
 {% block form %}
   {{ radios({
@@ -13,7 +20,7 @@
       }
     },
     hint: {
-      text: __("clinicBooking.mmrAlternative.hint")
+      text: hint
     },
     items: [{
       text: __("clinicBooking.mmrAlternative.yes.label", firstName),

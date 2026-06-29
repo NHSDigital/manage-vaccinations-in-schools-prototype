@@ -1,3 +1,5 @@
+import prototypeFilters from '@x-govuk/govuk-prototype-filters'
+
 import { Programme } from '../models.js'
 
 /**
@@ -13,24 +15,24 @@ export const ConjunctionType = {
  * Get a comma-delimited list of programme names to use in a sentence
  *
  * @param {Array<string>} programme_ids - the IDs of programmes whose name will form the list
+ * @param {boolean} eligibleForMmrv - refer to MMRV rather than MMR?
  * @param {Intl.ListFormatType} conjunctionType - Choice between 'and' and 'or'
  * @param {object} context - the data context where programmes are held
  * @returns {string} the list ready to use in a sentence
  */
 export const programmeNamesListForSentence = (
   programme_ids,
+  eligibleForMmrv,
   conjunctionType,
   context
 ) => {
-  const formatter = new Intl.ListFormat('en-GB', {
-    style: 'long',
-    type: conjunctionType
-  })
-  const programmeNames = formatter.format(
-    programme_ids.map((programme_id) =>
-      Programme.findOne(programme_id, context)?.name?.replace('Flu', 'flu')
-    )
+  const programmes = Programme.findAll(context).filter(({ id }) =>
+    programme_ids.includes(id)
   )
-
-  return programmeNames
+  const programmeNames = programmes.map((programme) =>
+    programme.id === 'mmr' && eligibleForMmrv ? 'MMRV' : programme.name
+  )
+  return prototypeFilters
+    .formatList(programmeNames, conjunctionType)
+    .replace('Flu', 'flu')
 }

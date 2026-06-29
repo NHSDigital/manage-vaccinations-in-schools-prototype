@@ -491,6 +491,7 @@ export const patientController = {
     // Report the success
     const selectedProgrammeNames = programmeNamesListForSentence(
       clinicProgramme_ids,
+      patient.canBeOfferedMmrv,
       ConjunctionType.and,
       data
     )
@@ -537,6 +538,7 @@ export const patientController = {
       programmeCount: programme_ids.length,
       programmeNames: programmeNamesListForSentence(
         programme_ids,
+        false,
         ConjunctionType.or,
         data
       )
@@ -578,6 +580,7 @@ export const patientController = {
       count: programmesWithoutClinics.length,
       names: programmeNamesListForSentence(
         programmesWithoutClinics.map(({ id }) => id),
+        false,
         ConjunctionType.or,
         data
       )
