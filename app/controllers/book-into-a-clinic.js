@@ -20,7 +20,6 @@ import {
   getBookableClinicSessions,
   getScheduledClinicLocationItems
 } from '../utils/clinic-booking.js'
-import { setMidday } from '../utils/date.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
