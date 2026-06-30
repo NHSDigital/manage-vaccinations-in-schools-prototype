@@ -20,6 +20,7 @@
     {% if account.role == UserRole.DataConsumer %}
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       {{ card({
+        classes: "app-card--compact",
         clickable: true,
         heading: __("report.list.title"),
         headingSize: "xs",
@@ -29,11 +30,43 @@
     </li>
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       {{ card({
+        classes: "app-card--compact",
         clickable: true,
         heading: __("manual.show.title"),
         headingSize: "xs",
         href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
         description: __("manual.show.description")
+      }) }}
+    </li>
+    {% elif account.role == UserRole.SchoolSecretary %}
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      {{ card({
+        classes: "app-card--compact",
+        clickable: true,
+        heading: __("patient.list.title"),
+        headingSize: "s",
+        href: "/patients",
+        descriptionHtml: "Find children and view their consent status" | nhsukMarkdown
+      }) }}
+    </li>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      {{ card({
+        classes: "app-card--compact",
+        clickable: true,
+        heading: __("session.list.title"),
+        headingSize: "s",
+        href: "/sessions",
+        descriptionHtml: "View vaccination sessions and the children in them" | nhsukMarkdown
+      }) }}
+    </li>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      {{ card({
+        classes: "app-card--compact",
+        clickable: true,
+        heading: __("upload.list.title"),
+        headingSize: "s",
+        href: "/uploads",
+        descriptionHtml: "Upload class lists" | nhsukMarkdown
       }) }}
     </li>
     {% else %}

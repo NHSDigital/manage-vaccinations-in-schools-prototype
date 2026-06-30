@@ -1,6 +1,24 @@
 {{ summaryList({
   card: {
     classes: "app-card--compact",
+    heading: session.formatted.date | highlightQuery(data.q) | safe,
+    headingSize: "s",
+    headingLevel: 4,
+    href: session.uri + "/report",
+    clickable: true
+  },
+  lastRowBorder: false,
+  rows: summaryRows(session, {
+    patients: {},
+    programmes: {},
+    school: {},
+    yearGroups: {},
+    status: {},
+    consentWindow: {}
+  })
+}) if account.isSchoolUser else summaryList({
+  card: {
+    classes: "app-card--compact",
     heading: session.location.name | highlightQuery(data.q) | safe,
     headingLevel: 3,
     headingSize: "s",

@@ -8,6 +8,8 @@ router.get('/sign-in', account.login)
 
 router.post('/cis2', account.cis2)
 
+router.post('/dfe-sign-in', account.dfeSignIn)
+
 router.post('/change-role', account.changeRole)
 
 router.get('/sign-out', account.logout)

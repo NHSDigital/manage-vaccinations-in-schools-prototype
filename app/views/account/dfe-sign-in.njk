@@ -1,0 +1,59 @@
+{% extends "_layouts/form-dfe.njk" %}
+
+{% set title = __("account.dfeSignIn.label") %}
+
+{% block form %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {{ __("account.dfeSignIn.login.title") }}
+      </h1>
+
+      {{ govukInput({
+        label: {
+          text: __("account.dfeSignIn.login.email.title")
+        },
+        hint: {
+          text: __("account.dfeSignIn.login.email.hint")
+        }
+      }) }}
+
+      {{ govukButton({
+        text: __("account.dfeSignIn.login.email.confirm")
+      }) }}
+
+      {{ __("account.dfeSignIn.terms.description") | govukMarkdown | safe }}
+
+      <h2 class="govuk-heading-m">
+        {{ __("account.dfeSignIn.new.title") }}
+      </h2>
+
+      {{ govukButton({
+        classes: "govuk-button--secondary",
+        text: __("account.dfeSignIn.new.confirm")
+      }) }}
+
+      {{ govukDetails({
+        summaryText: __("account.dfeSignIn.services.title"),
+        text: __("account.dfeSignIn.services.description")
+      }) }}
+    </div>
+    <div class="govuk-grid-column-one-third">
+      <aside class="app-related">
+        <h2 class="govuk-heading-m">
+          Related actions
+        </h2>
+        <nav aria-label="Related actions">
+          <ul class="govuk-list">
+            <li>
+              <a class="govuk-link" href="https://help.signin.education.gov.uk/contact-us">Contact us</a>
+            </li>
+            <li>
+              <a class="govuk-link" href="https://askonline.education.gov.uk/chatbot/davina?regional=true">DfE Sign-in help assistant (opens in new tab)</a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+    </div>
+  </div>
+{% endblock %}

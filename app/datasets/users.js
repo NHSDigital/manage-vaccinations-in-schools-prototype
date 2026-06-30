@@ -48,5 +48,13 @@ export default [
     email: 'agatha.andrews@cwicb.nhs.example',
     role: UserRole.DataConsumer,
     team_id: '002'
+  },
+  {
+    uid: '000000000007',
+    firstName: 'Tilly',
+    lastName: 'Thompson',
+    email: 'tilly.thompson@graceacademy.example',
+    role: UserRole.SchoolSecretary,
+    team_id: '003'
   }
 ]

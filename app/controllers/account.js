@@ -31,6 +31,20 @@ export const accountController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  dfeSignIn(request, response) {
+    const { data } = request.session
+
+    // Update session token (get pre-defined user with school secretary role)
+    request.session.data.token = User.findAll(data).find(
+      (user) => user.role === UserRole.SchoolSecretary
+    )
+
+    return saveAndRedirect(request, response, '/home')
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   login(request, response) {
     const { data } = request.session
     const { uid } = /** @type {{ uid?: string }} */ (request.query)
@@ -45,9 +59,13 @@ export const accountController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   logout(request, response) {
+    const { account } = response.locals
+
+    const startPath = account.isSchoolUser ? '/start-schools' : '/start'
+
     delete request.session.data.token
 
-    return saveAndRedirect(request, response, '/start')
+    return saveAndRedirect(request, response, startPath)
   }
 }
 

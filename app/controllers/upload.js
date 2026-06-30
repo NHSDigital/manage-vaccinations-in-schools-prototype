@@ -22,7 +22,16 @@ export const uploadController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
-    response.locals.uploads = Upload.findAll(request.session.data)
+    const { data } = request.session
+    const { account } = response.locals
+
+    let uploads = Upload.findAll(data)
+
+    if (account.isSchoolUser) {
+      uploads = uploads.filter((upload) => upload.type === UploadType.School)
+    }
+
+    response.locals.uploads = uploads
 
     return next()
   },

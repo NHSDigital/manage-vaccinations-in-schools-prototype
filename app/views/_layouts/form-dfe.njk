@@ -1,0 +1,10 @@
+{% extends "_layouts/default-dfe.njk" %}
+
+{% block content %}
+  {{ super() }}
+
+  <form action="{{ formAction }}" method="post">
+    {% block form %}
+    {% endblock %}
+  </div>
+{% endblock %}

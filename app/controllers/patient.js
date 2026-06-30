@@ -7,7 +7,7 @@ import {
   SessionStatus,
   SessionType
 } from '../enums.js'
-import { Patient, Programme, Session } from '../models.js'
+import { Patient, Programme, Session, Team } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -23,7 +23,7 @@ export const patientController = {
    */
   read(request, response, next, patient_uuid) {
     const { data } = request.session
-    const { __ } = response.locals
+    const { __, account } = response.locals
 
     const currentPath = request.baseUrl + request.path
 
@@ -50,10 +50,12 @@ export const patientController = {
         current: currentPath === `${patient.uri}/contacts`
       },
       ...Object.values(patient.programmes).map((patientProgramme) => {
-        return {
-          text: patientProgramme.programme.name,
-          href: patientProgramme.uri,
-          current: currentPath === patientProgramme.uri
+        if (!account.isSchoolUser) {
+          return {
+            text: patientProgramme.programme.name,
+            href: patientProgramme.uri,
+            current: currentPath === patientProgramme.uri
+          }
         }
       })
     ]
@@ -76,12 +78,17 @@ export const patientController = {
   readAll(request, response, next) {
     const { option, programme_id, q, yearGroup } = request.query
     const { data } = request.session
+    const { account } = response.locals
+
+    const team = Team.findOne(account.team_id, data)
 
     const programmes = Programme.findAll(data)
       .filter((programme) => !programme.hidden)
       .sort((a, b) => a.name.localeCompare(b.name))
 
-    const patients = Patient.findAll(data)
+    const patients = Patient.findAll(data).filter((patient) =>
+      team.schools.some((school) => patient.school_id === school.id)
+    )
 
     // Sort
     let results = _.sortBy(patients, 'lastName')
@@ -110,6 +117,7 @@ export const patientController = {
 
     // Filter defaults
     const filters = {
+      consent: request.query.consent || 'none',
       report: request.query.report || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
@@ -151,6 +159,15 @@ export const patientController = {
           )
         )
       }
+    }
+
+    // Filter by consent status (school teams only)
+    if (filters.consent && filters.consent !== 'none') {
+      const ids = programme_ids || programmes.map((programme) => programme.id)
+
+      results = results.filter((patient) =>
+        ids.some((id) => patient.programmes[id].consent === filters.consent)
+      )
     }
 
     // Filter by status
@@ -236,6 +253,7 @@ export const patientController = {
 
     // Clean up session data
     delete data.clinicStatus
+    delete data.consent
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
@@ -301,7 +319,7 @@ export const patientController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'q', 'report'],
+      ['clinicStatus', 'consent', 'q', 'report'],
       [
         'option',
         'patientConsent',

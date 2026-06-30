@@ -1,0 +1,36 @@
+{% extends "_layouts/default.njk" %}
+
+{% set assetsName = "public" %}
+{% set title = serviceName + " (Mavis)" %}
+{% set headerOptions = {
+  service: {
+    text: serviceName
+  }
+} %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {{ appHeading({
+        size: "xl",
+        title: title
+      }) }}
+
+      {% filter nhsukMarkdown %}
+This service is for school staff.
+
+Use it to:
+- upload class lists for vaccination programmes
+- check which pupils are in vaccination sessions
+- view pupils’ consent status
+
+Your school age immunisation service will use this information to plan and deliver vaccination sessions.
+      {% endfilter %}
+
+      {{ button({
+        html: __("account.dfeSignIn.title"),
+        href: "/account/dfe-sign-in"
+      }) }}
+    </div>
+  </div>
+{% endblock %}

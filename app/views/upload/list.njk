@@ -12,8 +12,11 @@
   }) }}
 
   {{ actionLink({
-    text: __("upload.new.label"),
-    href: "/uploads/new"
+    href: "/uploads/new?type=" + UploadType.School + "&school_id=" + account.team.school_ids[0],
+    text: __("session.upload-class-list.title")
+  }) if account.isSchoolUser else actionLink({
+    href: "/uploads/new",
+    text: __("upload.new.label")
   }) }}
 
   <div class="nhsuk-grid-row">
@@ -34,7 +37,7 @@
           small: true,
           items: radioFilterItems(UploadType),
           decorate: "type"
-        }) }}
+        }) if not account.isSchoolUser }}
 
         {{ checkboxes({
           fieldset: {
@@ -98,6 +101,9 @@
           },
           lastRowBorder: false,
           rows: summaryRows(upload, {
+            fileName: {},
+            status: {}
+          }) if account.isSchoolUser else summaryRows(upload, {
             fileName: {},
             type: {
               value: upload.summary.type

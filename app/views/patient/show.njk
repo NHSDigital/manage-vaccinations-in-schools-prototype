@@ -38,7 +38,7 @@
         {
           text: __("patient.archive.label"),
           href: patient.uri + "/archive"
-        } if not patient.archived
+        } if not patient.archived and not account.isSchoolUser
       ]
     }
   }) %}
@@ -64,7 +64,7 @@
         nhsn: {
           changeText: "PDS history",
           href: patient.uri + "/pds"
-        } if not patient.hasMissingNhsNumber,
+        } if not patient.hasMissingNhsNumber and not account.isSchoolUser,
         archiveReason: {
           other: archiveReasonOther
         },
@@ -88,20 +88,33 @@
   {% set canInviteToClinic = false %}
   {% set canBookIntoClinic = false %}
   {% for id, patientProgramme in patient.programmes %}
-    {% set patientProgrammeRows = patientProgrammeRows | push([
-      {
-        header: __("patientProgramme.name.label"),
-        html: link(patientProgramme.uri, patientProgramme.programme.name)
-      },
-      {
-        header: __("patientProgramme.status.label"),
-        html: patientProgramme.formatted.status
-      },
-      {
-        header: __("patientProgramme.statusNotes.label"),
-        html: patientProgramme.statusNotes
-      }
-    ]) %}
+    {% if account.isSchoolUser %}
+      {% set patientProgrammeRows = patientProgrammeRows | push([
+        {
+          header: __("patientProgramme.name.label"),
+          html: patientProgramme.programme.name
+        },
+        {
+          header: __("patientProgramme.consent.label"),
+          html: patientProgramme.formatted.consentStatus
+        }
+      ]) %}
+    {% else %}
+      {% set patientProgrammeRows = patientProgrammeRows | push([
+        {
+          header: __("patientProgramme.name.label"),
+          html: link(patientProgramme.uri, patientProgramme.programme.name)
+        },
+        {
+          header: __("patientProgramme.status.label"),
+          html: patientProgramme.formatted.status
+        },
+        {
+          header: __("patientProgramme.statusNotes.label"),
+          html: patientProgramme.statusNotes
+        }
+      ]) %}
+    {% endif %}
     {% set canInviteToClinic = canInviteToClinic or patientProgramme.clinicStatus === PatientClinicStatus.Ready %}
     {% set canBookIntoClinic = canBookIntoClinic or canInviteToClinic or patientProgramme.clinicStatus === PatientClinicStatus.Invited %}
   {% endfor %}
@@ -127,8 +140,8 @@
       responsive: true,
       head: [
         { text: __("patientProgramme.name.label") },
-        { text: __("patientProgramme.status.label") },
-        { text: __("patientProgramme.statusNotes.label") }
+        { text: __("patientProgramme.consent.label") if account.isSchoolUser else __("patientProgramme.status.label") },
+        { text: __("patientProgramme.statusNotes.label") if not account.isSchoolUser }
       ],
       rows: patientProgrammeRows
     }) }}
@@ -141,7 +154,9 @@
     descriptionHtml: appTimeline({
       items: timelineItems(patient.auditEvents)
     })
-  }) if patient.auditEvents.length }}
+  }) if patient.auditEvents.length and not account.isSchoolUser }}
 
-  {% include "patient/_note.njk" %}
+  {% if not account.isSchoolUser %}
+    {% include "patient/_note.njk" %}
+  {% endif %}
 {% endblock %}
