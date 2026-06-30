@@ -676,6 +676,12 @@ export const en = {
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
+    appointmentLost: {
+      title: 'Your appointment time is no longer available',
+      instruction:
+        'To continue with your booking, you must choose another appointment time.',
+      confirm: 'Choose another appointment'
+    },
     offerHealthQuestions: {
       title: 'We’ve got your vaccination booking request',
       bookingReference: 'Your booking reference number is: %s',

@@ -1,0 +1,26 @@
+{% extends "_layouts/form.njk" %}
+
+{% set paths = { back: false } %}
+{% set confirmButtonText = __("clinicBooking.appointmentLost.confirm") %}
+{% set title = __("clinicBooking.appointmentLost.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: "Appointment details",
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      location: {},
+      date: {},
+      timeSlot: {}
+    })
+  }) }}
+
+  {{ __("clinicBooking.appointmentLost.instruction") | nhsukMarkdown }}
+{% endblock %}
