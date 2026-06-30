@@ -2043,8 +2043,8 @@ export const en = {
       }
     },
     catchUps: {
-      title: 'Catch-up opportunities',
-      none: '%s has no additional catch-up opportunties.'
+      title: 'Additional vaccinations that can be offered',
+      none: '%s has no additional vaccinations that can be offered.'
     }
   },
   pdsRecord: {
