@@ -26,8 +26,8 @@ export function generateClinicVaccinationPeriods(session) {
     breakLength
 
   const sessionDate = new Date(session.date)
-  const earliestSessionStartTime = new Date(sessionDate.setUTCHours(9, 0)) // 9am
-  const latestSessionFinishTime = new Date(sessionDate.setUTCHours(20, 0)) // 8pm
+  const earliestSessionStartTime = new Date(sessionDate.setHours(9, 0, 0, 0)) // 9am
+  const latestSessionFinishTime = new Date(sessionDate.setHours(20, 0, 0, 0)) // 8pm
   const sessionWindow = Math.floor(
     (latestSessionFinishTime.getTime() - earliestSessionStartTime.getTime()) /
       1000 /

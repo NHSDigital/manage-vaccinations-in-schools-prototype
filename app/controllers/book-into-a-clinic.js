@@ -20,7 +20,6 @@ import {
   getBookableClinicSessions,
   getScheduledClinicLocationItems
 } from '../utils/clinic-booking.js'
-import { setMidday } from '../utils/date.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
@@ -272,7 +271,6 @@ export const bookIntoClinicController = {
       const clinicDateItems = []
       scheduledClinicSessions.forEach((session) => {
         const midday = new Date(session.date)
-        setMidday(midday)
 
         const availableTimes = session.availableAppointmentTimes
         const morningAvailable = availableTimes.some((time) => time < midday)
