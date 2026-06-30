@@ -2044,7 +2044,7 @@ export const en = {
     },
     catchUps: {
       title: 'Additional vaccinations that can be offered',
-      none: '%s has no additional vaccinations that can be offered.'
+      none: 'There are no additional vaccinations that can be offered to %s.'
     },
     clinicAttendanceType: {
       label: 'Attendance type'
