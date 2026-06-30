@@ -75,8 +75,8 @@ export const downloadController = {
   new(type) {
     return (request, response) => {
       const { school_id, session_id } = request.params
-      const { account } = request.app.locals
       const { data } = request.session
+      const { account } = response.locals
 
       const download = Download.create(
         { createdBy_uid: account.uid },

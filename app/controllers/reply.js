@@ -65,9 +65,9 @@ export const replyController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
-    const { account } = request.app.locals
     const { programme_id, nhsn } = request.params
     const { data } = request.session
+    const { account } = response.locals
 
     const patientSession = PatientSession.findAll(request.session.data)
       .filter(({ programme }) => programme.id === programme_id)
@@ -103,10 +103,11 @@ export const replyController = {
    */
   update(type) {
     return (request, response) => {
-      const { account, invalidUuid } = request.app.locals
+      const { invalidUuid } = request.app.locals
       const { reply_uuid } = request.params
       const { data } = request.session
-      const { __, patientSession, triage, vaccination } = response.locals
+      const { __, account, patientSession, triage, vaccination } =
+        response.locals
 
       let reply
       let next
@@ -479,11 +480,10 @@ export const replyController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   withdraw(request, response) {
-    const { account } = request.app.locals
     const { refusalReason, refusalReasonOther, note } = request.body.reply
     const { reply_uuid } = request.params
     const { data } = request.session
-    const { __, patientSession, reply } = response.locals
+    const { __, account, patientSession, reply } = response.locals
 
     // Create a new reply
     const newReply = Reply.create(

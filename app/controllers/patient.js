@@ -352,10 +352,9 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
-    const { account } = request.app.locals
     const { patient_uuid } = request.params
     const { data, referrer } = request.session
-    const { __ } = response.locals
+    const { __, account } = response.locals
 
     // Update session data
     const patient = Patient.update(
@@ -647,7 +646,7 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   archive(request, response) {
-    const { account } = request.app.locals
+    const { account } = response.locals
     const { patient_uuid } = request.params
     const { data } = request.session
     const { __ } = response.locals
@@ -670,10 +669,9 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   note(request, response) {
-    const { account } = request.app.locals
     const { note } = request.body
     const { data } = request.session
-    const { __, patient } = response.locals
+    const { __, account, patient } = response.locals
 
     patient.saveNote({
       note,
@@ -692,11 +690,10 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   addToSession(request, response) {
-    const { account } = request.app.locals
     const { session_id } = request.body
     const { programme_id } = request.params
     const { data } = request.session
-    const { __, patient, patientProgramme } = response.locals
+    const { __, account, patient, patientProgramme } = response.locals
 
     if (patientProgramme.scheduledClinicsCount === 0) {
       return saveAndRedirect(request, response, `/sessions/new`)
@@ -737,10 +734,9 @@ export const patientController = {
    */
   vaccination(type) {
     return (request, response) => {
-      const { account } = request.app.locals
       const { programme_id } = request.params
       const { data } = request.session
-      const { patient } = response.locals
+      const { account, patient } = response.locals
 
       const patientProgramme = new PatientProgramme(
         patient.programmes[String(programme_id)],

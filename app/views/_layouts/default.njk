@@ -82,17 +82,17 @@
           href: "/schools",
           text: __("school.list.label"),
           active: navigation.activeSection == "schools"
-        },
+        } if "schools" in account.views,
         {
           href: "/patients",
           text: __("patient.list.label"),
           active: navigation.activeSection == "patients"
-        },
+        } if "patients" in account.views,
         {
           href: "/sessions",
           text: __("session.list.label"),
           active: navigation.activeSection == "sessions"
-        },
+        } if "sessions" in account.views,
         {
           classes: "app-header__navigation-item--with-badge",
           href: "/reviews",
@@ -100,34 +100,34 @@
             text: data.counts.review
           }),
           active: navigation.activeSection == "reviews"
-        },
+        } if "reviews" in account.views,
         {
           href: "/reports",
           text: __("report.list.label"),
           active: navigation.activeSection == "reports"
-        },
+        } if "reports" in account.views,
         {
           href: "/uploads",
           text: __("upload.list.label"),
           active: navigation.activeSection == "uploads"
-        },
+        } if "uploads" in account.views,
         {
           href: "/downloads",
           text: __("download.list.label"),
           active: navigation.activeSection == "downloads"
-        },
+        } if "downloads" in account.views,
         {
           href: "/vaccines",
           text: __("vaccine.list.label"),
           active: navigation.activeSection == "vaccines"
-        },
+        } if "vaccines" in account.views,
         {
-          href: team.uri,
+          href: account.team.uri,
           text: __("team.show.label"),
           active: navigation.activeSection == "teams"
-        }
+        } if "teams" in account.views
       ]
-    } if account.role != UserRole.DataConsumer,
+    },
     account: {
       items: [
         {

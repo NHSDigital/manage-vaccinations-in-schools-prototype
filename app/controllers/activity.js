@@ -20,8 +20,8 @@ export const activityController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
-    const { account } = request.app.locals
     const { data } = request.session
+    const { account } = response.locals
 
     const auditEvent = (event) => new AuditEvent(event, data)
     const createdBy_uid = account.uid

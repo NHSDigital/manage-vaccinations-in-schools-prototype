@@ -85,9 +85,9 @@ export const vaccinationController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
-    const { account } = request.app.locals
     const { patientSession_uuid } = request.query
     const { data } = request.session
+    const { account } = response.locals
 
     const patientSession = PatientSession.findOne(
       String(patientSession_uuid),

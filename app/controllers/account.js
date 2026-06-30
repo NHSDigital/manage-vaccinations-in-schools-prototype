@@ -1,3 +1,5 @@
+import { UserRole } from '../enums.js'
+import { User } from '../models.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const accountController = {
@@ -5,13 +7,14 @@ export const accountController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   changeRole(request, response) {
-    const { account } = request.app.locals
+    const { role } = request.body.account
     const { referrer } = /** @type {{ referrer?: string }} */ (request.query)
 
-    request.session.data.token = {
-      ...account,
-      ...{ role: request.body.role }
-    }
+    // Update account role
+    response.locals.account.role = role || UserRole.Nurse
+
+    // Update session token
+    request.session.data.token = response.locals.account
 
     return saveAndRedirect(request, response, referrer || '/home')
   },
@@ -27,12 +30,11 @@ export const accountController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   login(request, response) {
-    const { account } = request.app.locals
+    const { data } = request.session
+    const { uid } = /** @type {{ uid?: string }} */ (request.query)
 
-    request.session.data.token = {
-      ...account,
-      ...{ role: request.query.role }
-    }
+    // Update session token (get pre-defined user with UID)
+    request.session.data.token = User.findOne(uid, data)
 
     return saveAndRedirect(request, response, '/home')
   },
@@ -41,8 +43,7 @@ export const accountController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   logout(request, response) {
-    // Delete role selected when signing in via CIS2
-    delete request.session.data.role
+    delete request.session.data.token
 
     return saveAndRedirect(request, response, '/start')
   }
