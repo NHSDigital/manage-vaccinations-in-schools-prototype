@@ -2809,10 +2809,10 @@ export const en = {
       appointments: {
         label: 'Clinic details',
         total: {
-          label: 'Total appointments'
+          label: 'Total slots'
         },
         available: {
-          label: 'Available appointments'
+          label: 'Available slots'
         },
         programmeRequests: {
           label: '%s appointments'
@@ -2910,7 +2910,7 @@ export const en = {
       suffix: 'minutes'
     },
     totalAppointments: {
-      label: 'Number of appointments'
+      label: 'Number of slots'
     },
     appointments: {
       label: 'Appointments'
