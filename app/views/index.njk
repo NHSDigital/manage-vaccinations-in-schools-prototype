@@ -23,10 +23,20 @@
         size: "m"
       }) }}
 
-      {{ actionLink({
-        text: "Start page for nurses and administrators",
-        href: "/start"
-      }) }}
+      <p class="nhsuk-body">
+        {{ actionLink({
+          classes: "nhsuk-u-margin-bottom-0",
+          text: "Start page for nurses and administrators",
+          href: "/start"
+        }) }}
+      </p>
+
+      <p class="nhsuk-body">
+        {{ actionLink({
+          text: "Start page for school administrators",
+          href: "/start-schools"
+        }) }}
+      </p>
 
       {% set userItems = [] %}
       {% for uid, user in data.users %}
@@ -71,6 +81,8 @@
           }) }}
         {% endif %}
       {% endfor %}
+
+      <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
       {{ appHeading({
         level: 2,

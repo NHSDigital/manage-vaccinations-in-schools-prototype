@@ -24,6 +24,7 @@
           checkboxFilters: checkboxFilters,
           radioFilters: radioFilters,
           hideClinicStatuses: true,
+          hideProgrammeStatuses: account.isSchoolUser,
           view: view
         }) }}
       </app-auto-submit>
@@ -89,13 +90,22 @@
             {% endfor %}
           {% endset %}
 
+          {% set consentStatusHtml -%}
+            {% set ids = data.programme_id or session.programme_ids %}
+            {% for patientSession in patientSession.siblingPatientSessions %}
+              {% if ids | includes(patientSession.programme_id) %}
+                {{ patientSession.formatted.programmeConsent | nhsukMarkdown }}
+              {%- endif -%}
+            {%- endfor %}
+          {%- endset %}
+
           {% call card({
             classes: "app-card--compact",
             heading: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
             headingLevel: 3,
             headingSize: "s",
-            clickable: not showRegistration,
-            href: patientSession.uri
+            clickable: not showRegistration and not account.isSchoolUser,
+            href: patientSession.uri if not account.isSchoolUser
           }) %}
             {{ summaryList({
               lastRowBorder: false,
@@ -109,24 +119,24 @@
                 vaccineCriteria: {
                   label: __("patientSession.vaccineCriteria.label"),
                   value: patientSession.formatted.vaccineCriteria
-                } if session.offersAlternativeVaccine,
+                } if session.offersAlternativeVaccine and not account.isSchoolUser,
                 instruct: {
                   label: __("patientSession.instruct.label"),
                   value: patientSession.formatted.instruct
-                } if patientSession.instruct,
+                } if patientSession.instruct and not account.isSchoolUser,
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
                   href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "register" and patientSession.register != RegistrationOutcome.Pending
                 } if showRegistration,
                 report: {
-                  label: __("patientSession.report.label"),
-                  value: reportStatusHtml
+                  label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.report.label"),
+                  value: consentStatusHtml if account.isSchoolUser else reportStatusHtml
                 },
                 clinicAppointment: {
                   label: __("patientSession.clinicAppointment.label"),
                   value: patientSession.clinicAppointment.formatted.timeSlot
-                },
+                } if not account.isSchoolUser,
                 notes: {
                   label: __("patientSession.sessionNotes.label"),
                   value: appEvent({
@@ -135,7 +145,7 @@
                     truncate: 300,
                     patientSession: patientSession
                   })
-                } if patientSession.sessionNotes[0]
+                } if patientSession.sessionNotes[0] and not account.isSchoolUser
               })
             }) }}
 

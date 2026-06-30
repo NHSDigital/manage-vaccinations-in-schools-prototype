@@ -2,7 +2,7 @@ import { default as filters } from '@x-govuk/govuk-prototype-filters'
 import { isAfter, isBefore } from 'date-fns'
 
 import { SchoolClosureReason, SchoolStatus } from '../enums.js'
-import { Location, Patient, Session } from '../models.js'
+import { Location, Patient, Session, Team } from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
 import { getSchoolStatus } from '../utils/status.js'
@@ -25,6 +25,7 @@ import {
  * @property {SchoolPhase} [phase] - Phase
  * @property {boolean} [sen] - SEN school
  * @property {string} [site] - Site code
+ * @property {Array<string>} [teams] - Teams
  * @property {Array<number>} [yearGroups] - Year groups
  */
 
@@ -52,6 +53,7 @@ export class School extends Location {
     this.phase = options?.phase
     this.sen = stringToBoolean(options?.sen) || false
     this.site = options?.site
+    this.team_ids = options?.team_ids || []
     this.yearGroups = stringToArray(options?.yearGroups).map(Number)
   }
 
@@ -86,6 +88,21 @@ export class School extends Location {
    */
   get linkedSchools() {
     return this.linkedUrns.map((urn) => School.findOne(urn, this.context))
+  }
+
+  /**
+   * Get school teams
+   *
+   * @returns {Array<Team>} Teams
+   */
+  get teams() {
+    if (this.context?.teams && this.id) {
+      return Object.values(this.context?.teams)
+        .filter((school) => school.team_ids.includes(this.id))
+        .map((team) => new Team(team, this.context))
+    }
+
+    return []
   }
 
   /**

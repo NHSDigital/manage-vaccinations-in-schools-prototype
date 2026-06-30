@@ -1,0 +1,14 @@
+@use "node_modules/govuk-frontend/dist/govuk" as *;
+
+.govuk-generic-header {
+  background-color: govuk-functional-colour(brand);
+}
+
+.app-related {
+  padding-top: govuk-spacing(3);
+  border-top: $govuk-border-width solid govuk-functional-colour(brand);
+
+  .govuk-link {
+    font-weight: bold;
+  }
+}

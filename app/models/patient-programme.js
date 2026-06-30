@@ -26,7 +26,7 @@ import {
 } from '../utils/date.js'
 import { ordinal } from '../utils/number.js'
 import { getReportOutcome } from '../utils/patient-session.js'
-import { getPatientStatus } from '../utils/status.js'
+import { getConsentOutcomeStatus, getPatientStatus } from '../utils/status.js'
 import {
   formatProgrammeStatus,
   formatTag,
@@ -571,6 +571,15 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get consent outcome
+   *
+   * @returns {ConsentOutcome|PatientStatus} Consent outcome
+   */
+  get consent() {
+    return this.lastPatientSession?.consent
+  }
+
+  /**
    * Get formatted values
    *
    * @returns {object} Formatted values
@@ -594,6 +603,16 @@ export class PatientProgramme extends BaseModel {
                 this.statusNotes,
                 false
               )
+            case 'consentStatus':
+              return this.consent
+                ? formatProgrammeStatus(
+                    this.programme,
+                    getConsentOutcomeStatus(this.consent)
+                  )
+                : formatProgrammeStatus(
+                    this.programme,
+                    getPatientStatus(this.status)
+                  )
             case 'programmeStatus':
               return formatProgrammeStatus(
                 this.programme,
@@ -622,7 +641,7 @@ PatientProgramme.relate('patient_uuid', () => Patient, 'patient')
 PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
- * @import { RecordVaccineCriteria } from '../enums.js'
+ * @import { ConsentOutcome, RecordVaccineCriteria } from '../enums.js'
  * @import { PatientSession } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

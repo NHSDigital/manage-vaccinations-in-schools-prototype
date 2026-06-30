@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 import express from 'express'
 
 import { authentication } from './middleware/authentication.js'
@@ -39,6 +41,17 @@ import { vaccinationRoutes } from './routes/vaccination.js'
 import { vaccineRoutes } from './routes/vaccine.js'
 
 const router = express.Router({ strict: true })
+
+// GOV.UK assets path
+router.use(
+  '/assets',
+  express.static(
+    path.join(
+      import.meta.dirname,
+      '../node_modules/govuk-frontend/dist/govuk/assets'
+    )
+  )
+)
 
 router.use(performance)
 router.use(enumeration)

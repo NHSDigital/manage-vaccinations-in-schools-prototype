@@ -108,6 +108,18 @@
       }) if enums }}
     {% endfor %}
 
+    {{ checkboxes({
+      small: true,
+      fieldset: {
+        legend: {
+          text: __("patientSession.consent.label"),
+          size: "s"
+        }
+      },
+      items: enumItems(ConsentOutcome),
+      decorate: "consent"
+    }) if account.isSchoolUser }}
+
     {{ radios({
       small: true,
       fieldset: {

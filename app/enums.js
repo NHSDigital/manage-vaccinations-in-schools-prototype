@@ -837,7 +837,8 @@ export const UserRole = {
   Pharmacist: 'Pharmacist',
   HCA: 'Healthcare assistant',
   MedicalSecretary: 'Medical secretary',
-  DataConsumer: 'Data consumer'
+  DataConsumer: 'Data consumer',
+  SchoolSecretary: 'School administrator'
 }
 
 /**

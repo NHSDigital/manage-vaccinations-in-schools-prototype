@@ -81,6 +81,7 @@ export const en = {
       title: 'Log out'
     },
     cis2: {
+      title: 'Log in with my Care Identity',
       unlock: 'I need to unlock my smartcard',
       method: {
         label: 'Select your login method',
@@ -93,13 +94,38 @@ export const en = {
         passkey: 'Passkey (including Windows Hello and Security key)'
       },
       terms: {
-        heading: 'Agree to our terms of use',
+        title: 'Agree to our terms of use',
         description:
           'By continuing, you agree to our [terms and conditions](https://digital.nhs.uk/services/care-identity-service/registration-authority-users/registration-authority-help/privacy-notice#terms-and-conditions)'
       },
       remember: {
         label: 'Remember my selection',
         hint: 'Do not check this box if you are on a shared computer'
+      }
+    },
+    dfeSignIn: {
+      label: 'DfE Sign-in',
+      title: 'Sign in with DfE Sign-in',
+      login: {
+        title: 'Access the DfE Sign-in service',
+        email: {
+          title: 'Log into your account',
+          hint: 'Enter your email address to sign in.',
+          confirm: 'Next'
+        }
+      },
+      terms: {
+        description:
+          'By signing in, you accept [DfE Sign-in terms and conditions](https://interactions.signin.education.gov.uk/terms).'
+      },
+      new: {
+        title: 'New users of DfE Sign-in',
+        confirm: 'Create an account'
+      },
+      services: {
+        title: 'Services using DfE Sign-in',
+        description:
+          'These DfE services are now accessed using your DfE Sign-in account.'
       }
     },
     permissions: {
@@ -1964,6 +1990,9 @@ export const en = {
     vaccinationsGiven: {
       count:
         '{count, plural, =0 {No vaccination record} one {Vaccination record} other {# vaccination records}}'
+    },
+    consent: {
+      label: 'Consent status'
     },
     status: {
       label: 'Status'

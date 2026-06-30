@@ -66,7 +66,12 @@ const prototype = await NHSPrototypeKit.init({
     })
   }),
   sessionDataDefaults,
-  viewsPath: ['app', 'app/views', 'node_modules/nhsuk-decorated-components']
+  viewsPath: [
+    'app',
+    'app/views',
+    'node_modules/govuk-frontend/dist',
+    'node_modules/nhsuk-decorated-components'
+  ]
 })
 
 prototype.start()

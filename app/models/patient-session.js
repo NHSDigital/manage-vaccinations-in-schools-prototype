@@ -61,6 +61,7 @@ import {
 import {
   formatLink,
   formatTag,
+  formatProgrammeStatus,
   formatVaccineCriteria,
   formatYearGroup
 } from '../utils/string.js'
@@ -935,6 +936,11 @@ export class PatientSession extends BaseModel {
               return this.programme?.nameTag
             case 'consent':
               return this.consent && formatTag(this.status.consent)
+            case 'programmeConsent':
+              return (
+                this.consent &&
+                formatProgrammeStatus(this.programme, this.status.consent)
+              )
             case 'screen':
               return this.screen && formatTag(this.status.screen)
             case 'instruct':

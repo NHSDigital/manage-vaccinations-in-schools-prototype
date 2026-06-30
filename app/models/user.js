@@ -57,6 +57,15 @@ export class User extends BaseModel {
   }
 
   /**
+   * Is a school user
+   *
+   * @returns {boolean} Is a school user
+   */
+  get isSchoolUser() {
+    return this.role === UserRole.SchoolSecretary
+  }
+
+  /**
    * Get full name, formatted as LASTNAME, Firstname
    *
    * @returns {string} Full name
@@ -99,6 +108,8 @@ export class User extends BaseModel {
     switch (true) {
       case this.role === UserRole.DataConsumer:
         return ['reports']
+      case this.role === UserRole.SchoolSecretary:
+        return ['patients', 'sessions', 'uploads']
       default:
         return [
           'patients',

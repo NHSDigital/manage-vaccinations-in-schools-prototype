@@ -165,22 +165,7 @@
   {{ footer({
     meta: {
       text: "Today is " + today,
-      items: [{
-        text: "Homepage",
-        href: "/"
-      }, {
-        text: "Activity log items",
-        href: "/activity"
-      }, {
-        text: "CIS2 users",
-        href: "/users"
-      }, {
-        text: "Reset data",
-        href: "/reset"
-      }, {
-        text: "Design history",
-        href: "https://design-history.prevention-services.nhs.uk/manage-vaccinations-in-schools/"
-      }]
+      items: navigation.meta
     }
   }) }}
 {% endblock %}

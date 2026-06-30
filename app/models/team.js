@@ -85,6 +85,7 @@ export class Team extends BaseModel {
     try {
       return School.findAll(this.context)
         .filter((school) => !['888888', '999999'].includes(school.id))
+        .filter((school) => school.team_ids.includes(this.id))
         .sort((a, b) => a.name.localeCompare(b.name))
     } catch (error) {
       console.error('Team.schools', error.message)

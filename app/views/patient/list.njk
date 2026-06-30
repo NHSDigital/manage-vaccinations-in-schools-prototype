@@ -16,12 +16,14 @@
   {{ actionLink({
     text: __("pdsRecord.start.label"),
     href: "/pds/new/start"
-  }) }}
+  }) if not account.isSchoolUser }}
 
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
       {{ appPatientSearch({
-        clear: "/patients"
+        clear: "/patients",
+        hideClinicStatuses: true,
+        hideProgrammeStatuses: account.isSchoolUser
       }) }}
     </app-auto-submit>
 
@@ -78,6 +80,20 @@
             {% endif %}
           {%- endset %}
 
+          {% set consentStatusHtml -%}
+            {%- if data.programme_id %}
+              {%- for id, patientProgramme in patient.programmes -%}
+                {%- if data.programme_id | includes(id) -%}
+                  {{ patientProgramme.formatted.consentStatus | nhsukMarkdown }}
+                {%- endif -%}
+              {%- endfor %}
+            {% else %}
+              {%- for id, patientProgramme in patient.programmes -%}
+                {{ patientProgramme.formatted.consentStatus | nhsukMarkdown }}
+              {%- endfor %}
+            {% endif %}
+          {%- endset %}
+
           {{ summaryList({
             card: {
               classes: "app-card--compact",
@@ -89,6 +105,16 @@
             },
             lastRowBorder: false,
             rows: summaryRows(patient, {
+              dob: {},
+              school: {
+                value: patient.school.name | highlightQuery(data.q)
+              },
+              yearGroup: {},
+              report: {
+                label: __("patientSession.consent.label"),
+                value: consentStatusHtml
+              }
+            }) if account.isSchoolUser else summaryRows(patient, {
               nhsn: {
                 value: patient.formatted.nhsn | highlightQuery(data.q)
               },

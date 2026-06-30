@@ -15,6 +15,7 @@ import {
 } from '../enums.js'
 import {
   Clinic,
+  ClinicBooking,
   DefaultBatch,
   Instruction,
   PatientSession,
@@ -22,7 +23,7 @@ import {
   Programme,
   School,
   Session,
-  ClinicBooking
+  Team
 } from '../models.js'
 import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
@@ -53,7 +54,7 @@ export const sessionController = {
   read(request, response, next, session_id) {
     const { view } = request.params
     const { data } = request.session
-    const { __ } = response.locals
+    const { __, account } = response.locals
 
     const session = Session.findOne(session_id, data)
     response.locals.session = session
@@ -62,7 +63,7 @@ export const sessionController = {
       (defaultBatch) => defaultBatch.session_id === session_id
     )
 
-    if (session && !session.isUnplanned) {
+    if (session && !session.isUnplanned && !account.isSchoolUser) {
       response.locals.navigationItems = [
         {
           text: __('session.show.label'),
@@ -108,12 +109,21 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readAll(request, response, next) {
-    const sessions = Session.findAll(request.session.data)
+    const { data } = request.session
+    const { account } = response.locals
+
+    const team = Team.findOne(account.team_id, data)
+
+    const sessions = Session.findAll(data).filter((session) =>
+      team.schools.some((school) => session.school_id === school.id)
+    )
+
     const scheduledClinics = sessions.filter(
       (session) =>
         session.type === SessionType.Clinic &&
         session.status === SessionStatus.Planned
     )
+
     response.locals.sessions = sessions
     response.locals.clinicsAreScheduled = scheduledClinics.length > 0
 

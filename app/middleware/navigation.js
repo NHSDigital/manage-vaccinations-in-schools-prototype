@@ -21,7 +21,6 @@ export const navigation = (request, response, next) => {
 
   response.locals.navigation = {
     activeSection,
-    referrer: request.originalUrl,
     consentUrl: {
       Flu: getSessionConsentUrl(sessions, SessionPresetName.Flu),
       HPV: getSessionConsentUrl(sessions, SessionPresetName.HPV),
@@ -42,7 +41,30 @@ export const navigation = (request, response, next) => {
       'HPV, MenACWY, Td/IPV and MMR(V)': getClinicInviteUrlForPresets([
         SessionPresetName.SummerCatchup
       ])
-    }
+    },
+    meta: [
+      {
+        text: 'Homepage',
+        href: '/'
+      },
+      {
+        text: 'Activity log items',
+        href: '/activity'
+      },
+      {
+        text: 'CIS2 users',
+        href: '/users'
+      },
+      {
+        text: 'Reset data',
+        href: '/reset'
+      },
+      {
+        text: 'Design history',
+        href: 'https://design-history.prevention-services.nhs.uk/manage-vaccinations-in-schools/'
+      }
+    ],
+    referrer: request.originalUrl
   }
 
   // Show environment date in footer

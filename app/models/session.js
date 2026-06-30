@@ -1090,7 +1090,10 @@ export class Session extends BaseModel {
             case 'dateShort':
               return formatDate(this.date, { dateStyle: 'long' })
             case 'date':
-              return formatDate(this.date, { dateStyle: 'full' })
+              return formatDate(this.date, { dateStyle: 'full' }).replace(
+                ',',
+                ''
+              )
             case 'nextDate':
               return formatDate(this.date, {
                 weekday: 'long',
