@@ -1,42 +1,46 @@
 {% call card({
-  heading: __("patientSession.clinicAppointment.title") if patientSession.clinicAppointment else __("patientSession.walkIn.title"),
+  heading: __("patientSession.clinicAppointment.title"),
   headingSize: "m",
   actions: {
     items: [
       {
         text: __("patientSession.clinicAppointment.edit.label"),
-        href: patientSession.clinicAppointment.uri.edit
+        href: clinicAppointment.uri.edit
       },
       {
         text: __("patientSession.clinicAppointment.cancel.label"),
-        href: patientSession.clinicAppointment.uri.cancel
+        href: clinicAppointment.uri.cancel
       }
     ]
-  } if not session.isCancelled and patientSession.clinicAppointment
+  } if not session.isCancelled and clinicAppointment
 }) %}
 
-  {% if patientSession.clinicAppointment %}
+  {% if patientSession.clinicAttendanceType === ClinicAttendanceType.Appointment %}
     {# Pre-booked appointment #}
     {{ summaryList({
       lastRowBorder: false,
-      rows: summaryRows(patientSession.clinicAppointment, {
+      rows: summaryRows(clinicAppointment, {
         child: {
           value: patient.link.fullName
+        },
+        attendanceType: {
+          label: __("patientSession.clinicAttendanceType.label"),
+          value: patientSession.clinicAttendanceType
         },
         date: {},
         timeSlot: {},
         programmeTags: {},
-        impairments: {
-          value: patientSession.clinicAppointment.child.formatted.impairments
+        impairmentsUnlessNone: {
+          label: __("patient.impairments.label")
         },
-        adjustments: {
-          value: patientSession.clinicAppointment.child.formatted.adjustments
+        adjustmentsUnlessNone: {
+          label: __("patient.adjustments.label")
         },
         contactDetails: {}
       })
     }) }}
   {% else %}
-    {# Walk-in #}
+    {# Drop-in #}
     {% set programmeTagsHtml = '' %}
     {% for siblingPatientSession in patientSession.siblingPatientSessions %}
       {% set programmeTagsHtml = programmeTagsHtml + siblingPatientSession.programme.nameTag + " " %}
@@ -48,6 +52,10 @@
         child: {
           label: __("clinicAppointment.child.label"),
           value: patient.link.fullName
+        },
+        attendanceType: {
+          label: __("patientSession.clinicAttendanceType.label"),
+          value: patientSession.clinicAttendanceType
         },
         date: {
           label: __("clinicAppointment.date.label"),

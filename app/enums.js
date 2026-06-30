@@ -73,6 +73,15 @@ export const ClinicAppointmentStatus = {
  * @readonly
  * @enum {string}
  */
+export const ClinicAttendanceType = {
+  Appointment: 'Appointment',
+  DropIn: 'Drop-in'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentOutcome = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',

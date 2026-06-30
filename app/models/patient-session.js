@@ -5,6 +5,7 @@ import activity from '../datasets/activity.js'
 import {
   AcademicYear,
   AuditEventType,
+  ClinicAttendanceType,
   ConsentOutcome,
   ConsentWindow,
   PatientStatus,
@@ -353,6 +354,21 @@ export class PatientSession {
       ?.flatMap(({ appointments }) => appointments)
       ?.filter(({ session_id }) => session_id === this.session_id)
       ?.find(({ patient_uuid }) => patient_uuid === this.patient_uuid)
+  }
+
+  /**
+   * Is this patient-session for a booked clinic appointment, or for a drop-in?
+   *
+   * @returns {ClinicAttendanceType|undefined} Attendance type if this is for a clinic session, or undefined otherwise
+   */
+  get clinicAttendanceType() {
+    if (this.session.type !== SessionType.Clinic) {
+      return
+    }
+
+    return this.clinicAppointment
+      ? ClinicAttendanceType.Appointment
+      : ClinicAttendanceType.DropIn
   }
 
   /**

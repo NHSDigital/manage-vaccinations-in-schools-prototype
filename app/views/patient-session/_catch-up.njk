@@ -1,6 +1,10 @@
   {% set appointmentProgrammeIds = [] %}
-  {% if patientSession.clinicAppointment %}
-    {% set appointmentProgrammeIds = patientSession.clinicAppointment.selected_programme_ids %}
+  {% if clinicAppointment %}
+    {% set appointmentProgrammeIds = clinicAppointment.selected_programme_ids %}
+  {% else %}
+    {% for siblingPatientSession in patientSession.siblingPatientSessions %}
+      {% set appointmentProgrammeIds = appointmentProgrammeIds | push(siblingPatientSession.programme_id) %}
+    {% endfor %}
   {% endif %}
 
   {% set patientProgrammeRows = [] %}
@@ -21,7 +25,7 @@
         },
         {
           header: __("actions.label"),
-          html: link(patientSession.clinicAppointment.uri.addProgramme + patientProgramme.programme.id, "Add to appointment")
+          html: link(clinicAppointment.uri.addProgramme + patientProgramme.programme.id, "Add to appointment")
         } if not session.isCancelled
       ]) %}
     {% endif %}
