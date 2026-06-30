@@ -40,6 +40,7 @@ export const patientSessionController = {
     )
 
     const {
+      clinicAppointment,
       consent,
       consentGiven,
       patient,
@@ -161,6 +162,7 @@ export const patientSessionController = {
     response.locals.patient = patient
     response.locals.programme = programme
     response.locals.session = session
+    response.locals.clinicAppointment = clinicAppointment
 
     // Use different values for pre-screening questions
     // `IsWell` and `IsPregnant` should persist per patient
