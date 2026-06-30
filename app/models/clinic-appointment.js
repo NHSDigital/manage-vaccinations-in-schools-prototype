@@ -552,6 +552,26 @@ export class ClinicAppointment {
                   : `${this.impairments.length} impairments noted`
               )
 
+            case 'adjustmentsUnlessNone': {
+              const adjustments = this.adjustments
+              if (!adjustments) return undefined
+              return formatList(
+                adjustments.filter(
+                  (adjustment) => adjustment !== Adjustment.None
+                )
+              )
+            }
+
+            case 'impairmentsUnlessNone': {
+              const impairments = this.impairments
+              if (!impairments) return undefined
+              return formatList(
+                impairments.filter(
+                  (impairment) => impairment !== Impairment.None
+                )
+              )
+            }
+
             case 'summary': {
               const teamFacingStartTime = formatTime(this.startAt, false)
               return `${teamFacingStartTime} ${this.fullName} (${getProgrammeNames()})`
