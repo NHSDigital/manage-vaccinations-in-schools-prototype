@@ -102,10 +102,10 @@ export const uploadController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
-    const { account } = request.app.locals
     const { programme_id } = request.params
     const { type, school_id } = request.query
     const { data } = request.session
+    const { account } = response.locals
 
     const upload = Upload.create(
       {
@@ -275,10 +275,9 @@ export const uploadController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   approve(request, response) {
-    const { account } = request.app.locals
     const { upload_id } = request.params
     const { data } = request.session
-    const { __ } = response.locals
+    const { __, account } = response.locals
 
     Upload.update(
       upload_id,

@@ -17,6 +17,26 @@
   }) if notices.length }}
 
   <ul class="nhsuk-grid-row nhsuk-card-group">
+    {% if account.role == UserRole.DataConsumer %}
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      {{ card({
+        clickable: true,
+        heading: __("report.list.title"),
+        headingSize: "xs",
+        href: "/reports",
+        descriptionHtml: __("report.list.description") | nhsukMarkdown
+      }) }}
+    </li>
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      {{ card({
+        clickable: true,
+        heading: __("manual.show.title"),
+        headingSize: "xs",
+        href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
+        description: __("manual.show.description")
+      }) }}
+    </li>
+    {% else %}
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
@@ -120,5 +140,6 @@
         description: __("manual.show.description")
       }) }}
     </li>
+    {% endif %}
   </ul>
 {% endblock %}

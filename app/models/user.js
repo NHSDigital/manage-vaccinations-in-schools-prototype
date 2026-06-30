@@ -1,6 +1,9 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
+import { UserRole, VaccineMethod } from '../enums.js'
 import { formatCode, formatLink } from '../utils/string.js'
+
+import { Team } from './team.js'
 
 /**
  * @typedef {object} UserOptions
@@ -9,9 +12,8 @@ import { formatCode, formatLink } from '../utils/string.js'
  * @property {string} [lastName] - Last/family name
  * @property {string} [email] - Email address
  * @property {UserRole} [role] - User role
- * @property {boolean} [canPrescribe] - Can provide PSD instruction
- * @property {Array<VaccineMethod>} [vaccineMethods] - Vaccine methods
  * @property {object} [vaccinations] - Vaccination count
+ * @property {object} [team_id] - Team ID
  */
 
 /**
@@ -20,16 +22,26 @@ import { formatCode, formatLink } from '../utils/string.js'
 export class User {
   /**
    * @param {UserOptions} options
+   * @param {object} [context] - Context
    */
-  constructor(options) {
+  constructor(options, context) {
+    this.context = context
     this.uid = options?.uid || faker.string.numeric(12)
     this.firstName = options?.firstName
     this.lastName = options?.lastName
     this.email = options?.email
     this.role = options?.role
-    this.canPrescribe = options?.canPrescribe || false
-    this.vaccineMethods = options?.vaccineMethods || []
     this.vaccinations = options?.vaccinations || {}
+    this.team_id = options?.team_id || '001'
+  }
+
+  /**
+   * Can provide PSD instruction
+   *
+   * @returns {boolean} Can provide PSD instruction
+   */
+  get canPrescribe() {
+    return [UserRole.NursePrescriber, UserRole.Pharmacist].includes(this.role)
   }
 
   /**
@@ -48,6 +60,59 @@ export class User {
    */
   get nameAndRole() {
     return `${this.fullName} (${this.role})`
+  }
+
+  /**
+   * Get team
+   *
+   * @returns {Team|undefined} Team
+   */
+  get team() {
+    try {
+      return Team.findOne(this.team_id, this.context)
+    } catch (error) {
+      console.error('User.team', error.message)
+    }
+  }
+
+  /**
+   * Get authorised vaccine methods
+   *
+   * @returns {Array<VaccineMethod>} Vaccine methods
+   */
+  get vaccineMethods() {
+    switch (true) {
+      case [UserRole.Nurse, UserRole.NursePrescriber].includes(this.role):
+        return [VaccineMethod.Injection, VaccineMethod.Intranasal]
+      case this.role === UserRole.HCA:
+        return [VaccineMethod.Intranasal]
+      default:
+        return []
+    }
+  }
+
+  /**
+   * Get authorised views
+   *
+   * @returns {Array<string>} Views
+   */
+  get views() {
+    switch (true) {
+      case this.role === UserRole.DataConsumer:
+        return ['reports']
+      default:
+        return [
+          'patients',
+          'schools',
+          'sessions',
+          'review',
+          'reports',
+          'uploads',
+          'downloads',
+          'vaccines',
+          'teams'
+        ]
+    }
   }
 
   /**
@@ -126,7 +191,3 @@ export class User {
     }
   }
 }
-
-/**
- * @import { UserRole, VaccineMethod } from '../enums.js'
- */

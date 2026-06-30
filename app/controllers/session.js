@@ -22,7 +22,6 @@ import {
   Programme,
   School,
   Session,
-  Team,
   ClinicBooking
 } from '../models.js'
 import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
@@ -140,12 +139,11 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
-    const { account } = request.app.locals
     const { data } = request.session
+    const { account } = response.locals
 
     const session = Session.create(
       {
-        // TODO: This needs contextual team data to work
         createdBy_uid: account.uid
       },
       data.wizard
@@ -369,11 +367,10 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readPatientSessions(request, response, next) {
-    const { account } = request.app.locals
     const { view } = request.params
     const { option, q, programme_id, yearGroup } = request.query
     const { data } = request.session
-    const { session } = response.locals
+    const { account, session } = response.locals
 
     const showRegistration =
       session.registration && session.isActive && view === 'report'
@@ -739,10 +736,9 @@ export const sessionController = {
    */
   update(type) {
     return (request, response) => {
-      const { account } = request.app.locals
       const { session_id } = request.params
       const { data } = request.session
-      const { __ } = response.locals
+      const { __, account } = response.locals
 
       // Update session data
       const session = Session.update(
@@ -783,9 +779,7 @@ export const sessionController = {
     return (request, response, next) => {
       const { session_id, view } = request.params
       const { data, referrer } = request.session
-      let { team } = response.locals
-
-      team = Team.findOne(team?.id || '001', data)
+      const { account } = response.locals
 
       // Force saving of the session type before we fork based on it; avoid race condition
       if (view === 'type' && request.method === 'POST') {
@@ -846,8 +840,8 @@ export const sessionController = {
       // Set up different methods for clinic selection, based on number of clinics
       if (session.type === SessionType.Clinic) {
         const usableNumberOfRadios = 16
-        if (team.clinics.length <= usableNumberOfRadios) {
-          response.locals.clinicRadios = Object.values(team.clinics)
+        if (account.team.clinics.length <= usableNumberOfRadios) {
+          response.locals.clinicRadios = Object.values(account.team.clinics)
             .map((clinic) => new Clinic(clinic))
             .map((clinic) => ({
               text: clinic.name,
@@ -912,7 +906,7 @@ export const sessionController = {
   updateForm(request, response) {
     const { session_id, view } = request.params
     const { data } = request.session
-    const { paths } = response.locals
+    const { paths, team } = response.locals
 
     let session = Session.findOne(session_id, data.wizard)
     if (view === 'type') {
@@ -921,9 +915,6 @@ export const sessionController = {
         session.registration === undefined ||
         session?.type !== request.body.session.type
       ) {
-        let { team } = response.locals
-        team = Team.findOne(team?.id || '001', data)
-
         request.body.session.registration =
           request.body.session.type === SessionType.School
             ? team.schoolSessionRegistration
@@ -1014,9 +1005,8 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   giveInstructions(request, response) {
-    const { account } = request.app.locals
-    const { __, session } = response.locals
     const { data } = request.session
+    const { __, account, session } = response.locals
 
     const patientsToInstruct = session.patientSessions
       .filter(({ report }) => report === PatientStatus.Due)
@@ -1072,8 +1062,8 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   makeActive(request, response) {
-    const { __, session } = response.locals
     const { data } = request.session
+    const { __, session } = response.locals
 
     Session.update(session.id, { date: today() }, data)
 
@@ -1086,10 +1076,9 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   inviteToClinic(request, response) {
-    const { account } = request.app.locals
     const { session_id } = request.params
     const { data } = request.session
-    const { __mf } = response.locals
+    const { __mf, account } = response.locals
 
     // Update session as closed
     const session = Session.update(session_id, { closed: true }, data)
@@ -1148,8 +1137,8 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   startCancel(request, response) {
-    const { session } = response.locals
     const { data } = request.session
+    const { session } = response.locals
 
     data.cancellation = {}
 

@@ -28,11 +28,11 @@
         href: "/start"
       }) }}
 
-      {% set roleItems = [] %}
-      {% for role in enumItems(UserRole) %}
-        {% set roleItems = roleItems | push({
-          href: "/account/sign-in?role=" + role.value,
-          text: role.text
+      {% set userItems = [] %}
+      {% for uid, user in data.users %}
+        {% set userItems = userItems | push({
+          href: "/account/sign-in?uid=" + uid,
+          text: user.role
         }) %}
       {% endfor %}
 
@@ -40,7 +40,7 @@
 
       {{ contentsList({
         classes: "nhsuk-u-margin-left-1",
-        items: roleItems
+        items: userItems
       }) }}
 
       <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">

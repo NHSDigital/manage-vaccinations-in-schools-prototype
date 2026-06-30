@@ -28,9 +28,8 @@ export const patientSessionController = {
    * @type {RequestParamHandler}
    */
   read(request, response, next, nhsn) {
-    const { account } = request.app.locals
     const { programme_id, session_id } = request.params
-    const { __ } = response.locals
+    const { __, account } = response.locals
 
     const patientSession = PatientSession.findAll(request.session.data).find(
       (patientSession) =>
@@ -224,10 +223,9 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   register(request, response) {
-    const { account } = request.app.locals
     const { register } = request.body.patientSession
     const { data } = request.session
-    const { __, patientSession, session, back } = response.locals
+    const { __, account, patientSession, session, back } = response.locals
 
     patientSession.registerAttendance(
       {
@@ -280,10 +278,9 @@ export const patientSessionController = {
    */
   gillick(type) {
     return (request, response) => {
-      const { account } = request.app.locals
       const { gillick } = request.body.patientSession
       const { data } = request.session
-      const { __, back, patientSession } = response.locals
+      const { __, account, back, patientSession } = response.locals
 
       if (type === 'edit') {
         gillick.updatedAt = today()
@@ -306,10 +303,9 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   preScreen(request, response) {
-    const { account } = request.app.locals
     const { preScreen } = request.body
     const { data } = request.session
-    const { patientSession, programme } = response.locals
+    const { account, patientSession, programme } = response.locals
 
     // Pre-screen interview
     patientSession.preScreen({
@@ -351,8 +347,7 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   remind(request, response) {
-    const { account } = request.app.locals
-    const { back, patient, patientSession } = response.locals
+    const { account, back, patient, patientSession } = response.locals
 
     patientSession.sendReminder(
       {
@@ -368,10 +363,9 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   triage(request, response) {
-    const { account } = request.app.locals
     const { triage } = request.body
     const { data } = request.session
-    const { __, back, patientSession } = response.locals
+    const { __, account, back, patientSession } = response.locals
 
     if (triage.psd) {
       const instruction = Instruction.create(
@@ -405,10 +399,9 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   note(request, response) {
-    const { account } = request.app.locals
     let { note, type, programme_ids } = request.body
     const { data } = request.session
-    const { __, back, patientSession } = response.locals
+    const { __, account, back, patientSession } = response.locals
 
     programme_ids = Array.isArray(programme_ids)
       ? programme_ids
@@ -472,10 +465,9 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   updateCancel(request, response) {
-    const { account } = request.app.locals
-    const { __, patientSession, session } = response.locals
     const { data } = request.session
     const { view } = request.params
+    const { __, account, patientSession, session } = response.locals
 
     // Where next?
     const nextPage =

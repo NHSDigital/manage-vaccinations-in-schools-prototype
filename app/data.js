@@ -20,9 +20,6 @@ import vaccinations from '../.data/vaccinations.json' with { type: 'json' }
 import vaccines from './datasets/vaccines.js'
 import { ClinicBooking, Consent, Move, Notice, Session } from './models.js'
 
-// Use Coventry and Warwickshire as team
-const team = teams['001']
-
 /**
  * Default values for user session data
  *
@@ -48,7 +45,6 @@ const data = {
   replies,
   schools,
   sessions,
-  team,
   teams,
   uploads,
   users,
