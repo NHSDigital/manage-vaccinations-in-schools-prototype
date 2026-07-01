@@ -1,0 +1,78 @@
+{% extends "_layouts/default.njk" %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <!--
+        Status banner: card + tag, carrying severity as a status word plus tag colour.
+        This view is the "no action needed" state. Other states come later:
+        - amber / warning tag (nhsuk-tag--orange), status word TBC, sentence + "contact your GP" CTA
+        - red / error tag (nhsuk-tag--red), status word TBC, sentence + CTA
+      -->
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <strong class="nhsuk-tag nhsuk-tag--green">No action needed</strong>
+          <p>Adam is fully vaccinated against measles, mumps, and rubella.</p>
+        </div>
+      </div>
+
+      <h2 class="nhsuk-heading-l">Adam’s vaccinations</h2>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__heading-container">
+          <h3 class="nhsuk-card__heading"><a class="nhsuk-link" href="/parent-test/dose-detail">Dose 2<span class="nhsuk-u-visually-hidden"> vaccination details</span></a></h3>
+        </div>
+        <div class="nhsuk-card__content">
+          <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+              <dt class="nhsuk-summary-list__key">Date</dt>
+              <dd class="nhsuk-summary-list__value">16 May 2021</dd>
+            </div>
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+              <dt class="nhsuk-summary-list__key">Name of vaccine</dt>
+              <dd class="nhsuk-summary-list__value">MMR (measles, mumps, and rubella)</dd>
+            </div>
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+              <dt class="nhsuk-summary-list__key">Vaccine product</dt>
+              <dd class="nhsuk-summary-list__value">MMRvaxPro</dd>
+            </div>
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions nhsuk-summary-list__row--no-border">
+              <dt class="nhsuk-summary-list__key">Batch number</dt>
+              <dd class="nhsuk-summary-list__value">M072B25</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__heading-container">
+          <h3 class="nhsuk-card__heading"><a class="nhsuk-link" href="/parent-test/dose-detail">Dose 1<span class="nhsuk-u-visually-hidden"> vaccination details</span></a></h3>
+        </div>
+        <div class="nhsuk-card__content">
+          <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+              <dt class="nhsuk-summary-list__key">Date</dt>
+              <dd class="nhsuk-summary-list__value">15 May 2017</dd>
+            </div>
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+              <dt class="nhsuk-summary-list__key">Name of vaccine</dt>
+              <dd class="nhsuk-summary-list__value">MMR (measles, mumps, and rubella)</dd>
+            </div>
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+              <dt class="nhsuk-summary-list__key">Vaccine product</dt>
+              <dd class="nhsuk-summary-list__value">MMRvaxPro</dd>
+            </div>
+            <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions nhsuk-summary-list__row--no-border">
+              <dt class="nhsuk-summary-list__key">Batch number</dt>
+              <dd class="nhsuk-summary-list__value">T140A26</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <p>This record shows what we currently hold. Recent vaccinations may not have reached us yet, and vaccinations given by another service or in another country may not be included.</p>
+
+      <p>If anything looks wrong or missing, contact <a href="#">help and support</a>.</p>
+    </div>
+  </div>
+{% endblock %}

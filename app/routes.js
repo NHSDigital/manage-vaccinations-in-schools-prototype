@@ -24,6 +24,7 @@ import { giveOrRefuseConsentRoutes } from './routes/give-or-refuse-consent.js'
 import { homeRoutes } from './routes/home.js'
 import { moveRoutes } from './routes/move.js'
 import { noticeRoutes } from './routes/notice.js'
+import { parentTestRoutes } from './routes/parent-test.js'
 import { patientSessionRoutes } from './routes/patient-session.js'
 import { patientRoutes } from './routes/patient.js'
 import { pdsRecordRoutes } from './routes/pds-record.js'
@@ -59,6 +60,7 @@ router.use('/downloads', downloadRoutes)
 router.use('/give-or-refuse-consent', giveOrRefuseConsentRoutes)
 router.use('/moves', moveRoutes)
 router.use('/notices', noticeRoutes)
+router.use('/parent-test', parentTestRoutes) // static parent-facing CCVH views for user research
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/contacts', contactRoutes)
