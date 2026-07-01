@@ -14,7 +14,7 @@
     label: { text: __("clinicBooking.notConvenient.otherDetails") },
     decorate: "appointment.abandonmentReasonOther"
   }) %}
-  {% set reasonRadioItems = injectConditionalHtml(enumItems(NoSuitableClinicReason), NoSuitableClinicReason.Other, otherHtml) %}
+  {% set reasonRadioItems = injectConditionalHtml(enumItems(AppointmentAbandonmentReason), AppointmentAbandonmentReason.Other, otherHtml) %}
 
   {{ checkboxes({
     fieldset: {

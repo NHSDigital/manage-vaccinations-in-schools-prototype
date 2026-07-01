@@ -7,7 +7,6 @@ import {
   ClinicAppointmentStatus,
   ConsentVaccineCriteria,
   Impairment,
-  NoSuitableClinicReason,
   ParentalRelationship,
   ProgrammeType,
   RegistrationOutcome,
@@ -61,8 +60,12 @@ import {
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
- * @property {Array<NoSuitableClinicReason>} [abandonmentReasons] - Reasons the parent gave for being unable to find a suitable appointment
- * @property {string} [abandonmentReasonOther] - the parent's own reason for being unable to find a suitable appointment
+ * @property {Array<AppointmentAbandonmentReason>} [abandonmentReasons] - Reasons for abandoning this appointment
+ * @property {string} [abandonmentReasonOther] - Details of the custom reason for abandonment
+ * @property {AppointmentAbandonmentReason} [abandonmentPrimaryReason] - The main reason for abandonment
+ * @property {number} [convenientDistance] - Miles the parent is willing to travel
+ * @property {Array<DayOfTheWeek>} [convenientDays] - Days of the week that are convenient for the parent
+ * @property {Array<PartOfTheDay>} [convenientTimes] - The relationship of the person booking the appointment to the child
  */
 
 /**
@@ -102,11 +105,12 @@ export class ClinicAppointment {
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
     this.note = options?.note
 
-    this.abandonmentReasons =
-      (options?.abandonmentReasons &&
-        stringToArray(options.abandonmentReasons)) ||
-      []
+    this.abandonmentReasons = stringToArray(options?.abandonmentReasons)
     this.abandonmentReasonOther = options?.abandonmentReasonOther
+    this.abandonmentPrimaryReason = options?.abandonmentPrimaryReason
+    this.convenientDistance = options?.convenientDistance
+    this.convenientDays = stringToArray(options?.convenientDays)
+    this.convenientTimes = stringToArray(options?.convenientTimes)
   }
 
   /**
@@ -714,3 +718,7 @@ export class ClinicAppointment {
     )
   }
 }
+
+/**
+ * @import { DayOfTheWeek, AppointmentAbandonmentReason, PartOfTheDay } from '../enums.js'
+ */

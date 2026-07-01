@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import {
   LocationSearchType,
-  NoSuitableClinicReason,
+  AppointmentAbandonmentReason,
   ReplyDecision
 } from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
@@ -164,24 +164,27 @@ export const getAllAppointmentPaths = (
       },
       [`/${booking_uuid}/new/contact-preference`]: {},
 
-      // Reporting the lack of a convenient option
+      // Check and confirm
       [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
-        [`/${booking_uuid}/new/confirmation`]: () => !appointment.isAbandoned
+        [`/${booking_uuid}/new/confirmation`]: () => !appointment.isAbandoned,
+        [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: () =>
+          appointment.isAbandoned
       },
 
+      // Reporting the lack of a convenient option
       [`/${booking_uuid}/new/${appointment_uuid}/not-convenient`]: {},
       ...(abandonmentReasons?.length > 1
         ? { [`/${booking_uuid}/new/${appointment_uuid}/least-convenient`]: {} }
         : {}),
-      ...(abandonmentReasons.includes(NoSuitableClinicReason.Distance)
+      ...(abandonmentReasons.includes(AppointmentAbandonmentReason.Distance)
         ? {
             [`/${booking_uuid}/new/${appointment_uuid}/convenient-distance`]: {}
           }
         : {}),
-      ...(abandonmentReasons.includes(NoSuitableClinicReason.DayOfWeek)
+      ...(abandonmentReasons.includes(AppointmentAbandonmentReason.DayOfWeek)
         ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-days`]: {} }
         : {}),
-      ...(abandonmentReasons.includes(NoSuitableClinicReason.TimeOfDay)
+      ...(abandonmentReasons.includes(AppointmentAbandonmentReason.TimeOfDay)
         ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-times`]: {} }
         : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: {}

@@ -38,6 +38,17 @@ export const Adjustment = {
  * @readonly
  * @enum {string}
  */
+export const AppointmentAbandonmentReason = {
+  Distance: 'All clinics are too far from my preferred location',
+  DayOfWeek: 'No appointments are on convenient days for me',
+  TimeOfDay: 'No appointments are at convenient times for me',
+  Other: 'Other'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ArchiveRecordReason = {
   Deceased: 'The child was reported as deceased',
   Duplicate: 'It’s a duplicate',
@@ -317,17 +328,6 @@ export const MoveSource = {
   Consent: 'Consent response',
   School: 'Class list',
   External: 'Another SAIS team'
-}
-
-/**
- * @readonly
- * @enum {string}
- */
-export const NoSuitableClinicReason = {
-  Distance: 'All clinics are too far from my preferred location',
-  DayOfWeek: 'No appointments are on convenient days for me',
-  TimeOfDay: 'No appointments are at convenient times for me',
-  Other: 'Other'
 }
 
 /**

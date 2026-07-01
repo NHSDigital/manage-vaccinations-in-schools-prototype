@@ -4,6 +4,7 @@ import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
 import {
+  AppointmentAbandonmentReason,
   ParentalRelationship,
   ProgrammeType,
   ReplyDecision,
@@ -375,6 +376,16 @@ export const bookIntoClinicController = {
         ConjunctionType.and,
         data
       )
+    } else if (view === 'least-convenient') {
+      const reasonItems = appointment.abandonmentReasons.map((reason) => ({
+        text:
+          reason === AppointmentAbandonmentReason.Other
+            ? `${AppointmentAbandonmentReason.Other}: ${appointment.abandonmentReasonOther}`
+            : reason,
+        value: reason
+      }))
+
+      response.locals.reasonItems = reasonItems
     }
 
     // All health questions use the same view
