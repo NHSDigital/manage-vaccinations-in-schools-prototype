@@ -985,19 +985,30 @@ export class Session {
    * @returns {object} Session activity counts
    */
   get activity() {
-    return {
-      getConsent: getSessionActivityCount(this, [
-        {
-          consent: ConsentOutcome.NoResponse
+    return new Proxy(
+      {},
+      {
+        get: (_target, property) => {
+          switch (property) {
+            case 'getConsent':
+              return getSessionActivityCount(this, [
+                {
+                  consent: ConsentOutcome.NoResponse
+                }
+              ])
+            case 'instruct':
+              return getSessionActivityCount(this, [
+                {
+                  report: PatientStatus.Due,
+                  instruct: InstructionOutcome.Needed
+                }
+              ])
+            default:
+              return undefined
+          }
         }
-      ]),
-      instruct: getSessionActivityCount(this, [
-        {
-          report: PatientStatus.Due,
-          instruct: InstructionOutcome.Needed
-        }
-      ])
-    }
+      }
+    )
   }
 
   /**
