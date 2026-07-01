@@ -25,7 +25,7 @@
     "start": "node ."
   },
   "dependencies": {
-    "@faker-js/faker": "^10.4.0",
+    "@faker-js/faker": "^10.5.0",
     "@x-govuk/govuk-prototype-filters": "^2.1.0",
     "@x-govuk/govuk-prototype-wizard": "^0.4.0",
     "accessible-autocomplete": "^3.0.1",
