@@ -29,7 +29,7 @@
     "@x-govuk/govuk-prototype-filters": "^2.1.0",
     "@x-govuk/govuk-prototype-wizard": "^0.4.0",
     "accessible-autocomplete": "^3.0.1",
-    "autoprefixer": "^10.5.0",
+    "autoprefixer": "^10.5.1",
     "connect-pg-simple": "^10.0.0",
     "countries-and-timezones": "^3.9.0",
     "date-fns": "^4.4.0",
