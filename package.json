@@ -42,7 +42,7 @@
     "nhsuk-decorated-components": "^0.7.0",
     "nhsuk-frontend": "^10.5.2",
     "nhsuk-prototype-kit": "^8.3.0",
-    "pg": "^8.21.0",
+    "pg": "^8.22.0",
     "postcss": "^8.5.15",
     "response-time": "^2.3.4"
   },
