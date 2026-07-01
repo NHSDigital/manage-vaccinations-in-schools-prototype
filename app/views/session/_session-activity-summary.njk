@@ -1,5 +1,29 @@
 {% set sessionActivityRows = [] %}
 
+{% if session.type === SessionType.School and session.consents.length > 0 %}
+  {% set sessionActivityRows = sessionActivityRows | push(
+    {
+      key: {
+        text: __("session.activity.unmatchedConsent.label")
+      },
+      value: {
+        html: link(session.uri + "/consents", __mf("consent.count", { count: session.consents.length })) | nhsukMarkdown
+      }
+    }) %}
+{% endif %}
+
+{% if session.type === SessionType.Clinic and session.unmatchedAppointments.length > 0 %}
+  {% set sessionActivityRows = sessionActivityRows | push(
+    {
+      key: {
+        text: __("session.activity.unmatchedAppointments.label")
+      },
+      value: {
+        html: link(session.uri + "/unmatched-appointments", __mf("appointments.count.activity", { count: session.unmatchedAppointments.length })) | nhsukMarkdown
+      }
+    }) %}
+{% endif %}
+
 {% if sessionActivityRow("getConsent") and session.school_id %}
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("getConsent")) %}
 {% endif %}

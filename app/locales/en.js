@@ -239,16 +239,13 @@ export const en = {
       label: 'Clinic appointments',
       title: 'Unmatched clinic appointments'
     },
-    warning: {
-      title: 'Review clinic appointments',
-      count:
-        '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {{count} unmatched clinic appointments}}'
-    },
     show: {
       title: 'Clinic appointment made by %s'
     },
     count: {
       total:
+        '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {{count} unmatched clinic appointments}}',
+      activity:
         '{count, plural, =0 {No unmatched clinic appointments} one {1 unmatched clinic appointment} other {{count} unmatched clinic appointments}}',
       session:
         '{count, plural, =0 {No unmatched clinic appointments at {location}} one {1 unmatched clinic appointment at {location}} other {{count} unmatched clinic appointments at {location}}}'
@@ -2786,6 +2783,12 @@ export const en = {
         label: 'Registration needed',
         count:
           '{count, plural, =0 {No children} one {# child} other {# children}} to register'
+      },
+      unmatchedConsent: {
+        label: 'Unmatched children'
+      },
+      unmatchedAppointments: {
+        label: 'Unmatched children'
       },
       // Registered and ready for vaccinator
       record: {
