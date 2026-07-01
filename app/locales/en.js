@@ -2692,7 +2692,7 @@ export const en = {
         'Can healthcare assistants give the nasal spray vaccine using a patient specific direction (PSD)?'
     },
     'upload-class-list': {
-      title: 'Import class lists'
+      title: 'Upload class lists'
     },
     list: {
       label: 'Sessions',
@@ -2841,9 +2841,9 @@ export const en = {
       title: 'When will this session be held?',
       hint: 'For example, 27 3 2026',
       check: {
-        title: 'Have you imported historical vaccination records for %s?',
+        title: 'Have you uploaded historical vaccination records for %s?',
         description:
-          '1% of children in {{yearGroups}} in this session have vaccination records. This is unusually low coverage for catch-up year groups.\n\nCheck and confirm that vaccination records have been imported for all children in this school before you continue.\n\nScheduling this session now will send consent requests to 40 parents of children in {{yearGroups}} on {{date}}. Many of them may be parents of already vaccinated children.',
+          '1% of children in {{yearGroups}} in this session have vaccination records. This is unusually low coverage for catch-up year groups.\n\nCheck and confirm that vaccination records have been uploaded for all children in this school before you continue.\n\nScheduling this session now will send consent requests to 40 parents of children in {{yearGroups}} on {{date}}. Many of them may be parents of already vaccinated children.',
         confirm: 'Keep session dates',
         cancel: 'Remove session dates'
       }
@@ -3374,7 +3374,7 @@ export const en = {
     },
     yearGroups: {
       label: 'Year groups',
-      title: 'Which year groups do you want to import class list records for?'
+      title: 'Which year groups do you want to upload class list records for?'
     },
     invalid: {
       title: 'Records could not be uploaded'
@@ -3734,19 +3734,19 @@ export const en = {
         vaccination: 'Duplicate vaccination record'
       },
       original: {
-        label: 'Previously imported record',
-        record: 'Previously imported child record',
-        vaccination: 'Previously imported vaccination record'
+        label: 'Previously uploaded record',
+        record: 'Previously uploaded child record',
+        vaccination: 'Previously uploaded vaccination record'
       },
       decision: {
         label: 'Which record do you want to keep?',
         duplicate: {
           label: 'Use duplicate record',
-          hint: 'The duplicate record will replace the previously imported record.'
+          hint: 'The duplicate record will replace the previously uploaded record.'
         },
         original: {
-          label: 'Keep previously imported record',
-          hint: 'The previously imported record will be kept and the duplicate record will be discarded.'
+          label: 'Keep previously uploaded record',
+          hint: 'The previously uploaded record will be kept and the duplicate record will be discarded.'
         }
       },
       confirm: 'Resolve duplicate'
