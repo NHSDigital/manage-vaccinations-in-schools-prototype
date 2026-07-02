@@ -14,7 +14,9 @@ export const accountController = {
     response.locals.account.role = role || UserRole.Nurse
 
     // Update session token
-    request.session.data.token = response.locals.account
+    // Drop the `context` to prevent circular dependency
+    const { context, ...token } = response.locals.account
+    request.session.data.token = token
 
     return saveAndRedirect(request, response, referrer || '/home')
   },
