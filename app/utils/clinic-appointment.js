@@ -79,7 +79,7 @@ export const getAllAppointmentPaths = (
           switch (searchType) {
             case LocationSearchType.Postcode:
             case LocationSearchType.Outcode:
-              sessionData.transaction.preferredPostcode = searchTerm
+              sessionData.appointment.preferredPostcode = searchTerm
               sessionData.transaction.outOfArea = false
               return true
             case LocationSearchType.Place:
@@ -91,7 +91,7 @@ export const getAllAppointmentPaths = (
       },
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
-          data: 'transaction.preferredPostcode',
+          data: 'appointment.preferredPostcode',
           value: 'retry'
         }
       },

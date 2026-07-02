@@ -63,6 +63,7 @@ import {
  * @property {Array<AppointmentAbandonmentReason>} [abandonmentReasons] - Reasons for abandoning this appointment
  * @property {string} [abandonmentReasonOther] - Details of the custom reason for abandonment
  * @property {AppointmentAbandonmentReason} [abandonmentPrimaryReason] - The main reason for abandonment
+ * @property {string} [preferredPostcode] - the postcode of the parent's ideal clinic location
  * @property {number} [convenientDistance] - Miles the parent is willing to travel
  * @property {Array<DayOfTheWeek>} [convenientDays] - Days of the week that are convenient for the parent
  * @property {Array<PartOfTheDay>} [convenientTimes] - The relationship of the person booking the appointment to the child
@@ -108,6 +109,7 @@ export class ClinicAppointment {
     this.abandonmentReasons = stringToArray(options?.abandonmentReasons)
     this.abandonmentReasonOther = options?.abandonmentReasonOther
     this.abandonmentPrimaryReason = options?.abandonmentPrimaryReason
+    this.preferredPostcode = options?.preferredPostcode
     this.convenientDistance = options?.convenientDistance
     this.convenientDays = stringToArray(options?.convenientDays)
     this.convenientTimes = stringToArray(options?.convenientTimes)
