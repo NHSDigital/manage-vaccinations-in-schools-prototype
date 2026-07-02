@@ -371,6 +371,24 @@ export const en = {
     },
     arrivalTime: {
       label: 'Arrival time'
+    },
+    preferredPostcode: {
+      label: 'Preferred clinic location'
+    },
+    abandonmentReasons: {
+      label: 'Reasons for not booking'
+    },
+    primaryAbandonmentReason: {
+      label: 'Most important reason'
+    },
+    convenientDistance: {
+      label: 'Furthest you can travel'
+    },
+    convenientDays: {
+      label: 'Convenient days'
+    },
+    convenientTimes: {
+      label: 'Convenient times'
     }
   },
   clinicBooking: {
@@ -635,6 +653,11 @@ export const en = {
     convenientTimes: {
       title: 'Which times of day are convenient for you?',
       hint: 'Select all that apply'
+    },
+    'check-feedback': {
+      title: 'Check and send your feedback',
+      summary: 'Your answers',
+      confirm: 'Send feedback'
     },
     thankYou: {
       title: 'Thank you for your feedback',

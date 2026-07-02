@@ -187,6 +187,7 @@ export const getAllAppointmentPaths = (
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.TimeOfDay)
         ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-times`]: {} }
         : {}),
+      [`/${booking_uuid}/new/${appointment_uuid}/check-feedback`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: {}
     }
   })

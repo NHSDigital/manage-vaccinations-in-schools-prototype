@@ -5,6 +5,7 @@ import _ from 'lodash'
 
 import {
   AppointmentAbandonmentReason,
+  ClinicAppointmentStatus,
   ParentalRelationship,
   ProgrammeType,
   ReplyDecision,
@@ -28,6 +29,7 @@ import {
 import { saveAndRedirect } from '../utils/redirect.js'
 import {
   formatHour,
+  formatOther,
   formatTime,
   kebabToCamelCase,
   stringToBoolean
@@ -147,8 +149,32 @@ export const bookIntoClinicController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  updateFeedback(request, response) {
+    const { booking_uuid, appointment_uuid } = request.params
+    const { data } = request.session
+    const { booking, paths } = response.locals
+
+    // Clean up session data
+    delete data.booking
+    delete data.appointment
+    delete data.transaction
+    delete data.clinicInvite
+
+    // Record the abandonment
+    const appointment = booking.findAppointment(appointment_uuid)
+    appointment.status = ClinicAppointmentStatus.Abandoned
+
+    // Save to the global context
+    ClinicBooking.update(booking_uuid, booking, data)
+
+    return saveAndRedirect(request, response, paths.next)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   readForm(request, response, next) {
-    const { appointment_uuid, booking_uuid } = request.params
+    const { appointment_uuid, booking_uuid, view } = request.params
     const { data, referrer } = request.session
 
     // Create objects on the global context to allow us to check branching conditions, etc.
@@ -168,14 +194,20 @@ export const bookIntoClinicController = {
         response.locals.childCount = booking.appointments.length
         response.locals.firstName = 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
         response.locals.fullName = 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
+
+        // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
+        // that postcode is pushed to the appointment
+        if (view === 'clinic-location') {
+          currentAppointment.preferredPostcode =
+            data.appointment['preferredPostcode']
+          ClinicBooking.update(booking_uuid, booking, data.wizard)
+        }
       }
     }
 
     // Make sure the views have access to information about flow control e.g. for narrowing down a clinic search
-    let transaction
     if (data.wizard?.transaction) {
-      transaction = data.wizard?.transaction
-      response.locals.transaction = transaction
+      response.locals.transaction = data.wizard?.transaction
     }
 
     const journey = {
@@ -380,7 +412,10 @@ export const bookIntoClinicController = {
       const reasonItems = appointment.abandonmentReasons.map((reason) => ({
         text:
           reason === AppointmentAbandonmentReason.Other
-            ? `${AppointmentAbandonmentReason.Other}: ${appointment.abandonmentReasonOther}`
+            ? formatOther(
+                AppointmentAbandonmentReason.Other,
+                appointment.abandonmentReasonOther
+              )
             : reason,
         value: reason
       }))
