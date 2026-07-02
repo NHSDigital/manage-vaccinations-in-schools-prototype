@@ -18,8 +18,32 @@ router.get('/', (request, response) => {
   response.render('parent-test/index')
 })
 
-router.get('/fully-vaccinated', (request, response) => {
-  response.render('parent-test/fully-vaccinated')
+router.get('/rosa', (request, response) => {
+  response.render('parent-test/rosa')
+})
+
+router.get('/maya', (request, response) => {
+  response.render('parent-test/maya')
+})
+
+router.get('/theo', (request, response) => {
+  response.render('parent-test/theo')
+})
+
+router.get('/priya', (request, response) => {
+  response.render('parent-test/priya')
+})
+
+router.get('/idris', (request, response) => {
+  response.render('parent-test/idris')
+})
+
+router.get('/esme', (request, response) => {
+  response.render('parent-test/esme')
+})
+
+router.get('/caleb', (request, response) => {
+  response.render('parent-test/caleb')
 })
 
 router.get('/dose-detail', (request, response) => {
