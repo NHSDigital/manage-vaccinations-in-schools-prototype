@@ -627,12 +627,12 @@ export const en = {
         '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
     },
     abandon: {
-      label: 'I cannot find a suitable appointment'
+      label: 'I cannot find a convenient appointment'
     },
     notConvenient: {
       title: 'We’re sorry you’ve not been able to find a convenient clinic',
       intro:
-        'Tell us the reasons you were unable to find a suitable appointment so that we can improve the clinics we offer.',
+        'Tell us the reasons you were unable to find a convenient appointment so that we can improve the clinics we offer.',
       label: 'Reasons for not booking',
       hint: 'Select all that apply',
       otherDetails: 'Give details'
