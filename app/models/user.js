@@ -105,7 +105,7 @@ export class User {
           'patients',
           'schools',
           'sessions',
-          'review',
+          'reviews',
           'reports',
           'uploads',
           'downloads',
