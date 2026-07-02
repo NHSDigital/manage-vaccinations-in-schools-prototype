@@ -415,7 +415,7 @@ export const en = {
       otherMethods: {
         title: 'Other ways to book an appointment',
         description:
-          'If you cannot use this form, you can book an appointment by phoning %s.'
+          'If you cannot use this form, you can book an appointment by phoning {{team.tel}}.'
       }
     },
     availability: {

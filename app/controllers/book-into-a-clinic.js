@@ -1,4 +1,3 @@
-import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import { addMinutes } from 'date-fns'
 import _ from 'lodash'
@@ -597,11 +596,6 @@ export const bookIntoClinicController = {
    */
   show(request, response) {
     const view = request.params.view || 'start'
-
-    // Allow us to offer a phone booking if not wanting online (start.njk)
-    response.locals.bookingPhoneNumber =
-      request.session.data.teams[0]?.tel ??
-      faker.helpers.replaceSymbols('01### ######')
 
     return response.render(`book-into-a-clinic/${view}`)
   }
