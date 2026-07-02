@@ -10,7 +10,7 @@
         title: title
       }) }}
 
-      {{ __("clinicBooking.thankYou.advice") | nhsukMarkdown }}
+      {{ __("clinicBooking.thankYou.advice", { team: account.team }) | nhsukMarkdown }}
     </div>
   </div>
 {% endblock %}

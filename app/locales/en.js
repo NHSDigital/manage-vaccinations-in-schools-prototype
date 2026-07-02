@@ -662,7 +662,7 @@ export const en = {
     thankYou: {
       title: 'Thank you for your feedback',
       advice:
-        'You can still use the link in your invitation to check for suitable clinics at a later date.'
+        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },
     'check-answers': {
       title: 'Check and confirm %s’s appointment details',
