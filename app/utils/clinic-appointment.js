@@ -1,6 +1,10 @@
 import _ from 'lodash'
 
-import { LocationSearchType, ReplyDecision } from '../enums.js'
+import {
+  LocationSearchType,
+  AppointmentAbandonmentReason,
+  ReplyDecision
+} from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
@@ -23,6 +27,10 @@ export const getAllAppointmentPaths = (
   if (!appointments?.length) {
     return {}
   }
+
+  const abandonmentReasons = stringToArray(
+    sessionData.appointment?.abandonmentReasons
+  )
 
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
@@ -71,7 +79,7 @@ export const getAllAppointmentPaths = (
           switch (searchType) {
             case LocationSearchType.Postcode:
             case LocationSearchType.Outcode:
-              sessionData.transaction.preferredPostcode = searchTerm
+              sessionData.appointment.preferredPostcode = searchTerm
               sessionData.transaction.outOfArea = false
               return true
             case LocationSearchType.Place:
@@ -83,7 +91,7 @@ export const getAllAppointmentPaths = (
       },
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
-          data: 'transaction.preferredPostcode',
+          data: 'appointment.preferredPostcode',
           value: 'retry'
         }
       },
@@ -156,7 +164,31 @@ export const getAllAppointmentPaths = (
       },
       [`/${booking_uuid}/new/contact-preference`]: {},
 
-      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {}
+      // Check and confirm
+      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
+        [`/${booking_uuid}/new/confirmation`]: () => !appointment.isAbandoned,
+        [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: () =>
+          appointment.isAbandoned
+      },
+
+      // Reporting the lack of a convenient option
+      [`/${booking_uuid}/new/${appointment_uuid}/not-convenient`]: {},
+      ...(abandonmentReasons?.length > 1
+        ? { [`/${booking_uuid}/new/${appointment_uuid}/least-convenient`]: {} }
+        : {}),
+      ...(abandonmentReasons.includes(AppointmentAbandonmentReason.Distance)
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/convenient-distance`]: {}
+          }
+        : {}),
+      ...(abandonmentReasons.includes(AppointmentAbandonmentReason.DayOfWeek)
+        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-days`]: {} }
+        : {}),
+      ...(abandonmentReasons.includes(AppointmentAbandonmentReason.TimeOfDay)
+        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-times`]: {} }
+        : {}),
+      [`/${booking_uuid}/new/${appointment_uuid}/check-feedback`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: {}
     }
   })
 

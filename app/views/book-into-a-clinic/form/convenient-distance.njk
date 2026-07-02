@@ -1,0 +1,17 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __mf("clinicBooking.convenientDistance.title") %}
+
+{% block form %}
+  {{ input({
+      label: {
+        isPageHeading: true,
+        text: title,
+        size: "l"
+      },
+      suffix: __("clinicBooking.convenientDistance.input.suffix"),
+      width: 2,
+      inputmode: "numeric",
+      decorate: "appointment.convenientDistance"
+    }) }}
+{% endblock %}

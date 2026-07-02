@@ -4,6 +4,7 @@ import { formatDuration, intervalToDuration } from 'date-fns'
 import activity from '../datasets/activity.js'
 import {
   Adjustment,
+  AppointmentAbandonmentReason,
   ClinicAppointmentStatus,
   ConsentVaccineCriteria,
   Impairment,
@@ -60,6 +61,13 @@ import {
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
+ * @property {Array<AppointmentAbandonmentReason>} [abandonmentReasons] - Reasons for abandoning this appointment
+ * @property {string} [abandonmentReasonOther] - Details of the custom reason for abandonment
+ * @property {AppointmentAbandonmentReason} [abandonmentPrimaryReason] - The main reason for abandonment
+ * @property {string} [preferredPostcode] - the postcode of the parent's ideal clinic location
+ * @property {number} [convenientDistance] - Miles the parent is willing to travel
+ * @property {Array<DayOfTheWeek>} [convenientDays] - Days of the week that are convenient for the parent
+ * @property {Array<PartOfTheDay>} [convenientTimes] - The relationship of the person booking the appointment to the child
  */
 
 /**
@@ -98,6 +106,31 @@ export class ClinicAppointment {
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
     this.note = options?.note
+
+    this.abandonmentReasons = stringToArray(options?.abandonmentReasons)
+    this.abandonmentReasonOther = options?.abandonmentReasonOther
+    this.abandonmentPrimaryReason =
+      this.abandonmentReasons?.length > 1
+        ? options?.abandonmentPrimaryReason
+        : this.abandonmentReasons?.length === 1
+          ? this.abandonmentReasons[0]
+          : undefined
+    this.preferredPostcode = options?.preferredPostcode
+    this.convenientDistance = this.abandonmentReasons.includes(
+      AppointmentAbandonmentReason.Distance
+    )
+      ? options?.convenientDistance
+      : undefined
+    this.convenientDays = this.abandonmentReasons.includes(
+      AppointmentAbandonmentReason.DayOfWeek
+    )
+      ? stringToArray(options?.convenientDays)
+      : undefined
+    this.convenientTimes = this.abandonmentReasons.includes(
+      AppointmentAbandonmentReason.TimeOfDay
+    )
+      ? stringToArray(options?.convenientTimes)
+      : undefined
   }
 
   /**
@@ -201,6 +234,15 @@ export class ClinicAppointment {
     if (offerRebooking) {
       patient.inviteToClinic(this.selected_programme_ids)
     }
+  }
+
+  /**
+   * Has the parent given up on trying to find a suitable appointment?
+   *
+   * @returns {boolean} - true if abandoned, false otherwise
+   */
+  get isAbandoned() {
+    return this.abandonmentReasons?.length > 0
   }
 
   /**
@@ -580,6 +622,44 @@ export class ClinicAppointment {
             case 'register':
               return this.patientSessions.at(0)?.formatted?.register
 
+            case 'abandonmentReasons':
+              return formatList(
+                this.abandonmentReasons.map((reason) =>
+                  reason === AppointmentAbandonmentReason.Other
+                    ? formatOther(
+                        AppointmentAbandonmentReason.Other,
+                        this.abandonmentReasonOther
+                      )
+                    : reason
+                )
+              )
+
+            case 'primaryAbandonmentReason':
+              return this.abandonmentReasons?.length === 1
+                ? undefined
+                : this.abandonmentPrimaryReason ==
+                    AppointmentAbandonmentReason.Other
+                  ? formatOther(
+                      AppointmentAbandonmentReason.Other,
+                      this.abandonmentReasonOther
+                    )
+                  : this.abandonmentPrimaryReason
+
+            case 'convenientDistance':
+              return this.convenientDistance
+                ? `${this.convenientDistance} miles`
+                : undefined
+
+            case 'convenientDays':
+              return this.convenientDays?.length
+                ? formatList(this.convenientDays)
+                : undefined
+
+            case 'convenientTimes':
+              return this.convenientTimes?.length
+                ? formatList(this.convenientTimes)
+                : undefined
+
             default:
               return undefined
           }
@@ -696,3 +776,7 @@ export class ClinicAppointment {
     )
   }
 }
+
+/**
+ * @import { DayOfTheWeek, PartOfTheDay } from '../enums.js'
+ */

@@ -29,6 +29,11 @@ router.post(
 )
 
 router.post(
+  '/:booking_uuid/new/:appointment_uuid/check-feedback',
+  bookIntoClinic.updateFeedback
+)
+
+router.post(
   '/:booking_uuid/new/:appointment_uuid/:view',
   bookIntoClinic.updateForm
 )

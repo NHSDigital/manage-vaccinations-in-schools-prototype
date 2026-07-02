@@ -1,0 +1,19 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __mf("clinicBooking.convenientDays.title") %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title
+        }),
+        size: "l"
+      }
+    },
+    hint: { text: __("clinicBooking.convenientDays.hint") },
+    items: enumItems(DayOfTheWeek),
+    decorate: "appointment.convenientDays"
+  }) }}
+{% endblock %}

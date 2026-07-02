@@ -6,7 +6,7 @@
 {% block form %}
   {% set panelHtml %}
     {{ __("clinicBooking.clinicDistance.description", {
-      postcode: data.transaction.preferredPostcode,
+      postcode: appointment.preferredPostcode,
       team: data.team
     }) | nhsukMarkdown }}
 

@@ -1,0 +1,44 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("clinicBooking.check-feedback.confirm") %}
+{% set title = __("clinicBooking.check-feedback.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title
+  }) }}
+
+  {# 
+    Note: primaryAbandonmentReason INTENTIONALLY differs in name from the model’s abandonmentPrimaryReason, as we
+    want the primary reason recorded even if there's only one reason (it'll make later querying easier) but we
+    don’t want summaryRows to pick up the value from the object's abandonmentPrimaryReason key when the formatted
+    getter returns undefined for it
+  #}
+  
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.check-feedback.summary"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      vaccinations: {},
+      preferredPostcode: {},
+      abandonmentReasons: {
+        href: appointment.uri.new + "/not-convenient"
+      },
+      primaryAbandonmentReason: {
+        href: appointment.uri.new + "/least-convenient"
+      },
+      convenientDistance: {
+        href: appointment.uri.new + "/convenient-distance"
+      },
+      convenientDays: {
+        href: appointment.uri.new + "/convenient-days"
+      },
+      convenientTimes: {
+        href: appointment.uri.new + "/convenient-times"
+      }
+    })
+  }) }}
+{% endblock %}
