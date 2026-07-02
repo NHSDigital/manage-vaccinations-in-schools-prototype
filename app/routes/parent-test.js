@@ -46,6 +46,10 @@ router.get('/caleb', (request, response) => {
   response.render('parent-test/caleb')
 })
 
+router.get('/understanding-records', (request, response) => {
+  response.render('parent-test/understanding-records')
+})
+
 router.get('/dose-detail', (request, response) => {
   response.render('parent-test/dose-detail')
 })
