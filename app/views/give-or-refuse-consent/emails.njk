@@ -13,8 +13,8 @@
 
 {% set placeholders = {
   from: {
-    name: data.team.name,
-    email: data.team.email
+    name: account.team.name,
+    email: account.team.email
   },
   to: {
     name: consent.contact.fullName,
@@ -22,7 +22,7 @@
   },
   child: consent.child,
   session: session,
-  team: data.team
+  team: account.team
 } %}
 
 {% set defaultTemplate = "invite" %}

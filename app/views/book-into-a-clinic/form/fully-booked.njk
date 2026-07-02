@@ -13,7 +13,7 @@
         {{ __("clinicBooking.fullyBooked.problem", { programmes: programmeNames }) | nhsukMarkdown }}
       {% endcall %}
 
-      {{ __("clinicBooking.fullyBooked.guidance", { team: data.team }) | nhsukMarkdown }}
+      {{ __("clinicBooking.fullyBooked.guidance", { team: account.team }) | nhsukMarkdown }}
     </div>
   </div>
 {% endblock %}

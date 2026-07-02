@@ -47,9 +47,10 @@ export const schoolController = {
   new(type) {
     return (request, response) => {
       const { data } = request.session
+      const { account } = response.locals
 
       // @ts-ignore
-      const school = School.create({ team_id: data.team?.id }, data.wizard)
+      const school = School.create({ team_id: account.team?.id }, data.wizard)
 
       if (type === 'site') {
         data.startPath = 'new-site'

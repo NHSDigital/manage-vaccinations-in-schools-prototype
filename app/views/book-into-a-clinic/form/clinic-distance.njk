@@ -7,7 +7,7 @@
   {% set panelHtml %}
     {{ __("clinicBooking.clinicDistance.description", {
       postcode: appointment.preferredPostcode,
-      team: data.team
+      team: account.team
     }) | nhsukMarkdown }}
 
     <div class="nhsuk-button-group">

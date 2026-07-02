@@ -906,7 +906,7 @@ export const sessionController = {
   updateForm(request, response) {
     const { session_id, view } = request.params
     const { data } = request.session
-    const { paths, team } = response.locals
+    const { paths, account } = response.locals
 
     let session = Session.findOne(session_id, data.wizard)
     if (view === 'type') {
@@ -917,8 +917,8 @@ export const sessionController = {
       ) {
         request.body.session.registration =
           request.body.session.type === SessionType.School
-            ? team.schoolSessionRegistration
-            : team.clinicSessionRegistration
+            ? account.team.schoolSessionRegistration
+            : account.team.clinicSessionRegistration
       }
     }
 
