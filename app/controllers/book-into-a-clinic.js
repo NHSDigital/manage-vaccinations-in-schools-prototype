@@ -131,6 +131,20 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * @type {RequestParamHandler}
+   */
+  read(request, response, next, booking_uuid) {
+    const { patient_uuid } = request.params
+    const { data } = request.session
+
+    if (patient_uuid) {
+      response.locals.patient = Patient.findOne(String(patient_uuid), data)
+    }
+
+    next()
+  },
+
+  /**
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
@@ -637,5 +651,5 @@ export const bookIntoClinicController = {
 }
 
 /**
- * @import { RequestHandler } from 'express'
+ * @import { RequestHandler, RequestParamHandler } from 'express'
  */
