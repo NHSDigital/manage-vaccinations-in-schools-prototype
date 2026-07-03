@@ -50,6 +50,34 @@ router.get('/understanding-records', (request, response) => {
   response.render('parent-test/understanding-records')
 })
 
+router.get('/rosa/dose-1', (request, response) => {
+  response.render('parent-test/rosa/dose-1')
+})
+
+router.get('/rosa/not-counted', (request, response) => {
+  response.render('parent-test/rosa/not-counted')
+})
+
+router.get('/maya/dose-1', (request, response) => {
+  response.render('parent-test/maya/dose-1')
+})
+
+router.get('/maya/dose-2', (request, response) => {
+  response.render('parent-test/maya/dose-2')
+})
+
+router.get('/theo/dose-1', (request, response) => {
+  response.render('parent-test/theo/dose-1')
+})
+
+router.get('/idris/dose-1', (request, response) => {
+  response.render('parent-test/idris/dose-1')
+})
+
+router.get('/caleb/dose-1', (request, response) => {
+  response.render('parent-test/caleb/dose-1')
+})
+
 router.get('/dose-detail', (request, response) => {
   response.render('parent-test/dose-detail')
 })
