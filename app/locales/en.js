@@ -554,7 +554,10 @@ export const en = {
       }
     },
     preferredLocation: {
-      title: 'Find a clinic near where you’d like %s’s appointment',
+      title: {
+        parent: 'Find a clinic near where you’d like %s’s appointment',
+        team: 'What is the parent or guardian’s preferred clinic location?'
+      },
       location: {
         label: 'Preferred clinic location',
         hint: 'Enter a town, city, or postcode'
