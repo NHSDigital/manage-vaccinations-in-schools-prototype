@@ -106,20 +106,6 @@
     {% set canBookIntoClinic = canBookIntoClinic or canInviteToClinic or patientProgramme.clinicStatus === PatientClinicStatus.Invited %}
   {% endfor %}
 
-  {# Hide invite to clinic link
-    {% call card({
-      heading: __("patient.programmes.label"),
-      headingLevel: 3,
-      actions: {
-        items: [
-          {
-            text: "Invite to clinic",
-            href: patient.uri + "/invite-to-clinic"
-          } if not patient.archived and canInviteToSession
-        ]
-      }
-    }) %}
-  #}
   {% call card({
     heading: __("patient.programmes.label"),
     headingLevel: 3,
@@ -131,7 +117,7 @@
         } if not patient.archived and canInviteToClinic,
         {
           text: "Book into a clinic",
-          href: patient.uri + "/book-into-clinic"
+          href: patient.uri + "/book-into-a-clinic/"
         } if not patient.archived and canBookIntoClinic
       ]
     }
