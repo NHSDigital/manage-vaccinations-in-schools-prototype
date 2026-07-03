@@ -17,14 +17,15 @@
   <div class="nhsuk-grid-row">
     <app-auto-submit class="nhsuk-grid-column-one-quarter">
       {{ appReportSearch({
-        clear: "/reports/vaccinations"
+        clear: "/reports/vaccinations",
+        headingLevel: 3
       }) }}
     </app-auto-submit>
 
     <div class="nhsuk-grid-column-three-quarters">
       {{ appHeading({
         title: __("report.vaccinations.total"),
-        level: 2,
+        level: 3,
         size: "m"
       }) }}
 
@@ -32,7 +33,7 @@
         <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
           {{ appDataCard({
             heading: "Cohort",
-            headingLevel: 3,
+            headingLevel: 4,
             headingSize: "xs",
             colour: "blue",
             compact: true,
@@ -43,7 +44,7 @@
         <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
           {{ appDataCard({
             heading: "Not vaccinated",
-            headingLevel: 3,
+            headingLevel: 4,
             headingSize: "xs",
             colour: "red",
             compact: true,
@@ -54,7 +55,7 @@
         <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
           {{ appDataCard({
             heading: "Vaccinated",
-            headingLevel: 3,
+            headingLevel: 4,
             headingSize: "xs",
             colour: "green",
             compact: true,

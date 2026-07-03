@@ -22,7 +22,7 @@
         classes: "app-filters",
         feature: true,
         heading: __("download.search.label"),
-        headingLevel: 3
+        headingLevel: 2
       }) %}
         {{ radios({
           fieldset: {
@@ -64,7 +64,7 @@
       {% endif %}
 
       {{ appHeading({
-        level: 3,
+        level: 2,
         size: "m",
         title: title,
         summary: __mf("download.results", {
@@ -80,7 +80,7 @@
             classes: "app-card--compact",
             heading: download.name,
             headingSize: "s",
-            headingLevel: 4,
+            headingLevel: 3,
             href: download.uri + "/download" if download.status == DownloadStatus.Ready,
             clickable: true if download.status == DownloadStatus.Ready
           },

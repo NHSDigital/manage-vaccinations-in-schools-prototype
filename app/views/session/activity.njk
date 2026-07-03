@@ -51,7 +51,7 @@
         {% endif %}
 
         {{ appHeading({
-          level: 3,
+          level: 2,
           size: "m",
           title: title | replace(",", " or "),
           summary: __mf("patient.results.summary", {
@@ -85,8 +85,8 @@
           {% call card({
             classes: "app-card--compact",
             heading: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
+            headingLevel: 3,
             headingSize: "s",
-            headingLevel: 4,
             clickable: not showRegistration,
             href: patientSession.uri
           }) %}

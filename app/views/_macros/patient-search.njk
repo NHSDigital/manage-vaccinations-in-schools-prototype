@@ -40,8 +40,8 @@
   {% call card({
     classes: "app-filters",
     feature: true,
-    heading: __("patient.search.label") ,
-    headingLevel: 3
+    heading: __("patient.search.label"),
+    headingLevel: params.headingLevel | default(2)
   }) %}
     {{ searchInput({
       label: {
