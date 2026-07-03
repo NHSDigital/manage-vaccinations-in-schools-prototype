@@ -119,10 +119,7 @@ export const bookIntoClinicController = {
     response.locals.patient_uuid = patient_uuid
 
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
-    const nextPath =
-      bookableSessions.length > 0
-        ? '/book-into-a-clinic/start'
-        : '/book-into-a-clinic/availability'
+    const nextPath = bookableSessions.length > 0 ? 'start' : 'availability'
 
     return saveAndRedirect(request, response, nextPath)
   },
@@ -132,6 +129,7 @@ export const bookIntoClinicController = {
    */
   new(request, response) {
     const { data } = request.session
+    const { patient_uuid } = request.params
     data.transaction = {}
 
     // Create a new clinic booking in the wizard context
@@ -141,11 +139,18 @@ export const bookIntoClinicController = {
       },
       data.wizard
     )
-    booking.addAppointment()
-    const firstAppointment = booking.appointments[0]
+    const firstAppointment = booking.addAppointment()
+    if (patient_uuid) {
+      firstAppointment.patient_uuid = patient_uuid
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
+    }
 
     // Redirect to the first page in the booking journey (after the start page, that is)
-    const redirectUrl = `${firstAppointment.uri.new}/programmes`
+    const relativePath = firstAppointment.uri.new.replace(
+      '/book-into-a-clinic',
+      ''
+    )
+    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
 
     return saveAndRedirect(request, response, redirectUrl)
   },
@@ -198,7 +203,8 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
-    const { appointment_uuid, booking_uuid, view } = request.params
+    const { appointment_uuid, booking_uuid, view, patient_uuid } =
+      request.params
     const { data, referrer } = request.session
 
     // Create objects on the global context to allow us to check branching conditions, etc.
@@ -216,8 +222,8 @@ export const bookIntoClinicController = {
         response.locals.childNumber =
           booking.appointments.indexOf(currentAppointment) + 1
         response.locals.childCount = booking.appointments.length
-        response.locals.firstName = 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
-        response.locals.fullName = 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
+        response.locals.firstName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
+        response.locals.fullName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
 
         // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
         // that postcode is pushed to the appointment
@@ -235,8 +241,6 @@ export const bookIntoClinicController = {
     }
 
     const journey = {
-      [`/`]: {},
-
       // Appointment journey; once per child
       ...getAllAppointmentPaths(
         booking_uuid,
