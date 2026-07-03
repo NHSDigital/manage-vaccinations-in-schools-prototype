@@ -511,12 +511,13 @@ export const en = {
         'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
     programmes: {
-      title:
-        '{count, plural, one {Do you consent to {firstName} having the following vaccination?} other {Do you consent to {firstName} having the following vaccinations?}}',
-      description: {
-        matched:
-          'While invited for {{ programmeNames }} vaccination, our records show that {{ firstName }} is also eligible for other vaccinations.'
+      title: {
+        parent:
+          '{count, plural, one {Do you consent to {firstName} having the following vaccination?} other {Do you consent to {firstName} having the following vaccinations?}}',
+        team: 'Select the {count, plural, one {vaccination} other {vaccinations}} being booked'
       },
+      eligibility:
+        '{ firstName } is eligible for the following {count, plural, one {vaccination} other {vaccinations}} and isn’t scheduled to be vaccinated at an upcoming school session.',
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
