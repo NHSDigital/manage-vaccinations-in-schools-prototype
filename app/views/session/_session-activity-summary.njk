@@ -47,7 +47,8 @@
 {% if sessionActivityRows.length > 0 or session.isCompleted %}
   {% call card({
     heading: __("session.activity.label"),
-    headingLevel: 3
+    headingLevel: 2,
+    headingSize: "m"
   }) %}
     {{ summaryList({
       rows: sessionActivityRows | removeLastSummaryBorder

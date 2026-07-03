@@ -19,7 +19,7 @@
       {% call card({
         feature: true,
         heading: __("appointments.label"),
-        headingLevel: 3
+        headingLevel: 2
       }) %}
         {{ summaryList({
           classes: "nhsuk-u-margin-bottom-4 app-summary-list--full-width",
@@ -56,14 +56,14 @@
 
       {% if initial %}
         {{ appHeading({
-          level: 3,
+          level: 2,
           size: "m",
           title: __("search.results"),
           summary: __("search.initial") | safe
         }) }}
       {% else %}
         {{ appHeading({
-          level: 3,
+          level: 2,
           size: "m",
           title: __("search.results"),
           summary: __mf("patient.results.summary", {
@@ -78,7 +78,8 @@
             card: {
               classes: "app-card--compact",
               heading: patient.fullName | highlightQuery(data.q) | safe,
-              headingLevel: 4,
+              headingLevel: 3,
+              headingSize: "s",
               clickable: true,
               href: appointmentPath + "/link?patient_uuid=" + patient.uuid
             },

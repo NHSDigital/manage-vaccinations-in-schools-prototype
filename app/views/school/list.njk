@@ -17,7 +17,7 @@
         classes: "app-filters",
         feature: true,
         heading: __("school.search.label") ,
-        headingLevel: 3
+        headingLevel: 2
       }) %}
         {{ searchInput({
           label: {
@@ -100,7 +100,7 @@
       {% endif %}
 
       {{ appHeading({
-        level: 3,
+        level: 2,
         size: "m",
         title: title,
         summary: __mf("school.results", {
@@ -116,7 +116,7 @@
             classes: "app-card--compact",
             heading: school.name | highlightQuery(data.q) | safe,
             headingSize: "s",
-            headingLevel: 4,
+            headingLevel: 3,
             href: school.uri,
             clickable: true
           },

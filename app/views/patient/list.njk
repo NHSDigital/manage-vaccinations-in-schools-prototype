@@ -55,7 +55,7 @@
               title: __mf("patient.results.inviteToClinic.title", { count: results.count }),
               summary: __("patient.results.inviteToClinic.hint")
             }) }}
-            
+
             {{ actionLink({
               text: __mf("patient.results.inviteToClinic.link", { count: results.count }),
               href: "/patients/invite-to-clinic" + query | asQueryString
@@ -83,7 +83,7 @@
               classes: "app-card--compact",
               heading: patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
               headingSize: "s",
-              headingLevel: 4,
+              headingLevel: 3,
               href: patient.uri,
               clickable: true
             },
