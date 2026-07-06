@@ -46,6 +46,10 @@ router.get('/caleb', (request, response) => {
   response.render('parent-test/caleb')
 })
 
+router.get('/lena', (request, response) => {
+  response.render('parent-test/lena')
+})
+
 router.get('/understanding-records', (request, response) => {
   response.render('parent-test/understanding-records')
 })
@@ -76,6 +80,10 @@ router.get('/idris/dose-1', (request, response) => {
 
 router.get('/caleb/dose-1', (request, response) => {
   response.render('parent-test/caleb/dose-1')
+})
+
+router.get('/lena/dose-1', (request, response) => {
+  response.render('parent-test/lena/dose-1')
 })
 
 router.get('/dose-detail', (request, response) => {
