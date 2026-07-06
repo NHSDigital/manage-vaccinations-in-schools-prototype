@@ -576,8 +576,11 @@ export const en = {
     },
     clinicDistance: {
       title: 'All available clinics are more than 100 miles away',
-      description:
-        'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+      description: {
+        parent:
+          'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+        team: 'All available clinics are more than 100 miles from the preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location'
+      },
       confirm: 'Continue anyway',
       cancel: 'Try another location'
     },
