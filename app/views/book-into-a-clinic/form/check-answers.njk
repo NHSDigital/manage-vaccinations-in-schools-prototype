@@ -1,11 +1,13 @@
 {% extends "_layouts/form.njk" %}
 
-{% set confirmButtonText = __("clinicBooking.check-answers.confirm") %}
+{% set audience = "team" if patient else "parent" %}
+{% set confirmButtonText = __("clinicBooking.check-answers.confirm." + audience) %}
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
 
 {% block form %}
   {{ appHeading({
-    title: title
+    title: title,
+    summary: "Check the appointment details before completing the booking."
   }) }}
 
   {{ summaryList({
@@ -14,24 +16,25 @@
       headingSize: "m"
     },
     lastRowBorder: false,
-    rows: summaryRows(appointment.child, {
-      fullFriendlyName: {
-        href: appointment.uri.new + "/child"
+    rows: summaryRows(patient if patient else appointment.child, {
+      fullName: {
+        value: appointment.child.fullFriendlyName if not patient,
+        href: appointment.uri.new + "/child" if not patient
       },
       preferredName: {
-        href: appointment.uri.new + "/child"
+        href: appointment.uri.new + "/child" if not patient
       },
       dob: {
-        href: appointment.uri.new + "/dob"
+        href: appointment.uri.new + "/dob" if not patient
       },
       address: {
-        href: appointment.uri.new + "/address"
+        href: appointment.uri.new + "/address" if not patient
       },
       impairments: {
-        href: appointment.uri.new + "/impairments"
+        href: appointment.uri.new + "/impairments" if not patient
       },
       adjustments: {
-        href: appointment.uri.new + "/adjustments"
+        href: appointment.uri.new + "/adjustments" if not patient
       }
     })
   }) }}

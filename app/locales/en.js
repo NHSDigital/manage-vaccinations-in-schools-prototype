@@ -678,7 +678,10 @@ export const en = {
         appointment: 'Appointment details',
         contact: 'Contact details'
       },
-      confirm: 'Confirm'
+      confirm: {
+        parent: 'Confirm',
+        team: 'Add this appointment'
+      }
     },
     addAnother: {
       title:
