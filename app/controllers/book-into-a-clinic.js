@@ -190,9 +190,9 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
-    const { booking_uuid } = request.params
+    const { appointment_uuid, booking_uuid, patient_uuid } = request.params
     const { data } = request.session
-    const { booking, paths } = response.locals
+    const { __, booking, paths, patient } = response.locals
 
     // Clean up session data
     delete data.booking
@@ -202,6 +202,19 @@ export const bookIntoClinicController = {
 
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
+
+    if (patient_uuid) {
+      const appointment = booking.findAppointment(appointment_uuid)
+      request.flash(
+        'success',
+        __('clinicBooking.success', {
+          fullName: appointment.patient.fullName,
+          sessionName: appointment.session.name
+        })
+      )
+
+      paths.next = patient.uri
+    }
 
     return saveAndRedirect(request, response, paths.next)
   },

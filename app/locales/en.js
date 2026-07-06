@@ -791,6 +791,7 @@ export const en = {
         description: 'You’ll get a booking confirmation email or text message.'
       }
     },
+    success: 'Added {{fullName}} to the {{sessionName}}',
     show: {
       title: 'Manage your booking',
       introduction:

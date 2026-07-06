@@ -181,7 +181,8 @@ export const getAllAppointmentPaths = (
 
       // Check and confirm
       [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
-        [`/${booking_uuid}/new/confirmation`]: () => !appointment.isAbandoned,
+        [`/${booking_uuid}/new/confirmation`]: () =>
+          !appointment.isAbandoned && !appointment.patient_uuid,
         [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: () =>
           appointment.isAbandoned
       },
