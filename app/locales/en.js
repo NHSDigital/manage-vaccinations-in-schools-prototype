@@ -2430,8 +2430,7 @@ export const en = {
     alternative: {
       label: 'Consent also given for injected vaccine?',
       title:
-        'Do they also agree to the injected vaccine if the nasal spray is not suitable?',
-      hint: 'For example, if the child is heavily congested on the day of the vaccination'
+        'Do they also agree to the injected vaccine if the nasal spray is not suitable?'
     },
     invalid: {
       label: 'Invalid response'
