@@ -1,3 +1,4 @@
+import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import { addMinutes } from 'date-fns'
 import _ from 'lodash'
@@ -12,7 +13,13 @@ import {
   SessionStatus,
   SessionType
 } from '../enums.js'
-import { ClinicBooking, Patient, Programme, Session } from '../models.js'
+import {
+  ClinicBooking,
+  Contact,
+  Patient,
+  Programme,
+  Session
+} from '../models.js'
 import {
   getAllAppointmentPaths,
   getPreviousAddressItems,
@@ -136,6 +143,10 @@ export const bookIntoClinicController = {
   read(request, response, next, booking_uuid) {
     const { patient_uuid } = request.params
     const { data } = request.session
+
+    if (!booking_uuid) {
+      console.log('Error: no booking ID in route parameters')
+    }
 
     if (patient_uuid) {
       response.locals.patient = Patient.findOne(String(patient_uuid), data)
@@ -627,6 +638,30 @@ export const bookIntoClinicController = {
         delete data.transaction.time
 
         paths.next = `${appointment.uri.new}/child`
+      }
+    } else if (view === 'contact-selection') {
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      if (booking.contact.uuid !== 'new') {
+        // Just selected an existing parent, so load it into the booking and appointment
+        booking.contact = Contact.findOne(booking.contact.uuid, data)
+        const appointment = booking.findAppointment(appointment_uuid)
+        appointment.parentalRelationship = booking.contact.relationship
+        appointment.parentalRelationshipOther =
+          booking.contact.relationshipOther
+        appointment.parentHasParentalResponsibility =
+          booking.contact.hasParentalResponsibility
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      } else {
+        // Reset the contact ready for new details
+        booking.contact = new Contact({ uuid: 'new' })
+      }
+    } else if (view === 'contact') {
+      // If we've just recorded a new contact for an existing patient, give it a proper UUID
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      if (booking.contact?.uuid === 'new') {
+        booking.contact.uuid = faker.string.uuid()
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
       }
     } else if (view === 'delete-appointment') {
       // The user's chosen to remove an appointment

@@ -696,8 +696,23 @@ export const en = {
       confirm: 'Yes, delete this appointment',
       cancel: 'No, return to the previous page'
     },
+    contactSelection: {
+      title: 'Who is the contact for this appointment?',
+      hint: 'The contact you choose will get booking confirmation and reminder messages.',
+      itemHint: {
+        email: 'Email: %s',
+        tel: 'Phone: %s'
+      },
+      new: 'Enter a new contact'
+    },
     contact: {
-      title: 'About you',
+      title: {
+        parent: 'About you',
+        team: {
+          existing: 'Confirm the contact details for this appointment',
+          new: 'Enter a new contact for this appointment'
+        }
+      },
       fullName: {
         label: 'Full name'
       },
@@ -713,15 +728,20 @@ export const en = {
         hint: 'Someone from the vaccinations team might call you if they have questions'
       },
       sms: {
-        label: 'Confirm if you want appointment updates by text message'
+        label: 'Confirm if %s want appointment updates by text message'
       },
       contactPreference: {
-        title: 'If we need to contact you',
-        label: 'Do you have any communication or language needs?',
+        title: {
+          parent: 'Do you have any communication or language needs?',
+          team: 'Does the contact have any communication or language needs?'
+        },
+        hint: {
+          parent:
+            'For example, if you have any hearing or sight needs, or if English is not your first language.',
+          team: 'For example, if they have any hearing or sight needs, or if English is not their first language.'
+        },
         yes: 'Yes',
-        no: 'No',
-        description:
-          'Tell us if you have any communication or language needs we should know about.\n\nFor example, if you have any hearing or sight needs, or if English is not your first language.'
+        no: 'No'
       },
       contactPreferenceDetails: {
         label: 'Give details'

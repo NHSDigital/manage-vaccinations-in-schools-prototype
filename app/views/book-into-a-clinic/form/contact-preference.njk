@@ -1,21 +1,19 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.contact.contactPreference.title") %}
+{% set audience = "team" if patient else "parent" %}
+{% set title = __("clinicBooking.contact.contactPreference.title." + audience) %}
+{% set hint = __("clinicBooking.contact.contactPreference.hint." + audience) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
-  }) }}
-
-  {{ __("clinicBooking.contact.contactPreference.description") | nhsukMarkdown }}
-
   {{ radios({
     fieldset: {
       legend: {
-        text: __("clinicBooking.contact.contactPreference.label"),
-        size: "s"
+        html: appHeading({
+          title: title
+        })
       }
     },
+    hint: { text: hint },
     items: [{
       text: __("clinicBooking.contact.contactPreference.yes"),
       value: true,

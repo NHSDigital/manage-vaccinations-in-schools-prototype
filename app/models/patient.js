@@ -6,6 +6,7 @@ import schools from '../datasets/schools.js'
 import {
   Adjustment,
   AuditEventType,
+  ClinicAppointmentStatus,
   Impairment,
   NoticeType,
   NotifyEmailStatus,
@@ -15,6 +16,7 @@ import {
 import {
   AuditEvent,
   Child,
+  ClinicAppointment,
   Contact,
   Move,
   PatientProgramme,
@@ -218,6 +220,19 @@ export class Patient extends Child {
         contacts.set(contact.uuid, new Contact(contact))
       })
 
+    // Add any contacts found in clinic appointments
+    this.appointments
+      .filter(({ contact }) => contact)
+      .filter(({ status }) =>
+        [
+          ClinicAppointmentStatus.Booked,
+          ClinicAppointmentStatus.Cancelled
+        ].includes(status)
+      )
+      .forEach(({ contact }) =>
+        contacts.set(contact.uuid, new Contact(contact))
+      )
+
     return [...contacts.values()]
   }
 
@@ -393,6 +408,17 @@ export class Patient extends Child {
     return this.reply_uuids
       .map((uuid) => Reply.findOne(uuid, this.context))
       .filter((reply) => reply?.patient_uuid === this.uuid)
+  }
+
+  /**
+   * Get clinic appointments
+   *
+   * @returns {Array<ClinicAppointment>} appointments
+   */
+  get appointments() {
+    return ClinicAppointment.findAll(this.context).filter(
+      (appointment) => appointment?.patient_uuid === this.uuid
+    )
   }
 
   /**
