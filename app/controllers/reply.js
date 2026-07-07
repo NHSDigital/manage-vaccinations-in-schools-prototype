@@ -395,6 +395,10 @@ export const replyController = {
       }
     }
 
+    // Update wizard data
+    Reply.update(reply_uuid, reply, data.wizard)
+
+    // Clean up session data
     delete data.healthAnswers
     delete data.respondent
 
