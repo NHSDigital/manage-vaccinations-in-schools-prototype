@@ -85,7 +85,8 @@
 
   {# Vaccination programmes card #}
   {% set patientProgrammeRows = [] %}
-  {% set canInviteToSession = false %}
+  {% set canInviteToClinic = false %}
+  {% set canBookIntoClinic = false %}
   {% for id, patientProgramme in patient.programmes %}
     {% set patientProgrammeRows = patientProgrammeRows | push([
       {
@@ -101,23 +102,10 @@
         html: patientProgramme.statusNotes
       }
     ]) %}
-    {% set canInviteToSession = canInviteToSession or patientProgramme.clinicStatus === PatientClinicStatus.Ready %}
+    {% set canInviteToClinic = canInviteToClinic or patientProgramme.clinicStatus === PatientClinicStatus.Ready %}
+    {% set canBookIntoClinic = canBookIntoClinic or canInviteToClinic or patientProgramme.clinicStatus === PatientClinicStatus.Invited %}
   {% endfor %}
 
-  {# Hide invite to clinic link
-    {% call card({
-      heading: __("patient.programmes.label"),
-      headingLevel: 3,
-      actions: {
-        items: [
-          {
-            text: "Invite to clinic",
-            href: patient.uri + "/invite-to-clinic"
-          } if not patient.archived and canInviteToSession
-        ]
-      }
-    }) %}
-  #}
   {% call card({
     heading: __("patient.programmes.label"),
     headingLevel: 3,
@@ -126,7 +114,11 @@
         {
           text: "Invite to clinic",
           href: patient.uri + "/invite-to-clinic"
-        } if not patient.archived and canInviteToSession
+        } if not patient.archived and canInviteToClinic,
+        {
+          text: "Book into a clinic",
+          href: patient.uri + "/book-into-a-clinic/"
+        } if not patient.archived and canBookIntoClinic
       ]
     }
   }) %}

@@ -1,11 +1,12 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.preferredLocation.title", firstName) %}
+{% set title = __("clinicBooking.preferredLocation.title.team") if patient
+          else __("clinicBooking.preferredLocation.title.parent", firstName) %}
 
 {% block form %}
   {{ appHeading({
     title: title,
-    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+    caption: appointmentCaption
   }) }}
 
   {{ input({

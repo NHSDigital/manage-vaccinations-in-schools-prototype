@@ -1,10 +1,11 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.mmrAlternative.title", firstName) %}
+{% set audience = "team" if patient else "parent" %}
+{% set title = __("clinicBooking.mmrAlternative.title." + audience, firstName) %}
 {% set hint = __("clinicBooking.mmrAlternative.hint") %}
 
 {# Replace MMR with MMRV content as necessary #}
-{% if data.clinicInvite.invitedForMmrv %}
+{% if data.clinicInvite.eligibleForMmrv %}
   {% set title = title | replace('MMR', 'MMRV') %}
   {% set hint = hint | replace('MMR', 'MMRV') %}
 {% endif %}
@@ -14,8 +15,8 @@
     fieldset: {
       legend: {
         html: appHeading({
-          size: "l",
-          title: title
+          title: title,
+          caption: appointmentCaption
         })
       }
     },
@@ -23,10 +24,10 @@
       text: hint
     },
     items: [{
-      text: __("clinicBooking.mmrAlternative.yes.label", firstName),
+      text: __("clinicBooking.mmrAlternative.yes.label." + audience, firstName),
       value: true
     }, {
-      text: __("clinicBooking.mmrAlternative.no.label", firstName),
+      text: __("clinicBooking.mmrAlternative.no.label." + audience, firstName),
       value: false
     }],
     decorate: "appointment.mmrAlternative"

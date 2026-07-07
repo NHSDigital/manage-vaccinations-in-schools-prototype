@@ -779,7 +779,7 @@ export const sessionController = {
     return (request, response, next) => {
       const { session_id, view } = request.params
       const { data, referrer } = request.session
-      const { account } = response.locals
+      const { team } = response.locals
 
       // Force saving of the session type before we fork based on it; avoid race condition
       if (view === 'type' && request.method === 'POST') {
@@ -840,8 +840,8 @@ export const sessionController = {
       // Set up different methods for clinic selection, based on number of clinics
       if (session.type === SessionType.Clinic) {
         const usableNumberOfRadios = 16
-        if (account.team.clinics.length <= usableNumberOfRadios) {
-          response.locals.clinicRadios = Object.values(account.team.clinics)
+        if (team.clinics.length <= usableNumberOfRadios) {
+          response.locals.clinicRadios = Object.values(team.clinics)
             .map((clinic) => new Clinic(clinic))
             .map((clinic) => ({
               text: clinic.name,
@@ -906,7 +906,7 @@ export const sessionController = {
   updateForm(request, response) {
     const { session_id, view } = request.params
     const { data } = request.session
-    const { paths, account } = response.locals
+    const { paths, team } = response.locals
 
     let session = Session.findOne(session_id, data.wizard)
     if (view === 'type') {
@@ -917,8 +917,8 @@ export const sessionController = {
       ) {
         request.body.session.registration =
           request.body.session.type === SessionType.School
-            ? account.team.schoolSessionRegistration
-            : account.team.clinicSessionRegistration
+            ? team.schoolSessionRegistration
+            : team.clinicSessionRegistration
       }
     }
 
@@ -1131,6 +1131,23 @@ export const sessionController = {
     )
 
     return saveAndRedirect(request, response, session.uri)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  fakeAddChild(request, response) {
+    const { session_id } = request.params
+    const { data } = request.session
+
+    const session = Session.findOne(session_id, data)
+
+    request.flash(
+      'success',
+      'Created a clinic appointment for Alison Hargreaves at Edgwick Medical Centre, with a booking reference of CLN-1234-5678'
+    )
+
+    return response.redirect(`${session.uri}/report`)
   },
 
   /**

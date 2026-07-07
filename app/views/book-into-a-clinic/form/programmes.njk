@@ -1,6 +1,8 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __mf("clinicBooking.programmes.title", {
+{% set titleKey = "clinicBooking.programmes.title.team" if patient
+             else "clinicBooking.programmes.title.parent" %}
+{% set title = __mf(titleKey, {
   count: programmeItems.length,
   firstName: firstName
 }) %}
@@ -11,12 +13,16 @@
       legend: {
         html: appHeading({
           title: title,
-          caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+          caption: appointmentCaption,
+          summary: __mf("clinicBooking.programmes.eligibility", {
+            count: programmeItems.length,
+            firstName: patient.firstName
+          }) | nhsukMarkdown if patient
         }),
         size: "l"
       }
     },
-    hint: { text: __("clinicBooking.programmes.hint") } if programmeItems.length > 1,
+    hint: { text: __("clinicBooking.programmes.hint") } if programmeItems.length > 1 and not patient,
     items: programmeItems,
     decorate: "appointment.selected_programme_ids"
   }) }}

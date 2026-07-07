@@ -19,6 +19,7 @@ router.post('/advert-link', session.copyAdvertLink)
 router.param('session_id', session.read)
 
 router.get('/:session_id/download', download.new(DownloadType.Session))
+router.get('/:session_id/add-child', session.fakeAddChild)
 
 router.all('/:session_id/new/:view', session.readForm('new'))
 router.get('/:session_id/new/:view', session.showForm)

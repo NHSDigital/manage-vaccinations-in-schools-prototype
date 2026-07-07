@@ -8,7 +8,7 @@
 {% block form %}
   {{ appHeading({
     title: title,
-    caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+    caption: appointmentCaption
   }) }}
 
   {% include "book-into-a-clinic/form/_session-summary.njk" %}

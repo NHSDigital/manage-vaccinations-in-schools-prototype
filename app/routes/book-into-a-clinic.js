@@ -10,7 +10,8 @@ router.get('/', bookIntoClinic.readProgrammes)
 
 router.get('/new', bookIntoClinic.new)
 
-// TODO
+router.param('booking_uuid', bookIntoClinic.read)
+
 router.all(
   '/:booking_uuid/new/:appointment_uuid/:view',
   bookIntoClinic.readForm

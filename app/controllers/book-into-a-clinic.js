@@ -1,3 +1,4 @@
+import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import { addMinutes } from 'date-fns'
 import _ from 'lodash'
@@ -6,12 +7,19 @@ import {
   AppointmentAbandonmentReason,
   ClinicAppointmentStatus,
   ParentalRelationship,
+  PatientClinicStatus,
   ProgrammeType,
   ReplyDecision,
   SessionStatus,
   SessionType
 } from '../enums.js'
-import { ClinicBooking, Programme, Session } from '../models.js'
+import {
+  ClinicBooking,
+  Contact,
+  Patient,
+  Programme,
+  Session
+} from '../models.js'
 import {
   getAllAppointmentPaths,
   getPreviousAddressItems,
@@ -39,11 +47,16 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   setupServiceHeader(request, response, next) {
-    const serviceName = 'Book into a clinic'
+    const { patient_uuid } = request.params
 
-    response.locals.assetsName = 'public'
-    response.locals.serviceName = serviceName
-    response.locals.headerOptions = { service: { text: serviceName } }
+    // Set up the parent-facing service name and header
+    if (!patient_uuid) {
+      const serviceName = 'Book into a clinic'
+
+      response.locals.assetsName = 'public'
+      response.locals.serviceName = serviceName
+      response.locals.headerOptions = { service: { text: serviceName } }
+    }
 
     return next()
   },
@@ -56,15 +69,37 @@ export const bookIntoClinicController = {
       request.query
     )
     const { data } = request.session
+    const { patient_uuid } = request.params
 
-    // Read the invited programme IDs from the querystring and store them
     let programme_ids
-    if (programme_id) {
-      programme_ids = Array.isArray(programme_id)
-        ? programme_id
-        : [programme_id]
+    if (patient_uuid) {
+      // Starting the booking process from the child record, so no querystring with invited
+      // programmes; use the child's clinic-ready programmes as the basis instead
+      const patient = Patient.findOne(patient_uuid, data)
+      if (patient) {
+        const canBeOfferedMmrv = patient.canBeOfferedMmrv
+        programme_ids = Object.values(patient.programmes)
+          .filter(({ clinicStatus }) =>
+            [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
+              String(clinicStatus)
+            )
+          )
+          .map(({ programme_id }) =>
+            programme_id === 'mmr' && canBeOfferedMmrv ? 'mmrv' : programme_id
+          )
+      }
     } else {
-      // default to all programmes if none supplied
+      // Starting the booking from the parent's invite link; read the invited programme IDs
+      // from the querystring
+      if (programme_id) {
+        programme_ids = Array.isArray(programme_id)
+          ? programme_id
+          : [programme_id]
+      }
+    }
+
+    // Default to all programmes if none supplied
+    if (!programme_ids) {
       programme_ids = Programme.findAll(data)
         .filter(({ hidden }) => !hidden)
         .map(({ id }) => id)
@@ -90,16 +125,52 @@ export const bookIntoClinicController = {
     data.clinicInvite = {
       programmes,
       programmeNames: programmes.map(({ name }) => name),
-      invitedForMmrv: useMmrv
+      eligibleForMmrv: useMmrv
     }
 
+    response.locals.patient_uuid = patient_uuid
+
+    // Skip the start page if it's the SAIS team making the booking
     const bookableSessions = getBookableClinicSessions(data, programme_ids)
     const nextPath =
       bookableSessions.length > 0
-        ? '/book-into-a-clinic/start'
-        : '/book-into-a-clinic/availability'
+        ? patient_uuid
+          ? 'new'
+          : 'start'
+        : 'availability'
 
     return saveAndRedirect(request, response, nextPath)
+  },
+
+  /**
+   * @type {RequestParamHandler}
+   */
+  read(request, response, next, booking_uuid) {
+    const { patient_uuid, appointment_uuid } = request.params
+    const { data } = request.session
+    const { __ } = response.locals
+
+    const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    if (patient_uuid) {
+      // If booking started from the child record, always show that context
+      const patient = Patient.findOne(String(patient_uuid), data)
+      response.locals.patient = patient
+      response.locals.appointmentCaption = __(
+        'clinicBooking.appointment.caption',
+        patient?.fullName
+      )
+    } else if (appointment_uuid) {
+      // For the parent's booking, show the current child's name if more than one
+      const appointment = booking.findAppointment(String(appointment_uuid))
+      if (appointment?.booking?.appointments?.length > 1) {
+        response.locals.appointmentCaption = __(
+          'clinicBooking.appointment.caption',
+          appointment?.child?.fullFriendlyName
+        )
+      }
+    }
+
+    next()
   },
 
   /**
@@ -107,6 +178,7 @@ export const bookIntoClinicController = {
    */
   new(request, response) {
     const { data } = request.session
+    const { patient_uuid } = request.params
     data.transaction = {}
 
     // Create a new clinic booking in the wizard context
@@ -116,11 +188,18 @@ export const bookIntoClinicController = {
       },
       data.wizard
     )
-    booking.addAppointment()
-    const firstAppointment = booking.appointments[0]
+    const firstAppointment = booking.addAppointment()
+    if (patient_uuid) {
+      firstAppointment.patient_uuid = patient_uuid
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
+    }
 
     // Redirect to the first page in the booking journey (after the start page, that is)
-    const redirectUrl = `${firstAppointment.uri.new}/programmes`
+    const relativePath = firstAppointment.uri.new.replace(
+      '/book-into-a-clinic',
+      ''
+    )
+    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
 
     return saveAndRedirect(request, response, redirectUrl)
   },
@@ -129,9 +208,9 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
-    const { booking_uuid } = request.params
+    const { appointment_uuid, booking_uuid } = request.params
     const { data } = request.session
-    const { booking, paths } = response.locals
+    const { __, booking, paths, patient } = response.locals
 
     // Clean up session data
     delete data.booking
@@ -141,6 +220,22 @@ export const bookIntoClinicController = {
 
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
+
+    if (patient) {
+      // Create the patient-session records for this appointment
+      const appointment = booking.findAppointment(appointment_uuid)
+      appointment.addToSession()
+
+      request.flash(
+        'success',
+        __('clinicBooking.success', {
+          fullName: patient.fullName,
+          sessionName: appointment.session.name
+        })
+      )
+
+      paths.next = patient.uri
+    }
 
     return saveAndRedirect(request, response, paths.next)
   },
@@ -173,7 +268,8 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
-    const { appointment_uuid, booking_uuid, view } = request.params
+    const { appointment_uuid, booking_uuid, view, patient_uuid } =
+      request.params
     const { data, referrer } = request.session
 
     // Create objects on the global context to allow us to check branching conditions, etc.
@@ -191,8 +287,8 @@ export const bookIntoClinicController = {
         response.locals.childNumber =
           booking.appointments.indexOf(currentAppointment) + 1
         response.locals.childCount = booking.appointments.length
-        response.locals.firstName = 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
-        response.locals.fullName = 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
+        response.locals.firstName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
+        response.locals.fullName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
 
         // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
         // that postcode is pushed to the appointment
@@ -210,8 +306,6 @@ export const bookIntoClinicController = {
     }
 
     const journey = {
-      [`/`]: {},
-
       // Appointment journey; once per child
       ...getAllAppointmentPaths(
         booking_uuid,
@@ -234,7 +328,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
-    const { __, __mf, appointment } = response.locals
+    const { __, __mf, appointment, patient } = response.locals
     const { data } = request.session
     let { booking_uuid, view } = request.params
 
@@ -278,7 +372,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.invitedForMmrv,
+        data.clinicInvite.eligibleForMmrv,
         ConjunctionType.or,
         data
       )
@@ -286,6 +380,7 @@ export const bookIntoClinicController = {
       const clinicLocationItems = getScheduledClinicLocationItems(
         data,
         appointment.selected_programme_ids,
+        patient ? 0 : 1,
         data.transaction?.outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems
@@ -403,7 +498,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.invitedForMmrv,
+        data.clinicInvite.eligibleForMmrv,
         ConjunctionType.and,
         data
       )
@@ -579,6 +674,30 @@ export const bookIntoClinicController = {
 
         paths.next = `${appointment.uri.new}/child`
       }
+    } else if (view === 'contact-selection') {
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      if (booking.contact.uuid !== 'new') {
+        // Just selected an existing parent, so load it into the booking and appointment
+        booking.contact = Contact.findOne(booking.contact.uuid, data)
+        const appointment = booking.findAppointment(appointment_uuid)
+        appointment.parentalRelationship = booking.contact.relationship
+        appointment.parentalRelationshipOther =
+          booking.contact.relationshipOther
+        appointment.parentHasParentalResponsibility =
+          booking.contact.hasParentalResponsibility
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      } else {
+        // Reset the contact ready for new details
+        booking.contact = new Contact({ uuid: 'new' })
+      }
+    } else if (view === 'contact') {
+      // If we've just recorded a new contact for an existing patient, give it a proper UUID
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      if (booking.contact?.uuid === 'new') {
+        booking.contact.uuid = faker.string.uuid()
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      }
     } else if (view === 'delete-appointment') {
       // The user's chosen to remove an appointment
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -602,5 +721,5 @@ export const bookIntoClinicController = {
 }
 
 /**
- * @import { RequestHandler } from 'express'
+ * @import { RequestHandler, RequestParamHandler } from 'express'
  */

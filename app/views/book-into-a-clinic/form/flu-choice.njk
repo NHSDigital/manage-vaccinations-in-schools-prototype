@@ -1,25 +1,26 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.fluChoice.title", firstName) %}
+{% set audience = "team" if patient else "parent" %}
+{% set title = __("clinicBooking.fluChoice.title." + audience, firstName) %}
 
 {% block form %}
   {{ radios({
     fieldset: {
       legend: {
         html: appHeading({
-          size: "l",
-          title: title
+          title: title,
+          caption: appointmentCaption
         })
       }
     },
     items: [
       {
-        text: __("clinicBooking.fluChoice.nasal.label"),
+        text: __("clinicBooking.fluChoice.nasal.label." + audience),
         hint: { text: __("clinicBooking.fluChoice.nasal.hint") },
         value: ReplyDecision.Given
       },
       {
-        text: __('clinicBooking.fluChoice.injection.label'),
+        text: __("clinicBooking.fluChoice.injection.label." + audience),
         hint: { text: __('clinicBooking.fluChoice.injection.hint') },
         value: ReplyDecision.OnlyAlternativeInjection
       }

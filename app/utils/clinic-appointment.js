@@ -136,6 +136,18 @@ export const getAllAppointmentPaths = (
               appointment.selected_programme_ids
             ).length === 0
           )
+        },
+        [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: () => {
+          const patient = appointment.patient
+          if (!patient) return false
+
+          return patient.contacts?.length > 0
+        },
+        [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
+          const patient = appointment.patient
+          if (!patient) return false
+
+          return patient.contacts?.length === 0
         }
       },
 
@@ -153,20 +165,24 @@ export const getAllAppointmentPaths = (
         : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {
+        [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => true
+      },
 
       // Parent contact details
+      [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: {},
       [`/${booking_uuid}/new/${appointment_uuid}/contact`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
           data: 'appointment.parentHasParentalResponsibility',
           value: 'false'
         }
       },
-      [`/${booking_uuid}/new/contact-preference`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/contact-preference`]: {},
 
       // Check and confirm
       [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
-        [`/${booking_uuid}/new/confirmation`]: () => !appointment.isAbandoned,
+        [`/${booking_uuid}/new/confirmation`]: () =>
+          !appointment.isAbandoned && !appointment.patient_uuid,
         [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: () =>
           appointment.isAbandoned
       },

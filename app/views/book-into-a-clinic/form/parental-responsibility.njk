@@ -7,7 +7,7 @@
     <div class="nhsuk-grid-column-two-thirds">
       {{ appHeading({
         title: title,
-        caption: __("clinicBooking.appointment.caption", fullName) if childCount > 1
+        caption: appointmentCaption
       }) }}
 
       {#
@@ -26,7 +26,7 @@
         in that way.
       #}
       {{ __("clinicBooking.parentalResponsibility.description", {
-        team: account.team
+        team: team
       }) | nhsukMarkdown }}
     </div>
   </div>

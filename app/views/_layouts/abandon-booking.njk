@@ -1,13 +1,17 @@
 {% extends "_layouts/form.njk" %}
 
 {% block afterForm %}
-  {{ appButtonGroup({
-    buttons: [{
-      text: __("form.continue")
-    }],
-    links: [{
-      text: __("clinicBooking.abandon.label"),
-      href: appointment.uri.new + "/not-convenient"
-    }]
-  }) }}
+  {% if not patient %}
+    {{ appButtonGroup({
+      buttons: [{
+        text: __("form.continue")
+      }],
+      links: [{
+        text: __("clinicBooking.abandon.label"),
+        href: appointment.uri.new + "/not-convenient"
+      }]
+    }) }}
+  {% else %}
+    {{ super() }}
+  {% endif %}
 {% endblock %}

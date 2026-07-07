@@ -511,49 +511,80 @@ export const en = {
         'To give or refuse consent for a child’s vaccination, you need to have parental responsibility.\n\nIf you have any questions, please contact the local health organisation by calling {{team.tel}}, or email {{team.email}}.'
     },
     programmes: {
-      title:
-        '{count, plural, one {Do you consent to {firstName} having the following vaccination?} other {Do you consent to {firstName} having the following vaccinations?}}',
-      description: {
-        matched:
-          'While invited for {{ programmeNames }} vaccination, our records show that {{ firstName }} is also eligible for other vaccinations.'
+      title: {
+        parent:
+          '{count, plural, one {Do you consent to {firstName} having the following vaccination?} other {Do you consent to {firstName} having the following vaccinations?}}',
+        team: 'Select the {count, plural, one {vaccination} other {vaccinations}} being booked'
       },
+      eligibility:
+        '{ firstName } is eligible for the following {count, plural, one {vaccination} other {vaccinations}} and isn’t scheduled to be vaccinated at an upcoming school session.',
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
-      title: 'Which flu vaccine do you agree to %s having?',
+      title: {
+        parent: 'Which flu vaccine do you agree to %s having?',
+        team: 'Which flu vaccine will the child have?'
+      },
       nasal: {
-        label: 'I agree to the nasal spray vaccine',
+        label: {
+          parent: 'I agree to the nasal spray vaccine',
+          team: 'The nasal spray vaccine'
+        },
         hint: 'This is the recommended option and gives the best protection against flu'
       },
       injection: {
-        label: 'I agree to the alternative flu injection',
+        label: {
+          parent: 'I agree to the alternative flu injection',
+          team: 'The alternative flu injection'
+        },
         hint: 'This is suitable for children who do not use gelatine products, or if they cannot have the nasal spray vaccine for medical reasons'
       }
     },
     fluAlternative: {
-      title:
-        'If %s cannot have the nasal spray, do you agree to them having the injected vaccine instead?',
+      title: {
+        parent:
+          'If %s cannot have the nasal spray, do you agree to them having the injected vaccine instead?',
+        team: 'If the child cannot have the nasal spray, can they have the injected vaccine instead?'
+      },
       hint: 'We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead.',
       yes: {
-        label: 'Yes'
+        label: {
+          parent: 'Yes',
+          team: 'Yes, we can give an injection, if required'
+        }
       },
       no: {
-        label: 'No'
+        label: {
+          parent: 'No',
+          team: 'No, use only the nasal spray'
+        }
       }
     },
     mmrAlternative: {
-      title: 'Do you want %s to have an MMR vaccine without gelatine?',
+      title: {
+        parent: 'Do you want %s to have an MMR vaccine without gelatine?',
+        team: 'Which type of MMR vaccine can the child have?'
+      },
       hint: 'One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.',
       yes: {
-        label:
-          'I want my child to have the vaccine that does not contain gelatine'
+        label: {
+          parent:
+            'I want my child to have the vaccine that does not contain gelatine',
+          team: 'Use only the vaccine that does not contain gelatine'
+        }
       },
       no: {
-        label: 'My child can have either type of vaccine'
+        label: {
+          parent: 'My child can have either type of vaccine',
+          team: 'Either type of vaccine can be given'
+        }
       }
     },
     preferredLocation: {
-      title: 'Find a clinic near where you’d like %s’s appointment',
+      title: {
+        parent: 'Find a clinic near where you’d like %s’s appointment',
+        team: 'What is the parent or guardian’s preferred clinic location?'
+      },
       location: {
         label: 'Preferred clinic location',
         hint: 'Enter a town, city, or postcode'
@@ -572,8 +603,11 @@ export const en = {
     },
     clinicDistance: {
       title: 'All available clinics are more than 100 miles away',
-      description:
-        'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+      description: {
+        parent:
+          'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+        team: 'All available clinics are more than 100 miles from the preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location'
+      },
       confirm: 'Continue anyway',
       cancel: 'Try another location'
     },
@@ -671,7 +705,10 @@ export const en = {
         appointment: 'Appointment details',
         contact: 'Contact details'
       },
-      confirm: 'Confirm'
+      confirm: {
+        parent: 'Confirm',
+        team: 'Add this appointment'
+      }
     },
     addAnother: {
       title:
@@ -689,8 +726,23 @@ export const en = {
       confirm: 'Yes, delete this appointment',
       cancel: 'No, return to the previous page'
     },
+    contactSelection: {
+      title: 'Who is the contact for this appointment?',
+      hint: 'The contact you choose will get booking confirmation and reminder messages.',
+      itemHint: {
+        email: 'Email: %s',
+        tel: 'Phone: %s'
+      },
+      new: 'Enter a new contact'
+    },
     contact: {
-      title: 'About you',
+      title: {
+        parent: 'About you',
+        team: {
+          existing: 'Confirm the contact details for this appointment',
+          new: 'Enter a new contact for this appointment'
+        }
+      },
       fullName: {
         label: 'Full name'
       },
@@ -706,15 +758,20 @@ export const en = {
         hint: 'Someone from the vaccinations team might call you if they have questions'
       },
       sms: {
-        label: 'Confirm if you want appointment updates by text message'
+        label: 'Confirm if %s want appointment updates by text message'
       },
       contactPreference: {
-        title: 'If we need to contact you',
-        label: 'Do you have any communication or language needs?',
+        title: {
+          parent: 'Do you have any communication or language needs?',
+          team: 'Does the contact have any communication or language needs?'
+        },
+        hint: {
+          parent:
+            'For example, if you have any hearing or sight needs, or if English is not your first language.',
+          team: 'For example, if they have any hearing or sight needs, or if English is not their first language.'
+        },
         yes: 'Yes',
-        no: 'No',
-        description:
-          'Tell us if you have any communication or language needs we should know about.\n\nFor example, if you have any hearing or sight needs, or if English is not your first language.'
+        no: 'No'
       },
       contactPreferenceDetails: {
         label: 'Give details'
@@ -761,6 +818,7 @@ export const en = {
         description: 'You’ll get a booking confirmation email or text message.'
       }
     },
+    success: 'Added {{fullName}} to the {{sessionName}}',
     show: {
       title: 'Manage your booking',
       introduction:

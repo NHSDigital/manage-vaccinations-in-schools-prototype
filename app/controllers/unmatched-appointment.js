@@ -5,7 +5,6 @@ import {
   ClinicAppointment,
   ClinicBooking,
   Patient,
-  PatientSession,
   Session
 } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -179,27 +178,14 @@ export const unmatchedAppointmentController = {
     )
     const appointment = booking.findAppointment(appointment_uuid)
 
-    // Create and add patient session for each programme they've signed up for
-    for (const programme_id of appointment.selected_programme_ids) {
-      const patientSession = PatientSession.create(
-        {
-          patient_uuid: patient.uuid,
-          programme_id: programme_id,
-          session_id: appointment.session_id
-        },
-        data
-      )
-
-      // Add to session
-      patient.addToSession(patientSession)
-    }
-
     // Link appointment to patient record
     appointment.patient_uuid = patient.uuid
 
+    // Create and add patient session for each programme they've signed up for
+    appointment.addToSession()
+
     // Update session data
     ClinicBooking.update(booking.uuid, booking, data)
-    Patient.update(patient.uuid, patient, data)
 
     // Update the review badges
     data.counts.appointments--
@@ -231,27 +217,14 @@ export const unmatchedAppointmentController = {
     // Create patient
     const patient = Patient.create(appointment.child, data)
 
-    // Create and add patient session for each programme they've signed up for
-    for (const programme_id of appointment.selected_programme_ids) {
-      const patientSession = PatientSession.create(
-        {
-          patient_uuid: patient.uuid,
-          programme_id: programme_id,
-          session_id: appointment.session_id
-        },
-        data
-      )
-
-      // Add to session
-      patient.addToSession(patientSession)
-    }
-
     // Link appointment to patient record
     appointment.patient_uuid = patient.uuid
 
+    // Create and add patient session for each programme they've signed up for
+    appointment.addToSession()
+
     // Update session data
     ClinicBooking.update(booking.uuid, booking, data)
-    Patient.update(patient.uuid, patient, data)
 
     // Update the review badges
     data.counts.appointments--

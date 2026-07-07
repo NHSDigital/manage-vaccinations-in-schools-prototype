@@ -1,11 +1,13 @@
 {% extends "_layouts/form.njk" %}
 
-{% set confirmButtonText = __("clinicBooking.check-answers.confirm") %}
+{% set audience = "team" if patient else "parent" %}
+{% set confirmButtonText = __("clinicBooking.check-answers.confirm." + audience) %}
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
 
 {% block form %}
   {{ appHeading({
-    title: title
+    title: title,
+    summary: "Check the appointment details before completing the booking."
   }) }}
 
   {{ summaryList({
@@ -14,24 +16,25 @@
       headingSize: "m"
     },
     lastRowBorder: false,
-    rows: summaryRows(appointment.child, {
-      fullFriendlyName: {
-        href: appointment.uri.new + "/child"
+    rows: summaryRows(patient if patient else appointment.child, {
+      fullName: {
+        value: appointment.child.fullFriendlyName if not patient,
+        href: "child" if not patient
       },
       preferredName: {
-        href: appointment.uri.new + "/child"
+        href: "child" if not patient
       },
       dob: {
-        href: appointment.uri.new + "/dob"
+        href: "dob" if not patient
       },
       address: {
-        href: appointment.uri.new + "/address"
+        href: "address" if not patient
       },
       impairments: {
-        href: appointment.uri.new + "/impairments"
+        href: "impairments" if not patient
       },
       adjustments: {
-        href: appointment.uri.new + "/adjustments"
+        href: "adjustments" if not patient
       }
     })
   }) }}
@@ -44,22 +47,22 @@
     lastRowBorder: false,
     rows: summaryRows(appointment, {
       vaccinations: {
-        href: appointment.uri.new + "/programmes"
+        href: "programmes"
       },
       fluVaccineType: {
-        href: appointment.uri.new + "/flu-choice"
+        href: "flu-choice"
       },
       mmrVaccineType: {
-        href: appointment.uri.new + "/mmr-alternative"
+        href: "mmr-alternative"
       },
       location: {
-        href: appointment.uri.new + "/clinic-location"
+        href: "clinic-location"
       },
       date: {
-        href: appointment.uri.new + "/clinic-date"
+        href: "clinic-date"
       },
       timeSlot: {
-        href: appointment.uri.new + "/appointment-time-range"
+        href: "appointment-time-range"
       }
     })
   }) }}
@@ -72,27 +75,27 @@
     lastRowBorder: false,
     rows: summaryRows(booking.contact, {
       fullName: {
-        href: appointment.uri.new + "/contact"
+        href: "contact"
       },
       relationship: {
-        href: appointment.uri.new + "/contact",
+        href: "contact",
         value: appointment.formatted.parentalRelationship
       },
       hasParentalResponsibility: {
-        href: appointment.uri.new + "/contact",
+        href: "contact",
         value: appointment.parentHasParentalResponsibility
       },
       email: {
-        href: appointment.uri.new + "/contact"
+        href: "contact"
       },
       tel: {
-        href: appointment.uri.new + "/contact"
+        href: "contact"
       },
       sms: {
-        href: appointment.uri.new + "/contact"
+        href: "contact"
       },
       contactPreference: {
-        href: booking.uri.new + "/contact-preference"
+        href: "contact-preference"
       }
     })
   }) }}

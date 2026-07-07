@@ -1,0 +1,44 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.contactSelection.title", firstName) %}
+
+{% set contactItems = [] %}
+{% for contact in patient.contacts %}
+  {% set contactMethods = [] %}
+  {% if contact.email %}
+    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.email", contact.email)) %}
+  {% endif %}
+  {% if contact.tel %}
+    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.tel", contact.tel)) %}
+  {% endif %}
+  {% set contactItems = contactItems | push({
+    text: contact.fullNameAndRelationship,
+    value: contact.uuid,
+    hint: {
+      text: contactMethods | join('<br>') | safe
+    }
+  }) %}
+{% endfor %}
+{% set contactItems = contactItems | push({
+  divider: 'or'
+}) %}
+{% set contactItems = contactItems | push({
+  text: __("clinicBooking.contactSelection.new"),
+  value: "new"
+}) %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: appHeading({
+          title: title,
+          caption: appointmentCaption
+        })
+      }
+    },
+    hint: { text: __("clinicBooking.contactSelection.hint") },
+    items: contactItems,
+    decorate: "booking.contact.uuid"
+  }) }}
+{% endblock %}

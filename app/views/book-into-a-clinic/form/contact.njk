@@ -1,13 +1,23 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.contact.title") %}
+{% if patient %}
+  {% if patient.contact.uuid === 'new' %}
+    {% set title = __("clinicBooking.contact.title.team.new") %}
+  {% else %}
+    {% set title = __("clinicBooking.contact.title.team.existing") %}
+  {% endif %}
+{% else %}
+  {% set title = __("clinicBooking.contact.title.parent") %}
+{% endif %}
 
 {% block form %}
   {% call fieldset({
     legend: {
-      text: title,
-      size: "l",
-      isPageHeading: true
+      html: appHeading({
+        title: title,
+        caption: appointmentCaption
+      }),
+      size: "l"
     }
   }) %}
 
@@ -20,19 +30,19 @@
 
     {{ input({
       label: { text: __("clinicBooking.contact.email.label") },
-      hint: { text: __("clinicBooking.contact.email.hint") },
+      hint: { text: __("clinicBooking.contact.email.hint") } if not patient,
       decorate: "booking.contact.email"
     }) }}
 
     {{ input({
       label: { text: __("clinicBooking.contact.tel.label") + " (optional)" },
-      hint: { text: __("clinicBooking.contact.tel.hint") },
+      hint: { text: __("clinicBooking.contact.tel.hint") } if not patient,
       decorate: "booking.contact.tel"
     }) }}
 
     {{ checkboxes({
       items: [{
-        text: __("clinicBooking.contact.sms.label"),
+        text: __("clinicBooking.contact.sms.label", "you" if not patient else "they"),
         value: true
       }],
       decorate: "booking.contact.sms"
