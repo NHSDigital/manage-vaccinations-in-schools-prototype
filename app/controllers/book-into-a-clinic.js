@@ -328,7 +328,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
-    const { __, __mf, appointment } = response.locals
+    const { __, __mf, appointment, patient } = response.locals
     const { data } = request.session
     let { booking_uuid, view } = request.params
 
@@ -380,6 +380,7 @@ export const bookIntoClinicController = {
       const clinicLocationItems = getScheduledClinicLocationItems(
         data,
         appointment.selected_programme_ids,
+        patient ? 0 : 1,
         data.transaction?.outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems

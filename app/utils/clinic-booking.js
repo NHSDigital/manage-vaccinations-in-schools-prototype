@@ -41,15 +41,20 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  *
  * @param {object} context - the data context for the models to check
  * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
+ * @param {number} daysLeftToBook - the number of days that must be left to book
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
-export const getBookableClinicSessions = (context, programme_ids) => {
+export const getBookableClinicSessions = (
+  context,
+  programme_ids,
+  daysLeftToBook
+) => {
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
       session.type === SessionType.Clinic &&
       session.status === SessionStatus.Planned &&
       session.programme_ids.some((id) => programme_ids.includes(id)) &&
-      session.isOpenToBooking &&
+      session.daysLeftToBook >= daysLeftToBook &&
       session.availableAppointmentCount > 0
   )
 
@@ -61,15 +66,21 @@ export const getBookableClinicSessions = (context, programme_ids) => {
  *
  * @param {object} context - Data context for the models to check
  * @param {Array<string>} programme_ids - Programmes that must be served at the clinics
+ * @param {number} daysLeftToBook - the number of days that must be left to book
  * @param {boolean|undefined} fakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
  * @returns {Array<object>} Set of radio buttons to present to the user, one per location
  */
 export const getScheduledClinicLocationItems = (
   context,
   programme_ids,
+  daysLeftToBook,
   fakeOutOfArea
 ) => {
-  const scheduledClinics = getBookableClinicSessions(context, programme_ids)
+  const scheduledClinics = getBookableClinicSessions(
+    context,
+    programme_ids,
+    daysLeftToBook
+  )
   const sessionsByLocation = _.groupBy(
     scheduledClinics,
     (session) => session.clinic_id
