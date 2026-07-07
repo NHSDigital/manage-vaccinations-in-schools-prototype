@@ -22,7 +22,7 @@
     <app-auto-submit class="app-grid-column-filters">
       {{ appPatientSearch({
         clear: "/patients",
-        hideClinicStatuses: true,
+        hideClinicStatuses: account.isSchoolUser,
         hideProgrammeStatuses: account.isSchoolUser
       }) }}
     </app-auto-submit>
