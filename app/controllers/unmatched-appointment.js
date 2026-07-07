@@ -5,7 +5,6 @@ import {
   ClinicAppointment,
   ClinicBooking,
   Patient,
-  PatientSession,
   Session
 } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
