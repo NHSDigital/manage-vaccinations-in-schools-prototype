@@ -15,7 +15,7 @@
     rows: summaryRows(vaccination, {
       programme: {},
       outcome: {},
-      vaccine_snomed: {
+      vaccine: {
         href: vaccination.uri + "/new/vaccine" if programme.alternativeVaccine
       },
       method: {
@@ -30,7 +30,7 @@
       sequence: {
         href: vaccination.uri + "/new/sequence"
       },
-      batch_id: {
+      batch: {
         href: vaccination.uri + "/new/batch-id"
       },
       location: {

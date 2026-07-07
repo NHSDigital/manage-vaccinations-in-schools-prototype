@@ -3869,7 +3869,7 @@ export const en = {
       label: 'Dose sequence',
       title: 'Which dose of the %s vaccination was this?'
     },
-    vaccine_snomed: {
+    vaccine: {
       title: 'Which vaccine was given?',
       label: 'Vaccine'
     },
