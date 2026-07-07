@@ -540,10 +540,10 @@ export const en = {
       title: {
         parent:
           '{count, plural, one {Do you consent to {firstName} having the following vaccination?} other {Do you consent to {firstName} having the following vaccinations?}}',
-        team: 'Select the {count, plural, one {vaccination} other {vaccinations}} being booked'
+        team: 'Select the {count, plural, one {vaccination} other {vaccinations}} to book'
       },
       eligibility:
-        '{ firstName } is eligible for the following {count, plural, one {vaccination} other {vaccinations}} and isn’t scheduled to be vaccinated at an upcoming school session.',
+        '{ firstName } is eligible for the following {count, plural, one {vaccination} other {vaccinations}} and is not scheduled to be vaccinated at an upcoming school session.',
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
