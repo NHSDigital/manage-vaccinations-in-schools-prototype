@@ -131,7 +131,11 @@ export const bookIntoClinicController = {
     response.locals.patient_uuid = patient_uuid
 
     // Skip the start page if it's the SAIS team making the booking
-    const bookableSessions = getBookableClinicSessions(data, programme_ids)
+    const bookableSessions = getBookableClinicSessions(
+      data,
+      programme_ids,
+      !patient_uuid
+    )
     const nextPath =
       bookableSessions.length > 0
         ? patient_uuid

@@ -34,6 +34,7 @@ export const getAllAppointmentPaths = (
 
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
+    const parentIsBooking = !appointment.patient_uuid
     return {
       // Vaccinations wanted
       [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
@@ -42,7 +43,11 @@ export const getAllAppointmentPaths = (
             sessionData.appointment?.selected_programme_ids
           )
           return (
-            getBookableClinicSessions(sessionData, programme_ids).length === 0
+            getBookableClinicSessions(
+              sessionData,
+              programme_ids,
+              parentIsBooking
+            ).length === 0
           )
         }
       },
@@ -103,7 +108,8 @@ export const getAllAppointmentPaths = (
           return (
             getBookableClinicSessions(
               sessionData,
-              appointment.selected_programme_ids
+              appointment.selected_programme_ids,
+              parentIsBooking
             ).length === 0
           )
         }
@@ -113,7 +119,8 @@ export const getAllAppointmentPaths = (
           return (
             getBookableClinicSessions(
               sessionData,
-              appointment.selected_programme_ids
+              appointment.selected_programme_ids,
+              parentIsBooking
             ).length === 0
           )
         }
@@ -123,7 +130,8 @@ export const getAllAppointmentPaths = (
           return (
             getBookableClinicSessions(
               sessionData,
-              appointment.selected_programme_ids
+              appointment.selected_programme_ids,
+              parentIsBooking
             ).length === 0
           )
         }
@@ -133,7 +141,8 @@ export const getAllAppointmentPaths = (
           return (
             getBookableClinicSessions(
               sessionData,
-              appointment.selected_programme_ids
+              appointment.selected_programme_ids,
+              parentIsBooking
             ).length === 0
           )
         },
