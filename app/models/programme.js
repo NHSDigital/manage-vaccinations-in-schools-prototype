@@ -22,6 +22,7 @@ import { BaseModel } from './base.js'
  * @property {object} [emailNames] - Email names
  * @property {object} [information] - NHS.UK programme information
  * @property {object} [guidance] - GOV.UK guidance
+ * @property {boolean} [isSeasonal] - Is seasonal vaccination programme
  * @property {Array<string>} [sequence] - Vaccine dose sequence
  * @property {Array<string>} [immunocompromisedSequence] - Vaccine dose sequence for immunocompromised patients
  * @property {string} [sequenceDefault] - Default vaccine dose sequence
@@ -55,6 +56,7 @@ export class Programme extends BaseModel {
     this.emailNames = options?.emailNames
     this.information = options?.information
     this.guidance = options?.guidance
+    this.isSeasonal = options?.isSeasonal || false
     this.sequence = options?.sequence
     this.immunocompromisedSequence = options?.immunocompromisedSequence
     this.sequenceDefault = options?.sequenceDefault

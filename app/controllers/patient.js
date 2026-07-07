@@ -49,15 +49,17 @@ export const patientController = {
         href: `${patient.uri}/contacts`,
         current: currentPath === `${patient.uri}/contacts`
       },
-      ...Object.values(patient.programmes).map((patientProgramme) => {
-        if (!account.isSchoolUser) {
-          return {
-            text: patientProgramme.programme.name,
-            href: patientProgramme.uri,
-            current: currentPath === patientProgramme.uri
+      ...Object.values(patient.programmes)
+        .filter((patientProgramme) => patientProgramme.isActive)
+        .map((patientProgramme) => {
+          if (!account.isSchoolUser) {
+            return {
+              text: patientProgramme.programme.name,
+              href: patientProgramme.uri,
+              current: currentPath === patientProgramme.uri
+            }
           }
-        }
-      })
+        })
     ]
 
     response.locals.archiveRecordReasonItems = Object.values(

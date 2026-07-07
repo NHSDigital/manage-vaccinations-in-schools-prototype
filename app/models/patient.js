@@ -25,7 +25,13 @@ import {
   Vaccination
 } from '../models.js'
 import { getUpdatedFields } from '../utils/audit-event.js'
-import { getDateValueDifference, removeDays, today } from '../utils/date.js'
+import {
+  getAllAcademicYears,
+  getCurrentAcademicYear,
+  getDateValueDifference,
+  removeDays,
+  today
+} from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
 import { getPreferredNames } from '../utils/reply.js'
 import {
@@ -370,20 +376,36 @@ export class Patient extends Child {
     for (const programme of Object.values(programmesData).filter(
       (programme) => !programme.isHidden
     )) {
-      const patientProgramme = new PatientProgramme(
-        {
-          patient_uuid: this.uuid,
-          programme_id: programme.id
-        },
-        this.context
-      )
+      if (programme.isSeasonal) {
+        for (const academicYear of getAllAcademicYears()) {
+          const previousPatientProgramme = new PatientProgramme(
+            {
+              academicYear,
+              patient_uuid: this.uuid,
+              programme_id: programme.id
+            },
+            this.context
+          )
 
-      // Patient invited to clinic if invitation sent
-      patientProgramme.wasInvitedToClinic = this.clinicProgramme_ids.includes(
-        programme.id
-      )
+          programmes[previousPatientProgramme.id] = previousPatientProgramme
+        }
+      } else {
+        const patientProgramme = new PatientProgramme(
+          {
+            academicYear: getCurrentAcademicYear(),
+            patient_uuid: this.uuid,
+            programme_id: programme.id
+          },
+          this.context
+        )
 
-      programmes[programme.id] = patientProgramme
+        // Patient invited to clinic if invitation sent
+        patientProgramme.wasInvitedToClinic = this.clinicProgramme_ids.includes(
+          programme.id
+        )
+
+        programmes[patientProgramme.id] = patientProgramme
+      }
     }
 
     return programmes

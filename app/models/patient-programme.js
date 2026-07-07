@@ -20,8 +20,10 @@ import {
   Vaccination
 } from '../models.js'
 import {
+  formatDate,
   getCurrentAcademicYear,
   getDateValueDifference,
+  isBetweenDates,
   today
 } from '../utils/date.js'
 import { ordinal } from '../utils/number.js'
@@ -37,6 +39,7 @@ import { BaseModel } from './base.js'
 
 /**
  * @typedef {BaseModelOptions & object} PatientProgrammeOptions
+ * @property {number} [academicYear] - Programme year
  * @property {boolean} [wasInvitedToClinic] - Invited to clinic
  */
 
@@ -66,34 +69,58 @@ export class PatientProgramme extends BaseModel {
     this.programme
 
     this.context = context
+    this.academicYear = options?.academicYear || this.#currentAcademicYear
     this.wasInvitedToClinic = options?.wasInvitedToClinic
   }
 
   /**
-   * Year patient is eligible for programme
+   * Current academic year for today’s date
    *
-   * @returns {number|undefined} Year patient becomes eligible for programme
+   * @returns {number} Academic year a date sits within
    */
-  get year() {
-    if (!this.programme) {
-      return
+  get #currentAcademicYear() {
+    return getCurrentAcademicYear()
+  }
+
+  /**
+   * Get patient programme ID
+   *
+   * @returns {string} Patient programme ID
+   */
+  get id() {
+    if (this.programme.isSeasonal) {
+      return this.#currentAcademicYear === this.academicYear
+        ? this.programme.id
+        : `${this.programme.id}-${this.academicYear}`
+    }
+
+    return this.programme.id
+  }
+
+  /**
+   * Get programme name
+   *
+   * @returns {string} Programme name
+   */
+  get name() {
+    if (this.programme.type === ProgrammeType.MMR && this.patient?.age <= 6) {
+      return 'MMRV'
     }
 
     if (this.programme.type === ProgrammeType.Flu) {
-      const academicYear = getCurrentAcademicYear()
-
-      // If flu season has finished, make eligible for next year’s programme
-      if (isAfter(today(), `${academicYear + 1}-03-31`)) {
-        return academicYear + 1
-      }
-
-      return academicYear
+      return `Flu (${this.eligibilityStartAt.getFullYear()} to ${this.eligibilityEndAt.getFullYear()} season)`
     }
 
-    const yearsUntilEligible =
-      this.programme.targetYearGroup - this.patient.yearGroup
+    return this.programme.name
+  }
 
-    return getCurrentAcademicYear() + yearsUntilEligible
+  /**
+   * Is active programme
+   *
+   * @returns {boolean} Is active programme
+   */
+  get isActive() {
+    return this.academicYear === this.#currentAcademicYear
   }
 
   /**
@@ -108,6 +135,13 @@ export class PatientProgramme extends BaseModel {
       .filter(({ programme_ids }) =>
         programme_ids?.some((id) => this.programme_id === id)
       )
+      .filter(({ createdAt }) =>
+        isBetweenDates(
+          createdAt,
+          this.eligibilityStartAt,
+          this.eligibilityEndAt
+        )
+      )
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
@@ -119,7 +153,9 @@ export class PatientProgramme extends BaseModel {
   get patientSessions() {
     return this.patient?.patientSessions
       .filter(
-        (patientSession) => patientSession?.programme_id === this.programme_id
+        ({ programme_id, session }) =>
+          programme_id === this.programme_id &&
+          session.academicYear === this.academicYear
       )
       .sort((a, b) => getDateValueDifference(a.session.date, b.session.date))
   }
@@ -261,7 +297,7 @@ export class PatientProgramme extends BaseModel {
         SessionStatus.Closed,
         SessionStatus.Cancelled
       ].includes(latestSchoolSession?.status) &&
-      latestSchoolSession?.academicYear === getCurrentAcademicYear()
+      latestSchoolSession?.academicYear === this.#currentAcademicYear
     )
   }
 
@@ -308,15 +344,73 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Eligible for programme in the current academic year
+   * Date patient becomes eligible for programme
    *
-   * @returns {boolean} Eligible for programme
+   * @returns {Date|undefined} Date patient becomes eligible for programme
+   */
+  get eligibilityStartAt() {
+    if (!this.programme) {
+      return
+    }
+
+    if (this.programme.isSeasonal) {
+      return new Date(`${this.academicYear}-09-01`)
+    }
+
+    let yearsUntilEligible =
+      this.programme.targetYearGroup - this.patient.yearGroup
+
+    return new Date(`${this.#currentAcademicYear + yearsUntilEligible}-09-01`)
+  }
+
+  /**
+   * Date patient left eligible for programme
+   *
+   * @returns {Date|undefined} Date patient left eligible for programme
+   */
+  get eligibilityEndAt() {
+    if (!this.programme?.isSeasonal) {
+      return
+    }
+
+    return new Date(`${this.academicYear + 1}-03-31`)
+  }
+
+  /**
+   * Eligible for programme in the current academic year has started
+   *
+   * @returns {boolean} Eligible for programme has started
    */
   get isEligible() {
     return (
       !this.patient?.hasAgedOutOfProgrammes &&
-      getCurrentAcademicYear() >= this.year
+      isAfter(today(), this.eligibilityStartAt)
     )
+  }
+
+  /**
+   * Eligible for programme in the current academic year has ended
+   *
+   * @returns {boolean} Eligible for programme has ended
+   */
+  get wasEligible() {
+    return this.programme?.isSeasonal && isAfter(today(), this.eligibilityEndAt)
+  }
+
+  /**
+   * Get expanded description about ineligibility status
+   *
+   * @returns {string|undefined} Ineligibility description
+   */
+  get ineligibilityDescription() {
+    switch (true) {
+      case this.patient?.hasAgedOutOfProgrammes:
+        return 'Not eligible for school age immunisation'
+      case this.wasEligible:
+        return `Programme ended on ${this.formatted.eligibilityEndAt}`
+      default:
+        return `Eligible from ${this.formatted.eligibilityStartAt}`
+    }
   }
 
   /**
@@ -326,7 +420,9 @@ export class PatientProgramme extends BaseModel {
    */
   get vaccinationOutcomes() {
     return this.patient?.vaccinations.filter(
-      ({ programme }) => programme.id === this.programme_id
+      ({ programme, session }) =>
+        programme.id === this.programme_id &&
+        session?.academicYear === this.academicYear
     )
   }
 
@@ -451,6 +547,32 @@ export class PatientProgramme extends BaseModel {
     return this.programme.sequence[this.doseDue - 1]
   }
 
+  /**
+   * Get other seasons for this programme
+   *
+   * @returns {Array<PatientProgramme>|undefined} - Other seasons for this programme
+   */
+  get otherSeasons() {
+    if (this.programme.isSeasonal) {
+      return Object.values(this.patient.programmes).filter(
+        ({ programme, id }) =>
+          this.programme.id === programme.id && this.id !== id
+      )
+    }
+  }
+
+  /**
+   * Get the active season for this programme
+   *
+   * @returns {PatientProgramme} - Active season for this programme
+   */
+  get activeSeason() {
+    return Object.values(this.patient.programmes).find(
+      ({ programme, isActive }) =>
+        this.programme.id === programme.id && isActive
+    )
+  }
+
   get ttcvVaccinations() {
     if (this.programme.type === ProgrammeType.TdIPV) {
       return [
@@ -519,14 +641,20 @@ export class PatientProgramme extends BaseModel {
    * @returns {PatientStatus} Status properties
    */
   get status() {
-    // Not eligible for programme yet
-    if (!this.isEligible) {
+    // No longer eligible for any school-age vaccination programmes or
+    // not eligible for this programme yet
+    if (this.patient.hasAgedOutOfProgrammes || !this.isEligible) {
       return PatientStatus.Ineligible
     }
 
     // Is fully vaccinated
     if (this.dosesRemaining === 0) {
       return PatientStatus.Vaccinated
+    }
+
+    // No longer eligible for this programme
+    if (this.wasEligible) {
+      return PatientStatus.Ineligible
     }
 
     // Has been invited to a session
@@ -555,9 +683,7 @@ export class PatientProgramme extends BaseModel {
   get statusNotes() {
     switch (this.status) {
       case PatientStatus.Ineligible:
-        return this.patient?.hasAgedOutOfProgrammes
-          ? 'Not eligible for school age immunisation'
-          : `Eligible from 1 September ${this.year}`
+        return this.ineligibilityDescription
       case PatientStatus.Vaccinated:
         return `Vaccinated on ${this.lastVaccinationGiven.formatted.administeredAt_date}`
       case PatientStatus.Triage:
@@ -621,6 +747,10 @@ export class PatientProgramme extends BaseModel {
           switch (prop) {
             case 'doseDue':
               return ordinal(this.doseDue)
+            case 'eligibilityStartAt':
+              return formatDate(this.eligibilityStartAt, { dateStyle: 'long' })
+            case 'eligibilityEndAt':
+              return formatDate(this.eligibilityEndAt, { dateStyle: 'long' })
             case 'status':
               return getStatusTag()
             case 'statusWithNotes':
@@ -659,7 +789,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {string} URI
    */
   get uri() {
-    return `/patients/${this.patient_uuid}/programmes/${this.programme_id}`
+    return `/patients/${this.patient_uuid}/programmes/${this.id}`
   }
 }
 

@@ -58,6 +58,7 @@ export default {
       url: 'https://www.gov.uk/government/publications/flu-vaccination-leaflets-and-posters',
       hint: 'including in other languages and alternative formats, including BSL and Braille'
     },
+    isSeasonal: true,
     sequence: ['1P'],
     immunocompromisedSequence: ['1P', '2P'],
     sequenceDefault: '1P',

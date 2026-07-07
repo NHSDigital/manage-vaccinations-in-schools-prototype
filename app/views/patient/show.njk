@@ -88,7 +88,7 @@
   {% set canInviteToClinic = false %}
   {% set canBookIntoClinic = false %}
   {% for id, patientProgramme in patient.programmes %}
-    {% if account.isSchoolUser %}
+    {% if patientProgramme.isActive and account.isSchoolUser %}
       {% set patientProgrammeRows = patientProgrammeRows | push([
         {
           header: __("patientProgramme.name.label"),
@@ -99,7 +99,7 @@
           html: patientProgramme.formatted.consentStatus
         }
       ]) %}
-    {% else %}
+    {% elif patientProgramme.isActive %}
       {% set patientProgrammeRows = patientProgrammeRows | push([
         {
           header: __("patientProgramme.name.label"),

@@ -9,7 +9,7 @@ import {
   nextMonday
 } from 'date-fns'
 
-import { SchoolTerm } from '../enums.js'
+import { AcademicYear, SchoolTerm } from '../enums.js'
 
 const ALLOWED_VALUES_FOR_MONTHS = [
   ['1', '01', 'jan', 'january'],
@@ -197,6 +197,34 @@ export function getAcademicYear(date) {
  */
 export function getCurrentAcademicYear() {
   return getAcademicYear(today())
+}
+
+/**
+ * Get the latest academic year available, including next academic year
+ * if the 1 August preparation period has started
+ *
+ * @returns {number} Latest available academic year
+ */
+export function getLatestAcademicYear() {
+  const date = today()
+  const currentAcademicYear = getAcademicYear(date)
+  const isPreparationPeriod = date.getMonth() + 1 === 8
+
+  return isPreparationPeriod ? currentAcademicYear + 1 : currentAcademicYear
+}
+
+/**
+ * Get all academic years available, including the next academic year
+ * if the 1 August preparation period has started
+ *
+ * @returns {number[]} Latest available academic year
+ */
+export function getAllAcademicYears() {
+  const latestAcademicYear = getLatestAcademicYear()
+
+  return Object.keys(AcademicYear)
+    .map(Number)
+    .filter((year) => year <= latestAcademicYear)
 }
 
 /**
