@@ -13,9 +13,11 @@
 {% block form %}
   {% call fieldset({
     legend: {
-      text: title,
-      size: "l",
-      isPageHeading: true
+      html: appHeading({
+        title: title,
+        caption: appointmentCaption
+      }),
+      size: "l"
     }
   }) %}
 

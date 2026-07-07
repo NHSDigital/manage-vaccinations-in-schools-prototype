@@ -146,15 +146,28 @@ export const bookIntoClinicController = {
    * @type {RequestParamHandler}
    */
   read(request, response, next, booking_uuid) {
-    const { patient_uuid } = request.params
+    const { patient_uuid, appointment_uuid } = request.params
     const { data } = request.session
+    const { __ } = response.locals
 
-    if (!booking_uuid) {
-      console.log('Error: no booking ID in route parameters')
-    }
-
+    const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
     if (patient_uuid) {
-      response.locals.patient = Patient.findOne(String(patient_uuid), data)
+      // If booking started from the child record, always show that context
+      const patient = Patient.findOne(String(patient_uuid), data)
+      response.locals.patient = patient
+      response.locals.appointmentCaption = __(
+        'clinicBooking.appointment.caption',
+        patient?.fullName
+      )
+    } else if (appointment_uuid) {
+      // For the parent's booking, show the current child's name if more than one
+      const appointment = booking.findAppointment(String(appointment_uuid))
+      if (appointment?.booking?.appointments?.length > 1) {
+        response.locals.appointmentCaption = __(
+          'clinicBooking.appointment.caption',
+          appointment?.child?.fullFriendlyName
+        )
+      }
     }
 
     next()
