@@ -47,11 +47,16 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   setupServiceHeader(request, response, next) {
-    const serviceName = 'Book into a clinic'
+    const { patient_uuid } = request.params
 
-    response.locals.assetsName = 'public'
-    response.locals.serviceName = serviceName
-    response.locals.headerOptions = { service: { text: serviceName } }
+    // Set up the parent-facing service name and header
+    if (!patient_uuid) {
+      const serviceName = 'Book into a clinic'
+
+      response.locals.assetsName = 'public'
+      response.locals.serviceName = serviceName
+      response.locals.headerOptions = { service: { text: serviceName } }
+    }
 
     return next()
   },
