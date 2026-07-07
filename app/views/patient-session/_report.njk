@@ -37,6 +37,6 @@
   {# Actions #}
   {{ actionLink({
     text: __("patientSession.patientProgramme.label", programme.nameSentenceCase),
-    href: patient.uri + "/programmes/" + programme.id + "?referrer=" + referrer
+    href: patientSession.patientProgramme.uri + "?referrer=" + referrer
   }) }}
 {% endcall %}

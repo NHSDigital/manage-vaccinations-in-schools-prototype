@@ -15,16 +15,29 @@
     }, {
       text: __("patient.list.title"),
       href: "/patients"
-    }]
+    }, {
+      text: patient.fullName,
+      href: patient.uri
+    } if patientProgramme.activeSeason and not patientProgramme.isActive, {
+      text: patientProgramme.activeSeason.programme.name,
+      href: patientProgramme.activeSeason.uri
+    } if patientProgramme.activeSeason and not patientProgramme.isActive]
   }) }}
 {% endblock %}
 
 {% block form %}
   {{ super() }}
 
-  {{ patientNavigation({
-    patient: patient
-  }) }}
+  {% if patientProgramme.isActive %}
+    {{ patientNavigation({
+      patient: patient
+    }) }}
+  {% else %}
+    {{ appHeading({
+      caption: patient.fullName,
+      title: patientProgramme.name
+    }) }}
+  {% endif %}
 
   {% call card({
     heading: __mf("patientProgramme.vaccinationsGiven.count", {
@@ -73,7 +86,7 @@
     {{ actionLink({
       text: __("vaccination.new.alreadyVaccinated.title"),
       href: patientProgramme.uri + "/new/vaccination"
-    }) }}
+    }) if patientProgramme.isActive }}
   {% endcall %}
 
   {% if patientProgramme.ttcvVaccinations %}
@@ -176,7 +189,7 @@
           variant: "secondary",
           href: patientProgramme.uri + "/clinics"
         }]
-      }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.isEligible }}
+      }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.isEligible and patientProgramme.isActive }}
     {% endcall %}
   {% endif %}
 
@@ -187,4 +200,40 @@
       items: timelineItems(patientProgramme.auditEvents)
     })
   }) if patientProgramme.auditEvents.length }}
+
+  {% if patientProgramme.otherSeasons %}
+    {% call card({
+      heading: __("patientProgramme.otherSeasons.label", patientProgramme.programme.nameSentenceCase),
+      headingLevel: 3
+    }) %}
+      {% set otherSeasonRows = [] %}
+      {% for patientProgramme in patientProgramme.otherSeasons %}
+        {% set otherSeasonRows = otherSeasonRows | push([
+          {
+            header: __("patientProgramme.name.label"),
+            html: link(patientProgramme.uri, patientProgramme.name)
+          },
+          {
+            header: __("patientProgramme.status.label"),
+            html: patientProgramme.formatted.status
+          },
+          {
+            header: __("patientProgramme.statusNotes.label"),
+            html: patientProgramme.statusNotes
+          }
+        ]) %}
+      {% endfor %}
+
+      {{ table({
+        id: "other-seasons",
+        responsive: true,
+        head: [
+          { text: __("patientProgramme.name.label") },
+          { text: __("patientProgramme.status.label") },
+          { text: __("patientProgramme.statusNotes.label") }
+        ],
+        rows: otherSeasonRows
+      }) }}
+    {% endcall %}
+  {% endif %}
 {% endblock %}

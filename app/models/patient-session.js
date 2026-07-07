@@ -134,7 +134,11 @@ export class PatientSession extends BaseModel {
    * @returns {PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
-    return this.patient?.programmes[this.programme_id]
+    return Object.values(this.patient?.programmes).find(
+      (patientProgramme) =>
+        patientProgramme.programme_id === this.programme_id &&
+        patientProgramme.academicYear === this.session.academicYear
+    )
   }
 
   /**
@@ -475,7 +479,9 @@ export class PatientSession extends BaseModel {
     try {
       if (this.patient?.vaccinations && this.programme_id) {
         return this.patient.vaccinations.filter(
-          ({ programme }) => programme?.id === this.programme_id
+          ({ programme, session }) =>
+            programme?.id === this.programme_id &&
+            session?.academicYear === this.patientProgramme.academicYear
         )
       }
     } catch (error) {
@@ -882,6 +888,8 @@ export class PatientSession extends BaseModel {
    */
   get reportDescription() {
     switch (this.report) {
+      case PatientStatus.Ineligible:
+        return this.patientProgramme?.ineligibilityDescription
       case PatientStatus.Vaccinated:
         return `${this.patient?.firstName} was vaccinated by ${this.lastVaccinationOutcome.createdBy.fullName} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
       case PatientStatus.Due:

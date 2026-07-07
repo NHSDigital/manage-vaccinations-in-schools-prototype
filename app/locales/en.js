@@ -2034,6 +2034,9 @@ export const en = {
     statusNotes: {
       label: 'Notes'
     },
+    otherSeasons: {
+      label: 'Other vaccinations for %s'
+    },
     tetanus: {
       label: 'Previous vaccinations for tetanus, diptheria and polio'
     },

@@ -2,27 +2,44 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { SessionPresetName, SessionType, TeamDefaults } from '../enums.js'
 import { Session } from '../models.js'
-import { addDays, getTermDates, removeDays, setMidday } from '../utils/date.js'
+import {
+  addDays,
+  getCurrentAcademicYear,
+  getTermDates,
+  removeDays,
+  setMidday
+} from '../utils/date.js'
 import { getSessionYearGroups } from '../utils/session.js'
 
 /**
  * Generate fake session
  *
  * @param {SessionPreset} preset - Session preset
- * @param {number} academicYear - Academic year
  * @param {User} user - User
  * @param {object} options - Options
  * @param {string} [options.clinic_id] - Clinic ID
  * @param {string} [options.school_id] - School URN
  * @returns {Session|undefined} Session
  */
-export function generateSession(preset, academicYear, user, options) {
+export function generateSession(preset, user, options) {
   // Don’t generate sessions for inactive session preset
   if (!preset.active) {
     return
   }
 
   const { clinic_id, school_id } = options
+
+  // Generate some school sessions for flu in the previous academic year
+  let academicYear = getCurrentAcademicYear()
+  const isPreviousAcademicYear = faker.datatype.boolean(0.5)
+  if (
+    school_id &&
+    isPreviousAcademicYear &&
+    preset.name === SessionPresetName.Flu
+  ) {
+    academicYear = academicYear - 1
+  }
+
   const term = getTermDates(academicYear, preset.term)
 
   let date = faker.date.between({
