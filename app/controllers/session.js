@@ -114,8 +114,10 @@ export const sessionController = {
 
     const team = Team.findOne(account.team_id, data)
 
-    const sessions = Session.findAll(data).filter((session) =>
-      team.schools.some((school) => session.school_id === school.id)
+    const sessions = Session.findAll(data).filter(
+      (session) =>
+        team.schools.some((school) => session.school_id === school.id) ||
+        team.clinics.some((clinic) => session.clinic_id === clinic.id)
     )
 
     const scheduledClinics = sessions.filter(
