@@ -22,6 +22,7 @@ import { giveOrRefuseConsentRoutes } from './routes/give-or-refuse-consent.js'
 import { homeRoutes } from './routes/home.js'
 import { moveRoutes } from './routes/move.js'
 import { noticeRoutes } from './routes/notice.js'
+import { patientProgrammeRoutes } from './routes/patient-programme.js'
 import { patientSessionRoutes } from './routes/patient-session.js'
 import { patientRoutes } from './routes/patient.js'
 import { pdsRecordRoutes } from './routes/pds-record.js'
@@ -60,6 +61,7 @@ router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/contacts', contactRoutes)
+router.use('/patients/:patient_uuid/programmes', patientProgrammeRoutes)
 router.use('/patients', patientRoutes)
 router.use('/pds', pdsRecordRoutes)
 router.use('/reports', reportRoutes)

@@ -4,19 +4,10 @@ import {
   ArchiveRecordReason,
   PatientClinicStatus,
   PatientStatus,
-  ProgrammeType,
   SessionStatus,
-  SessionType,
-  VaccinationOutcome
+  SessionType
 } from '../enums.js'
-import {
-  PatientProgramme,
-  Patient,
-  Programme,
-  Vaccination,
-  PatientSession,
-  Session
-} from '../models.js'
+import { Patient, Programme, Session } from '../models.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -446,45 +437,6 @@ export const patientController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  readProgramme(request, response, next) {
-    const { programme_id } = request.params
-    const { data } = request.session
-    const { patient } = response.locals
-
-    if (!programme_id) {
-      return saveAndRedirect(request, response, patient.uri)
-    }
-
-    const patientProgramme = new PatientProgramme(
-      patient.programmes[String(programme_id)],
-      data
-    )
-
-    response.locals.patientProgramme = patientProgramme
-
-    response.locals.activeClinicsItems = patientProgramme.activeClinics.map(
-      (session) => ({
-        text: session.location.name,
-        hint: { text: session.clinic.formatted.address },
-        value: session.id
-      })
-    )
-
-    return next()
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showProgramme(request, response) {
-    const view = request.params.view || 'programme'
-
-    return response.render(`patient/${view}`)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
   inviteOneToClinic(request, response) {
     const { patient_uuid } = request.params
     const { data, referrer } = request.session
@@ -687,90 +639,6 @@ export const patientController = {
     request.flash('success', __(`patient.notes.new.success`, { patient }))
 
     return saveAndRedirect(request, response, patient.uri)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  addToSession(request, response) {
-    const { session_id } = request.body
-    const { programme_id } = request.params
-    const { data } = request.session
-    const { __, account, patient, patientProgramme } = response.locals
-
-    if (patientProgramme.scheduledClinicsCount === 0) {
-      return saveAndRedirect(request, response, `/sessions/new`)
-    }
-
-    // Get session
-    const session = Session.findOne(session_id, data)
-
-    // Create and add patient session
-    const patientSession = PatientSession.create(
-      {
-        createdBy_uid: account.uid,
-        patient_uuid: patient.uuid,
-        programme_id,
-        session_id
-      },
-      data
-    )
-
-    // Add to session
-    patient.addToSession(patientSession)
-
-    // Update session data
-    Patient.update(patient.uuid, patient, data)
-
-    request.flash(
-      'success',
-      __(`patientProgramme.addToSession.success`, { patient, session })
-    )
-
-    const returnUri = PatientSession.findOne(patientSession.uuid, data).uri
-    saveAndRedirect(request, response, returnUri)
-  },
-
-  /**
-   * @param {string} type - Form type
-   * @returns {RequestHandler<Record<string, string>>} Request handler
-   */
-  vaccination(type) {
-    return (request, response) => {
-      const { programme_id } = request.params
-      const { data } = request.session
-      const { account, patient } = response.locals
-
-      const patientProgramme = new PatientProgramme(
-        patient.programmes[String(programme_id)],
-        data
-      )
-
-      // Vaccination
-      const vaccination = Vaccination.create(
-        {
-          outcome: VaccinationOutcome.AlreadyVaccinated,
-          patient_uuid: patient.uuid,
-          createdBy_uid: account.uid,
-          administeredBy_uid: account.uid,
-          ...(type === 'new' && { programme_id })
-        },
-        data.wizard
-      )
-
-      let startPage = 'administered-at'
-      if (!vaccination.programme_id) {
-        startPage = 'programme'
-      } else if (patientProgramme.programme.type === ProgrammeType.MMR) {
-        startPage = 'variant'
-      }
-
-      saveAndRedirect(
-        request,
-        response,
-        `${patientProgramme.programme.uri}/vaccinations/${vaccination.uuid}/new/${startPage}?referrer=${patientProgramme.uri}`
-      )
-    }
   }
 }
 
