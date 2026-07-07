@@ -196,6 +196,35 @@ export class ClinicAppointment {
   }
 
   /**
+   * Create patient-session records for all booked vaccinations
+   */
+  addToSession() {
+    if (!this.patient_uuid || !this.session_id) {
+      throw new Error(
+        'Unable to create patient sessions for the clinic appointment'
+      )
+    }
+
+    // Create and add patient session for each programme they've signed up for
+    const patient = this.patient
+    for (const programme_id of this.selected_programme_ids) {
+      const patientSession = PatientSession.create(
+        {
+          patient_uuid: patient.uuid,
+          programme_id: programme_id,
+          session_id: this.session_id
+        },
+        this.context
+      )
+
+      // Add to session
+      patient.addToSession(patientSession)
+    }
+
+    Patient.update(patient.uuid, patient, patient.context)
+  }
+
+  /**
    * Cancel the appointment, logging the event and removing associated patient sessions
    *
    * @param {User} account - the user carrying out the removal

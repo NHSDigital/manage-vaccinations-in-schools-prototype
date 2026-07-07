@@ -208,7 +208,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
-    const { appointment_uuid, booking_uuid, patient_uuid } = request.params
+    const { appointment_uuid, booking_uuid } = request.params
     const { data } = request.session
     const { __, booking, paths, patient } = response.locals
 
@@ -221,12 +221,15 @@ export const bookIntoClinicController = {
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
 
-    if (patient_uuid) {
+    if (patient) {
+      // Create the patient-session records for this appointment
       const appointment = booking.findAppointment(appointment_uuid)
+      appointment.addToSession()
+
       request.flash(
         'success',
         __('clinicBooking.success', {
-          fullName: appointment.patient.fullName,
+          fullName: patient.fullName,
           sessionName: appointment.session.name
         })
       )
