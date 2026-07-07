@@ -472,8 +472,8 @@ export class Vaccination extends BaseModel {
               return formatMillilitres(this.dose)
             case 'sequence':
               return this.sequence && formatSequence(this.sequence)
-            case 'vaccine_snomed':
-              return this.vaccine.snomed ? this.vaccine?.brand : 'Unknown'
+            case 'vaccine':
+              return this.vaccine?.brand || 'Unknown'
             case 'note':
               return formatMarkdown(this.note)
             case 'outcome':
@@ -536,7 +536,7 @@ export class Vaccination extends BaseModel {
    * @returns {string} URI
    */
   get uri() {
-    return `/reports/${this.programme.id}/vaccinations/${this.uuid}`
+    return `/reports/${this.programme_id}/vaccinations/${this.uuid}`
   }
 }
 
