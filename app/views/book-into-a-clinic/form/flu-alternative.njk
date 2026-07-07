@@ -1,14 +1,15 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.fluAlternative.title", firstName) %}
+{% set audience = "team" if patient else "parent" %}
+{% set title = __("clinicBooking.fluAlternative.title." + audience, firstName) %}
 
 {% block form %}
   {{ radios({
     fieldset: {
       legend: {
         html: appHeading({
-          size: "l",
-          title: title
+          title: title,
+          caption: appointmentCaption
         })
       }
     },
@@ -16,10 +17,10 @@
       text: __("clinicBooking.fluAlternative.hint")
     },
     items: [{
-      text: __("clinicBooking.fluAlternative.yes.label"),
+      text: __("clinicBooking.fluAlternative.yes.label." + audience),
       value: true
     }, {
-      text: __("clinicBooking.fluAlternative.no.label"),
+      text: __("clinicBooking.fluAlternative.no.label." + audience),
       value: false
     }],
     decorate: "appointment.fluAlternative"

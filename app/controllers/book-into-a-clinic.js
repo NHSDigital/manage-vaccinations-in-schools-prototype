@@ -125,7 +125,7 @@ export const bookIntoClinicController = {
     data.clinicInvite = {
       programmes,
       programmeNames: programmes.map(({ name }) => name),
-      invitedForMmrv: useMmrv
+      eligibleForMmrv: useMmrv
     }
 
     response.locals.patient_uuid = patient_uuid
@@ -369,7 +369,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.invitedForMmrv,
+        data.clinicInvite.eligibleForMmrv,
         ConjunctionType.or,
         data
       )
@@ -494,7 +494,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.invitedForMmrv,
+        data.clinicInvite.eligibleForMmrv,
         ConjunctionType.and,
         data
       )

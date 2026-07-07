@@ -521,36 +521,63 @@ export const en = {
       hint: 'Each vaccine is given separately'
     },
     fluChoice: {
-      title: 'Which flu vaccine do you agree to %s having?',
+      title: {
+        parent: 'Which flu vaccine do you agree to %s having?',
+        team: 'Which flu vaccine will the child have?'
+      },
       nasal: {
-        label: 'I agree to the nasal spray vaccine',
+        label: {
+          parent: 'I agree to the nasal spray vaccine',
+          team: 'The nasal spray vaccine'
+        },
         hint: 'This is the recommended option and gives the best protection against flu'
       },
       injection: {
-        label: 'I agree to the alternative flu injection',
+        label: {
+          parent: 'I agree to the alternative flu injection',
+          team: 'The alternative flu injection'
+        },
         hint: 'This is suitable for children who do not use gelatine products, or if they cannot have the nasal spray vaccine for medical reasons'
       }
     },
     fluAlternative: {
-      title:
-        'If %s cannot have the nasal spray, do you agree to them having the injected vaccine instead?',
+      title: {
+        parent:
+          'If %s cannot have the nasal spray, do you agree to them having the injected vaccine instead?',
+        team: 'If the child cannot have the nasal spray, can they have the injected vaccine instead?'
+      },
       hint: 'We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead.',
       yes: {
-        label: 'Yes'
+        label: {
+          parent: 'Yes',
+          team: 'Yes, we can give an injection, if required'
+        }
       },
       no: {
-        label: 'No'
+        label: {
+          parent: 'No',
+          team: 'No, use only the nasal spray'
+        }
       }
     },
     mmrAlternative: {
-      title: 'Do you want %s to have an MMR vaccine without gelatine?',
+      title: {
+        parent: 'Do you want %s to have an MMR vaccine without gelatine?',
+        team: 'Which type of MMR vaccine can the child have?'
+      },
       hint: 'One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.',
       yes: {
-        label:
-          'I want my child to have the vaccine that does not contain gelatine'
+        label: {
+          parent:
+            'I want my child to have the vaccine that does not contain gelatine',
+          team: 'Use only the vaccine that does not contain gelatine'
+        }
       },
       no: {
-        label: 'My child can have either type of vaccine'
+        label: {
+          parent: 'My child can have either type of vaccine',
+          team: 'Either type of vaccine can be given'
+        }
       }
     },
     preferredLocation: {
