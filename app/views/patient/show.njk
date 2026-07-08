@@ -133,7 +133,7 @@
           href: patient.uri + "/book-into-a-clinic/"
         } if not patient.archived and canBookIntoClinic
       ]
-    }
+    } if not account.isSchoolUser
   }) %}
     {{ table({
       id: "programmes",
