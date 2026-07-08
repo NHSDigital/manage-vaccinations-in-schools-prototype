@@ -60,6 +60,8 @@ export const giveOrRefuseConsentController = {
 
       response.locals.assetsName = 'prototype'
 
+      response.locals.child = patient
+
       response.locals.consent = new Consent(
         {
           child: patient,
