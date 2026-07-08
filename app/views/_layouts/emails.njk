@@ -26,7 +26,7 @@
   }) }}
 
   <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-quarter">
+    <div class="nhsuk-grid-column-one-third">
       {% for theme, items in navigationItems | groupby("theme") %}
         {{ appHeading({
           classes: "nhsuk-u-margin-bottom-2",
@@ -42,7 +42,7 @@
       {% endfor %}
     </div>
 
-    <div class="nhsuk-grid-column-three-quarters">
+    <div class="nhsuk-grid-column-two-thirds">
       {% call card({
         heading: __("emails." + dir + "." + template + ".name", placeholders) | safe,
         headingSize: "s"
