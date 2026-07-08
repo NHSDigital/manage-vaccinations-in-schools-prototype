@@ -270,9 +270,12 @@ export class Child extends BaseModel {
    * @returns {string} Full and preferred names
    */
   get fullAndPreferredNames() {
+    // Don’t use LASTNAME, Firstname
+    const fullName = [this.firstName, this.lastName].join(' ')
+
     return this.preferredName
-      ? `${this.fullName} (known as ${this.preferredName})`
-      : this.fullName
+      ? `${fullName} (known as ${this.preferredName})`
+      : fullName
   }
 
   /**
