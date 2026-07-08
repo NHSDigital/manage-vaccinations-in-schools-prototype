@@ -1579,8 +1579,28 @@ export const en = {
         label: 'Vaccinated',
         name: 'Your child had their {{session.vaccinationNames.sentenceCase}} today'
       },
-      'vaccination-not-administered': {
-        label: 'Could not vaccinate',
+      'vaccination-not-given-absent': {
+        label: 'Could not vaccinate (child absent)',
+        name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
+      },
+      'vaccination-not-given-refused': {
+        label: 'Could not vaccinate (child refused)',
+        name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
+      },
+      'vaccination-not-given-unwell': {
+        label: 'Could not vaccinate (child unwell)',
+        name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
+      },
+      'vaccination-not-given-contraindicated-delay-vaccination': {
+        label: 'Could not vaccinate (delay vaccination)',
+        name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
+      },
+      'vaccination-not-given-contraindicated-invite-to-clinic': {
+        label: 'Could not vaccinate (invite-to-clinic)',
+        name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
+      },
+      'vaccination-not-given-contraindicated-do-not-vaccinate': {
+        label: 'Could not vaccinate (do not vaccinate)',
         name: 'Your child did not have their {{session.vaccinationNames.sentenceCase}} today'
       },
       'information-child': {
@@ -3216,10 +3236,35 @@ export const en = {
         name: 'Child has been vaccinated',
         text: '{{child.fullAndPreferredNames}} had their {{session.vaccinationNames.sentenceCase}} today. They might have some of the following side effects: bruising or itching at the injection site, a high temperature, nausea, or pain in the arms, hands, or fingers.\n\nIf you’re concerned, contact your GP in the usual way.'
       },
-      'vaccination-not-administered': {
-        label: 'Could not vaccinate',
+      'vaccination-not-given-absent': {
+        label: 'Could not vaccinate (child absent)',
         name: 'Child did not get their vaccination despite having consent',
-        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} at school today. This was because {{reason}}.\n\nIf you’d still like them to be vaccinated on a different date, contact the local health team by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} at school today. This was because they were absent from the session.\n\nIf you’d still like them to be vaccinated on a different date, contact the local health team by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+      },
+      'vaccination-not-given-refused': {
+        label: 'Could not vaccinate (child refused)',
+        name: 'Child did not get their vaccination despite having consent',
+        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} at school today. This was because they refused the vaccine.\n\nIf you’d still like them to be vaccinated on a different date, contact the local health team by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+      },
+      'vaccination-not-given-unwell': {
+        label: 'Could not vaccinate (child unwell)',
+        name: 'Child did not get their vaccination despite having consent',
+        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} at school today. This was because they were unwell.\n\nIf you’d still like them to be vaccinated on a different date, contact the local health team by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+      },
+      'vaccination-not-given-contraindicated-delay-vaccination': {
+        label: 'Could not vaccinate (delay vaccination)',
+        name: 'Child did not get their vaccination despite having consent',
+        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} today. Our nursing team decided it would be better for {{child.firstName}} to be vaccinated at a later date.\n\nIf {{child.firstName}}’s health changes, or you arrange for them to be vaccinated somewhere else, contact us by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+      },
+      'vaccination-not-given-contraindicated-do-not-vaccinate': {
+        label: 'Could not vaccinate (do not vaccinate)',
+        name: 'Child did not get their vaccination despite having consent',
+        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} today. Our nursing team decided that {{child.firstName}} cannot have their {{session.vaccinationNames.sentenceCase}} vaccination.\n\nTo discuss what {{child.firstName}} might be able to have instead, contact us by calling [{{team.tel}}](#), or email [{{team.email}}](#).'
+      },
+      'vaccination-not-given-contraindicated-invite-to-clinic': {
+        label: 'Could not vaccinate (invite to clinic)',
+        name: 'Child did not get their vaccination despite having consent',
+        text: '{{child.fullAndPreferredNames}} did not have their {{session.vaccinationNames.sentenceCase}} today. Our nursing team decided that the vaccination should take place at a clinic.\n\nTo book a clinic appointment, call [{{team.tel}}](#), or email [{{team.email}}](#).'
       }
     }
   },
