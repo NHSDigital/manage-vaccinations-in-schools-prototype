@@ -1857,7 +1857,6 @@ export const en = {
       dob: 'Child’s date of birth',
       showOnly: 'Show only',
       hasAdjustment: 'Children needing reasonable adjustments',
-      hasAgedOutOfProgrammes: 'Children aged out of programmes',
       hasImpairment: 'Children with impairments',
       hasMissingNhsNumber: 'Children missing an NHS&nbsp;number',
       isArchived: 'Archived records'

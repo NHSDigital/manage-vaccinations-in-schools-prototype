@@ -133,8 +133,15 @@
         value: "none",
         checked: not data.report or data.report == "none"
       }, {
-        text: PatientStatus.Ineligible
-      }, {
+        text: PatientStatus.Ineligible,
+        conditional: {
+          html: checkboxes({
+            small: true,
+            items: enumItems(PatientIneligibleStatus),
+            decorate: "patientIneligible"
+          })
+        } if data.report == PatientStatus.Ineligible
+      } if not params.hidePatientIneligibleStatus, {
         text: PatientStatus.Consent,
         conditional: {
           html: checkboxes({
@@ -268,10 +275,6 @@
           {
             value: "hasMissingNhsNumber",
             html: __("patient.search.hasMissingNhsNumber")
-          },
-          {
-            value: "hasAgedOutOfProgrammes",
-            text: __("patient.search.hasAgedOutOfProgrammes")
           }
         ],
         decorate: "option"

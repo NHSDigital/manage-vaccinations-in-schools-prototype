@@ -429,6 +429,7 @@ export const sessionController = {
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
+      patientIneligible: request.query.patientIneligible || 'none',
       patientRefused: request.query.patientRefused || 'none',
       patientTriage: request.query.patientTriage || 'none',
       patientVaccinated: request.query.patientVaccinated || 'none',
@@ -462,6 +463,22 @@ export const sessionController = {
       }
     }
 
+    // Filter by ineligible sub-status (from patient programme)
+    if (
+      filters.report === PatientStatus.Ineligible &&
+      filters.patientIneligible !== 'none'
+    ) {
+      const ids =
+        programme_ids || session.programmes.map((programme) => programme.id)
+      results = results.filter((patientSession) =>
+        ids.some(
+          (id) =>
+            patientSession.patient.programmes[id].ineligibilityStatus ===
+            filters.patientIneligible
+        )
+      )
+    }
+
     // Filter by year group
     if (yearGroup) {
       results = results.filter(({ patient }) =>
@@ -472,7 +489,6 @@ export const sessionController = {
     // Filter patient by display option
     for (const key of [
       'hasAdjustment',
-      'hasAgedOutOfProgrammes',
       'hasImpairment',
       'hasMissingNhsNumber',
       'isArchived'
@@ -573,6 +589,7 @@ export const sessionController = {
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
+    delete data.patientIneligible
     delete data.patientRefused
     delete data.patientTriage
     delete data.patientVaccinated
@@ -600,6 +617,7 @@ export const sessionController = {
         'option',
         'patientConsent',
         'patientDeferred',
+        'patientIneligible',
         'patientRefused',
         'patientTriage',
         'patientVaccinated',

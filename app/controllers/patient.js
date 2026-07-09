@@ -49,17 +49,15 @@ export const patientController = {
         href: `${patient.uri}/contacts`,
         current: currentPath === `${patient.uri}/contacts`
       },
-      ...Object.values(patient.programmes)
-        .filter((patientProgramme) => patientProgramme.isActive)
-        .map((patientProgramme) => {
-          if (!account.isSchoolUser) {
-            return {
-              text: patientProgramme.programme.name,
-              href: patientProgramme.uri,
-              current: currentPath === patientProgramme.uri
-            }
+      ...Object.values(patient.activeProgrammes).map((patientProgramme) => {
+        if (!account.isSchoolUser) {
+          return {
+            text: patientProgramme.programme.name,
+            href: patientProgramme.uri,
+            current: currentPath === patientProgramme.uri
           }
-        })
+        }
+      })
     ]
 
     response.locals.archiveRecordReasonItems = Object.values(
@@ -124,6 +122,7 @@ export const patientController = {
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
+      patientIneligible: request.query.patientIneligible || 'none',
       patientRefused: request.query.patientRefused || 'none',
       patientTriage: request.query.patientTriage || 'none',
       patientVaccinated: request.query.patientVaccinated || 'none',
@@ -134,8 +133,7 @@ export const patientController = {
     if (programme_id && filters.report !== PatientStatus.Ineligible) {
       results = results.filter((patient) =>
         programme_ids.some(
-          (programme_id) =>
-            patient.programmes[programme_id].status !== PatientStatus.Ineligible
+          (programme_id) => !patient.programmes[programme_id].isIneligible
         )
       )
     }
@@ -181,7 +179,7 @@ export const patientController = {
       )
     }
 
-    // Filter by sub-status(es)
+    // Filter by sub-status(es) (from last patient session)
     for (const [patientStatus, status] of Object.entries({
       [PatientStatus.Consent]: 'patientConsent',
       [PatientStatus.Deferred]: 'patientDeferred',
@@ -204,6 +202,21 @@ export const patientController = {
       }
     }
 
+    // Filter by ineligible sub-status (from patient programme)
+    if (
+      filters.report === PatientStatus.Ineligible &&
+      filters.patientIneligible !== 'none'
+    ) {
+      const ids = programme_ids || programmes.map((programme) => programme.id)
+      results = results.filter((patient) =>
+        ids.some(
+          (id) =>
+            patient.programmes[id].ineligibilityStatus ===
+            filters.patientIneligible
+        )
+      )
+    }
+
     // Filter by year group
     if (yearGroup) {
       results = results.filter((patient) =>
@@ -214,7 +227,6 @@ export const patientController = {
     // Filter by display option
     for (const key of [
       'hasAdjustment',
-      'hasAgedOutOfProgrammes',
       'hasImpairment',
       'hasMissingNhsNumber',
       'isArchived'
@@ -259,6 +271,7 @@ export const patientController = {
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
+    delete data.patientIneligible
     delete data.patientRefused
     delete data.patientTriage
     delete data.patientVaccinated
@@ -326,6 +339,7 @@ export const patientController = {
         'option',
         'patientConsent',
         'patientDeferred',
+        'patientIneligible',
         'patientRefused',
         'patientTriage',
         'patientVaccinated',

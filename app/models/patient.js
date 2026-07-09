@@ -412,6 +412,19 @@ export class Patient extends Child {
   }
 
   /**
+   * Get active patient programmes
+   *
+   * @returns {Record<string, PatientProgramme>} Active patient programmes
+   */
+  get activeProgrammes() {
+    return Object.fromEntries(
+      Object.entries(this.programmes).filter(
+        ([, programme]) => programme.isActive
+      )
+    )
+  }
+
+  /**
    * Get the IDs of programmes for which this patient can be invited to clinic
    *
    * @returns {Array<string>} the IDs of programmes for which this patient is clinic-ready

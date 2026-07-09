@@ -430,6 +430,16 @@ export const PatientConsentStatus = {
  * @readonly
  * @enum {string}
  */
+export const PatientIneligibleStatus = {
+  Pending: 'Not eligible yet',
+  AgedOut: 'Not eligible for school age immunisation',
+  Expired: 'No longer eligible'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const PatientTriageStatus = {
   Responses: 'Review health questions',
   Consultation: 'Triage in person'
