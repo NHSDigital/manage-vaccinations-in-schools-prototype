@@ -518,8 +518,6 @@ export const en = {
     },
     impairments: {
       title: 'Does %s have any of the following impairments?',
-      summary:
-        'This information can help to decide the length of appointment needed',
       none: {
         label: 'No, %s has no impairments'
       }
@@ -527,8 +525,6 @@ export const en = {
     adjustments: {
       title:
         'Will %s need any of the following adjustments during their vaccination?',
-      summary:
-        'This information can help to decide the length of appointment needed',
       none: {
         label: 'No, %s does not need any adjustments'
       }

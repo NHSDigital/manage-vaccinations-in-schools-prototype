@@ -11,14 +11,10 @@
       legend: {
         html: appHeading({
           title: title,
-          caption: appointmentCaption,
-          summary: __("clinicBooking.adjustments.summary") if patient
+          caption: appointmentCaption
         })
       }
     },
-    hint: {
-      text: "This information can help to inform the choice of appointment length."
-    } if patient,
     items: [{
       text: __("consent.child.adjustments.assistanceAnimal.label"),
       value: Adjustment.AssistanceAnimal,
