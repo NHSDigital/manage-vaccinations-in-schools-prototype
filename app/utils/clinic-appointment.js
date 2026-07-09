@@ -67,6 +67,14 @@ export const getAllAppointmentPaths = (
           }
         : {}),
 
+      // Ask for additional support needs early during SAIS journey, as it can affect appointment length
+      ...(!parentIsBooking
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+          }
+        : {}),
+
       // Clinic location preference
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
@@ -161,25 +169,32 @@ export const getAllAppointmentPaths = (
       },
 
       // Child details
-      [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
-      ...(appointments[0].uuid !== appointment_uuid &&
-      getPreviousAddressItems(appointments).length > 2
+      ...(parentIsBooking
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () =>
-                sessionData.transaction.addressChoice !== 'new'
-            }
+            [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
+            ...(appointments[0].uuid !== appointment_uuid &&
+            getPreviousAddressItems(appointments).length > 2
+              ? {
+                  [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
+                    {
+                      [`/${booking_uuid}/new/${appointment_uuid}/contact`]:
+                        () => sessionData.transaction.addressChoice !== 'new'
+                    }
+                }
+              : {}),
+            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
           }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => true
-      },
 
       // Parent contact details
-      [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: {},
+      ...(!parentIsBooking
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: {}
+          }
+        : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/contact`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
           data: 'appointment.parentHasParentalResponsibility',

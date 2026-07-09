@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.child.impairments.title") %}
+{% set title = __("clinicBooking.impairments.title", firstName) %}
 
 {% block form %}
   {{ checkboxes({
@@ -8,7 +8,8 @@
       legend: {
         html: appHeading({
           title: title,
-          caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1
+          caption: appointmentCaption,
+          summary: __("clinicBooking.impairments.summary") if patient
         })
       }
     },
@@ -62,7 +63,7 @@
       divider: 'or'
     },
     {
-      text: __("consent.child.impairments.none.label"),
+      text: __("clinicBooking.impairments.none.label", firstName),
       value: Impairment.None,
       exclusiveGroup: "impairments-list",
       exclusive: true

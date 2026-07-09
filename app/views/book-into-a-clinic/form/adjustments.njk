@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.child.adjustments.title") %}
+{% set title = __("clinicBooking.adjustments.title", firstName) %}
 {% if childCount > 1 and childNumber < childCount %}
   {% set confirmButtonText = __("clinicBooking.nextChildButtonText") %}
 {% endif %}
@@ -11,10 +11,14 @@
       legend: {
         html: appHeading({
           title: title,
-          caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1
+          caption: appointmentCaption,
+          summary: __("clinicBooking.adjustments.summary") if patient
         })
       }
     },
+    hint: {
+      text: "This information can help to inform the choice of appointment length."
+    } if patient,
     items: [{
       text: __("consent.child.adjustments.assistanceAnimal.label"),
       value: Adjustment.AssistanceAnimal,
@@ -45,7 +49,7 @@
       divider: 'or'
     },
     {
-      text: __("consent.child.adjustments.none.label"),
+      text: __("clinicBooking.adjustments.none.label", firstName),
       value: Adjustment.None,
       exclusiveGroup: "adjustments-list",
       exclusive: true
