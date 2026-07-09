@@ -766,7 +766,7 @@ export const en = {
         parent: 'About you',
         team: {
           existing: 'Confirm the contact details for this appointment',
-          new: 'Enter a new contact for this appointment'
+          new: 'Enter contact details for this appointment'
         }
       },
       fullName: {

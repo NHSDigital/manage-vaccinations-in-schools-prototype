@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% if patient %}
-  {% if patient.contact.uuid === 'new' %}
+  {% if patient.contacts.length === 0 or booking.contact.uuid === 'new' %}
     {% set title = __("clinicBooking.contact.title.team.new") %}
   {% else %}
     {% set title = __("clinicBooking.contact.title.team.existing") %}
