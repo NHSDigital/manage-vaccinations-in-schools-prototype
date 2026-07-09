@@ -384,7 +384,7 @@ export const bookIntoClinicController = {
       const clinicLocationItems = getScheduledClinicLocationItems(
         data,
         appointment.selected_programme_ids,
-        patient ? 0 : 1,
+        patient ? false : true,
         data.transaction?.outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems
@@ -689,12 +689,11 @@ export const bookIntoClinicController = {
           booking.contact.relationshipOther
         appointment.parentHasParentalResponsibility =
           booking.contact.hasParentalResponsibility
-
-        ClinicBooking.update(booking_uuid, booking, data.wizard)
       } else {
         // Reset the contact ready for new details
         booking.contact = new Contact({ uuid: 'new' })
       }
+      ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'contact') {
       // If we've just recorded a new contact for an existing patient, give it a proper UUID
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)

@@ -516,6 +516,23 @@ export const en = {
       title: 'What is %s’s home address?',
       hint: 'Select the child’s primary address. We use this to confirm their identity.'
     },
+    impairments: {
+      title: 'Does %s have any of the following impairments?',
+      summary:
+        'This information can help to decide the length of appointment needed',
+      none: {
+        label: 'No, %s has no impairments'
+      }
+    },
+    adjustments: {
+      title:
+        'Will %s need any of the following adjustments during their vaccination?',
+      summary:
+        'This information can help to decide the length of appointment needed',
+      none: {
+        label: 'No, %s does not need any adjustments'
+      }
+    },
     parentalRelationship: {
       title: 'What is your relationship to %s?',
       hasParentalResponsibility: {
@@ -766,7 +783,7 @@ export const en = {
         parent: 'About you',
         team: {
           existing: 'Confirm the contact details for this appointment',
-          new: 'Enter a new contact for this appointment'
+          new: 'Enter contact details for this appointment'
         }
       },
       fullName: {
@@ -829,7 +846,6 @@ export const en = {
     },
     healthAnswers: {
       label: 'Answers to health questions',
-      caption: 'Health questions for %s',
       yes: 'Yes',
       no: 'No',
       details: 'Give details'
@@ -1032,9 +1048,6 @@ export const en = {
         },
         other: {
           label: 'Other'
-        },
-        none: {
-          label: 'No, my child does not need any adjustments'
         }
       },
       adjustmentsOther: {
@@ -1061,9 +1074,6 @@ export const en = {
         },
         communicative: {
           hint: 'For example, related to autism or ADHD (attention deficit hyperactivity disorder)'
-        },
-        none: {
-          label: 'No, my child has no impairments'
         }
       },
       impairmentsOther: {
