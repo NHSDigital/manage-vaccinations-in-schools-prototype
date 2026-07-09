@@ -121,7 +121,6 @@ export const unmatchedAppointmentController = {
     // Filter by display option
     for (const key of [
       'hasAdjustment',
-      'hasAgedOutOfProgrammes',
       'hasImpairment',
       'hasMissingNhsNumber',
       'isArchived'

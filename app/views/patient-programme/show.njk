@@ -189,7 +189,7 @@
           variant: "secondary",
           href: patientProgramme.uri + "/clinics"
         }]
-      }) if patientProgramme.status != PatientStatus.Vaccinated and patientProgramme.isEligible and patientProgramme.isActive }}
+      }) if patientProgramme.status != PatientStatus.Vaccinated and not patientProgramme.isIneligible and patientProgramme.isActive }}
     {% endcall %}
   {% endif %}
 

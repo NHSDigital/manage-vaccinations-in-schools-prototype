@@ -104,7 +104,6 @@ export const consentController = {
     // Filter by display option
     for (const key of [
       'hasAdjustment',
-      'hasAgedOutOfProgrammes',
       'hasImpairment',
       'hasMissingNhsNumber',
       'isArchived'

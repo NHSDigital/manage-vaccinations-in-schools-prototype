@@ -4,6 +4,7 @@ export interface PatientFilterQuery {
   instruct?: string
   patientConsent?: string
   patientDeferred?: string
+  patientIneligible?: string
   patientRefused?: string
   patientTriage?: string
   patientVaccinated?: string

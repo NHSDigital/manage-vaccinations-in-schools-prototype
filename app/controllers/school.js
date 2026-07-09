@@ -158,6 +158,7 @@ export const schoolController = {
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
+      patientIneligible: request.query.patientIneligible || 'none',
       patientRefused: request.query.patientRefused || 'none',
       patientTriage: request.query.patientTriage || 'none',
       patientVaccinated: request.query.patientVaccinated || 'none',
@@ -203,7 +204,7 @@ export const schoolController = {
       )
     }
 
-    // Filter by sub-status(es)
+    // Filter by sub-status(es) (from last patient session)
     for (const [patientStatus, status] of Object.entries({
       [PatientStatus.Consent]: 'patientConsent',
       [PatientStatus.Deferred]: 'patientDeferred',
@@ -227,6 +228,22 @@ export const schoolController = {
       }
     }
 
+    // Filter by ineligible sub-status (from patient programme)
+    if (
+      filters.report === PatientStatus.Ineligible &&
+      filters.patientIneligible !== 'none'
+    ) {
+      const ids =
+        programme_ids || school.programmes.map((programme) => programme.id)
+      results = results.filter((patient) =>
+        ids.some(
+          (id) =>
+            patient.programmes[id].ineligibilityStatus ===
+            filters.patientIneligible
+        )
+      )
+    }
+
     // Filter by year group
     if (yearGroup) {
       results = results.filter((patient) =>
@@ -237,7 +254,6 @@ export const schoolController = {
     // Filter by display option
     for (const key of [
       'hasAdjustment',
-      'hasAgedOutOfProgrammes',
       'hasImpairment',
       'hasMissingNhsNumber',
       'isArchived'
@@ -276,6 +292,7 @@ export const schoolController = {
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
+    delete data.patientIneligible
     delete data.patientRefused
     delete data.patientTriage
     delete data.patientVaccinated
@@ -301,6 +318,7 @@ export const schoolController = {
         'option',
         'patientConsent',
         'patientDeferred',
+        'patientIneligible',
         'patientRefused',
         'patientTriage',
         'patientVaccinated',

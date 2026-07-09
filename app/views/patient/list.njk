@@ -68,13 +68,13 @@
         {% for patient in results.page %}
           {% set reportStatusHtml -%}
             {%- if data.programme_id %}
-              {%- for id, patientProgramme in patient.programmes -%}
+              {%- for id, patientProgramme in patient.activeProgrammes -%}
                 {%- if data.programme_id | includes(id) -%}
                   {{ patientProgramme.formatted.programmeStatus | nhsukMarkdown }}
                 {%- endif -%}
               {%- endfor %}
             {% else %}
-              {%- for id, patientProgramme in patient.programmes -%}
+              {%- for id, patientProgramme in patient.activeProgrammes -%}
                 {{ patientProgramme.formatted.programmeStatus | nhsukMarkdown }}
               {%- endfor %}
             {% endif %}
@@ -82,13 +82,13 @@
 
           {% set consentStatusHtml -%}
             {%- if data.programme_id %}
-              {%- for id, patientProgramme in patient.programmes -%}
+              {%- for id, patientProgramme in patient.activeProgrammes -%}
                 {%- if data.programme_id | includes(id) -%}
                   {{ patientProgramme.formatted.consentStatus | nhsukMarkdown }}
                 {%- endif -%}
               {%- endfor %}
             {% else %}
-              {%- for id, patientProgramme in patient.programmes -%}
+              {%- for id, patientProgramme in patient.activeProgrammes -%}
                 {{ patientProgramme.formatted.consentStatus | nhsukMarkdown }}
               {%- endfor %}
             {% endif %}

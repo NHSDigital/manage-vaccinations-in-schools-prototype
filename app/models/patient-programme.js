@@ -1,4 +1,4 @@
-import { addMonths, addWeeks, isAfter } from 'date-fns'
+import { addMonths, addWeeks, isAfter, isBefore } from 'date-fns'
 
 import {
   AuditEventType,
@@ -6,6 +6,7 @@ import {
   PatientConsentStatus,
   PatientDeferredStatus,
   PatientDueStatus,
+  PatientIneligibleStatus,
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
@@ -377,36 +378,62 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Eligible for programme in the current academic year has started
+   * Is not yet eligible for programme
    *
-   * @returns {boolean} Eligible for programme has started
+   * @returns {boolean} Is not yet eligible for programme
    */
-  get isEligible() {
-    return (
-      !this.patient?.hasAgedOutOfProgrammes &&
-      isAfter(today(), this.eligibilityStartAt)
-    )
+  get isNotEligibleYet() {
+    return isBefore(today(), this.eligibilityStartAt)
   }
 
   /**
-   * Eligible for programme in the current academic year has ended
+   * Is no longer eligible for programme
    *
-   * @returns {boolean} Eligible for programme has ended
+   * @returns {boolean} Is no longer eligible for programme
    */
-  get wasEligible() {
-    return this.programme?.isSeasonal && isAfter(today(), this.eligibilityEndAt)
+  get isNoLongerEligible() {
+    return isAfter(today(), this.eligibilityEndAt)
+  }
+
+  /**
+   * Ineligible for programme
+   *
+   * @returns {boolean} Ineligible for programme
+   */
+  get isIneligible() {
+    return (
+      this.patient?.hasAgedOutOfProgrammes ||
+      this.isNotEligibleYet ||
+      this.isNoLongerEligible
+    )
   }
 
   /**
    * Get expanded description about ineligibility status
    *
-   * @returns {string|undefined} Ineligibility description
+   * @returns {PatientIneligibleStatus} Ineligibility description
    */
-  get ineligibilityDescription() {
+  get ineligibilityStatus() {
     switch (true) {
       case this.patient?.hasAgedOutOfProgrammes:
+        return PatientIneligibleStatus.AgedOut
+      case this.isNoLongerEligible:
+        return PatientIneligibleStatus.Expired
+      default:
+        return PatientIneligibleStatus.Pending
+    }
+  }
+
+  /**
+   * Get expanded description about ineligibility status
+   *
+   * @returns {string} Ineligibility description
+   */
+  get ineligibilityDescription() {
+    switch (this.ineligibilityStatus) {
+      case PatientIneligibleStatus.AgedOut:
         return 'Not eligible for school age immunisation'
-      case this.wasEligible:
+      case PatientIneligibleStatus.Expired:
         return `Programme ended on ${this.formatted.eligibilityEndAt}`
       default:
         return `Eligible from ${this.formatted.eligibilityStartAt}`
@@ -641,29 +668,29 @@ export class PatientProgramme extends BaseModel {
    * @returns {PatientStatus} Status properties
    */
   get status() {
-    // No longer eligible for any school-age vaccination programmes or
-    // not eligible for this programme yet
-    if (this.patient.hasAgedOutOfProgrammes || !this.isEligible) {
-      return PatientStatus.Ineligible
-    }
+    switch (true) {
+      // No longer eligible for any school-age vaccination
+      // Not eligible for this programme yet
+      case this.patient.hasAgedOutOfProgrammes:
+      case this.isNotEligibleYet:
+        return PatientStatus.Ineligible
 
-    // Is fully vaccinated
-    if (this.dosesRemaining === 0) {
-      return PatientStatus.Vaccinated
-    }
+      // Is fully vaccinated
+      case this.dosesRemaining === 0:
+        return PatientStatus.Vaccinated
 
-    // No longer eligible for this programme
-    if (this.wasEligible) {
-      return PatientStatus.Ineligible
-    }
+      // No longer eligible for this programme
+      case this.isNoLongerEligible:
+        return PatientStatus.Ineligible
 
-    // Has been invited to a session
-    if (this.lastPatientSession) {
-      return getReportOutcome(this.lastPatientSession)
-    }
+      // Has been invited to a session
+      case !!this.lastPatientSession:
+        return getReportOutcome(this.lastPatientSession)
 
-    // Needs to be invited to a session
-    return PatientStatus.Consent
+      // Needs to be invited to a session
+      default:
+        return PatientStatus.Consent
+    }
   }
 
   /**
