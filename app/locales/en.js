@@ -415,6 +415,9 @@ export const en = {
     },
     convenientTimes: {
       label: 'Convenient times'
+    },
+    bookingReference: {
+      label: 'Booking reference'
     }
   },
   clinicBooking: {
