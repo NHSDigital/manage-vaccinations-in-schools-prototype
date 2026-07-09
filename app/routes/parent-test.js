@@ -50,6 +50,14 @@ router.get('/lena', (request, response) => {
   response.render('parent-test/lena')
 })
 
+router.get('/maya-overview', (request, response) => {
+  response.render('parent-test/maya-overview')
+})
+
+router.get('/rosa-overview', (request, response) => {
+  response.render('parent-test/rosa-overview')
+})
+
 router.get('/understanding-records', (request, response) => {
   response.render('parent-test/understanding-records')
 })
