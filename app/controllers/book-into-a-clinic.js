@@ -384,7 +384,7 @@ export const bookIntoClinicController = {
       const clinicLocationItems = getScheduledClinicLocationItems(
         data,
         appointment.selected_programme_ids,
-        patient ? 0 : 1,
+        patient ? false : true,
         data.transaction?.outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems
