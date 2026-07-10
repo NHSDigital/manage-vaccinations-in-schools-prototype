@@ -230,13 +230,7 @@ export class PatientProgramme extends BaseModel {
         }
 
         // Parent(s) refused on grounds of it being in school --> OK to invite
-        const refusalReasons = lastPatientSession.consentRefusalReasons
-        if (
-          refusalReasons.length &&
-          refusalReasons.every(
-            (reason) => reason === ReplyRefusal.OutsideSchool
-          )
-        ) {
+        if (lastPatientSession.vaccinationWantedOutsideSchool) {
           return true
         }
 
@@ -573,8 +567,18 @@ export class PatientProgramme extends BaseModel {
         return this.lastVaccinationOutcome
           ? `${this.lastPatientSession.patientDeferred} on ${this.lastVaccinationOutcome.formatted.administeredAt_date}`
           : this.lastPatientSession.patientDeferred
-      case PatientStatus.Refused:
-        return this.lastPatientSession.patientRefused
+      case PatientStatus.Refused: {
+        const lastPatientSession = this.lastPatientSession
+        const patientRefusedStatus = lastPatientSession.patientRefused
+        if (
+          patientRefusedStatus === PatientRefusedStatus.Refusal &&
+          lastPatientSession.vaccinationWantedOutsideSchool
+        ) {
+          return 'Do not vaccinate in school'
+        }
+
+        return patientRefusedStatus
+      }
       case PatientStatus.Consent:
         return this.lastPatientSession
           ? this.lastPatientSession.patientConsent

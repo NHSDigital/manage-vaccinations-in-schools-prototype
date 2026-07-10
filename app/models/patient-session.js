@@ -15,6 +15,7 @@ import {
   PatientVaccinatedStatus,
   RecordVaccineCriteria,
   ReplyDecision,
+  ReplyRefusal,
   RegistrationOutcome,
   ScreenOutcome,
   VaccinationOutcome,
@@ -718,6 +719,19 @@ export class PatientSession extends BaseModel {
    */
   get consentRefusalReasons() {
     return getConsentRefusalReasons(this)
+  }
+
+  /**
+   * Were all consent refusal reasons down to not wanting vaccination in school?
+   *
+   * @returns {boolean} True if all refusals were on grounds of not wanting vaccination in school, or false otherwise
+   */
+  get vaccinationWantedOutsideSchool() {
+    const refusalReasons = this.consentRefusalReasons
+    return (
+      refusalReasons.length &&
+      refusalReasons.every((reason) => reason === ReplyRefusal.OutsideSchool)
+    )
   }
 
   /**
