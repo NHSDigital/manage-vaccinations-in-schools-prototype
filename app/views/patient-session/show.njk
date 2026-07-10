@@ -22,7 +22,7 @@
   <div class="nhsuk-grid-row">
     <div class="app-grid-column-patient-record" data-module="app-sticky">
       {{ summaryList({
-        classes: "app-summary-list--full-width-at-large-desktop",
+        classes: "app-summary-list--full-width-at-large-desktop nhsuk-u-margin-bottom-2",
         lastRowBorder: false,
         rows: summaryRows(patient, {
           nhsn: {
@@ -35,6 +35,8 @@
           address: {}
         })
       }) }}
+
+      {{ link(patient.uri, __("patientSession.show.childRecordLink.label")) | nhsukMarkdown }}
     </div>
 
     <div class="app-grid-column-patient-session">

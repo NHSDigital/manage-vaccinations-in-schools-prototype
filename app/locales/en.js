@@ -2049,7 +2049,10 @@ export const en = {
   },
   patientSession: {
     show: {
-      title: 'Child record'
+      title: 'Child record',
+      childRecordLink: {
+        label: 'View full child record'
+      }
     },
     appointment: {
       title: 'Appointment'
