@@ -9,6 +9,7 @@ import {
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
+  ReplyRefusal,
   SessionStatus,
   SessionType
 } from '../enums.js'
@@ -217,11 +218,31 @@ export class PatientProgramme extends BaseModel {
       }
       case PatientStatus.Consent:
         return !this.patient?.hasNoContactDetails || this.patient.post16
-      case PatientStatus.Refused:
-        return (
-          this.lastPatientSession?.patientRefused ===
-          PatientRefusedStatus.FollowUp
-        )
+      case PatientStatus.Refused: {
+        const lastPatientSession = this.lastPatientSession
+        if (!lastPatientSession) return false
+
+        // Parent refused but wanted a follow-up --> OK to invite
+        if (
+          lastPatientSession.patientRefused === PatientRefusedStatus.FollowUp
+        ) {
+          return true
+        }
+
+        // Parent(s) refused on grounds of it being in school --> OK to invite
+        const refusalReasons = lastPatientSession.consentRefusalReasons
+        if (
+          refusalReasons.length &&
+          refusalReasons.every(
+            (reason) => reason === ReplyRefusal.OutsideSchool
+          )
+        ) {
+          return true
+        }
+
+        // Any other refusal reason is a hard no for clinic
+        return false
+      }
       default:
         return false
     }
