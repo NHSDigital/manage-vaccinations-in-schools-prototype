@@ -422,7 +422,7 @@ export const en = {
   },
   clinicBooking: {
     start: {
-      title: 'Book an appointment for your child’s vaccination',
+      title: 'Book a clinic vaccination',
       intro:
         'If your child has not been vaccinated at school, or is not up to date with their vaccinations for any other reason, you can book into a clinic.\n\nAt their appointment, your child can also have other vaccinations that they previously missed.',
       programme: {
