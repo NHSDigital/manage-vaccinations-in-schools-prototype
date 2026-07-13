@@ -9,7 +9,6 @@ import {
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
-  ReplyRefusal,
   SessionStatus,
   SessionType
 } from '../enums.js'
