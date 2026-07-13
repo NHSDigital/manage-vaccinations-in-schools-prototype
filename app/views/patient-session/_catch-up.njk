@@ -1,11 +1,7 @@
   {% set appointmentProgrammeIds = [] %}
-  {% if clinicAppointment %}
-    {% set appointmentProgrammeIds = clinicAppointment.selected_programme_ids %}
-  {% else %}
-    {% for siblingPatientSession in patientSession.siblingPatientSessions %}
-      {% set appointmentProgrammeIds = appointmentProgrammeIds | push(siblingPatientSession.programme_id) %}
-    {% endfor %}
-  {% endif %}
+  {% for siblingPatientSession in patientSession.siblingPatientSessions %}
+    {% set appointmentProgrammeIds = appointmentProgrammeIds | push(siblingPatientSession.programme_id) %}
+  {% endfor %}
 
   {% set patientProgrammeRows = [] %}
   {% for id, patientProgramme in patient.programmes %}
