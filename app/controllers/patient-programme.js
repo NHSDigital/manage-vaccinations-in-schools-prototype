@@ -43,9 +43,9 @@ export const patientProgrammeController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
-    const view = request.params.view || 'programme'
+    const view = request.params.view || 'show'
 
-    return response.render(`patient/${view}`)
+    return response.render(`patient-programme/${view}`)
   },
 
   /**
