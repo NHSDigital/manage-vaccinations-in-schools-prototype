@@ -317,7 +317,11 @@ export class PatientSession extends BaseModel {
 
     return ClinicBooking.findAll(this.context)
       ?.flatMap(({ appointments }) => appointments)
-      ?.filter(({ session_id }) => session_id === this.session_id)
+      ?.filter(
+        (appointment) =>
+          appointment.session_id === this.session_id &&
+          appointment.selected_programme_ids.includes(this.programme_id)
+      )
       ?.find(({ patient_uuid }) => patient_uuid === this.patient_uuid)
   }
 
