@@ -84,6 +84,15 @@ export class User extends BaseModel {
   }
 
   /**
+   * Set authorised vaccine methods
+   *
+   * @param {Array<VaccineMethod>} methods - Vaccine methods
+   */
+  set vaccineMethods(methods) {
+    this.vaccinations = methods
+  }
+
+  /**
    * Get authorised vaccine methods
    *
    * @returns {Array<VaccineMethod>} Vaccine methods
