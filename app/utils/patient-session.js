@@ -106,84 +106,59 @@ export const getSessionOutcome = (patientSession) => {
 export const getReportOutcome = (patientSession) => {
   // Has vaccination outcome
   if (patientSession.vaccinationOutcomes?.length > 0) {
-    if (
-      [
-        VaccinationOutcome.Vaccinated,
-        VaccinationOutcome.AlreadyVaccinated
-      ].includes(patientSession.outcome)
-    ) {
-      return PatientStatus.Vaccinated
-    } else if (
-      [
-        VaccinationOutcome.Absent,
-        VaccinationOutcome.Refused,
-        VaccinationOutcome.Unwell
-      ].includes(patientSession.outcome) &&
-      isToday(patientSession.lastVaccinationOutcome?.createdAt)
-    ) {
-      // ‘Could not vaccinate’ only applies on the day it was recorded
-      return PatientStatus.Deferred
+    const { outcome } = patientSession
+    switch (outcome) {
+      case VaccinationOutcome.Vaccinated:
+      case VaccinationOutcome.AlreadyVaccinated:
+        return PatientStatus.Vaccinated
+
+      case VaccinationOutcome.Absent:
+      case VaccinationOutcome.Refused:
+      case VaccinationOutcome.Unwell:
+        if (isToday(patientSession.lastVaccinationOutcome?.createdAt)) {
+          // ‘Could not vaccinate’ only applies on the day it was recorded
+          return PatientStatus.Deferred
+        }
     }
   }
 
   // Has screening outcome
-  if (patientSession.screen) {
-    if (
-      [
-        ScreenOutcome.DelayVaccination,
-        ScreenOutcome.InviteToClinic,
-        ScreenOutcome.DoNotVaccinate
-      ].includes(String(patientSession.screen))
-    ) {
+  const { screen } = patientSession
+  switch (screen) {
+    case ScreenOutcome.DelayVaccination:
+    case ScreenOutcome.InviteToClinic:
+    case ScreenOutcome.DoNotVaccinate:
       return PatientStatus.Deferred
-    } else if (
-      [
-        ScreenOutcome.Vaccinate,
-        ScreenOutcome.VaccinateAlternativeFluInjectionOnly,
-        ScreenOutcome.VaccinateAlternativeMMRInjectionOnly,
-        ScreenOutcome.VaccinateIntranasalOnly
-      ].includes(String(patientSession.screen))
-    ) {
-      return PatientStatus.Due
-    }
-  }
 
-  // Keep in triage
-  if (patientSession.screen === ScreenOutcome.NeedsTriage) {
-    return PatientStatus.Triage
+    case ScreenOutcome.Vaccinate:
+    case ScreenOutcome.VaccinateAlternativeFluInjectionOnly:
+    case ScreenOutcome.VaccinateAlternativeMMRInjectionOnly:
+    case ScreenOutcome.VaccinateIntranasalOnly:
+      return PatientStatus.Due
+
+    case ScreenOutcome.NeedsTriage:
+      return PatientStatus.Triage
   }
 
   // Has consent outcome
   if (patientSession.consentGiven) {
     return PatientStatus.Due
-  } else if (
-    [
-      ConsentOutcome.Inconsistent,
-      ConsentOutcome.Refused,
-      ConsentOutcome.FinalRefusal
-    ].includes(patientSession.consent)
-  ) {
-    return PatientStatus.Refused
-  } else if (
-    [
-      ConsentOutcome.NotDelivered,
-      ConsentOutcome.NoResponse,
-      ConsentOutcome.NoResponse
-    ].includes(patientSession.consent)
-  ) {
-    return PatientStatus.Consent
-  } else if (
-    [
-      ConsentOutcome.Declined,
-      ConsentOutcome.Inconsistent,
-      ConsentOutcome.Refused,
-      ConsentOutcome.FinalRefusal
-    ].includes(patientSession.consent)
-  ) {
-    return PatientStatus.Refused
   }
+  const { consent } = patientSession
+  switch (consent) {
+    case ConsentOutcome.Declined:
+    case ConsentOutcome.Inconsistent:
+    case ConsentOutcome.Refused:
+    case ConsentOutcome.FinalRefusal:
+      return PatientStatus.Refused
 
-  return PatientStatus.Ineligible
+    case ConsentOutcome.NotDelivered:
+    case ConsentOutcome.NoResponse:
+      return PatientStatus.Consent
+
+    default:
+      return PatientStatus.Ineligible
+  }
 }
 
 /**
