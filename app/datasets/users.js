@@ -26,7 +26,7 @@ export default [
     team_id: '001'
   },
   {
-    uid: '000000000005',
+    uid: '000000000004',
     firstName: 'Rachel',
     lastName: 'Richards',
     email: 'rachel.richards@covwarkpt.nhs.example',
