@@ -385,7 +385,7 @@ export const sessionController = {
     const { account, session } = response.locals
 
     const showRegistration =
-      session.registration && session.isActive && view === 'report'
+      session.hasRegistration && session.isActive && view === 'report'
 
     response.locals.showRegistration = showRegistration
     response.locals.view = view
@@ -924,10 +924,10 @@ export const sessionController = {
     if (view === 'type') {
       // Inject the relevant registration default, if not already set, or if changing session type
       if (
-        session.registration === undefined ||
+        session.hasRegistration === undefined ||
         session?.type !== request.body.session.type
       ) {
-        request.body.session.registration =
+        request.body.session.hasRegistration =
           request.body.session.type === SessionType.School
             ? team.schoolSessionRegistration
             : team.clinicSessionRegistration
