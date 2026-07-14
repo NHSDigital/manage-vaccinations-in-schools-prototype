@@ -2332,7 +2332,7 @@ export const en = {
   preScreen: {
     label: 'Pre-screening checks',
     description: 'Have you checked that {{patient.firstName}}:',
-    selfId: {
+    hasSelfIdentified: {
       label: 'Has {{patient.firstName}} confirmed their identity?',
       true: 'Yes',
       false: 'No, it was confirmed by somebody else'
@@ -3847,7 +3847,7 @@ export const en = {
       refused: 'They refused it',
       unwell: 'They were not well enough'
     },
-    selfId: {
+    hasSelfIdentified: {
       true: 'The child',
       false: 'Somebody else'
     },

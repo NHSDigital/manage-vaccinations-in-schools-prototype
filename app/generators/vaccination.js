@@ -65,7 +65,7 @@ export function generateVaccination(patientSession, programme, batch, users) {
     nhseSyncedAt,
     outcome,
     locationName: patientSession.session?.location.name,
-    selfId: true,
+    hasSelfIdentified: true,
     patientSession_uuid: patientSession.uuid,
     programme_id: programme.id,
     vaccine_snomed: batch?.vaccine_snomed,
