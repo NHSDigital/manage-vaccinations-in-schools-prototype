@@ -83,7 +83,7 @@ export const patientController = {
     const team = Team.findOne(account.team_id, data)
 
     const programmes = Programme.findAll(data)
-      .filter((programme) => !programme.hidden)
+      .filter((programme) => !programme.isHidden)
       .sort((a, b) => a.name.localeCompare(b.name))
 
     const patients = Patient.findAll(data).filter((patient) =>
@@ -497,7 +497,7 @@ export const patientController = {
     let clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     const programmes = Programme.findAll(data)
-      .filter((programme) => !programme.hidden)
+      .filter((programme) => !programme.isHidden)
       .sort((a, b) => a.name.localeCompare(b.name))
 
     let programme_ids

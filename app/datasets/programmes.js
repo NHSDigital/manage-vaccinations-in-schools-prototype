@@ -6,7 +6,7 @@ export default {
     id: 'other',
     name: 'A programme administered outside the UK',
     title: 'A programme administered outside the UK',
-    hidden: true,
+    isHidden: true,
     isTetanusVaccine: true,
     sequence: ['1P'],
     sequenceDefault: '1P'
@@ -16,7 +16,7 @@ export default {
     id: '4in1',
     name: '4-in-1',
     title: '4-in-1 pre-school booster',
-    hidden: true,
+    isHidden: true,
     isTetanusVaccine: true,
     sequence: ['1P', '2P', '3P'],
     sequenceDefault: '1P'
@@ -26,7 +26,7 @@ export default {
     id: '5in1',
     name: '5-in-1',
     title: '5-in-1',
-    hidden: true,
+    isHidden: true,
     isTetanusVaccine: true,
     sequence: ['1B'],
     sequenceDefault: '1B'
@@ -36,7 +36,7 @@ export default {
     id: '6in1',
     name: '6-in-1',
     title: '6-in-1',
-    hidden: true,
+    isHidden: true,
     isTetanusVaccine: true,
     sequence: ['1P', '2P', '3P', '4P'],
     sequenceDefault: '1P'

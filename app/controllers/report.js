@@ -13,7 +13,7 @@ export const reportController = {
     const { data } = request.session
 
     const programmes = Programme.findAll(data)
-      ?.filter((programme) => !programme.hidden)
+      ?.filter((programme) => !programme.isHidden)
       .sort((a, b) => a.name.localeCompare(b.name))
 
     let vaccinations = Vaccination.findAll(data) || []

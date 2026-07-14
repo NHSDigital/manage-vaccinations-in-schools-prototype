@@ -16,7 +16,7 @@ import { BaseModel } from './base.js'
  * @typedef {BaseModelOptions & object} ProgrammeOptions
  * @property {string} [id] - Programme ID
  * @property {ProgrammeType} [type] - Programme type
- * @property {boolean} [hidden] - Hidden
+ * @property {boolean} [isHidden] - Hidden
  * @property {string} [name] - Name
  * @property {string} [title] - Title
  * @property {object} [emailNames] - Email names
@@ -49,7 +49,7 @@ export class Programme extends BaseModel {
     this.context = context
     this.id = options?.id
     this.type = options?.type
-    this.hidden = options?.hidden || false
+    this.isHidden = options?.isHidden || false
     this.name = options?.name
     this.title = options?.title
     this.emailNames = options?.emailNames

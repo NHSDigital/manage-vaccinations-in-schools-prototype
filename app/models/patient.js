@@ -368,7 +368,7 @@ export class Patient extends Child {
     const programmes = {}
 
     for (const programme of Object.values(programmesData).filter(
-      (programme) => !programme.hidden
+      (programme) => !programme.isHidden
     )) {
       const patientProgramme = new PatientProgramme(
         {

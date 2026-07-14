@@ -102,7 +102,7 @@ export const bookIntoClinicController = {
     // Default to all programmes if none supplied
     if (!programme_ids) {
       programme_ids = Programme.findAll(data)
-        .filter(({ hidden }) => !hidden)
+        .filter(({ isHidden }) => !isHidden)
         .map(({ id }) => id)
     }
 

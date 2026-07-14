@@ -189,7 +189,7 @@ export const sessionController = {
 
     // Offer even those programmes with no clinics scheduled
     const allProgrammes = Programme.findAll(data).filter(
-      (programme) => !programme.hidden
+      (programme) => !programme.isHidden
     )
     allProgrammes.forEach((programme) => {
       if (!programmeFrequencyMap[programme.id]) {
