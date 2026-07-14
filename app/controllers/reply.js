@@ -80,7 +80,7 @@ export const replyController = {
         programme_id: patientSession.programme.id,
         session_id: patientSession.session.id,
         createdBy_uid: account.uid,
-        selfConsent: patientSession?.patient?.post16
+        selfConsent: patientSession?.patient?.isPost16
       },
       data
     )
@@ -88,7 +88,7 @@ export const replyController = {
     const reply = new Reply(createdReply, data)
 
     let next
-    if (patientSession?.patient?.post16) {
+    if (patientSession?.patient?.isPost16) {
       next = `${reply.uri}/new/decision`
     } else {
       next = `${reply.uri}/new/respondent`
@@ -243,7 +243,7 @@ export const replyController = {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
         [`/${reply_uuid}/${type}/decision`]: {
-          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.post16 ? 'can-notify' : 'health-answers'}`]:
+          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.isPost16 ? 'can-notify' : 'health-answers'}`]:
             {
               data: 'reply.decision',
               value: ReplyDecision.Given

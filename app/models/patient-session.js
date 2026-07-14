@@ -508,7 +508,7 @@ export class PatientSession extends BaseModel {
    * @returns {PatientConsentStatus|undefined} Patient consent status
    */
   get patientConsent() {
-    if (this.patient?.post16) {
+    if (this.patient?.isPost16) {
       return PatientConsentStatus.SelfConsent
     }
 
@@ -655,7 +655,7 @@ export class PatientSession extends BaseModel {
     const relationships = filters.formatList(this.parentalRelationships)
     const contactNames = filters.formatList(this.contactsRequestingFollowUp)
 
-    if (this.patient?.post16) {
+    if (this.patient?.isPost16) {
       return `${this.patient.firstName} is old enough to self-consent.`
     }
 
@@ -761,7 +761,7 @@ export class PatientSession extends BaseModel {
 
     const triageNote = triageNotes.at(-1)
     const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
-    const person = this.patient.post16 ? 'child' : 'parent'
+    const person = this.patient.isPost16 ? 'child' : 'parent'
 
     switch (this.screen) {
       case ScreenOutcome.NeedsTriage:

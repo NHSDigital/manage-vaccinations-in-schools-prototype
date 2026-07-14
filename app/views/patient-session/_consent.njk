@@ -16,7 +16,7 @@
   {% endif %}
 
   {# Actions #}
-  {% if not isVaccinated and not patientSession.patient.post16 %}
+  {% if not isVaccinated and not patientSession.patient.isPost16 %}
     {{ actionLink({
       text: __("reply.new.title"),
       href: patientSession.uri + "/replies/new?referrer=" + referrer
@@ -91,7 +91,7 @@
         })
       }) }}
     {% endfor %}
-  {% elif not patientSession.patient.hasNoContactDetails and not patientSession.patient.post16 %}
+  {% elif not patientSession.patient.hasNoContactDetails and not patientSession.patient.isPost16 %}
     {# Requests that have been sent but with no response yet #}
     {# We don’t create replies so use contact details instead #}
 
