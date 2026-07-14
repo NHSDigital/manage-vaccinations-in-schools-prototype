@@ -44,7 +44,7 @@ import { BaseModel } from './base.js'
  * @property {Child} [child] - Child
  * @property {Contact} [contact_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
- * @property {boolean} [alternative] - Consent for alternative vaccine
+ * @property {boolean} [hasConsentForAlternativeVaccine] - Consent for alternative vaccine
  * @property {boolean} [hasConfirmedRefusal] - Refusal confirmed
  * @property {boolean} [hasRequestedConsultation] - Consultation requested
  * @property {boolean} [hasEthnicityAnswers] - Answered ethnicity questions
@@ -106,8 +106,9 @@ export class Reply extends BaseModel {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.child = options?.child && new Child(options.child)
-    this.alternative =
-      options?.alternative && stringToBoolean(options?.alternative)
+    this.hasConsentForAlternativeVaccine =
+      options?.hasConsentForAlternativeVaccine &&
+      stringToBoolean(options?.hasConsentForAlternativeVaccine)
     this.hasConfirmedRefusal = stringToBoolean(options?.hasConfirmedRefusal)
     this.hasRequestedConsultation = stringToBoolean(
       options?.hasRequestedConsultation
@@ -268,7 +269,8 @@ export class Reply extends BaseModel {
   get vaccineCriteria() {
     if (this.hasGivenConsent && this.programme.type === ProgrammeType.Flu) {
       switch (true) {
-        case this.decision === ReplyDecision.Given && !this.alternative:
+        case this.decision === ReplyDecision.Given &&
+          !this.hasConsentForAlternativeVaccine:
           return ConsentVaccineCriteria.IntranasalOnly
         case this.decision === ReplyDecision.OnlyAlternativeInjection:
           return ConsentVaccineCriteria.AlternativeFluInjectionOnly
@@ -292,7 +294,7 @@ export class Reply extends BaseModel {
   get hasConsentForInjection() {
     return (
       this.decision === ReplyDecision.OnlyAlternativeInjection ||
-      this.alternative
+      this.hasConsentForAlternativeVaccine
     )
   }
 
@@ -324,7 +326,7 @@ export class Reply extends BaseModel {
           break
         case ReplyDecision.Given: {
           // Nasal chosen, but was the alternative injection also accepted?
-          if (!this.alternative) {
+          if (!this.hasConsentForAlternativeVaccine) {
             consentedVaccine = consentedVaccine.filter(
               ({ method }) => method === VaccineMethod.Intranasal
             )
@@ -363,7 +365,9 @@ export class Reply extends BaseModel {
     if (programme?.type == MMR) {
       const allowedCriteria = [
         VaccineCriteria.AlternativeInjection,
-        ...(this.alternative ? [] : [VaccineCriteria.Injection])
+        ...(this.hasConsentForAlternativeVaccine
+          ? []
+          : [VaccineCriteria.Injection])
       ]
       consentedVaccine = Object.values(vaccines)
         .filter(({ type }) => type === ProgrammeType.MMR)
