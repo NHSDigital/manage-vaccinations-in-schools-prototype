@@ -165,7 +165,7 @@ export class Patient extends Child {
    *
    * @returns {boolean} Is a new patient record
    */
-  get uploadIsNew() {
+  get isNewUpload() {
     return this.contacts[1] !== undefined && !this.hasPendingChanges
   }
 

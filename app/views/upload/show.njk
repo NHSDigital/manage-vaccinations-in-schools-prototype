@@ -62,7 +62,7 @@
   {% if upload.status == UploadStatus.Review %}
     {{ patientRecords({
       key: "new",
-      patients: upload.patients | selectattr("uploadIsNew")
+      patients: upload.patients | selectattr("isNewUpload")
     }) }}
 
     {{ patientRecords({
