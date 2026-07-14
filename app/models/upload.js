@@ -85,26 +85,6 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Get number of invalid patient records (no vaccination recorded)
-   *
-   * @returns {Array<Patient>|undefined} Invalid patient records
-   */
-  get invalid() {
-    if (
-      this.status === UploadStatus.Review &&
-      this.type === UploadType.Report
-    ) {
-      if (this.context?.patients && this.patient_uuids) {
-        return this.patient_uuids
-          .map((uuid) => Patient.findOne(uuid, this.context))
-          .filter((patient) => patient.vaccinations.length === 0)
-      }
-
-      return []
-    }
-  }
-
-  /**
    * Upload needs review
    *
    * @returns {boolean} Upload needs review
