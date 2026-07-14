@@ -260,11 +260,11 @@ export class Download extends BaseModel {
           location_urn: vaccination.school_id,
           user_role: '',
           user_code: '',
-          attended: vaccination.given ? 'Y' : 'N',
+          attended: vaccination.wasGiven ? 'Y' : 'N',
           non_attendance: '',
           batch_expiry: vaccination.batch?.expiry,
           sequence: vaccination.sequence,
-          refusal: !vaccination.given ? vaccination.outcome : '',
+          refusal: !vaccination.wasGiven ? vaccination.outcome : '',
           batch_id: vaccination.batch_id,
           // FIX: Resolve Getters from Vaccination model
           site: vaccination.injectionSite,
@@ -312,7 +312,7 @@ export class Download extends BaseModel {
             PERSON_POSTCODE: vaccination.patient?.postalCode,
             SCHOOL_NAME: vaccination.location,
             school_id: vaccination.school_id,
-            REASON_NOT_VACCINATED: !vaccination.given
+            REASON_NOT_VACCINATED: !vaccination.wasGiven
               ? vaccination.outcome
               : '',
             DATE_OF_VACCINATION: vaccination.createdAt,
@@ -320,7 +320,7 @@ export class Download extends BaseModel {
             BATCH_NUMBER: vaccination.batch_id,
             BATCH_EXPIRY_DATE: vaccination.batch?.expiry,
             ANATOMICAL_SITE: vaccination.injectionSite,
-            VACCINATED: vaccination.given ? 'Y' : 'N',
+            VACCINATED: vaccination.wasGiven ? 'Y' : 'N',
             PERFORMING_PROFESSIONAL: vaccination.createdBy?.fullName
           }[header]
 

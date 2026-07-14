@@ -59,16 +59,16 @@ export const activityController = {
     }
     const session = Session.findOne(Object.values(data.sessions)[0].id, data)
     const vaccinationGiven = Vaccination.findAll(data).find(
-      (vaccination) => vaccination.given
+      (vaccination) => vaccination.wasGiven
     )
     const vaccinationUpdated = Vaccination.findAll(data).find(
       (vaccination) =>
-        vaccination.given &&
+        vaccination.wasGiven &&
         vaccination.uuid !== vaccinationGiven.uuid &&
         vaccination.batch_id !== vaccinationGiven.batch_id
     )
     const vaccinationNotGiven = Vaccination.findAll(data).find(
-      (vaccination) => !vaccination.given
+      (vaccination) => !vaccination.wasGiven
     )
 
     // Contact for use in Notify activities; force having both email and phone
