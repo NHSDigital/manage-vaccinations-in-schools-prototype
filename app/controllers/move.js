@@ -19,7 +19,7 @@ export const moveController = {
    */
   readAll(request, response, next) {
     const moves = Move.findAll(request.session.data).filter(
-      (move) => !move.ignored
+      (move) => !move.isIgnored
     )
 
     // Sort
