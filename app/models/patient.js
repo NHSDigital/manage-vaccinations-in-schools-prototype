@@ -43,7 +43,7 @@ import {
  * @typedef {ChildOptions & object} PatientOptions
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [isInvalid] - Flagged as invalid
- * @property {boolean} [sensitive] - Flagged as sensitive
+ * @property {boolean} [isSensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Partial<Child>} [pendingChanges] - Pending changes to record values
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
@@ -73,12 +73,13 @@ export class Patient extends Child {
     super(options, context)
 
     const isInvalid = stringToBoolean(options?.isInvalid)
-    const sensitive = stringToBoolean(options?.sensitive)
+    const isSensitive = stringToBoolean(options?.isSensitive)
 
     this.nhsn = options?.nhsn || this.nhsNumber
     this.isInvalid = isInvalid
-    this.sensitive = sensitive
-    this.address = !sensitive && options?.address ? options.address : undefined
+    this.isSensitive = isSensitive
+    this.address =
+      !isSensitive && options?.address ? options.address : undefined
     this.archiveReason = options?.archiveReason
     this.archiveReasonOther = options?.archiveReasonOther
     this.pendingChanges = options?.pendingChanges || {}
@@ -206,7 +207,7 @@ export class Patient extends Child {
   get contacts() {
     const contacts = new Map()
 
-    if (!this.sensitive) {
+    if (!this.isSensitive) {
       this.contact_uuids.forEach((uuid) =>
         contacts.set(uuid, Contact.findOne(uuid, this.context))
       )
@@ -252,7 +253,7 @@ export class Patient extends Child {
       })
     )
 
-    if (this.sensitive) {
+    if (this.isSensitive) {
       recordEvents.push(
         new AuditEvent({
           type: AuditEventType.Record,
@@ -848,7 +849,7 @@ export class Patient extends Child {
         break
       case notice.type === NoticeType.Sensitive:
         // Flag record as sensitive
-        this.sensitive = true
+        this.isSensitive = true
         name = `Record flagged as sensitive`
         break
       default:
