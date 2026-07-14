@@ -67,7 +67,7 @@
 
     {{ patientRecords({
       key: "matched",
-      patients: upload.patients | selectattr("uploadHasMatch")
+      patients: upload.patients | selectattr("hasMatchingUpload")
     }) }}
 
     {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
