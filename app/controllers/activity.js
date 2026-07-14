@@ -49,7 +49,7 @@ export const activityController = {
         uuid !== patient?.uuid && !hasMissingNhsNumber && !isInvalid
     )
     const reply = Reply.findAll(data).find(
-      (reply) => !reply.selfConsent && reply.given && reply.contact
+      (reply) => !reply.hasSelfConsent && reply.given && reply.contact
     )
     const replyRefusal = {
       ...reply,
