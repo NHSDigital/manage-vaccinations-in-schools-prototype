@@ -23,7 +23,7 @@ import {
  * @property {SchoolClosureReason} [closeReason] - Reason school closed
  * @property {Array<string>} [linkedUrns] - GIAS linked URNs
  * @property {SchoolPhase} [phase] - Phase
- * @property {boolean} [sen] - SEN school
+ * @property {boolean} [isSen] - SEN school
  * @property {string} [site] - Site code
  * @property {Array<string>} [teams] - Teams
  * @property {Array<number>} [yearGroups] - Year groups
@@ -51,7 +51,7 @@ export class School extends Location {
     this.closeReason = options?.closeReason
     this.linkedUrns = stringToArray(options?.linkedUrns)
     this.phase = options?.phase
-    this.sen = stringToBoolean(options?.sen) || false
+    this.isSen = stringToBoolean(options?.isSen) || false
     this.site = options?.site
     this.team_ids = options?.team_ids || []
     this.yearGroups = stringToArray(options?.yearGroups).map(Number)

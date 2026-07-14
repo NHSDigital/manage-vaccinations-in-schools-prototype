@@ -2702,7 +2702,7 @@ export const en = {
       label: 'Phase',
       title: 'Phase of education'
     },
-    sen: {
+    isSen: {
       label: 'SEN school',
       title: 'Is this a special educational needs (SEN) school?'
     },

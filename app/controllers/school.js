@@ -457,7 +457,7 @@ export const schoolController = {
         addressLevel1: 'Coventry',
         postalCode: 'CV1 5LS',
         phase: 'Primary',
-        sen: false,
+        isSen: false,
         yearGroups: [0, 1, 2, 3, 4, 5, 6]
       }
     }
