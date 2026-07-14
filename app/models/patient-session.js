@@ -381,7 +381,10 @@ export class PatientSession extends BaseModel {
     }
 
     // Administered vaccine was the alternative
-    if (this.clinicAppointment?.alternative || this.alternative) {
+    if (
+      this.clinicAppointment?.hasConsentForAlternativeVaccine ||
+      this.alternative
+    ) {
       return alternativeVaccine
     }
 
