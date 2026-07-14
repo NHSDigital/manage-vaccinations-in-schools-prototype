@@ -1093,7 +1093,7 @@ export const sessionController = {
     const { __mf, account } = response.locals
 
     // Update session as closed
-    const session = Session.update(session_id, { closed: true }, data)
+    const session = Session.update(session_id, { closeAt: today() }, data)
 
     // Find a clinic
     const clinic = Session.findAll(data)

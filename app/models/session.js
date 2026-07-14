@@ -78,7 +78,7 @@ import { BaseModel } from './base.js'
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Date} [consentOpenAt] - Date consent window opens
  * @property {object} [consentOpenAt_] - Date consent window opens (from `dateInput`)
- * @property {boolean} [closed] - Session closed
+ * @property {Date} [closeAt] - Date session closed
  * @property {boolean} [cancelled] - Session was cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
@@ -140,7 +140,7 @@ export class Session extends BaseModel {
           ? removeDays(this.date, TeamDefaults.SessionOpenWeeks * 7)
           : undefined
       this.consentOpenAt_ = options?.consentOpenAt_
-      this.closed = options?.closed || false
+      this.closeAt = options?.closeAt && new Date(options.closeAt)
       this.reminderWeeks =
         options?.reminderWeeks || TeamDefaults.SessionReminderWeeks
       this.mmrConsent = this.presetNames?.includes(SessionPresetName.MMR)
@@ -357,7 +357,7 @@ export class Session extends BaseModel {
    */
   get status() {
     switch (true) {
-      case this.closed:
+      case !!this.closeAt:
         return SessionStatus.Closed
       case this.cancelled:
         return SessionStatus.Cancelled
