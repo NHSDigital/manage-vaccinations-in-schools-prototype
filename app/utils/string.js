@@ -155,14 +155,14 @@ export function formatLinkWithSecondaryText(href, text, secondary) {
  *
  * @param {string} text - Primary text
  * @param {string} [secondary] - Secondary text
- * @param {boolean} [breakLine] - Whether to add a line break before secondary text
+ * @param {boolean} [hasLineBreak] - Whether to add a line break before secondary text
  * @returns {string} Formatted HTML
  */
-export function formatWithSecondaryText(text, secondary, breakLine = true) {
+export function formatWithSecondaryText(text, secondary, hasLineBreak = true) {
   let html = text
 
   if (secondary) {
-    html += breakLine ? '<br>' : ''
+    html += hasLineBreak ? '<br>' : ''
     html += formatSecondaryText(secondary)
   }
 
@@ -300,15 +300,15 @@ export function formatMillilitres(string) {
  * Format with code styling
  *
  * @param {string|number} string - String
- * @param {boolean} [noWrap] - Prevent wrapping
+ * @param {boolean} [shouldNoWrap] - Prevent wrapping
  * @returns {string|undefined} Formatted HTML
  */
-export function formatCode(string, noWrap = false) {
+export function formatCode(string, shouldNoWrap = false) {
   if (!string) return
 
   const classes = ['nhsuk-u-font-code']
 
-  if (noWrap) {
+  if (shouldNoWrap) {
     classes.push('nhsuk-u-nowrap')
   }
 
@@ -347,10 +347,10 @@ export function formatNhsNumber(string, isInvalid) {
  * Format contact name with optional display of contact details
  *
  * @param {Contact} contact - Contact
- * @param {boolean} [includeContactDetails] - Include contact details
+ * @param {boolean} [shouldIncludeContactDetails] - Include contact details
  * @returns {string|undefined} Formatted contact HTML
  */
-export function formatContact(contact, includeContactDetails = true) {
+export function formatContact(contact, shouldIncludeContactDetails = true) {
   if (!contact) return
 
   let string = contact.fullName || 'Parent or guardian'
@@ -361,12 +361,12 @@ export function formatContact(contact, includeContactDetails = true) {
   }
 
   // Add telephone number, if provided
-  if (includeContactDetails && contact.tel) {
+  if (shouldIncludeContactDetails && contact.tel) {
     string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.tel}</span>`
   }
 
   // Add email address, if provided
-  if (includeContactDetails && contact.email) {
+  if (shouldIncludeContactDetails && contact.email) {
     string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.email}</span>`
   }
 
@@ -533,13 +533,13 @@ export function lowerCaseFirst(string) {
  *
  * @param {string} firstName - the person's first name
  * @param {string} lastName - the person's last name
- * @param {boolean} parentFacing - true to format naturally for parents, or false to put surname first for SAIS teams
+ * @param {boolean} isParentFacing - true to format naturally for parents, or false to put surname first for SAIS teams
  * @returns {string} - the formatted name
  */
-export function formatFullName(firstName, lastName, parentFacing = false) {
+export function formatFullName(firstName, lastName, isParentFacing = false) {
   if (!firstName || !lastName) return ''
 
-  return parentFacing
+  return isParentFacing
     ? [firstName, lastName].join(' ')
     : [lastName.toUpperCase(), firstName].join(', ')
 }
@@ -585,13 +585,13 @@ export function formatHour(hour) {
  * Format the time in a date using the 12-hour clock and an am/pm suffix
  *
  * @param {Date} date - the date containing the time we want to format
- * @param {boolean} hour12 - use the 12 hour clock and am/pm?
+ * @param {boolean} isHour12 - use the 12 hour clock and am/pm?
  * @returns {string} the time formatted according to the hour12 parameter
  */
-export function formatTime(date, hour12 = true) {
+export function formatTime(date, isHour12 = true) {
   const locale = i18n.getLocale()
 
-  if (!hour12) {
+  if (!isHour12) {
     return date.toLocaleTimeString(locale, {
       hour: 'numeric',
       minute: '2-digit',

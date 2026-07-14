@@ -263,11 +263,11 @@ export default () => {
    *
    * @param {object} Enum - Enumerable name
    * @param {string} selected - Selected value
-   * @param {boolean} sorted - true to sort the values alphabetically, false to preserve enum order
+   * @param {boolean} isSorted - true to sort the values alphabetically, false to preserve enum order
    * @returns {object} Radio items
    */
-  globals.radioFilterItems = function (Enum, selected, sorted = true) {
-    const values = sorted
+  globals.radioFilterItems = function (Enum, selected, isSorted = true) {
+    const values = isSorted
       ? Object.values(Enum).sort((a, b) => a.localeCompare(b))
       : Object.values(Enum)
     return [
@@ -362,13 +362,13 @@ export default () => {
    * Inspect session data
    *
    * @param {object} data - Data to inspect
-   * @param {boolean} includeContext - Include context data
+   * @param {boolean} requiresContext - Include context data
    * @returns {string} Inspected data within a `<pre>` element
    */
-  globals.inspect = function (data, includeContext = false) {
+  globals.inspect = function (data, requiresContext = false) {
     const { filters } = this.ctx.settings.nunjucksEnv
 
-    if (!includeContext) {
+    if (!requiresContext) {
       const contextlessData = structuredClone(data)
 
       // Remove context whether data is a single record or a collection of records

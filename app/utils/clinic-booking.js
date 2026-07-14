@@ -41,20 +41,20 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  *
  * @param {object} context - the data context for the models to check
  * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
- * @param {boolean} requireStockingPeriod - must there be time before the session starts to plan stocks?
+ * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
   programme_ids,
-  requireStockingPeriod
+  requiresStockingPeriod
 ) => {
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
       session.type === SessionType.Clinic &&
       session.status === SessionStatus.Planned &&
       session.programme_ids.some((id) => programme_ids.includes(id)) &&
-      session.daysLeftToBook >= (requireStockingPeriod ? 1 : 0) &&
+      session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
       session.availableAppointmentCount > 0
   )
 
@@ -66,27 +66,27 @@ export const getBookableClinicSessions = (
  *
  * @param {object} context - Data context for the models to check
  * @param {Array<string>} programme_ids - Programmes that must be served at the clinics
- * @param {boolean} requireStockingPeriod - must there be time before the session starts to plan stocks?
- * @param {boolean|undefined} fakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
+ * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
+ * @param {boolean|undefined} isFakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
  * @returns {Array<object>} Set of radio buttons to present to the user, one per location
  */
 export const getScheduledClinicLocationItems = (
   context,
   programme_ids,
-  requireStockingPeriod,
-  fakeOutOfArea
+  requiresStockingPeriod,
+  isFakeOutOfArea
 ) => {
   const scheduledClinics = getBookableClinicSessions(
     context,
     programme_ids,
-    requireStockingPeriod
+    requiresStockingPeriod
   )
   const sessionsByLocation = _.groupBy(
     scheduledClinics,
     (session) => session.clinic_id
   )
 
-  let distanceToClinic = fakeOutOfArea ? 100.5 : 0.5
+  let distanceToClinic = isFakeOutOfArea ? 100.5 : 0.5
   const clinicLocationItems = []
   Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
     const firstSession = sessions.reduce((earliest, current) => {
