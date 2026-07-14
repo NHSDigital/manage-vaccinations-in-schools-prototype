@@ -201,7 +201,7 @@ export const getAllAppointmentPaths = (
           value: 'false'
         }
       },
-      [`/${booking_uuid}/new/${appointment_uuid}/contact-preference`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/communication-needs`]: {},
 
       // Check and confirm
       [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {

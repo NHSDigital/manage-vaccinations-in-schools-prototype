@@ -164,7 +164,7 @@ export const giveOrRefuseConsentController = {
           value: 'false'
         }
       },
-      [`/${session_id}/${consent_uuid}/new/contact-preference`]: {},
+      [`/${session_id}/${consent_uuid}/new/communication-needs`]: {},
       [`/${session_id}/${consent_uuid}/new/decision`]: {
         [`/${session_id}/${consent_uuid}/new/refusal-reason`]: {
           data: 'consent.decision',

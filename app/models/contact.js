@@ -19,8 +19,8 @@ import { BaseModel } from './base.js'
  * @property {NotifyEmailStatus} [emailStatus] - Email status
  * @property {boolean} [sms] - Get updates via SMS
  * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {boolean} [contactPreference] - Preferred contact method
- * @property {string} [contactPreferenceDetails] - Contact method details
+ * @property {boolean} [hasCommunicationNeeds] - Has communication needs
+ * @property {string} [communicationNeeds] - Communication or language needs
  */
 
 /**
@@ -63,10 +63,10 @@ export class Contact extends BaseModel {
     this.emailStatus = this?.email && options?.emailStatus
     this.sms = stringToBoolean(options.sms)
     this.smsStatus = this?.tel && options?.smsStatus
-    this.contactPreference = stringToBoolean(options?.contactPreference)
+    this.hasCommunicationNeeds = stringToBoolean(options?.hasCommunicationNeeds)
 
-    if (this.contactPreference) {
-      this.contactPreferenceDetails = options?.contactPreferenceDetails
+    if (this.hasCommunicationNeeds) {
+      this.communicationNeeds = options?.communicationNeeds
     }
   }
 
@@ -90,8 +90,8 @@ export class Contact extends BaseModel {
       {
         get: (_target, prop) => {
           switch (prop) {
-            case 'contactPreference':
-              return this.contactPreferenceDetails || this.contactPreference
+            case 'communicationNeeds':
+              return this.communicationNeeds || this.hasCommunicationNeeds
             case 'fullName':
               return this.fullName || 'Name unknown'
             case 'relationship':

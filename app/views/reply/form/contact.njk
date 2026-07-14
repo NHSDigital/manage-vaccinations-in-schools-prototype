@@ -78,22 +78,22 @@
   {{ radios({
     fieldset: {
       legend: {
-        text: __("contact.contactPreference.label")
+        text: __("contact.hasCommunicationNeeds.title")
       }
     },
     items: [{
-      text: __("contact.contactPreference.yes"),
+      text: __("contact.hasCommunicationNeeds.yes"),
       value: true,
       conditional: {
         html: textarea({
-          label: { text: __("contact.contactPreferenceDetails.label") },
-          decorate: "reply.contact.contactPreferenceDetails"
+          label: { text: __("contact.communicationNeeds.title") },
+          decorate: "reply.contact.communicationNeeds"
         })
       }
     }, {
-      text: __("contact.contactPreference.no"),
+      text: __("contact.hasCommunicationNeeds.no"),
       value: false
     }],
-    decorate: "reply.contact.contactPreference"
+    decorate: "reply.contact.hasCommunicationNeeds"
   }) }}
 {% endblock %}

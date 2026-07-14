@@ -1,0 +1,30 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("consent.contact.hasCommunicationNeeds.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("consent.contact.hasCommunicationNeeds.title"),
+        size: "l",
+        isPageHeading: true
+      }
+    },
+    hint: { text: __("consent.contact.hasCommunicationNeeds.hint") },
+    items: [{
+      text: __("consent.contact.hasCommunicationNeeds.yes"),
+      value: true,
+      conditional: {
+        html: textarea({
+          label: { text: __("consent.contact.communicationNeeds.title") },
+          decorate: "consent.contact_.communicationNeeds"
+        })
+      }
+    }, {
+      text: __("consent.contact.hasCommunicationNeeds.no"),
+      value: false
+    }],
+    decorate: "consent.contact_.hasCommunicationNeeds"
+  }) }}
+{% endblock %}

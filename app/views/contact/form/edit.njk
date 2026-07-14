@@ -49,22 +49,22 @@
   {{ radios({
     fieldset: {
       legend: {
-        text: __("contact.contactPreference.label")
+        text: __("contact.hasCommunicationNeeds.label")
       }
     },
     items: [{
-      text: __("contact.contactPreference.yes"),
+      text: __("contact.hasCommunicationNeeds.yes"),
       value: true,
       conditional: {
         html: textarea({
-          label: { text: __("contact.contactPreferenceDetails.label") },
-          decorate: "contact.contactPreferenceDetails"
+          label: { text: __("contact.communicationNeeds.label") },
+          decorate: "contact.communicationNeeds"
         })
       }
     }, {
-      text: __("contact.contactPreference.no"),
+      text: __("contact.hasCommunicationNeeds.no"),
       value: false
     }],
-    decorate: "contact.contactPreference"
+    decorate: "contact.hasCommunicationNeeds"
   }) }}
 {% endblock %}

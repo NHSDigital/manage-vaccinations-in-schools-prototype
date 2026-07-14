@@ -81,10 +81,10 @@
           tel: {
             value: appContactSms(reply.contact, reply.given)
           } if reply.contact.tel,
-          contactPreference: {
-            label: __("contact.contactPreference.label"),
-            value: reply.contact.contactPreferenceDetails
-          } if reply.contact.contactPreferenceDetails,
+          communicationNeeds: {
+            label: __("contact.communicationNeeds.label"),
+            value: reply.contact.communicationNeeds
+          } if reply.contact.communicationNeeds,
           createdAt: {},
           decisionStatus: {},
           vaccineCriteria: {}
@@ -112,7 +112,7 @@
         rows: summaryRows(contact, {
           email: {},
           tel: {},
-          contactPreference: {},
+          communicationNeeds: {},
           decisionStatus: {
             label: __("reply.decisionStatus.label"),
             value: tag({
