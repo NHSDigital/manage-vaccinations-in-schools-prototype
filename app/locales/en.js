@@ -1197,7 +1197,7 @@ export const en = {
     decisionStatus: {
       label: 'Response'
     },
-    alternative: {
+    hasConsentForAlternativeVaccine: {
       flu: {
         label: 'Consent also given for injected vaccine?',
         title:
@@ -2551,7 +2551,7 @@ export const en = {
     tel: {
       label: 'Phone number'
     },
-    alternative: {
+    hasConsentForAlternativeVaccine: {
       label: 'Consent also given for injected vaccine?',
       title:
         'Do they also agree to the injected vaccine if the nasal spray is not suitable?'

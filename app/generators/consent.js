@@ -59,7 +59,7 @@ export function generateConsent(
   const isFluProgramme = programme.type === ProgrammeType.Flu
 
   // Has the contact given consent for alternative injected vaccine?
-  const alternative =
+  const hasConsentForAlternativeVaccine =
     isFluProgramme && decision === ReplyDecision.Given
       ? faker.datatype.boolean(0.75)
       : false
@@ -116,7 +116,9 @@ export function generateConsent(
     child,
     decision,
     method,
-    ...(decision === ReplyDecision.Given && { alternative }),
+    ...(decision === ReplyDecision.Given && {
+      hasConsentForAlternativeVaccine
+    }),
     ...([
       ReplyDecision.Given,
       ReplyDecision.OnlyAlternativeInjection,

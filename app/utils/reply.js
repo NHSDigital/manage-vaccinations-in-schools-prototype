@@ -148,7 +148,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
     if (
       session.canOfferIntranasalVaccine &&
       reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
-      !reply.alternative
+      !reply.hasConsentForAlternativeVaccine
     ) {
       return ConsentOutcome.GivenForIntranasal
     }
@@ -242,7 +242,8 @@ export const getConsentOutcome = (patientSession) => {
             vaccineCriteria === ConsentVaccineCriteria.IntranasalOnly
         )
         const allAcceptAlternative = replies.every(
-          ({ alternative }) => alternative
+          ({ hasConsentForAlternativeVaccine }) =>
+            hasConsentForAlternativeVaccine
         )
 
         if (someWantInjectionOnly && someWantIntranasalOnly) {
@@ -261,7 +262,12 @@ export const getConsentOutcome = (patientSession) => {
 
       // For MMR programme, determine if any consent requested gelatine-free
       if (patientSession.session?.canOfferAlternativeVaccine) {
-        if (replies.some(({ alternative }) => alternative)) {
+        if (
+          replies.some(
+            ({ hasConsentForAlternativeVaccine }) =>
+              hasConsentForAlternativeVaccine
+          )
+        ) {
           return ConsentOutcome.GivenForAlternativeInjection
         }
       }
