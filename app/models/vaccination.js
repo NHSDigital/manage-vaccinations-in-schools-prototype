@@ -71,7 +71,7 @@ import { BaseModel } from './base.js'
  * @property {number} [dose] - Dosage (ml)
  * @property {string} [sequence] - Dose sequence
  * @property {string} [protocol] - Protocol
- * @property {boolean} [scheduled] - Vaccination date was on schedule
+ * @property {boolean} [isScheduled] - Vaccination date was on schedule
  * @property {string} [note] - Note
  * @property {string} [programmeOther] - Non-NHS programme name
  * @property {boolean} [isVariant] - Is programme variant?
@@ -175,7 +175,7 @@ export class Vaccination extends BaseModel {
     this.protocol = this.given
       ? options?.protocol || VaccinationProtocol.PGD
       : undefined
-    this.scheduled = stringToBoolean(options.scheduled)
+    this.isScheduled = stringToBoolean(options.isScheduled)
     this.note = options?.note || ''
     this.programmeOther = options?.programmeOther
     this.isVariant = options?.isVariant

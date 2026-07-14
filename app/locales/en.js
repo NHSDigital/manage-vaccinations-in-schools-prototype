@@ -1283,7 +1283,7 @@ export const en = {
         title: 'When was the 1st dose given?',
         label: 'Date of vaccination'
       },
-      scheduled: {
+      isScheduled: {
         title: 'Was the 1st dose given when your child was 12 months old?',
         hint: 'This is usually the child’s age when the 1st dose is offered'
       }
@@ -1301,7 +1301,7 @@ export const en = {
         title: 'When was the 2nd dose given?',
         label: 'Date of vaccination'
       },
-      scheduled: {
+      isScheduled: {
         title:
           'Was the 2nd dose given when your child was 3 years and 4 months old?',
         hint: 'This is usually the child’s age when the 2nd dose is offered'
@@ -1327,7 +1327,7 @@ export const en = {
         title: 'When was the vaccination given?',
         hint: 'If you do not know the exact date of the vaccination, leave the day field empty and enter your best guess for the month'
       },
-      scheduled: {
+      isScheduled: {
         yes: 'Yes',
         no: 'No'
       }
