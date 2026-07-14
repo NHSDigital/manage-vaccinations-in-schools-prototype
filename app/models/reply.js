@@ -60,7 +60,7 @@ import { BaseModel } from './base.js'
  * @property {ReplyRefusal} [refusalReason] - Refusal reason
  * @property {string} [refusalReasonOther] - Other refusal reason
  * @property {string} [refusalReasonDetails] - Refusal reason details
- * @property {boolean} [selfConsent] - Reply given by child
+ * @property {boolean} [hasSelfConsent] - Reply given by child
  * @property {string} [note] - Note about this response
  */
 
@@ -129,7 +129,7 @@ export class Reply extends BaseModel {
         ? false // Don’t show non response as invalid
         : stringToBoolean(options?.invalid) || false
     this.method = options?.method
-    this.selfConsent = options?.selfConsent
+    this.hasSelfConsent = options?.hasSelfConsent
     this.note = options?.note || ''
     this.contact_uuid = options?.contact_uuid
     this.patient_uuid = options?.patient_uuid
@@ -231,7 +231,7 @@ export class Reply extends BaseModel {
    * @returns {string} Full name and relationship
    */
   get fullNameAndRelationship() {
-    return this.selfConsent
+    return this.hasSelfConsent
       ? this.relationship
       : formatContact(this.contact, false)
   }

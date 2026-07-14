@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% if reply.selfConsent %}
+{% if reply.hasSelfConsent %}
   {% set title = __("reply.programme.title.Child") %}
 {% else %}
   {% set title = __("reply.programme.title.Contact") %}

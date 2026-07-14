@@ -190,7 +190,7 @@ export const getConsentOutcome = (patientSession) => {
   const replies = validReplies.filter(({ delivered }) => delivered)
 
   // If any reply is child self consenting, use child’s decision
-  const childReply = replies.find((reply) => reply.selfConsent)
+  const childReply = replies.find((reply) => reply.hasSelfConsent)
   if (childReply) {
     return getConfirmedConsentOutcome(childReply, patientSession.session)
   }

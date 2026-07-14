@@ -80,7 +80,7 @@ export const replyController = {
         programme_id: patientSession.programme.id,
         session_id: patientSession.session.id,
         createdBy_uid: account.uid,
-        selfConsent: patientSession?.patient?.isPost16
+        hasSelfConsent: patientSession?.patient?.isPost16
       },
       data
     )
@@ -121,7 +121,7 @@ export const replyController = {
         next = patientSession.uri
 
         // Remove any contact details in reply if self consent
-        if (reply.selfConsent) {
+        if (reply.hasSelfConsent) {
           delete reply.contact_uuid
         }
 
@@ -236,14 +236,14 @@ export const replyController = {
         [`/`]: {},
         [`/${reply_uuid}/${type}/respondent`]: {},
         ...(data.respondent !== 'self' &&
-          !reply.selfConsent && {
+          !reply.hasSelfConsent && {
             [`/${reply_uuid}/${type}/contact`]: {}
           }),
         ...(isMultiProgrammeSession && {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
         [`/${reply_uuid}/${type}/decision`]: {
-          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.isPost16 ? 'can-notify' : 'health-answers'}`]:
+          [`/${reply_uuid}/${type}/${reply?.hasSelfConsent && !patientSession.patient.isPost16 ? 'can-notify' : 'health-answers'}`]:
             {
               data: 'reply.decision',
               value: ReplyDecision.Given
@@ -378,16 +378,16 @@ export const replyController = {
             },
             data.wizard
           ).uuid
-          reply.selfConsent = false
+          reply.hasSelfConsent = false
           break
         case 'self':
           reply.method = ReplyMethod.InPerson
-          reply.selfConsent = true
+          reply.hasSelfConsent = true
           break
         default: // Consent response is an existing respondent
           reply.method = ReplyMethod.Phone
           reply.contact_uuid = respondent
-          reply.selfConsent = false
+          reply.hasSelfConsent = false
 
           // Store reply that needs marked as invalid
           // We only want to do this when submitting replacement reply

@@ -7,8 +7,8 @@ export default {
     absent: (session) => `Absent from session at ${session.location.name}`
   },
   consent: {
-    created: ({ child, decision, contact, selfConsent }) =>
-      selfConsent
+    created: ({ child, decision, contact, hasSelfConsent }) =>
+      hasSelfConsent
         ? `${decision} by ${child?.fullName} (child)`
         : `${decision} by ${contact?.fullNameAndRelationship}`,
     updated: ({ decision, contact }) =>
