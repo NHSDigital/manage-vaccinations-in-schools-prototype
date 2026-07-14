@@ -26,6 +26,9 @@ router.get(
   '/:programme_id/new/vaccination',
   patientProgramme.vaccination('new')
 )
-router.get('/:programme_id/new/ttcv', patientProgramme.vaccination('ttcv'))
+router.get(
+  '/:programme_id/new/tetanus',
+  patientProgramme.vaccination('tetanus')
+)
 
 export const patientProgrammeRoutes = router
