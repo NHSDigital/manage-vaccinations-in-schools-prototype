@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated %}
-  {% set title = __("vaccination.variant.title", { patient: vaccination.patient }) %}
+  {% set title = __("vaccination.isVariant.title", { patient: vaccination.patient }) %}
   {% set items = getBooleanItems() %}
 {% else %}
   {% set title = __("vaccination.programme.title", { patient: vaccination.patient }) %}
@@ -26,9 +26,9 @@
       }
     },
     hint: {
-      text: __("vaccination.variant.hint", { patient: vaccination.patient })
+      text: __("vaccination.isVariant.hint", { patient: vaccination.patient })
     } if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated,
     items: items,
-    decorate: "vaccination.variant"
+    decorate: "vaccination.isVariant"
   }) }}
 {% endblock %}

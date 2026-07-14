@@ -3794,7 +3794,7 @@ export const en = {
     age: {
       label: 'Age'
     },
-    variant: {
+    isVariant: {
       label: 'Programme variant',
       title: 'Was {{patient.firstName}} vaccinated with the MMRV vaccine?',
       hint: '{{patient.firstName}} is eligible for the new MMRV vaccine, but may have got the  MMR vaccine instead.'

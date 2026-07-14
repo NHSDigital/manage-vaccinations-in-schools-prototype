@@ -74,7 +74,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [scheduled] - Vaccination date was on schedule
  * @property {string} [note] - Note
  * @property {string} [programmeOther] - Non-NHS programme name
- * @property {boolean} [variant] - Is programme variant?
+ * @property {boolean} [isVariant] - Is programme variant?
  */
 
 /**
@@ -178,8 +178,8 @@ export class Vaccination extends BaseModel {
     this.scheduled = stringToBoolean(options.scheduled)
     this.note = options?.note || ''
     this.programmeOther = options?.programmeOther
-    this.variant = options?.variant
-      ? stringToBoolean(options.variant)
+    this.isVariant = options?.isVariant
+      ? stringToBoolean(options.isVariant)
       : undefined
 
     if (this.outcome === VaccinationOutcome.AlreadyVaccinated) {
@@ -381,7 +381,7 @@ export class Vaccination extends BaseModel {
    * @returns {string} Programme or programme variant name
    */
   get programmeOrVariantName() {
-    if (this.variant && this.programme.type === ProgrammeType.MMR) {
+    if (this.isVariant && this.programme.type === ProgrammeType.MMR) {
       return 'MMRV'
     }
 
@@ -399,7 +399,7 @@ export class Vaccination extends BaseModel {
       {
         get: (_target, prop) => {
           const getProgrammeTag = () => {
-            return this.variant
+            return this.isVariant
               ? formatTag({
                   text: this.programmeOrVariantName,
                   colour: 'transparent'
