@@ -163,7 +163,7 @@ export const replyController = {
 
         // Invalidate any replaced response
         if (invalidUuid) {
-          Reply.update(invalidUuid, { invalid: true }, data)
+          Reply.update(invalidUuid, { isInvalidated: true }, data)
 
           delete request.app.locals.invalidUuid
         }
@@ -473,7 +473,7 @@ export const replyController = {
     delete data.reply
 
     // Update batch data
-    const reply = Reply.update(reply_uuid, { invalid: true, note }, data)
+    const reply = Reply.update(reply_uuid, { isInvalidated: true, note }, data)
 
     request.flash('success', __(`reply.invalidate.success`, { reply }))
 
@@ -524,7 +524,7 @@ export const replyController = {
     }
 
     // Invalidate existing reply
-    Reply.update(reply_uuid, { invalid: true }, data)
+    Reply.update(reply_uuid, { isInvalidated: true }, data)
 
     // Clean up session data
     delete data.reply

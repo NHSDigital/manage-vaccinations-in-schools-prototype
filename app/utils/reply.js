@@ -173,7 +173,7 @@ export const getConsentOutcome = (patientSession) => {
 
   // Get valid replies
   const validReplies = Object.values(patientSession.replies).filter(
-    ({ invalid }) => !invalid
+    ({ isInvalidated }) => !isInvalidated
   )
 
   // If no valid replies, no response
@@ -287,7 +287,7 @@ export const getConsentRefusalReasons = (patientSession) => {
   ).filter((reply) => reply.refusalReason)
 
   for (const reply of repliesWithRefusalReasons) {
-    if (reply.refusalReason && !reply.invalid) {
+    if (reply.refusalReason && !reply.isInvalidated) {
       // Indicate confirmed refusal reason
       const refusalReason = reply.confirmed
         ? `${reply.refusalReason}<br><b>Confirmed</b>`

@@ -713,7 +713,7 @@ export class Patient extends Child {
   /**
    * Record reply
    *
-   * @param {object} reply - Reply
+   * @param {Reply} reply - Reply
    */
   addReply(reply) {
     if (!reply) {
@@ -723,7 +723,7 @@ export class Patient extends Child {
     const isNew = !this.replies[reply.uuid]
 
     let name
-    if (reply.invalid) {
+    if (reply.isInvalidated) {
       name = activity.consent.invalid(reply)
     } else if (isNew) {
       name = activity.consent.created(reply)

@@ -43,7 +43,7 @@ export const consentController = {
   readAll(request, response, next) {
     const { session_id } = request.params
     const consents = Consent.findAll(request.session.data)
-      .filter((consent) => !consent.invalid)
+      .filter((consent) => !consent.isInvalidated)
       .filter((consent) => !consent.patient_uuid)
 
     // Sort
@@ -214,7 +214,11 @@ export const consentController = {
     delete data.consent
 
     // Update session data
-    const consent = Consent.update(consent_uuid, { invalid: true, note }, data)
+    const consent = Consent.update(
+      consent_uuid,
+      { isInvalidated: true, note },
+      data
+    )
 
     data.counts.consents--
     data.counts.review--
