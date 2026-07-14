@@ -8,7 +8,7 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} MoveOptions
  * @property {string} [uuid] - Move UUID
- * @property {boolean} [ignored] - Reported move is ignored
+ * @property {boolean} [isIgnored] - Reported move is ignored
  * @property {MoveSource} [source] - Reporting source
  */
 
@@ -52,7 +52,7 @@ export class Move extends BaseModel {
 
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.ignored = options?.ignored || false
+    this.isIgnored = options?.isIgnored || false
     this.source = options?.source
   }
 
@@ -107,7 +107,7 @@ export class Move extends BaseModel {
    * @param {object} context - Context
    */
   ignore(uuid, context) {
-    Move.update(uuid, { ignored: true }, context)
+    Move.update(uuid, { isIgnored: true }, context)
   }
 
   /**
