@@ -97,10 +97,11 @@ export function generateConsent(
 
   const nowAt = today()
   const sessionClosedBeforeToday = session.closeAt.valueOf() < nowAt.valueOf()
-  const sessionOpensAfterToday = session.openAt.valueOf() > nowAt.valueOf()
+  const consentWindowOpensAfterToday =
+    session.consentOpenAt.valueOf() > nowAt.valueOf()
 
   // If session hasn’t opened yet, don’t generate a consent
-  if (sessionOpensAfterToday) {
+  if (consentWindowOpensAfterToday) {
     return
   }
 
@@ -108,7 +109,7 @@ export function generateConsent(
     createdAt:
       lastConsentCreatedAt ||
       faker.date.between({
-        from: session.openAt,
+        from: session.consentOpenAt,
         to: sessionClosedBeforeToday ? session.closeAt : nowAt
       }),
     child,

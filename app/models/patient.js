@@ -656,7 +656,7 @@ export class Patient extends Child {
       this.addEvent({
         name: activity.session.added(patientSession.session),
         type: AuditEventType.ProgrammeNote,
-        createdAt: patientSession.session.openAt,
+        createdAt: patientSession.session.consentOpenAt,
         createdBy_uid: patientSession.session.createdBy_uid,
         programme_ids: patientSession.session.programme_ids
       })
@@ -701,7 +701,7 @@ export class Patient extends Child {
           type: AuditEventType.ProgrammeNote,
           messageRecipient: contact,
           messageTemplate: 'invite',
-          createdAt: patientSession.session.openAt,
+          createdAt: patientSession.session.consentOpenAt,
           patient_uuid: this.uuid,
           programme_ids: patientSession.session.programme_ids,
           session_id: patientSession.session.id

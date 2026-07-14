@@ -76,8 +76,8 @@ import { BaseModel } from './base.js'
  *
  *   Schools only
  * @property {Array<number>} [yearGroups] - Year groups
- * @property {Date} [openAt] - Date consent window opens
- * @property {object} [openAt_] - Date consent window opens (from `dateInput`)
+ * @property {Date} [consentOpenAt] - Date consent window opens
+ * @property {object} [consentOpenAt_] - Date consent window opens (from `dateInput`)
  * @property {boolean} [closed] - Session closed
  * @property {boolean} [cancelled] - Session was cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
@@ -134,12 +134,12 @@ export class Session extends BaseModel {
 
     if (this.type === SessionType.School) {
       this.yearGroups = stringToArray(options?.yearGroups).map(Number)
-      this.openAt = options?.openAt
-        ? new Date(options.openAt)
+      this.consentOpenAt = options?.consentOpenAt
+        ? new Date(options.consentOpenAt)
         : this.date
           ? removeDays(this.date, TeamDefaults.SessionOpenWeeks * 7)
           : undefined
-      this.openAt_ = options?.openAt_
+      this.consentOpenAt_ = options?.consentOpenAt_
       this.closed = options?.closed || false
       this.reminderWeeks =
         options?.reminderWeeks || TeamDefaults.SessionReminderWeeks
@@ -186,8 +186,8 @@ export class Session extends BaseModel {
    *
    * @returns {object|string} `dateInput` object
    */
-  get openAt_() {
-    return convertIsoDateToObject(this.openAt)
+  get consentOpenAt_() {
+    return convertIsoDateToObject(this.consentOpenAt)
   }
 
   /**
@@ -195,9 +195,9 @@ export class Session extends BaseModel {
    *
    * @param {object} object - dateInput object
    */
-  set openAt_(object) {
+  set consentOpenAt_(object) {
     if (object) {
-      this.openAt = convertObjectToIsoDate(object)
+      this.consentOpenAt = convertObjectToIsoDate(object)
     }
   }
 
@@ -1022,16 +1022,16 @@ export class Session extends BaseModel {
 
             switch (this.consentWindow) {
               case ConsentWindow.Opening:
-                consentWindow = `Opens ${formatDate(this.openAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window opens on ${formatDate(this.openAt, consentDateStyle)}.`
+                consentWindow = `Opens ${formatDate(this.consentOpenAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window opens on ${formatDate(this.consentOpenAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Closed:
                 consentWindow = `Closed ${formatDate(this.closeAt, consentDateStyle)}`
                 consentWindowSentence = `Consent window closed on ${formatDate(this.closeAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Open:
-                consentWindow = `Open from ${formatDate(this.openAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window is open from ${formatDate(this.openAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}.`
+                consentWindow = `Open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window is open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}.`
                 break
             }
             return { consentWindow, consentWindowSentence }
@@ -1100,8 +1100,8 @@ export class Session extends BaseModel {
                 month: 'long',
                 day: 'numeric'
               })
-            case 'openAt':
-              return formatDate(this.openAt, { dateStyle: 'full' })
+            case 'consentOpenAt':
+              return formatDate(this.consentOpenAt, { dateStyle: 'full' })
             case 'reminderDate':
               return formatDate(this.reminderDate, { dateStyle: 'full' })
             case 'nextReminderDate':
