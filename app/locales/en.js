@@ -802,7 +802,7 @@ export const en = {
       sms: {
         label: 'Confirm if %s want appointment updates by text message'
       },
-      contactPreference: {
+      hasCommunicationNeeds: {
         title: {
           parent: 'Do you have any communication or language needs?',
           team: 'Does the contact have any communication or language needs?'
@@ -815,8 +815,9 @@ export const en = {
         yes: 'Yes',
         no: 'No'
       },
-      contactPreferenceDetails: {
-        label: 'Give details'
+      communicationNeeds: {
+        label: 'Communication or language needs',
+        title: 'Give details'
       },
       relationshipOther: {
         label: 'Relationship to the child'
@@ -1139,16 +1140,15 @@ export const en = {
       sms: {
         label: "Tick this box if you'd like to get updates by text message"
       },
-      contactPreference: {
-        title: 'If we need to contact you',
-        label: 'Do you have any communication or language needs?',
+      hasCommunicationNeeds: {
+        title: 'Do you have any communication or language needs?',
+        hint: 'For example, if you have any hearing or sight needs, or if English is not your first language.',
         yes: 'Yes',
-        no: 'No',
-        description:
-          'Tell us if you have any communication or language needs we should know about.\n\nFor example, if you have any hearing or sight needs, or if English is not your first language.'
+        no: 'No'
       },
-      contactPreferenceDetails: {
-        label: 'Give details'
+      communicationNeeds: {
+        label: 'Communication or language needs',
+        title: 'Give details'
       },
       relationshipOther: {
         label: 'Relationship to the child'
@@ -1717,13 +1717,14 @@ export const en = {
     tel: {
       label: 'Phone number'
     },
-    contactPreference: {
-      label: 'Communication or language needs',
+    hasCommunicationNeeds: {
+      title: 'Do they have any communication or language needs?',
       yes: 'Yes',
       no: 'No'
     },
-    contactPreferenceDetails: {
-      label: 'Give details'
+    communicationNeeds: {
+      label: 'Communication or language needs',
+      title: 'Give details'
     },
     relationshipOther: {
       label: 'Give details'
@@ -1985,13 +1986,14 @@ export const en = {
       relationshipOther: {
         label: 'Relationship to the child'
       },
-      contactPreference: {
-        label: 'Communication or language needs',
+      hasCommunicationNeeds: {
+        title: 'Do they have any communication or language needs?',
         yes: 'Yes',
         no: 'No'
       },
-      contactPreferenceDetails: {
-        label: 'Give details'
+      communicationNeeds: {
+        label: 'Communication or language needs',
+        title: 'Give details'
       }
     },
     programmes: {
