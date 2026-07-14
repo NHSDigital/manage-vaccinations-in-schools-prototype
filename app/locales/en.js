@@ -1103,7 +1103,7 @@ export const en = {
         hint: 'Give the child’s primary address. We use this to confirm their identity.'
       }
     },
-    ethnicity: {
+    hasEthnicityAnswers: {
       label: 'Do you want to answer the ethnicity questions?',
       hint: 'These questions are optional. Your answers will not affect your consent response.',
       title: 'We have received your consent response',
