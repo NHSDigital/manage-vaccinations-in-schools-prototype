@@ -48,7 +48,7 @@ export function generateContact(patient, isMum) {
   )
   const tel = faker.helpers.maybe(() => phoneNumber, { probability: 0.6 })
 
-  const sms = faker.datatype.boolean(0.5)
+  const canSms = faker.datatype.boolean(0.5)
   const smsStatus = faker.helpers.weightedArrayElement([
     { value: NotifySmsStatus.Delivered, weight: 100 },
     { value: NotifySmsStatus.Permanent, weight: 10 },
@@ -79,7 +79,7 @@ export function generateContact(patient, isMum) {
     }),
     ...(tel && {
       tel,
-      sms,
+      canSms,
       ...(smsStatus && { smsStatus })
     }),
     patient_uuid: patient.uuid

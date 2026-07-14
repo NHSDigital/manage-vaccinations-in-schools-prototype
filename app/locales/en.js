@@ -799,7 +799,7 @@ export const en = {
         label: 'Phone number',
         hint: 'Someone from the vaccinations team might call you if they have questions'
       },
-      sms: {
+      canSms: {
         label: 'Confirm if %s want appointment updates by text message'
       },
       hasCommunicationNeeds: {
@@ -1137,7 +1137,7 @@ export const en = {
         label: 'Phone number',
         hint: 'Someone from the vaccinations team might call you if they have questions'
       },
-      sms: {
+      canSms: {
         label: "Tick this box if you'd like to get updates by text message"
       },
       hasCommunicationNeeds: {
@@ -1698,7 +1698,7 @@ export const en = {
     fullName: {
       label: 'Name'
     },
-    sms: {
+    canSms: {
       label: 'Get updates by text message',
       true: 'Yes',
       false: 'No'

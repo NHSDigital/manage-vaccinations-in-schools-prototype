@@ -42,10 +42,10 @@
 
     {{ checkboxes({
       items: [{
-        text: __("clinicBooking.contact.sms.label", "you" if not patient else "they"),
+        text: __("clinicBooking.contact.canSms.label", "you" if not patient else "they"),
         value: true
       }],
-      decorate: "booking.contact.sms"
+      decorate: "booking.contact.canSms"
     }) }}
 
   {% endcall %}
