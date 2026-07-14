@@ -21,17 +21,17 @@
     fieldset: {
       legend: {
         classes: "nhsuk-u-font-size-22",
-        text: __("preScreen.selfId.label", {
+        text: __("preScreen.hasSelfIdentified.label", {
           patient: patient
         }),
         size: "s"
       }
     },
     items: [{
-      text: __("preScreen.selfId.true"),
+      text: __("preScreen.hasSelfIdentified.true"),
       value: true
     }, {
-      text: __("preScreen.selfId.false"),
+      text: __("preScreen.hasSelfIdentified.false"),
       value: false,
       conditional: {
         html: input({
@@ -52,7 +52,7 @@
         })
       }
     }],
-    decorate: "preScreen.selfId"
+    decorate: "preScreen.hasSelfIdentified"
   }) }}
 
   <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">

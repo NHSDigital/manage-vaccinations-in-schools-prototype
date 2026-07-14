@@ -16,10 +16,10 @@
       }
     },
     items: [{
-      text: __("vaccination.selfId.true"),
+      text: __("vaccination.hasSelfIdentified.true"),
       value: true
     }, {
-      text: __("vaccination.selfId.false"),
+      text: __("vaccination.hasSelfIdentified.false"),
       value: false,
       conditional: {
         html: input({
@@ -34,6 +34,6 @@
         })
       }
     }],
-    decorate: "vaccination.selfId"
+    decorate: "vaccination.hasSelfIdentified"
   }) }}
 {% endblock %}

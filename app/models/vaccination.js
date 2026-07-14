@@ -60,7 +60,7 @@ import { BaseModel } from './base.js'
  * @property {string} [addressLevel1] - Address level 2
  * @property {string} [country] - Country (in UK)
  * @property {string} [countryOther] - Country (outside UK)
- * @property {boolean} [selfId] - Child confirmed their identity?
+ * @property {boolean} [hasSelfIdentified] - Child confirmed their identity?
  * @property {object} [identifiedBy] - Who identified child
  * @property {string} [identifiedBy.name] - Name of identifier
  * @property {string} [identifiedBy.relationship] - Relationship of identifier
@@ -159,8 +159,9 @@ export class Vaccination extends BaseModel {
     this.locationName = options?.locationName
     this.country = options?.country || 'England'
     this.countryOther = this.country === 'Other' && options?.countryOther
-    this.selfId = options?.selfId && stringToBoolean(options.selfId)
-    this.identifiedBy = this.selfId !== true && options?.identifiedBy
+    this.hasSelfIdentified =
+      options?.hasSelfIdentified && stringToBoolean(options.hasSelfIdentified)
+    this.identifiedBy = this.hasSelfIdentified !== true && options?.identifiedBy
     this.outcome = options?.outcome
     this.given = [
       VaccinationOutcome.Vaccinated,
@@ -500,7 +501,7 @@ export class Vaccination extends BaseModel {
             case 'school':
               return this.school && this.school.name
             case 'identifiedBy':
-              return this.selfId
+              return this.hasSelfIdentified
                 ? 'The child'
                 : formatIdentifier(this.identifiedBy)
             default:

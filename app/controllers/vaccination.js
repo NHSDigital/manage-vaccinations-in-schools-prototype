@@ -94,7 +94,8 @@ export const vaccinationController = {
       data
     )
     const { session, programme, vaccine, instruction } = patientSession
-    const { identifiedBy, injectionSite, ready, selfId } = data.preScreen
+    const { identifiedBy, injectionSite, ready, hasSelfIdentified } =
+      data.preScreen
     const assessedBy_uid = data.preScreen?.assessedBy_uid
 
     // Check for default batch
@@ -145,7 +146,7 @@ export const vaccinationController = {
 
     const vaccination = Vaccination.create(
       {
-        selfId,
+        hasSelfIdentified,
         identifiedBy,
         location: session.formatted.location,
         programme_id: programme.id,
