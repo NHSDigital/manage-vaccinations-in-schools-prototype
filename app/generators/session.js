@@ -30,7 +30,7 @@ export function generateSession(preset, academicYear, user, options) {
     to: term.to
   })
 
-  let openAt
+  let consentOpenAt
   if (date) {
     // Clinic sessions happen after the school term has finished
     if (clinic_id) {
@@ -49,7 +49,7 @@ export function generateSession(preset, academicYear, user, options) {
       }
     }
 
-    openAt = removeDays(date, TeamDefaults.SessionOpenWeeks * 7)
+    consentOpenAt = removeDays(date, TeamDefaults.SessionOpenWeeks * 7)
   }
 
   let appointmentLength
@@ -66,7 +66,7 @@ export function generateSession(preset, academicYear, user, options) {
     createdAt: removeDays(term.from, 60),
     createdBy_uid: user.uid,
     date,
-    openAt,
+    consentOpenAt,
     hasRegistration: true,
     academicYear,
     presetNames: [preset.name],

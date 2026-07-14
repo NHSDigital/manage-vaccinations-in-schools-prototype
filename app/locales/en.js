@@ -3120,7 +3120,7 @@ export const en = {
     consentUrl: {
       label: 'Online consent form'
     },
-    openAt: {
+    consentOpenAt: {
       title: 'When should parents get a request to give consent?',
       label: 'Consent requests',
       hint: 'For example, 27 3 2026'
@@ -3185,7 +3185,7 @@ export const en = {
       invite: {
         label: 'Invitation',
         name: 'Inviting parent to give or refuse consent',
-        text: 'Give or refuse consent for {{child.firstName}} to have their {{session.vaccinationNames.sentenceCase}}:\n\n[https://give-or-refuse-consent.nhs.uk/{{session.id}}]({{session.consentUrl}}/start)\n\nYou need to do this by {{session.formatted.openAt}}.\n\nResponding will take less than 5 minutes.'
+        text: 'Give or refuse consent for {{child.firstName}} to have their {{session.vaccinationNames.sentenceCase}}:\n\n[https://give-or-refuse-consent.nhs.uk/{{session.id}}]({{session.consentUrl}}/start)\n\nYou need to do this by {{session.formatted.consentOpenAt}}.\n\nResponding will take less than 5 minutes.'
       },
       'invite-clinic': {
         label: 'Clinic booking',
