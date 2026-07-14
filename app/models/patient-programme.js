@@ -37,7 +37,7 @@ import { BaseModel } from './base.js'
 
 /**
  * @typedef {BaseModelOptions & object} PatientProgrammeOptions
- * @property {boolean} [invitedToClinic] - Invited to clinic
+ * @property {boolean} [wasInvitedToClinic] - Invited to clinic
  */
 
 /**
@@ -66,7 +66,7 @@ export class PatientProgramme extends BaseModel {
     this.programme
 
     this.context = context
-    this.invitedToClinic = options?.invitedToClinic
+    this.wasInvitedToClinic = options?.wasInvitedToClinic
   }
 
   /**
@@ -169,7 +169,7 @@ export class PatientProgramme extends BaseModel {
     }
 
     // Invited to a clinic?
-    if (this.invitedToClinic) {
+    if (this.wasInvitedToClinic) {
       return PatientClinicStatus.Invited
     }
 

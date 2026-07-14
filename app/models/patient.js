@@ -378,7 +378,7 @@ export class Patient extends Child {
       )
 
       // Patient invited to clinic if invitation sent
-      patientProgramme.invitedToClinic = this.clinicProgramme_ids.includes(
+      patientProgramme.wasInvitedToClinic = this.clinicProgramme_ids.includes(
         programme.id
       )
 
