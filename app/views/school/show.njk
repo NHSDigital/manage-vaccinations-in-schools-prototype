@@ -66,7 +66,7 @@
       {{ actionLink({
         text: __("school.download.label"),
         href: school.uri + "/download?referrer=" + school.uri
-      }) if data.invitedToClinic and results.count > 0 }}
+      }) if data.wasInvitedToClinic and results.count > 0 }}
 
       {% for patient in results.page %}
         {% set reportStatusHtml -%}
