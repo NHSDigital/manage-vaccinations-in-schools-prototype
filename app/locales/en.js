@@ -3437,18 +3437,6 @@ export const en = {
     },
     results:
       '{count, plural, =0 {No uploads matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
-    recent: {
-      label: 'Uploaded files',
-      title: 'Uploaded files',
-      count:
-        '{count, plural, =0 {No uploaded files} one {1 uploaded file} other {# uploaded files}} ({needsReview, plural, =0 {none need} one {1 needs} other {# need}} review)'
-    },
-    imported: {
-      label: 'Completed uploads',
-      title: 'Completed uploads',
-      count:
-        '{count, plural, =0 {No completed uploads} one {1 completed upload} other {# completed uploads}}'
-    },
     show: {
       title: 'Upload ({{upload.formatted.createdAt}})',
       requiresReviewTitle:
