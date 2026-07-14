@@ -63,7 +63,7 @@ export default {
     sequenceDefault: '1P',
     yearGroups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     vaccine_snomeds: ['43208811000001106', '40085011000001101'],
-    nhseSyncable: true
+    isNhseSyncable: true
   },
   [ProgrammeType.HPV]: {
     type: ProgrammeType.HPV,
@@ -88,7 +88,7 @@ export default {
     targetYearGroup: 8,
     yearGroups: [8, 9, 10, 11],
     vaccine_snomeds: ['33493111000001108'],
-    nhseSyncable: true
+    isNhseSyncable: true
   },
   [ProgrammeType.MenACWY]: {
     type: ProgrammeType.MenACWY,
@@ -112,7 +112,7 @@ export default {
     targetYearGroup: 9,
     yearGroups: [9, 10, 11],
     vaccine_snomeds: ['39779611000001104'],
-    nhseSyncable: false
+    isNhseSyncable: false
   },
   [ProgrammeType.MMR]: {
     type: ProgrammeType.MMR,
@@ -142,7 +142,7 @@ export default {
     targetYearGroup: -3,
     yearGroups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     vaccine_snomeds: ['13968211000001108', '34925111000001104'],
-    nhseSyncable: true
+    isNhseSyncable: true
   },
   [ProgrammeType.TdIPV]: {
     type: ProgrammeType.TdIPV,
@@ -166,7 +166,7 @@ export default {
     yearGroups: [9, 10, 11],
     targetYearGroup: 9,
     vaccine_snomeds: ['7374311000001101'],
-    isTetanusVaccine: true,
-    nhseSyncable: false
+    isNhseSyncable: false,
+    isTetanusVaccine: true
   }
 }

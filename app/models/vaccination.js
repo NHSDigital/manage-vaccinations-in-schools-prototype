@@ -330,7 +330,7 @@ export class Vaccination extends BaseModel {
     const oneMinuteAgo = new Date(new Date().getTime() - 1000 * 60)
 
     switch (true) {
-      case !this.programme?.nhseSyncable:
+      case !this.programme?.isNhseSyncable:
       case this.patient?.hasMissingNhsNumber:
         return VaccinationSyncStatus.CannotSync
       case !this.given:
