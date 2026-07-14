@@ -73,7 +73,7 @@
           {% endcall %}
         {% endif %}
 
-        {% if view === "report" and session.type === SessionType.Clinic and session.status === SessionStatus.Planned %}
+        {% if view === "report" and session.type === SessionType.Clinic and session.isPlanned %}
           {{ actionLink({
             href: session.uri + "/add-child",
             text: "Add a child to this clinic"
