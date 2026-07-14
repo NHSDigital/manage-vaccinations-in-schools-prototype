@@ -22,7 +22,8 @@ import {
   formatFullName,
   formatList,
   formatYearGroup,
-  stringToArray
+  stringToArray,
+  stringToBoolean
 } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -46,7 +47,7 @@ import { BaseModel } from './base.js'
  * @property {string} [adjustmentsOther] - Other adjustment
  * @property {Array<Impairment>} [impairments] - Impairments
  * @property {string} [impairmentsOther] - Other impairment
- * @property {boolean} [immunocompromised] - Immunocompromised
+ * @property {boolean} [isImmunocompromised] - Is immunocompromised
  * @property {object} [address] - Address
  * @property {string} [gpSurgery] - GP surgery
  * @property {number} [academicYearGroup] - Academic year group (override)
@@ -86,7 +87,7 @@ export class Child extends BaseModel {
     this.ethnicBackground = options?.ethnicBackground
     this.adjustments = stringToArray(options?.adjustments)
     this.impairments = stringToArray(options?.impairments)
-    this.immunocompromised = options?.immunocompromised
+    this.isImmunocompromised = stringToBoolean(options?.isImmunocompromised)
     this.address = options?.address
     this.gpSurgery = options?.gpSurgery
     this.academicYearGroup = options?.academicYearGroup || this.yearGroup

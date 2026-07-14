@@ -390,7 +390,7 @@ export class PatientProgramme extends BaseModel {
    */
   get dosesNeeded() {
     if (
-      this.patient.immunocompromised &&
+      this.patient.isImmunocompromised &&
       this.programme.immunocompromisedSequence
     ) {
       return this.programme.immunocompromisedSequence.length
@@ -440,7 +440,7 @@ export class PatientProgramme extends BaseModel {
    */
   get sequence() {
     if (
-      this.patient.immunocompromised &&
+      this.patient.isImmunocompromised &&
       this.programme.immunocompromisedSequence
     ) {
       return this.programme.immunocompromisedSequence[this.doseDue - 1]
