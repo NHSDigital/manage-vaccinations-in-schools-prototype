@@ -3438,9 +3438,8 @@ export const en = {
     results:
       '{count, plural, =0 {No uploads matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
     show: {
-      title: 'Upload ({{upload.formatted.createdAt}})',
-      requiresReviewTitle:
-        'Review and approve upload ({{upload.formatted.createdAt}})',
+      title: 'Upload (%s)',
+      requiresReviewTitle: 'Review and approve upload (%s)',
       summary: 'Details',
       new: {
         title: 'New records',

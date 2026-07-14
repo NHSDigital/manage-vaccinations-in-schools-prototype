@@ -6,9 +6,9 @@
 {% set hideConfirmButton = true %}
 {% set programme = data.programmes[upload.programme_id] %}
 {% if upload.requiresReview %}
-  {% set title = __("upload.show.requiresReviewTitle", { upload: upload }) %}
+  {% set title = __("upload.show.requiresReviewTitle", upload.formatted.createdAt) %}
 {% else %}
-  {% set title = __("upload.show.title", { upload: upload }) %}
+  {% set title = __("upload.show.title", upload.formatted.createdAt) %}
 {% endif %}
 
 {% block beforeContent %}
