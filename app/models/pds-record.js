@@ -13,7 +13,7 @@ import {
 /**
  * @typedef {ChildOptions & object} PDSRecordOptions
  * @property {string} [nhsn] - NHS number
- * @property {boolean} [invalid] - Flagged as invalid
+ * @property {boolean} [isInvalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
@@ -35,13 +35,13 @@ export class PDSRecord extends Child {
   constructor(options, context) {
     super(options, context)
 
-    const invalid = stringToBoolean(options?.invalid)
+    const isInvalid = stringToBoolean(options?.isInvalid)
     const sensitive = stringToBoolean(options?.sensitive)
 
     this.nhsn =
       options?.nhsn ||
       '999#######'.replace(/#+/g, (m) => faker.string.numeric(m.length))
-    this.invalid = invalid
+    this.isInvalid = isInvalid
     this.sensitive = sensitive
     this.address = !sensitive && options?.address ? options.address : undefined
     this.school_id = null
@@ -106,7 +106,7 @@ export class PDSRecord extends Child {
       {
         get: (_target, prop) => {
           const getFormattedNhsn = () =>
-            formatNhsNumber(this.nhsn, this.invalid)
+            formatNhsNumber(this.nhsn, this.isInvalid)
 
           switch (prop) {
             case 'fullNameAndNhsn':
