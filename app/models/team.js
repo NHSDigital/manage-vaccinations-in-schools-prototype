@@ -17,7 +17,7 @@ import { BaseModel } from './base.js'
  * @property {string} [privacyPolicyUrl] - Privacy policy URL
  * @property {number} [sessionOpenWeeks] - Weeks before request consent
  * @property {number} [sessionReminderWeeks] - Weeks before send first reminder
- * @property {boolean} [schoolSessionRegistration] - Should school sessions have registration
+ * @property {boolean} [hasSchoolSessionRegistration] - Should school sessions have registration
  * @property {number} [clinicNasalSprayDuration] - Minutes to allocate each nasal spray
  * @property {number} [clinicInjectionDuration] - Minutes to allocate each injection
  * @property {boolean} [clinicSessionRegistration] - Should clinic sessions have registration
@@ -48,8 +48,8 @@ export class Team extends BaseModel {
       Number(options?.sessionOpenWeeks) || TeamDefaults.SessionOpenWeeks
     this.sessionReminderWeeks =
       Number(options?.sessionReminderWeeks) || TeamDefaults.SessionReminderWeeks
-    this.schoolSessionRegistration =
-      stringToBoolean(options.schoolSessionRegistration) ??
+    this.hasSchoolSessionRegistration =
+      stringToBoolean(options.hasSchoolSessionRegistration) ??
       TeamDefaults.SchoolSessionRegistration
     this.clinicNasalSprayDuration =
       Number(options?.clinicNasalSprayDuration) ||

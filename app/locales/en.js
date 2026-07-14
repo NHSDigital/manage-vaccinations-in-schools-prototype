@@ -3332,7 +3332,7 @@ export const en = {
       label: 'Consent reminders',
       hint: 'Enter the number of weeks before a session takes place'
     },
-    schoolSessionRegistration: {
+    hasSchoolSessionRegistration: {
       title:
         'Register children’s attendance before recording vaccinations in school?',
       label: 'Register attendance'
