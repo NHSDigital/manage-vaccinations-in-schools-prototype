@@ -19,8 +19,8 @@ export function getUpdatedFields(before, after) {
     if (!_.isMatch(valueBefore, valueAfter)) {
       updatedFields.push({
         key: `${after.ns}.${key}.label`,
-        before: String(valueBefore ?? '').replace('<br>', ', '),
-        after: String(valueAfter ?? '').replace('<br>', ', ')
+        before: String(valueBefore ?? 'Not provided').replace('<br>', ', '),
+        after: String(valueAfter ?? 'Not provided').replace('<br>', ', ')
       })
     }
   }

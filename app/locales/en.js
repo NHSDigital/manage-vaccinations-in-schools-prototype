@@ -1953,6 +1953,9 @@ export const en = {
       label: 'Registration group',
       title: 'What registration group is the child in?'
     },
+    academicYearGroup: {
+      label: 'Year group'
+    },
     yearGroupWithRegistration: {
       label: 'Year group'
     },
