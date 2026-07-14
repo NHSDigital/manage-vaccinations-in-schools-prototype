@@ -42,11 +42,11 @@ export const activityController = {
       q5: false
     })
     const patient = Patient.findAll(data).find(
-      ({ hasMissingNhsNumber, invalid }) => !hasMissingNhsNumber && !invalid
+      ({ hasMissingNhsNumber, isInvalid }) => !hasMissingNhsNumber && !isInvalid
     )
     const mergedPatient = Patient.findAll(data).find(
-      ({ uuid, hasMissingNhsNumber, invalid }) =>
-        uuid !== patient?.uuid && !hasMissingNhsNumber && !invalid
+      ({ uuid, hasMissingNhsNumber, isInvalid }) =>
+        uuid !== patient?.uuid && !hasMissingNhsNumber && !isInvalid
     )
     const reply = Reply.findAll(data).find(
       (reply) => !reply.selfConsent && reply.given && reply.contact

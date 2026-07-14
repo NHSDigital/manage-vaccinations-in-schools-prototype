@@ -42,7 +42,7 @@ import {
 /**
  * @typedef {ChildOptions & object} PatientOptions
  * @property {string} [nhsn] - NHS number
- * @property {boolean} [invalid] - Flagged as invalid
+ * @property {boolean} [isInvalid] - Flagged as invalid
  * @property {boolean} [sensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Partial<Child>} [pendingChanges] - Pending changes to record values
@@ -72,11 +72,11 @@ export class Patient extends Child {
   constructor(options, context) {
     super(options, context)
 
-    const invalid = stringToBoolean(options?.invalid)
+    const isInvalid = stringToBoolean(options?.isInvalid)
     const sensitive = stringToBoolean(options?.sensitive)
 
     this.nhsn = options?.nhsn || this.nhsNumber
-    this.invalid = invalid
+    this.isInvalid = isInvalid
     this.sensitive = sensitive
     this.address = !sensitive && options?.address ? options.address : undefined
     this.archiveReason = options?.archiveReason
@@ -532,7 +532,7 @@ export class Patient extends Child {
       {
         get: (_target, prop) => {
           const getFormattedNhsn = () =>
-            formatNhsNumber(this.nhsn, this.invalid)
+            formatNhsNumber(this.nhsn, this.isInvalid)
 
           switch (prop) {
             case 'fullNameAndNhsn':
@@ -843,7 +843,7 @@ export class Patient extends Child {
         break
       case notice.type === NoticeType.Invalid:
         // Flag record as invalid
-        this.invalid = true
+        this.isInvalid = true
         name = `Record flagged as invalid`
         break
       case notice.type === NoticeType.Sensitive:
