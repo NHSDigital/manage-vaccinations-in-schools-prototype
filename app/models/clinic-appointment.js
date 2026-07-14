@@ -315,7 +315,7 @@ export class ClinicAppointment {
    *
    * @returns {boolean} - true if the appointment's been archived, or false otherwise
    */
-  get archived() {
+  get isArchived() {
     return this.status === ClinicAppointmentStatus.Archived
   }
 
