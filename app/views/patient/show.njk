@@ -38,7 +38,7 @@
         {
           text: __("patient.archive.label"),
           href: patient.uri + "/archive"
-        } if not patient.archived and not account.isSchoolUser
+        } if not patient.isArchived and not account.isSchoolUser
       ]
     }
   }) %}
@@ -127,11 +127,11 @@
         {
           text: "Invite to clinic",
           href: patient.uri + "/invite-to-clinic"
-        } if not patient.archived and canInviteToClinic,
+        } if not patient.isArchived and canInviteToClinic,
         {
           text: "Book into a clinic",
           href: patient.uri + "/book-into-a-clinic/"
-        } if not patient.archived and canBookIntoClinic
+        } if not patient.isArchived and canBookIntoClinic
       ]
     } if not account.isSchoolUser
   }) %}

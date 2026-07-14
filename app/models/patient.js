@@ -457,7 +457,7 @@ export class Patient extends Child {
    *
    * @returns {boolean} Record is archived
    */
-  get archived() {
+  get isArchived() {
     return this.archiveReason !== undefined
   }
 
