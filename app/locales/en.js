@@ -2592,7 +2592,7 @@ export const en = {
     outcome: {
       title: 'Update consent response'
     },
-    confirmed: {
+    hasConfirmedRefusal: {
       label: 'Confirm consent refusal?'
     }
   },

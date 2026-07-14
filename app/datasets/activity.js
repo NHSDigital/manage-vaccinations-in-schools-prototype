@@ -13,8 +13,8 @@ export default {
         : `${decision} by ${contact?.fullNameAndRelationship}`,
     updated: ({ decision, contact }) =>
       `${decision} in updated response from ${contact.fullNameAndRelationship}`,
-    followedUp: ({ confirmed, decision, contact }) =>
-      `${confirmed ? 'Refusal confirmed' : decision} in followed-up response from ${contact.fullNameAndRelationship}`,
+    followedUp: ({ hasConfirmedRefusal, decision, contact }) =>
+      `${hasConfirmedRefusal ? 'Refusal confirmed' : decision} in followed-up response from ${contact.fullNameAndRelationship}`,
     matched: ({ contact }) =>
       `Consent response from ${contact.fullNameAndRelationship} manually matched with child record`,
     invalid: ({ contact }) =>
