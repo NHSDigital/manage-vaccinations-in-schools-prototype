@@ -798,7 +798,7 @@ export class Session extends BaseModel {
    *
    * @returns {boolean} Has alternative vaccines
    */
-  get offersAlternativeVaccine() {
+  get canOfferAlternativeVaccine() {
     const programmesWithAlternativeVaccine = this.programmes.filter(
       ({ alternativeVaccine }) => alternativeVaccine
     )

@@ -119,7 +119,7 @@
                 vaccineCriteria: {
                   label: __("patientSession.vaccineCriteria.label"),
                   value: patientSession.formatted.vaccineCriteria
-                } if session.offersAlternativeVaccine and not account.isSchoolUser,
+                } if session.canOfferAlternativeVaccine and not account.isSchoolUser,
                 instruct: {
                   label: __("patientSession.instruct.label"),
                   value: patientSession.formatted.instruct

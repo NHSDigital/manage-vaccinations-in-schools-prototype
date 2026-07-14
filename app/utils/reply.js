@@ -139,7 +139,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
 
   if (reply.given) {
     if (
-      session.offersAlternativeVaccine &&
+      session.canOfferAlternativeVaccine &&
       reply.decision === ReplyDecision.OnlyAlternativeInjection
     ) {
       return ConsentOutcome.GivenForAlternativeInjection
@@ -255,7 +255,7 @@ export const getConsentOutcome = (patientSession) => {
       }
 
       // For MMR programme, determine if any consent requested gelatine-free
-      if (patientSession.session?.offersAlternativeVaccine) {
+      if (patientSession.session?.canOfferAlternativeVaccine) {
         if (replies.some(({ alternative }) => alternative)) {
           return ConsentOutcome.GivenForAlternativeInjection
         }

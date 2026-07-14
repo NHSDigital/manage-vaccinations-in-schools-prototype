@@ -96,7 +96,7 @@
         alternative: {
           label: __("consent.alternative." + programme_id + ".label"),
           href: editPath("alternative")
-        } if session.offersAlternativeVaccine,
+        } if session.canOfferAlternativeVaccine,
         refusalReason: {
           href: editPath("refusal-reason")
         },
