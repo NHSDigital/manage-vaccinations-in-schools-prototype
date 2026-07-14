@@ -128,7 +128,7 @@
       },
       address: {
         href: editPath("address")
-      } if consent.given,
+      } if consent.hasGivenConsent,
       school: {
         value: consent.child.formatted.school or session.location.name,
         href: editPath("school")
@@ -184,7 +184,7 @@
       editPath("health-question-{{key}}"),
       true
     )
-  }) if consent.given }}
+  }) if consent.hasGivenConsent }}
 
   {% if SessionPresetName.MMR in session.presetNames and consent.decision == ReplyDecision.AlreadyVaccinated %}
     {{ summaryList({
