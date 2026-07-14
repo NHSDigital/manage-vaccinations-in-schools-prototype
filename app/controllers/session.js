@@ -929,7 +929,7 @@ export const sessionController = {
       ) {
         request.body.session.hasRegistration =
           request.body.session.type === SessionType.School
-            ? team.schoolSessionRegistration
+            ? team.hasSchoolSessionRegistration
             : team.clinicSessionRegistration
       }
     }
