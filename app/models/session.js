@@ -228,7 +228,7 @@ export class Session extends BaseModel {
    *
    * @returns {Date|undefined} Consent close date
    */
-  get closeAt() {
+  get consentCloseAt() {
     // Always close consent for school sessions one day before final session
     if (this.date) {
       return removeDays(this.date, 1)
@@ -1026,12 +1026,12 @@ export class Session extends BaseModel {
                 consentWindowSentence = `Consent window opens on ${formatDate(this.consentOpenAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Closed:
-                consentWindow = `Closed ${formatDate(this.closeAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window closed on ${formatDate(this.closeAt, consentDateStyle)}.`
+                consentWindow = `Closed ${formatDate(this.consentCloseAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window closed on ${formatDate(this.consentCloseAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Open:
-                consentWindow = `Open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window is open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.closeAt, consentDateStyle)}.`
+                consentWindow = `Open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window is open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}.`
                 break
             }
             return { consentWindow, consentWindowSentence }
@@ -1121,8 +1121,8 @@ export class Session extends BaseModel {
                   )
                 : `Send ${reminderWeeksText} before each session`
             }
-            case 'closeAt':
-              return formatDate(this.closeAt, { dateStyle: 'full' })
+            case 'consentCloseAt':
+              return formatDate(this.consentCloseAt, { dateStyle: 'full' })
             case 'patients':
               return filters.plural(this.patients.length, 'child')
             case 'consents':

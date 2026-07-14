@@ -96,7 +96,8 @@ export function generateConsent(
     ].includes(refusalReason)
 
   const nowAt = today()
-  const sessionClosedBeforeToday = session.closeAt.valueOf() < nowAt.valueOf()
+  const sessionClosedBeforeToday =
+    session.consentCloseAt.valueOf() < nowAt.valueOf()
   const consentWindowOpensAfterToday =
     session.consentOpenAt.valueOf() > nowAt.valueOf()
 
@@ -110,7 +111,7 @@ export function generateConsent(
       lastConsentCreatedAt ||
       faker.date.between({
         from: session.consentOpenAt,
-        to: sessionClosedBeforeToday ? session.closeAt : nowAt
+        to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
       }),
     child,
     decision,
