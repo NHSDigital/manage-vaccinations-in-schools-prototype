@@ -2870,7 +2870,7 @@ export const en = {
       label: 'Protocol',
       title: 'Which protocol will you use for flu vaccinations in this session?'
     },
-    psdProtocol: {
+    hasPsdProtocol: {
       label: 'Use patient specific direction (PSD)',
       title:
         'Can healthcare assistants give the nasal spray vaccine using a patient specific direction (PSD)?'

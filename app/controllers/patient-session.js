@@ -103,7 +103,7 @@ export const patientSessionController = {
       // Patient already triaged
       hasTriage: triageNotes.length > 0,
       hasInstruct:
-        session.psdProtocol &&
+        session.hasPsdProtocol &&
         patientSession.instruct &&
         patientSession.session.isActive,
       userIsHCA,

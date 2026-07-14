@@ -138,7 +138,7 @@ export const vaccinationController = {
 
     // HCAs uses different protocol depending on vaccine and programme
     if (role === UserRole.HCA) {
-      if (session.psdProtocol && instruction) {
+      if (session.hasPsdProtocol && instruction) {
         protocol = VaccinationProtocol.PSD
       }
     }

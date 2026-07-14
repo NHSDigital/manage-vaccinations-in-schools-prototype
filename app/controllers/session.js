@@ -85,7 +85,7 @@ export const sessionController = {
           href: `${session.uri}/report`,
           current: view === 'report'
         },
-        ...(session.psdProtocol
+        ...(session.hasPsdProtocol
           ? [
               {
                 text: __('session.instruct.label'),
@@ -551,7 +551,7 @@ export const sessionController = {
     const radioFilters = {
       report: {
         register: showRegistration && RegistrationOutcome,
-        instruct: session.psdProtocol && InstructionOutcome
+        instruct: session.hasPsdProtocol && InstructionOutcome
       },
       instruct: {
         instruct: InstructionOutcome
