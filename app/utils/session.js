@@ -32,10 +32,10 @@ export const getConsentWindow = (session) => {
       return ConsentWindow.Opening
     // Open (open date is before today, and close date after today)
     case isBefore(session.consentOpenAt, nowAt) &&
-      isAfter(session.closeAt, nowAt):
+      isAfter(session.consentCloseAt, nowAt):
       return ConsentWindow.Open
     // Closed (close date is before today)
-    case isBefore(session.closeAt, nowAt):
+    case isBefore(session.consentCloseAt, nowAt):
       return ConsentWindow.Closed
     default:
       return ConsentWindow.None
