@@ -79,7 +79,7 @@ import { BaseModel } from './base.js'
  * @property {string} [uuid] - Patient session UUID
  * @property {Gillick} [gillick] - Gillick assessment
  * @property {Array<AuditEvent>} [notes] - Notes
- * @property {boolean} [alternative] - Administer alternative vaccine
+ * @property {boolean} [hasAlternativeVaccine] - Administer alternative vaccine
  */
 
 /**
@@ -125,7 +125,7 @@ export class PatientSession extends BaseModel {
     this.uuid = options?.uuid || faker.string.uuid()
     this.gillick = options?.gillick && new Gillick(options.gillick)
     this.notes = options?.notes || []
-    this.alternative = options?.alternative || false
+    this.hasAlternativeVaccine = options?.hasAlternativeVaccine || false
   }
 
   /**
@@ -383,7 +383,7 @@ export class PatientSession extends BaseModel {
     // Administered vaccine was the alternative
     if (
       this.clinicAppointment?.hasConsentForAlternativeVaccine ||
-      this.alternative
+      this.hasAlternativeVaccine
     ) {
       return alternativeVaccine
     }
