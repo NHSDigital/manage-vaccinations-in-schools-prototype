@@ -7,7 +7,7 @@ export default {
     name: 'A programme administered outside the UK',
     title: 'A programme administered outside the UK',
     hidden: true,
-    ttcv: true,
+    isTetanusVaccine: true,
     sequence: ['1P'],
     sequenceDefault: '1P'
   },
@@ -17,7 +17,7 @@ export default {
     name: '4-in-1',
     title: '4-in-1 pre-school booster',
     hidden: true,
-    ttcv: true,
+    isTetanusVaccine: true,
     sequence: ['1P', '2P', '3P'],
     sequenceDefault: '1P'
   },
@@ -27,7 +27,7 @@ export default {
     name: '5-in-1',
     title: '5-in-1',
     hidden: true,
-    ttcv: true,
+    isTetanusVaccine: true,
     sequence: ['1B'],
     sequenceDefault: '1B'
   },
@@ -37,7 +37,7 @@ export default {
     name: '6-in-1',
     title: '6-in-1',
     hidden: true,
-    ttcv: true,
+    isTetanusVaccine: true,
     sequence: ['1P', '2P', '3P', '4P'],
     sequenceDefault: '1P'
   },
@@ -166,7 +166,7 @@ export default {
     yearGroups: [9, 10, 11],
     targetYearGroup: 9,
     vaccine_snomeds: ['7374311000001101'],
-    ttcv: true,
+    isTetanusVaccine: true,
     nhseSyncable: false
   }
 }

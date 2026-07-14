@@ -2034,7 +2034,7 @@ export const en = {
     statusNotes: {
       label: 'Notes'
     },
-    ttcv: {
+    tetanus: {
       label: 'Previous vaccinations for tetanus, diptheria and polio'
     },
     activeClinics: {
@@ -3759,7 +3759,7 @@ export const en = {
       },
       alreadyVaccinated: {
         title: 'Record as already vaccinated',
-        ttcv: 'Record a previous vaccination'
+        tetanus: 'Record a previous vaccination'
       },
       notGiven: {
         title: 'Vaccination was not given'
@@ -3892,7 +3892,7 @@ export const en = {
     source: {
       label: 'Source'
     },
-    ttcv: {
+    tetanus: {
       label: 'Dose'
     },
     programme: {

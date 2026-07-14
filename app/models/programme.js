@@ -27,7 +27,7 @@ import { BaseModel } from './base.js'
  * @property {string} [sequenceDefault] - Default vaccine dose sequence
  * @property {Array<number>} [yearGroups] - All eligible year groups for this programme
  * @property {number} [targetYearGroup] - Year group for routine vaccination
- * @property {boolean} [ttcv] - Tetanus-toxoid containing vaccination programme
+ * @property {boolean} [isTetanusVaccine] - Tetanus-toxoid containing programme
  * @property {boolean} [nhseSyncable] - Vaccination records can be synced
  * @property {Array<string>} [vaccine_snomeds] - Vaccines administered
  */
@@ -60,7 +60,7 @@ export class Programme extends BaseModel {
     this.sequenceDefault = options?.sequenceDefault
     this.yearGroups = options?.yearGroups
     this.targetYearGroup = options?.targetYearGroup
-    this.ttcv = options?.ttcv || false
+    this.isTetanusVaccine = options?.isTetanusVaccine || false
     this.nhseSyncable = options?.nhseSyncable || false
     this.vaccine_snomeds = options?.vaccine_snomeds || []
   }

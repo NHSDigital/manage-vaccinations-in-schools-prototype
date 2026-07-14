@@ -355,9 +355,9 @@ export class PatientProgramme extends BaseModel {
    *
    * @returns {Array<Vaccination>|undefined} Vaccinations
    */
-  get ttcvVaccinationsGiven() {
+  get tetanusVaccinationsGiven() {
     return this.patient?.vaccinations
-      .filter((vaccination) => vaccination.programme?.ttcv)
+      .filter((vaccination) => vaccination.programme?.isTetanusVaccine)
       .filter((vaccination) => vaccination.given)
   }
 
@@ -484,7 +484,7 @@ export class PatientProgramme extends BaseModel {
           },
           this.context
         ),
-        ...this.ttcvVaccinationsGiven,
+        ...this.tetanusVaccinationsGiven,
         ...this.otherVaccinationsGiven
       ].sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
     }

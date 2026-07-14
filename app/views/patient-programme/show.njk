@@ -78,7 +78,7 @@
 
   {% if patientProgramme.ttcvVaccinations %}
     {% call card({
-      heading: __("patientProgramme.ttcv.label"),
+      heading: __("patientProgramme.tetanus.label"),
       headingLevel: 3
     }) %}
       {% set ttcvRows = [] %}
@@ -97,27 +97,27 @@
             html: vaccination.formatted.programmeWithSequence
           },
           {
-            header: __("vaccination.ttcv.label"),
+            header: __("vaccination.tetanus.label"),
             html: loop.index | ordinal
           }
         ]) %}
       {% endfor %}
 
       {{ table({
-        id: "ttcv",
+        id: "tetanus",
         responsive: true,
         head: [
           { text: __("vaccination.administeredAt.label") },
           { text: __("vaccination.age.label") },
           { text: __("vaccination.programme.label") },
-          { text: __("vaccination.ttcv.label") }
+          { text: __("vaccination.tetanus.label") }
         ],
         rows: ttcvRows
       }) }}
 
       {{ actionLink({
-        text: __("vaccination.new.alreadyVaccinated.ttcv"),
-        href: patientProgramme.uri + "/new/ttcv"
+        text: __("vaccination.new.alreadyVaccinated.tetanus"),
+        href: patientProgramme.uri + "/new/tetanus"
       }) }}
     {% endcall %}
   {% endif %}
