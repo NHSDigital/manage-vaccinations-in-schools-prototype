@@ -767,10 +767,17 @@ export class Patient extends Child {
         messageTemplate = 'vaccination-already-had'
         break
       case VaccinationOutcome.Absent:
+        messageTemplate = 'vaccination-not-given-absent'
+        break
       case VaccinationOutcome.DoNotVaccinate:
+        messageTemplate =
+          'vaccination-not-given-contraindicated-do-not-vaccinate'
+        break
       case VaccinationOutcome.Refused:
+        messageTemplate = 'vaccination-not-given-refused'
+        break
       case VaccinationOutcome.Unwell:
-        messageTemplate = 'vaccination-not-administered'
+        messageTemplate = 'vaccination-not-given-unwell'
         break
       default:
         messageTemplate = 'vaccination-deleted'
