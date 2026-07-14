@@ -16,8 +16,8 @@ import { BaseModel } from './base.js'
  * @property {boolean} [canNotify] - Notify about consent and vaccinations
  * @property {string} [tel] - Phone number
  * @property {string} [email] - Email address
+ * @property {boolean} [canSms] - Get updates via SMS
  * @property {NotifyEmailStatus} [emailStatus] - Email status
- * @property {boolean} [sms] - Get updates via SMS
  * @property {NotifySmsStatus} [smsStatus] - SMS status
  * @property {boolean} [hasCommunicationNeeds] - Has communication needs
  * @property {string} [communicationNeeds] - Communication or language needs
@@ -60,8 +60,8 @@ export class Contact extends BaseModel {
     this.canNotify = stringToBoolean(options?.canNotify)
     this.tel = options?.tel
     this.email = options?.email
+    this.canSms = stringToBoolean(options.canSms)
     this.emailStatus = this?.email && options?.emailStatus
-    this.sms = stringToBoolean(options.sms)
     this.smsStatus = this?.tel && options?.smsStatus
     this.hasCommunicationNeeds = stringToBoolean(options?.hasCommunicationNeeds)
 
