@@ -314,7 +314,7 @@ export const patientSessionController = {
     })
 
     // Pre-screening outcome is to vaccinate with the alternative vaccine
-    patientSession.alternative = preScreen.ready === 'alternative'
+    patientSession.hasAlternativeVaccine = preScreen.ready === 'alternative'
 
     // Update patient session
     PatientSession.update(patientSession.uuid, patientSession, data)
