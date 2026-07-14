@@ -109,7 +109,7 @@ export class Upload extends BaseModel {
    *
    * @returns {boolean} Upload needs review
    */
-  get needsReview() {
+  get requiresReview() {
     return this.status === UploadStatus.Review
   }
 

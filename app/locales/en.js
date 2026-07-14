@@ -3451,7 +3451,7 @@ export const en = {
     },
     show: {
       title: 'Upload ({{upload.formatted.createdAt}})',
-      needsReviewTitle:
+      requiresReviewTitle:
         'Review and approve upload ({{upload.formatted.createdAt}})',
       summary: 'Details',
       new: {

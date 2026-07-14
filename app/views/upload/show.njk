@@ -5,8 +5,8 @@
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set programme = data.programmes[upload.programme_id] %}
-{% if upload.needsReview %}
-  {% set title = __("upload.show.needsReviewTitle", { upload: upload }) %}
+{% if upload.requiresReview %}
+  {% set title = __("upload.show.requiresReviewTitle", { upload: upload }) %}
 {% else %}
   {% set title = __("upload.show.title", { upload: upload }) %}
 {% endif %}
