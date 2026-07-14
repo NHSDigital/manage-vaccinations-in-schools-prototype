@@ -229,7 +229,7 @@ export class PatientProgramme extends BaseModel {
         }
 
         // Parent(s) refused on grounds of it being in school --> OK to invite
-        if (lastPatientSession.vaccinationWantedOutsideSchool) {
+        if (lastPatientSession.isVaccinationWantedOutsideSchool) {
           return true
         }
 
@@ -571,7 +571,7 @@ export class PatientProgramme extends BaseModel {
         const patientRefusedStatus = lastPatientSession.patientRefused
         if (
           patientRefusedStatus === PatientRefusedStatus.Refusal &&
-          lastPatientSession.vaccinationWantedOutsideSchool
+          lastPatientSession.isVaccinationWantedOutsideSchool
         ) {
           return 'Do not vaccinate in school'
         }

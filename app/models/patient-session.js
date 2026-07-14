@@ -730,7 +730,7 @@ export class PatientSession extends BaseModel {
    *
    * @returns {boolean} True if all refusals were on grounds of not wanting vaccination in school, or false otherwise
    */
-  get vaccinationWantedOutsideSchool() {
+  get isVaccinationWantedOutsideSchool() {
     const refusalReasons = this.consentRefusalReasons
     return (
       refusalReasons.length &&
