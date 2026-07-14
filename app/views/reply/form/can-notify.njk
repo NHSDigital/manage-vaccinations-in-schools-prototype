@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("contact.notify.title") %}
+{% set title = __("contact.canNotify.title") %}
 
 {% block form %}
   {{ radios({
@@ -13,6 +13,6 @@
       }
     },
     items: getBooleanItems(),
-    decorate: "reply.contact.notify"
+    decorate: "reply.contact.canNotify"
   }) }}
 {% endblock %}

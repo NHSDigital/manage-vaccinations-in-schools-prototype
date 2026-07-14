@@ -788,7 +788,7 @@ export const en = {
       fullName: {
         label: 'Full name'
       },
-      notify: {
+      canNotify: {
         label: 'Send notifications'
       },
       email: {
@@ -1125,7 +1125,7 @@ export const en = {
       relationship: {
         label: 'Relationship to child'
       },
-      notify: {
+      canNotify: {
         label: 'Send notifications'
       },
       email: {
@@ -1728,7 +1728,7 @@ export const en = {
     relationshipOther: {
       label: 'Give details'
     },
-    notify: {
+    canNotify: {
       title:
         'Does the child want their parent or guardian to get confirmation of the vaccination?',
       label: 'Notify parent'
@@ -1970,7 +1970,7 @@ export const en = {
       fullName: {
         label: 'Name'
       },
-      notify: {
+      canNotify: {
         label: 'Send notifications'
       },
       email: {
@@ -2496,7 +2496,7 @@ export const en = {
         new: 'Details for parent or guardian',
         edit: 'Details for {{contact.fullNameAndRelationship}}'
       },
-      notify: {
+      canNotify: {
         title:
           'Do you want to send {{contact.formatted.fullName}} an email and text message confirming their decision?',
         label: 'Notify parent'
