@@ -3337,7 +3337,7 @@ export const en = {
         'Register children’s attendance before recording vaccinations in school?',
       label: 'Register attendance'
     },
-    clinicSessionRegistration: {
+    hasClinicSessionRegistration: {
       title:
         'Register children’s attendance before recording vaccinations at a clinic?',
       label: 'Register attendance'
