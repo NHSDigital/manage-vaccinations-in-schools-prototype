@@ -61,11 +61,11 @@
               {
                 text: __("reply.withdraw.label"),
                 href: reply.uri + "/edit/withdraw"
-              } if not reply.isInvalidated and reply.given,
+              } if not reply.isInvalidated and reply.hasGivenConsent,
               {
                 text: __("reply.follow-up.label"),
                 href: reply.uri + "/edit/follow-up"
-              } if not reply.isInvalidated and not reply.confirmed and not reply.given,
+              } if not reply.isInvalidated and not reply.confirmed and not reply.hasGivenConsent,
               {
                 text: __("reply.invalidate.label"),
                 href: reply.uri + "/edit/invalidate"
@@ -76,10 +76,10 @@
         lastRowBorder: false,
         rows: summaryRows(reply, {
           email: {
-            value: appContactEmail(reply.contact, reply.given)
+            value: appContactEmail(reply.contact, reply.hasGivenConsent)
           } if reply.contact.email,
           tel: {
-            value: appContactSms(reply.contact, reply.given)
+            value: appContactSms(reply.contact, reply.hasGivenConsent)
           } if reply.contact.tel,
           communicationNeeds: {
             label: __("contact.communicationNeeds.label"),

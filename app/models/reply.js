@@ -49,7 +49,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [consultation] - Consultation requested
  * @property {boolean} [ethnicity] - Answered ethnicity questions
  * @property {boolean} [declined] - Reply declines consent
- * @property {boolean} [given] - Reply gives consent
+ * @property {boolean} [hasGivenConsent] - Reply gives consent
  * @property {boolean} [hasRefusedConsent] - Reply refuses consent
  * @property {boolean} [isInvalidated] - Reply is invalid
  * @property {ReplyMethod} [method] - Reply method
@@ -114,7 +114,7 @@ export class Reply extends BaseModel {
       this.confirmed === true ? ReplyDecision.Refused : options?.decision
     this.ethnicity = stringToBoolean(options?.ethnicity)
     this.declined = this.decision === ReplyDecision.Declined
-    this.given = [
+    this.hasGivenConsent = [
       ReplyDecision.Given,
       ReplyDecision.OnlyAlternativeInjection,
       ReplyDecision.OnlyMenACWY,
@@ -142,9 +142,9 @@ export class Reply extends BaseModel {
     this.contact_ = options?.contact_ && new Contact(options.contact_)
 
     // Given options
-    if (this.given) {
-      this.healthAnswers = this.given && options?.healthAnswers
-      this.triageNote = this.given && options?.triageNote
+    if (this.hasGivenConsent) {
+      this.healthAnswers = this.hasGivenConsent && options?.healthAnswers
+      this.triageNote = this.hasGivenConsent && options?.triageNote
     }
 
     // Refusal options
@@ -262,7 +262,7 @@ export class Reply extends BaseModel {
    * @returns {ConsentVaccineCriteria|undefined} Chosen vaccination method
    */
   get vaccineCriteria() {
-    if (this.given && this.programme.type === ProgrammeType.Flu) {
+    if (this.hasGivenConsent && this.programme.type === ProgrammeType.Flu) {
       switch (true) {
         case this.decision === ReplyDecision.Given && !this.alternative:
           return ConsentVaccineCriteria.IntranasalOnly
@@ -273,7 +273,7 @@ export class Reply extends BaseModel {
       }
     }
 
-    if (this.given && this.programme.type === ProgrammeType.MMR) {
+    if (this.hasGivenConsent && this.programme.type === ProgrammeType.MMR) {
       if (this.decision === ReplyDecision.OnlyAlternativeInjection) {
         return ConsentVaccineCriteria.AlternativeMMRInjectionOnly
       }

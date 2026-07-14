@@ -33,11 +33,11 @@
         {
           text: __("reply.withdraw.label"),
           href: reply.uri + "/edit/withdraw"
-        } if not reply.isInvalidated and reply.given,
+        } if not reply.isInvalidated and reply.hasGivenConsent,
         {
           text: __("reply.follow-up.label"),
           href: reply.uri + "/edit/follow-up"
-        } if not reply.isInvalidated and not reply.confirmed and not reply.given,
+        } if not reply.isInvalidated and not reply.confirmed and not reply.hasGivenConsent,
         {
           text: __("reply.invalidate.label"),
           href: reply.uri + "/edit/invalidate"
