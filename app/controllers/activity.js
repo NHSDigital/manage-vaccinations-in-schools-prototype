@@ -55,7 +55,7 @@ export const activityController = {
       ...reply,
       contact: reply.contact,
       decision: ReplyDecision.Refused,
-      confirmed: true
+      hasConfirmedRefusal: true
     }
     const session = Session.findOne(Object.values(data.sessions)[0].id, data)
     const vaccinationGiven = Vaccination.findAll(data).find(

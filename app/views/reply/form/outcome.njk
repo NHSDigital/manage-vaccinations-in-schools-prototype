@@ -16,10 +16,10 @@
 
   {{ radios({
     fieldset: {
-      legend: { text: __("reply.confirmed.label") }
+      legend: { text: __("reply.hasConfirmedRefusal.label") }
     },
     inline: true,
     items: getBooleanItems(),
-    decorate: "reply.confirmed"
+    decorate: "reply.hasConfirmedRefusal"
   }) }}
 {% endblock %}

@@ -45,7 +45,7 @@ import { BaseModel } from './base.js'
  * @property {Contact} [contact_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
  * @property {boolean} [alternative] - Consent for alternative vaccine
- * @property {boolean} [confirmed] - Decision confirmed
+ * @property {boolean} [hasConfirmedRefusal] - Refusal confirmed
  * @property {boolean} [consultation] - Consultation requested
  * @property {boolean} [ethnicity] - Answered ethnicity questions
  * @property {boolean} [hasDeclinedConsent] - Reply declines consent
@@ -108,10 +108,12 @@ export class Reply extends BaseModel {
     this.child = options?.child && new Child(options.child)
     this.alternative =
       options?.alternative && stringToBoolean(options?.alternative)
-    this.confirmed = stringToBoolean(options?.confirmed)
+    this.hasConfirmedRefusal = stringToBoolean(options?.hasConfirmedRefusal)
     this.consultation = stringToBoolean(options?.consultation)
     this.decision =
-      this.confirmed === true ? ReplyDecision.Refused : options?.decision
+      this.hasConfirmedRefusal === true
+        ? ReplyDecision.Refused
+        : options?.decision
     this.ethnicity = stringToBoolean(options?.ethnicity)
     this.hasDeclinedConsent = this.decision === ReplyDecision.Declined
     this.hasGivenConsent = [
@@ -412,7 +414,7 @@ export class Reply extends BaseModel {
                 'Invalid',
                 false
               )
-            } else if (this.confirmed) {
+            } else if (this.hasConfirmedRefusal) {
               decisionStatus = formatWithSecondaryText(
                 decisionStatus,
                 'Confirmed',

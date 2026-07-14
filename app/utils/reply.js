@@ -129,7 +129,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
     return ConsentOutcome.NoResponse
   }
 
-  if (reply.decision === ReplyDecision.Refused && reply.confirmed) {
+  if (reply.decision === ReplyDecision.Refused && reply.hasConfirmedRefusal) {
     return ConsentOutcome.FinalRefusal
   }
 
@@ -205,7 +205,8 @@ export const getConsentOutcome = (patientSession) => {
     // If one of the replies is a confirmed refusal, consent is final refusal
     if (
       replies.find(
-        ({ hasRefusedConsent, confirmed }) => hasRefusedConsent && confirmed
+        ({ hasRefusedConsent, hasConfirmedRefusal }) =>
+          hasRefusedConsent && hasConfirmedRefusal
       )
     ) {
       return ConsentOutcome.FinalRefusal
@@ -293,7 +294,7 @@ export const getConsentRefusalReasons = (patientSession) => {
   for (const reply of repliesWithRefusalReasons) {
     if (reply.refusalReason && !reply.isInvalidated) {
       // Indicate confirmed refusal reason
-      const refusalReason = reply.confirmed
+      const refusalReason = reply.hasConfirmedRefusal
         ? `${reply.refusalReason}<br><b>Confirmed</b>`
         : reply.refusalReason
 

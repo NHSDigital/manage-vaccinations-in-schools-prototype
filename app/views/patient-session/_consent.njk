@@ -65,7 +65,7 @@
               {
                 text: __("reply.follow-up.label"),
                 href: reply.uri + "/edit/follow-up"
-              } if not reply.isInvalidated and not reply.confirmed and not reply.hasGivenConsent,
+              } if not reply.isInvalidated and not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
               {
                 text: __("reply.invalidate.label"),
                 href: reply.uri + "/edit/invalidate"
