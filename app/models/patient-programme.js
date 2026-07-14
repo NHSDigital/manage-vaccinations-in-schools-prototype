@@ -312,7 +312,7 @@ export class PatientProgramme extends BaseModel {
    *
    * @returns {boolean} Eligible for programme
    */
-  get eligible() {
+  get isEligible() {
     return (
       !this.patient?.hasAgedOutOfProgrammes &&
       getCurrentAcademicYear() >= this.year
@@ -518,7 +518,7 @@ export class PatientProgramme extends BaseModel {
    */
   get status() {
     // Not eligible for programme yet
-    if (!this.eligible) {
+    if (!this.isEligible) {
       return PatientStatus.Ineligible
     }
 
