@@ -68,9 +68,9 @@ export class Team extends BaseModel {
    */
   get clinics() {
     try {
-      return Clinic.findAll(this.context).sort((a, b) =>
-        a.name.localeCompare(b.name)
-      )
+      return Clinic.findAll(this.context)
+        .filter((clinic) => clinic.team_id === this.id)
+        .sort((a, b) => a.name.localeCompare(b.name))
     } catch (error) {
       console.error('Team.clinics', error.message)
     }
