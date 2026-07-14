@@ -146,7 +146,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
     }
 
     if (
-      session.offersIntranasalVaccine &&
+      session.canOfferIntranasalVaccine &&
       reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
       !reply.alternative
     ) {
@@ -221,7 +221,7 @@ export const getConsentOutcome = (patientSession) => {
     // If consent given, determine which vaccine method has consent
     if (replies.every(({ given }) => given)) {
       // For flu programme, determine if consent given for injection
-      if (patientSession.session?.offersIntranasalVaccine) {
+      if (patientSession.session?.canOfferIntranasalVaccine) {
         const allWantInjection = replies.every(
           ({ vaccineCriteria }) =>
             vaccineCriteria ===

@@ -812,7 +812,7 @@ export class Session extends BaseModel {
    *
    * @returns {boolean} Has alternative vaccines
    */
-  get offersIntranasalVaccine() {
+  get canOfferIntranasalVaccine() {
     const programmesWithIntranasalVaccine = this.programmes.filter(
       ({ standardVaccine }) =>
         standardVaccine.criteria === VaccineCriteria.Intranasal
