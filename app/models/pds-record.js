@@ -14,7 +14,7 @@ import {
  * @typedef {ChildOptions & object} PDSRecordOptions
  * @property {string} [nhsn] - NHS number
  * @property {boolean} [isInvalid] - Flagged as invalid
- * @property {boolean} [sensitive] - Flagged as sensitive
+ * @property {boolean} [isSensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
  */
@@ -36,14 +36,15 @@ export class PDSRecord extends Child {
     super(options, context)
 
     const isInvalid = stringToBoolean(options?.isInvalid)
-    const sensitive = stringToBoolean(options?.sensitive)
+    const isSensitive = stringToBoolean(options?.isSensitive)
 
     this.nhsn =
       options?.nhsn ||
       '999#######'.replace(/#+/g, (m) => faker.string.numeric(m.length))
     this.isInvalid = isInvalid
-    this.sensitive = sensitive
-    this.address = !sensitive && options?.address ? options.address : undefined
+    this.isSensitive = isSensitive
+    this.address =
+      !isSensitive && options?.address ? options.address : undefined
     this.school_id = null
     this.contact_uuids = options?.contact_uuids || []
   }
@@ -72,7 +73,7 @@ export class PDSRecord extends Child {
    * @returns {Array<Contact>|undefined} Contacts
    */
   get contacts() {
-    if (!this.sensitive) {
+    if (!this.isSensitive) {
       return this.contact_uuids.map((uuid) =>
         Contact.findOne(uuid, this.context)
       )
