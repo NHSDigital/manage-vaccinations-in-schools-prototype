@@ -1858,9 +1858,9 @@ export const en = {
       showOnly: 'Show only',
       archived: 'Archived records',
       hasAdjustment: 'Children needing reasonable adjustments',
+      hasAgedOutOfProgrammes: 'Children aged out of programmes',
       hasImpairment: 'Children with impairments',
-      hasMissingNhsNumber: 'Children missing an NHS&nbsp;number',
-      agedOutOfProgrammes: 'Children aged out of programmes'
+      hasMissingNhsNumber: 'Children missing an NHS&nbsp;number'
     },
     archiveReason: {
       label: 'Reason archived'
@@ -1883,13 +1883,13 @@ export const en = {
       label: 'NHS number',
       title: 'What is the child’s NHS number?'
     },
-    hasMissingNhsNumber: {
-      label: 'Missing NHS number'
-    },
-    agedOutOfProgrammes: {
+    hasAgedOutOfProgrammes: {
       label: 'Aged out of programmes?',
       status:
         '{{patient.fullName}} is no longer eligible for school age immunisations'
+    },
+    hasMissingNhsNumber: {
+      label: 'Missing NHS number'
     },
     fullNameAndNhsn: {
       label: 'Name and NHS number'

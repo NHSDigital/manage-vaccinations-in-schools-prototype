@@ -225,7 +225,7 @@ export class Child extends BaseModel {
    *
    * @returns {boolean} Child still eligible for SAIS vaccinations
    */
-  get agedOutOfProgrammes() {
+  get hasAgedOutOfProgrammes() {
     return this.age >= 18
   }
 
@@ -235,7 +235,7 @@ export class Child extends BaseModel {
    * @returns {number|undefined} Year group, for example 8
    */
   get yearGroup() {
-    if (!this.agedOutOfProgrammes) {
+    if (!this.hasAgedOutOfProgrammes) {
       return this.academicYearGroup || getYearGroup(this.dob)
     }
   }
@@ -325,17 +325,17 @@ export class Child extends BaseModel {
                 Object.values(this.address).filter(Boolean).join('<br>')
               )
             case 'yearGroup':
-              if (this.agedOutOfProgrammes) return undefined
+              if (this.hasAgedOutOfProgrammes) return undefined
               return getFormattedYearGroup()
             case 'yearGroupWithRegistration': {
-              if (this.agedOutOfProgrammes) return undefined
+              if (this.hasAgedOutOfProgrammes) return undefined
               const yearGroup = getFormattedYearGroup()
               return this.registrationGroup && yearGroup
                 ? `${yearGroup} (${this.registrationGroup})`
                 : yearGroup
             }
             case 'schoolName':
-              if (this.agedOutOfProgrammes) return undefined
+              if (this.hasAgedOutOfProgrammes) return undefined
               return this?.school && this.school.name
             case 'adjustments':
               return (

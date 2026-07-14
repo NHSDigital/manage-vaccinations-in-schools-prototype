@@ -314,7 +314,7 @@ export class PatientProgramme extends BaseModel {
    */
   get eligible() {
     return (
-      !this.patient?.agedOutOfProgrammes &&
+      !this.patient?.hasAgedOutOfProgrammes &&
       getCurrentAcademicYear() >= this.year
     )
   }
@@ -553,7 +553,7 @@ export class PatientProgramme extends BaseModel {
   get statusNotes() {
     switch (this.status) {
       case PatientStatus.Ineligible:
-        return this.patient?.agedOutOfProgrammes
+        return this.patient?.hasAgedOutOfProgrammes
           ? 'Not eligible for school age immunisation'
           : `Eligible from 1 September ${this.year}`
       case PatientStatus.Vaccinated:

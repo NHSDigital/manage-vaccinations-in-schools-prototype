@@ -471,10 +471,10 @@ export const sessionController = {
 
     // Filter patient by display option
     for (const key of [
-      'agedOutOfProgrammes',
       'archived',
-      'hasImpairment',
       'hasAdjustment',
+      'hasAgedOutOfProgrammes',
+      'hasImpairment',
       'hasMissingNhsNumber'
     ]) {
       if (option?.includes(key)) {
