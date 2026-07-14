@@ -79,7 +79,7 @@ import { BaseModel } from './base.js'
  * @property {Date} [consentOpenAt] - Date consent window opens
  * @property {object} [consentOpenAt_] - Date consent window opens (from `dateInput`)
  * @property {Date} [closeAt] - Date session closed
- * @property {boolean} [cancelled] - Session was cancelled
+ * @property {Date} [cancelledAt] - Date session cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
  * @property {VaccinationProtocol} [fluProtocol] - Default protocol for flu programme
@@ -120,7 +120,7 @@ export class Session extends BaseModel {
     this.date_ = options?.date_
     this.academicYear = options?.academicYear || getCurrentAcademicYear()
     this.presetNames = stringToArray(options?.presetNames)
-    this.cancelled = options?.cancelled || false
+    this.cancelledAt = options?.cancelledAt && new Date(options.cancelledAt)
     this.hasRegistration = stringToBoolean(options?.hasRegistration)
 
     if (this.type === SessionType.Clinic) {
@@ -359,7 +359,7 @@ export class Session extends BaseModel {
     switch (true) {
       case !!this.closeAt:
         return SessionStatus.Closed
-      case this.cancelled:
+      case !!this.cancelledAt:
         return SessionStatus.Cancelled
       case !this.date:
         return SessionStatus.Unplanned

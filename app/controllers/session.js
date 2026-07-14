@@ -1234,7 +1234,7 @@ export const sessionController = {
     } else if (view === 'confirm') {
       request.flash('message', __('session.cancel.success', { session }))
 
-      session.cancelled = true
+      session.cancelledAt = today()
       Session.update(session.id, session, data)
     }
 
