@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% block beforeContent %}{% endblock %}
-{% set title = __("consent.ethnicity.title") %}
+{% set title = __("consent.hasEthnicityAnswers.title") %}
 
 {% block form %}
   {% call fieldset({
@@ -12,23 +12,23 @@
         })
       }
   }) %}
-    {{ __("consent.ethnicity.description") | nhsukMarkdown }}
+    {{ __("consent.hasEthnicityAnswers.description") | nhsukMarkdown }}
 
     {{ radios({
       fieldset: {
         legend: {
-          text: __("consent.ethnicity.label"),
+          text: __("consent.hasEthnicityAnswers.label"),
           size: "m"
         }
       },
       items: [{
-        text: __("consent.ethnicity.yes.label"),
+        text: __("consent.hasEthnicityAnswers.yes.label"),
         value: true
       }, {
-        text: __("consent.ethnicity.no.label"),
+        text: __("consent.hasEthnicityAnswers.no.label"),
         value: false
       }],
-      decorate: "consent.ethnicity"
+      decorate: "consent.hasEthnicityAnswers"
     }) }}
   {% endcall %}
 {% endblock %}

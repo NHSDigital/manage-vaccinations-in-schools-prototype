@@ -47,7 +47,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [alternative] - Consent for alternative vaccine
  * @property {boolean} [hasConfirmedRefusal] - Refusal confirmed
  * @property {boolean} [consultation] - Consultation requested
- * @property {boolean} [ethnicity] - Answered ethnicity questions
+ * @property {boolean} [hasEthnicityAnswers] - Answered ethnicity questions
  * @property {boolean} [hasDeclinedConsent] - Reply declines consent
  * @property {boolean} [hasGivenConsent] - Reply gives consent
  * @property {boolean} [hasRefusedConsent] - Reply refuses consent
@@ -114,7 +114,7 @@ export class Reply extends BaseModel {
       this.hasConfirmedRefusal === true
         ? ReplyDecision.Refused
         : options?.decision
-    this.ethnicity = stringToBoolean(options?.ethnicity)
+    this.hasEthnicityAnswers = stringToBoolean(options?.hasEthnicityAnswers)
     this.hasDeclinedConsent = this.decision === ReplyDecision.Declined
     this.hasGivenConsent = [
       ReplyDecision.Given,

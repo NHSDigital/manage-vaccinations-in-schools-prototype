@@ -186,7 +186,8 @@ export const giveOrRefuseConsentController = {
       [`/${session_id}/${consent_uuid}/new/check-answers`]: {},
       [`/${session_id}/${consent_uuid}/new/ethnicity`]: {
         [`/${session_id}/${consent_uuid}/new/confirmation`]: () =>
-          stringToBoolean(request.session.data.consent?.ethnicity) === false
+          stringToBoolean(request.session.data.consent?.hasEthnicityAnswers) ===
+          false
       },
       [`/${session_id}/${consent_uuid}/new/ethnic-group`]: {},
       [`/${session_id}/${consent_uuid}/new/ethnic-background`]: {},
