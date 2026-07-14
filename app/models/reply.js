@@ -50,8 +50,8 @@ import { BaseModel } from './base.js'
  * @property {boolean} [ethnicity] - Answered ethnicity questions
  * @property {boolean} [declined] - Reply declines consent
  * @property {boolean} [given] - Reply gives consent
- * @property {boolean} [refused] - Reply refuses consent
- * @property {boolean} [isInvalidated] - Reply is invalidated
+ * @property {boolean} [hasRefusedConsent] - Reply refuses consent
+ * @property {boolean} [isInvalidated] - Reply is invalid
  * @property {ReplyMethod} [method] - Reply method
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {object} [firstDose] - First dose
@@ -120,7 +120,7 @@ export class Reply extends BaseModel {
       ReplyDecision.OnlyMenACWY,
       ReplyDecision.OnlyTdIPV
     ].includes(this.decision)
-    this.refused = [
+    this.hasRefusedConsent = [
       ReplyDecision.AlreadyVaccinated,
       ReplyDecision.Refused
     ].includes(this.decision)

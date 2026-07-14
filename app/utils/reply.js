@@ -133,7 +133,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
     return ConsentOutcome.FinalRefusal
   }
 
-  if (reply.refused) {
+  if (reply.hasRefusedConsent) {
     return ConsentOutcome.Refused
   }
 
@@ -203,12 +203,16 @@ export const getConsentOutcome = (patientSession) => {
   // If many replies, determine if responses are consistent or inconsistent
   if (replies.length > 1) {
     // If one of the replies is a confirmed refusal, consent is final refusal
-    if (replies.find(({ refused, confirmed }) => refused && confirmed)) {
+    if (
+      replies.find(
+        ({ hasRefusedConsent, confirmed }) => hasRefusedConsent && confirmed
+      )
+    ) {
       return ConsentOutcome.FinalRefusal
     }
 
     // If one of the replies is a refusal, consent is refused
-    if (replies.find(({ refused }) => refused)) {
+    if (replies.find(({ hasRefusedConsent }) => hasRefusedConsent)) {
       return ConsentOutcome.Refused
     }
 
