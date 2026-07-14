@@ -175,7 +175,7 @@ export function generateChild(schools) {
     adjustments,
     impairments,
     impairmentsOther,
-    immunocompromised: faker.datatype.boolean(0.1),
+    isImmunocompromised: faker.datatype.boolean(0.1),
     address: {
       addressLine1: faker.location.streetAddress(),
       addressLevel1: faker.location.city(),
