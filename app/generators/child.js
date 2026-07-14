@@ -157,13 +157,13 @@ export function generateChild(schools) {
   const hasRegistrationGroup = school_id.startsWith('13')
   if (hasRegistrationGroup) {
     const yearGroup = getYearGroup(dob)
-    const registration = faker.string.alpha({
+    const registrationLetter = faker.string.alpha({
       length: 2,
       casing: 'upper',
       exclude: ['A', 'E', 'I', 'O', 'U']
     })
 
-    registrationGroup = `${yearGroup}${registration}`
+    registrationGroup = `${yearGroup}${registrationLetter}`
   }
 
   return new Child({

@@ -16,7 +16,7 @@
       {% endif %}
 
       {# Registration status #}
-      {% if session.isActive and session.registration %}
+      {% if session.hasRegistration and session.isActive %}
         <br>
         {% if appointment.register %}
           {{ appointment.formatted.register | safe }}
@@ -49,7 +49,7 @@
       {% endif %}
     {% else %}
       <a href="#">Book</a>
-    {% endif %}  
+    {% endif %}
   {% endmacro %}
 
   {# Full calendar-like view of the vaccination periods' appointments and empty slots #}

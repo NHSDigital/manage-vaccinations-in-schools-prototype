@@ -39,7 +39,7 @@ export const getInstructionOutcome = (patientSession) => {
 export const getRegistrationOutcome = (patientSession) => {
   const { patient, session, report } = patientSession
 
-  if (!session.registration) {
+  if (!session.hasRegistration) {
     return RegistrationOutcome.Present
   }
 
@@ -63,7 +63,7 @@ export const getRecordOutcome = (patientSession) => {
   const { register, report, session } = patientSession
 
   if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {
-    if (session.registration && register !== RegistrationOutcome.Present) {
+    if (session.hasRegistration && register !== RegistrationOutcome.Present) {
       return false
     }
 

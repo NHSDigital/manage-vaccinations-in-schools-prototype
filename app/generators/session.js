@@ -67,7 +67,7 @@ export function generateSession(preset, academicYear, user, options) {
     createdBy_uid: user.uid,
     date,
     openAt,
-    registration: true,
+    hasRegistration: true,
     academicYear,
     presetNames: [preset.name],
     ...(clinic_id && {

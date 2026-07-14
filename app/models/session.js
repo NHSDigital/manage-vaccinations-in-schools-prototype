@@ -68,7 +68,7 @@ import { BaseModel } from './base.js'
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  * @property {SessionMMRConsent} [mmrConsent] - Does session use MMR outbreak comms?
- * @property {boolean} [registration] - Does session have registration?
+ * @property {boolean} [hasRegistration] - Session has registration?
  *
  *   Clinics only
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
@@ -121,6 +121,7 @@ export class Session extends BaseModel {
     this.academicYear = options?.academicYear || getCurrentAcademicYear()
     this.presetNames = stringToArray(options?.presetNames)
     this.cancelled = options?.cancelled || false
+    this.hasRegistration = stringToBoolean(options?.hasRegistration)
 
     if (this.type === SessionType.Clinic) {
       this.vaccinationPeriods = options?.vaccinationPeriods
@@ -157,7 +158,6 @@ export class Session extends BaseModel {
       this.psdProtocol = stringToBoolean(options?.psdProtocol) || false
     }
 
-    this.registration = stringToBoolean(options?.registration)
     this.register = options?.register || {}
   }
 
