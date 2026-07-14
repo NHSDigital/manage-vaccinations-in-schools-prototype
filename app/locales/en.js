@@ -1856,11 +1856,11 @@ export const en = {
       label: 'Find children',
       dob: 'Child’s date of birth',
       showOnly: 'Show only',
-      archived: 'Archived records',
       hasAdjustment: 'Children needing reasonable adjustments',
       hasAgedOutOfProgrammes: 'Children aged out of programmes',
       hasImpairment: 'Children with impairments',
-      hasMissingNhsNumber: 'Children missing an NHS&nbsp;number'
+      hasMissingNhsNumber: 'Children missing an NHS&nbsp;number',
+      isArchived: 'Archived records'
     },
     archiveReason: {
       label: 'Reason archived'
@@ -1868,7 +1868,7 @@ export const en = {
     archiveReasonOther: {
       label: 'Give details'
     },
-    archived: {
+    isArchived: {
       label: 'Archived'
     },
     notes: {

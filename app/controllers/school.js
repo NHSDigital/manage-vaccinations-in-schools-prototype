@@ -236,11 +236,11 @@ export const schoolController = {
 
     // Filter by display option
     for (const key of [
-      'archived',
       'hasAdjustment',
       'hasAgedOutOfProgrammes',
       'hasImpairment',
-      'hasMissingNhsNumber'
+      'hasMissingNhsNumber',
+      'isArchived'
     ]) {
       if (option && String(option).includes(key)) {
         results = results.filter((patient) => patient[key])

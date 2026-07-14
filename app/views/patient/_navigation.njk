@@ -10,11 +10,11 @@
   {{ appActionList({
     items: [{
       tag: {
-        text: __("patient.archived.label"),
+        text: __("patient.isArchived.label"),
         classes: "nhsuk-tag--grey"
       }
     }]
-  }) if patient.archived }}
+  }) if patient.isArchived }}
 
   {{ appSectionNavigation({
     items: sectionNavigationItems
