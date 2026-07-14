@@ -36,7 +36,7 @@
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("resolveConsent")) %}
 {% endif %}
 
-{% if sessionActivityRow("instruct") and session.psdProtocol %}
+{% if sessionActivityRow("instruct") and session.hasPsdProtocol %}
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("instruct")) %}
 {% endif %}
 

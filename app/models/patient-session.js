@@ -963,7 +963,7 @@ export class PatientSession extends BaseModel {
               return this.screen && formatTag(this.status.screen)
             case 'instruct':
               return (
-                this.session?.psdProtocol && formatTag(this.status.instruct)
+                this.session?.hasPsdProtocol && formatTag(this.status.instruct)
               )
             case 'register':
               return formatTag(this.status.register)

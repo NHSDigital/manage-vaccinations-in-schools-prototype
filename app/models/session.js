@@ -83,7 +83,7 @@ import { BaseModel } from './base.js'
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
  * @property {VaccinationProtocol} [fluProtocol] - Default protocol for flu programme
- * @property {boolean} [psdProtocol] - Enable PSD protocol
+ * @property {boolean} [hasPsdProtocol] - Enable PSD protocol
  */
 
 /**
@@ -155,7 +155,7 @@ export class Session extends BaseModel {
 
     // PSD protocol can only be enabled if flu protocol is PGD
     if (this.fluProtocol === VaccinationProtocol.PGD) {
-      this.psdProtocol = stringToBoolean(options?.psdProtocol) || false
+      this.hasPsdProtocol = stringToBoolean(options?.hasPsdProtocol) || false
     }
 
     this.register = options?.register || {}
