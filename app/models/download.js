@@ -31,7 +31,7 @@ import { BaseModel } from './base.js'
  * @property {object} [endAt_] - Date to end report (from `dateInput`)
  * @property {DownloadFormat} [format] - Downloaded file format
  * @property {DownloadType} [type] - Download type
- * @property {boolean} [recordOffline] - Include columns for recording offline
+ * @property {boolean} [canRecordOffline] - Include columns for recording offline
  * @property {Array<DownloadVariable>} [variables] - Download variables
  * @property {number} [academicYear] - Programme year
  * @property {Array<string>} [team_ids] - Team IDs
@@ -97,7 +97,7 @@ export class Download extends BaseModel {
     }
 
     if (this.type === DownloadType.Session) {
-      this.recordOffline = stringToBoolean(options?.recordOffline)
+      this.canRecordOffline = stringToBoolean(options?.canRecordOffline)
     }
   }
 
@@ -397,9 +397,9 @@ export class Download extends BaseModel {
                 : this.teams.length
             case 'vaccinations':
               return `${this.vaccinations?.length} records`
-            case 'recordOffline':
+            case 'canRecordOffline':
               if (this.type !== DownloadType.Session) return undefined
-              return this.recordOffline === true ? 'Yes' : 'No'
+              return this.canRecordOffline === true ? 'Yes' : 'No'
             default:
               return undefined
           }

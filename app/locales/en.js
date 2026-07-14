@@ -1478,7 +1478,7 @@ export const en = {
           'Full vaccination details for individual children. Only includes vaccinations given by your team.'
       }
     },
-    recordOffline: {
+    canRecordOffline: {
       label: 'Record offline?',
       title: 'Do you want to use this spreadsheet for offline recording?',
       yes: {

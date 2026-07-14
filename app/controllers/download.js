@@ -175,11 +175,11 @@ export const downloadController = {
 
     response.locals.recordOfflineItems = [
       {
-        text: __('download.recordOffline.yes.label'),
+        text: __('download.canRecordOffline.yes.label'),
         value: true
       },
       {
-        text: __('download.recordOffline.no.label'),
+        text: __('download.canRecordOffline.no.label'),
         value: false
       }
     ]
