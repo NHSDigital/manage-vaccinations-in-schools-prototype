@@ -232,7 +232,7 @@ export class PatientSession extends BaseModel {
     if (this.responses) {
       return this.responses
         .filter((reply) => !reply.isInvalidated)
-        .filter((reply) => reply.declined)
+        .filter((reply) => reply.hasDeclinedConsent)
         .flatMap((reply) => reply.contact.fullNameAndRelationship)
     }
   }

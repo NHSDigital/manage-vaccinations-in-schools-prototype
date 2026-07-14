@@ -218,7 +218,7 @@ export const getConsentOutcome = (patientSession) => {
 
     // If one of the replies has requested follow up, show this status
     // over showing inconsistent consent
-    if (replies.find(({ declined }) => declined)) {
+    if (replies.find(({ hasDeclinedConsent }) => hasDeclinedConsent)) {
       return ConsentOutcome.Declined
     }
 
