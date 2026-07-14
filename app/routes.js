@@ -87,6 +87,7 @@ router.use(
 )
 router.use('/reviews', reviewRoutes)
 router.use('/schools', schoolRoutes)
+router.use('/sessions/:session_id/add-appointment', bookIntoClinicRoutes)
 router.use(
   '/sessions/:session_id/unmatched-appointments',
   unmatchedAppointmentRoutes

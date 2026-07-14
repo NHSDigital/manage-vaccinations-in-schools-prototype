@@ -48,8 +48,8 @@
         {{ appointment.link.extend | safe }}
       {% endif %}
     {% else %}
-      <a href="#">Book</a>
-    {% endif %}
+      <a href="{{session.uri}}/add-appointment/">Book</a>
+    {% endif %}  
   {% endmacro %}
 
   {# Full calendar-like view of the vaccination periods' appointments and empty slots #}

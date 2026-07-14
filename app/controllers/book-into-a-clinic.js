@@ -47,11 +47,11 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   setupServiceHeader(request, response, next) {
-    const { patient_uuid } = request.params
+    const { patient_uuid, session_id } = request.params
     const { __ } = response.locals
 
     // Set up the parent-facing service name and header
-    if (!patient_uuid) {
+    if (!patient_uuid && !session_id) {
       const serviceName = __('clinicBooking.start.title')
 
       response.locals.assetsName = 'public'
@@ -70,7 +70,7 @@ export const bookIntoClinicController = {
       request.query
     )
     const { data } = request.session
-    const { patient_uuid } = request.params
+    const { patient_uuid, session_id } = request.params
 
     let programme_ids
     if (patient_uuid) {
@@ -89,6 +89,14 @@ export const bookIntoClinicController = {
             programme_id === 'mmr' && canBeOfferedMmrv ? 'mmrv' : programme_id
           )
       }
+    } else if (session_id) {
+      // Starting from a session, so likely migrating data from another system. Use the
+      // session's programmes as the ones that we offer, on the assumption it's been set
+      // up to match what was booked elsewhere.
+      const session = Session.findOne(session_id, data)
+
+      // We'll have to wait till we have a patient before we can decide on MMR vs. MMRV
+      programme_ids = session.programme_ids
     } else {
       // Starting the booking from the parent's invite link; read the invited programme IDs
       // from the querystring
@@ -129,20 +137,20 @@ export const bookIntoClinicController = {
       eligibleForMmrv: useMmrv
     }
 
-    response.locals.patient_uuid = patient_uuid
-
-    // Skip the start page if it's the SAIS team making the booking
-    const bookableSessions = getBookableClinicSessions(
-      data,
-      programme_ids,
-      !patient_uuid
-    )
-    const nextPath =
-      bookableSessions.length > 0
-        ? patient_uuid
-          ? 'new'
-          : 'start'
-        : 'availability'
+    let nextPath = 'new'
+    if (!session_id) {
+      // Need to check if there are any clinic sessions available to book into
+      const bookableSessions = getBookableClinicSessions(
+        data,
+        programme_ids,
+        !patient_uuid
+      )
+      if (bookableSessions.length === 0) {
+        nextPath = 'availability'
+      } else if (!patient_uuid) {
+        nextPath = 'start'
+      }
+    }
 
     return saveAndRedirect(request, response, nextPath)
   },
