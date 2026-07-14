@@ -324,7 +324,7 @@ export class ClinicAppointment {
    *
    * @returns {boolean} - true if the appointment's cancelled, or false otherwise
    */
-  get cancelled() {
+  get isCancelled() {
     return this.status === ClinicAppointmentStatus.Cancelled
   }
 
