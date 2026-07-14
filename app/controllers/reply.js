@@ -243,7 +243,7 @@ export const replyController = {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
         [`/${reply_uuid}/${type}/decision`]: {
-          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.post16 ? 'notify-contact' : 'health-answers'}`]:
+          [`/${reply_uuid}/${type}/${reply?.selfConsent && !patientSession.patient.post16 ? 'can-notify' : 'health-answers'}`]:
             {
               data: 'reply.decision',
               value: ReplyDecision.Given
@@ -257,7 +257,7 @@ export const replyController = {
             value: ReplyDecision.NoResponse
           }
         },
-        [`/${reply_uuid}/${type}/notify-contact`]: {},
+        [`/${reply_uuid}/${type}/can-notify`]: {},
         [`/${reply_uuid}/${type}/health-answers`]: {
           [`/${reply_uuid}/${type}/${countAnswersNeedingTriage(request.session.data.reply?.healthAnswers) ? 'triage' : 'check-answers'}`]: true
         },

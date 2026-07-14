@@ -74,8 +74,8 @@
       hasParentalResponsibility: {
         href: reply.uri + "/new/contact"
       },
-      notify: {
-        href: reply.uri + "/new/notify-contact"
+      canNotify: {
+        href: reply.uri + "/new/can-notify"
       },
       email: {
         href: reply.uri + "/new/contact"
@@ -84,7 +84,7 @@
         href: reply.uri + "/new/contact"
       }
     })
-  }) if reply.contact.relationship or reply.contact.notify !== undefined }}
+  }) if reply.contact.relationship or reply.contact.canNotify !== undefined }}
 
   {{ summaryList({
     classes: "app-summary-list--full-width",

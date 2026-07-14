@@ -13,7 +13,7 @@ import { BaseModel } from './base.js'
  * @property {ParentalRelationship} [relationship] - Relationship to child
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
- * @property {boolean} [notify] - Notify about consent and vaccination events
+ * @property {boolean} [canNotify] - Notify about consent and vaccinations
  * @property {string} [tel] - Phone number
  * @property {string} [email] - Email address
  * @property {NotifyEmailStatus} [emailStatus] - Email status
@@ -57,7 +57,7 @@ export class Contact extends BaseModel {
       ParentalRelationship.Fosterer
         ? stringToBoolean(options.hasParentalResponsibility)
         : undefined
-    this.notify = stringToBoolean(options?.notify)
+    this.canNotify = stringToBoolean(options?.canNotify)
     this.tel = options?.tel
     this.email = options?.email
     this.emailStatus = this?.email && options?.emailStatus
