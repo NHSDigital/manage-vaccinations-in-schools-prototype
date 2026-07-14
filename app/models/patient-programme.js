@@ -174,7 +174,7 @@ export class PatientProgramme extends BaseModel {
     }
 
     // Maybe we *can* vaccinate the child, but there are no school sessions left?
-    if (this.canVaccinateAtClinic && !this.schoolSessionPending) {
+    if (this.canVaccinateAtClinic && !this.hasSchoolSessionPending) {
       return PatientClinicStatus.Ready
     }
 
@@ -187,7 +187,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean} - true if we can offer this vaccination, false otherwise
    */
   get canOfferClinicCatchup() {
-    return this.canVaccinateAtClinic && !this.schoolSessionPending
+    return this.canVaccinateAtClinic && !this.hasSchoolSessionPending
   }
 
   /**
@@ -246,7 +246,7 @@ export class PatientProgramme extends BaseModel {
    *
    * @returns {boolean} If there's still a chance for school vaccination (`true`), or otherwise (`false`)
    */
-  get schoolSessionPending() {
+  get hasSchoolSessionPending() {
     const school = this.patient?.school
     if (school?.isHomeOrUnknown) {
       return false
