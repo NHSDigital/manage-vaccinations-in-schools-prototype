@@ -186,14 +186,14 @@ export class Reply extends BaseModel {
     ) {
       this.firstDose = options?.firstDose && new Vaccination(options.firstDose)
 
-      if (options?.firstDose?.scheduled) {
+      if (options?.firstDose?.isScheduled) {
         this.firstDose.createdAt = addMonths(this.child?.dob, 12)
       }
 
       this.secondDose =
         options?.secondDose && new Vaccination(options.secondDose)
 
-      if (options?.secondDose?.scheduled) {
+      if (options?.secondDose?.isScheduled) {
         this.secondDose.createdAt = addMonths(this.child?.dob, 40)
       }
     }
