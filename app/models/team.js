@@ -20,7 +20,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasSchoolSessionRegistration] - Should school sessions have registration
  * @property {number} [clinicNasalSprayDuration] - Minutes to allocate each nasal spray
  * @property {number} [clinicInjectionDuration] - Minutes to allocate each injection
- * @property {boolean} [clinicSessionRegistration] - Should clinic sessions have registration
+ * @property {boolean} [hasClinicSessionRegistration] - Should clinic sessions have registration
  */
 
 /**
@@ -56,8 +56,8 @@ export class Team extends BaseModel {
       TeamDefaults.NasalSprayDuration
     this.clinicInjectionDuration =
       Number(options?.clinicInjectionDuration) || TeamDefaults.InjectionDuration
-    this.clinicSessionRegistration =
-      stringToBoolean(options.clinicSessionRegistration) ??
+    this.hasClinicSessionRegistration =
+      stringToBoolean(options.hasClinicSessionRegistration) ??
       TeamDefaults.ClinicSessionRegistration
   }
 
