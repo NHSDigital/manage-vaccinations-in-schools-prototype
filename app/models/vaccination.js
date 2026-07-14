@@ -163,7 +163,7 @@ export class Vaccination extends BaseModel {
       options?.hasSelfIdentified && stringToBoolean(options.hasSelfIdentified)
     this.identifiedBy = this.hasSelfIdentified !== true && options?.identifiedBy
     this.outcome = options?.outcome
-    this.given = [
+    this.wasGiven = [
       VaccinationOutcome.Vaccinated,
       VaccinationOutcome.PartVaccinated,
       VaccinationOutcome.AlreadyVaccinated
@@ -171,9 +171,9 @@ export class Vaccination extends BaseModel {
     this.injectionMethod = options?.injectionMethod
     this.injectionSite = options?.injectionSite
     this.source = options?.source || VaccinationSource.Service
-    this.dose = this.given ? Number(options?.dose) : undefined
+    this.dose = this.wasGiven ? Number(options?.dose) : undefined
     this.sequence = options?.sequence
-    this.protocol = this.given
+    this.protocol = this.wasGiven
       ? options?.protocol || VaccinationProtocol.PGD
       : undefined
     this.isScheduled = stringToBoolean(options.isScheduled)
@@ -269,7 +269,7 @@ export class Vaccination extends BaseModel {
    * @returns {VaccinationMethod|undefined} Method
    */
   get method() {
-    if (!this.vaccine || !this.given) return
+    if (!this.vaccine || !this.wasGiven) return
 
     if (this.vaccine.criteria === VaccineCriteria.Intranasal) {
       this.injectionMethod = VaccinationMethod.Intranasal
@@ -292,7 +292,7 @@ export class Vaccination extends BaseModel {
    * @returns {VaccinationSite|undefined} Anatomical site
    */
   get site() {
-    if (!this.vaccine || !this.given) return
+    if (!this.vaccine || !this.wasGiven) return
 
     if (this.method === VaccinationMethod.Intranasal) {
       // Method is nasal, so site is ‘Nose’
@@ -334,7 +334,7 @@ export class Vaccination extends BaseModel {
       case !this.programme?.isNhseSyncable:
       case this.patient?.hasMissingNhsNumber:
         return VaccinationSyncStatus.CannotSync
-      case !this.given:
+      case !this.wasGiven:
         return VaccinationSyncStatus.NotSynced
       case this.nhseSyncedAt > updatedAt:
         return VaccinationSyncStatus.Synced

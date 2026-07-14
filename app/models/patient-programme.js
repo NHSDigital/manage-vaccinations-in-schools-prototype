@@ -347,7 +347,9 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get vaccinationsGiven() {
-    return this.vaccinationOutcomes.filter((vaccination) => vaccination.given)
+    return this.vaccinationOutcomes.filter(
+      (vaccination) => vaccination.wasGiven
+    )
   }
 
   /**
@@ -358,7 +360,7 @@ export class PatientProgramme extends BaseModel {
   get tetanusVaccinationsGiven() {
     return this.patient?.vaccinations
       .filter((vaccination) => vaccination.programme?.isTetanusVaccine)
-      .filter((vaccination) => vaccination.given)
+      .filter((vaccination) => vaccination.wasGiven)
   }
 
   /**
@@ -369,7 +371,7 @@ export class PatientProgramme extends BaseModel {
   get otherVaccinationsGiven() {
     return this.patient?.vaccinations
       .filter((vaccination) => vaccination.programmeOther)
-      .filter((vaccination) => vaccination.given)
+      .filter((vaccination) => vaccination.wasGiven)
   }
 
   /**

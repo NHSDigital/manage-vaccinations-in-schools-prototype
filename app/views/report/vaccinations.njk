@@ -48,8 +48,8 @@
             headingSize: "xs",
             colour: "red",
             compact: true,
-            data: (((vaccinations | rejectattr("given") | length) / vaccinations.length * 100) | round(2) or 0) + "%",
-            meta: vaccinations | rejectattr("given") | length + " children"
+            data: (((vaccinations | rejectattr("wasGiven") | length) / vaccinations.length * 100) | round(2) or 0) + "%",
+            meta: vaccinations | rejectattr("wasGiven") | length + " children"
           }) }}
         </div>
         <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
@@ -59,8 +59,8 @@
             headingSize: "xs",
             colour: "green",
             compact: true,
-            data: (((vaccinations | selectattr("given") | length) / vaccinations.length * 100) | round(2) or 0) + "%",
-            meta: vaccinations | selectattr("given") | length + " children"
+            data: (((vaccinations | selectattr("wasGiven") | length) / vaccinations.length * 100) | round(2) or 0) + "%",
+            meta: vaccinations | selectattr("wasGiven") | length + " children"
           }) }}
         </div>
       </div>
