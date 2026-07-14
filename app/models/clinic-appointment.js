@@ -484,7 +484,7 @@ export class ClinicAppointment {
    *
    * @returns {boolean} Administer alternative vaccine
    */
-  get alternative() {
+  get hasConsentForAlternativeVaccine() {
     return (
       this.fluDecision === ReplyDecision.OnlyAlternativeInjection ||
       this.mmrAlternative
