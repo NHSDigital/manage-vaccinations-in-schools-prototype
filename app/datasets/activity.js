@@ -64,7 +64,17 @@ export default {
       `Session reminder sent to ${contact.fullNameAndRelationship}`,
     'vaccination-given': (contact) =>
       `Confirmation the vaccination was given sent to ${contact.fullNameAndRelationship}`,
-    'vaccination-not-administered': (contact) =>
+    'vaccination-not-given-absent': (contact) =>
+      `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-not-given-refused': (contact) =>
+      `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-not-given-unwell': (contact) =>
+      `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-not-given-contraindicated-delay-vaccination': (contact) =>
+      `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-not-given-contraindicated-invite-to-clinic': (contact) =>
+      `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
+    'vaccination-not-given-contraindicated-do-not-vaccinate': (contact) =>
       `Confirmation the vaccination was not given sent to ${contact.fullNameAndRelationship}`,
     'vaccination-already-had': (contact) =>
       `Confirmation previous vaccination discovered since consent sent to ${contact.fullNameAndRelationship}`,

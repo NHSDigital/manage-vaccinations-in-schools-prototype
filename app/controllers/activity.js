@@ -194,7 +194,12 @@ export const activityController = {
           'triage-vaccinate-second-dose',
           'vaccination-reminder',
           'vaccination-given',
-          'vaccination-not-administered',
+          'vaccination-not-given-absent',
+          'vaccination-not-given-refused',
+          'vaccination-not-given-unwell',
+          'vaccination-not-given-contraindicated-delay-vaccination',
+          'vaccination-not-given-contraindicated-invite-to-clinic',
+          'vaccination-not-given-contraindicated-do-not-vaccinate',
           'vaccination-already-had',
           'vaccination-deleted'
         ].map((name) =>
