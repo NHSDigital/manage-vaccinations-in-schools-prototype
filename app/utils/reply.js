@@ -167,7 +167,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
  */
 export const getConsentOutcome = (patientSession) => {
   // If patient is 16+, assume consent given
-  if (patientSession.patient.post16) {
+  if (patientSession.patient.isPost16) {
     return ConsentOutcome.Given
   }
 

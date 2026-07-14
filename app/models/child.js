@@ -216,7 +216,7 @@ export class Child extends BaseModel {
    *
    * @returns {boolean} Child is aged 16 or over
    */
-  get post16() {
+  get isPost16() {
     return this.age >= 16
   }
 
