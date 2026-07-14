@@ -51,7 +51,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [declined] - Reply declines consent
  * @property {boolean} [given] - Reply gives consent
  * @property {boolean} [refused] - Reply refuses consent
- * @property {boolean} [invalid] - Reply is invalid
+ * @property {boolean} [isInvalidated] - Reply is invalidated
  * @property {ReplyMethod} [method] - Reply method
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {object} [firstDose] - First dose
@@ -124,10 +124,10 @@ export class Reply extends BaseModel {
       ReplyDecision.AlreadyVaccinated,
       ReplyDecision.Refused
     ].includes(this.decision)
-    this.invalid =
+    this.isInvalidated =
       this?.decision === ReplyDecision.NoResponse
         ? false // Don’t show non response as invalid
-        : stringToBoolean(options?.invalid) || false
+        : stringToBoolean(options?.isInvalidated) || false
     this.method = options?.method
     this.hasSelfConsent = options?.hasSelfConsent
     this.note = options?.note || ''
@@ -403,7 +403,7 @@ export class Reply extends BaseModel {
               decisionStatus = formatTag(
                 getConsentOutcomeStatus(ConsentOutcome.NotDelivered)
               )
-            } else if (this.invalid) {
+            } else if (this.isInvalidated) {
               decisionStatus = formatWithSecondaryText(
                 formatTag({
                   colour: 'grey',

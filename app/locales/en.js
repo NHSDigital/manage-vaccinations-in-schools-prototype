@@ -2556,7 +2556,7 @@ export const en = {
       title:
         'Do they also agree to the injected vaccine if the nasal spray is not suitable?'
     },
-    invalid: {
+    isInvalidated: {
       label: 'Invalid response'
     },
     healthAnswers: {

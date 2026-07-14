@@ -218,7 +218,7 @@ export class PatientSession extends BaseModel {
   get parentalRelationships() {
     if (this.responses) {
       return this.responses
-        .filter((reply) => !reply.invalid)
+        .filter((reply) => !reply.isInvalidated)
         .flatMap((reply) => reply.relationship || 'Parent or guardian')
     }
   }
@@ -231,7 +231,7 @@ export class PatientSession extends BaseModel {
   get contactsRequestingFollowUp() {
     if (this.responses) {
       return this.responses
-        .filter((reply) => !reply.invalid)
+        .filter((reply) => !reply.isInvalidated)
         .filter((reply) => reply.declined)
         .flatMap((reply) => reply.contact.fullNameAndRelationship)
     }
