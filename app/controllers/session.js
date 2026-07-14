@@ -544,7 +544,7 @@ export const sessionController = {
 
     const checkboxFilters = {
       record: {
-        vaccineCriteria: session.offersAlternativeVaccine && vaccineCriteria
+        vaccineCriteria: session.canOfferAlternativeVaccine && vaccineCriteria
       }
     }
 

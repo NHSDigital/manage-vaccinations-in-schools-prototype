@@ -141,7 +141,7 @@ export const giveOrRefuseConsentController = {
     // If programme has alternative vaccine, and given consent has been given
     // for the default, ask for consent for the alternative as well
     const getConsentForAlternativeVaccine =
-      session.offersAlternativeVaccine &&
+      session.canOfferAlternativeVaccine &&
       consent.decision === ReplyDecision.Given
 
     const journey = {
