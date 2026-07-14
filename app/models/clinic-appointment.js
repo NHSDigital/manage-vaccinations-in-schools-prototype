@@ -228,9 +228,9 @@ export class ClinicAppointment {
    * Cancel the appointment, logging the event and removing associated patient sessions
    *
    * @param {User} account - the user carrying out the removal
-   * @param {boolean} offerRebooking - true if the parent will be offered immediate rebooking, or false if they'll be invited again later
+   * @param {boolean} shouldOfferRebooking - true if the parent will be offered immediate rebooking, or false if they'll be invited again later
    */
-  cancelAppointment(account, offerRebooking) {
+  cancelAppointment(account, shouldOfferRebooking) {
     const session = this.session
     if (
       ![SessionStatus.Active, SessionStatus.Planned].includes(session?.status)
@@ -260,7 +260,7 @@ export class ClinicAppointment {
     })
 
     // Re-invite? If so, record that too
-    if (offerRebooking) {
+    if (shouldOfferRebooking) {
       patient.inviteToClinic(this.selected_programme_ids)
     }
   }
