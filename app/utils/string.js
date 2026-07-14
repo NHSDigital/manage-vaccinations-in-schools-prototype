@@ -321,10 +321,10 @@ export function formatCode(string, noWrap = false) {
  * joiner to prevent telephone format detection
  *
  * @param {string} string - String
- * @param {boolean} invalid - Invalid record
+ * @param {boolean} isInvalid - Is invalid record
  * @returns {string|undefined|null} Formatted HTML
  */
-export function formatNhsNumber(string, invalid) {
+export function formatNhsNumber(string, isInvalid) {
   if (!string) return
 
   // Patients without an NHS number have a 10 character alphanumeric UID
@@ -333,7 +333,7 @@ export function formatNhsNumber(string, invalid) {
   if (isNhsNumber) {
     string = string.toString().replaceAll(/(\d{3})(\d{3})(\d{4})/g, '$1 $2 $3')
 
-    if (invalid) {
+    if (isInvalid) {
       string = `<s>${string}</s>`
     }
 
