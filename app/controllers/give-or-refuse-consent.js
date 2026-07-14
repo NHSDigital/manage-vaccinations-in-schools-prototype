@@ -116,7 +116,7 @@ export const giveOrRefuseConsentController = {
     delete data.consent
 
     // Update session data
-    if (consent.consultation) {
+    if (consent.hasRequestedConsultation) {
       consent.decision = ReplyDecision.Declined
       Consent.update(consent_uuid, consent, data.wizard)
     }

@@ -86,7 +86,7 @@ export function generateConsent(
   const refusalReason = getRefusalReason(programme.type, decision)
 
   // If decision is declined then a follow-up consultation was requested
-  const consultation =
+  const hasRequestedConsultation =
     decision === ReplyDecision.Declined &&
     [
       ReplyRefusal.Medical,
@@ -143,7 +143,7 @@ export function generateConsent(
       ...(refusalReason === ReplyRefusal.Other && {
         refusalReasonOther: 'My family rejects vaccinations on principle.'
       }),
-      consultation
+      hasRequestedConsultation
     }),
     contact_uuid: contact.uuid,
     programme_id: programme.id,
