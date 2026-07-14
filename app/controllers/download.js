@@ -167,7 +167,7 @@ export const downloadController = {
     )
 
     response.locals.programmeTypeItems = Programme.findAll(data)
-      ?.filter((programme) => !programme.hidden)
+      ?.filter((programme) => !programme.isHidden)
       .map((programme) => ({
         text: programme.name,
         value: programme.type
