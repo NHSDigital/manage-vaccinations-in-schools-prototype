@@ -159,21 +159,35 @@ export const bookIntoClinicController = {
    * @type {RequestParamHandler}
    */
   read(request, response, next, booking_uuid) {
-    const { patient_uuid, appointment_uuid } = request.params
+    const { patient_uuid, session_id, appointment_uuid } = request.params
     const { data } = request.session
     const { __ } = response.locals
 
-    const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    // Started from the child record e.g. booking an appointment over the phone
     if (patient_uuid) {
-      // If booking started from the child record, always show that context
       const patient = Patient.findOne(String(patient_uuid), data)
       response.locals.patient = patient
+
+      // Show the child context in the caption
       response.locals.appointmentCaption = __(
         'clinicBooking.appointment.caption',
         patient?.fullName
       )
-    } else if (appointment_uuid) {
+    }
+
+    // Started from the session e.g. migrating data from another system
+    if (session_id) {
+      const session = Session.findOne(String(session_id), data)
+      response.locals.session = session
+
+      // Show the session context in the caption
+      response.locals.appointmentCaption = `Clinic at ${session.location.name} on ${session.formatted.dateShort}`
+    }
+
+    // Started from the parent's invite link
+    if (!response.locals.appointmentCaption && appointment_uuid) {
       // For the parent's booking, show the current child's name if more than one
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking.findAppointment(String(appointment_uuid))
       if (appointment?.booking?.appointments?.length > 1) {
         response.locals.appointmentCaption = __(
