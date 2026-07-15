@@ -6,6 +6,7 @@ import _ from 'lodash'
 import {
   AppointmentAbandonmentReason,
   ClinicAppointmentStatus,
+  ClinicBookingJourneyType,
   ParentalRelationship,
   PatientClinicStatus,
   ProgrammeType,
@@ -197,6 +198,20 @@ export const bookIntoClinicController = {
       }
     }
 
+    // Track the journey type to help us build the wizard and adapt content
+    if (!data.journeyData[booking_uuid].journeyType) {
+      data.journeyData[booking_uuid].journeyType = patient_uuid
+        ? ClinicBookingJourneyType.PhoneBooking
+        : session_id
+          ? ClinicBookingJourneyType.DataMigration
+          : ClinicBookingJourneyType.ParentOnline
+    }
+
+    response.locals.journeyData = data.journeyData[booking_uuid]
+    response.locals.isParentFacing =
+      data.journeyData[booking_uuid].journeyType ===
+      ClinicBookingJourneyType.ParentOnline
+
     next()
   },
 
@@ -327,11 +342,6 @@ export const bookIntoClinicController = {
           ClinicBooking.update(booking_uuid, booking, data.wizard)
         }
       }
-    }
-
-    // Make sure the views have access to information about flow control e.g. for narrowing down a clinic search
-    if (data.journeyData?.[booking_uuid]) {
-      response.locals.journeyData = data.journeyData[booking_uuid]
     }
 
     const journey = {

@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set audience = "team" if patient else "parent" %}
+{% set audience = "parent" if isParentFacing else "team" %}
 {% set confirmButtonText = __("clinicBooking.check-answers.confirm." + audience) %}
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
 
@@ -16,19 +16,19 @@
       headingSize: "m"
     },
     lastRowBorder: false,
-    rows: summaryRows(patient if patient else appointment.child, {
+    rows: summaryRows(appointment.child if isParentFacing else patient, {
       fullName: {
-        value: appointment.child.fullFriendlyName if not patient,
-        href: "child" if not patient
+        value: appointment.child.fullFriendlyName if isParentFacing,
+        href: "child" if isParentFacing
       },
       preferredName: {
-        href: "child" if not patient
+        href: "child" if isParentFacing
       },
       dob: {
-        href: "dob" if not patient
+        href: "dob" if isParentFacing
       },
       address: {
-        href: "address" if not patient
+        href: "address" if isParentFacing
       },
       impairments: {
         href: "impairments"

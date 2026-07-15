@@ -1,8 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
-{% set titleKey = "clinicBooking.programmes.title.team" if patient
-             else "clinicBooking.programmes.title.parent" %}
-{% set title = __mf(titleKey, {
+{% set audience = "parent" if isParentFacing else "team" %}
+{% set title = __mf("clinicBooking.programmes.title." + audience, {
   count: programmeItems.length,
   firstName: firstName
 }) %}
@@ -22,7 +21,7 @@
         size: "l"
       }
     },
-    hint: { text: __("clinicBooking.programmes.hint") } if programmeItems.length > 1 and not patient,
+    hint: { text: __("clinicBooking.programmes.hint") } if programmeItems.length > 1 and isParentFacing,
     items: programmeItems,
     decorate: "appointment.selected_programme_ids"
   }) }}
