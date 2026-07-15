@@ -157,6 +157,39 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  new(request, response) {
+    const { data } = request.session
+    const { patient_uuid } = request.params
+
+    // Create a new clinic booking in the wizard context
+    const booking = ClinicBooking.create(
+      {
+        invited_programme_ids: data.clinicInvite.programmes.map(({ id }) => id)
+      },
+      data.wizard
+    )
+    const firstAppointment = booking.addAppointment()
+    if (patient_uuid) {
+      firstAppointment.patient_uuid = patient_uuid
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
+    }
+
+    if (!data.journeyData) data.journeyData = {}
+    data.journeyData[booking.uuid] = {}
+
+    // Redirect to the first page in the booking journey (after the start page, that is)
+    const relativePath = firstAppointment.uri.new.replace(
+      '/book-into-a-clinic',
+      ''
+    )
+    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
+
+    return saveAndRedirect(request, response, redirectUrl)
+  },
+
+  /**
    * @type {RequestParamHandler}
    */
   read(request, response, next, booking_uuid) {
@@ -213,39 +246,6 @@ export const bookIntoClinicController = {
       ClinicBookingJourneyType.ParentOnline
 
     next()
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  new(request, response) {
-    const { data } = request.session
-    const { patient_uuid } = request.params
-
-    // Create a new clinic booking in the wizard context
-    const booking = ClinicBooking.create(
-      {
-        invited_programme_ids: data.clinicInvite.programmes.map(({ id }) => id)
-      },
-      data.wizard
-    )
-    const firstAppointment = booking.addAppointment()
-    if (patient_uuid) {
-      firstAppointment.patient_uuid = patient_uuid
-      ClinicBooking.update(booking.uuid, booking, data.wizard)
-    }
-
-    if (!data.journeyData) data.journeyData = {}
-    data.journeyData[booking.uuid] = {}
-
-    // Redirect to the first page in the booking journey (after the start page, that is)
-    const relativePath = firstAppointment.uri.new.replace(
-      '/book-into-a-clinic',
-      ''
-    )
-    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
-
-    return saveAndRedirect(request, response, redirectUrl)
   },
 
   /**
