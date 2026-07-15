@@ -206,7 +206,6 @@ export const bookIntoClinicController = {
   new(request, response) {
     const { data } = request.session
     const { patient_uuid } = request.params
-    data.transaction = {}
 
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create(
@@ -220,6 +219,9 @@ export const bookIntoClinicController = {
       firstAppointment.patient_uuid = patient_uuid
       ClinicBooking.update(booking.uuid, booking, data.wizard)
     }
+
+    if (!data.journeyData) data.journeyData = {}
+    data.journeyData[booking.uuid] = {}
 
     // Redirect to the first page in the booking journey (after the start page, that is)
     const relativePath = firstAppointment.uri.new.replace(
@@ -242,7 +244,7 @@ export const bookIntoClinicController = {
     // Clean up session data
     delete data.booking
     delete data.appointment
-    delete data.transaction
+    delete data.journeyData[booking_uuid]
     delete data.clinicInvite
 
     // Save to the global context
@@ -278,7 +280,7 @@ export const bookIntoClinicController = {
     // Clean up session data
     delete data.booking
     delete data.appointment
-    delete data.transaction
+    delete data.journeyData[booking_uuid]
     delete data.clinicInvite
 
     // Record the abandonment
@@ -328,8 +330,8 @@ export const bookIntoClinicController = {
     }
 
     // Make sure the views have access to information about flow control e.g. for narrowing down a clinic search
-    if (data.wizard?.transaction) {
-      response.locals.transaction = data.wizard?.transaction
+    if (data.journeyData?.[booking_uuid]) {
+      response.locals.journeyData = data.journeyData[booking_uuid]
     }
 
     const journey = {
@@ -408,7 +410,7 @@ export const bookIntoClinicController = {
         data,
         appointment.selected_programme_ids,
         patient ? false : true,
-        data.transaction?.outOfArea
+        data.journeyData[booking_uuid].outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems
     } else if (view === 'clinic-date') {
@@ -417,7 +419,7 @@ export const bookIntoClinicController = {
           (session) =>
             session.type === SessionType.Clinic &&
             session.status === SessionStatus.Planned &&
-            session.clinic_id === data.transaction.clinic_id
+            session.clinic_id === data.journeyData[booking_uuid].clinic_id
         ),
         'date'
       )
@@ -489,7 +491,9 @@ export const bookIntoClinicController = {
       )
 
       const availabilityForChosenHour = {}
-      for (const date of availableTimesByHour[data.transaction.timeRange]) {
+      for (const date of availableTimesByHour[
+        data.journeyData[booking_uuid].timeRange
+      ]) {
         const key = formatTime(date, true)
 
         if (!availabilityForChosenHour[key]) {
@@ -604,16 +608,15 @@ export const bookIntoClinicController = {
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     }
-    if (request.body.transaction) {
-      data.wizard.transaction = data.wizard.transaction ?? {}
-      _.merge(data.wizard.transaction, request.body.transaction)
+    if (request.body.journeyData) {
+      _.merge(data.journeyData[booking_uuid], request.body.journeyData)
     }
 
     if (view === 'child-count') {
       // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      let desiredCount = Number(data.wizard.transaction.childCount)
+      let desiredCount = Number(data.journeyData[booking_uuid].childCount)
       desiredCount = isNaN(desiredCount) || desiredCount < 1 ? 1 : desiredCount
       const existingCount = booking.appointments.length
 
@@ -632,7 +635,9 @@ export const bookIntoClinicController = {
       const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
       paths.next = firstAppointmentUrl
     } else if (view === 'child') {
-      if (!stringToBoolean(request.body.transaction?.preferredNameChoice)) {
+      if (
+        !stringToBoolean(data.journeyData[booking_uuid]?.preferredNameChoice)
+      ) {
         // If the parent's backed out of using the child's preferred name (say, from the check answers page), then
         // clear it out of the appointment
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -644,13 +649,13 @@ export const bookIntoClinicController = {
       }
     } else if (
       view === 'address-selection' &&
-      request.body.transaction.addressChoice !== 'new'
+      data.journeyData[booking_uuid].addressChoice !== 'new'
     ) {
       // We've just selected a previous child's address for the current appointment, so copy
       // that detail to the child record
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      const previous_appointment_uuid = request.body.transaction.addressChoice
+      const previous_appointment_uuid = request.body.journeyData.addressChoice
       const previousAppointment = booking?.findAppointment(
         previous_appointment_uuid
       )
@@ -662,14 +667,15 @@ export const bookIntoClinicController = {
       }
     } else if (
       view === 'session-selection' &&
-      request.body.transaction.sessionChoice !== 'new'
+      data.journeyData[booking_uuid].sessionChoice !== 'new'
     ) {
       // We've just selected a previous child's session choice for the current appointment;
       // in this case, the session ID is actually the radio value passed in request.body
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const currentAppointment = booking?.findAppointment(appointment_uuid)
       if (currentAppointment) {
-        currentAppointment.session_id = request.body.transaction.sessionChoice
+        currentAppointment.session_id =
+          data.journeyData[booking_uuid].sessionChoice
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
     } else if (view === 'appointment-time') {
@@ -678,14 +684,14 @@ export const bookIntoClinicController = {
       const appointmentLengthInMinutes =
         Session.findOne(appointment.session_id, data)?.appointmentLength ?? 10
 
-      const startAt = new Date(request.body.transaction.time)
+      const startAt = new Date(data.journeyData[booking_uuid].time)
       const endAt = addMinutes(startAt, appointmentLengthInMinutes)
       _.merge(appointment, { startAt, endAt })
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'add-another') {
       // If the user elected to add another, create the new appointment and override the default redirect
-      const addAnother = request.body.transaction.addAnother === 'true'
+      const addAnother = data.journeyData[booking_uuid].addAnother === 'true'
       if (addAnother) {
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
         const appointment = booking.addAppointment()
@@ -693,11 +699,11 @@ export const bookIntoClinicController = {
 
         // Clear out values we don't want pre-selected for the next child
         delete data.appointment
-        delete data.transaction.addAnother
-        delete data.transaction.addressChoice
-        delete data.transaction.sessionChoice
-        delete data.transaction.timeRange
-        delete data.transaction.time
+        delete data.journeyData[booking_uuid].addAnother
+        delete data.journeyData[booking_uuid].addressChoice
+        delete data.journeyData[booking_uuid].sessionChoice
+        delete data.journeyData[booking_uuid].timeRange
+        delete data.journeyData[booking_uuid].time
 
         paths.next = `${appointment.uri.new}/child`
       }
