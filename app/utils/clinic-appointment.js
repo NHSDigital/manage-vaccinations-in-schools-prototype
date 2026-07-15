@@ -81,23 +81,23 @@ export const getAllAppointmentPaths = (
         ? {
             [`/${booking_uuid}/new/${appointment_uuid}/session-selection`]: {
               [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
-                () => sessionData.transaction.addressChoice !== 'new'
+                () => sessionData.journeyData.addressChoice !== 'new'
             }
           }
         : {}),
       [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: () => {
-          const searchTerm = sessionData.transaction?.preferredLocation
+          const searchTerm = sessionData.journeyData.preferredLocation
           const searchType = getLocationSearchType(searchTerm)
           switch (searchType) {
             case LocationSearchType.Postcode:
             case LocationSearchType.Outcode:
               sessionData.appointment.preferredPostcode = searchTerm
-              sessionData.transaction.outOfArea = false
+              sessionData.journeyData.outOfArea = false
               return true
             case LocationSearchType.Place:
             default:
-              sessionData.transaction.outOfArea = true
+              sessionData.journeyData.outOfArea = true
               return false
           }
         }
@@ -179,7 +179,7 @@ export const getAllAppointmentPaths = (
                   [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
                     {
                       [`/${booking_uuid}/new/${appointment_uuid}/contact`]:
-                        () => sessionData.transaction.addressChoice !== 'new'
+                        () => sessionData.journeyData.addressChoice !== 'new'
                     }
                 }
               : {}),
