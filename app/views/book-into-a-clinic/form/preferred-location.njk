@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set audience = "parent" if isParentFacing else "team" %}
-{% set title = __("clinicBooking.preferredLocation.title." + audience) %}
+{% set title = __("clinicBooking.preferredLocation.title." + audience, firstName) %}
 
 {% block form %}
   {{ appHeading({
