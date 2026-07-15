@@ -232,18 +232,18 @@ export const bookIntoClinicController = {
     }
 
     // Track the journey type to help us build the wizard and adapt content
-    if (!data.journeyData[booking_uuid].journeyType) {
-      data.journeyData[booking_uuid].journeyType = patient_uuid
-        ? ClinicBookingJourneyType.PhoneBooking
-        : session_id
-          ? ClinicBookingJourneyType.DataMigration
-          : ClinicBookingJourneyType.ParentOnline
+    const journeyType = patient_uuid
+      ? ClinicBookingJourneyType.PhoneBooking
+      : session_id
+        ? ClinicBookingJourneyType.DataMigration
+        : ClinicBookingJourneyType.ParentOnline
+    if (data.journeyData[booking_uuid]) {
+      data.journeyData[booking_uuid].journeyType = journeyType
     }
 
     response.locals.journeyData = data.journeyData[booking_uuid]
     response.locals.isParentFacing =
-      data.journeyData[booking_uuid].journeyType ===
-      ClinicBookingJourneyType.ParentOnline
+      journeyType === ClinicBookingJourneyType.ParentOnline
 
     next()
   },
