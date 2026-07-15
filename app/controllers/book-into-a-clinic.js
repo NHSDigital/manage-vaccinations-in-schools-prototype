@@ -15,6 +15,7 @@ import {
   SessionType
 } from '../enums.js'
 import {
+  ClinicAppointment,
   ClinicBooking,
   Contact,
   Patient,
@@ -213,6 +214,14 @@ export const bookIntoClinicController = {
     if (session_id) {
       const session = Session.findOne(String(session_id), data)
       response.locals.session = session
+
+      if (appointment_uuid) {
+        const appointment = ClinicAppointment.findOne(
+          String(appointment_uuid),
+          data.wizard
+        )
+        response.locals.patient = appointment.patient
+      }
 
       // Show the session context in the caption
       response.locals.appointmentCaption = `Clinic at ${session.location.name} on ${session.formatted.dateShort}`
