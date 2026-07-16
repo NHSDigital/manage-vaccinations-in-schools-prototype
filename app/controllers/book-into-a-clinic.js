@@ -8,7 +8,6 @@ import {
   ClinicAppointmentStatus,
   ClinicBookingJourneyType,
   ParentalRelationship,
-  PatientClinicStatus,
   ProgrammeType,
   ReplyDecision,
   SessionStatus,
@@ -22,6 +21,8 @@ import {
   Session
 } from '../models.js'
 import {
+  getClinicBookableProgrammeIDs,
+  getAppointmentProgrammeOptions,
   getAllAppointmentPaths,
   getPreviousAddressItems,
   getPreviousSessionItems
@@ -69,90 +70,35 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readProgrammes(request, response) {
-    const { programme_id } = /** @type {{ programme_id?: string }} */ (
-      request.query
-    )
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
-    let programme_ids
+    let nextPath, programme_ids
     if (patient_uuid) {
-      // Starting the booking process from the child record, so no querystring with invited
-      // programmes; use the child's clinic-ready programmes as the basis instead
-      const patient = Patient.findOne(patient_uuid, data)
-      if (patient) {
-        const canBeOfferedMmrv = patient.canBeOfferedMmrv
-        programme_ids = Object.values(patient.programmes)
-          .filter(({ clinicStatus }) =>
-            [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
-              String(clinicStatus)
-            )
-          )
-          .map(({ programme_id }) =>
-            programme_id === 'mmr' && canBeOfferedMmrv ? 'mmrv' : programme_id
-          )
-      }
+      // Starting the booking process from a child record
+      programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
+      nextPath = getBookableClinicSessions(data, programme_ids, false).length
+        ? 'new'
+        : 'availability'
     } else if (session_id) {
-      // Starting from a session, so likely migrating data from another system. Use the
-      // session's programmes as the ones that we offer, on the assumption it's been set
-      // up to match what was booked elsewhere.
-      const session = Session.findOne(session_id, data)
-
-      // We'll have to wait till we have a patient before we can decide on MMR vs. MMRV
-      programme_ids = session.programme_ids
+      // Starting the booking process from a session
+      nextPath = 'new'
     } else {
-      // Starting the booking from the parent's invite link; read the invited programme IDs
-      // from the querystring
-      if (programme_id) {
-        programme_ids = Array.isArray(programme_id)
-          ? programme_id
-          : [programme_id]
-      }
-    }
-
-    // Default to all programmes if none supplied
-    if (!programme_ids) {
-      programme_ids = Programme.findAll(data)
-        .filter(({ isHidden }) => !isHidden)
-        .map(({ id }) => id)
-    }
-
-    // Strip out mmrv as a programme id, but keep memory of it so we can adapt content
-    const useMmrv = programme_ids.includes('mmrv')
-    programme_ids = programme_ids.map((id) => (id === 'mmrv' ? 'mmr' : id))
-    const programmes = Programme.findAll(data)
-      .map((programme) => {
-        delete programme.context
-        return programme
-      })
-      .filter(({ id }) => programme_ids.includes(id))
-    if (useMmrv) {
-      const mmrProgramme = programmes.find(({ id }) => id === 'mmr')
-      mmrProgramme.name = 'MMRV'
-      mmrProgramme.id = 'mmrv'
-      mmrProgramme.information.hint = mmrProgramme.information.hintMmrv
-    }
-
-    // Track details of the invite for pages that need to show the invited programmes
-    data.clinicInvite = {
-      programmes,
-      programmeNames: programmes.map(({ name }) => name),
-      eligibleForMmrv: useMmrv
-    }
-
-    let nextPath = 'new'
-    if (!session_id) {
-      // Need to check if there are any clinic sessions available to book into
-      const bookableSessions = getBookableClinicSessions(
-        data,
-        programme_ids,
-        !patient_uuid
+      // Starting the booking from the parent's invite link
+      const { programme_id } = /** @type {{ programme_id?: string }} */ (
+        request.query
       )
-      if (bookableSessions.length === 0) {
-        nextPath = 'availability'
-      } else if (!patient_uuid) {
-        nextPath = 'start'
-      }
+      programme_ids = Array.isArray(programme_id)
+        ? programme_id
+        : [programme_id]
+      nextPath = getBookableClinicSessions(data, programme_ids, true).length
+        ? 'start'
+        : 'availability'
+    }
+
+    // If we already know what programmes we're going to offer, save that now
+    if (programme_ids) {
+      data.clinicInvite = getAppointmentProgrammeOptions(programme_ids, data)
     }
 
     return saveAndRedirect(request, response, nextPath)
@@ -346,14 +292,20 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   linkChild(request, response) {
-    const { patient_uuid } = request.query
+    const { patient_uuid } = /** @type {{ patient_uuid?: string }} */ (
+      request.query
+    )
     const { appointment_uuid, booking_uuid } = request.params
     const { data } = request.session
     const { appointmentPath, booking } = response.locals
 
     const appointment = booking.findAppointment(appointment_uuid)
-    appointment.patient_uuid = String(patient_uuid)
+    appointment.patient_uuid = patient_uuid
     ClinicBooking.update(booking_uuid, booking, data.wizard)
+
+    // Record the programmes we can offer this child
+    const programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
+    data.clinicInvite = getAppointmentProgrammeOptions(programme_ids, data)
 
     const nextPage = `${appointmentPath}/programmes`
 

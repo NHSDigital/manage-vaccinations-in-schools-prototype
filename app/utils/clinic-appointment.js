@@ -3,14 +3,86 @@ import _ from 'lodash'
 import {
   LocationSearchType,
   AppointmentAbandonmentReason,
+  PatientClinicStatus,
   ReplyDecision,
   ClinicBookingJourneyType
 } from '../enums.js'
-import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
+import {
+  ClinicAppointment,
+  ClinicBooking,
+  Patient,
+  Programme,
+  Session
+} from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getLocationSearchType } from './geolocation.js'
 import { camelToKebabCase, stringToArray } from './string.js'
+
+/**
+ * Get the MMRV-aware list of programme IDs for which the given patient can be booked into clinic
+ *
+ * @param {string} patient_uuid - the UUID of the patient being booked in
+ * @param {object} context - the context on which models are stored
+ * @returns {Array<string>} an array of programme IDs, possibly including 'mmrv'
+ */
+export const getClinicBookableProgrammeIDs = (patient_uuid, context) => {
+  const patient = Patient.findOne(patient_uuid, context)
+  if (!patient) {
+    return []
+  }
+
+  const canOfferMmrv = patient.canBeOfferedMmrv
+  const bookableStatuses = [
+    PatientClinicStatus.Ready,
+    PatientClinicStatus.Invited
+  ]
+
+  return Object.values(patient.programmes)
+    .filter(
+      ({ clinicStatus }) =>
+        clinicStatus && bookableStatuses.includes(clinicStatus)
+    )
+    .map(({ programme_id }) =>
+      programme_id === 'mmr' && canOfferMmrv ? 'mmrv' : programme_id
+    )
+}
+
+/**
+ * Get some MMRV-aware information about programmes we can offer in the booking
+ *
+ * @param {Array<string>} programme_ids - IDs of programmes that can be offered
+ * @param {object} context - the context on which models are stored
+ * @returns {object} information about programmes to offer
+ */
+export const getAppointmentProgrammeOptions = (programme_ids, context) => {
+  // Strip out mmrv as a programme id, but keep memory of it so we can adapt content
+  const offerMmrv = programme_ids.includes('mmrv')
+  programme_ids = programme_ids.map((id) => (id === 'mmrv' ? 'mmr' : id))
+
+  // Convert to the actual programme objects
+  const programmes = Programme.findAll(context)
+    .map((programme) => {
+      delete programme.context
+      return programme
+    })
+    .filter(({ id }) => programme_ids.includes(id))
+
+  // Reinstate MMRV if relevant for the booking
+  if (offerMmrv) {
+    const mmrProgramme = programmes.find(({ id }) => id === 'mmr')
+    mmrProgramme.name = 'MMRV'
+    mmrProgramme.id = 'mmrv'
+    mmrProgramme.information.hint = mmrProgramme.information.hintMmrv
+  }
+
+  // Track details of the invite for pages that need to show the invited programmes
+  return {
+    programmes,
+    programmeNames: programmes.map(({ name }) => name),
+    eligibleForMmrv: offerMmrv
+  }
+}
 
 /**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
