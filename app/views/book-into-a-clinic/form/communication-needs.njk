@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set audience = "team" if patient else "parent" %}
+{% set audience = "parent" if isParentFacing else "team" %}
 {% set title = __("clinicBooking.contact.hasCommunicationNeeds.title." + audience) %}
 {% set hint = __("clinicBooking.contact.hasCommunicationNeeds.hint." + audience) %}
 
