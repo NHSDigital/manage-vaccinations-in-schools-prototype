@@ -30,6 +30,7 @@ import {
   getBookableClinicSessions,
   getScheduledClinicLocationItems
 } from '../utils/clinic-booking.js'
+import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
@@ -42,6 +43,7 @@ import {
   kebabToCamelCase,
   stringToBoolean
 } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const bookIntoClinicController = {
   /**
@@ -161,7 +163,7 @@ export const bookIntoClinicController = {
    */
   new(request, response) {
     const { data } = request.session
-    const { patient_uuid } = request.params
+    const { patient_uuid, session_id } = request.params
 
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create(
@@ -184,7 +186,8 @@ export const bookIntoClinicController = {
       '/book-into-a-clinic',
       ''
     )
-    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
+    const firstView = session_id ? 'find-child' : 'programmes'
+    const redirectUrl = `${request.baseUrl}${relativePath}/${firstView}`
 
     return saveAndRedirect(request, response, redirectUrl)
   },
@@ -258,6 +261,11 @@ export const bookIntoClinicController = {
       )
     }
 
+    // Track the (possibly session- or child-record-based) appointment path
+    let appointmentPath = appointment.uri.new.replace('/book-into-a-clinic', '')
+    appointmentPath = `${request.baseUrl}${appointmentPath}`
+    response.locals.appointmentPath = appointmentPath
+
     // For multi-child bookings
     response.locals.childNumber = booking.appointments.indexOf(appointment) + 1
     response.locals.childCount = booking.appointments.length
@@ -267,6 +275,84 @@ export const bookIntoClinicController = {
     response.locals.fullName = isParentFacing ? 'your child' : 'the child'
 
     next()
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
+   */
+  readChildren(request, response, next) {
+    let { option, q } = request.query
+    const { data } = request.session
+
+    const patients = Patient.findAll(data)
+
+    // Sort
+    let results = _.sortBy(patients, 'lastName')
+
+    // Query
+    if (q) {
+      results = results.filter((patient) =>
+        patient.tokenized.includes(String(q).toLowerCase())
+      )
+    }
+
+    // Filter by display option
+    for (const key of [
+      'agedOutOfProgrammes',
+      'archived',
+      'hasImpairment',
+      'hasAdjustment',
+      'hasMissingNhsNumber'
+    ]) {
+      if (option?.includes(key)) {
+        results = results.filter((patient) => patient[key])
+      }
+    }
+
+    // Toggle initial view
+    response.locals.noFiltersApplied =
+      Object.keys(request.query).filter((key) => key !== 'referrer').length ===
+      0
+
+    // Results
+    response.locals.patients = patients
+    response.locals.results = getResults(results, request.query)
+    response.locals.pages = getPagination(results, request.query)
+
+    // Clean up session data
+    delete data.option
+    delete data.q
+
+    return next()
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  filterChildren(request, response) {
+    const params = getFilterParams(request, ['q'], ['option'])
+
+    const appointmentPath = response.locals.appointmentPath
+    const resultsUri = `${appointmentPath}/find-child?${params}`
+    return saveAndRedirect(request, response, resultsUri)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  linkChild(request, response) {
+    const { patient_uuid } = request.query
+    const { appointment_uuid, booking_uuid } = request.params
+    const { data } = request.session
+    const { appointmentPath, booking } = response.locals
+
+    const appointment = booking.findAppointment(appointment_uuid)
+    appointment.patient_uuid = String(patient_uuid)
+    ClinicBooking.update(booking_uuid, booking, data.wizard)
+
+    const nextPage = `${appointmentPath}/programmes`
+
+    return saveAndRedirect(request, response, nextPage)
   },
 
   /**
@@ -765,4 +851,5 @@ export const bookIntoClinicController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
+ * @import { PatientFilterQuery } from '../../typings/index.d.ts'
  */

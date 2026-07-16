@@ -1,0 +1,68 @@
+{% from "_macros/patient-search.njk" import appPatientSearch with context %}
+
+{% extends "_layouts/form.njk" %}
+
+{% set hideConfirmButton = true %}
+
+{% set title = __("clinicBooking.findChild.title") %}
+
+{% block form %}
+  {{ appHeading({
+    title: title,
+    caption: appointmentCaption
+  }) }}
+
+  {{ appPatientSearch({
+    hideProgrammeStatuses: true,
+    hideClinicStatuses: true,
+    clear: consentPath + "/match"
+  }) }}
+
+  {% if noFiltersApplied %}
+    {{ appHeading({
+      level: 2,
+      size: "m",
+      title: __("search.results"),
+      summary: __("search.initial") | safe
+    }) }}
+  {% else %}
+    {{ appHeading({
+      level: 2,
+      size: "m",
+      title: __("search.results"),
+      summary: __mf("patient.results.summary", {
+        from: results.from,
+        to: results.to,
+        count: results.count
+      }) | safe
+    }) }}
+
+    {% for patient in results.page %}
+      {{ summaryList({
+        card: {
+          classes: "app-card--compact",
+          heading: patient.fullName | highlightQuery(data.q) | safe,
+          headingLevel: 3,
+          headingSize: "s",
+          clickable: true,
+          href: appointmentPath + "/link-child?patient_uuid=" + patient.uuid
+        },
+        lastRowBorder: false,
+        rows: summaryRows(patient, {
+          dob: {},
+          postalCode: {
+            value: patient.postalCode | highlightQuery(data.q)
+          },
+          schoolName: {
+            value: patient.school.name | highlightQuery(data.q)
+          },
+          contacts: {
+            value: patient.formatted.contacts | highlightQuery(data.q)
+          }
+        })
+      }) }}
+    {% endfor %}
+
+    {{ pagination(pages) }}
+  {% endif %}
+{% endblock %}

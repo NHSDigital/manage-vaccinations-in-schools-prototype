@@ -42,6 +42,13 @@ export const getAllAppointmentPaths = (
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
     return {
+      // Find the child (data migration journey only)
+      ...(journeyType === ClinicBookingJourneyType.DataMigration
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/find-child`]: {}
+          }
+        : {}),
+
       // Vaccinations wanted
       [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/availability`]: () => {

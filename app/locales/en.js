@@ -478,6 +478,9 @@ export const en = {
     appointment: {
       caption: 'Appointment for %s'
     },
+    findChild: {
+      title: 'Search for the child to add'
+    },
     child: {
       title: {
         first: 'What is your child’s name?',
