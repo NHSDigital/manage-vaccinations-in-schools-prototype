@@ -808,7 +808,7 @@ export const en = {
       hasCommunicationNeeds: {
         title: {
           parent: 'Do you have any communication or language needs?',
-          team: 'Does the contact have any communication or language needs?'
+          team: 'Does the parent or guardian have any communication or language needs?'
         },
         hint: {
           parent:
