@@ -15,7 +15,6 @@ import {
   SessionType
 } from '../enums.js'
 import {
-  ClinicAppointment,
   ClinicBooking,
   Contact,
   Patient,
@@ -193,8 +192,8 @@ export const bookIntoClinicController = {
   /**
    * @type {RequestParamHandler}
    */
-  read(request, response, next, booking_uuid) {
-    const { patient_uuid, session_id, appointment_uuid } = request.params
+  readBooking(request, response, next, booking_uuid) {
+    const { patient_uuid, session_id } = request.params
     const { data } = request.session
     const { __ } = response.locals
 
@@ -215,29 +214,8 @@ export const bookIntoClinicController = {
       const session = Session.findOne(String(session_id), data)
       response.locals.session = session
 
-      if (appointment_uuid) {
-        const appointment = ClinicAppointment.findOne(
-          String(appointment_uuid),
-          data.wizard
-        )
-        response.locals.patient = appointment.patient
-      }
-
       // Show the session context in the caption
       response.locals.appointmentCaption = `Clinic at ${session.location.name} on ${session.formatted.dateShort}`
-    }
-
-    // Started from the parent's invite link
-    if (!response.locals.appointmentCaption && appointment_uuid) {
-      // For the parent's booking, show the current child's name if more than one
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const appointment = booking.findAppointment(String(appointment_uuid))
-      if (appointment?.booking?.appointments?.length > 1) {
-        response.locals.appointmentCaption = __(
-          'clinicBooking.appointment.caption',
-          appointment?.child?.fullFriendlyName
-        )
-      }
     }
 
     // Track the journey type to help us build the wizard and adapt content
@@ -253,6 +231,40 @@ export const bookIntoClinicController = {
     response.locals.journeyData = data.journeyData[booking_uuid]
     response.locals.isParentFacing =
       journeyType === ClinicBookingJourneyType.ParentOnline
+
+    const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
+    const booking = new ClinicBooking(wizardBooking, data)
+    response.locals.booking = booking
+
+    next()
+  },
+
+  /**
+   * @type {RequestParamHandler}
+   */
+  readAppointment(request, response, next, appointment_uuid) {
+    const { __, booking, isParentFacing } = response.locals
+
+    // Give pages access to the appointment and the patient (if one is matched)
+    const appointment = booking.findAppointment(appointment_uuid)
+    response.locals.appointment = appointment
+    response.locals.patient = appointment.patient
+
+    // For the parent's booking, show the current child's name in the caption (but only if more than one)
+    if (isParentFacing && booking?.appointments?.length > 1) {
+      response.locals.appointmentCaption = __(
+        'clinicBooking.appointment.caption',
+        appointment?.child?.fullFriendlyName
+      )
+    }
+
+    // For multi-child bookings
+    response.locals.childNumber = booking.appointments.indexOf(appointment) + 1
+    response.locals.childCount = booking.appointments.length
+
+    // TODO: tidy up this hangover from multi-child bookings (make pages use only one form?)
+    response.locals.firstName = isParentFacing ? 'your child' : 'the child'
+    response.locals.fullName = isParentFacing ? 'your child' : 'the child'
 
     next()
   },
@@ -321,36 +333,16 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
-    const { appointment_uuid, booking_uuid, view, patient_uuid } =
-      request.params
+    const { appointment_uuid, booking_uuid, view } = request.params
     const { data, referrer } = request.session
+    const { booking } = response.locals
 
-    // Create objects on the global context to allow us to check branching conditions, etc.
-    // And make them available to the view.
-    let booking
-    if (booking_uuid) {
-      const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
-      booking = new ClinicBooking(wizardBooking, data)
-      response.locals.booking = booking
-
-      if (appointment_uuid) {
-        const currentAppointment = booking.findAppointment(appointment_uuid)
-        response.locals.appointment = currentAppointment
-
-        response.locals.childNumber =
-          booking.appointments.indexOf(currentAppointment) + 1
-        response.locals.childCount = booking.appointments.length
-        response.locals.firstName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
-        response.locals.fullName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
-
-        // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
-        // that postcode is pushed to the appointment
-        if (view === 'clinic-location') {
-          currentAppointment.preferredPostcode =
-            data.appointment['preferredPostcode']
-          ClinicBooking.update(booking_uuid, booking, data.wizard)
-        }
-      }
+    // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
+    // that postcode is pushed to the appointment
+    if (view === 'clinic-location') {
+      const appointment = booking.findAppointment(appointment_uuid)
+      appointment.preferredPostcode = data.appointment['preferredPostcode']
+      ClinicBooking.update(booking_uuid, booking, data.wizard)
     }
 
     const journey = {

@@ -3,7 +3,8 @@ import _ from 'lodash'
 import {
   LocationSearchType,
   AppointmentAbandonmentReason,
-  ReplyDecision
+  ReplyDecision,
+  ClinicBookingJourneyType
 } from '../enums.js'
 import { ClinicAppointment, ClinicBooking, Session } from '../models.js'
 
@@ -32,9 +33,14 @@ export const getAllAppointmentPaths = (
     sessionData.appointment?.abandonmentReasons
   )
 
+  // Note: the journey data will be unavailable on the confirmation page (which is parent-facing only)
+  const journeyType =
+    sessionData.journeyData[booking_uuid]?.journeyType ??
+    ClinicBookingJourneyType.ParentOnline
+  const parentIsBooking = journeyType === ClinicBookingJourneyType.ParentOnline
+
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
-    const parentIsBooking = !appointment.patient_uuid
     return {
       // Vaccinations wanted
       [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
