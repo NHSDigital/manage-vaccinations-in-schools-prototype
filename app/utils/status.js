@@ -2,6 +2,7 @@ import {
   ConsentOutcome,
   DownloadStatus,
   InstructionOutcome,
+  PatientClinicStatus,
   PatientStatus,
   RegistrationOutcome,
   ReplyDecision,
@@ -336,6 +337,34 @@ export function getVaccinationOutcomeStatus(outcome) {
   return {
     colour,
     text: outcome
+  }
+}
+
+/**
+ * Get clinic status properties
+ *
+ * @param {PatientClinicStatus|false} status - clinic status
+ * @returns {object} Status properties
+ */
+export function getClinicStatus(status) {
+  let colour
+  switch (status) {
+    case PatientClinicStatus.Ready:
+      colour = 'green'
+      break
+    case PatientClinicStatus.Invited:
+      colour = 'orange'
+      break
+    case PatientClinicStatus.Booked:
+      colour = 'blue'
+      break
+    default:
+      colour = 'white'
+  }
+
+  return {
+    colour,
+    text: status
   }
 }
 

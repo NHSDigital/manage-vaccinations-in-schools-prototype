@@ -38,6 +38,13 @@
     }) }}
 
     {% for patient in results.page %}
+      {% set clinicStatusHtml -%}
+        {%- for id, patientProgramme in patient.programmes -%}
+          {% set clinicStatus = patientProgramme.formatted.clinicStatus %}
+          {{ clinicStatus | nhsukMarkdown if clinicStatus }}
+        {%- endfor %}
+      {%- endset %}
+
       {{ summaryList({
         card: {
           classes: "app-card--compact",
@@ -53,8 +60,9 @@
           postalCode: {
             value: patient.postalCode | highlightQuery(data.q)
           },
-          schoolName: {
-            value: patient.school.name | highlightQuery(data.q)
+          clinicStatus: {
+            label: "Clinic status",
+            value: clinicStatusHtml
           },
           contacts: {
             value: patient.formatted.contacts | highlightQuery(data.q)
