@@ -165,6 +165,10 @@ export const bookIntoClinicController = {
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
+    if (!data.journeyData) {
+      data.journeyData = {}
+    }
+
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create(
       {
@@ -172,14 +176,24 @@ export const bookIntoClinicController = {
       },
       data.wizard
     )
+
+    // Track various metadata about the journey that we don't record in the booking itself
+    const journeyType = patient_uuid
+      ? ClinicBookingJourneyType.PhoneBooking
+      : session_id
+        ? ClinicBookingJourneyType.DataMigration
+        : ClinicBookingJourneyType.ParentOnline
+    data.journeyData[booking.uuid] = { journeyType }
+
+    // Set up the first appointment
     const firstAppointment = booking.addAppointment()
     if (patient_uuid) {
       firstAppointment.patient_uuid = patient_uuid
       ClinicBooking.update(booking.uuid, booking, data.wizard)
+    } else if (session_id) {
+      firstAppointment.session_id = session_id
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
     }
-
-    if (!data.journeyData) data.journeyData = {}
-    data.journeyData[booking.uuid] = {}
 
     // Redirect to the first page in the booking journey (after the start page, that is)
     const relativePath = firstAppointment.uri.new.replace(
@@ -221,19 +235,15 @@ export const bookIntoClinicController = {
       response.locals.appointmentCaption = `Clinic at ${session.location.name} on ${session.formatted.dateShort}`
     }
 
-    // Track the journey type to help us build the wizard and adapt content
-    const journeyType = patient_uuid
-      ? ClinicBookingJourneyType.PhoneBooking
-      : session_id
-        ? ClinicBookingJourneyType.DataMigration
-        : ClinicBookingJourneyType.ParentOnline
-    if (data.journeyData[booking_uuid]) {
-      data.journeyData[booking_uuid].journeyType = journeyType
-    }
-
-    response.locals.journeyData = data.journeyData[booking_uuid]
+    // Adapt content in the views for the journey's audience
+    const journeyType =
+      data.journeyData[booking_uuid]?.journeyType ??
+      ClinicBookingJourneyType.ParentOnline
     response.locals.isParentFacing =
       journeyType === ClinicBookingJourneyType.ParentOnline
+
+    // Simplify access to the journey data in the views
+    response.locals.journeyData = data.journeyData[booking_uuid]
 
     const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
     const booking = new ClinicBooking(wizardBooking, data)
