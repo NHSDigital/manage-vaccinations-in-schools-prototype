@@ -170,12 +170,7 @@ export const bookIntoClinicController = {
     }
 
     // Create a new clinic booking in the wizard context
-    const booking = ClinicBooking.create(
-      {
-        invited_programme_ids: data.clinicInvite.programmes.map(({ id }) => id)
-      },
-      data.wizard
-    )
+    const booking = ClinicBooking.create({}, data.wizard)
 
     // Track various metadata about the journey that we don't record in the booking itself
     const journeyType = patient_uuid

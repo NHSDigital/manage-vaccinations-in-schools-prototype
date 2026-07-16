@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ClinicAppointment, Contact } from '../models.js'
-import { formatCode, stringToArray } from '../utils/string.js'
+import { formatCode } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
@@ -9,7 +9,6 @@ import { BaseModel } from './base.js'
  * @typedef {BaseModelOptions & object} ClinicBookingOptions
  * @property {string} [uuid] - Clinic booking UUID
  * @property {string} [bookingReference] - Booking reference number
- * @property {Array<string>} [invited_programme_ids] - IDs of programmes for which child was invited
  * @property {Contact} [contact] - Contact details for the booking; see appointments for parental relationship details
  * @property {Array<ClinicAppointment>} [appointments] - Appointments in this booking (one per child)
  */
@@ -34,7 +33,6 @@ export class ClinicBooking extends BaseModel {
 
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
-    this.invited_programme_ids = stringToArray(options?.invited_programme_ids)
 
     this.contact =
       (options?.contact && new Contact(options.contact)) ?? new Contact({})
