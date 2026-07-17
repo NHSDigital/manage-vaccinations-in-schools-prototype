@@ -1906,6 +1906,9 @@ export const en = {
       label: 'Full name',
       title: 'What is the child’s name?'
     },
+    preferredName: {
+      label: 'Preferred name'
+    },
     firstName: {
       label: 'First name'
     },
