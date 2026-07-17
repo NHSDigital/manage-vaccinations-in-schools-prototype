@@ -98,7 +98,10 @@ export const bookIntoClinicController = {
 
     // If we already know what programmes we're going to offer, save that now
     if (programme_ids) {
-      data.clinicInvite = getAppointmentProgrammeOptions(programme_ids, data)
+      data.programmesToOffer = getAppointmentProgrammeOptions(
+        programme_ids,
+        data
+      )
     }
 
     return saveAndRedirect(request, response, nextPath)
@@ -305,7 +308,7 @@ export const bookIntoClinicController = {
 
     // Record the programmes we can offer this child
     const programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
-    data.clinicInvite = getAppointmentProgrammeOptions(programme_ids, data)
+    data.programmesToOffer = getAppointmentProgrammeOptions(programme_ids, data)
 
     const nextPage = `${appointmentPath}/programmes`
 
@@ -324,7 +327,7 @@ export const bookIntoClinicController = {
     delete data.booking
     delete data.appointment
     delete data.journeyData[booking_uuid]
-    delete data.clinicInvite
+    delete data.programmesToOffer
 
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
@@ -360,7 +363,7 @@ export const bookIntoClinicController = {
     delete data.booking
     delete data.appointment
     delete data.journeyData[booking_uuid]
-    delete data.clinicInvite
+    delete data.programmesToOffer
 
     // Record the abandonment
     const appointment = booking.findAppointment(appointment_uuid)
@@ -440,7 +443,7 @@ export const bookIntoClinicController = {
         }))
     } else if (view === 'programmes') {
       // Create radio options for the programmes invited to (or flu if we've got none)
-      response.locals.programmeItems = data.clinicInvite.programmes.map(
+      response.locals.programmeItems = data.programmesToOffer.programmes.map(
         (programme) => {
           return {
             text: programme.name,
@@ -455,7 +458,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.eligibleForMmrv,
+        data.programmesToOffer.eligibleForMmrv,
         ConjunctionType.or,
         data
       )
@@ -583,7 +586,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.eligibleForMmrv,
+        data.programmesToOffer.eligibleForMmrv,
         ConjunctionType.and,
         data
       )

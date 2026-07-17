@@ -27,7 +27,7 @@ interface ApplicationData {
   booking?: ClinicBooking
   cancellation?: Record<string, any>
   clinicAdvert?: Record<string, any>
-  clinicInvite?: Record<string, any>
+  programmesToOffer?: Record<string, any>
   clinicPatient_ids?: string | string[]
   consent?: Consent
   counts?: {

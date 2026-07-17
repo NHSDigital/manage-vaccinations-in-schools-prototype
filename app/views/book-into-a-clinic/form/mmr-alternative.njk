@@ -5,7 +5,7 @@
 {% set hint = __("clinicBooking.mmrAlternative.hint") %}
 
 {# Replace MMR with MMRV content as necessary #}
-{% if data.clinicInvite.eligibleForMmrv %}
+{% if data.programmesToOffer.eligibleForMmrv %}
   {% set title = title | replace('MMR', 'MMRV') %}
   {% set hint = hint | replace('MMR', 'MMRV') %}
 {% endif %}

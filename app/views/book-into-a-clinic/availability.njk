@@ -10,7 +10,7 @@
         title: __("clinicBooking.availability.title.invited")
       }) }}
 
-      {% set programmeNames = data.clinicInvite.programmeNames | formatList('disjunction') %}
+      {% set programmeNames = data.programmesToOffer.programmeNames | formatList('disjunction') %}
       {% call insetText() %}
         {{ __("clinicBooking.availability.problem", { programmes: programmeNames }) | nhsukMarkdown }}
       {% endcall %}

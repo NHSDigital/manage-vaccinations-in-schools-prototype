@@ -12,12 +12,12 @@
 
       {{ __("clinicBooking.start.intro") | nhsukMarkdown }}
       
-      {% if data.clinicInvite.programmes.length > 1 %}
+      {% if data.programmesToOffer.programmes.length > 1 %}
         <h2>About the vaccinations</h2>
       {% endif %}
 
-      {% for programme in data.clinicInvite.programmes %}
-        {% if data.clinicInvite.programmes.length > 1 %}
+      {% for programme in data.programmesToOffer.programmes %}
+        {% if data.programmesToOffer.programmes.length > 1 %}
           <h3>{{ programme.name }}</h3>
         {% else %}
           <h2>About the {{ programme.name | replace('Flu', 'flu') }} vaccination</h2>
