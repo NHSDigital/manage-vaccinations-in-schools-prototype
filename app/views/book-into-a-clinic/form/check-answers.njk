@@ -31,10 +31,10 @@
         href: "address" if isParentFacing
       },
       impairments: {
-        href: "impairments"
+        href: "impairments" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       adjustments: {
-        href: "adjustments"
+        href: "adjustments" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       }
     })
   }) }}
@@ -56,13 +56,13 @@
         href: "mmr-alternative"
       },
       location: {
-        href: "clinic-location"
+        href: "clinic-location" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       date: {
-        href: "clinic-date"
+        href: "clinic-date" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       timeSlot: {
-        href: "appointment-time-range"
+        href: "appointment-time-range" if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
       }
     })
   }) }}
