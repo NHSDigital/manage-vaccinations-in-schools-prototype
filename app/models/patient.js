@@ -11,6 +11,8 @@ import {
   NoticeType,
   NotifyEmailStatus,
   PatientClinicStatus,
+  SessionStatus,
+  SessionType,
   VaccinationOutcome
 } from '../enums.js'
 import {
@@ -33,6 +35,10 @@ import {
   today
 } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
+import {
+  ConjunctionType,
+  programmeNamesListForSentence
+} from '../utils/programme.js'
 import { getPreferredNames } from '../utils/reply.js'
 import {
   formatLink,
@@ -594,6 +600,64 @@ export class Patient extends Child {
               return formatList(
                 this.contacts.map((contact) => contact.fullNameAndRelationship)
               )
+            case 'upcomingAppointments': {
+              const appointmentDetails = this.appointments
+                .filter((appointment) =>
+                  [SessionStatus.Planned, SessionStatus.Active].includes(
+                    appointment.session.status
+                  )
+                )
+                .map((appointment) => {
+                  const session = appointment.session
+                  return formatWithSecondaryText(
+                    `${session.location.name} on ${session.formatted.dateShort}`,
+                    `For ${appointment.formatted.programmeNames}`,
+                    true
+                  )
+                })
+              return appointmentDetails.length
+                ? formatList(appointmentDetails)
+                : 'None'
+            }
+            case 'upcomingSchoolSessions': {
+              const schoolPatientSessions = this.patientSessions.filter(
+                (patientSession) => {
+                  const session = patientSession.session
+                  return (
+                    session.type === SessionType.School &&
+                    [SessionStatus.Planned, SessionStatus.Active].includes(
+                      session.status
+                    )
+                  )
+                }
+              )
+              if (schoolPatientSessions.length === 0) {
+                return 'None'
+              }
+              const bySession = Object.groupBy(
+                schoolPatientSessions,
+                (patientSession) => patientSession.session_id
+              )
+              return formatList(
+                Object.values(bySession).map((patientSessions) => {
+                  const session = patientSessions[0].session
+                  const sessionDetails = `${session.location.name} on ${session.formatted.dateShort}`
+                  const programme_ids = patientSessions.map(
+                    ({ programme_id }) => programme_id
+                  )
+                  const programmeNames = programmeNamesListForSentence(
+                    programme_ids,
+                    this.canBeOfferedMmrv,
+                    ConjunctionType.and,
+                    this.context
+                  )
+                  return formatWithSecondaryText(
+                    sessionDetails,
+                    `For ${programmeNames}`
+                  )
+                })
+              )
+            }
             default:
               return super.formatted?.[prop]
           }

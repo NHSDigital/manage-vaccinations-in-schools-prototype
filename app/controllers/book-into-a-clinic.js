@@ -306,11 +306,18 @@ export const bookIntoClinicController = {
     appointment.patient_uuid = patient_uuid
     ClinicBooking.update(booking_uuid, booking, data.wizard)
 
-    // Record the programmes we can offer this child
+    // Check the programmes we can offer this child
+    let nextPage
     const programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
-    data.programmesToOffer = getAppointmentProgrammeOptions(programme_ids, data)
-
-    const nextPage = `${appointmentPath}/programmes`
+    if (programme_ids.length) {
+      data.programmesToOffer = getAppointmentProgrammeOptions(
+        programme_ids,
+        data
+      )
+      nextPage = `${appointmentPath}/programmes`
+    } else {
+      nextPage = `${appointmentPath}/not-eligible`
+    }
 
     return saveAndRedirect(request, response, nextPage)
   },
