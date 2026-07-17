@@ -346,7 +346,8 @@ export const bookIntoClinicController = {
   update(request, response) {
     const { appointment_uuid, booking_uuid } = request.params
     const { data } = request.session
-    const { __, booking, paths, patient } = response.locals
+    const { __, booking, paths, patient, session, journeyData } =
+      response.locals
 
     // Clean up session data
     delete data.booking
@@ -369,7 +370,12 @@ export const bookIntoClinicController = {
           sessionName: appointment.session.name
         })
       )
+    }
 
+    // Get back to where we started, if this isn't the parent journey
+    if (session) {
+      paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/report'}`
+    } else if (patient) {
       paths.next = patient.uri
     }
 

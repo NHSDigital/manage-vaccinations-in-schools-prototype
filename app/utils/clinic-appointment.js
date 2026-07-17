@@ -117,7 +117,7 @@ export const getAllAppointmentPaths = (
     const appointment_uuid = appointment.uuid
     return {
       // Find the child (data migration journey only)
-      ...(journeyType === ClinicBookingJourneyType.DataMigration
+      ...(isDataMigrationJourney
         ? {
             [`/${booking_uuid}/new/${appointment_uuid}/find-child`]: {}
           }
