@@ -227,39 +227,48 @@ export const getAllAppointmentPaths = (
             }
           }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
-          return (
-            getBookableClinicSessions(
-              sessionData,
-              appointment.selected_programme_ids,
-              isParentJourney
-            ).length === 0
-          )
-        }
+      ...(!(
+        isDataMigrationJourney &&
+        sessionData.journeyData[booking_uuid]?.preselectedSlot
+      )
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
+              {
+                [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]:
+                  () => {
+                    return (
+                      getBookableClinicSessions(
+                        sessionData,
+                        appointment.selected_programme_ids,
+                        isParentJourney
+                      ).length === 0
+                    )
+                  }
+              },
+            [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {
+              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+                return (
+                  getBookableClinicSessions(
+                    sessionData,
+                    appointment.selected_programme_ids,
+                    isParentJourney
+                  ).length === 0
+                )
+              }
+            }
+          }
+        : {}),
+      [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: () => {
+        const patient = appointment.patient
+        if (!patient) return false
+
+        return patient.contacts?.length > 0
       },
-      [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
-          return (
-            getBookableClinicSessions(
-              sessionData,
-              appointment.selected_programme_ids,
-              isParentJourney
-            ).length === 0
-          )
-        },
-        [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: () => {
-          const patient = appointment.patient
-          if (!patient) return false
+      [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
+        const patient = appointment.patient
+        if (!patient) return false
 
-          return patient.contacts?.length > 0
-        },
-        [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-          const patient = appointment.patient
-          if (!patient) return false
-
-          return patient.contacts?.length === 0
-        }
+        return patient.contacts?.length === 0
       },
 
       // Child details

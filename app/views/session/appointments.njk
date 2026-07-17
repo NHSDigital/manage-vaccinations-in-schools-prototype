@@ -5,7 +5,7 @@
 {% set caption = session.formatted.date %}
 
 {% block content %}
-  {% macro buildSlotHtml(appointment, time, spaceToExtend) %}
+  {% macro buildSlotHtml(appointment, bookingQueryString, spaceToExtend) %}
     {% if appointment !== null %}
       {# Link from child’s name #}
       {% if appointment.patient_uuid %}
@@ -48,7 +48,7 @@
         {{ appointment.link.extend | safe }}
       {% endif %}
     {% else %}
-      <a href="{{session.uri}}/add-appointment/">Book</a>
+      {{ link(session.uri + "/add-appointment/?" + bookingQueryString, "Book") | safe }}
     {% endif %}  
   {% endmacro %}
 
@@ -67,7 +67,7 @@
           if rowValue.timeSlot else
           {
             header: rowValue.header,
-            html: buildSlotHtml(rowValue.appointment, row.time, rowValue.spaceToExtend)
+            html: buildSlotHtml(rowValue.appointment, row.bookingQueryString, rowValue.spaceToExtend)
           }
         ) %}
       {% endfor %}

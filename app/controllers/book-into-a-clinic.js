@@ -81,8 +81,15 @@ export const bookIntoClinicController = {
         ? 'new'
         : 'availability'
     } else if (session_id) {
-      // Starting the booking process from a session
-      nextPath = 'new'
+      // Starting the booking process from a session; pass on specific slot if present
+      const { slot } = /** @type {{ slot?: string }} */ (request.query)
+      if (slot) {
+        const params = new URLSearchParams()
+        params.append('slot', slot)
+        nextPath = `new?${params.toString()}`
+      } else {
+        nextPath = 'new'
+      }
     } else {
       // Starting the booking from the parent's invite link
       const { programme_id } = /** @type {{ programme_id?: string }} */ (
@@ -130,20 +137,31 @@ export const bookIntoClinicController = {
     data.journeyData[booking.uuid] = { journeyType }
 
     // Set up the first appointment
-    const firstAppointment = booking.addAppointment()
+    const appointment = booking.addAppointment()
     if (patient_uuid) {
-      firstAppointment.patient_uuid = patient_uuid
+      appointment.patient_uuid = patient_uuid
       ClinicBooking.update(booking.uuid, booking, data.wizard)
     } else if (session_id) {
-      firstAppointment.session_id = session_id
+      appointment.session_id = session_id
+
+      // Already selected a specific time slot?
+      const { slot } = /** @type {{ slot?: string }} */ (request.query)
+      if (slot) {
+        const session = Session.findOne(session_id, data)
+        appointment.startAt = new Date(slot)
+        appointment.endAt = addMinutes(
+          appointment.startAt,
+          session.appointmentLength
+        )
+
+        data.journeyData[booking.uuid].preselectedSlot = appointment.startAt
+      }
+
       ClinicBooking.update(booking.uuid, booking, data.wizard)
     }
 
     // Redirect to the first page in the booking journey (after the start page, that is)
-    const relativePath = firstAppointment.uri.new.replace(
-      '/book-into-a-clinic',
-      ''
-    )
+    const relativePath = appointment.uri.new.replace('/book-into-a-clinic', '')
     const firstView = session_id ? 'find-child' : 'programmes'
     const redirectUrl = `${request.baseUrl}${relativePath}/${firstView}`
 

@@ -696,7 +696,12 @@ export const sessionController = {
             }))
         )
 
-        return { time, rowValues }
+        const params = new URLSearchParams()
+        params.append('slot', time.toISOString())
+        return {
+          bookingQueryString: params.toString(),
+          rowValues
+        }
       })
 
       vaccinationPeriodTables.push({
