@@ -44,6 +44,7 @@
           {{ clinicStatus | nhsukMarkdown if clinicStatus }}
         {%- endfor %}
       {%- endset %}
+      {% set clinicStatusHtml = clinicStatusHtml | trim %}
 
       {{ summaryList({
         card: {
@@ -63,7 +64,7 @@
           clinicStatus: {
             label: "Clinic status",
             value: clinicStatusHtml
-          },
+          } if clinicStatusHtml.length,
           contacts: {
             value: patient.formatted.contacts | highlightQuery(data.q)
           }
