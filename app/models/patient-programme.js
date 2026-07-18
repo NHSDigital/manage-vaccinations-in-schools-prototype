@@ -559,6 +559,20 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get vaccination due
+   *
+   * @returns {PatientDueStatus} Vaccination due
+   */
+  get vaccinationDue() {
+    return [
+      PatientDueStatus.Only,
+      PatientDueStatus.First,
+      PatientDueStatus.Second,
+      PatientDueStatus.Third
+    ][this.doseDue]
+  }
+
+  /**
    * Get dose sequence code
    *
    * @returns {string} Dose sequence code
@@ -638,27 +652,6 @@ export class PatientProgramme extends BaseModel {
         ...this.tetanusVaccinationsGiven,
         ...this.otherVaccinationsGiven
       ].sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
-    }
-  }
-
-  /**
-   * Get vaccination due
-   *
-   * @returns {PatientDueStatus} Vaccination due
-   */
-  get vaccinationDue() {
-    switch (true) {
-      case this.dosesNeeded === 3 && this.dosesRemaining === 1:
-        return PatientDueStatus.Third
-      case this.dosesNeeded === 3 && this.dosesRemaining === 2:
-      case this.dosesNeeded === 2 && this.dosesRemaining === 1:
-        return PatientDueStatus.Second
-      case this.dosesNeeded === 3 && this.dosesRemaining === 3:
-      case this.dosesNeeded === 2 && this.dosesRemaining === 2:
-        return PatientDueStatus.First
-      case this.dosesNeeded === 1 && this.dosesRemaining === 1:
-      default:
-        return PatientDueStatus.Only
     }
   }
 
