@@ -476,7 +476,7 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get TTCV vaccinations given
+   * Get tetanus vaccinations given
    *
    * @returns {Array<Vaccination>|undefined} Vaccinations
    */
@@ -600,7 +600,7 @@ export class PatientProgramme extends BaseModel {
     )
   }
 
-  get ttcvVaccinations() {
+  get tetanusVaccinations() {
     if (this.programme.type === ProgrammeType.TdIPV) {
       return [
         new Vaccination(
