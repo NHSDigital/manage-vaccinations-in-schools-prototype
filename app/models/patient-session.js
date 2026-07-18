@@ -41,8 +41,8 @@ import {
 } from '../utils/date.js'
 import {
   getInstructionOutcome,
+  canRecordOutcome,
   getRegistrationOutcome,
-  getRecordOutcome,
   getSessionOutcome
 } from '../utils/patient-session.js'
 import {
@@ -857,10 +857,10 @@ export class PatientSession extends BaseModel {
   /**
    * Get ready to record outcome
    *
-   * @returns {boolean|undefined} Ready to record outcome
+   * @returns {boolean} Ready to record outcome
    */
-  get record() {
-    return getRecordOutcome(this)
+  get canRecordOutcome() {
+    return canRecordOutcome(this)
   }
 
   /**

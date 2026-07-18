@@ -59,7 +59,7 @@ export const getRegistrationOutcome = (patientSession) => {
  * @param {PatientSession} patientSession - Patient session
  * @returns {boolean} Ready to record outcome
  */
-export const getRecordOutcome = (patientSession) => {
+export const canRecordOutcome = (patientSession) => {
   const { register, report, session } = patientSession
 
   if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {

@@ -44,7 +44,6 @@ export const patientSessionController = {
       consentGiven,
       patient,
       programme,
-      record,
       report,
       session,
       triageNotes,
@@ -110,7 +109,7 @@ export const patientSessionController = {
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
         account.vaccineMethods?.includes(patientSession.vaccine?.method) &&
-        record &&
+        patientSession.canRecordOutcome &&
         session.isActive
     }
 
