@@ -303,15 +303,25 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get clinics for this programme by session status
+   *
+   * @param {SessionStatus} status - Session status
+   * @returns {Array<Session>} Clinics targeting this programme and status
+   */
+  #clinicsWithStatus(status) {
+    return Session.findAll(this.context)
+      ?.filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
+      ?.filter(({ type }) => type === SessionType.Clinic)
+      ?.filter((session) => session.status === status)
+  }
+
+  /**
    * Get active clinics for this programme
    *
    * @returns {Array<Session>} Active clinics targeting this programme
    */
   get activeClinics() {
-    return Session.findAll(this.context)
-      ?.filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
-      ?.filter(({ type }) => type === SessionType.Clinic)
-      ?.filter(({ status }) => status === SessionStatus.Active)
+    return this.#clinicsWithStatus(SessionStatus.Active)
   }
 
   /**
@@ -329,10 +339,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<Session>} Scheduled clinics targeting this programme
    */
   get scheduledClinics() {
-    return Session.findAll(this.context)
-      ?.filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
-      ?.filter(({ type }) => type === SessionType.Clinic)
-      ?.filter(({ status }) => status === SessionStatus.Planned)
+    return this.#clinicsWithStatus(SessionStatus.Planned)
   }
 
   /**
