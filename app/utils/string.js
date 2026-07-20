@@ -1,9 +1,20 @@
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
-import i18n from 'i18n'
 
 import { healthQuestions } from '../datasets/health-questions.js'
 
+import i18n from './i18n.js'
 import { ordinal } from './number.js'
+
+/**
+ * Translate a phrase outside the request/response cycle
+ *
+ * @param {string} phrase - Catalog key
+ * @param {object} [values] - Values for interpolation (e.g. { count })
+ * @param {string} [locale] - Locale to translate into
+ * @returns {string} Translated string
+ */
+export const localise = (phrase, values = {}, locale = 'en') =>
+  i18n.__mf({ phrase, locale }, values)
 
 /**
  * kebab-case to camelCase
