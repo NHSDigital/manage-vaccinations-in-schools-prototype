@@ -254,22 +254,23 @@ export const getAllAppointmentPaths = (
                     isParentJourney
                   ).length === 0
                 )
+              },
+              [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
+                () => {
+                  const patient = appointment.patient
+                  if (!patient) return false
+
+                  return patient.contacts?.length > 0
+                },
+              [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
+                const patient = appointment.patient
+                if (!patient) return false
+
+                return patient.contacts?.length === 0
               }
             }
           }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: () => {
-        const patient = appointment.patient
-        if (!patient) return false
-
-        return patient.contacts?.length > 0
-      },
-      [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-        const patient = appointment.patient
-        if (!patient) return false
-
-        return patient.contacts?.length === 0
-      },
 
       // Child details
       ...(isParentJourney
