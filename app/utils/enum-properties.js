@@ -1,0 +1,263 @@
+import {
+  ConsentOutcome,
+  DownloadStatus,
+  InstructionOutcome,
+  PatientClinicStatus,
+  PatientStatus,
+  RegistrationOutcome,
+  ReplyDecision,
+  SchoolStatus,
+  ScreenOutcome,
+  UploadStatus,
+  VaccinationOutcome,
+  VaccinationSyncStatus
+} from '../enums.js'
+
+const CONSENT_OUTCOME_COLOURS = {
+  [ConsentOutcome.NoResponse]: 'grey',
+  [ConsentOutcome.NotDelivered]: 'orange',
+  [ConsentOutcome.Inconsistent]: 'orange',
+  [ConsentOutcome.Given]: 'green',
+  [ConsentOutcome.GivenForAlternativeInjection]: 'green',
+  [ConsentOutcome.GivenForIntranasal]: 'green',
+  [ConsentOutcome.Declined]: 'yellow',
+  [ConsentOutcome.Refused]: 'red',
+  [ConsentOutcome.FinalRefusal]: 'red'
+}
+
+const DOWNLOAD_STATUS_COLOURS = {
+  [DownloadStatus.Processing]: 'grey',
+  [DownloadStatus.Ready]: 'green'
+}
+
+const PATIENT_CLINIC_STATUS_COLOURS = {
+  [PatientClinicStatus.Ready]: 'green',
+  [PatientClinicStatus.Invited]: 'orange',
+  [PatientClinicStatus.Booked]: 'blue'
+}
+
+const PATIENT_STATUS_COLOURS = {
+  [PatientStatus.Ineligible]: 'grey',
+  [PatientStatus.Consent]: 'blue',
+  [PatientStatus.Triage]: 'blue',
+  [PatientStatus.Refused]: 'orange',
+  [PatientStatus.Deferred]: 'red',
+  [PatientStatus.Due]: 'green'
+}
+
+const REGISTRATION_OUTCOME_COLOURS = {
+  [RegistrationOutcome.Present]: 'green',
+  [RegistrationOutcome.Absent]: 'red',
+  [RegistrationOutcome.Complete]: 'white'
+}
+
+const REPLY_DECISION_COLOURS = {
+  [ReplyDecision.Given]: 'green',
+  [ReplyDecision.OnlyAlternativeInjection]: 'green',
+  [ReplyDecision.Declined]: 'yellow',
+  [ReplyDecision.Refused]: 'red',
+  [ReplyDecision.NoResponse]: 'grey'
+}
+
+const SCHOOL_STATUS_COLOURS = {
+  [SchoolStatus.Open]: 'white',
+  [SchoolStatus.Opening]: 'yellow',
+  [SchoolStatus.Closing]: 'yellow',
+  [SchoolStatus.Closed]: 'grey'
+}
+
+const SCREEN_OUTCOME_COLOURS = {
+  [ScreenOutcome.NeedsTriage]: 'blue',
+  [ScreenOutcome.InviteToClinic]: 'orange',
+  [ScreenOutcome.DelayVaccination]: 'orange',
+  [ScreenOutcome.DoNotVaccinate]: 'red'
+}
+
+const UPLOAD_STATUS_COLOURS = {
+  [UploadStatus.Approved]: 'green',
+  [UploadStatus.Review]: 'blue',
+  [UploadStatus.Devoid]: 'grey',
+  [UploadStatus.Failed]: 'red',
+  [UploadStatus.Invalid]: 'red'
+}
+
+const VACCINATION_SYNC_STATUS_COLOURS = {
+  [VaccinationSyncStatus.CannotSync]: 'orange',
+  [VaccinationSyncStatus.NotSynced]: 'grey',
+  [VaccinationSyncStatus.Synced]: 'green',
+  [VaccinationSyncStatus.Failed]: 'red'
+}
+
+const VACCINATION_OUTCOME_COLOURS = {
+  [VaccinationOutcome.DoNotVaccinate]: 'red',
+  [VaccinationOutcome.Refused]: 'red',
+  [VaccinationOutcome.Absent]: 'red',
+  [VaccinationOutcome.Unwell]: 'red',
+  [VaccinationOutcome.ConsentRefused]: 'orange',
+  [VaccinationOutcome.DelayVaccination]: 'orange',
+  [VaccinationOutcome.InviteToClinic]: 'orange'
+}
+
+/**
+ * Get clinic status properties
+ *
+ * @param {PatientClinicStatus|false} status - clinic status
+ * @returns {object} Status properties
+ */
+export function getPatientClinicStatusProperties(status) {
+  return {
+    colour: PATIENT_CLINIC_STATUS_COLOURS[status] ?? 'white',
+    text: status
+  }
+}
+
+/**
+ * Get consent outcome properties
+ *
+ * @param {ConsentOutcome} outcome - Consent outcome
+ * @returns {object} Outcome properties
+ */
+export function getConsentOutcomeProperties(outcome) {
+  return { colour: CONSENT_OUTCOME_COLOURS[outcome], text: outcome }
+}
+
+/**
+ * Get download status properties
+ *
+ * @param {DownloadStatus} status - Download status
+ * @returns {object} Status properties
+ */
+export function getDownloadStatusProperties(status) {
+  return { colour: DOWNLOAD_STATUS_COLOURS[status], text: status }
+}
+
+/**
+ * Get instruction outcome status properties
+ *
+ * @param {InstructionOutcome|boolean} outcome - Instruction outcome
+ * @returns {object|undefined} Outcome properties
+ */
+export function getInstructionOutcomeProperties(outcome) {
+  if (!outcome) {
+    return
+  }
+
+  return {
+    colour: outcome === InstructionOutcome.Given ? 'green' : 'grey',
+    text: outcome
+  }
+}
+
+/**
+ * Get patient status properties
+ *
+ * @param {PatientStatus} status - Patient status
+ * @param {PatientDueStatus} [vaccinationDue] - Patient due status
+ * @returns {object} Status properties
+ */
+export function getPatientStatusProperties(status, vaccinationDue) {
+  return {
+    colour: PATIENT_STATUS_COLOURS[status] ?? 'white',
+    text: status === PatientStatus.Due ? (vaccinationDue ?? status) : status
+  }
+}
+
+/**
+ * Get registration outcome status properties
+ *
+ * @param {RegistrationOutcome} outcome - Registration outcome
+ * @returns {object} Outcome properties
+ */
+export function getRegistrationOutcomeProperties(outcome) {
+  return {
+    colour: REGISTRATION_OUTCOME_COLOURS[outcome] ?? 'grey',
+    text: outcome
+  }
+}
+
+/**
+ * Get reply decision status properties
+ *
+ * @param {ReplyDecision} decision - Reply decision
+ * @returns {object} Decision properties
+ */
+export function getReplyDecisionProperties(decision) {
+  return {
+    colour: REPLY_DECISION_COLOURS[decision] ?? 'blue',
+    text:
+      decision === ReplyDecision.OnlyAlternativeInjection
+        ? ReplyDecision.Given
+        : decision
+  }
+}
+
+/**
+ * Get school status properties
+ *
+ * @param {SchoolStatus} status - School status
+ * @returns {object} Status properties
+ */
+export function getSchoolStatusProperties(status) {
+  return {
+    colour: SCHOOL_STATUS_COLOURS[status],
+    text: status
+  }
+}
+
+/**
+ * Get screen outcome status properties
+ *
+ * @param {ScreenOutcome|boolean} outcome - Screen outcome
+ * @returns {object} Outcome properties
+ */
+export function getScreenOutcomeProperties(outcome) {
+  const hasOutcome = String(outcome) in SCREEN_OUTCOME_COLOURS
+
+  return {
+    colour: hasOutcome ? SCREEN_OUTCOME_COLOURS[outcome] : 'green',
+    text: hasOutcome ? outcome : 'No triage needed'
+  }
+}
+
+/**
+ * Get upload status properties
+ *
+ * @param {UploadStatus} status - Upload status
+ * @returns {object} Status properties
+ */
+export function getUploadStatusProperties(status) {
+  return {
+    colour: UPLOAD_STATUS_COLOURS[status] ?? 'white',
+    text: status
+  }
+}
+
+/**
+ * Get vaccination sync status properties
+ *
+ * @param {VaccinationSyncStatus} status - Vaccination sync status
+ * @returns {object} Status properties
+ */
+export function getVaccinationSyncStatusProperties(status) {
+  return {
+    colour: VACCINATION_SYNC_STATUS_COLOURS[status] ?? 'blue',
+    text: status
+  }
+}
+
+/**
+ * Get vaccination outcome properties
+ *
+ * @param {VaccinationOutcome} outcome - Vaccination outcome
+ * @returns {object} Outcome properties
+ */
+export function getVaccinationOutcomeProperties(outcome) {
+  return {
+    colour: VACCINATION_OUTCOME_COLOURS[outcome] ?? 'white',
+    text: outcome
+  }
+}
+
+/**
+ * @import { PatientDueStatus } from '../enums.js'
+ */

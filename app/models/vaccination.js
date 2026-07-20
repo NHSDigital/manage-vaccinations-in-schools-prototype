@@ -29,9 +29,9 @@ import {
   today
 } from '../utils/date.js'
 import {
-  getVaccinationOutcomeStatus,
-  getVaccinationSyncStatus
-} from '../utils/status.js'
+  getVaccinationOutcomeProperties,
+  getVaccinationSyncStatusProperties
+} from '../utils/enum-properties.js'
 import {
   formatCode,
   formatIdentifier,
@@ -461,7 +461,7 @@ export class Vaccination extends BaseModel {
               })
             case 'syncStatus':
               return formatWithSecondaryText(
-                formatTag(getVaccinationSyncStatus(this.syncStatus)),
+                formatTag(getVaccinationSyncStatusProperties(this.syncStatus)),
                 this.syncStatusNotes,
                 true
               )
@@ -478,7 +478,7 @@ export class Vaccination extends BaseModel {
             case 'note':
               return formatMarkdown(this.note)
             case 'outcome':
-              return formatTag(getVaccinationOutcomeStatus(this.outcome))
+              return formatTag(getVaccinationOutcomeProperties(this.outcome))
             case 'programme':
               return this.programmeOther || getProgrammeTag()
             case 'programmeWithSequence':
