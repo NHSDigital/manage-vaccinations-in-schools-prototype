@@ -46,14 +46,17 @@
         {{ checkboxes({
           fieldset: {
             legend: {
-              text: __("programme.label"),
+              text: __("school.unplannedProgrammes.label"),
               size: "s"
             }
           },
+          hint: {
+            text: __("school.unplannedProgrammes.hint")
+          },
           small: true,
-          items: programmeItems,
+          items: unplannedProgrammeItems,
           decorate: "programme_id"
-        }) if programmeItems }}
+        }) }}
 
         {{ checkboxes({
           fieldset: {
@@ -64,10 +67,6 @@
           },
           small: true,
           items: [
-            {
-              value: "hasNoPlannedSessions",
-              text: __("school.search.hasNoPlannedSessions")
-            },
             {
               value: "isClosed",
               text: __("school.search.isClosed")
@@ -131,8 +130,8 @@
             status: {},
             phase: {},
             address: {},
-            plannedSessions: {},
-            nextSessionDate: {}
+            nextSessionDate: {},
+            unplannedProgrammes: {}
           })
         }) }}
       {% endfor %}
