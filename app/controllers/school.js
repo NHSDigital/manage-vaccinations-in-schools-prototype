@@ -89,7 +89,7 @@ export const schoolController = {
     }
 
     // Filter by display option
-    for (const key of ['isClosed']) {
+    for (const key of ['isClosed', 'hasNoPlannedSessions']) {
       if (option?.includes(key)) {
         results = results.filter((school) => school[key])
       }

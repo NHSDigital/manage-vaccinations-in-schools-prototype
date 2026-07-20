@@ -1,7 +1,7 @@
 import { default as filters } from '@x-govuk/govuk-prototype-filters'
 import { isAfter, isBefore } from 'date-fns'
 
-import { SchoolClosureReason, SchoolStatus } from '../enums.js'
+import { SchoolClosureReason, SchoolStatus, SessionStatus } from '../enums.js'
 import { Location, Patient, Session, Team } from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 import { getSchoolStatusProperties } from '../utils/enum-properties.js'
@@ -11,6 +11,7 @@ import {
   formatLink,
   formatTag,
   formatYearGroups,
+  localise,
   stringToArray,
   stringToBoolean
 } from '../utils/string.js'
@@ -231,6 +232,26 @@ export class School extends Location {
   }
 
   /**
+   * Get planned sessions run at this school
+   *
+   * @returns {Array<Session>} Sessions
+   */
+  get plannedSessions() {
+    return this.sessions.filter(
+      ({ status }) => status === SessionStatus.Planned
+    )
+  }
+
+  /**
+   * Whether no sessions planned to run at this school
+   *
+   * @returns {boolean} `true` if there are no planned session
+   */
+  get hasNoPlannedSessions() {
+    return !this.isHomeOrUnknown && this.plannedSessions.length === 0
+  }
+
+  /**
    * Get next session at this school
    *
    * @returns {Date|undefined} Next session
@@ -285,8 +306,16 @@ export class School extends Location {
               return `${this.name} (${getId()})`
             case 'nextSessionDate':
               return formatDate(this.nextSessionDate, { dateStyle: 'full' })
+            case 'plannedSessions':
+              return !this.isHomeOrUnknown
+                ? localise('school.plannedSessions.count', {
+                    count: this.plannedSessions.length
+                  })
+                : ''
             case 'patients':
-              return filters.plural(this.patients.length, 'child')
+              return localise('school.patients.count', {
+                count: this.patients.length
+              })
             case 'site':
               return formatCode(this.site)
             case 'status':
