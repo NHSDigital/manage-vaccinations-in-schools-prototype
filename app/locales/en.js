@@ -2696,7 +2696,9 @@ export const en = {
     },
     patients: {
       label: 'Children',
-      title: 'Children'
+      title: 'Children',
+      count:
+        '{count, plural, =0 {No children} one {1 child} other {# children}}'
     },
     sessions: {
       label: 'Sessions',
@@ -2705,6 +2707,11 @@ export const en = {
       isPlanned: 'Scheduled sessions',
       isCompleted: 'Completed sessions'
     },
+    plannedSessions: {
+      label: 'Upcoming sessions',
+      count:
+        '{count, plural, =0 {No upcoming sessions} one {# upcoming session} other{# upcoming sessions}}'
+    },
     results:
       '{count, plural, =0 {No schools matching your search criteria were found} one{Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> record} other{Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> schools}}',
     count:
@@ -2712,6 +2719,7 @@ export const en = {
     search: {
       label: 'Find school',
       showOnly: 'Show only',
+      hasNoPlannedSessions: 'Schools with no upcoming sessions',
       isClosed: 'Closed schools'
     },
     name: {
