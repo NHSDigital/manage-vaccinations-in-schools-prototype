@@ -7,7 +7,6 @@ import {
   AuditEventType,
   ClinicAttendanceType,
   ConsentOutcome,
-  ConsentWindow,
   PatientStatus,
   PatientConsentStatus,
   PatientDeferredStatus,
@@ -47,17 +46,26 @@ import {
   getVaccinationOutcomeProperties
 } from '../utils/enum-properties.js'
 import {
-  getInstructionOutcome,
   canRecordOutcome,
+  getConsentOutcomeDescription,
+  getInstructionOutcome,
+  getPatientConsentStatus,
+  getPatientDeferredDescription,
+  getPatientDeferredStatus,
+  getPatientRefusedStatus,
+  getPatientStatusDescription,
+  getPatientTriageStatus,
+  getPatientVaccinatedStatus,
   getRegistrationOutcome,
+  getRegistrationOutcomeDescription,
+  getScreenOutcomeDescription,
   getVaccinationOutcome
 } from '../utils/patient-session.js'
 import {
   countAnswersNeedingTriage,
   getConsentOutcome,
   getConsentHealthAnswers,
-  getConsentRefusalReasons,
-  getRepliesWithHealthAnswers
+  getConsentRefusalReasons
 } from '../utils/reply.js'
 import {
   formatLink,
@@ -505,35 +513,7 @@ export class PatientSession extends BaseModel {
    * @returns {PatientConsentStatus|undefined} Patient consent status
    */
   get patientConsent() {
-    if (this.patient?.isPost16) {
-      return PatientConsentStatus.SelfConsent
-    }
-
-    if (this.patient?.hasNoContactDetails) {
-      return PatientConsentStatus.NoDetails
-    }
-
-    // Only school sessions have a consent window
-    if (this.session.school_id) {
-      if (this.session?.consentWindow === ConsentWindow.None) {
-        return PatientConsentStatus.NotScheduled
-      } else if (this.session?.consentWindow === ConsentWindow.Opening) {
-        return PatientConsentStatus.Scheduled
-      }
-    }
-
-    switch (this.consent) {
-      case ConsentOutcome.NotDelivered:
-        return PatientConsentStatus.NotDelivered
-      case ConsentOutcome.NoResponse:
-        return PatientConsentStatus.NoResponse
-      case ConsentOutcome.Declined:
-        return PatientRefusedStatus.FollowUp
-      case ConsentOutcome.Inconsistent:
-        return PatientRefusedStatus.Conflict
-      case ConsentOutcome.Refused:
-        return PatientRefusedStatus.Refusal
-    }
+    return getPatientConsentStatus(this)
   }
 
   /**
@@ -542,16 +522,7 @@ export class PatientSession extends BaseModel {
    * @returns {PatientTriageStatus|undefined} Patient triage status
    */
   get patientTriage() {
-    const responses = Object.values(this.responses)
-    const responsesToTriage = getRepliesWithHealthAnswers(responses)
-
-    if (this.screen === ScreenOutcome.NeedsTriage) {
-      if (responsesToTriage.length > 0) {
-        return PatientTriageStatus.Responses
-      } else if (this.clinicAppointment) {
-        return PatientTriageStatus.Consultation
-      }
-    }
+    return getPatientTriageStatus(this)
   }
 
   /**
@@ -560,28 +531,7 @@ export class PatientSession extends BaseModel {
    * @returns {PatientDeferredStatus|undefined} Patient deferred status
    */
   get patientDeferred() {
-    if (this.screen === ScreenOutcome.DoNotVaccinate) {
-      return PatientDeferredStatus.DoNotVaccinate
-    } else if (this.screen === ScreenOutcome.DelayVaccination) {
-      return PatientDeferredStatus.DelayVaccination
-    } else if (this.screen === ScreenOutcome.InviteToClinic) {
-      return PatientDeferredStatus.InviteToClinic
-    }
-
-    switch (this.outcome) {
-      case VaccinationOutcome.Absent:
-        return PatientDeferredStatus.ChildAbsent
-      case VaccinationOutcome.Refused:
-        return PatientDeferredStatus.ChildRefused
-      case VaccinationOutcome.Unwell:
-        return PatientDeferredStatus.ChildUnwell
-      case VaccinationOutcome.InviteToClinic:
-        return PatientDeferredStatus.InviteToClinic
-      case VaccinationOutcome.DelayVaccination:
-        return PatientDeferredStatus.DelayVaccination
-      case VaccinationOutcome.DoNotVaccinate:
-        return PatientDeferredStatus.DoNotVaccinate
-    }
+    return getPatientDeferredStatus(this)
   }
 
   /**
@@ -590,15 +540,7 @@ export class PatientSession extends BaseModel {
    * @returns {PatientRefusedStatus|undefined} Patient refused status
    */
   get patientRefused() {
-    switch (this.consent) {
-      case ConsentOutcome.Inconsistent:
-        return PatientRefusedStatus.Conflict
-      case ConsentOutcome.Declined:
-        return PatientRefusedStatus.FollowUp
-      case ConsentOutcome.Refused:
-      case ConsentOutcome.FinalRefusal:
-        return PatientRefusedStatus.Refusal
-    }
+    return getPatientRefusedStatus(this)
   }
 
   /**
@@ -607,13 +549,7 @@ export class PatientSession extends BaseModel {
    * @returns {PatientVaccinatedStatus|undefined} Patient vaccinated status
    */
   get patientVaccinated() {
-    switch (this.outcome) {
-      case VaccinationOutcome.Vaccinated:
-      case VaccinationOutcome.PartVaccinated:
-        return PatientVaccinatedStatus.Vaccinated
-      case VaccinationOutcome.AlreadyVaccinated:
-        return PatientVaccinatedStatus.AlreadyVaccinated
-    }
+    return getPatientVaccinatedStatus(this)
   }
 
   /**
@@ -646,43 +582,10 @@ export class PatientSession extends BaseModel {
   /**
    * Get expanded description about consent outcome
    *
-   * @returns {string|undefined} Consent description
+   * @returns {string} Consent description
    */
   get consentDescription() {
-    const relationships = filters.formatList(this.parentalRelationships)
-    const contactNames = filters.formatList(this.contactsRequestingFollowUp)
-
-    if (this.patient?.isPost16) {
-      return `${this.patient.firstName} is old enough to self-consent.`
-    }
-
-    if (this.patient?.hasNoContactDetails) {
-      return 'There are no contact details for this child.'
-    }
-
-    if (this.session?.consentWindow === ConsentWindow.Opening) {
-      return this.session?.formatted.consentWindowSentence
-    }
-
-    switch (this.consent) {
-      case ConsentOutcome.NoResponse:
-        return 'No-one responded to our requests for consent.'
-      case ConsentOutcome.NotDelivered:
-        return 'Consent response could not be delivered.'
-      case ConsentOutcome.Inconsistent:
-        return 'You can only vaccinate if all respondents give consent.'
-      case ConsentOutcome.Declined:
-        return `${contactNames} would like to speak to a member of the team about other options for their child’s vaccination.`
-      case ConsentOutcome.Given:
-      case ConsentOutcome.GivenForAlternativeInjection:
-      case ConsentOutcome.GivenForIntranasal:
-        return `${relationships} gave consent.`
-      case ConsentOutcome.Refused:
-        return `${relationships} refused consent.`
-      case ConsentOutcome.FinalRefusal:
-        return `Refusal to give consent confirmed by ${relationships}.`
-      default:
-    }
+    return getConsentOutcomeDescription(this)
   }
 
   /**
@@ -745,45 +648,12 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get expanded description about consent outcome
+   * Get expanded description about screening outcome
    *
-   * @returns {string|undefined} Screen description
+   * @returns {string} Screen description
    */
   get screenDescription() {
-    const { patient, triageNotes } = this
-
-    if (!patient) {
-      return
-    }
-
-    const triageNote = triageNotes.at(-1)
-    const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
-    const person = this.patient.isPost16 ? 'child' : 'parent'
-
-    switch (this.screen) {
-      case ScreenOutcome.NeedsTriage:
-        return this.clinicAppointment
-          ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patient.firstName}.`
-          : `You need to decide if it’s safe to vaccinate ${patient.firstName}.`
-      case ScreenOutcome.InviteToClinic:
-        return `${user.fullName} decided that ${patient.firstName}’s vaccination should take place at a clinic.`
-      case ScreenOutcome.DelayVaccination:
-        return triageNote?.outcomeAt
-          ? `${user.fullName} decided that ${patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.outcomeAt}.`
-          : `${user.fullName} decided that ${patient.firstName}’s vaccination should be delayed`
-      case ScreenOutcome.DoNotVaccinate:
-        return `${user.fullName} decided that ${patient.firstName} should not be vaccinated.`
-      case ScreenOutcome.Vaccinate:
-        return `${user.fullName} decided that ${patient.firstName} is safe to vaccinate.`
-      case ScreenOutcome.VaccinateAlternativeFluInjectionOnly:
-        return `${user.fullName} decided that ${patient.firstName} is safe to vaccinate using the injected vaccine only.`
-      case ScreenOutcome.VaccinateAlternativeMMRInjectionOnly:
-        return `${user.fullName} decided that ${patient.firstName} is safe to vaccinate using the gelatine-free injection only.`
-      case ScreenOutcome.VaccinateIntranasalOnly:
-        return `${user.fullName} decided that ${patient.firstName} is safe to vaccinate using the nasal spray only.`
-      default:
-        return `No triage is needed for ${patient.firstName}.`
-    }
+    return getScreenOutcomeDescription(this)
   }
 
   /**
@@ -792,18 +662,7 @@ export class PatientSession extends BaseModel {
    * @returns {string|undefined} Deferred description
    */
   get deferredDescription() {
-    switch (this.patientDeferred) {
-      case PatientDeferredStatus.ChildAbsent:
-      case PatientDeferredStatus.ChildRefused:
-      case PatientDeferredStatus.ChildUnwell:
-        return `${this.patientDeferred} on ${this.lastVaccinationOutcome?.formatted.createdAt}.`
-      case PatientDeferredStatus.InviteToClinic:
-      case PatientDeferredStatus.DelayVaccination:
-      case PatientDeferredStatus.DoNotVaccinate:
-        return this.screenDescription
-      default:
-        return this.patientDeferred
-    }
+    return getPatientDeferredDescription(this)
   }
 
   /**
@@ -827,19 +686,10 @@ export class PatientSession extends BaseModel {
   /**
    * Get expanded description about registration outcome
    *
-   * @returns {string|undefined} Registration description
+   * @returns {string} Registration description
    */
   get registerDescription() {
-    switch (this.register) {
-      case RegistrationOutcome.Present:
-        return `${this.patient?.firstName} is attending this session.`
-      case RegistrationOutcome.Absent:
-        return `${this.patient?.firstName} is absent from this session.`
-      case RegistrationOutcome.Pending:
-        return `${this.patient?.firstName} has not been registered as attending yet.`
-      case RegistrationOutcome.Complete:
-        return `${this.patient?.firstName} has completed this session.`
-    }
+    return getRegistrationOutcomeDescription(this)
   }
 
   /**
@@ -875,24 +725,7 @@ export class PatientSession extends BaseModel {
    * @returns {string|undefined} Report description
    */
   get reportDescription() {
-    switch (this.report) {
-      case PatientStatus.Ineligible:
-        return this.patientProgramme?.ineligibilityDescription
-      case PatientStatus.Vaccinated:
-        return `${this.patient?.firstName} was vaccinated by ${this.lastVaccinationOutcome.createdBy.fullName} on ${this.lastVaccinationOutcome.formatted.createdAt}.`
-      case PatientStatus.Due:
-        return this.vaccineCriteria
-          ? `${this.patient?.firstName} is ready to vaccinate (${this.vaccineCriteria.toLowerCase()}).`
-          : `${this.patient?.firstName} is ready to vaccinate.`
-      case PatientStatus.Deferred:
-        return this.deferredDescription
-      case PatientStatus.Triage:
-        return this.screenDescription
-      case PatientStatus.Refused:
-      case PatientStatus.Consent:
-        // Don’t show full consent description as it’s shown directly below
-        return `${this.patientConsent}.`
-    }
+    return getPatientStatusDescription(this)
   }
 
   /**

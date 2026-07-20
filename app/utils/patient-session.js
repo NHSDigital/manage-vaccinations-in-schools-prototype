@@ -1,14 +1,125 @@
+import filters from '@x-govuk/govuk-prototype-filters'
 import { isToday } from 'date-fns'
 
 import {
   ConsentOutcome,
+  ConsentWindow,
   InstructionOutcome,
+  PatientConsentStatus,
+  PatientDeferredStatus,
   PatientStatus,
+  PatientRefusedStatus,
+  PatientTriageStatus,
+  PatientVaccinatedStatus,
   RegistrationOutcome,
   ScreenOutcome,
   VaccinationOutcome,
   VaccineCriteria
 } from '../enums.js'
+import { getRepliesWithHealthAnswers } from '../utils/reply.js'
+
+/**
+ * Get ready to record outcome
+ * Check if registration is needed prior to recording vaccination
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {boolean} Ready to record outcome
+ */
+export function canRecordOutcome(patientSession) {
+  const { register, report, session } = patientSession
+
+  if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {
+    if (session.hasRegistration && register !== RegistrationOutcome.Present) {
+      return false
+    }
+
+    return true
+  }
+
+  return false
+}
+
+/**
+ * Get expanded description about consent outcome
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {string} Consent outcome description
+ */
+export function getConsentOutcomeDescription(patientSession) {
+  const relationships = filters.formatList(patientSession.parentalRelationships)
+  const contactNames = filters.formatList(
+    patientSession.contactsRequestingFollowUp
+  )
+
+  if (patientSession.patient?.isPost16) {
+    return `${patientSession.patient.firstName} is old enough to self-consent.`
+  }
+
+  if (patientSession.patient?.hasNoContactDetails) {
+    return 'There are no contact details for this child.'
+  }
+
+  if (patientSession.session?.consentWindow === ConsentWindow.Opening) {
+    return patientSession.session?.formatted.consentWindowSentence
+  }
+
+  switch (patientSession.consent) {
+    case ConsentOutcome.NoResponse:
+      return 'No-one responded to our requests for consent.'
+    case ConsentOutcome.NotDelivered:
+      return 'Consent response could not be delivered.'
+    case ConsentOutcome.Inconsistent:
+      return 'You can only vaccinate if all respondents give consent.'
+    case ConsentOutcome.Declined:
+      return `${contactNames} would like to speak to a member of the team about other options for their child’s vaccination.`
+    case ConsentOutcome.Given:
+    case ConsentOutcome.GivenForAlternativeInjection:
+    case ConsentOutcome.GivenForIntranasal:
+      return `${relationships} gave consent.`
+    case ConsentOutcome.Refused:
+      return `${relationships} refused consent.`
+    case ConsentOutcome.FinalRefusal:
+      return `Refusal to give consent confirmed by ${relationships}.`
+    default:
+  }
+}
+
+/**
+ * Get expanded description about screen outcome
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {string} Screen outcome description
+ */
+export function getScreenOutcomeDescription(patientSession) {
+  const triageNote = patientSession.triageNotes.at(-1)
+  const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
+  const person = patientSession.patient.isPost16 ? 'child' : 'parent'
+
+  switch (patientSession.screen) {
+    case ScreenOutcome.NeedsTriage:
+      return patientSession.clinicAppointment
+        ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
+        : `You need to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
+    case ScreenOutcome.InviteToClinic:
+      return `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should take place at a clinic.`
+    case ScreenOutcome.DelayVaccination:
+      return triageNote?.outcomeAt
+        ? `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.outcomeAt}.`
+        : `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed`
+    case ScreenOutcome.DoNotVaccinate:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} should not be vaccinated.`
+    case ScreenOutcome.Vaccinate:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate.`
+    case ScreenOutcome.VaccinateAlternativeFluInjectionOnly:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the injected vaccine only.`
+    case ScreenOutcome.VaccinateAlternativeMMRInjectionOnly:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the gelatine-free injection only.`
+    case ScreenOutcome.VaccinateIntranasalOnly:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the nasal spray only.`
+    default:
+      return `No triage is needed for ${patientSession.patient.firstName}.`
+  }
+}
 
 /**
  * Get instruction outcome for nasal spray
@@ -16,7 +127,7 @@ import {
  * @param {PatientSession} patientSession - Patient session
  * @returns {InstructionOutcome|boolean} Instruction outcome
  */
-export const getInstructionOutcome = (patientSession) => {
+export function getInstructionOutcome(patientSession) {
   if (!patientSession.vaccine) {
     return false
   }
@@ -36,7 +147,7 @@ export const getInstructionOutcome = (patientSession) => {
  * @param {PatientSession} patientSession - Patient session
  * @returns {RegistrationOutcome} Registration outcome
  */
-export const getRegistrationOutcome = (patientSession) => {
+export function getRegistrationOutcome(patientSession) {
   const { patient, session, report } = patientSession
 
   if (!session.hasRegistration) {
@@ -53,24 +164,22 @@ export const getRegistrationOutcome = (patientSession) => {
 }
 
 /**
- * Get ready to record outcome
- * Check if registration is needed prior to recording vaccination
+ * Get expanded description about registration outcome
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {boolean} Ready to record outcome
+ * @returns {string} Registration outcome description
  */
-export const canRecordOutcome = (patientSession) => {
-  const { register, report, session } = patientSession
-
-  if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {
-    if (session.hasRegistration && register !== RegistrationOutcome.Present) {
-      return false
-    }
-
-    return true
+export function getRegistrationOutcomeDescription(patientSession) {
+  switch (patientSession.register) {
+    case RegistrationOutcome.Present:
+      return `${patientSession.patient?.firstName} is attending this session.`
+    case RegistrationOutcome.Absent:
+      return `${patientSession.patient?.firstName} is absent from this session.`
+    case RegistrationOutcome.Pending:
+      return `${patientSession.patient?.firstName} has not been registered as attending yet.`
+    case RegistrationOutcome.Complete:
+      return `${patientSession.patient?.firstName} has completed this session.`
   }
-
-  return false
 }
 
 /**
@@ -79,7 +188,7 @@ export const canRecordOutcome = (patientSession) => {
  * @param {PatientSession} patientSession - Patient session
  * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
  */
-export const getVaccinationOutcome = (patientSession) => {
+export function getVaccinationOutcome(patientSession) {
   if (patientSession.lastVaccinationOutcome) {
     return patientSession.lastVaccinationOutcome.outcome
   } else if (
@@ -103,7 +212,7 @@ export const getVaccinationOutcome = (patientSession) => {
  * @param {PatientSession} patientSession - Patient session
  * @returns {PatientStatus} Overall patient status
  */
-export const getPatientStatus = (patientSession) => {
+export function getPatientStatus(patientSession) {
   // Has vaccination outcome
   if (patientSession.vaccinationOutcomes?.length > 0) {
     switch (patientSession.outcome) {
@@ -156,6 +265,178 @@ export const getPatientStatus = (patientSession) => {
 
     default:
       return PatientStatus.Ineligible
+  }
+}
+
+/**
+ * Get patient consent status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {PatientConsentStatus|undefined} Patient consent status
+ */
+export function getPatientConsentStatus(patientSession) {
+  if (patientSession.patient?.isPost16) {
+    return PatientConsentStatus.SelfConsent
+  }
+
+  if (patientSession.patient?.hasNoContactDetails) {
+    return PatientConsentStatus.NoDetails
+  }
+
+  // Only school sessions have a consent window
+  if (patientSession.session.school_id) {
+    if (patientSession.session?.consentWindow === ConsentWindow.None) {
+      return PatientConsentStatus.NotScheduled
+    } else if (
+      patientSession.session?.consentWindow === ConsentWindow.Opening
+    ) {
+      return PatientConsentStatus.Scheduled
+    }
+  }
+
+  switch (patientSession.consent) {
+    case ConsentOutcome.NotDelivered:
+      return PatientConsentStatus.NotDelivered
+    case ConsentOutcome.NoResponse:
+      return PatientConsentStatus.NoResponse
+    case ConsentOutcome.Declined:
+      return PatientRefusedStatus.FollowUp
+    case ConsentOutcome.Inconsistent:
+      return PatientRefusedStatus.Conflict
+    case ConsentOutcome.Refused:
+      return PatientRefusedStatus.Refusal
+  }
+}
+
+/**
+ * Get patient refused status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {PatientRefusedStatus|undefined} Patient refused status
+ */
+export function getPatientRefusedStatus(patientSession) {
+  switch (patientSession.consent) {
+    case ConsentOutcome.Inconsistent:
+      return PatientRefusedStatus.Conflict
+    case ConsentOutcome.Declined:
+      return PatientRefusedStatus.FollowUp
+    case ConsentOutcome.Refused:
+    case ConsentOutcome.FinalRefusal:
+      return PatientRefusedStatus.Refusal
+  }
+}
+
+/**
+ * Get patient triage status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {PatientTriageStatus|undefined} Patient triage status
+ */
+export function getPatientTriageStatus(patientSession) {
+  const responses = Object.values(patientSession.responses)
+  const responsesToTriage = getRepliesWithHealthAnswers(responses)
+
+  if (patientSession.screen === ScreenOutcome.NeedsTriage) {
+    if (responsesToTriage.length > 0) {
+      return PatientTriageStatus.Responses
+    } else if (patientSession.clinicAppointment) {
+      return PatientTriageStatus.Consultation
+    }
+  }
+}
+
+/**
+ * Get patient deferred status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {PatientDeferredStatus|undefined} Patient deferred status
+ */
+export function getPatientDeferredStatus(patientSession) {
+  if (patientSession.screen === ScreenOutcome.DoNotVaccinate) {
+    return PatientDeferredStatus.DoNotVaccinate
+  } else if (patientSession.screen === ScreenOutcome.DelayVaccination) {
+    return PatientDeferredStatus.DelayVaccination
+  } else if (patientSession.screen === ScreenOutcome.InviteToClinic) {
+    return PatientDeferredStatus.InviteToClinic
+  }
+
+  switch (patientSession.outcome) {
+    case VaccinationOutcome.Absent:
+      return PatientDeferredStatus.ChildAbsent
+    case VaccinationOutcome.Refused:
+      return PatientDeferredStatus.ChildRefused
+    case VaccinationOutcome.Unwell:
+      return PatientDeferredStatus.ChildUnwell
+    case VaccinationOutcome.InviteToClinic:
+      return PatientDeferredStatus.InviteToClinic
+    case VaccinationOutcome.DelayVaccination:
+      return PatientDeferredStatus.DelayVaccination
+    case VaccinationOutcome.DoNotVaccinate:
+      return PatientDeferredStatus.DoNotVaccinate
+  }
+}
+
+/**
+ * Get expanded description about deferred status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {string} Deferred description
+ */
+export function getPatientDeferredDescription(patientSession) {
+  switch (patientSession.patientDeferred) {
+    case PatientDeferredStatus.ChildAbsent:
+    case PatientDeferredStatus.ChildRefused:
+    case PatientDeferredStatus.ChildUnwell:
+      return `${patientSession.patientDeferred} on ${patientSession.lastVaccinationOutcome?.formatted.createdAt}.`
+    case PatientDeferredStatus.InviteToClinic:
+    case PatientDeferredStatus.DelayVaccination:
+    case PatientDeferredStatus.DoNotVaccinate:
+      return patientSession.screenDescription
+    default:
+      return patientSession.patientDeferred
+  }
+}
+
+/**
+ * Get patient vaccinated status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {PatientVaccinatedStatus|undefined} Patient vaccinated status
+ */
+export function getPatientVaccinatedStatus(patientSession) {
+  switch (patientSession.outcome) {
+    case VaccinationOutcome.Vaccinated:
+    case VaccinationOutcome.PartVaccinated:
+      return PatientVaccinatedStatus.Vaccinated
+    case VaccinationOutcome.AlreadyVaccinated:
+      return PatientVaccinatedStatus.AlreadyVaccinated
+  }
+}
+
+/**
+ * Get expanded description about patient status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {string|undefined} Patient status description
+ */
+export function getPatientStatusDescription(patientSession) {
+  switch (patientSession.report) {
+    case PatientStatus.Ineligible:
+      return patientSession.patientProgramme?.ineligibilityDescription
+    case PatientStatus.Vaccinated:
+      return `${patientSession.patient?.firstName} was vaccinated by ${patientSession.lastVaccinationOutcome.createdBy.fullName} on ${patientSession.lastVaccinationOutcome.formatted.createdAt}.`
+    case PatientStatus.Due:
+      return patientSession.vaccineCriteria
+        ? `${patientSession.patient?.firstName} is ready to vaccinate (${patientSession.vaccineCriteria.toLowerCase()}).`
+        : `${patientSession.patient?.firstName} is ready to vaccinate.`
+    case PatientStatus.Deferred:
+      return patientSession.deferredDescription
+    case PatientStatus.Triage:
+      return patientSession.screenDescription
+    case PatientStatus.Refused:
+    case PatientStatus.Consent:
+      // Don’t show full consent description as it’s shown directly below
+      return `${patientSession.patientConsent}.`
   }
 }
 
