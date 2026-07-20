@@ -318,11 +318,12 @@ export const bookIntoClinicController = {
     )
     const { appointment_uuid, booking_uuid } = request.params
     const { data } = request.session
-    const { appointmentPath, booking } = response.locals
+    const { appointmentPath } = response.locals
 
-    const appointment = booking.findAppointment(appointment_uuid)
+    const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    const appointment = wizardBooking.findAppointment(appointment_uuid)
     appointment.patient_uuid = patient_uuid
-    ClinicBooking.update(booking_uuid, booking, data.wizard)
+    ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
 
     // Check the programmes we can offer this child
     let nextPage
@@ -417,9 +418,10 @@ export const bookIntoClinicController = {
     // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
     // that postcode is pushed to the appointment
     if (view === 'clinic-location') {
-      const appointment = booking.findAppointment(appointment_uuid)
+      const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = wizardBooking.findAppointment(appointment_uuid)
       appointment.preferredPostcode = data.appointment['preferredPostcode']
-      ClinicBooking.update(booking_uuid, booking, data.wizard)
+      ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
     }
 
     const journey = {
