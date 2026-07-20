@@ -98,16 +98,19 @@ export class BaseModel {
       findAllCache.set(context, contextCache)
     }
 
-    if (!contextCache.has(this.contextKey)) {
-      contextCache.set(
-        this.contextKey,
-        Object.values(context[this.contextKey]).map(
+    // Guard against staleness from create-data mutating `context[contextKey]` directly
+    const currentSize = Object.keys(context[this.contextKey]).length
+    const cached = contextCache.get(this.contextKey)
+    if (!cached || cached.size !== currentSize) {
+      contextCache.set(this.contextKey, {
+        size: currentSize,
+        items: Object.values(context[this.contextKey]).map(
           (item) => new this(item, context)
         )
-      )
+      })
     }
 
-    return contextCache.get(this.contextKey)
+    return contextCache.get(this.contextKey).items
   }
 
   static findOne(identifier, context) {
