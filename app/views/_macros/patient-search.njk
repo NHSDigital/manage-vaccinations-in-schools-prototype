@@ -287,7 +287,7 @@
       summaryText: __("search.advanced"),
       open: true if data.option,
       html: searchDetailsHtml
-    }) }}
+    }) if not params.hideAdvancedFilters }}
 
     {{ filterButtonGroup | safe if programmeItems or statusItems }}
   {% endcall %}

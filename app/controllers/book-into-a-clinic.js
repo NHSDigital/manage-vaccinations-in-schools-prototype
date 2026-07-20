@@ -6,8 +6,8 @@ import _ from 'lodash'
 import {
   AppointmentAbandonmentReason,
   ClinicAppointmentStatus,
+  ClinicBookingJourneyType,
   ParentalRelationship,
-  PatientClinicStatus,
   ProgrammeType,
   ReplyDecision,
   SessionStatus,
@@ -21,6 +21,8 @@ import {
   Session
 } from '../models.js'
 import {
+  getClinicBookableProgrammeIDs,
+  getAppointmentProgrammeOptions,
   getAllAppointmentPaths,
   getPreviousAddressItems,
   getPreviousSessionItems
@@ -29,6 +31,7 @@ import {
   getBookableClinicSessions,
   getScheduledClinicLocationItems
 } from '../utils/clinic-booking.js'
+import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
@@ -41,17 +44,18 @@ import {
   kebabToCamelCase,
   stringToBoolean
 } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const bookIntoClinicController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
   setupServiceHeader(request, response, next) {
-    const { patient_uuid } = request.params
+    const { patient_uuid, session_id } = request.params
     const { __ } = response.locals
 
     // Set up the parent-facing service name and header
-    if (!patient_uuid) {
+    if (!patient_uuid && !session_id) {
       const serviceName = __('clinicBooking.start.title')
 
       response.locals.assetsName = 'public'
@@ -66,116 +70,48 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readProgrammes(request, response) {
-    const { programme_id } = /** @type {{ programme_id?: string }} */ (
-      request.query
-    )
     const { data } = request.session
-    const { patient_uuid } = request.params
+    const { patient_uuid, session_id } = request.params
 
-    let programme_ids
+    let nextPath, programme_ids
     if (patient_uuid) {
-      // Starting the booking process from the child record, so no querystring with invited
-      // programmes; use the child's clinic-ready programmes as the basis instead
-      const patient = Patient.findOne(patient_uuid, data)
-      if (patient) {
-        const canBeOfferedMmrv = patient.canBeOfferedMmrv
-        programme_ids = Object.values(patient.programmes)
-          .filter(({ clinicStatus }) =>
-            [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
-              String(clinicStatus)
-            )
-          )
-          .map(({ programme_id }) =>
-            programme_id === 'mmr' && canBeOfferedMmrv ? 'mmrv' : programme_id
-          )
+      // Starting the booking process from a child record
+      programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
+      nextPath = getBookableClinicSessions(data, programme_ids, false).length
+        ? 'new'
+        : 'availability'
+    } else if (session_id) {
+      // Starting the booking process from a session; pass on specific slot if present
+      const { slot } = /** @type {{ slot?: string }} */ (request.query)
+      if (slot) {
+        const params = new URLSearchParams()
+        params.append('slot', slot)
+        nextPath = `new?${params.toString()}`
+      } else {
+        nextPath = 'new'
       }
     } else {
-      // Starting the booking from the parent's invite link; read the invited programme IDs
-      // from the querystring
-      if (programme_id) {
-        programme_ids = Array.isArray(programme_id)
-          ? programme_id
-          : [programme_id]
-      }
-    }
-
-    // Default to all programmes if none supplied
-    if (!programme_ids) {
-      programme_ids = Programme.findAll(data)
-        .filter(({ isHidden }) => !isHidden)
-        .map(({ id }) => id)
-    }
-
-    // Strip out mmrv as a programme id, but keep memory of it so we can adapt content
-    const useMmrv = programme_ids.includes('mmrv')
-    programme_ids = programme_ids.map((id) => (id === 'mmrv' ? 'mmr' : id))
-    const programmes = Programme.findAll(data)
-      .map((programme) => {
-        delete programme.context
-        return programme
-      })
-      .filter(({ id }) => programme_ids.includes(id))
-    if (useMmrv) {
-      const mmrProgramme = programmes.find(({ id }) => id === 'mmr')
-      mmrProgramme.name = 'MMRV'
-      mmrProgramme.id = 'mmrv'
-      mmrProgramme.information.hint = mmrProgramme.information.hintMmrv
-    }
-
-    // Track details of the invite for pages that need to show the invited programmes
-    data.clinicInvite = {
-      programmes,
-      programmeNames: programmes.map(({ name }) => name),
-      eligibleForMmrv: useMmrv
-    }
-
-    response.locals.patient_uuid = patient_uuid
-
-    // Skip the start page if it's the SAIS team making the booking
-    const bookableSessions = getBookableClinicSessions(
-      data,
-      programme_ids,
-      !patient_uuid
-    )
-    const nextPath =
-      bookableSessions.length > 0
-        ? patient_uuid
-          ? 'new'
-          : 'start'
+      // Starting the booking from the parent's invite link
+      const { programme_id } = /** @type {{ programme_id?: string }} */ (
+        request.query
+      )
+      programme_ids = Array.isArray(programme_id)
+        ? programme_id
+        : [programme_id]
+      nextPath = getBookableClinicSessions(data, programme_ids, true).length
+        ? 'start'
         : 'availability'
+    }
+
+    // If we already know what programmes we're going to offer, save that now
+    if (programme_ids) {
+      data.programmesToOffer = getAppointmentProgrammeOptions(
+        programme_ids,
+        data
+      )
+    }
 
     return saveAndRedirect(request, response, nextPath)
-  },
-
-  /**
-   * @type {RequestParamHandler}
-   */
-  read(request, response, next, booking_uuid) {
-    const { patient_uuid, appointment_uuid } = request.params
-    const { data } = request.session
-    const { __ } = response.locals
-
-    const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-    if (patient_uuid) {
-      // If booking started from the child record, always show that context
-      const patient = Patient.findOne(String(patient_uuid), data)
-      response.locals.patient = patient
-      response.locals.appointmentCaption = __(
-        'clinicBooking.appointment.caption',
-        patient?.fullName
-      )
-    } else if (appointment_uuid) {
-      // For the parent's booking, show the current child's name if more than one
-      const appointment = booking.findAppointment(String(appointment_uuid))
-      if (appointment?.booking?.appointments?.length > 1) {
-        response.locals.appointmentCaption = __(
-          'clinicBooking.appointment.caption',
-          appointment?.child?.fullFriendlyName
-        )
-      }
-    }
-
-    next()
   },
 
   /**
@@ -183,30 +119,226 @@ export const bookIntoClinicController = {
    */
   new(request, response) {
     const { data } = request.session
-    const { patient_uuid } = request.params
-    data.transaction = {}
+    const { patient_uuid, session_id } = request.params
+
+    if (!data.journeyData) {
+      data.journeyData = {}
+    }
 
     // Create a new clinic booking in the wizard context
-    const booking = ClinicBooking.create(
-      {
-        invited_programme_ids: data.clinicInvite.programmes.map(({ id }) => id)
-      },
-      data.wizard
-    )
-    const firstAppointment = booking.addAppointment()
+    const booking = ClinicBooking.create({}, data.wizard)
+
+    // Track various metadata about the journey that we don't record in the booking itself
+    const journeyType = patient_uuid
+      ? ClinicBookingJourneyType.PhoneBooking
+      : session_id
+        ? ClinicBookingJourneyType.DataMigration
+        : ClinicBookingJourneyType.ParentOnline
+    data.journeyData[booking.uuid] = { journeyType }
+
+    // Set up the first appointment
+    const appointment = booking.addAppointment()
     if (patient_uuid) {
-      firstAppointment.patient_uuid = patient_uuid
+      appointment.patient_uuid = patient_uuid
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
+    } else if (session_id) {
+      appointment.session_id = session_id
+
+      // Already selected a specific time slot?
+      const { slot } = /** @type {{ slot?: string }} */ (request.query)
+      if (slot) {
+        const session = Session.findOne(session_id, data)
+        appointment.startAt = new Date(slot)
+        appointment.endAt = addMinutes(
+          appointment.startAt,
+          session.appointmentLength
+        )
+
+        data.journeyData[booking.uuid].preselectedSlot = appointment.startAt
+      }
+
       ClinicBooking.update(booking.uuid, booking, data.wizard)
     }
 
     // Redirect to the first page in the booking journey (after the start page, that is)
-    const relativePath = firstAppointment.uri.new.replace(
-      '/book-into-a-clinic',
-      ''
-    )
-    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
+    const relativePath = appointment.uri.new.replace('/book-into-a-clinic', '')
+    const firstView = session_id ? 'find-child' : 'programmes'
+    const redirectUrl = `${request.baseUrl}${relativePath}/${firstView}`
 
     return saveAndRedirect(request, response, redirectUrl)
+  },
+
+  /**
+   * @type {RequestParamHandler}
+   */
+  readBooking(request, response, next, booking_uuid) {
+    const { patient_uuid, session_id } = request.params
+    const { data } = request.session
+    const { __ } = response.locals
+
+    // Started from the child record e.g. booking an appointment over the phone
+    if (patient_uuid) {
+      const patient = Patient.findOne(String(patient_uuid), data)
+      response.locals.patient = patient
+
+      // Show the child context in the caption
+      response.locals.appointmentCaption = __(
+        'clinicBooking.appointment.caption',
+        patient?.fullName
+      )
+    }
+
+    // Started from the session e.g. migrating data from another system
+    if (session_id) {
+      const session = Session.findOne(String(session_id), data)
+      response.locals.session = session
+
+      // Show the session context in the caption
+      response.locals.appointmentCaption = `Clinic at ${session.location.name} on ${session.formatted.dateShort}`
+    }
+
+    // Adapt content in the views for the journey's audience
+    const journeyType =
+      data.journeyData[booking_uuid]?.journeyType ??
+      ClinicBookingJourneyType.ParentOnline
+    response.locals.isParentFacing =
+      journeyType === ClinicBookingJourneyType.ParentOnline
+
+    // Simplify access to the journey data in the views
+    response.locals.journeyData = data.journeyData[booking_uuid]
+
+    const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
+    const booking = new ClinicBooking(wizardBooking, data)
+    response.locals.booking = booking
+
+    next()
+  },
+
+  /**
+   * @type {RequestParamHandler}
+   */
+  readAppointment(request, response, next, appointment_uuid) {
+    const { __, booking, isParentFacing } = response.locals
+
+    // Give pages access to the appointment and the patient (if one is matched)
+    const appointment = booking.findAppointment(appointment_uuid)
+    response.locals.appointment = appointment
+    response.locals.patient = appointment.patient
+
+    // For the parent's booking, show the current child's name in the caption (but only if more than one)
+    if (isParentFacing && booking?.appointments?.length > 1) {
+      response.locals.appointmentCaption = __(
+        'clinicBooking.appointment.caption',
+        appointment?.child?.fullFriendlyName
+      )
+    }
+
+    // Track the (possibly session- or child-record-based) appointment path
+    let appointmentPath = appointment.uri.new.replace('/book-into-a-clinic', '')
+    appointmentPath = `${request.baseUrl}${appointmentPath}`
+    response.locals.appointmentPath = appointmentPath
+
+    // For multi-child bookings
+    response.locals.childNumber = booking.appointments.indexOf(appointment) + 1
+    response.locals.childCount = booking.appointments.length
+
+    // TODO: tidy up this hangover from multi-child bookings (make pages use only one form?)
+    response.locals.firstName = isParentFacing ? 'your child' : 'the child'
+    response.locals.fullName = isParentFacing ? 'your child' : 'the child'
+
+    next()
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
+   */
+  readChildren(request, response, next) {
+    let { option, q } = request.query
+    const { data } = request.session
+
+    const patients = Patient.findAll(data)
+
+    // Sort
+    let results = _.sortBy(patients, 'lastName')
+
+    // Query
+    if (q) {
+      results = results.filter((patient) =>
+        patient.tokenized.includes(String(q).toLowerCase())
+      )
+    }
+
+    // Filter by display option
+    for (const key of [
+      'agedOutOfProgrammes',
+      'archived',
+      'hasImpairment',
+      'hasAdjustment',
+      'hasMissingNhsNumber'
+    ]) {
+      if (option?.includes(key)) {
+        results = results.filter((patient) => patient[key])
+      }
+    }
+
+    // Toggle initial view
+    response.locals.noFiltersApplied =
+      Object.keys(request.query).filter((key) => key !== 'referrer').length ===
+      0
+
+    // Results
+    response.locals.patients = patients
+    response.locals.results = getResults(results, request.query)
+    response.locals.pages = getPagination(results, request.query)
+
+    // Clean up session data
+    delete data.option
+    delete data.q
+
+    return next()
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  filterChildren(request, response) {
+    const params = getFilterParams(request, ['q'], ['option'])
+
+    const appointmentPath = response.locals.appointmentPath
+    const resultsUri = `${appointmentPath}/find-child?${params}`
+    return saveAndRedirect(request, response, resultsUri)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  linkChild(request, response) {
+    const { patient_uuid } = /** @type {{ patient_uuid?: string }} */ (
+      request.query
+    )
+    const { appointment_uuid, booking_uuid } = request.params
+    const { data } = request.session
+    const { appointmentPath } = response.locals
+
+    const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    const appointment = wizardBooking.findAppointment(appointment_uuid)
+    appointment.patient_uuid = patient_uuid
+    ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
+
+    // Check the programmes we can offer this child
+    let nextPage
+    const programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
+    if (programme_ids.length) {
+      data.programmesToOffer = getAppointmentProgrammeOptions(
+        programme_ids,
+        data
+      )
+      nextPage = `${appointmentPath}/programmes`
+    } else {
+      nextPage = `${appointmentPath}/not-eligible`
+    }
+
+    return saveAndRedirect(request, response, nextPage)
   },
 
   /**
@@ -215,13 +347,14 @@ export const bookIntoClinicController = {
   update(request, response) {
     const { appointment_uuid, booking_uuid } = request.params
     const { data } = request.session
-    const { __, booking, paths, patient } = response.locals
+    const { __, booking, paths, patient, session, journeyData } =
+      response.locals
 
     // Clean up session data
     delete data.booking
     delete data.appointment
-    delete data.transaction
-    delete data.clinicInvite
+    delete data.journeyData[booking_uuid]
+    delete data.programmesToOffer
 
     // Save to the global context
     ClinicBooking.update(booking_uuid, booking, data)
@@ -238,7 +371,12 @@ export const bookIntoClinicController = {
           sessionName: appointment.session.name
         })
       )
+    }
 
+    // Get back to where we started, if this isn't the parent journey
+    if (session) {
+      paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/report'}`
+    } else if (patient) {
       paths.next = patient.uri
     }
 
@@ -256,8 +394,8 @@ export const bookIntoClinicController = {
     // Clean up session data
     delete data.booking
     delete data.appointment
-    delete data.transaction
-    delete data.clinicInvite
+    delete data.journeyData[booking_uuid]
+    delete data.programmesToOffer
 
     // Record the abandonment
     const appointment = booking.findAppointment(appointment_uuid)
@@ -273,41 +411,17 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
-    const { appointment_uuid, booking_uuid, view, patient_uuid } =
-      request.params
+    const { appointment_uuid, booking_uuid, view } = request.params
     const { data, referrer } = request.session
+    const { booking } = response.locals
 
-    // Create objects on the global context to allow us to check branching conditions, etc.
-    // And make them available to the view.
-    let booking
-    if (booking_uuid) {
-      const wizardBooking = ClinicBooking.findOne(booking_uuid, data?.wizard)
-      booking = new ClinicBooking(wizardBooking, data)
-      response.locals.booking = booking
-
-      if (appointment_uuid) {
-        const currentAppointment = booking.findAppointment(appointment_uuid)
-        response.locals.appointment = currentAppointment
-
-        response.locals.childNumber =
-          booking.appointments.indexOf(currentAppointment) + 1
-        response.locals.childCount = booking.appointments.length
-        response.locals.firstName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.firstName if multi-child bookings
-        response.locals.fullName = patient_uuid ? 'the child' : 'your child' // TODO: use currentAppointment.fullFriendlyName if multi-child bookings
-
-        // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
-        // that postcode is pushed to the appointment
-        if (view === 'clinic-location') {
-          currentAppointment.preferredPostcode =
-            data.appointment['preferredPostcode']
-          ClinicBooking.update(booking_uuid, booking, data.wizard)
-        }
-      }
-    }
-
-    // Make sure the views have access to information about flow control e.g. for narrowing down a clinic search
-    if (data.wizard?.transaction) {
-      response.locals.transaction = data.wizard?.transaction
+    // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
+    // that postcode is pushed to the appointment
+    if (view === 'clinic-location') {
+      const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = wizardBooking.findAppointment(appointment_uuid)
+      appointment.preferredPostcode = data.appointment['preferredPostcode']
+      ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
     }
 
     const journey = {
@@ -362,7 +476,7 @@ export const bookIntoClinicController = {
         }))
     } else if (view === 'programmes') {
       // Create radio options for the programmes invited to (or flu if we've got none)
-      response.locals.programmeItems = data.clinicInvite.programmes.map(
+      response.locals.programmeItems = data.programmesToOffer.programmes.map(
         (programme) => {
           return {
             text: programme.name,
@@ -377,7 +491,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.eligibleForMmrv,
+        data.programmesToOffer.eligibleForMmrv,
         ConjunctionType.or,
         data
       )
@@ -386,7 +500,7 @@ export const bookIntoClinicController = {
         data,
         appointment.selected_programme_ids,
         patient ? false : true,
-        data.transaction?.outOfArea
+        data.journeyData[booking_uuid].outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems
     } else if (view === 'clinic-date') {
@@ -395,7 +509,7 @@ export const bookIntoClinicController = {
           (session) =>
             session.type === SessionType.Clinic &&
             session.status === SessionStatus.Planned &&
-            session.clinic_id === data.transaction.clinic_id
+            session.clinic_id === data.journeyData[booking_uuid].clinic_id
         ),
         'date'
       )
@@ -467,7 +581,9 @@ export const bookIntoClinicController = {
       )
 
       const availabilityForChosenHour = {}
-      for (const date of availableTimesByHour[data.transaction.timeRange]) {
+      for (const date of availableTimesByHour[
+        data.journeyData[booking_uuid].timeRange
+      ]) {
         const key = formatTime(date, true)
 
         if (!availabilityForChosenHour[key]) {
@@ -503,7 +619,7 @@ export const bookIntoClinicController = {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
         appointment.selected_programme_ids,
-        data.clinicInvite.eligibleForMmrv,
+        data.programmesToOffer.eligibleForMmrv,
         ConjunctionType.and,
         data
       )
@@ -582,16 +698,15 @@ export const bookIntoClinicController = {
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     }
-    if (request.body.transaction) {
-      data.wizard.transaction = data.wizard.transaction ?? {}
-      _.merge(data.wizard.transaction, request.body.transaction)
+    if (request.body.journeyData) {
+      _.merge(data.journeyData[booking_uuid], request.body.journeyData)
     }
 
     if (view === 'child-count') {
       // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      let desiredCount = Number(data.wizard.transaction.childCount)
+      let desiredCount = Number(data.journeyData[booking_uuid].childCount)
       desiredCount = isNaN(desiredCount) || desiredCount < 1 ? 1 : desiredCount
       const existingCount = booking.appointments.length
 
@@ -610,7 +725,9 @@ export const bookIntoClinicController = {
       const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
       paths.next = firstAppointmentUrl
     } else if (view === 'child') {
-      if (!stringToBoolean(request.body.transaction?.preferredNameChoice)) {
+      if (
+        !stringToBoolean(data.journeyData[booking_uuid]?.preferredNameChoice)
+      ) {
         // If the parent's backed out of using the child's preferred name (say, from the check answers page), then
         // clear it out of the appointment
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -622,13 +739,13 @@ export const bookIntoClinicController = {
       }
     } else if (
       view === 'address-selection' &&
-      request.body.transaction.addressChoice !== 'new'
+      data.journeyData[booking_uuid].addressChoice !== 'new'
     ) {
       // We've just selected a previous child's address for the current appointment, so copy
       // that detail to the child record
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      const previous_appointment_uuid = request.body.transaction.addressChoice
+      const previous_appointment_uuid = request.body.journeyData.addressChoice
       const previousAppointment = booking?.findAppointment(
         previous_appointment_uuid
       )
@@ -640,14 +757,15 @@ export const bookIntoClinicController = {
       }
     } else if (
       view === 'session-selection' &&
-      request.body.transaction.sessionChoice !== 'new'
+      data.journeyData[booking_uuid].sessionChoice !== 'new'
     ) {
       // We've just selected a previous child's session choice for the current appointment;
       // in this case, the session ID is actually the radio value passed in request.body
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const currentAppointment = booking?.findAppointment(appointment_uuid)
       if (currentAppointment) {
-        currentAppointment.session_id = request.body.transaction.sessionChoice
+        currentAppointment.session_id =
+          data.journeyData[booking_uuid].sessionChoice
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
     } else if (view === 'appointment-time') {
@@ -656,14 +774,14 @@ export const bookIntoClinicController = {
       const appointmentLengthInMinutes =
         Session.findOne(appointment.session_id, data)?.appointmentLength ?? 10
 
-      const startAt = new Date(request.body.transaction.time)
+      const startAt = new Date(data.journeyData[booking_uuid].time)
       const endAt = addMinutes(startAt, appointmentLengthInMinutes)
       _.merge(appointment, { startAt, endAt })
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'add-another') {
       // If the user elected to add another, create the new appointment and override the default redirect
-      const addAnother = request.body.transaction.addAnother === 'true'
+      const addAnother = data.journeyData[booking_uuid].addAnother === 'true'
       if (addAnother) {
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
         const appointment = booking.addAppointment()
@@ -671,11 +789,11 @@ export const bookIntoClinicController = {
 
         // Clear out values we don't want pre-selected for the next child
         delete data.appointment
-        delete data.transaction.addAnother
-        delete data.transaction.addressChoice
-        delete data.transaction.sessionChoice
-        delete data.transaction.timeRange
-        delete data.transaction.time
+        delete data.journeyData[booking_uuid].addAnother
+        delete data.journeyData[booking_uuid].addressChoice
+        delete data.journeyData[booking_uuid].sessionChoice
+        delete data.journeyData[booking_uuid].timeRange
+        delete data.journeyData[booking_uuid].time
 
         paths.next = `${appointment.uri.new}/child`
       }
@@ -726,4 +844,5 @@ export const bookIntoClinicController = {
 
 /**
  * @import { RequestHandler, RequestParamHandler } from 'express'
+ * @import { PatientFilterQuery } from '../../typings/index.d.ts'
  */

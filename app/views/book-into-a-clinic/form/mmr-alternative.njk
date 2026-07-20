@@ -1,11 +1,11 @@
 {% extends "_layouts/form.njk" %}
 
-{% set audience = "team" if patient else "parent" %}
+{% set audience = "parent" if isParentFacing else "team" %}
 {% set title = __("clinicBooking.mmrAlternative.title." + audience, firstName) %}
 {% set hint = __("clinicBooking.mmrAlternative.hint") %}
 
 {# Replace MMR with MMRV content as necessary #}
-{% if data.clinicInvite.eligibleForMmrv %}
+{% if data.programmesToOffer.eligibleForMmrv %}
   {% set title = title | replace('MMR', 'MMRV') %}
   {% set hint = hint | replace('MMR', 'MMRV') %}
 {% endif %}

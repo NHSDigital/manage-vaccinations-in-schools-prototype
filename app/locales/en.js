@@ -478,6 +478,15 @@ export const en = {
     appointment: {
       caption: 'Appointment for %s'
     },
+    findChild: {
+      title: 'Search for the child to add'
+    },
+    notEligible: {
+      title: '%s cannot be vaccinated at clinic',
+      description:
+        'The selected child cannot be vaccinated at clinic for any programme, or already has vaccinations scheduled.',
+      return: 'Return to the session'
+    },
     child: {
       title: {
         first: 'What is your child’s name?',
@@ -805,7 +814,7 @@ export const en = {
       hasCommunicationNeeds: {
         title: {
           parent: 'Do you have any communication or language needs?',
-          team: 'Does the contact have any communication or language needs?'
+          team: 'Does the parent or guardian have any communication or language needs?'
         },
         hint: {
           parent:
@@ -1897,6 +1906,9 @@ export const en = {
       label: 'Full name',
       title: 'What is the child’s name?'
     },
+    preferredName: {
+      label: 'Preferred name'
+    },
     firstName: {
       label: 'First name'
     },
@@ -2003,6 +2015,12 @@ export const en = {
     },
     status: {
       label: 'Status'
+    },
+    upcomingAppointments: {
+      label: 'Clinic appointments'
+    },
+    upcomingSchoolSessions: {
+      label: 'School sessions'
     }
   },
   patientProgramme: {

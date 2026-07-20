@@ -3,11 +3,11 @@
 {% set title = __("clinicBooking.clinicDistance.title") %}
 {% set hideConfirmButton = true %}
 
-{% set descriptionKey = "clinicBooking.clinicDistance.description.team" if patient else "clinicBooking.clinicDistance.description.parent" %}
+{% set audience = "parent" if isParentFacing else "team" %}
 
 {% block form %}
   {% set panelHtml %}
-    {{ __(descriptionKey, {
+    {{ __("clinicBooking.clinicDistance.description." + audience, {
       postcode: appointment.preferredPostcode,
       team: team
     }) | nhsukMarkdown }}

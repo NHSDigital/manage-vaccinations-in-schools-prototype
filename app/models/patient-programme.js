@@ -29,7 +29,11 @@ import {
 } from '../utils/date.js'
 import { ordinal } from '../utils/number.js'
 import { getReportOutcome } from '../utils/patient-session.js'
-import { getConsentOutcomeStatus, getPatientStatus } from '../utils/status.js'
+import {
+  getConsentOutcomeStatus,
+  getPatientStatus,
+  getClinicStatus
+} from '../utils/status.js'
 import {
   formatProgrammeStatus,
   formatTag,
@@ -801,6 +805,14 @@ export class PatientProgramme extends BaseModel {
                 this.programme,
                 getPatientStatus(this.status, this.vaccinationDue),
                 this.statusNotes
+              )
+            case 'clinicStatus':
+              return (
+                this.clinicStatus &&
+                formatProgrammeStatus(
+                  this.programme,
+                  getClinicStatus(this.clinicStatus)
+                )
               )
             default:
               return undefined

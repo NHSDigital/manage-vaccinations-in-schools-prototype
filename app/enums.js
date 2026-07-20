@@ -94,6 +94,16 @@ export const ClinicAttendanceType = {
  * @readonly
  * @enum {string}
  */
+export const ClinicBookingJourneyType = {
+  ParentOnline: 'From parent’s invite',
+  PhoneBooking: 'From child record',
+  DataMigration: 'From clinic session'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentOutcome = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',
