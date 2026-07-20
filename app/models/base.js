@@ -7,6 +7,14 @@ import {
   today
 } from '../utils/date.js'
 
+// Caches the results of findAll() per context object, so repeated calls
+// within the same request (e.g. the same req.session.data reference) reuse
+// the already-constructed instances instead of rebuilding them from raw
+// JSON every time. Entries are invalidated on create/update/delete, and are
+// naturally garbage-collected once their context object is no longer
+// referenced (e.g. at the end of a request).
+const findAllCache = new WeakMap()
+
 /**
  * @class BaseModel
  */
@@ -83,9 +91,23 @@ export class BaseModel {
 
   static findAll(context) {
     if (!context?.[this.contextKey]) return []
-    return Object.values(context[this.contextKey]).map(
-      (item) => new this(item, context)
-    )
+
+    let contextCache = findAllCache.get(context)
+    if (!contextCache) {
+      contextCache = new Map()
+      findAllCache.set(context, contextCache)
+    }
+
+    if (!contextCache.has(this.contextKey)) {
+      contextCache.set(
+        this.contextKey,
+        Object.values(context[this.contextKey]).map(
+          (item) => new this(item, context)
+        )
+      )
+    }
+
+    return contextCache.get(this.contextKey)
   }
 
   static findOne(identifier, context) {
@@ -100,6 +122,8 @@ export class BaseModel {
     // Update context
     context[this.contextKey] = context[this.contextKey] || {}
     context[this.contextKey][`${createdItem[this.identifierKey]}`] = createdItem
+
+    findAllCache.get(context)?.delete(this.contextKey)
 
     return createdItem
   }
@@ -126,12 +150,14 @@ export class BaseModel {
 
     // Update context
     context[this.contextKey][identifier] = updatedItem
+    findAllCache.get(context)?.delete(this.contextKey)
 
     return new this(updatedItem, context)
   }
 
   static delete(identifier, context) {
     delete context?.[this.contextKey]?.[identifier]
+    findAllCache.get(context)?.delete(this.contextKey)
   }
 }
 
