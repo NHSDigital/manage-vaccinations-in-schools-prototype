@@ -131,10 +131,15 @@ export class BaseModel {
   static update(identifier, updates, context) {
     if (!context?.[this.contextKey]) return
 
+    // Never merge `updates.context` into the target - it’s model plumbing,
+    // not domain data, and `updates` may belong to a model instance built
+    // against a different (e.g. much larger) context than `context` here.
+    const { context: _updatesContext, ...cleanUpdates } = updates ?? {}
+
     // Update item
     const updatedItem = _.mergeWith(
       this.findOne(identifier, context),
-      updates,
+      cleanUpdates,
       (oldValue, newValue) => {
         // Arrays shouldn’t be merged but replaced entirely
         if (Array.isArray(oldValue)) return newValue
