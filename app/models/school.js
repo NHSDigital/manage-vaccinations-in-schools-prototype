@@ -1,8 +1,8 @@
 import { default as filters } from '@x-govuk/govuk-prototype-filters'
 import { isAfter, isBefore } from 'date-fns'
 
-import { SchoolClosureReason, SchoolStatus, SessionStatus } from '../enums.js'
-import { Location, Patient, Session, Team } from '../models.js'
+import { SchoolClosureReason, SchoolStatus } from '../enums.js'
+import { Location, Patient, Programme, Session, Team } from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 import { getSchoolStatusProperties } from '../utils/enum-properties.js'
 import { tokenize } from '../utils/object.js'
@@ -221,25 +221,16 @@ export class School extends Location {
   /**
    * Get sessions run at this school
    *
-   * @returns {Array<Session>|undefined} Sessions
-   */
-  get sessions() {
-    if (this.context) {
-      return Session.findAll(this.context)
-        .filter((session) => session.school_id === this.id)
-        .sort((a, b) => getDateValueDifference(a.date, b.date))
-    }
-  }
-
-  /**
-   * Get planned sessions run at this school
-   *
    * @returns {Array<Session>} Sessions
    */
-  get plannedSessions() {
-    return this.sessions.filter(
-      ({ status }) => status === SessionStatus.Planned
-    )
+  get sessions() {
+    if (this.context && !this.isHomeOrUnknown) {
+      return Session.findAll(this.context)
+        .filter(({ school_id }) => school_id === this.id)
+        .sort((a, b) => getDateValueDifference(a.date, b.date))
+    }
+
+    return []
   }
 
   /**
@@ -247,8 +238,23 @@ export class School extends Location {
    *
    * @returns {boolean} `true` if there are no planned session
    */
-  get hasNoPlannedSessions() {
-    return !this.isHomeOrUnknown && this.plannedSessions.length === 0
+  get hasUnplannedProgrammes() {
+    return this.unplannedProgrammes.length > 0
+  }
+
+  /**
+   * Get programmes with no planned session at this school
+   *
+   * @returns {Array<Programme>} Unplanned programmes
+   */
+  get unplannedProgrammes() {
+    const plannedProgrammeIds = new Set(
+      this.sessions.flatMap((session) => session.programme_ids)
+    )
+
+    return Programme.findAll(this.context).filter(
+      ({ id, isHidden }) => !isHidden && !plannedProgrammeIds.has(id)
+    )
   }
 
   /**
@@ -306,11 +312,11 @@ export class School extends Location {
               return `${this.name} (${getId()})`
             case 'nextSessionDate':
               return formatDate(this.nextSessionDate, { dateStyle: 'full' })
-            case 'plannedSessions':
+            case 'unplannedProgrammes':
               return !this.isHomeOrUnknown
-                ? localise('school.plannedSessions.count', {
-                    count: this.plannedSessions.length
-                  })
+                ? this.unplannedProgrammes
+                    .flatMap(({ nameTag }) => nameTag)
+                    .join(' ')
                 : ''
             case 'patients':
               return localise('school.patients.count', {

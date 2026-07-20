@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { PatientStatus } from '../enums.js'
-import { Patient, School } from '../models.js'
+import { Patient, Programme, School } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -65,9 +65,13 @@ export const schoolController = {
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, SchoolFilterQuery>}
    */
   list(request, response) {
-    const { option, phase, q } = request.query
+    const { option, phase, programme_id, q } = request.query
     const { data } = request.session
     const { schools } = response.locals
+
+    const programmes = Programme.findAll(data)
+      ?.filter((programme) => !programme.isHidden)
+      .sort((a, b) => a.name.localeCompare(b.name))
 
     let results = schools
 
@@ -78,9 +82,12 @@ export const schoolController = {
       )
     }
 
-    // Filter by status (only show open schools by default)
-    if (!option) {
-      results = results.filter((school) => school.isOpen)
+    // Convert programme IDs into an array of IDs
+    let programme_ids
+    if (programme_id) {
+      programme_ids = Array.isArray(programme_id)
+        ? programme_id
+        : [programme_id]
     }
 
     // Filter by phase
@@ -88,11 +95,31 @@ export const schoolController = {
       results = results.filter((school) => school.phase === phase)
     }
 
+    // Filter by status (only show open schools by default)
+    if (option !== 'isClosed') {
+      results = results.filter((school) => school.isOpen)
+    }
+
     // Filter by display option
-    for (const key of ['isClosed', 'hasNoPlannedSessions']) {
+    for (const key of ['isClosed']) {
       if (option?.includes(key)) {
-        results = results.filter((school) => school[key])
+        results = results.filter(
+          (school) => !school.isHomeOrUnknown && school[key]
+        )
       }
+    }
+
+    // Filter by unplanned programme
+    if (programme_id) {
+      results = results.filter(
+        (school) =>
+          !school.isHomeOrUnknown &&
+          programme_ids.every((programme_id) =>
+            school.unplannedProgrammes
+              .map((programme) => programme.id)
+              .includes(programme_id)
+          )
+      )
     }
 
     // Sort
@@ -102,10 +129,18 @@ export const schoolController = {
     response.locals.results = getResults(results, request.query, 40)
     response.locals.pages = getPagination(results, request.query, 40)
 
+    // Programme filter options
+    response.locals.unplannedProgrammeItems = programmes.map((programme) => ({
+      text: programme.name,
+      value: programme.id,
+      checked: programme_id === programme.id
+    }))
+
     // Clean up session data
     delete data.option
     delete data.q
     delete data.phase
+    delete data.programme_id
 
     return response.render('school/list')
   },
@@ -114,7 +149,11 @@ export const schoolController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterList(request, response) {
-    const params = getFilterParams(request, ['phase', 'q'], ['option'])
+    const params = getFilterParams(
+      request,
+      ['phase', 'q'],
+      ['option', 'programme_id']
+    )
 
     return saveAndRedirect(request, response, `/schools?${params}`)
   },

@@ -20,5 +20,6 @@ export interface PatientFilterQuery {
 export interface SchoolFilterQuery {
   option?: string | string[]
   phase?: string | string[]
+  programme_id?: string | string[]
   q?: string
 }
