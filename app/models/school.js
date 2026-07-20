@@ -4,8 +4,8 @@ import { isAfter, isBefore } from 'date-fns'
 import { SchoolClosureReason, SchoolStatus } from '../enums.js'
 import { Location, Patient, Session, Team } from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
+import { getSchoolStatusProperties } from '../utils/enum-properties.js'
 import { tokenize } from '../utils/object.js'
-import { getSchoolStatus } from '../utils/status.js'
 import {
   formatCode,
   formatLink,
@@ -290,7 +290,9 @@ export class School extends Location {
             case 'site':
               return formatCode(this.site)
             case 'status':
-              return this.status && formatTag(getSchoolStatus(this.status))
+              return (
+                this.status && formatTag(getSchoolStatusProperties(this.status))
+              )
             case 'yearGroups':
               return formatYearGroups(this.yearGroups)
             default:

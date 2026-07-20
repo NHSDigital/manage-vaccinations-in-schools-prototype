@@ -11,7 +11,7 @@ import {
   getCurrentAcademicYear,
   today
 } from '../utils/date.js'
-import { getDownloadStatus } from '../utils/status.js'
+import { getDownloadStatusProperties } from '../utils/enum-properties.js'
 import {
   formatList,
   formatProgress,
@@ -388,7 +388,7 @@ export class Download extends BaseModel {
             case 'status':
               return this.status === DownloadStatus.Processing
                 ? formatProgress(this.progress)
-                : formatTag(getDownloadStatus(this.status))
+                : formatTag(getDownloadStatusProperties(this.status))
             case 'programme':
               return this.programme?.nameTag
             case 'teams':

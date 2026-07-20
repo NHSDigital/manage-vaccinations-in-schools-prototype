@@ -27,13 +27,13 @@ import {
   isBetweenDates,
   today
 } from '../utils/date.js'
+import {
+  getConsentOutcomeProperties,
+  getPatientClinicStatusProperties,
+  getPatientStatusProperties
+} from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
 import { getReportOutcome } from '../utils/patient-session.js'
-import {
-  getConsentOutcomeStatus,
-  getPatientStatus,
-  getClinicStatus
-} from '../utils/status.js'
 import {
   formatProgrammeStatus,
   formatTag,
@@ -703,7 +703,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {string} Colour name
    */
   get statusColour() {
-    return getPatientStatus(this.status, this.vaccinationDue).colour
+    return getPatientStatusProperties(this.status, this.vaccinationDue).colour
   }
 
   /**
@@ -773,7 +773,9 @@ export class PatientProgramme extends BaseModel {
       {
         get: (_target, prop) => {
           const getStatusTag = () =>
-            formatTag(getPatientStatus(this.status, this.vaccinationDue))
+            formatTag(
+              getPatientStatusProperties(this.status, this.vaccinationDue)
+            )
 
           switch (prop) {
             case 'doseDue':
@@ -794,16 +796,16 @@ export class PatientProgramme extends BaseModel {
               return this.consent
                 ? formatProgrammeStatus(
                     this.programme,
-                    getConsentOutcomeStatus(this.consent)
+                    getConsentOutcomeProperties(this.consent)
                   )
                 : formatProgrammeStatus(
                     this.programme,
-                    getPatientStatus(this.status)
+                    getPatientStatusProperties(this.status)
                   )
             case 'programmeStatus':
               return formatProgrammeStatus(
                 this.programme,
-                getPatientStatus(this.status, this.vaccinationDue),
+                getPatientStatusProperties(this.status, this.vaccinationDue),
                 this.statusNotes
               )
             case 'clinicStatus':
@@ -811,7 +813,7 @@ export class PatientProgramme extends BaseModel {
                 this.clinicStatus &&
                 formatProgrammeStatus(
                   this.programme,
-                  getClinicStatus(this.clinicStatus)
+                  getPatientClinicStatusProperties(this.clinicStatus)
                 )
               )
             default:

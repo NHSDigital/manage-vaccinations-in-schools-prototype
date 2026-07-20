@@ -24,9 +24,9 @@ import {
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
-  getConsentOutcomeStatus,
-  getReplyDecisionStatus
-} from '../utils/status.js'
+  getConsentOutcomeProperties,
+  getReplyDecisionProperties
+} from '../utils/enum-properties.js'
 import {
   formatMarkdown,
   formatOther,
@@ -405,11 +405,11 @@ export class Reply extends BaseModel {
         get: (_target, prop) => {
           const getDecisionStatus = () => {
             let decisionStatus = formatTag(
-              getReplyDecisionStatus(this.decision)
+              getReplyDecisionProperties(this.decision)
             )
             if (!this.delivered) {
               decisionStatus = formatTag(
-                getConsentOutcomeStatus(ConsentOutcome.NotDelivered)
+                getConsentOutcomeProperties(ConsentOutcome.NotDelivered)
               )
             } else if (this.isInvalidated) {
               decisionStatus = formatWithSecondaryText(

@@ -40,6 +40,13 @@ import {
   getYearGroup
 } from '../utils/date.js'
 import {
+  getConsentOutcomeProperties,
+  getInstructionOutcomeProperties,
+  getRegistrationOutcomeProperties,
+  getScreenOutcomeProperties,
+  getVaccinationOutcomeProperties
+} from '../utils/enum-properties.js'
+import {
   getInstructionOutcome,
   canRecordOutcome,
   getRegistrationOutcome,
@@ -52,13 +59,6 @@ import {
   getConsentRefusalReasons,
   getRepliesWithHealthAnswers
 } from '../utils/reply.js'
-import {
-  getConsentOutcomeStatus,
-  getInstructionOutcomeStatus,
-  getRegistrationStatus,
-  getScreenOutcomeStatus,
-  getVaccinationOutcomeStatus
-} from '../utils/status.js'
 import {
   formatLink,
   formatTag,
@@ -931,15 +931,15 @@ export class PatientSession extends BaseModel {
         get: (_target, prop) => {
           switch (prop) {
             case 'consent':
-              return getConsentOutcomeStatus(this.consent)
+              return getConsentOutcomeProperties(this.consent)
             case 'screen':
-              return getScreenOutcomeStatus(this.screen)
+              return getScreenOutcomeProperties(this.screen)
             case 'instruct':
-              return getInstructionOutcomeStatus(this.instruct)
+              return getInstructionOutcomeProperties(this.instruct)
             case 'register':
-              return getRegistrationStatus(this.register)
+              return getRegistrationOutcomeProperties(this.register)
             case 'outcome':
-              return getVaccinationOutcomeStatus(this.outcome)
+              return getVaccinationOutcomeProperties(this.outcome)
             case 'report':
               return this.patientProgramme?.status
             default:

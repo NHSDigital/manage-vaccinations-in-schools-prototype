@@ -4,7 +4,7 @@ import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import { UploadStatus, UploadType } from '../enums.js'
 import { Move, Patient, School } from '../models.js'
 import { formatDate } from '../utils/date.js'
-import { getUploadStatus } from '../utils/status.js'
+import { getUploadStatusProperties } from '../utils/enum-properties.js'
 import {
   formatLink,
   formatProgress,
@@ -213,7 +213,7 @@ export class Upload extends BaseModel {
             case 'status':
               return this.status === UploadStatus.Processing
                 ? formatProgress(this.progress)
-                : formatTag(getUploadStatus(this.status))
+                : formatTag(getUploadStatusProperties(this.status))
             default:
               return undefined
           }
