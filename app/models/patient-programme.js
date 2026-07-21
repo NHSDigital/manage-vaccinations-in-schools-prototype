@@ -33,7 +33,7 @@ import {
   getPatientStatusProperties
 } from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
-import { getReportOutcome } from '../utils/patient-session.js'
+import { getPatientStatus } from '../utils/patient-session.js'
 import {
   formatProgrammeStatus,
   formatTag,
@@ -662,7 +662,7 @@ export class PatientProgramme extends BaseModel {
 
       // Has been invited to a session
       case !!this.lastPatientSession:
-        return getReportOutcome(this.lastPatientSession)
+        return getPatientStatus(this.lastPatientSession)
 
       // Needs to be invited to a session
       default:

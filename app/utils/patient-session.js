@@ -103,7 +103,7 @@ export const getSessionOutcome = (patientSession) => {
  * @param {PatientSession} patientSession - Patient session
  * @returns {PatientStatus} Overall patient status
  */
-export const getReportOutcome = (patientSession) => {
+export const getPatientStatus = (patientSession) => {
   // Has vaccination outcome
   if (patientSession.vaccinationOutcomes?.length > 0) {
     switch (patientSession.outcome) {
