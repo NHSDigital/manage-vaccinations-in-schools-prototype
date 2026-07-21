@@ -6,20 +6,20 @@
   headingSize: "m"
 }) %}
   {# Description #}
-  {% if not patientSession.isVaccinated %}
-    {{ patientSession.consentDescription | nhsukMarkdown }}
+  {% if not patientProgramme.isVaccinated %}
+    {{ patientProgramme.consentDescription | nhsukMarkdown }}
 
-    {% if patientSession.patient.lastReminderDate %}
-      {{ patientSession.patient.formatted.lastReminderDate | nhsukMarkdown }}
+    {% if patientProgramme.patient.lastReminderDate %}
+      {{ patientProgramme.patient.formatted.lastReminderDate | nhsukMarkdown }}
     {% endif %}
   {% endif %}
 
   {# Actions #}
-  {% if not patientSession.isVaccinated and not patientSession.patient.isPost16 %}
+  {% if not patientProgramme.isVaccinated and not patientProgramme.patient.isPost16 %}
     {{ actionLink({
       text: __("reply.new.title"),
       href: patientProgramme.uri + "/replies/new?session_id=" + session.id + "&referrer=" + referrer
-    }) if not patientSession.isVaccinated }}
+    }) if not patientProgramme.isVaccinated }}
 
     {{ appButtonGroup({
       buttons: [{
@@ -40,15 +40,15 @@
     }) }}
   {% endif %}
 
-  {% if patientSession.replies | length %}
+  {% if patientProgramme.replies | length %}
     {# Requests with responses or requests that couldn’t be delivered #}
     {{ appHeading({
       level: 3,
       size: "s",
-      title: __("patientSession.replies.responses") if patientSession.responses.length > 0 else __("patientSession.replies.requests")
+      title: __("patientSession.replies.responses") if patientProgramme.responses.length > 0 else __("patientSession.replies.requests")
     }) }}
 
-    {% for reply in patientSession.replies %}
+    {% for reply in patientProgramme.replies %}
       {{ summaryList({
         card: {
           classes: "app-card--compact app-card--offset",
@@ -90,7 +90,7 @@
         })
       }) }}
     {% endfor %}
-  {% elif not patientSession.patient.hasNoContactDetails and not patientSession.patient.isPost16 %}
+  {% elif not patientProgramme.patient.hasNoContactDetails and not patientProgramme.patient.isPost16 %}
     {# Requests that have been sent but with no response yet #}
     {# We don’t create replies so use contact details instead #}
 
@@ -100,7 +100,7 @@
       title: __("patientSession.replies.pending")
     }) }}
 
-    {% for contact in patientSession.patient.contacts %}
+    {% for contact in patientProgramme.patient.contacts %}
       {{ summaryList({
         card: {
           classes: "app-card--compact app-card--offset",
@@ -128,12 +128,12 @@
 {# Health answers #}
 {{ summaryList({
   card: {
-    classes: "nhsuk-card--warning" if patientSession.answersNeedingTriageCount,
+    classes: "nhsuk-card--warning" if patientProgramme.answersNeedingTriageCount,
     heading: __mf("healthAnswers.count", {
-      count: patientSession.answersNeedingTriageCount
+      count: patientProgramme.answersNeedingTriageCount
     }),
     headingSize: "m"
   },
   classes: "app-summary-list--full-width",
-  rows: healthAnswerRows(patientSession.consentHealthAnswers)
-}) if patientSession.consentHealthAnswers }}
+  rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
+}) if patientProgramme.consentHealthAnswers }}

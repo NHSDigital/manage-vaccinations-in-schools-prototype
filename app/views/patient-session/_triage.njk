@@ -3,9 +3,9 @@
   headingSize: "m"
 }) %}
   {# Description #}
-  {{ patientSession.screenDescription | nhsukMarkdown }}
+  {{ patientProgramme.screenDescription | nhsukMarkdown }}
 
-  {% if options.needsTriage and not patientSession.consentHealthAnswers %}
+  {% if options.needsTriage and not patientProgramme.consentHealthAnswers %}
     {{ appHeading({
       classes: "nhsuk-u-margin-bottom-2",
       level: 3,
@@ -13,18 +13,18 @@
       title: __("vaccine.healthQuestions.label")
     }) }}
 
-    {{ patientSession.vaccine.formatted.healthQuestions | nhsukMarkdown }}
+    {{ patientProgramme.vaccine.formatted.healthQuestions | nhsukMarkdown }}
   {% endif %}
 
   {# Actions #}
   {{ actionLink({
     text: __("triage.new.title"),
     href: patientProgramme.uri + "/new/triage?referrer=" + referrer
-  }) if options.canTriage and not options.needsTriage and not patientSession.isVaccinated }}
+  }) if options.canTriage and not options.needsTriage and not patientProgramme.isVaccinated }}
 
   {# Decision table #}
   {% set triageNoteRows = [] %}
-  {% for triageNote in patientSession.triageNotes | reverse %}
+  {% for triageNote in patientProgramme.triageNotes | reverse %}
     {% set triageNoteRows = triageNoteRows | push([
       {
         header: __("event.createdAt.label"),
@@ -88,7 +88,7 @@
       decorate: "triage.statusInvalidAt_"
     }) %}
 
-    {% set statusItems = injectConditionalHtml(triageStatusItems(patientSession.screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) if patientSession.programme.alternativeVaccine else triageStatusItems(patientSession.screenStatusesForConsentMethod) %}
+    {% set statusItems = injectConditionalHtml(triageStatusItems(patientProgramme.screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) if patientProgramme.programme.alternativeVaccine else triageStatusItems(patientProgramme.screenStatusesForConsentMethod) %}
 
     {{ radios({
       fieldset: {
@@ -98,8 +98,8 @@
         }
       },
       hint: {
-        text: patientSession.screenVaccineCriteria
-      } if patientSession.screenVaccineCriteria,
+        text: patientProgramme.screenVaccineCriteria
+      } if patientProgramme.screenVaccineCriteria,
       items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
       decorate: "triage.status"
     }) }}

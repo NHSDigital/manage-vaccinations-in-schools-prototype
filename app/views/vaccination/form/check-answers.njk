@@ -2,7 +2,7 @@
 
 {% set confirmButtonText = __("vaccination.new.confirm") %}
 {% set title = __("vaccination.new.check-answers.title") %}
-{% set mismatchedMethods = vaccination.vaccine.method != vaccination.patientSession.vaccine.method and not patientSession.canRecordAlternativeVaccine %}
+{% set mismatchedMethods = vaccination.vaccine.method != vaccination.patientSession.patientProgramme.vaccine.method and not patientSession.patientProgramme.canRecordAlternativeVaccine %}
 
 {% block form %}
   {{ appHeading({

@@ -58,9 +58,6 @@ export const patientProgrammeController = {
     // Show back link to referring page, else patient programme page
     response.locals.back = referrer || patientProgramme.uri
 
-    // TODO: Remove once patient session methods moved to patient programme
-    response.locals.patientSession = patientProgramme?.lastPatientSession
-
     return next()
   },
 

@@ -45,18 +45,15 @@ export const patientSessionController = {
       (user) => user.canVaccinate
     )
 
-    const { clinicAppointment, patient, programme, session } = patientSession
+    const { clinicAppointment, patient, patientProgramme, programme, session } =
+      patientSession
 
     const vaccinated = patientSession.siblingPatientSessions.findIndex(
-      (patientSession) => patientSession.isVaccinated
+      ({ patientProgramme }) => patientProgramme.isVaccinated
     )
 
     const due = patientSession.siblingPatientSessions.filter(
-      (patientSession) => patientSession.status === PatientStatus.Due
-    )
-
-    const patientProgramme = Object.values(patient.programmes).find(
-      (patientProgramme) => patientProgramme.programme_id === programme_id
+      ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
     )
 
     let vaccineMethods = []
@@ -70,7 +67,7 @@ export const patientSessionController = {
       }
 
       // HCAs can only record nasal vaccines for children with a PSD
-      if (session.hasPsdProtocol && patientSession.hasInstruction) {
+      if (session.hasPsdProtocol && patientProgramme.hasInstruction) {
         vaccineMethods = [VaccineMethod.Intranasal]
       }
     }
@@ -83,34 +80,34 @@ export const patientSessionController = {
         !patient.hasNoContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
-        patientSession.consent === ConsentStatus.NoResponse,
+        patientProgramme.consent === ConsentStatus.NoResponse,
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
         session.isActive &&
         !vaccinated &&
-        !patientSession.consentGiven,
+        !patientProgramme.consentGiven,
       // Perform triage
       canTriage: account.isRegisteredNurse,
       // Patient needs triage
-      needsTriage: patientSession.status === PatientStatus.Triage,
+      needsTriage: patientProgramme.status === PatientStatus.Triage,
       // Patient already triaged
-      hasTriage: patientSession.triageNotes.length > 0,
-      hasInstruction: session.hasPsdProtocol && patientSession.hasInstruction,
+      hasTriage: patientProgramme.triageNotes.length > 0,
+      hasInstruction: session.hasPsdProtocol && patientProgramme.hasInstruction,
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
-        vaccineMethods?.includes(patientSession.vaccine?.method) &&
+        vaccineMethods?.includes(patientProgramme.vaccine?.method) &&
         patientSession.canRecordOutcome &&
         session.isActive,
       canRecordInjectionSite:
-        patientSession.vaccine?.criteria !== VaccineCriteria.Intranasal
+        patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal
     }
 
     // Vaccinator has permission to record using the alternative vaccine
     // and patient has consent to vaccinate using the alternative vaccine
     response.locals.canRecordAlternativeVaccine =
       account.vaccineMethods?.includes(programme.alternativeVaccine?.method) &&
-      patientSession.canRecordAlternativeVaccine
+      patientProgramme.canRecordAlternativeVaccine
 
     const view = request.path.split('/').at(-1)
     response.locals.navigationItems = [
@@ -124,7 +121,7 @@ export const patientSessionController = {
           ]
         : []),
       ...patientSession.siblingPatientSessions.map((patientSession) => ({
-        ...(patientSession.isVaccinated && { icon: 'tick' }),
+        ...(patientSession.patientProgramme.isVaccinated && { icon: 'tick' }),
         text: patientSession.programme.name,
         href: patientSession.uri,
         current:
@@ -158,8 +155,8 @@ export const patientSessionController = {
     // Use different values for pre-screening questions
     // `IsWell` and `IsPregnant` should persist per patient
     response.locals.preScreenQuestionItems =
-      patientSession.vaccine &&
-      Object.entries(patientSession.vaccine.preScreenQuestions).map(
+      patientProgramme.vaccine &&
+      Object.entries(patientProgramme.vaccine.preScreenQuestions).map(
         ([key, text]) => {
           let value = `${programme.id}-${key}`
           if (text === PreScreenQuestion.IsWell) {
@@ -230,7 +227,7 @@ export const patientSessionController = {
 
     if (
       register === RegistrationStatus.Absent &&
-      patientSession.status !== PatientStatus.Consent
+      patientSession.patientProgramme.status !== PatientStatus.Consent
     ) {
       // Record vaccination outcome as absent if safe to vaccinate
       const programme = Programme.findOne(session.programme_ids[0], data)
@@ -242,7 +239,7 @@ export const patientSessionController = {
           patient_uuid: patientSession.patient_uuid,
           programme_id: programme.id,
           session_id: session.id,
-          vaccine_snomed: patientSession.vaccine.snomed,
+          vaccine_snomed: patientSession.patientProgramme.vaccine.snomed,
           createdAt: today(10),
           createdBy_uid: account.uid,
           administeredAt: today(10),

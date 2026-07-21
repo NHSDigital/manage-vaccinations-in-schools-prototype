@@ -95,7 +95,7 @@
           {% set statusHtml %}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
-                {{ patientSession.formatted.status | nhsukMarkdown }}
+                {{ patientSession.patientProgramme.formatted.programmeStatus | nhsukMarkdown }}
               {% endif %}
             {% endfor %}
           {% endset %}
@@ -103,7 +103,7 @@
           {% set consentStatusHtml -%}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
-                {{ patientSession.formatted.programmeConsent | nhsukMarkdown }}
+                {{ patientSession.patientProgramme.formatted.consentStatus | nhsukMarkdown }}
               {%- endif -%}
             {%- endfor %}
           {%- endset %}

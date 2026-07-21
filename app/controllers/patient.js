@@ -193,11 +193,7 @@ export const patientController = {
         let statuses = filters[status]
         statuses = Array.isArray(statuses) ? statuses : [statuses]
         results = results.filter((patient) =>
-          ids.some((id) =>
-            statuses.includes(
-              patient.programmes[id].lastPatientSession?.[status]
-            )
-          )
+          ids.some((id) => statuses.includes(patient.programmes[id][status]))
         )
       }
     }

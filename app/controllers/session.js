@@ -440,7 +440,7 @@ export const sessionController = {
       if (filters[key] !== 'none') {
         const keys = Array.isArray(filters[key]) ? filters[key] : [filters[key]]
         results = results.filter((patientSession) =>
-          keys.includes(patientSession[key])
+          keys.includes(patientSession.patientProgramme[key])
         )
       }
     }
@@ -458,7 +458,7 @@ export const sessionController = {
         let statuses = filters[status]
         statuses = Array.isArray(statuses) ? statuses : [statuses]
         results = results.filter((patientSession) =>
-          statuses.includes(patientSession[status])
+          statuses.includes(patientSession.patientProgramme[status])
         )
       }
     }
@@ -511,10 +511,10 @@ export const sessionController = {
     // Only show patients ready to vaccinate, and that a user can vaccinate
     if (view === 'record') {
       results = results.filter(
-        ({ register, status, vaccine }) =>
-          status === PatientStatus.Due &&
+        ({ patientProgramme, register }) =>
+          patientProgramme.status === PatientStatus.Due &&
           register !== RegistrationStatus.Pending &&
-          account.vaccineMethods?.includes(vaccine?.method)
+          account.vaccineMethods?.includes(patientProgramme.vaccine?.method)
       )
     }
 
@@ -1053,9 +1053,9 @@ export const sessionController = {
     const { __, account, session } = response.locals
 
     const patientsToInstruct = session.patientSessions.filter(
-      (patientSession) =>
-        patientSession.status === PatientStatus.Due &&
-        patientSession.instructionStatus === InstructionStatus.Needed
+      ({ patientProgramme }) =>
+        patientProgramme.status === PatientStatus.Due &&
+        patientProgramme.instructionStatus === InstructionStatus.Needed
     )
 
     for (const patientSession of patientsToInstruct) {

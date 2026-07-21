@@ -986,7 +986,7 @@ export class Session extends BaseModel {
    */
   get patientSessionsForClinic() {
     return this.patients.filter(
-      (patientSession) => patientSession.status === PatientStatus.Due
+      ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
     )
   }
 

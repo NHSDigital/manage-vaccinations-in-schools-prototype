@@ -8,9 +8,13 @@ import { PatientStatus, RegistrationStatus } from '../enums.js'
  * @returns {boolean} Ready to record outcome
  */
 export function canRecordOutcome(patientSession) {
-  const { register, status, session } = patientSession
+  const { patientProgramme, register, session } = patientSession
 
-  if ([PatientStatus.Due, PatientStatus.Deferred].includes(status)) {
+  if (
+    [PatientStatus.Due, PatientStatus.Deferred].includes(
+      patientProgramme.status
+    )
+  ) {
     if (session.hasRegistration && register !== RegistrationStatus.Present) {
       return false
     }
@@ -28,13 +32,13 @@ export function canRecordOutcome(patientSession) {
  * @returns {RegistrationStatus} Registration status
  */
 export function getRegistrationStatus(patientSession) {
-  const { patient, session } = patientSession
+  const { patientProgramme, patient, session } = patientSession
 
   if (!session.hasRegistration) {
     return RegistrationStatus.Present
   }
 
-  if (patientSession.isVaccinated) {
+  if (patientProgramme.isVaccinated) {
     return RegistrationStatus.Complete
   } else if (session.register[patient.uuid]) {
     return session.register[patient.uuid]
