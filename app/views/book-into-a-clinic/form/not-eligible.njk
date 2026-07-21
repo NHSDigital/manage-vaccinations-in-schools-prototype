@@ -13,7 +13,7 @@
       {{ __("clinicBooking.notEligible.description") | nhsukMarkdown }}
 
       {% set programmeStatusHtml -%}
-        {%- for id, patientProgramme in patient.programmes -%}
+        {%- for id, patientProgramme in patient.activeProgrammes -%}
           {{ patientProgramme.formatted.programmeStatus | nhsukMarkdown }}
         {%- endfor %}
       {%- endset %}
