@@ -13,7 +13,8 @@ import {
   PatientClinicStatus,
   SessionStatus,
   SessionType,
-  VaccinationOutcome
+  VaccinationOutcome,
+  VaccinationSource
 } from '../enums.js'
 import {
   AuditEvent,
@@ -479,11 +480,11 @@ export class Patient extends Child {
   }
 
   /**
-   * Get vaccinations
+   * Get vaccinations recorded in service
    *
-   * @returns {Array<Vaccination>} Vaccinations
+   * @returns {Array<Vaccination>} Vaccinations recorded in service
    */
-  get vaccinations() {
+  get recordedVaccinations() {
     if (this.context?.vaccinations && this.vaccination_uuids) {
       return this.vaccination_uuids.map(
         (uuid) =>
@@ -492,6 +493,28 @@ export class Patient extends Child {
     }
 
     return []
+  }
+
+  /**
+   * Get vaccinations recorded off service
+   *
+   * @returns {Array<Vaccination>} Vaccinations recorded off service
+   */
+  get importedVaccinations() {
+    return Vaccination.findAll(this.context).filter(
+      (vaccination) =>
+        vaccination.patient_uuid === this.uuid &&
+        vaccination.source !== VaccinationSource.Service
+    )
+  }
+
+  /**
+   * Get all vaccinations
+   *
+   * @returns {Array<Vaccination>} All vaccinations
+   */
+  get vaccinations() {
+    return [...this.recordedVaccinations, ...this.importedVaccinations]
   }
 
   /**

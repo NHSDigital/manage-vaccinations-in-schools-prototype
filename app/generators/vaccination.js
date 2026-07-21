@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { addMonths, addWeeks } from 'date-fns'
 
 import vaccines from '../datasets/vaccines.js'
-import { VaccinationOutcome } from '../enums.js'
+import { VaccinationOutcome, VaccinationSource } from '../enums.js'
 import { Vaccination } from '../models.js'
 
 /**
@@ -80,5 +81,40 @@ export function generateVaccination(patientSession, programme, batch, users) {
 }
 
 /**
- * @import { Batch, PatientSession, Programme, User } from '../models.js'
+ * Generate fake historic tetanus vaccination
+ *
+ * @param {Patient} patient - Patient
+ * @param {string} programme_id - Programme ID
+ * @param {string} sequence - Dose sequence
+ * @returns {Vaccination} Historic tetanus vaccination
+ */
+export function generateTetanusVaccination(patient, programme_id, sequence) {
+  let administeredAt
+  switch (true) {
+    case programme_id === '5in1' && sequence === '1P':
+      administeredAt = addWeeks(patient.dob, 8)
+      break
+    case programme_id === '5in1' && sequence === '2P':
+      administeredAt = addWeeks(patient.dob, 12)
+      break
+    case programme_id === '5in1' && sequence === '3P':
+      administeredAt = addWeeks(patient.dob, 16)
+      break
+    case programme_id === '4in1' && sequence === '1B':
+      administeredAt = addMonths(patient.dob, 40)
+      break
+  }
+
+  return new Vaccination({
+    administeredAt,
+    patient_uuid: patient.uuid,
+    programme_id,
+    sequence,
+    source: VaccinationSource.HistoricalUpload,
+    outcome: VaccinationOutcome.Vaccinated
+  })
+}
+
+/**
+ * @import { Batch, Patient, PatientSession, Programme, User } from '../models.js'
  */

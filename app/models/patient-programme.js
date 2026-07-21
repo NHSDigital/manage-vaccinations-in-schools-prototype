@@ -1,4 +1,4 @@
-import { addMonths, addWeeks, isAfter, isBefore } from 'date-fns'
+import { isAfter, isBefore } from 'date-fns'
 
 import {
   AuditEventType,
@@ -498,7 +498,7 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get other vaccinations given
+   * Get other (non-NHS) vaccinations given
    *
    * @returns {Array<Vaccination>|undefined} Vaccinations
    */
@@ -506,6 +506,20 @@ export class PatientProgramme extends BaseModel {
     return this.patient?.vaccinations
       .filter((vaccination) => vaccination.programmeOther)
       .filter((vaccination) => vaccination.wasGiven)
+  }
+
+  /**
+   * Get tetanus vaccinations
+   *
+   * @returns {Array<Vaccination>|undefined} Vaccinations
+   */
+  get tetanusVaccinations() {
+    if (this.programme.type === ProgrammeType.TdIPV) {
+      return [
+        ...this.tetanusVaccinationsGiven,
+        ...this.otherVaccinationsGiven
+      ].sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+    }
   }
 
   /**
@@ -623,47 +637,6 @@ export class PatientProgramme extends BaseModel {
       ({ programme, isActive }) =>
         this.programme.id === programme.id && isActive
     )
-  }
-
-  get tetanusVaccinations() {
-    if (this.programme.type === ProgrammeType.TdIPV) {
-      return [
-        new Vaccination(
-          {
-            createdAt: addWeeks(this.patient.dob, 8),
-            programme_id: '5in1',
-            sequence: '1P'
-          },
-          this.context
-        ),
-        new Vaccination(
-          {
-            createdAt: addWeeks(this.patient.dob, 12),
-            programme_id: '5in1',
-            sequence: '2P'
-          },
-          this.context
-        ),
-        new Vaccination(
-          {
-            createdAt: addWeeks(this.patient.dob, 16),
-            programme_id: '5in1',
-            sequence: '3P'
-          },
-          this.context
-        ),
-        new Vaccination(
-          {
-            createdAt: addMonths(this.patient.dob, 40),
-            programme_id: '4in1',
-            sequence: '1B'
-          },
-          this.context
-        ),
-        ...this.tetanusVaccinationsGiven,
-        ...this.otherVaccinationsGiven
-      ].sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
-    }
   }
 
   /**
