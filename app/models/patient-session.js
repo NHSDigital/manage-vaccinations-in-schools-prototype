@@ -50,7 +50,7 @@ import {
   getInstructionOutcome,
   canRecordOutcome,
   getRegistrationOutcome,
-  getSessionOutcome
+  getVaccinationOutcome
 } from '../utils/patient-session.js'
 import {
   countAnswersNeedingTriage,
@@ -857,7 +857,7 @@ export class PatientSession extends BaseModel {
    * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
    */
   get outcome() {
-    return getSessionOutcome(this)
+    return getVaccinationOutcome(this)
   }
 
   /**

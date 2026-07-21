@@ -79,7 +79,7 @@ export const canRecordOutcome = (patientSession) => {
  * @param {PatientSession} patientSession - Patient session
  * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
  */
-export const getSessionOutcome = (patientSession) => {
+export const getVaccinationOutcome = (patientSession) => {
   if (patientSession.lastVaccinationOutcome) {
     return patientSession.lastVaccinationOutcome.outcome
   } else if (
