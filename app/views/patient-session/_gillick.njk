@@ -12,5 +12,5 @@
   {{ actionLink({
     text: __("patientSession.gillick." + type + ".title"),
     href: patientSession.uri + "/" + type + "/gillick?referrer=" + referrer
-  }) if not patientSession.isVaccinated }}
+  }) if not patientSession.patientProgramme.isVaccinated }}
 {% endcall %}

@@ -68,7 +68,7 @@
 
 {% filter nhsukMarkdown %}
 {{ __("preScreen.description", { patient: patient }) }}
-{% for question in patientSession.vaccine.preScreenQuestions %}
+{% for question in patientSession.patientProgramme.vaccine.preScreenQuestions %}
 - {{ question }}
 {% endfor %}
 {% endfilter %}
@@ -155,7 +155,7 @@
         text: __("preScreen.ready.label", {
           patient: patient,
           programme: patientSession.programme,
-          method: patientSession.vaccine.method | lower
+          method: patientSession.patientProgramme.vaccine.method | lower
         }) | safe
       }
     },

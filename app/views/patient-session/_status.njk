@@ -6,11 +6,11 @@
   headingSize: "m"
 }) %}
   {# Description #}
-  {{ patientSession.statusDescription | nhsukMarkdown }}
+  {{ patientProgramme.statusDescription | nhsukMarkdown }}
 
   {# Decision table #}
   {% set vaccinationRows = [] %}
-  {% for vaccination in patientSession.vaccinationOutcomes | reverse %}
+  {% for vaccination in patientProgramme.vaccinationOutcomes | reverse %}
     {% set vaccinationRows = vaccinationRows | push([
       {
         header: __("vaccination.administeredAt_date.label"),
@@ -32,7 +32,7 @@
       { text: __("vaccination.outcome.label") }
     ],
     rows: vaccinationRows
-  }) if patientSession.vaccinationOutcomes | length }}
+  }) if patientProgramme.vaccinationOutcomes | length }}
 
   {# Actions #}
   {{ actionLink({

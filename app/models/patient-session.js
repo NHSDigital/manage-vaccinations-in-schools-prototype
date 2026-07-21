@@ -6,23 +6,11 @@ import {
   AcademicYear,
   AuditEventType,
   ClinicAttendanceType,
-  ConsentStatus,
-  InstructionStatus,
-  PatientStatus,
   PatientClinicStatus,
-  PatientConsentStatus,
-  PatientDeferredStatus,
-  PatientRefusedStatus,
-  PatientTriageStatus,
-  PatientVaccinatedStatus,
-  ProgrammeType,
-  RecordVaccineCriteria,
-  ReplyDecision,
+  PatientStatus,
   ReplyRefusal,
   RegistrationStatus,
-  ScreenStatus,
-  SessionType,
-  VaccinationOutcome
+  SessionType
 } from '../enums.js'
 import {
   AuditEvent,
@@ -38,49 +26,13 @@ import {
   getDateValueDifference,
   getYearGroup
 } from '../utils/date.js'
-import {
-  getConsentStatusProperties,
-  getInstructionStatusProperties,
-  getRegistrationStatusProperties,
-  getScreenStatusProperties,
-  getVaccinationOutcomeProperties
-} from '../utils/enum-properties.js'
-import {
-  getConsentStatus,
-  getConsentStatusDescription,
-  getInstructionStatus,
-  getPatientConsentStatus,
-  getPatientDeferredDescription,
-  getPatientDeferredStatus,
-  getPatientRefusedStatus,
-  getPatientStatusDescription,
-  getPatientTriageStatus,
-  getPatientVaccinatedStatus,
-  getScreenStatus,
-  getScreenStatusDescription,
-  getVaccinationOutcome
-} from '../utils/patient-programme.js'
+import { getRegistrationStatusProperties } from '../utils/enum-properties.js'
 import {
   canRecordOutcome,
   getRegistrationStatus,
   getRegistrationStatusDescription
 } from '../utils/patient-session.js'
-import {
-  countAnswersNeedingTriage,
-  getConsentHealthAnswers,
-  getConsentRefusalReasons
-} from '../utils/reply.js'
-import {
-  formatLink,
-  formatTag,
-  formatProgrammeStatus,
-  formatVaccineCriteria,
-  formatYearGroup
-} from '../utils/string.js'
-import {
-  getScreenStatusesForConsentMethod,
-  getScreenVaccineCriteria
-} from '../utils/triage.js'
+import { formatLink, formatTag, formatYearGroup } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
@@ -184,18 +136,6 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get triage notes
-   *
-   * @returns {Array<AuditEvent>} Audit events
-   */
-  get triageNotes() {
-    return this.auditEvents
-      .filter(({ type }) => type === AuditEventType.ProgrammeNote)
-      .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
-      .filter(({ status }) => status)
-  }
-
-  /**
    * Get session notes
    *
    * @returns {Array<AuditEvent>} Audit event
@@ -205,112 +145,6 @@ export class PatientSession extends BaseModel {
       .filter(({ type }) => type === AuditEventType.SessionNote)
       .filter(({ session_id }) => session_id === this.session_id)
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
-  }
-
-  /**
-   * Get replies for patient session
-   *
-   * @returns {Array<Reply>|undefined} Replies
-   */
-  get replies() {
-    return this.patient?.replies
-      .filter(({ programme_id }) => programme_id === this.programme_id)
-      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
-  }
-
-  /**
-   * Get parental relationships from valid replies
-   *
-   * @returns {Array<string>|undefined} Parental relationships
-   */
-  get parentalRelationships() {
-    if (this.responses) {
-      return this.responses
-        .filter((reply) => !reply.isInvalidated)
-        .flatMap((reply) => reply.relationship || 'Parent or guardian')
-    }
-  }
-
-  /**
-   * Get names of contacts who have requested a follow up
-   *
-   * @returns {Array<string>|undefined} Contact names and relationships
-   */
-  get contactsRequestingFollowUp() {
-    if (this.responses) {
-      return this.responses
-        .filter((reply) => !reply.isInvalidated)
-        .filter((reply) => reply.hasDeclinedConsent)
-        .flatMap((reply) => reply.contact.fullNameAndRelationship)
-    }
-  }
-
-  /**
-   * Get responses (consent requests that were delivered)
-   *
-   * @returns {Array<Reply>|undefined} Responses
-   */
-  get responses() {
-    return this.replies?.filter((reply) => reply.delivered)
-  }
-
-  /**
-   * Has every contact given consent for an injected vaccine?
-   *
-   * Some contacts may give consent for the nasal spray, but also given consent
-   * for the injection as an alternative
-   *
-   * @returns {boolean|undefined} Consent given for an injected vaccine
-   */
-  get hasConsentForInjection() {
-    return this.responses?.every(
-      ({ hasConsentForInjection }) => hasConsentForInjection
-    )
-  }
-
-  /**
-   * Has every contact given consent only for an injected vaccine?
-   *
-   * We need this so that we don’t offer multiple triage outcomes if consent has
-   * only been given for the injected vaccine
-   *
-   * @returns {boolean|undefined} Consent given for an injected vaccine
-   */
-  get hasConsentForAlternativeInjectionOnly() {
-    return this.responses?.every(
-      ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
-    )
-  }
-
-  /**
-   * Get screen statuses for vaccination method(s) consented to
-   *
-   * @returns {Array<ScreenStatus>|undefined} Screen statuses
-   */
-  get screenStatusesForConsentMethod() {
-    if (this.programme && this.responses) {
-      return getScreenStatusesForConsentMethod(this.programme, this.responses)
-    }
-  }
-
-  /**
-   * Get vaccination criteria consented to use if safe to vaccinate
-   *
-   * @returns {ScreenVaccineCriteria|boolean|undefined} Criteria
-   */
-  get screenVaccineCriteria() {
-    if (this.programme && this.responses) {
-      return getScreenVaccineCriteria(this.programme, this.responses)
-    }
-  }
-
-  /**
-   * Get clinic readiness status
-   *
-   * @returns {PatientClinicStatus|undefined} clinic status for our programme
-   */
-  get clinicStatus() {
-    return this.patientProgramme?.clinicStatus || undefined
   }
 
   /**
@@ -399,260 +233,14 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get vaccine to administer (or was administered) in this patient session
-   *
-   * For all programmes besides flu, this will be an injection.
-   * For the flu programme, this depends on consent responses
-   *
-   * @returns {Vaccine|undefined} Vaccine method
-   */
-  get vaccine() {
-    const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
-    const alternativeVaccine = this.programme?.alternativeVaccine
-
-    // Need consent response (or a clinic appointment) before we can determine
-    // the chosen method.
-    // We only want to instruct patients being vaccinated using nasal spray
-    if (!this.consentGiven) {
-      return
-    }
-
-    // If no alternative, can only have been the standard vaccine
-    if (!this.programme?.alternativeVaccine) {
-      return standardVaccine
-    }
-
-    // Administered vaccine was the alternative
-    if (
-      this.clinicAppointment?.hasConsentForAlternativeVaccine ||
-      this.hasAlternativeVaccine
-    ) {
-      return alternativeVaccine
-    }
-
-    // Return vaccine based on consent (and triage) statuses
-    const hasScreenedForInjection =
-      this.screen &&
-      [
-        ScreenStatus.VaccinateAlternativeFluInjectionOnly,
-        ScreenStatus.VaccinateAlternativeMMRInjectionOnly
-      ].includes(String(this.screen))
-
-    return this.hasConsentForAlternativeInjectionOnly || hasScreenedForInjection
-      ? alternativeVaccine // Injection
-      : standardVaccine // Nasal
-  }
-
-  /**
-   * Get vaccine to administer (or was administered) in this patient session
-   *
-   * For all programmes besides flu, this will be an injection.
-   * For the flu programme, this depends on consent responses
-   *
-   * @returns {RecordVaccineCriteria|undefined} Vaccination method
-   */
-  get vaccineCriteria() {
-    // If no programme does not offer alternatives, don’t return a method
-    if (!this.programme?.alternativeVaccine) {
-      return
-    }
-
-    // Need consent response(s) before we can determine the chosen method
-    if (!this.consentGiven) {
-      return
-    }
-
-    if (this.programme.type === ProgrammeType.Flu) {
-      if (
-        this.consent === ConsentStatus.GivenForIntranasal ||
-        this.screen === ScreenStatus.VaccinateIntranasalOnly
-      ) {
-        return RecordVaccineCriteria.IntranasalOnly
-      }
-
-      if (
-        this.consent === ConsentStatus.GivenForAlternativeInjection ||
-        this.screen === ScreenStatus.VaccinateAlternativeFluInjectionOnly
-      ) {
-        return RecordVaccineCriteria.AlternativeFluInjectionOnly
-      }
-
-      return RecordVaccineCriteria.IntranasalPreferred
-    }
-
-    if (this.programme.type === ProgrammeType.MMR) {
-      if (
-        this.consent === ConsentStatus.GivenForAlternativeInjection ||
-        this.screen === ScreenStatus.VaccinateAlternativeMMRInjectionOnly
-      ) {
-        return RecordVaccineCriteria.AlternativeMMRInjectionOnly
-      }
-
-      return RecordVaccineCriteria.NoMMRPreference
-    }
-  }
-
-  /**
-   * Can either vaccine be administered
-   *
-   * @returns {boolean|undefined} Either vaccine be administered
-   */
-  get canRecordAlternativeVaccine() {
-    const hasScreenedForNasal =
-      this.screen === ScreenStatus.VaccinateIntranasalOnly
-
-    return (
-      this.hasConsentForInjection &&
-      !this.hasConsentForAlternativeInjectionOnly &&
-      !hasScreenedForNasal
-    )
-  }
-
-  /**
-   * Get vaccinations for patient session
-   *
-   * @returns {Array<Vaccination>|undefined} Vaccinations
-   */
-  get vaccinationOutcomes() {
-    return this.patientProgramme.vaccinationOutcomes
-  }
-
-  /**
-   * Get last recorded vaccination
-   *
-   * @returns {Vaccination|undefined} Vaccination
-   */
-  get lastVaccinationOutcome() {
-    return this.patientProgramme.lastVaccinationOutcome
-  }
-
-  /**
    * Get next activity, per programme
    *
    * @returns {Array<PatientSession>|undefined} Patient sessions per programme
    */
   get outstandingVaccinations() {
     return this.siblingPatientSessions?.filter(
-      ({ status }) => status === PatientStatus.Due
+      ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
     )
-  }
-
-  /**
-   * Get patient consent status
-   *
-   * @returns {PatientConsentStatus|undefined} Patient consent status
-   */
-  get patientConsent() {
-    return getPatientConsentStatus(this)
-  }
-
-  /**
-   * Get patient triage status
-   *
-   * @returns {PatientTriageStatus|undefined} Patient triage status
-   */
-  get patientTriage() {
-    return getPatientTriageStatus(this)
-  }
-
-  /**
-   * Get patient deferred status
-   *
-   * @returns {PatientDeferredStatus|undefined} Patient deferred status
-   */
-  get patientDeferred() {
-    return getPatientDeferredStatus(this)
-  }
-
-  /**
-   * Get patient refused status
-   *
-   * @returns {PatientRefusedStatus|undefined} Patient refused status
-   */
-  get patientRefused() {
-    return getPatientRefusedStatus(this)
-  }
-
-  /**
-   * Get patient vaccinated status
-   *
-   * @returns {PatientVaccinatedStatus|undefined} Patient vaccinated status
-   */
-  get patientVaccinated() {
-    return getPatientVaccinatedStatus(this)
-  }
-
-  /**
-   * At least one answer in consent health answers needs triage
-   *
-   * @returns {number} Number of answers needing triage
-   */
-  get answersNeedingTriageCount() {
-    return countAnswersNeedingTriage(this.consentHealthAnswers)
-  }
-
-  /**
-   * Get responses with triage notes for consent health answers
-   *
-   * @returns {Array<Reply>|undefined} Responses with triage notes
-   */
-  get responsesWithTriageNotes() {
-    return this.responses?.filter((response) => response.triageNote)
-  }
-
-  /**
-   * Get consent status
-   *
-   * @returns {ConsentStatus} Consent status
-   */
-  get consent() {
-    return getConsentStatus(this)
-  }
-
-  /**
-   * Get expanded description about consent status
-   *
-   * @returns {string} Consent description
-   */
-  get consentDescription() {
-    return getConsentStatusDescription(this)
-  }
-
-  /**
-   * Consent has been given
-   *
-   * @returns {boolean} Consent has been given
-   */
-  get consentGiven() {
-    if (this.consent && !this.clinicAppointment) {
-      return [
-        ConsentStatus.Given,
-        ConsentStatus.GivenForAlternativeInjection,
-        ConsentStatus.GivenForIntranasal
-      ].includes(this.consent)
-    } else if (this.clinicAppointment) {
-      return true
-    }
-
-    return false
-  }
-
-  /**
-   * Get consent health answers
-   *
-   * @returns {object|undefined} Consent health answers
-   */
-  get consentHealthAnswers() {
-    return getConsentHealthAnswers(this.responses)
-  }
-
-  /**
-   * Get consent refusal reasons (from replies)
-   *
-   * @returns {object|boolean} Consent refusal reasons
-   */
-  get consentRefusalReasons() {
-    return getConsentRefusalReasons(this.responses)
   }
 
   /**
@@ -661,56 +249,11 @@ export class PatientSession extends BaseModel {
    * @returns {boolean} True if all refusals were on grounds of not wanting vaccination in school, or false otherwise
    */
   get isVaccinationWantedOutsideSchool() {
-    const refusalReasons = this.consentRefusalReasons
+    const refusalReasons = this.patientProgramme?.consentRefusalReasons
     return (
       refusalReasons.length &&
       refusalReasons.every((reason) => reason === ReplyRefusal.OutsideSchool)
     )
-  }
-
-  /**
-   * Get screening status
-   *
-   * @returns {ScreenStatus|boolean} Screening status
-   */
-  get screen() {
-    return getScreenStatus(this)
-  }
-
-  /**
-   * Get expanded description about screening status
-   *
-   * @returns {string} Screen description
-   */
-  get screenDescription() {
-    return getScreenStatusDescription(this)
-  }
-
-  /**
-   * Get expanded description about deferred status
-   *
-   * @returns {string|undefined} Deferred description
-   */
-  get deferredDescription() {
-    return getPatientDeferredDescription(this)
-  }
-
-  /**
-   * Get instruction status
-   *
-   * @returns {InstructionStatus|undefined} Instruction status
-   */
-  get instructionStatus() {
-    return getInstructionStatus(this)
-  }
-
-  /**
-   * Patient has PSD instruction
-   *
-   * @returns {boolean} Patient has PSD instruction
-   */
-  get hasInstruction() {
-    return this.instructionStatus === InstructionStatus.Given
   }
 
   /**
@@ -741,42 +284,6 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get vaccination (session) outcome
-   *
-   * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
-   */
-  get outcome() {
-    return getVaccinationOutcome(this)
-  }
-
-  /**
-   * Get patient status
-   *
-   * @returns {PatientStatus|undefined} Patient status
-   */
-  get status() {
-    return this.patientProgramme?.status
-  }
-
-  /**
-   * Is vaccinated
-   *
-   * @returns {boolean} Is vaccinated
-   */
-  get isVaccinated() {
-    return this.patientProgramme?.status === VaccinationOutcome.Vaccinated
-  }
-
-  /**
-   * Get expanded description about patient status
-   *
-   * @returns {string|undefined} Status description
-   */
-  get statusDescription() {
-    return getPatientStatusDescription(this)
-  }
-
-  /**
    * Get formatted links
    *
    * @returns {object} Formatted links
@@ -785,38 +292,6 @@ export class PatientSession extends BaseModel {
     return {
       fullName: formatLink(this.uri, this.patient?.fullName || '')
     }
-  }
-
-  /**
-   * Get status properties per activity
-   *
-   * @returns {object} Status properties
-   */
-  get statusProperties() {
-    // Use lazy evaluation so we call only those functions needed by the client
-    return new Proxy(
-      {},
-      {
-        get: (_target, prop) => {
-          switch (prop) {
-            case 'consent':
-              return getConsentStatusProperties(this.consent)
-            case 'screen':
-              return getScreenStatusProperties(this.screen)
-            case 'instructionStatus':
-              return getInstructionStatusProperties(this.instructionStatus)
-            case 'register':
-              return getRegistrationStatusProperties(this.register)
-            case 'outcome':
-              return getVaccinationOutcomeProperties(this.outcome)
-            case 'status':
-              return this.patientProgramme?.status
-            default:
-              return undefined
-          }
-        }
-      }
-    )
   }
 
   /**
@@ -832,29 +307,8 @@ export class PatientSession extends BaseModel {
           switch (prop) {
             case 'programme':
               return this.programme?.nameTag
-            case 'consent':
-              return this.consent && formatTag(this.statusProperties.consent)
-            case 'programmeConsent':
-              return (
-                this.consent &&
-                formatProgrammeStatus(
-                  this.programme,
-                  this.statusProperties.consent
-                )
-              )
-            case 'screen':
-              return this.screen && formatTag(this.statusProperties.screen)
-            case 'instructionStatus':
-              return (
-                this.session?.hasPsdProtocol &&
-                formatTag(this.statusProperties.instructionStatus)
-              )
             case 'register':
-              return formatTag(this.statusProperties.register)
-            case 'outcome':
-              return this.outcome && formatTag(this.statusProperties.outcome)
-            case 'status':
-              return this.patientProgramme?.formatted.programmeStatus
+              return formatTag(getRegistrationStatusProperties(this.register))
             case 'outstandingVaccinations': {
               const outstanding = this.outstandingVaccinations?.map(
                 (vaccination) => vaccination.programme?.name
@@ -873,8 +327,6 @@ export class PatientSession extends BaseModel {
                     .join('<br>')
                 : undefined
             }
-            case 'vaccineCriteria':
-              return formatVaccineCriteria(this.vaccineCriteria)
             case 'yearGroup': {
               let formattedYearGroup = formatYearGroup(this.yearGroup)
               formattedYearGroup += this.patient?.registrationGroup
@@ -1017,7 +469,6 @@ PatientSession.relate('programme_id', () => Programme, 'programme')
 PatientSession.relate('session_id', () => Session, 'session')
 
 /**
- * @import { ScreenVaccineCriteria } from '../enums.js'
- * @import { Contact, PatientProgramme, Reply, Vaccination, Vaccine } from '../models.js'
+ * @import { Contact, PatientProgramme } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */
