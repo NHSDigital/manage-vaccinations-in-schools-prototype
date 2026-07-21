@@ -106,8 +106,7 @@ export const getSessionOutcome = (patientSession) => {
 export const getReportOutcome = (patientSession) => {
   // Has vaccination outcome
   if (patientSession.vaccinationOutcomes?.length > 0) {
-    const { outcome } = patientSession
-    switch (outcome) {
+    switch (patientSession.outcome) {
       case VaccinationOutcome.Vaccinated:
       case VaccinationOutcome.AlreadyVaccinated:
         return PatientStatus.Vaccinated
@@ -123,8 +122,7 @@ export const getReportOutcome = (patientSession) => {
   }
 
   // Has screening outcome
-  const { screen } = patientSession
-  switch (screen) {
+  switch (patientSession.screen) {
     case ScreenOutcome.DelayVaccination:
     case ScreenOutcome.InviteToClinic:
     case ScreenOutcome.DoNotVaccinate:
@@ -144,8 +142,8 @@ export const getReportOutcome = (patientSession) => {
   if (patientSession.consentGiven) {
     return PatientStatus.Due
   }
-  const { consent } = patientSession
-  switch (consent) {
+
+  switch (patientSession.consent) {
     case ConsentOutcome.Declined:
     case ConsentOutcome.Inconsistent:
     case ConsentOutcome.Refused:
