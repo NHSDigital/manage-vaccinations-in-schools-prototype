@@ -9,7 +9,7 @@ import {
   SessionType
 } from '../enums.js'
 import { Consent, Patient, Session } from '../models.js'
-import { getHealthQuestionPaths } from '../utils/consent.js'
+import { getHealthQuestionPaths } from '../utils/give-or-refuse-consent.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import {
   formatList,
