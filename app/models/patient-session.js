@@ -476,17 +476,7 @@ export class PatientSession extends BaseModel {
    * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get vaccinationOutcomes() {
-    try {
-      if (this.patient?.vaccinations && this.programme_id) {
-        return this.patient.vaccinations.filter(
-          ({ programme, session }) =>
-            programme?.id === this.programme_id &&
-            session?.academicYear === this.patientProgramme.academicYear
-        )
-      }
-    } catch (error) {
-      console.error('PatientSession.vaccinations', error.message)
-    }
+    return this.patientProgramme.vaccinationOutcomes
   }
 
   /**
@@ -495,9 +485,7 @@ export class PatientSession extends BaseModel {
    * @returns {Vaccination|undefined} Vaccination
    */
   get lastVaccinationOutcome() {
-    if (this.vaccinationOutcomes && this.vaccinationOutcomes.length > 0) {
-      return this.vaccinationOutcomes.at(-1)
-    }
+    return this.patientProgramme.lastVaccinationOutcome
   }
 
   /**
