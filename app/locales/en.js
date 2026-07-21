@@ -2775,8 +2775,11 @@ export const en = {
       session: 'Search by location name or postcode'
     },
     advanced: 'Advanced filters',
-    initial:
-      'Search for a child or use filters to see children matching your selection',
+    initial: {
+      default:
+        'Search for a child or use filters to see children matching your selection',
+      clinicBooking: 'Search for a child to book into this clinic session'
+    },
     results: 'Search results',
     confirm: 'Update results',
     clear: 'Clear filters'
