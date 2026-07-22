@@ -1,4 +1,5 @@
 export interface PatientFilterQuery {
+  additional?: string
   clinicStatus?: string
   consent?: string
   instruct?: string

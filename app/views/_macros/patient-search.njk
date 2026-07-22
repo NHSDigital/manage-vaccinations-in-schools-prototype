@@ -80,6 +80,23 @@
       decorate: "clinicStatus"
     }) if not params.hideClinicStatuses }}
 
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          text: "Additional programmes",
+          size: "s"
+        }
+      },
+      small: true,
+      items: [
+      {
+        text: 'Can be offered additional vaccinations',
+        value: true
+      }
+      ],
+      decorate: "additional"
+    }) if params.showAdditionalProgrammes }}
+
     {% for name, enums in params.checkboxFilters %}
       {{ checkboxes({
         fieldset: {

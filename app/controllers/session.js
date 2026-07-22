@@ -4,6 +4,7 @@ import _ from 'lodash'
 import {
   AcademicYear,
   InstructionStatus,
+  PatientClinicStatus,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -380,7 +381,7 @@ export const sessionController = {
    */
   readPatientSessions(request, response, next) {
     const { view } = request.params
-    const { option, q, programme_id, yearGroup } = request.query
+    const { additional, option, q, programme_id, yearGroup } = request.query
     const { data } = request.session
     const { account, session } = response.locals
 
@@ -498,7 +499,29 @@ export const sessionController = {
       }
     }
 
-    // Remove patient sessions where status returns false
+    // Remove patients that don't have any additional catch-up vaccinations they can be offered
+    if (additional) {
+      results = results.filter((patientSession) => {
+        const bookedProgramme_ids = patientSession.siblingPatientSessions.map(
+          (sibling) => sibling.programme_id
+        )
+        const offerProgramme_ids = Object.values(
+          patientSession.patient.activeProgrammes
+        )
+          .filter((programme) =>
+            [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
+              String(programme.clinicStatus)
+            )
+          )
+          .map((programme) => programme.programme_id)
+
+        return offerProgramme_ids.some(
+          (id) => !bookedProgramme_ids.includes(id)
+        )
+      })
+    }
+
+    // Remove patient sessions where outcome returns false
     results = results.filter((patientSession) => patientSession[view] !== false)
 
     // Only show patients ready to vaccinate, and that a user can vaccinate
@@ -615,6 +638,7 @@ export const sessionController = {
       request,
       ['clinicStatus', 'instruct', 'q', 'register', 'status'],
       [
+        'additional',
         'option',
         'patientConsent',
         'patientDeferred',

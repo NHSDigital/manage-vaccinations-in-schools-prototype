@@ -26,6 +26,7 @@
           hideClinicStatuses: true,
           hidePatientIneligibleStatus: true,
           hideProgrammeStatuses: account.isSchoolUser,
+          showAdditionalProgrammes: session.type === SessionType.Clinic and (session.isPlanned or session.isActive) and view === 'report',
           view: view
         }) }}
       </app-auto-submit>
