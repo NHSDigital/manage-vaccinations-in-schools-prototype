@@ -128,7 +128,7 @@
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
-                  href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "register" and patientSession.register != RegistrationOutcome.Pending
+                  href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "report" and patientSession.register != RegistrationOutcome.Pending
                 } if showRegistration,
                 report: {
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.report.label"),
