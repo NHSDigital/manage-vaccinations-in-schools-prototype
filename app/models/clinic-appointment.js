@@ -10,7 +10,7 @@ import {
   Impairment,
   ParentalRelationship,
   ProgrammeType,
-  RegistrationOutcome,
+  RegistrationStatus,
   ReplyDecision,
   SessionStatus,
   VaccineCriteria,
@@ -424,7 +424,7 @@ export class ClinicAppointment {
   /**
    * Get the registration status for this appointment's child i.e. have they turned up?
    *
-   * @returns {RegistrationOutcome|undefined} the registration status if a matched child, or undefined if not yet matched
+   * @returns {RegistrationStatus|undefined} the registration status if a matched child, or undefined if not yet matched
    */
   get register() {
     // Return undefined if not yet matched as registration is tied to a patient record

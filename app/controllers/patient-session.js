@@ -5,7 +5,7 @@ import {
   InstructionOutcome,
   PatientStatus,
   PreScreenQuestion,
-  RegistrationOutcome,
+  RegistrationStatus,
   SessionType,
   UserRole,
   VaccinationOutcome,
@@ -233,7 +233,7 @@ export const patientSessionController = {
     )
 
     if (
-      register === RegistrationOutcome.Absent &&
+      register === RegistrationStatus.Absent &&
       patientSession.status !== PatientStatus.Consent
     ) {
       // Record vaccination outcome as absent if safe to vaccinate

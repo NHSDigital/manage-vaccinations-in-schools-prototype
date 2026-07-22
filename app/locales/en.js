@@ -2,7 +2,7 @@ import { healthQuestions } from '../datasets/health-questions.js'
 import {
   AcademicYear,
   DownloadType,
-  RegistrationOutcome,
+  RegistrationStatus,
   ReplyDecision,
   ReplyRefusal,
   ScreenOutcome,
@@ -2242,11 +2242,11 @@ export const en = {
         }
       },
       success: {
-        [RegistrationOutcome.Present]:
+        [RegistrationStatus.Present]:
           '{{patientSession.patient.fullName}} is attending today’s session.',
-        [RegistrationOutcome.Absent]:
+        [RegistrationStatus.Absent]:
           '{{patientSession.patient.fullName}} has been recorded as absent from today’s session.',
-        [RegistrationOutcome.Pending]:
+        [RegistrationStatus.Pending]:
           '{{patientSession.patient.fullName}} has not been registered yet.'
       }
     },

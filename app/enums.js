@@ -678,7 +678,7 @@ export const RecordVaccineCriteria = {
  * @readonly
  * @enum {string}
  */
-export const RegistrationOutcome = {
+export const RegistrationStatus = {
   Pending: 'Not registered yet',
   Present: 'Attending session',
   Absent: 'Absent from session',
