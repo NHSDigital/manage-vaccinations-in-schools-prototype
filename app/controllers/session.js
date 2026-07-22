@@ -139,7 +139,7 @@ export const sessionController = {
     let { view } = request.params
 
     if (['instruct', 'patients', 'record'].includes(String(view))) {
-      view = 'activity'
+      view = 'patients'
     } else if (!view) {
       view = 'show'
     }
