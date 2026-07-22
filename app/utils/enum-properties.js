@@ -4,7 +4,7 @@ import {
   InstructionOutcome,
   PatientClinicStatus,
   PatientStatus,
-  RegistrationOutcome,
+  RegistrationStatus,
   ReplyDecision,
   SchoolStatus,
   ScreenOutcome,
@@ -45,10 +45,10 @@ const PATIENT_STATUS_COLOURS = {
   [PatientStatus.Due]: 'green'
 }
 
-const REGISTRATION_OUTCOME_COLOURS = {
-  [RegistrationOutcome.Present]: 'green',
-  [RegistrationOutcome.Absent]: 'red',
-  [RegistrationOutcome.Complete]: 'white'
+const REGISTRATION_STATUS_COLOURS = {
+  [RegistrationStatus.Present]: 'green',
+  [RegistrationStatus.Absent]: 'red',
+  [RegistrationStatus.Complete]: 'white'
 }
 
 const REPLY_DECISION_COLOURS = {
@@ -163,15 +163,15 @@ export function getPatientStatusProperties(status, vaccinationDue) {
 }
 
 /**
- * Get registration outcome status properties
+ * Get registration status properties
  *
- * @param {RegistrationOutcome} outcome - Registration outcome
- * @returns {object} Outcome properties
+ * @param {RegistrationStatus} status - Registration status
+ * @returns {object} Status properties
  */
-export function getRegistrationOutcomeProperties(outcome) {
+export function getRegistrationStatusProperties(status) {
   return {
-    colour: REGISTRATION_OUTCOME_COLOURS[outcome] ?? 'grey',
-    text: outcome
+    colour: REGISTRATION_STATUS_COLOURS[status] ?? 'grey',
+    text: status
   }
 }
 

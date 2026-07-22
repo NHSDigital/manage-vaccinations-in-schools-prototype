@@ -128,7 +128,7 @@
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
-                  href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "patients" and patientSession.register != RegistrationOutcome.Pending
+                  href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "patients" and patientSession.register != RegistrationStatus.Pending
                 } if showRegistration,
                 status: {
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.status.label"),
@@ -156,7 +156,7 @@
                 small: true,
                 variant: "secondary",
                 decorate: "patientSession.register",
-                value: RegistrationOutcome.Present,
+                value: RegistrationStatus.Present,
                 attributes: {
                   "aria-label": __("patientSession.registration.actions.present.title", { patient: patientSession.patient }),
                   formaction: patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view + "&register=" + data.register,
@@ -167,14 +167,14 @@
                 text: __("patientSession.registration.actions.absent.label"),
                 small: true,
                 decorate: "patientSession.register",
-                value: RegistrationOutcome.Absent,
+                value: RegistrationStatus.Absent,
                 attributes: {
                   "aria-label": __("patientSession.registration.actions.absent.title", { patient: patientSession.patient }),
                   formaction: patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view + "&register=" + data.register,
                   formmethod: "post"
                 }
               }]
-            }) if showRegistration and patientSession.register == RegistrationOutcome.Pending }}
+            }) if showRegistration and patientSession.register == RegistrationStatus.Pending }}
           {% endcall %}
         {% endfor %}
 

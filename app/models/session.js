@@ -1183,7 +1183,7 @@ export class Session extends BaseModel {
    * Update register
    *
    * @param {string} patient_uuid
-   * @param {RegistrationOutcome} registration
+   * @param {RegistrationStatus} registration
    */
   updateRegister(patient_uuid, registration) {
     this.register[patient_uuid] = registration
@@ -1194,6 +1194,6 @@ Session.relate('clinic_id', () => Clinic, 'clinic')
 Session.relate('school_id', () => School, 'school')
 
 /**
- * @import { RegistrationOutcome, SessionMMRConsent, SessionPreset } from '../enums.js'
+ * @import { RegistrationStatus, SessionMMRConsent, SessionPreset } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

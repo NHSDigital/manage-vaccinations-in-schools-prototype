@@ -6,7 +6,7 @@
   {{ patientSession.registerDescription | nhsukMarkdown }}
 
   {# Actions #}
-  {% if patientSession.register == RegistrationOutcome.Pending %}
+  {% if patientSession.register == RegistrationStatus.Pending %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ radios({
@@ -18,10 +18,10 @@
       },
       items: [{
         text: __("patientSession.registration.present"),
-        value: RegistrationOutcome.Present
+        value: RegistrationStatus.Present
       }, {
         text: __("patientSession.registration.absent"),
-        value: RegistrationOutcome.Absent
+        value: RegistrationStatus.Absent
       }],
       decorate: "patientSession.register"
     }) }}
@@ -32,7 +32,7 @@
         formaction: patientSession.uri + "/edit/registration?referrer=" + referrer
       }
     }) }}
-  {% elif patientSession.register != RegistrationOutcome.Complete %}
+  {% elif patientSession.register != RegistrationStatus.Complete %}
     {{ actionLink({
       text: __("patientSession.registration.title"),
       href: patientSession.uri + "/edit/registration?referrer=" + referrer

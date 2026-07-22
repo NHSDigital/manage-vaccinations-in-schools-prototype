@@ -15,7 +15,7 @@ import {
   RecordVaccineCriteria,
   ReplyDecision,
   ReplyRefusal,
-  RegistrationOutcome,
+  RegistrationStatus,
   ScreenOutcome,
   VaccinationOutcome,
   ProgrammeType,
@@ -40,7 +40,7 @@ import {
 import {
   getConsentOutcomeProperties,
   getInstructionOutcomeProperties,
-  getRegistrationOutcomeProperties,
+  getRegistrationStatusProperties,
   getScreenOutcomeProperties,
   getVaccinationOutcomeProperties
 } from '../utils/enum-properties.js'
@@ -55,8 +55,8 @@ import {
   getPatientStatusDescription,
   getPatientTriageStatus,
   getPatientVaccinatedStatus,
-  getRegistrationOutcome,
-  getRegistrationOutcomeDescription,
+  getRegistrationStatus,
+  getRegistrationStatusDescription,
   getScreenOutcomeDescription,
   getVaccinationOutcome
 } from '../utils/patient-session.js'
@@ -668,21 +668,21 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get registration outcome
+   * Get registration status
    *
-   * @returns {RegistrationOutcome} Registration outcome
+   * @returns {RegistrationStatus} Registration status
    */
   get register() {
-    return getRegistrationOutcome(this)
+    return getRegistrationStatus(this)
   }
 
   /**
-   * Get expanded description about registration outcome
+   * Get expanded description about registration status
    *
    * @returns {string} Registration description
    */
   get registerDescription() {
-    return getRegistrationOutcomeDescription(this)
+    return getRegistrationStatusDescription(this)
   }
 
   /**
@@ -751,7 +751,7 @@ export class PatientSession extends BaseModel {
             case 'instruct':
               return getInstructionOutcomeProperties(this.instruct)
             case 'register':
-              return getRegistrationOutcomeProperties(this.register)
+              return getRegistrationStatusProperties(this.register)
             case 'outcome':
               return getVaccinationOutcomeProperties(this.outcome)
             case 'status':
@@ -878,14 +878,14 @@ export class PatientSession extends BaseModel {
    * Register attendance
    *
    * @param {Partial<AuditEvent>} event - Event
-   * @param {RegistrationOutcome} register - Registration
+   * @param {RegistrationStatus} register - Registration
    */
   registerAttendance(event, register) {
     this.session?.updateRegister(this.patient?.uuid, register)
 
     this.patient?.addEvent({
       name:
-        register === RegistrationOutcome.Present
+        register === RegistrationStatus.Present
           ? activity.attendance.present(this.session)
           : activity.attendance.absent(this.session),
       createdAt: event.createdAt,

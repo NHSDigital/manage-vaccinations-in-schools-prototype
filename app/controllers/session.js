@@ -7,7 +7,7 @@ import {
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
-  RegistrationOutcome,
+  RegistrationStatus,
   SchoolPhase,
   SessionPresetName,
   SessionStatus,
@@ -506,7 +506,7 @@ export const sessionController = {
       results = results.filter(
         ({ register, status, vaccine }) =>
           status === PatientStatus.Due &&
-          register !== RegistrationOutcome.Pending &&
+          register !== RegistrationStatus.Pending &&
           account.vaccineMethods?.includes(vaccine?.method)
       )
     }
@@ -566,7 +566,7 @@ export const sessionController = {
 
     const radioFilters = {
       patients: {
-        register: showRegistration && RegistrationOutcome,
+        register: showRegistration && RegistrationStatus,
         instruct: session.hasPsdProtocol && InstructionOutcome
       },
       instruct: {

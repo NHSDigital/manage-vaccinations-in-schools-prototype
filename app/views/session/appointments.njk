@@ -22,7 +22,7 @@
           {{ appointment.formatted.register | safe }}
         {% else %}
           {{ tag({
-            text: RegistrationOutcome.Pending,
+            text: RegistrationStatus.Pending,
             classes: "nhsuk-tag--grey"
           }) }}
         {% endif %}

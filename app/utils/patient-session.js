@@ -11,7 +11,7 @@ import {
   PatientRefusedStatus,
   PatientTriageStatus,
   PatientVaccinatedStatus,
-  RegistrationOutcome,
+  RegistrationStatus,
   ScreenOutcome,
   VaccinationOutcome,
   VaccineCriteria
@@ -29,7 +29,7 @@ export function canRecordOutcome(patientSession) {
   const { register, status, session } = patientSession
 
   if ([PatientStatus.Due, PatientStatus.Deferred].includes(status)) {
-    if (session.hasRegistration && register !== RegistrationOutcome.Present) {
+    if (session.hasRegistration && register !== RegistrationStatus.Present) {
       return false
     }
 
@@ -142,42 +142,42 @@ export function getInstructionOutcome(patientSession) {
 }
 
 /**
- * Get registration outcome
+ * Get registration status
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {RegistrationOutcome} Registration outcome
+ * @returns {RegistrationStatus} Registration status
  */
-export function getRegistrationOutcome(patientSession) {
+export function getRegistrationStatus(patientSession) {
   const { patient, session, status } = patientSession
 
   if (!session.hasRegistration) {
-    return RegistrationOutcome.Present
+    return RegistrationStatus.Present
   }
 
   if (status === PatientStatus.Vaccinated) {
-    return RegistrationOutcome.Complete
+    return RegistrationStatus.Complete
   } else if (session.register[patient.uuid]) {
     return session.register[patient.uuid]
   }
 
-  return RegistrationOutcome.Pending
+  return RegistrationStatus.Pending
 }
 
 /**
- * Get expanded description about registration outcome
+ * Get expanded description about registration status
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {string} Registration outcome description
+ * @returns {string} Registration status description
  */
-export function getRegistrationOutcomeDescription(patientSession) {
+export function getRegistrationStatusDescription(patientSession) {
   switch (patientSession.register) {
-    case RegistrationOutcome.Present:
+    case RegistrationStatus.Present:
       return `${patientSession.patient?.firstName} is attending this session.`
-    case RegistrationOutcome.Absent:
+    case RegistrationStatus.Absent:
       return `${patientSession.patient?.firstName} is absent from this session.`
-    case RegistrationOutcome.Pending:
+    case RegistrationStatus.Pending:
       return `${patientSession.patient?.firstName} has not been registered as attending yet.`
-    case RegistrationOutcome.Complete:
+    case RegistrationStatus.Complete:
       return `${patientSession.patient?.firstName} has completed this session.`
   }
 }
