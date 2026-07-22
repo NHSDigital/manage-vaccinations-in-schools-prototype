@@ -46,8 +46,8 @@
           }) if view == "record"
         }) if view == "record" and session.isActive }}
 
-        {% if data.report and data.report != "none" %}
-          {% set title = __("session." + view + ".label") + ": " + data.report %}
+        {% if data.status and data.status != "none" %}
+          {% set title = __("session." + view + ".label") + ": " + data.status %}
         {% else %}
           {% set title = __("session." + view + ".title") %}
         {% endif %}
@@ -82,11 +82,11 @@
         {% endif %}
 
         {% for patientSession in results.page %}
-          {% set reportStatusHtml %}
+          {% set statusHtml %}
             {% set ids = data.programme_id or session.programme_ids %}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
-                {{ patientSession.formatted.report | nhsukMarkdown }}
+                {{ patientSession.formatted.status | nhsukMarkdown }}
               {% endif %}
             {% endfor %}
           {% endset %}
@@ -130,9 +130,9 @@
                   value: patientSession.formatted.register,
                   href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "patients" and patientSession.register != RegistrationOutcome.Pending
                 } if showRegistration,
-                report: {
-                  label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.report.label"),
-                  value: consentStatusHtml if account.isSchoolUser else reportStatusHtml
+                status: {
+                  label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.status.label"),
+                  value: consentStatusHtml if account.isSchoolUser else statusHtml
                 } if view != "instruct",
                 clinicAppointment: {
                   label: __("patientSession.clinicAppointment.label"),

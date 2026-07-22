@@ -51,7 +51,7 @@
         })
       }) if options.showOutstandingVaccinations }}
 
-      {% include "patient-session/_report.njk" %}
+      {% include "patient-session/_status.njk" %}
 
       {% for auditEvent in patientSession.sessionNotes %}
         {{ card({

@@ -2122,7 +2122,7 @@ export const en = {
     outcome: {
       label: 'Session outcome'
     },
-    report: {
+    status: {
       label: 'Programme status'
     },
     information: {

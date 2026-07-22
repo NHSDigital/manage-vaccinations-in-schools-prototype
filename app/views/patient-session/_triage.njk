@@ -1,4 +1,4 @@
-{% set isVaccinated = patientSession.report == PatientStatus.Vaccinated %}
+{% set isVaccinated = patientSession.status == PatientStatus.Vaccinated %}
 
 {% call card({
   heading: __("patientSession.screen.title", programme.nameSentenceCase),

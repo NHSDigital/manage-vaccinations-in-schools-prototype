@@ -496,7 +496,7 @@ export class PatientSession extends BaseModel {
    */
   get outstandingVaccinations() {
     return this.siblingPatientSessions?.filter(
-      ({ report }) => report === PatientStatus.Due
+      ({ status }) => status === PatientStatus.Due
     )
   }
 
@@ -708,16 +708,16 @@ export class PatientSession extends BaseModel {
    *
    * @returns {PatientStatus|undefined} Patient status
    */
-  get report() {
+  get status() {
     return this.patientProgramme?.status
   }
 
   /**
    * Get expanded description about patient status
    *
-   * @returns {string|undefined} Report description
+   * @returns {string|undefined} Status description
    */
-  get reportDescription() {
+  get statusDescription() {
     return getPatientStatusDescription(this)
   }
 
@@ -737,7 +737,7 @@ export class PatientSession extends BaseModel {
    *
    * @returns {object} Status properties
    */
-  get status() {
+  get statusProperties() {
     // Use lazy evaluation so we call only those functions needed by the client
     return new Proxy(
       {},
@@ -754,7 +754,7 @@ export class PatientSession extends BaseModel {
               return getRegistrationOutcomeProperties(this.register)
             case 'outcome':
               return getVaccinationOutcomeProperties(this.outcome)
-            case 'report':
+            case 'status':
               return this.patientProgramme?.status
             default:
               return undefined
@@ -778,23 +778,27 @@ export class PatientSession extends BaseModel {
             case 'programme':
               return this.programme?.nameTag
             case 'consent':
-              return this.consent && formatTag(this.status.consent)
+              return this.consent && formatTag(this.statusProperties.consent)
             case 'programmeConsent':
               return (
                 this.consent &&
-                formatProgrammeStatus(this.programme, this.status.consent)
+                formatProgrammeStatus(
+                  this.programme,
+                  this.statusProperties.consent
+                )
               )
             case 'screen':
-              return this.screen && formatTag(this.status.screen)
+              return this.screen && formatTag(this.statusProperties.screen)
             case 'instruct':
               return (
-                this.session?.hasPsdProtocol && formatTag(this.status.instruct)
+                this.session?.hasPsdProtocol &&
+                formatTag(this.statusProperties.instruct)
               )
             case 'register':
-              return formatTag(this.status.register)
+              return formatTag(this.statusProperties.register)
             case 'outcome':
-              return this.outcome && formatTag(this.status.outcome)
-            case 'report':
+              return this.outcome && formatTag(this.statusProperties.outcome)
+            case 'status':
               return this.patientProgramme?.formatted.programmeStatus
             case 'outstandingVaccinations': {
               const outstanding = this.outstandingVaccinations?.map(

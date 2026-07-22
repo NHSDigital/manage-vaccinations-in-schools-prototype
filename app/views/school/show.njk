@@ -69,7 +69,7 @@
       }) if data.wasInvitedToClinic and results.count > 0 }}
 
       {% for patient in results.page %}
-        {% set reportStatusHtml -%}
+        {% set statusHtml -%}
           {%- if data.programme_id %}
             {%- for id, patientProgramme in patient.programmes -%}
               {%- if data.programme_id | includes(id) -%}
@@ -98,9 +98,9 @@
             dob: {},
             yearGroup: {},
             clinicProgramme_ids: {},
-            report: {
-              label: __("patientSession.report.label"),
-              value: reportStatusHtml
+            status: {
+              label: __("patientSession.status.label"),
+              value: statusHtml
             }
           })
         }) }}

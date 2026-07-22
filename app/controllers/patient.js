@@ -118,7 +118,7 @@ export const patientController = {
     // Filter defaults
     const filters = {
       consent: request.query.consent || 'none',
-      report: request.query.report || 'none',
+      status: request.query.status || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
@@ -130,7 +130,7 @@ export const patientController = {
     }
 
     // Filter by programme eligibility (if programme(s) selected)
-    if (programme_id && filters.report !== PatientStatus.Ineligible) {
+    if (programme_id && filters.status !== PatientStatus.Ineligible) {
       results = results.filter((patient) =>
         programme_ids.some(
           (programme_id) => !patient.programmes[programme_id].isIneligible
@@ -171,11 +171,11 @@ export const patientController = {
     }
 
     // Filter by status
-    if (filters.report && filters.report !== 'none') {
+    if (filters.status && filters.status !== 'none') {
       const ids = programme_ids || programmes.map((programme) => programme.id)
 
       results = results.filter((patient) =>
-        ids.some((id) => patient.programmes[id].status === filters.report)
+        ids.some((id) => patient.programmes[id].status === filters.status)
       )
     }
 
@@ -188,7 +188,7 @@ export const patientController = {
       [PatientStatus.Triage]: 'patientTriage',
       [PatientStatus.Vaccinated]: 'patientVaccinated'
     })) {
-      if (filters.report === patientStatus && filters[status] !== 'none') {
+      if (filters.status === patientStatus && filters[status] !== 'none') {
         const ids = programme_ids || programmes.map((programme) => programme.id)
         let statuses = filters[status]
         statuses = Array.isArray(statuses) ? statuses : [statuses]
@@ -204,7 +204,7 @@ export const patientController = {
 
     // Filter by ineligible sub-status (from patient programme)
     if (
-      filters.report === PatientStatus.Ineligible &&
+      filters.status === PatientStatus.Ineligible &&
       filters.patientIneligible !== 'none'
     ) {
       const ids = programme_ids || programmes.map((programme) => programme.id)
@@ -277,7 +277,7 @@ export const patientController = {
     delete data.patientVaccinated
     delete data.programme_id
     delete data.q
-    delete data.report
+    delete data.status
     delete data.vaccineCriteria
     delete data.yearGroup
 
@@ -334,7 +334,7 @@ export const patientController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'consent', 'q', 'report'],
+      ['clinicStatus', 'consent', 'q', 'status'],
       [
         'option',
         'patientConsent',

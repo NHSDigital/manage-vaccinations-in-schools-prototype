@@ -425,7 +425,7 @@ export const sessionController = {
     const filters = {
       instruct: request.query.instruct || 'none',
       register: request.query.register || 'none',
-      report: request.query.report || 'none',
+      status: request.query.status || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
@@ -454,7 +454,7 @@ export const sessionController = {
       [PatientStatus.Triage]: 'patientTriage',
       [PatientStatus.Vaccinated]: 'patientVaccinated'
     })) {
-      if (filters.report === programmeOutcome && filters[status] !== 'none') {
+      if (filters.status === programmeOutcome && filters[status] !== 'none') {
         let statuses = filters[status]
         statuses = Array.isArray(statuses) ? statuses : [statuses]
         results = results.filter((patientSession) =>
@@ -465,7 +465,7 @@ export const sessionController = {
 
     // Filter by ineligible sub-status (from patient programme)
     if (
-      filters.report === PatientStatus.Ineligible &&
+      filters.status === PatientStatus.Ineligible &&
       filters.patientIneligible !== 'none'
     ) {
       const ids =
@@ -504,8 +504,8 @@ export const sessionController = {
     // Only show patients ready to vaccinate, and that a user can vaccinate
     if (view === 'record') {
       results = results.filter(
-        ({ register, report, vaccine }) =>
-          report === PatientStatus.Due &&
+        ({ register, status, vaccine }) =>
+          status === PatientStatus.Due &&
           register !== RegistrationOutcome.Pending &&
           account.vaccineMethods?.includes(vaccine?.method)
       )
@@ -597,7 +597,7 @@ export const sessionController = {
     delete data.q
     delete data.instruct
     delete data.register
-    delete data.report
+    delete data.status
     delete data.vaccineCriteria
     delete data.yearGroup
 
@@ -612,7 +612,7 @@ export const sessionController = {
 
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'instruct', 'q', 'register', 'report'],
+      ['clinicStatus', 'instruct', 'q', 'register', 'status'],
       [
         'option',
         'patientConsent',
@@ -1044,7 +1044,7 @@ export const sessionController = {
     const { __, account, session } = response.locals
 
     const patientsToInstruct = session.patientSessions
-      .filter(({ report }) => report === PatientStatus.Due)
+      .filter(({ status }) => status === PatientStatus.Due)
       .filter(({ instruct }) => instruct === InstructionOutcome.Needed)
 
     for (const patientSession of patientsToInstruct) {
