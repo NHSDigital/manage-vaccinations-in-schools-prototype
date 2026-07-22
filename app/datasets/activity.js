@@ -1,4 +1,4 @@
-import { InstructionOutcome, PatientStatus, ScreenOutcome } from '../enums.js'
+import { InstructionStatus, PatientStatus, ScreenOutcome } from '../enums.js'
 import { lowerCaseFirst } from '../utils/string.js'
 
 export default {
@@ -98,7 +98,7 @@ export default {
     created: 'Completed pre-screening checks'
   },
   psd: {
-    added: InstructionOutcome.Given,
+    added: InstructionStatus.Given,
     invalidated: 'PSD invalidated'
   },
   session: {

@@ -303,7 +303,7 @@ export const Impairment = {
  * @readonly
  * @enum {string}
  */
-export const InstructionOutcome = {
+export const InstructionStatus = {
   Given: 'PSD added',
   Needed: 'PSD not added'
 }
