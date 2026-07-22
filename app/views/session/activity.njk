@@ -124,7 +124,7 @@
                 instruct: {
                   label: __("patientSession.instruct.label"),
                   value: patientSession.formatted.instruct
-                } if patientSession.instruct and not account.isSchoolUser,
+                } if view == "instruct" and patientSession.instruct and not account.isSchoolUser,
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
@@ -133,7 +133,7 @@
                 report: {
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.report.label"),
                   value: consentStatusHtml if account.isSchoolUser else reportStatusHtml
-                },
+                } if view != "instruct",
                 clinicAppointment: {
                   label: __("patientSession.clinicAppointment.label"),
                   value: patientSession.clinicAppointment.formatted.timeSlot
