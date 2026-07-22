@@ -106,15 +106,18 @@ export const schoolController = {
 
     // Filter by unplanned programme
     if (programme_id) {
-      results = results.filter(
-        (school) =>
+      results = results.filter((school) => {
+        const unplannedProgramme_ids = school.unplannedProgrammes.map(
+          (programme) => programme.id
+        )
+
+        return (
           !school.isHomeOrUnknown &&
           programme_ids.every((programme_id) =>
-            school.unplannedProgrammes
-              .map((programme) => programme.id)
-              .includes(programme_id)
+            unplannedProgramme_ids.includes(programme_id)
           )
-      )
+        )
+      })
     }
 
     // Sort
