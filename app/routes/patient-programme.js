@@ -22,13 +22,11 @@ router.get('/:programme_id{/:view}', patientProgramme.show)
 
 router.post('/:programme_id/clinics', patientProgramme.addToSession)
 
-router.get(
-  '/:programme_id/new/vaccination',
-  patientProgramme.vaccination('new')
-)
-router.get(
-  '/:programme_id/new/tetanus',
-  patientProgramme.vaccination('tetanus')
-)
+router.all('/:programme_id/new/:view', patientProgramme.readForm)
+router.get('/:programme_id/new/:view', patientProgramme.showForm('new'))
+
+router.get('/:programme_id/new/vaccination', patientProgramme.vaccinate('new'))
+router.get('/:programme_id/new/tetanus', patientProgramme.vaccinate('tetanus'))
+router.post('/:programme_id/new/triage', patientProgramme.triage)
 
 export const patientProgrammeRoutes = router

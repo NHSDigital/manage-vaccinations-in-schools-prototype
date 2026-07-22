@@ -133,7 +133,7 @@ export function getInstructionOutcome(patientSession) {
   }
 
   if (patientSession.vaccine.criteria === VaccineCriteria.Intranasal) {
-    return patientSession.instruction
+    return patientSession.patientProgramme.instruction
       ? InstructionOutcome.Given
       : InstructionOutcome.Needed
   }

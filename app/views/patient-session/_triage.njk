@@ -20,8 +20,8 @@
 
   {# Actions #}
   {{ actionLink({
-    text: __("triage.edit.title"),
-    href: patientSession.uri + "/edit/triage?referrer=" + referrer
+    text: __("triage.new.title"),
+    href: patientSession.patientProgramme.uri + "/new/triage?referrer=" + referrer
   }) if options.canTriage and not options.needsTriage and not isVaccinated }}
 
   {# Decision table #}
@@ -117,7 +117,7 @@
     {{ button({
       text: __("triage.confirm"),
       attributes: {
-        formaction: patientSession.uri + "/new/triage?referrer=" + referrer
+        formaction: patientSession.patientProgramme.uri + "/new/triage?referrer=" + referrer
       }
     }) }}
   {% endif %}

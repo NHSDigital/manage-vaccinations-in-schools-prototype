@@ -1,5 +1,6 @@
 import { ProgrammeType, VaccinationOutcome } from '../enums.js'
 import {
+  Instruction,
   PatientProgramme,
   Patient,
   Vaccination,
@@ -51,6 +52,34 @@ export const patientProgrammeController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  readForm(request, response, next) {
+    const { referrer } = request.session
+    const { patientProgramme } = response.locals
+
+    // Show back link to referring page, else patient programme page
+    response.locals.back = referrer || patientProgramme.uri
+
+    // TODO: Remove once patient session methods moved to patient programme
+    response.locals.patientSession = patientProgramme?.lastPatientSession
+
+    return next()
+  },
+
+  /**
+   * @param {string} type - Form type
+   * @returns {RequestHandler<Record<string, string>>} Request handler
+   */
+  showForm(type) {
+    return (request, response) => {
+      const { view } = request.params
+
+      response.render(`patient-programme/form/${view}`, { type })
+    }
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   addToSession(request, response) {
     const { session_id } = request.body
     const { programme_id } = request.params
@@ -91,10 +120,46 @@ export const patientProgrammeController = {
   },
 
   /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  triage(request, response) {
+    const { triage } = request.body
+    const { data, referrer } = request.session
+    const { __, account, patientProgramme } = response.locals
+
+    if (triage.psd) {
+      const instruction = Instruction.create(
+        {
+          createdBy_uid: account.uid,
+          programme_id: patientProgramme.programme.id,
+          patient_uuid: patientProgramme.patient.uuid
+        },
+        data
+      )
+
+      patientProgramme.giveInstruction(instruction)
+    }
+
+    patientProgramme.recordTriage({
+      outcome: triage.outcome,
+      outcomeAt_: triage.outcomeAt_,
+      note: triage.note,
+      createdBy_uid: account.uid
+    })
+
+    // Clean up session data
+    delete data.triage
+
+    request.flash('success', __(`triage.new.success`, { patientProgramme }))
+
+    return saveAndRedirect(request, response, referrer || patientProgramme.uri)
+  },
+
+  /**
    * @param {string} type - Form type
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
-  vaccination(type) {
+  vaccinate(type) {
     return (request, response) => {
       const { programme_id } = request.params
       const { data } = request.session
