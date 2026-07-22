@@ -2859,10 +2859,6 @@ export const en = {
     academicYear: {
       label: 'Academic year'
     },
-    report: {
-      label: 'Children in session',
-      title: 'Children in session'
-    },
     consent: {
       label: 'Consent',
       title: 'Review consent responses'
@@ -2955,7 +2951,8 @@ export const en = {
       description: 'Add dates for this school.'
     },
     patients: {
-      label: 'Children',
+      label: 'Children in session',
+      title: 'Children in session',
       count:
         '{count, plural, =0 {No children} one {# child} other {# children}}'
     },

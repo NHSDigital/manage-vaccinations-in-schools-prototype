@@ -81,9 +81,9 @@ export const sessionController = {
             ]
           : []),
         {
-          text: __('session.report.label'),
-          href: `${session.uri}/report`,
-          current: view === 'report'
+          text: __('session.patients.label'),
+          href: `${session.uri}/patients`,
+          current: view === 'patients'
         },
         ...(session.hasPsdProtocol
           ? [
@@ -138,7 +138,7 @@ export const sessionController = {
   show(request, response) {
     let { view } = request.params
 
-    if (['instruct', 'record', 'report'].includes(String(view))) {
+    if (['instruct', 'patients', 'record'].includes(String(view))) {
       view = 'activity'
     } else if (!view) {
       view = 'show'
@@ -385,7 +385,7 @@ export const sessionController = {
     const { account, session } = response.locals
 
     const showRegistration =
-      session.hasRegistration && session.isActive && view === 'report'
+      session.hasRegistration && session.isActive && view === 'patients'
 
     response.locals.showRegistration = showRegistration
     response.locals.view = view
@@ -565,7 +565,7 @@ export const sessionController = {
     }
 
     const radioFilters = {
-      report: {
+      patients: {
         register: showRegistration && RegistrationOutcome,
         instruct: session.hasPsdProtocol && InstructionOutcome
       },
@@ -1182,7 +1182,7 @@ export const sessionController = {
       'Created a clinic appointment for Alison Hargreaves at Edgwick Medical Centre, with a booking reference of CLN-1234-5678'
     )
 
-    return response.redirect(`${session.uri}/report`)
+    return response.redirect(`${session.uri}/patients`)
   },
 
   /**
