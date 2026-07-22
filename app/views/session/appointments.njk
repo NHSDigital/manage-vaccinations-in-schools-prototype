@@ -32,7 +32,7 @@
       <br>
       {{ appointment.formatted.programmeTags | safe }}
 
-      {# Adjustments and impairements #}
+      {# Adjustments and impairments #}
       {% if appointment.requiresAdjustments %}
         <br>
         {{ appointment.formatted.adjustmentsCount | safe }}
@@ -49,7 +49,7 @@
       {% endif %}
     {% else %}
       {{ link(session.uri + "/add-appointment/?" + bookingQueryString, "Book") | safe }}
-    {% endif %}  
+    {% endif %}
   {% endmacro %}
 
   {# Full calendar-like view of the vaccination periods' appointments and empty slots #}
