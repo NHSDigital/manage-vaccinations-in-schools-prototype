@@ -1057,7 +1057,7 @@ export const sessionController = {
         data
       )
 
-      patientSession.giveInstruction(instruction)
+      patientSession.patientProgramme.giveInstruction(instruction)
 
       PatientSession.update(patientSession.uuid, patientSession, data)
     }

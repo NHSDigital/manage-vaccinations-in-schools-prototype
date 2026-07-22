@@ -1,5 +1,6 @@
 import { isAfter, isBefore } from 'date-fns'
 
+import activity from '../datasets/activity.js'
 import {
   AuditEventType,
   PatientClinicStatus,
@@ -10,11 +11,13 @@ import {
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
+  ScreenOutcome,
   SessionStatus,
   SessionType
 } from '../enums.js'
 import {
   AuditEvent,
+  Instruction,
   Patient,
   Programme,
   Session,
@@ -60,6 +63,12 @@ export class PatientProgramme extends BaseModel {
    */
   constructor(options, context) {
     super(options, context)
+
+    /** @type {string|undefined} */
+    this.instruction_uuid
+
+    /** @type {Patient|undefined} */
+    this.instruction
 
     /** @type {string|undefined} */
     this.patient_uuid
@@ -805,8 +814,71 @@ export class PatientProgramme extends BaseModel {
   get uri() {
     return `/patients/${this.patient_uuid}/programmes/${this.id}`
   }
+
+  /**
+   * Give PSD instruction
+   *
+   * @param {Instruction} instruction - Instruction
+   */
+  giveInstruction(instruction) {
+    this.instruction_uuid = instruction.uuid
+
+    this.patient?.addEvent({
+      name: activity.psd.added,
+      createdAt: instruction.createdAt,
+      createdBy_uid: instruction.createdBy_uid,
+      programme_ids: [this.programme_id]
+    })
+  }
+
+  /**
+   * Record triage
+   *
+   * @param {Partial<AuditEvent>} event - Event
+   */
+  recordTriage(event) {
+    this.patient?.addEvent({
+      name: activity.triage.decision(event),
+      note: event.note,
+      type: AuditEventType.ProgrammeNote,
+      outcome: event.outcome,
+      outcomeAt_: event.outcomeAt_,
+      createdAt: event.createdAt,
+      createdBy_uid: event.createdBy_uid,
+      programme_ids: [this.programme_id]
+    })
+
+    let messageTemplate
+    switch (event.outcome) {
+      case ScreenOutcome.DelayVaccination:
+        messageTemplate = 'triage-delay-vaccination'
+        break
+      case ScreenOutcome.DoNotVaccinate:
+        messageTemplate = 'triage-do-not-vaccinate'
+        break
+      case ScreenOutcome.InviteToClinic:
+        messageTemplate = 'triage-invite-to-clinic'
+        break
+      default:
+        messageTemplate = 'triage-vaccinate'
+    }
+
+    if (this.patient?.contacts) {
+      for (const contact of this.patient.contacts) {
+        this.patient?.addEvent({
+          name: activity.notify[messageTemplate](contact),
+          messageRecipient: contact,
+          messageTemplate,
+          createdAt: event.createdAt,
+          patient_uuid: this.patient.uuid,
+          programme_ids: [this.programme_id]
+        })
+      }
+    }
+  }
 }
 
+PatientProgramme.relate('instruction_uuid', () => Instruction, 'instruction')
 PatientProgramme.relate('patient_uuid', () => Patient, 'patient')
 PatientProgramme.relate('programme_id', () => Programme, 'programme')
 

@@ -3401,7 +3401,7 @@ export const en = {
     title: 'Triage',
     label: 'Is it safe to vaccinate {{patient.firstName}}?',
     confirm: 'Save triage',
-    edit: {
+    new: {
       title: 'Update triage outcome',
       success: 'Triage outcome updated'
     },

@@ -14,7 +14,6 @@ import {
 } from '../enums.js'
 import {
   ClinicBooking,
-  Instruction,
   PatientSession,
   Programme,
   Vaccination
@@ -354,42 +353,6 @@ export const patientSessionController = {
       },
       patient.contacts[0]
     )
-
-    return saveAndRedirect(request, response, back)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  triage(request, response) {
-    const { triage } = request.body
-    const { data } = request.session
-    const { __, account, back, patientSession } = response.locals
-
-    if (triage.psd) {
-      const instruction = Instruction.create(
-        {
-          createdBy_uid: account.uid,
-          programme_id: patientSession.programme.id,
-          patientSession_uuid: patientSession.uuid
-        },
-        data
-      )
-
-      patientSession.giveInstruction(instruction)
-    }
-
-    patientSession.recordTriage({
-      outcome: triage.outcome,
-      outcomeAt_: triage.outcomeAt_,
-      note: triage.note,
-      createdBy_uid: account.uid
-    })
-
-    // Clean up session data
-    delete data.triage
-
-    request.flash('success', __(`triage.edit.success`, { patientSession }))
 
     return saveAndRedirect(request, response, back)
   },
