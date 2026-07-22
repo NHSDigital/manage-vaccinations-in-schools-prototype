@@ -7,7 +7,7 @@ import programmesData from '../datasets/programmes.js'
 import {
   ConsentOutcome,
   ConsentWindow,
-  InstructionOutcome,
+  InstructionStatus,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -946,7 +946,7 @@ export class Session extends BaseModel {
               return getSessionActivityCount(this, [
                 {
                   status: PatientStatus.Due,
-                  instruct: InstructionOutcome.Needed
+                  instruct: InstructionStatus.Needed
                 }
               ])
             default:

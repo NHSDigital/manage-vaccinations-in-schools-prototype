@@ -1,7 +1,7 @@
 import {
   ConsentOutcome,
   DownloadStatus,
-  InstructionOutcome,
+  InstructionStatus,
   PatientClinicStatus,
   PatientStatus,
   RegistrationStatus,
@@ -132,19 +132,19 @@ export function getDownloadStatusProperties(status) {
 }
 
 /**
- * Get instruction outcome status properties
+ * Get instruction status properties
  *
- * @param {InstructionOutcome|boolean} outcome - Instruction outcome
- * @returns {object|undefined} Outcome properties
+ * @param {InstructionStatus|boolean} status - Instruction status
+ * @returns {object|undefined} Status properties
  */
-export function getInstructionOutcomeProperties(outcome) {
-  if (!outcome) {
+export function getInstructionStatusProperties(status) {
+  if (!status) {
     return
   }
 
   return {
-    colour: outcome === InstructionOutcome.Given ? 'green' : 'grey',
-    text: outcome
+    colour: status === InstructionStatus.Given ? 'green' : 'grey',
+    text: status
   }
 }
 

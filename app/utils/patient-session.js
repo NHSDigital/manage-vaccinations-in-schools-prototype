@@ -4,7 +4,7 @@ import { isToday } from 'date-fns'
 import {
   ConsentOutcome,
   ConsentWindow,
-  InstructionOutcome,
+  InstructionStatus,
   PatientConsentStatus,
   PatientDeferredStatus,
   PatientStatus,
@@ -122,20 +122,20 @@ export function getScreenOutcomeDescription(patientSession) {
 }
 
 /**
- * Get instruction outcome for nasal spray
+ * Get instruction status for nasal spray
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {InstructionOutcome|boolean} Instruction outcome
+ * @returns {InstructionStatus|boolean} Instruction status
  */
-export function getInstructionOutcome(patientSession) {
+export function getInstructionStatus(patientSession) {
   if (!patientSession.vaccine) {
     return false
   }
 
   if (patientSession.vaccine.criteria === VaccineCriteria.Intranasal) {
     return patientSession.patientProgramme.instruction
-      ? InstructionOutcome.Given
-      : InstructionOutcome.Needed
+      ? InstructionStatus.Given
+      : InstructionStatus.Needed
   }
 
   return false

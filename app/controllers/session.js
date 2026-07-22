@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import {
   AcademicYear,
-  InstructionOutcome,
+  InstructionStatus,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -567,10 +567,10 @@ export const sessionController = {
     const radioFilters = {
       patients: {
         register: showRegistration && RegistrationStatus,
-        instruct: session.hasPsdProtocol && InstructionOutcome
+        instruct: session.hasPsdProtocol && InstructionStatus
       },
       instruct: {
-        instruct: InstructionOutcome
+        instruct: InstructionStatus
       }
     }
 
@@ -1045,7 +1045,7 @@ export const sessionController = {
 
     const patientsToInstruct = session.patientSessions
       .filter(({ status }) => status === PatientStatus.Due)
-      .filter(({ instruct }) => instruct === InstructionOutcome.Needed)
+      .filter(({ instruct }) => instruct === InstructionStatus.Needed)
 
     for (const patientSession of patientsToInstruct) {
       const instruction = Instruction.create(

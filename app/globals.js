@@ -4,7 +4,7 @@ import { decorate } from 'nhsuk-decorated-components'
 import { healthQuestions } from './datasets/health-questions.js'
 import {
   AuditEventType,
-  InstructionOutcome,
+  InstructionStatus,
   PatientConsentStatus,
   PatientRefusedStatus
 } from './enums.js'
@@ -429,7 +429,7 @@ export default () => {
       instruct: {
         view: 'instruct',
         key: 'instruct',
-        value: InstructionOutcome.Needed,
+        value: InstructionStatus.Needed,
         ...(account.canPrescribe && { action: 'instructions' })
       },
       record: {

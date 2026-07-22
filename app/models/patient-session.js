@@ -39,7 +39,7 @@ import {
 } from '../utils/date.js'
 import {
   getConsentOutcomeProperties,
-  getInstructionOutcomeProperties,
+  getInstructionStatusProperties,
   getRegistrationStatusProperties,
   getScreenOutcomeProperties,
   getVaccinationOutcomeProperties
@@ -47,7 +47,7 @@ import {
 import {
   canRecordOutcome,
   getConsentOutcomeDescription,
-  getInstructionOutcome,
+  getInstructionStatus,
   getPatientConsentStatus,
   getPatientDeferredDescription,
   getPatientDeferredStatus,
@@ -659,12 +659,12 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get instruction outcome
+   * Get instruction status
    *
-   * @returns {InstructionOutcome|boolean} Instruction outcome
+   * @returns {InstructionStatus|boolean} Instruction status
    */
   get instruct() {
-    return getInstructionOutcome(this)
+    return getInstructionStatus(this)
   }
 
   /**
@@ -749,7 +749,7 @@ export class PatientSession extends BaseModel {
             case 'screen':
               return getScreenOutcomeProperties(this.screen)
             case 'instruct':
-              return getInstructionOutcomeProperties(this.instruct)
+              return getInstructionStatusProperties(this.instruct)
             case 'register':
               return getRegistrationStatusProperties(this.register)
             case 'outcome':
@@ -950,7 +950,7 @@ PatientSession.relate('programme_id', () => Programme, 'programme')
 PatientSession.relate('session_id', () => Session, 'session')
 
 /**
- * @import { InstructionOutcome, ScreenVaccineCriteria } from '../enums.js'
+ * @import { InstructionStatus, ScreenVaccineCriteria } from '../enums.js'
  * @import { Contact, PatientProgramme, Reply, Vaccination, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

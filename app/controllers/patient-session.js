@@ -2,7 +2,7 @@ import {
   AuditEventType,
   ConsentOutcome,
   ConsentWindow,
-  InstructionOutcome,
+  InstructionStatus,
   PatientStatus,
   PreScreenQuestion,
   RegistrationStatus,
@@ -65,7 +65,7 @@ export const patientSessionController = {
     // Nurses can record all vaccines
     // HCAs can only record nasal sprays for children with a PSD
     const userIsHCA = account.role === UserRole.HCA
-    const patientHasPsd = patientSession.instruct === InstructionOutcome.Given
+    const patientHasPsd = patientSession.instruct === InstructionStatus.Given
     if (userIsHCA && !patientHasPsd) {
       // Remove permissions for HCAs as patient doesn’t have a PSD
       account.vaccineMethods = []

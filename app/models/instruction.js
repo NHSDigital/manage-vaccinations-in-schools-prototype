@@ -7,7 +7,7 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} InstructionOptions
  * @property {string} [uuid] - Instruction UUID
- * @property {InstructionOutcome} [outcome] - Outcome
+ * @property {InstructionStatus} [status] - Status
  */
 
 /**
@@ -46,6 +46,6 @@ Instruction.relate('patient_uuid', () => Patient, 'patient')
 Instruction.relate('programme_id', () => Programme, 'programme')
 
 /**
- * @import { InstructionOutcome } from '../enums.js'
+ * @import { InstructionStatus } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */
