@@ -95,18 +95,13 @@ export const schoolController = {
       results = results.filter((school) => school.phase === phase)
     }
 
-    // Filter by status (only show open schools by default)
-    if (option !== 'isClosed') {
+    // Filter closed schools (but show open schools by default)
+    if (option === 'isClosed') {
+      results = results.filter(
+        (school) => !school.isHomeOrUnknown && school.isClosed
+      )
+    } else {
       results = results.filter((school) => school.isOpen)
-    }
-
-    // Filter by display option
-    for (const key of ['isClosed']) {
-      if (option?.includes(key)) {
-        results = results.filter(
-          (school) => !school.isHomeOrUnknown && school[key]
-        )
-      }
     }
 
     // Filter by unplanned programme
