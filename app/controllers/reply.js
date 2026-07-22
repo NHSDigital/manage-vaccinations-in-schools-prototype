@@ -126,7 +126,7 @@ export const replyController = {
         }
 
         if (triage?.outcome) {
-          patientSession.recordTriage({
+          patientSession.patientProgramme.recordTriage({
             ...triage,
             ...data?.wizard?.triage, // Wizard values
             createdBy_uid: account.uid,
