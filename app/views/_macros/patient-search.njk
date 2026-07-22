@@ -124,14 +124,14 @@
       small: true,
       fieldset: {
         legend: {
-          text: __("patientSession.report.label"),
+          text: __("patientSession.status.label"),
           size: "s"
         }
       },
       items: [{
         text: "Any",
         value: "none",
-        checked: not data.report or data.report == "none"
+        checked: not data.status or data.status == "none"
       }, {
         text: PatientStatus.Ineligible,
         conditional: {
@@ -140,7 +140,7 @@
             items: enumItems(PatientIneligibleStatus),
             decorate: "patientIneligible"
           })
-        } if data.report == PatientStatus.Ineligible
+        } if data.status == PatientStatus.Ineligible
       } if not params.hidePatientIneligibleStatus, {
         text: PatientStatus.Consent,
         conditional: {
@@ -149,7 +149,7 @@
             items: enumItems(PatientConsentStatus),
             decorate: "patientConsent"
           })
-        } if data.report == PatientStatus.Consent
+        } if data.status == PatientStatus.Consent
       }, {
         text: PatientStatus.Refused,
         conditional: {
@@ -158,7 +158,7 @@
             items: enumItems(PatientRefusedStatus),
             decorate: "patientRefused"
           })
-        } if data.report == PatientStatus.Refused
+        } if data.status == PatientStatus.Refused
       }, {
         text: PatientStatus.Triage,
         conditional: {
@@ -167,7 +167,7 @@
             items: enumItems(PatientTriageStatus),
             decorate: "patientTriage"
           })
-        } if data.report == PatientStatus.Triage
+        } if data.status == PatientStatus.Triage
       }, {
         text: PatientStatus.Due,
         conditional: {
@@ -203,7 +203,7 @@
             }],
             decorate: "vaccineCriteria"
           }) if showMMRVaccineCriteria)
-        } if data.report == PatientStatus.Due
+        } if data.status == PatientStatus.Due
       }, {
         text: PatientStatus.Deferred,
         conditional: {
@@ -212,7 +212,7 @@
             items: enumItems(PatientDeferredStatus),
             decorate: "patientDeferred"
           })
-        } if data.report == PatientStatus.Deferred
+        } if data.status == PatientStatus.Deferred
       }, {
         text: PatientStatus.PartiallyVaccinated
       }, {
@@ -223,9 +223,9 @@
             items: enumItems(PatientVaccinatedStatus),
             decorate: "patientVaccinated"
           })
-        } if data.report == PatientStatus.Vaccinated
+        } if data.status == PatientStatus.Vaccinated
       }],
-      decorate: "report"
+      decorate: "status"
     }) if not params.hideProgrammeStatuses }}
 
     {{ checkboxes({

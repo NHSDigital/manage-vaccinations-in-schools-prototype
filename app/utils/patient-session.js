@@ -26,9 +26,9 @@ import { getRepliesWithHealthAnswers } from '../utils/reply.js'
  * @returns {boolean} Ready to record outcome
  */
 export function canRecordOutcome(patientSession) {
-  const { register, report, session } = patientSession
+  const { register, status, session } = patientSession
 
-  if ([PatientStatus.Due, PatientStatus.Deferred].includes(report)) {
+  if ([PatientStatus.Due, PatientStatus.Deferred].includes(status)) {
     if (session.hasRegistration && register !== RegistrationOutcome.Present) {
       return false
     }
@@ -148,13 +148,13 @@ export function getInstructionOutcome(patientSession) {
  * @returns {RegistrationOutcome} Registration outcome
  */
 export function getRegistrationOutcome(patientSession) {
-  const { patient, session, report } = patientSession
+  const { patient, session, status } = patientSession
 
   if (!session.hasRegistration) {
     return RegistrationOutcome.Present
   }
 
-  if (report === PatientStatus.Vaccinated) {
+  if (status === PatientStatus.Vaccinated) {
     return RegistrationOutcome.Complete
   } else if (session.register[patient.uuid]) {
     return session.register[patient.uuid]
@@ -420,7 +420,7 @@ export function getPatientVaccinatedStatus(patientSession) {
  * @returns {string|undefined} Patient status description
  */
 export function getPatientStatusDescription(patientSession) {
-  switch (patientSession.report) {
+  switch (patientSession.status) {
     case PatientStatus.Ineligible:
       return patientSession.patientProgramme?.ineligibilityDescription
     case PatientStatus.Vaccinated:

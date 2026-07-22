@@ -43,18 +43,18 @@ export const patientSessionController = {
       consentGiven,
       patient,
       programme,
-      report,
+      status,
       session,
       triageNotes,
       vaccine
     } = patientSession
 
     const vaccinated = patientSession.siblingPatientSessions.findIndex(
-      ({ report }) => report !== PatientStatus.Vaccinated
+      ({ status }) => status !== PatientStatus.Vaccinated
     )
 
     const due = patientSession.siblingPatientSessions.filter(
-      ({ report }) => report === PatientStatus.Due
+      ({ status }) => status === PatientStatus.Due
     )
 
     const patientProgramme = Object.values(patient.programmes).find(
@@ -97,7 +97,7 @@ export const patientSessionController = {
       // Perform triage
       canTriage: !userIsHCA,
       // Patient needs triage
-      needsTriage: report === PatientStatus.Triage,
+      needsTriage: status === PatientStatus.Triage,
       // Patient already triaged
       hasTriage: triageNotes.length > 0,
       hasInstruct:
@@ -130,7 +130,7 @@ export const patientSessionController = {
           ]
         : []),
       ...patientSession.siblingPatientSessions.map((patientSession) => ({
-        ...(patientSession.report === PatientStatus.Vaccinated && {
+        ...(patientSession.status === PatientStatus.Vaccinated && {
           icon: 'tick'
         }),
         text: patientSession.programme.name,
@@ -234,7 +234,7 @@ export const patientSessionController = {
 
     if (
       register === RegistrationOutcome.Absent &&
-      patientSession.report !== PatientStatus.Consent
+      patientSession.status !== PatientStatus.Consent
     ) {
       // Record vaccination outcome as absent if safe to vaccinate
       const programme = Programme.findOne(session.programme_ids[0], data)

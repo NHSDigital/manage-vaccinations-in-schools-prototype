@@ -217,7 +217,9 @@ export class Programme extends BaseModel {
    * @returns {Array<PatientSession>} Patient session programme statuses
    */
   report(patientStatus) {
-    return this.patientSessions.filter(({ report }) => report === patientStatus)
+    return this.patientSessions.filter(
+      (patientSession) => patientSession.status === patientStatus
+    )
   }
 
   /**

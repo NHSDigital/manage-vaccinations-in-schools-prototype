@@ -6,7 +6,7 @@
   headingSize: "m"
 }) %}
   {# Description #}
-  {{ patientSession.reportDescription | nhsukMarkdown }}
+  {{ patientSession.statusDescription | nhsukMarkdown }}
 
   {# Decision table #}
   {% set vaccinationRows = [] %}

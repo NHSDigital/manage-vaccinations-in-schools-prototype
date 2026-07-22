@@ -1,6 +1,6 @@
 {% from "../_macros/contact-email.njk" import appContactEmail with context %}
 {% from "../_macros/contact-sms.njk" import appContactSms with context %}
-{% set isVaccinated = patientSession.report == PatientStatus.Vaccinated %}
+{% set isVaccinated = patientSession.status == PatientStatus.Vaccinated %}
 
 {% call card({
   heading: __("patientSession.consent.title", programme.nameSentenceCase),

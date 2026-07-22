@@ -945,7 +945,7 @@ export class Session extends BaseModel {
             case 'instruct':
               return getSessionActivityCount(this, [
                 {
-                  report: PatientStatus.Due,
+                  status: PatientStatus.Due,
                   instruct: InstructionOutcome.Needed
                 }
               ])
@@ -961,13 +961,13 @@ export class Session extends BaseModel {
    * Get session tally programme count
    *
    * @param {string} programme_id - Programme ID
-   * @param {PatientStatus} report - Programme status
+   * @param {PatientStatus} status - Programme status
    * @param {VaccineCriteria} vaccineCriteria - Vaccine criteria
    * @returns {number} Session tally count
    */
-  tally(programme_id, report, vaccineCriteria) {
+  tally(programme_id, status, vaccineCriteria) {
     return getSessionActivityCount(this, [
-      { programme_id, report, vaccineCriteria }
+      { programme_id, status, vaccineCriteria }
     ])
   }
 
@@ -977,7 +977,7 @@ export class Session extends BaseModel {
    * @returns {Array<PatientSession>} Patient sessions
    */
   get patientSessionsForClinic() {
-    return this.patients.filter(({ report }) => report === PatientStatus.Due)
+    return this.patients.filter(({ status }) => status === PatientStatus.Due)
   }
 
   /**

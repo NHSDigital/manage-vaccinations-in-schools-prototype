@@ -66,7 +66,7 @@
         {% endif %}
 
         {% for patient in results.page %}
-          {% set reportStatusHtml -%}
+          {% set statusHtml -%}
             {%- if data.programme_id %}
               {%- for id, patientProgramme in patient.activeProgrammes -%}
                 {%- if data.programme_id | includes(id) -%}
@@ -110,7 +110,7 @@
                 value: patient.school.name | highlightQuery(data.q)
               },
               yearGroup: {},
-              report: {
+              status: {
                 label: __("patientSession.consent.label"),
                 value: consentStatusHtml
               }
@@ -124,9 +124,9 @@
               },
               yearGroup: {},
               clinicProgramme_ids: {},
-              report: {
-                label: __("patientSession.report.label"),
-                value: reportStatusHtml
+              status: {
+                label: __("patientSession.status.label"),
+                value: statusHtml
               }
             })
           }) }}

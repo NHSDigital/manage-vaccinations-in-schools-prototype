@@ -154,7 +154,7 @@ export const schoolController = {
 
     // Filter defaults
     const filters = {
-      report: request.query.report || 'none',
+      status: request.query.status || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
@@ -166,7 +166,7 @@ export const schoolController = {
     }
 
     // Filter by programme eligibility (if programme(s) selected)
-    if (programme_id && filters.report !== PatientStatus.Ineligible) {
+    if (programme_id && filters.status !== PatientStatus.Ineligible) {
       results = results.filter((patient) =>
         programme_ids.some(
           (programme_id) =>
@@ -195,12 +195,12 @@ export const schoolController = {
     }
 
     // Filter by status
-    if (filters.report && filters.report !== 'none') {
+    if (filters.status && filters.status !== 'none') {
       const ids =
         programme_ids || school.programmes.map((programme) => programme.id)
 
       results = results.filter((patient) =>
-        ids.some((id) => patient.programmes[id].status === filters.report)
+        ids.some((id) => patient.programmes[id].status === filters.status)
       )
     }
 
@@ -213,7 +213,7 @@ export const schoolController = {
       [PatientStatus.Triage]: 'patientTriage',
       [PatientStatus.Vaccinated]: 'patientVaccinated'
     })) {
-      if (filters.report === patientStatus && filters[status] !== 'none') {
+      if (filters.status === patientStatus && filters[status] !== 'none') {
         const ids =
           programme_ids || school.programmes.map((programme) => programme.id)
         let statuses = filters[status]
@@ -230,7 +230,7 @@ export const schoolController = {
 
     // Filter by ineligible sub-status (from patient programme)
     if (
-      filters.report === PatientStatus.Ineligible &&
+      filters.status === PatientStatus.Ineligible &&
       filters.patientIneligible !== 'none'
     ) {
       const ids =
@@ -298,7 +298,7 @@ export const schoolController = {
     delete data.patientVaccinated
     delete data.programme_id
     delete data.q
-    delete data.report
+    delete data.status
     delete data.vaccineCriteria
     delete data.yearGroup
 
@@ -313,7 +313,7 @@ export const schoolController = {
 
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'q', 'report'],
+      ['clinicStatus', 'q', 'status'],
       [
         'option',
         'patientConsent',
