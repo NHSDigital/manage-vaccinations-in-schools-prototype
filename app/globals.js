@@ -411,18 +411,18 @@ export default () => {
 
     const activities = {
       getConsent: {
-        view: 'report',
+        view: 'patients',
         key: 'patientConsent',
         value: PatientConsentStatus.NoResponse,
         ...(!session.isCompleted && { action: 'reminders' })
       },
       followUp: {
-        view: 'report',
+        view: 'patients',
         key: 'patientRefused',
         value: PatientRefusedStatus.FollowUp
       },
       resolveConsent: {
-        view: 'report',
+        view: 'patients',
         key: 'patientRefused',
         value: PatientRefusedStatus.Conflict
       },

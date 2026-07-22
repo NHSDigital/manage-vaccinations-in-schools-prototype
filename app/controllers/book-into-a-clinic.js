@@ -375,7 +375,7 @@ export const bookIntoClinicController = {
 
     // Get back to where we started, if this isn't the parent journey
     if (session) {
-      paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/report'}`
+      paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/patients'}`
     } else if (patient) {
       paths.next = patient.uri
     }

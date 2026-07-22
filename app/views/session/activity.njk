@@ -46,8 +46,8 @@
           }) if view == "record"
         }) if view == "record" and session.isActive }}
 
-        {% if data[view] and data[view] != "none" %}
-          {% set title = __("patientSession." + view + ".label") + ": " + data[view] %}
+        {% if data.report and data.report != "none" %}
+          {% set title = __("session." + view + ".label") + ": " + data.report %}
         {% else %}
           {% set title = __("session." + view + ".title") %}
         {% endif %}
@@ -74,7 +74,7 @@
           {% endcall %}
         {% endif %}
 
-        {% if view === "report" and session.type === SessionType.Clinic and session.isPlanned %}
+        {% if view === "patients" and session.type === SessionType.Clinic and session.isPlanned %}
           {{ actionLink({
             href: session.uri + "/add-appointment/",
             text: "Add a child to this clinic"
@@ -128,7 +128,7 @@
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
-                  href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "report" and patientSession.register != RegistrationOutcome.Pending
+                  href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "patients" and patientSession.register != RegistrationOutcome.Pending
                 } if showRegistration,
                 report: {
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.report.label"),

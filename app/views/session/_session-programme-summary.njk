@@ -21,7 +21,7 @@
         colour: "blue",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Consent),
-        href: session.uri + "/report?report=" + PatientStatus.Consent + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.Consent + "&programme_id=" + programme.id
       }) }}
     </div>
     {% endif %}
@@ -32,7 +32,7 @@
         colour: "blue",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Triage),
-        href: session.uri + "/report?report=" + PatientStatus.Triage + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.Triage + "&programme_id=" + programme.id
       }) }}
     </div>
   {% if programme.type == ProgrammeType.Flu %}
@@ -45,7 +45,7 @@
         colour: "green",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Due, RecordVaccineCriteria.IntranasalOnly) + session.tally(programme.id, PatientStatus.Due, RecordVaccineCriteria.IntranasalPreferred),
-        href: session.uri + "/report?report=" + PatientStatus.Due + "&programme_id=" + programme.id + "&vaccineCriteria=" + RecordVaccineCriteria.IntranasalOnly + "&vaccineCriteria=" + RecordVaccineCriteria.IntranasalPreferred
+        href: session.uri + "/patients?report=" + PatientStatus.Due + "&programme_id=" + programme.id + "&vaccineCriteria=" + RecordVaccineCriteria.IntranasalOnly + "&vaccineCriteria=" + RecordVaccineCriteria.IntranasalPreferred
       }) }}
     </div>
   {% elif programme.type == ProgrammeType.MMR %}
@@ -58,7 +58,7 @@
         colour: "green",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Due, RecordVaccineCriteria.NoMMRPreference),
-        href: session.uri + "/report?report=" + PatientStatus.Due + "&programme_id=" + programme.id + "&vaccineCriteria=" + RecordVaccineCriteria.NoMMRPreference
+        href: session.uri + "/patients?report=" + PatientStatus.Due + "&programme_id=" + programme.id + "&vaccineCriteria=" + RecordVaccineCriteria.NoMMRPreference
       }) }}
     </div>
   {% else %}
@@ -69,7 +69,7 @@
         colour: "green",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Due),
-        href: session.uri + "/report?report=" + PatientStatus.Due + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.Due + "&programme_id=" + programme.id
       }) }}
     </div>
   {% endif %}
@@ -84,7 +84,7 @@
         colour: "green",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Due, vaccineCriteria),
-        href: session.uri + "/report?report=" + PatientStatus.Due + "&programme_id=" + programme.id + "&vaccineCriteria=" + vaccineCriteria
+        href: session.uri + "/patients?report=" + PatientStatus.Due + "&programme_id=" + programme.id + "&vaccineCriteria=" + vaccineCriteria
       }) }}
     </div>
   {% endif %}
@@ -95,7 +95,7 @@
         colour: "orange",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Refused),
-        href: session.uri + "/report?report=" + PatientStatus.Refused + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.Refused + "&programme_id=" + programme.id
       }) }}
     </div>
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -105,7 +105,7 @@
         colour: "red",
         compact: true,
         data: session.tally(programme.id, PatientStatus.Deferred),
-        href: session.uri + "/report?report=" + PatientStatus.Deferred + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.Deferred + "&programme_id=" + programme.id
       }) }}
     </div>
   {% if programme.type == ProgrammeType.MMR or programme.type == ProgrammeType.Flu %}
@@ -115,7 +115,7 @@
         headingLevel: 3,
         compact: true,
         data: session.tally(programme.id, PatientStatus.PartiallyVaccinated),
-        href: session.uri + "/report?report=" + PatientStatus.PartiallyVaccinated + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.PartiallyVaccinated + "&programme_id=" + programme.id
       }) }}
     </div>
   {% endif %}
@@ -125,7 +125,7 @@
         headingLevel: 3,
         compact: true,
         data: session.tally(programme.id, PatientStatus.Vaccinated),
-        href: session.uri + "/report?report=" + PatientStatus.Vaccinated + "&programme_id=" + programme.id
+        href: session.uri + "/patients?report=" + PatientStatus.Vaccinated + "&programme_id=" + programme.id
       }) }}
     </div>
   </div>
