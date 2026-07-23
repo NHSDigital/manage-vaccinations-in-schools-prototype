@@ -777,7 +777,7 @@ export const ScreenVaccineCriteria = {
  * @readonly
  * @enum {string}
  */
-export const ScreenOutcome = {
+export const ScreenStatus = {
   Vaccinate: 'Safe to vaccinate',
   VaccinateAlternativeFluInjectionOnly: 'Safe to vaccinate with injection',
   VaccinateAlternativeMMRInjectionOnly:

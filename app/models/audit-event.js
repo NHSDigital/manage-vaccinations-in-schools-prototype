@@ -14,7 +14,7 @@ import {
   formatDate,
   today
 } from '../utils/date.js'
-import { getScreenOutcomeProperties } from '../utils/enum-properties.js'
+import { getScreenStatusProperties } from '../utils/enum-properties.js'
 import {
   formatTag,
   formatMarkdown,
@@ -200,7 +200,7 @@ export class AuditEvent extends BaseModel {
             case 'outcome':
               return (
                 this.outcome &&
-                formatTag(getScreenOutcomeProperties(this.outcome))
+                formatTag(getScreenStatusProperties(this.outcome))
               )
             case 'outcomeAt':
               return (

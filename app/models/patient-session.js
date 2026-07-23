@@ -8,20 +8,20 @@ import {
   ClinicAttendanceType,
   ConsentStatus,
   PatientStatus,
+  PatientClinicStatus,
   PatientConsentStatus,
   PatientDeferredStatus,
   PatientRefusedStatus,
+  PatientTriageStatus,
   PatientVaccinatedStatus,
+  ProgrammeType,
   RecordVaccineCriteria,
   ReplyDecision,
   ReplyRefusal,
   RegistrationStatus,
-  ScreenOutcome,
-  VaccinationOutcome,
-  ProgrammeType,
-  PatientClinicStatus,
+  ScreenStatus,
   SessionType,
-  PatientTriageStatus
+  VaccinationOutcome
 } from '../enums.js'
 import {
   AuditEvent,
@@ -41,7 +41,7 @@ import {
   getConsentStatusProperties,
   getInstructionStatusProperties,
   getRegistrationStatusProperties,
-  getScreenOutcomeProperties,
+  getScreenStatusProperties,
   getVaccinationOutcomeProperties
 } from '../utils/enum-properties.js'
 import {
@@ -57,7 +57,7 @@ import {
   getPatientVaccinatedStatus,
   getRegistrationStatus,
   getRegistrationStatusDescription,
-  getScreenOutcomeDescription,
+  getScreenStatusDescription,
   getVaccinationOutcome
 } from '../utils/patient-session.js'
 import {
@@ -74,8 +74,8 @@ import {
   formatYearGroup
 } from '../utils/string.js'
 import {
-  getScreenOutcome,
-  getScreenOutcomesForConsentMethod,
+  getScreenStatus,
+  getScreenStatusesForConsentMethod,
   getScreenVaccineCriteria
 } from '../utils/triage.js'
 
@@ -280,13 +280,13 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get screen outcomes for vaccination method(s) consented to
+   * Get screen statuses for vaccination method(s) consented to
    *
-   * @returns {Array<ScreenOutcome>|undefined} Screen outcomes
+   * @returns {Array<ScreenStatus>|undefined} Screen statuses
    */
-  get screenOutcomesForConsentMethod() {
+  get screenStatusesForConsentMethod() {
     if (this.programme && this.responses) {
-      return getScreenOutcomesForConsentMethod(this.programme, this.responses)
+      return getScreenStatusesForConsentMethod(this.programme, this.responses)
     }
   }
 
@@ -393,12 +393,12 @@ export class PatientSession extends BaseModel {
       return alternativeVaccine
     }
 
-    // Return vaccine based on consent (and triage) outcomes
+    // Return vaccine based on consent (and triage) statuses
     const hasScreenedForInjection =
       this.screen &&
       [
-        ScreenOutcome.VaccinateAlternativeFluInjectionOnly,
-        ScreenOutcome.VaccinateAlternativeMMRInjectionOnly
+        ScreenStatus.VaccinateAlternativeFluInjectionOnly,
+        ScreenStatus.VaccinateAlternativeMMRInjectionOnly
       ].includes(String(this.screen))
 
     return this.hasConsentForAlternativeInjectionOnly || hasScreenedForInjection
@@ -428,14 +428,14 @@ export class PatientSession extends BaseModel {
     if (this.programme.type === ProgrammeType.Flu) {
       if (
         this.consent === ConsentStatus.GivenForIntranasal ||
-        this.screen === ScreenOutcome.VaccinateIntranasalOnly
+        this.screen === ScreenStatus.VaccinateIntranasalOnly
       ) {
         return RecordVaccineCriteria.IntranasalOnly
       }
 
       if (
         this.consent === ConsentStatus.GivenForAlternativeInjection ||
-        this.screen === ScreenOutcome.VaccinateAlternativeFluInjectionOnly
+        this.screen === ScreenStatus.VaccinateAlternativeFluInjectionOnly
       ) {
         return RecordVaccineCriteria.AlternativeFluInjectionOnly
       }
@@ -446,7 +446,7 @@ export class PatientSession extends BaseModel {
     if (this.programme.type === ProgrammeType.MMR) {
       if (
         this.consent === ConsentStatus.GivenForAlternativeInjection ||
-        this.screen === ScreenOutcome.VaccinateAlternativeMMRInjectionOnly
+        this.screen === ScreenStatus.VaccinateAlternativeMMRInjectionOnly
       ) {
         return RecordVaccineCriteria.AlternativeMMRInjectionOnly
       }
@@ -462,7 +462,7 @@ export class PatientSession extends BaseModel {
    */
   get canRecordAlternativeVaccine() {
     const hasScreenedForNasal =
-      this.screen === ScreenOutcome.VaccinateIntranasalOnly
+      this.screen === ScreenStatus.VaccinateIntranasalOnly
 
     return (
       this.hasConsentForInjection &&
@@ -632,21 +632,21 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get screening outcome
+   * Get screening status
    *
-   * @returns {ScreenOutcome|boolean} Screening outcome
+   * @returns {ScreenStatus|boolean} Screening status
    */
   get screen() {
-    return getScreenOutcome(this)
+    return getScreenStatus(this)
   }
 
   /**
-   * Get expanded description about screening outcome
+   * Get expanded description about screening status
    *
    * @returns {string} Screen description
    */
   get screenDescription() {
-    return getScreenOutcomeDescription(this)
+    return getScreenStatusDescription(this)
   }
 
   /**
@@ -747,7 +747,7 @@ export class PatientSession extends BaseModel {
             case 'consent':
               return getConsentStatusProperties(this.consent)
             case 'screen':
-              return getScreenOutcomeProperties(this.screen)
+              return getScreenStatusProperties(this.screen)
             case 'instruct':
               return getInstructionStatusProperties(this.instruct)
             case 'register':

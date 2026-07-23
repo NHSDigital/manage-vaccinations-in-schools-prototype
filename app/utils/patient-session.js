@@ -12,7 +12,7 @@ import {
   PatientTriageStatus,
   PatientVaccinatedStatus,
   RegistrationStatus,
-  ScreenOutcome,
+  ScreenStatus,
   VaccinationOutcome,
   VaccineCriteria
 } from '../enums.js'
@@ -85,36 +85,36 @@ export function getConsentStatusDescription(patientSession) {
 }
 
 /**
- * Get expanded description about screen outcome
+ * Get expanded description about screen status
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {string} Screen outcome description
+ * @returns {string} Screen status description
  */
-export function getScreenOutcomeDescription(patientSession) {
+export function getScreenStatusDescription(patientSession) {
   const triageNote = patientSession.triageNotes.at(-1)
   const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
   const person = patientSession.patient.isPost16 ? 'child' : 'parent'
 
   switch (patientSession.screen) {
-    case ScreenOutcome.NeedsTriage:
+    case ScreenStatus.NeedsTriage:
       return patientSession.clinicAppointment
         ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
         : `You need to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
-    case ScreenOutcome.InvitedToClinic:
+    case ScreenStatus.InvitedToClinic:
       return `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should take place at a clinic.`
-    case ScreenOutcome.DelayVaccination:
+    case ScreenStatus.DelayVaccination:
       return triageNote?.outcomeAt
         ? `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.outcomeAt}.`
         : `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed`
-    case ScreenOutcome.DoNotVaccinate:
+    case ScreenStatus.DoNotVaccinate:
       return `${user.fullName} decided that ${patientSession.patient.firstName} should not be vaccinated.`
-    case ScreenOutcome.Vaccinate:
+    case ScreenStatus.Vaccinate:
       return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate.`
-    case ScreenOutcome.VaccinateAlternativeFluInjectionOnly:
+    case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
       return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the injected vaccine only.`
-    case ScreenOutcome.VaccinateAlternativeMMRInjectionOnly:
+    case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
       return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the gelatine-free injection only.`
-    case ScreenOutcome.VaccinateIntranasalOnly:
+    case ScreenStatus.VaccinateIntranasalOnly:
       return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the nasal spray only.`
     default:
       return `No triage is needed for ${patientSession.patient.firstName}.`
@@ -197,11 +197,11 @@ export function getVaccinationOutcome(patientSession) {
     )
   ) {
     return VaccinationOutcome.ConsentRefused
-  } else if (patientSession.screen === ScreenOutcome.InvitedToClinic) {
+  } else if (patientSession.screen === ScreenStatus.InvitedToClinic) {
     return VaccinationOutcome.InvitedToClinic
-  } else if (patientSession.screen === ScreenOutcome.DelayVaccination) {
+  } else if (patientSession.screen === ScreenStatus.DelayVaccination) {
     return VaccinationOutcome.DelayVaccination
-  } else if (patientSession.screen === ScreenOutcome.DoNotVaccinate) {
+  } else if (patientSession.screen === ScreenStatus.DoNotVaccinate) {
     return VaccinationOutcome.DoNotVaccinate
   }
 }
@@ -232,18 +232,18 @@ export function getPatientStatus(patientSession) {
 
   // Has screening outcome
   switch (patientSession.screen) {
-    case ScreenOutcome.DelayVaccination:
-    case ScreenOutcome.InvitedToClinic:
-    case ScreenOutcome.DoNotVaccinate:
+    case ScreenStatus.DelayVaccination:
+    case ScreenStatus.InvitedToClinic:
+    case ScreenStatus.DoNotVaccinate:
       return PatientStatus.Deferred
 
-    case ScreenOutcome.Vaccinate:
-    case ScreenOutcome.VaccinateAlternativeFluInjectionOnly:
-    case ScreenOutcome.VaccinateAlternativeMMRInjectionOnly:
-    case ScreenOutcome.VaccinateIntranasalOnly:
+    case ScreenStatus.Vaccinate:
+    case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
+    case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
+    case ScreenStatus.VaccinateIntranasalOnly:
       return PatientStatus.Due
 
-    case ScreenOutcome.NeedsTriage:
+    case ScreenStatus.NeedsTriage:
       return PatientStatus.Triage
   }
 
@@ -336,7 +336,7 @@ export function getPatientTriageStatus(patientSession) {
   const responses = Object.values(patientSession.responses)
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
 
-  if (patientSession.screen === ScreenOutcome.NeedsTriage) {
+  if (patientSession.screen === ScreenStatus.NeedsTriage) {
     if (responsesToTriage.length > 0) {
       return PatientTriageStatus.Responses
     } else if (patientSession.clinicAppointment) {
@@ -352,11 +352,11 @@ export function getPatientTriageStatus(patientSession) {
  * @returns {PatientDeferredStatus|undefined} Patient deferred status
  */
 export function getPatientDeferredStatus(patientSession) {
-  if (patientSession.screen === ScreenOutcome.DoNotVaccinate) {
+  if (patientSession.screen === ScreenStatus.DoNotVaccinate) {
     return PatientDeferredStatus.DoNotVaccinate
-  } else if (patientSession.screen === ScreenOutcome.DelayVaccination) {
+  } else if (patientSession.screen === ScreenStatus.DelayVaccination) {
     return PatientDeferredStatus.DelayVaccination
-  } else if (patientSession.screen === ScreenOutcome.InvitedToClinic) {
+  } else if (patientSession.screen === ScreenStatus.InvitedToClinic) {
     return PatientDeferredStatus.InvitedToClinic
   }
 

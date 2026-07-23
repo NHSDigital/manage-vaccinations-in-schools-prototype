@@ -3,7 +3,7 @@ import {
   ArchiveRecordReason,
   AuditEventType,
   ReplyDecision,
-  ScreenOutcome
+  ScreenStatus
 } from '../enums.js'
 import { generateContact } from '../generators/contact.js'
 import {
@@ -327,7 +327,7 @@ export const activityController = {
         items: [
           auditEvent({
             name: activity.triage.decision({
-              outcome: ScreenOutcome.DelayVaccination
+              outcome: ScreenStatus.DelayVaccination
             }),
             note: 'A brief note about the triage decision.',
             createdBy_uid,
