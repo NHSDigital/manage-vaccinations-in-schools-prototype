@@ -1,39 +1,47 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("session.fluProtocol.title") %}
+{% set title = __("session.protocol.title") %}
 
 {% block form %}
-  {% set conditionalHtml = {
-    html: radios({
-      fieldset: {
-        legend: {
-          text: __("session.hasPsdProtocol.title")
-        }
-      },
-      items: getBooleanItems(),
-      decorate: "session.hasPsdProtocol"
-    })
-  } %}
+  {{ appHeading({
+    caption: session.location.name,
+    title: title
+  }) }}
 
   {{ radios({
-    formGroup: {
-      classes: "nhsuk-u-margin-bottom-6"
-    },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--l",
-        html: appHeading({
-          caption: session.location.name,
-          title: title
-        })
+        text: __("session.protocolNurse.title"),
+        size: "m"
       }
     },
     items: [{
-      text: VaccinationProtocol.PGD,
-      conditional: conditionalHtml
+      text: __("session.protocolNurse.pgd.label"),
+      value: VaccinationProtocol.PGD
     }, {
-      text: VaccinationProtocol.VGD
+      text: __("session.protocolNurse.vgd.label"),
+      value: VaccinationProtocol.VGD
     }],
-    decorate: "session.fluProtocol"
+    decorate: "session.protocolNurse"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("session.protocolHCA.title"),
+        size: "m"
+      }
+    },
+    items: [{
+      text: __("session.protocolHCA.no.label"),
+      value: ""
+    }, {
+      text: __("session.protocolHCA.psd.label"),
+      value: VaccinationProtocol.PSD
+    }, {
+      text: __("session.protocolHCA.vgd.label"),
+      value: VaccinationProtocol.VGD
+    }],
+    decorate: "session.protocolHCA"
   }) }}
 {% endblock %}

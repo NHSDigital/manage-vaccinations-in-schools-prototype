@@ -7,15 +7,16 @@ import {
   PreScreenQuestion,
   RegistrationStatus,
   SessionType,
-  UserRole,
   VaccinationOutcome,
   VaccinationProtocol,
+  VaccineCriteria,
   VaccineMethod
 } from '../enums.js'
 import {
   ClinicBooking,
   PatientSession,
   Programme,
+  User,
   Vaccination
 } from '../models.js'
 import { today } from '../utils/date.js'
@@ -29,12 +30,21 @@ export const patientSessionController = {
   read(request, response, next, nhsn) {
     const { programme_id, session_id } = request.params
     const { __, account } = response.locals
+    const { data } = request.session
 
-    const patientSession = PatientSession.findAll(request.session.data).find(
+    const patientSession = PatientSession.findAll(data).find(
       (patientSession) =>
         patientSession.session_id === session_id &&
         patientSession.programme_id === programme_id &&
         patientSession.patient.nhsn === nhsn
+    )
+
+    const registeredNurseUsers = User.findAll(data).filter(
+      (user) => user.isRegisteredNurse
+    )
+
+    const allVaccinatingUsers = User.findAll(data).filter(
+      (user) => user.canVaccinate
     )
 
     const {
@@ -61,25 +71,23 @@ export const patientSessionController = {
       (patientProgramme) => patientProgramme.programme_id === programme_id
     )
 
-    // PSD protocol
-    // Nurses can record all vaccines
-    // HCAs can only record nasal sprays for children with a PSD
-    const userIsHCA = account.role === UserRole.HCA
     const patientHasPsd = patientSession.instruct === InstructionStatus.Given
-    if (userIsHCA && !patientHasPsd) {
-      // Remove permissions for HCAs as patient doesn’t have a PSD
-      account.vaccineMethods = []
-    }
 
-    // VGD protocol
-    // Nurses can record all vaccines
-    // HCAs can record all vaccines (but must record practitioner)
-    if (userIsHCA && session.fluProtocol === VaccinationProtocol.VGD) {
-      // Remove permissions for HCAs as patient doesn’t have a PSD
-      account.vaccineMethods = [
-        VaccineMethod.Injection,
-        VaccineMethod.Intranasal
-      ]
+    let vaccineMethods = []
+
+    // Nurses can record all vaccines under any protocol
+    if (account.isRegisteredNurse) {
+      vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
+    } else if (account.isHealthcareAssistant) {
+      // HCAs can record all vaccines under VGD
+      if (session.protocolHCA === VaccinationProtocol.VGD) {
+        vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
+      }
+
+      // HCAs can record only nasal vaccines under PSD
+      if (session.protocolHCA === VaccinationProtocol.PSD) {
+        vaccineMethods = patientHasPsd ? [VaccineMethod.Intranasal] : []
+      }
     }
 
     response.locals.options = {
@@ -93,20 +101,26 @@ export const patientSessionController = {
         consent === ConsentStatus.NoResponse,
       // Perform Gillick assessment
       canGillick:
-        session.isActive && !vaccinated && !consentGiven && !userIsHCA,
+        account.isRegisteredNurse &&
+        session.isActive &&
+        !vaccinated &&
+        !consentGiven,
       // Perform triage
-      canTriage: !userIsHCA,
+      canTriage: account.isRegisteredNurse,
       // Patient needs triage
       needsTriage: status === PatientStatus.Triage,
       // Patient already triaged
       hasTriage: triageNotes.length > 0,
-      hasInstruct: session.hasPsdProtocol && patientSession.instruct,
-      userIsHCA,
+      hasInstruct:
+        session.protocolHCA === VaccinationProtocol.PSD &&
+        patientSession.instruct,
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
-        account.vaccineMethods?.includes(patientSession.vaccine?.method) &&
+        vaccineMethods?.includes(patientSession.vaccine?.method) &&
         patientSession.canRecordOutcome &&
-        session.isActive
+        session.isActive,
+      canRecordInjectionSite:
+        patientSession.vaccine?.criteria !== VaccineCriteria.Intranasal
     }
 
     // Vaccinator has permission to record using the alternative vaccine
@@ -157,6 +171,8 @@ export const patientSessionController = {
     response.locals.programme = programme
     response.locals.session = session
     response.locals.clinicAppointment = clinicAppointment
+    response.locals.registeredNurseUsers = registeredNurseUsers
+    response.locals.allVaccinatingUsers = allVaccinatingUsers
 
     // Use different values for pre-screening questions
     // `IsWell` and `IsPregnant` should persist per patient
