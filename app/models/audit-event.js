@@ -33,8 +33,8 @@ import { BaseModel } from './base.js'
  * @property {string} [messageTemplate] - Message template
  * @property {Array} [updatedFields] - Updated fields
  * @property {string} [status] - Status for activity type
- * @property {Date} [outcomeAt] - Date status invalidates
- * @property {object} [outcomeAt_] - Date status invalidates (from `dateInput`)
+ * @property {Date} [statusInvalidAt] - Date status invalidates
+ * @property {object} [statusInvalidAt_] - Date status invalidates (from `dateInput`)
  * @property {Array<string>} [programme_ids] - Programme IDs
  */
 
@@ -83,8 +83,9 @@ export class AuditEvent extends BaseModel {
     this.messageTemplate = options?.messageTemplate
     this.updatedFields = options?.updatedFields
     this.status = options?.status
-    this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)
-    this.outcomeAt_ = options?.outcomeAt_
+    this.statusInvalidAt =
+      options?.statusInvalidAt && new Date(options.statusInvalidAt)
+    this.statusInvalidAt_ = options?.statusInvalidAt_
     this.programme_ids = stringToArray(options?.programme_ids)
   }
 
@@ -106,8 +107,8 @@ export class AuditEvent extends BaseModel {
    *
    * @returns {object|string} `dateInput` object
    */
-  get outcomeAt_() {
-    return convertIsoDateToObject(this.outcomeAt)
+  get statusInvalidAt_() {
+    return convertIsoDateToObject(this.statusInvalidAt)
   }
 
   /**
@@ -115,9 +116,9 @@ export class AuditEvent extends BaseModel {
    *
    * @param {object} object - dateInput object
    */
-  set outcomeAt_(object) {
+  set statusInvalidAt_(object) {
     if (object) {
-      this.outcomeAt = convertObjectToIsoDate(object)
+      this.statusInvalidAt = convertObjectToIsoDate(object)
     }
   }
 
@@ -201,10 +202,10 @@ export class AuditEvent extends BaseModel {
               return (
                 this.status && formatTag(getScreenStatusProperties(this.status))
               )
-            case 'outcomeAt':
+            case 'statusInvalidAt':
               return (
-                this.outcomeAt &&
-                formatDate(this.outcomeAt, { dateStyle: 'long' })
+                this.statusInvalidAt &&
+                formatDate(this.statusInvalidAt, { dateStyle: 'long' })
               )
             case 'programmes':
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')

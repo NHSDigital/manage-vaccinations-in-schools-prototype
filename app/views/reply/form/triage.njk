@@ -18,12 +18,12 @@
   {% set delayVaccinationHtml = dateInput({
     fieldset: {
       legend: {
-        text: __("triage.outcomeAt.title", { patient: patient }),
+        text: __("triage.statusInvalidAt.title", { patient: patient }),
         size: "s"
       }
     },
-    hint: { text: __("triage.outcomeAt.hint", { date: DelayDate }) },
-    decorate: "triage.outcomeAt_"
+    hint: { text: __("triage.statusInvalidAt.hint", { date: DelayDate }) },
+    decorate: "triage.statusInvalidAt_"
   }) %}
 
   {% set statusItems = injectConditionalHtml(triageStatusItems(screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasal, psdRadiosHtml) if patientSession.programme.alternativeVaccine and reply.decision != ReplyDecision.OnlyAlternativeInjection and account.canPrescribe else triageStatusItems(screenStatusesForConsentMethod) %}
