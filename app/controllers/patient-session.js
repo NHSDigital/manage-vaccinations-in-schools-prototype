@@ -1,6 +1,6 @@
 import {
   AuditEventType,
-  ConsentOutcome,
+  ConsentStatus,
   ConsentWindow,
   InstructionStatus,
   PatientStatus,
@@ -90,7 +90,7 @@ export const patientSessionController = {
         !patient.hasNoContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
-        consent === ConsentOutcome.NoResponse,
+        consent === ConsentStatus.NoResponse,
       // Perform Gillick assessment
       canGillick:
         session.isActive && !vaccinated && !consentGiven && !userIsHCA,

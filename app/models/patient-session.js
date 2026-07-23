@@ -6,7 +6,7 @@ import {
   AcademicYear,
   AuditEventType,
   ClinicAttendanceType,
-  ConsentOutcome,
+  ConsentStatus,
   PatientStatus,
   PatientConsentStatus,
   PatientDeferredStatus,
@@ -38,7 +38,7 @@ import {
   getYearGroup
 } from '../utils/date.js'
 import {
-  getConsentOutcomeProperties,
+  getConsentStatusProperties,
   getInstructionStatusProperties,
   getRegistrationStatusProperties,
   getScreenOutcomeProperties,
@@ -46,7 +46,7 @@ import {
 } from '../utils/enum-properties.js'
 import {
   canRecordOutcome,
-  getConsentOutcomeDescription,
+  getConsentStatusDescription,
   getInstructionStatus,
   getPatientConsentStatus,
   getPatientDeferredDescription,
@@ -62,7 +62,7 @@ import {
 } from '../utils/patient-session.js'
 import {
   countAnswersNeedingTriage,
-  getConsentOutcome,
+  getConsentStatus,
   getConsentHealthAnswers,
   getConsentRefusalReasons
 } from '../utils/reply.js'
@@ -427,14 +427,14 @@ export class PatientSession extends BaseModel {
 
     if (this.programme.type === ProgrammeType.Flu) {
       if (
-        this.consent === ConsentOutcome.GivenForIntranasal ||
+        this.consent === ConsentStatus.GivenForIntranasal ||
         this.screen === ScreenOutcome.VaccinateIntranasalOnly
       ) {
         return RecordVaccineCriteria.IntranasalOnly
       }
 
       if (
-        this.consent === ConsentOutcome.GivenForAlternativeInjection ||
+        this.consent === ConsentStatus.GivenForAlternativeInjection ||
         this.screen === ScreenOutcome.VaccinateAlternativeFluInjectionOnly
       ) {
         return RecordVaccineCriteria.AlternativeFluInjectionOnly
@@ -445,7 +445,7 @@ export class PatientSession extends BaseModel {
 
     if (this.programme.type === ProgrammeType.MMR) {
       if (
-        this.consent === ConsentOutcome.GivenForAlternativeInjection ||
+        this.consent === ConsentStatus.GivenForAlternativeInjection ||
         this.screen === ScreenOutcome.VaccinateAlternativeMMRInjectionOnly
       ) {
         return RecordVaccineCriteria.AlternativeMMRInjectionOnly
@@ -564,21 +564,21 @@ export class PatientSession extends BaseModel {
   }
 
   /**
-   * Get consent outcome
+   * Get consent status
    *
-   * @returns {ConsentOutcome} Consent outcome
+   * @returns {ConsentStatus} Consent status
    */
   get consent() {
-    return getConsentOutcome(this)
+    return getConsentStatus(this)
   }
 
   /**
-   * Get expanded description about consent outcome
+   * Get expanded description about consent status
    *
    * @returns {string} Consent description
    */
   get consentDescription() {
-    return getConsentOutcomeDescription(this)
+    return getConsentStatusDescription(this)
   }
 
   /**
@@ -589,9 +589,9 @@ export class PatientSession extends BaseModel {
   get consentGiven() {
     if (this.consent && !this.clinicAppointment) {
       return [
-        ConsentOutcome.Given,
-        ConsentOutcome.GivenForAlternativeInjection,
-        ConsentOutcome.GivenForIntranasal
+        ConsentStatus.Given,
+        ConsentStatus.GivenForAlternativeInjection,
+        ConsentStatus.GivenForIntranasal
       ].includes(this.consent)
     } else if (this.clinicAppointment) {
       return true
@@ -745,7 +745,7 @@ export class PatientSession extends BaseModel {
         get: (_target, prop) => {
           switch (prop) {
             case 'consent':
-              return getConsentOutcomeProperties(this.consent)
+              return getConsentStatusProperties(this.consent)
             case 'screen':
               return getScreenOutcomeProperties(this.screen)
             case 'instruct':

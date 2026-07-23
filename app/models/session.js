@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 import programmesData from '../datasets/programmes.js'
 import {
-  ConsentOutcome,
+  ConsentStatus,
   ConsentWindow,
   InstructionStatus,
   PatientStatus,
@@ -939,7 +939,7 @@ export class Session extends BaseModel {
             case 'getConsent':
               return getSessionActivityCount(this, [
                 {
-                  consent: ConsentOutcome.NoResponse
+                  consent: ConsentStatus.NoResponse
                 }
               ])
             case 'instruct':

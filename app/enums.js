@@ -104,7 +104,7 @@ export const ClinicBookingJourneyType = {
  * @readonly
  * @enum {string}
  */
-export const ConsentOutcome = {
+export const ConsentStatus = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',
   Inconsistent: 'Conflicting consent',

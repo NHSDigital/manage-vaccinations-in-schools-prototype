@@ -3,7 +3,7 @@ import { addMonths } from 'date-fns'
 
 import vaccines from '../datasets/vaccines.js'
 import {
-  ConsentOutcome,
+  ConsentStatus,
   ConsentVaccineCriteria,
   NotifyEmailStatus,
   NotifySmsStatus,
@@ -24,7 +24,7 @@ import {
 } from '../models.js'
 import { formatDate } from '../utils/date.js'
 import {
-  getConsentOutcomeProperties,
+  getConsentStatusProperties,
   getReplyDecisionProperties
 } from '../utils/enum-properties.js'
 import {
@@ -409,7 +409,7 @@ export class Reply extends BaseModel {
             )
             if (!this.delivered) {
               decisionStatus = formatTag(
-                getConsentOutcomeProperties(ConsentOutcome.NotDelivered)
+                getConsentStatusProperties(ConsentStatus.NotDelivered)
               )
             } else if (this.isInvalidated) {
               decisionStatus = formatWithSecondaryText(
