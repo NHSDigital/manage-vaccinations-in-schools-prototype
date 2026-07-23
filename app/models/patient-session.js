@@ -189,7 +189,7 @@ export class PatientSession extends BaseModel {
     return this.auditEvents
       .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
-      .filter(({ outcome }) => outcome)
+      .filter(({ status }) => status)
   }
 
   /**

@@ -32,9 +32,9 @@ import { BaseModel } from './base.js'
  * @property {object} [messageRecipient] - Message recipient
  * @property {string} [messageTemplate] - Message template
  * @property {Array} [updatedFields] - Updated fields
- * @property {string} [outcome] - Outcome for activity type
- * @property {Date} [outcomeAt] - Date outcome invalidates
- * @property {object} [outcomeAt_] - Date outcome invalidates (from `dateInput`)
+ * @property {string} [status] - Status for activity type
+ * @property {Date} [outcomeAt] - Date status invalidates
+ * @property {object} [outcomeAt_] - Date status invalidates (from `dateInput`)
  * @property {Array<string>} [programme_ids] - Programme IDs
  */
 
@@ -82,7 +82,7 @@ export class AuditEvent extends BaseModel {
     this.messageRecipient = options?.messageRecipient
     this.messageTemplate = options?.messageTemplate
     this.updatedFields = options?.updatedFields
-    this.outcome = options?.outcome
+    this.status = options?.status
     this.outcomeAt = options?.outcomeAt && new Date(options.outcomeAt)
     this.outcomeAt_ = options?.outcomeAt_
     this.programme_ids = stringToArray(options?.programme_ids)
@@ -102,7 +102,7 @@ export class AuditEvent extends BaseModel {
   }
 
   /**
-   * Get date outcome invalidates for `dateInput`
+   * Get date status invalidates for `dateInput`
    *
    * @returns {object|string} `dateInput` object
    */
@@ -111,7 +111,7 @@ export class AuditEvent extends BaseModel {
   }
 
   /**
-   * Set date outcome invalidates from `dateInput`
+   * Set date status invalidates from `dateInput`
    *
    * @param {object} object - dateInput object
    */
@@ -197,10 +197,9 @@ export class AuditEvent extends BaseModel {
               })
             case 'note':
               return this.note && formatMarkdown(this.note)
-            case 'outcome':
+            case 'status':
               return (
-                this.outcome &&
-                formatTag(getScreenStatusProperties(this.outcome))
+                this.status && formatTag(getScreenStatusProperties(this.status))
               )
             case 'outcomeAt':
               return (

@@ -108,9 +108,9 @@
     },
     lastRowBorder: false,
     rows: summaryRows(triage, {
-      outcome: {
-        label: __("triage.outcome.label"),
-        value: triage.outcome,
+      status: {
+        label: __("triage.status.label"),
+        value: triage.status,
         href: reply.uri + "/new/triage"
       },
       note: {
@@ -119,5 +119,5 @@
         href: reply.uri + "/new/triage"
       }
     })
-  }) if triage.outcome }}
+  }) if triage.status }}
 {% endblock %}

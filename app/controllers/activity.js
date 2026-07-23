@@ -327,7 +327,7 @@ export const activityController = {
         items: [
           auditEvent({
             name: activity.triage.decision({
-              outcome: ScreenStatus.DelayVaccination
+              status: ScreenStatus.DelayVaccination
             }),
             note: 'A brief note about the triage decision.',
             createdBy_uid,

@@ -217,7 +217,7 @@ export default () => {
       value === 'or'
         ? { divider: 'or' }
         : {
-            text: __(`triage.outcome.${value}`),
+            text: __(`triage.status.${value}`),
             value
           }
     )

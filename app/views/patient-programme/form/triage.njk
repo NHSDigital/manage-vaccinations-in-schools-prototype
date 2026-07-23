@@ -39,7 +39,7 @@
       text: patientSession.screenVaccineCriteria
     } if patientSession.screenVaccineCriteria,
     items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
-    decorate: "triage.outcome"
+    decorate: "triage.status"
   }) }}
 
   {{ textarea({

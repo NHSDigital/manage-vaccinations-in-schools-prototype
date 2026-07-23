@@ -230,7 +230,7 @@ export function getPatientStatus(patientSession) {
     }
   }
 
-  // Has screening outcome
+  // Has screening status
   switch (patientSession.screen) {
     case ScreenStatus.DelayVaccination:
     case ScreenStatus.InvitedToClinic:

@@ -32,14 +32,14 @@
     fieldset: {
       legend: {
         classes: "nhsuk-fieldset__legend--m",
-        text: __("triage.outcome.label")
+        text: __("triage.status.label")
       }
     },
     hint: {
       text: screenVaccineCriteria
     } if screenVaccineCriteria,
     items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
-    decorate: "triage.outcome"
+    decorate: "triage.status"
   }) }}
 
   {{ textarea({

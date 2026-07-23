@@ -498,7 +498,7 @@ export const sessionController = {
       }
     }
 
-    // Remove patient sessions where outcome returns false
+    // Remove patient sessions where status returns false
     results = results.filter((patientSession) => patientSession[view] !== false)
 
     // Only show patients ready to vaccinate, and that a user can vaccinate
