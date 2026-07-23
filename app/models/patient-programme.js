@@ -856,7 +856,7 @@ export class PatientProgramme extends BaseModel {
       case ScreenOutcome.DoNotVaccinate:
         messageTemplate = 'triage-do-not-vaccinate'
         break
-      case ScreenOutcome.InviteToClinic:
+      case ScreenOutcome.InvitedToClinic:
         messageTemplate = 'triage-invite-to-clinic'
         break
       default:

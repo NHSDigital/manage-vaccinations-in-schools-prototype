@@ -486,7 +486,7 @@ export const PatientDeferredStatus = {
   ChildUnwell: 'Child unwell',
   DoNotVaccinate: 'Contraindicated',
   DelayVaccination: 'Delay vaccination',
-  InviteToClinic: 'Invited to clinic'
+  InvitedToClinic: 'Invited to clinic'
 }
 
 /**
@@ -784,7 +784,7 @@ export const ScreenOutcome = {
     'Safe to vaccinate with gelatine-free injection',
   VaccinateIntranasalOnly: 'Safe to vaccinate with nasal spray',
   NeedsTriage: 'Needs triage',
-  InviteToClinic: 'Invited to clinic',
+  InvitedToClinic: 'Invited to clinic',
   DelayVaccination: 'Delay vaccination',
   DoNotVaccinate: 'Do not vaccinate'
 }
@@ -873,7 +873,7 @@ export const VaccinationOutcome = {
   Refused: 'Child refused',
   Absent: 'Child absent',
   Unwell: 'Child unwell',
-  InviteToClinic: 'Invited to clinic',
+  InvitedToClinic: 'Invited to clinic',
   DelayVaccination: 'Delay vaccination',
   DoNotVaccinate: 'Contraindicated'
 }

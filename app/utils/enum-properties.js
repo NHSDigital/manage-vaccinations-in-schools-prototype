@@ -68,7 +68,7 @@ const SCHOOL_STATUS_COLOURS = {
 
 const SCREEN_OUTCOME_COLOURS = {
   [ScreenOutcome.NeedsTriage]: 'blue',
-  [ScreenOutcome.InviteToClinic]: 'orange',
+  [ScreenOutcome.InvitedToClinic]: 'orange',
   [ScreenOutcome.DelayVaccination]: 'orange',
   [ScreenOutcome.DoNotVaccinate]: 'red'
 }
@@ -95,7 +95,7 @@ const VACCINATION_OUTCOME_COLOURS = {
   [VaccinationOutcome.Unwell]: 'red',
   [VaccinationOutcome.ConsentRefused]: 'orange',
   [VaccinationOutcome.DelayVaccination]: 'orange',
-  [VaccinationOutcome.InviteToClinic]: 'orange'
+  [VaccinationOutcome.InvitedToClinic]: 'orange'
 }
 
 /**

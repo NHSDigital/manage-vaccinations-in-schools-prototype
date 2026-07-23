@@ -41,7 +41,7 @@ export const getScreenOutcomesForConsentMethod = (programme, replies) => {
       : []),
     'or',
     ScreenOutcome.NeedsTriage,
-    ScreenOutcome.InviteToClinic,
+    ScreenOutcome.InvitedToClinic,
     ScreenOutcome.DelayVaccination,
     ScreenOutcome.DoNotVaccinate
   ]
@@ -97,9 +97,9 @@ export const getScreenOutcome = (patientSession) => {
   if (patientSession.lastVaccinationOutcome) {
     if (
       patientSession.lastVaccinationOutcome.outcome ===
-      VaccinationOutcome.InviteToClinic
+      VaccinationOutcome.InvitedToClinic
     ) {
-      return ScreenOutcome.InviteToClinic
+      return ScreenOutcome.InvitedToClinic
     }
 
     if (

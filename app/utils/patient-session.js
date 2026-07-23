@@ -100,7 +100,7 @@ export function getScreenOutcomeDescription(patientSession) {
       return patientSession.clinicAppointment
         ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
         : `You need to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
-    case ScreenOutcome.InviteToClinic:
+    case ScreenOutcome.InvitedToClinic:
       return `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should take place at a clinic.`
     case ScreenOutcome.DelayVaccination:
       return triageNote?.outcomeAt
@@ -197,8 +197,8 @@ export function getVaccinationOutcome(patientSession) {
     )
   ) {
     return VaccinationOutcome.ConsentRefused
-  } else if (patientSession.screen === ScreenOutcome.InviteToClinic) {
-    return VaccinationOutcome.InviteToClinic
+  } else if (patientSession.screen === ScreenOutcome.InvitedToClinic) {
+    return VaccinationOutcome.InvitedToClinic
   } else if (patientSession.screen === ScreenOutcome.DelayVaccination) {
     return VaccinationOutcome.DelayVaccination
   } else if (patientSession.screen === ScreenOutcome.DoNotVaccinate) {
@@ -233,7 +233,7 @@ export function getPatientStatus(patientSession) {
   // Has screening outcome
   switch (patientSession.screen) {
     case ScreenOutcome.DelayVaccination:
-    case ScreenOutcome.InviteToClinic:
+    case ScreenOutcome.InvitedToClinic:
     case ScreenOutcome.DoNotVaccinate:
       return PatientStatus.Deferred
 
@@ -356,8 +356,8 @@ export function getPatientDeferredStatus(patientSession) {
     return PatientDeferredStatus.DoNotVaccinate
   } else if (patientSession.screen === ScreenOutcome.DelayVaccination) {
     return PatientDeferredStatus.DelayVaccination
-  } else if (patientSession.screen === ScreenOutcome.InviteToClinic) {
-    return PatientDeferredStatus.InviteToClinic
+  } else if (patientSession.screen === ScreenOutcome.InvitedToClinic) {
+    return PatientDeferredStatus.InvitedToClinic
   }
 
   switch (patientSession.outcome) {
@@ -367,8 +367,8 @@ export function getPatientDeferredStatus(patientSession) {
       return PatientDeferredStatus.ChildRefused
     case VaccinationOutcome.Unwell:
       return PatientDeferredStatus.ChildUnwell
-    case VaccinationOutcome.InviteToClinic:
-      return PatientDeferredStatus.InviteToClinic
+    case VaccinationOutcome.InvitedToClinic:
+      return PatientDeferredStatus.InvitedToClinic
     case VaccinationOutcome.DelayVaccination:
       return PatientDeferredStatus.DelayVaccination
     case VaccinationOutcome.DoNotVaccinate:
@@ -388,7 +388,7 @@ export function getPatientDeferredDescription(patientSession) {
     case PatientDeferredStatus.ChildRefused:
     case PatientDeferredStatus.ChildUnwell:
       return `${patientSession.patientDeferred} on ${patientSession.lastVaccinationOutcome?.formatted.createdAt}.`
-    case PatientDeferredStatus.InviteToClinic:
+    case PatientDeferredStatus.InvitedToClinic:
     case PatientDeferredStatus.DelayVaccination:
     case PatientDeferredStatus.DoNotVaccinate:
       return patientSession.screenDescription

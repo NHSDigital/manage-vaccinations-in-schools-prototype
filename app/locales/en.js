@@ -3427,7 +3427,7 @@ export const en = {
       [ScreenOutcome.VaccinateIntranasalOnly]:
         'Yes, it’s safe to vaccinate with nasal spray',
       [ScreenOutcome.DoNotVaccinate]: 'No, do not vaccinate',
-      [ScreenOutcome.InviteToClinic]: 'No, invite to clinic',
+      [ScreenOutcome.InvitedToClinic]: 'No, invite to clinic',
       [ScreenOutcome.DelayVaccination]: 'No, delay vaccination',
       [ScreenOutcome.NeedsTriage]: 'No, keep in triage'
     },
