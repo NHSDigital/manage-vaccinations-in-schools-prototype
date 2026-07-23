@@ -2256,6 +2256,9 @@ export const en = {
     },
     clinicAttendanceType: {
       label: 'Attendance type'
+    },
+    additionalProgrammes: {
+      label: 'Can also offer'
     }
   },
   pdsRecord: {
@@ -2983,6 +2986,11 @@ export const en = {
         label: 'Conflicting consent',
         count:
           '{count, plural, =0 {No children} one {# child} other {# children}} with conflicting consent'
+      },
+      offerCatchUps: {
+        label: 'Offer additional vaccinations',
+        count:
+          '{count, plural, =0 {No children} one {# child} other {# children}} can be offered additional vaccinations'
       },
       instruct: {
         label: 'PSD review needed',

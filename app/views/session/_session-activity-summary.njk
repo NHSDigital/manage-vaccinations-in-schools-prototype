@@ -1,47 +1,79 @@
 {% set sessionActivityRows = [] %}
 
-{% if session.type === SessionType.School and session.consents.length > 0 %}
-  {% set sessionActivityRows = sessionActivityRows | push(
-    {
-      key: {
-        text: __("session.activity.unmatchedConsent.label")
-      },
-      value: {
-        html: link(session.uri + "/consents", __mf("consent.count", { count: session.consents.length })) | nhsukMarkdown
-      }
-    }) %}
+{# Unmatched consent for school sessions #}
+{% if session.type === SessionType.School %}
+  {% set consents = session.consents %}
+  {% if consents.length > 0 %}
+    {% set sessionActivityRows = sessionActivityRows | push(
+      {
+        key: {
+          text: __("session.activity.unmatchedConsent.label")
+        },
+        value: {
+          html: link(session.uri + "/consents", __mf("consent.count", { count: consents.length })) | nhsukMarkdown
+        }
+      }) %}
+  {% endif %}
 {% endif %}
 
-{% if session.type === SessionType.Clinic and session.unmatchedAppointments.length > 0 %}
-  {% set sessionActivityRows = sessionActivityRows | push(
-    {
-      key: {
-        text: __("session.activity.unmatchedAppointments.label")
-      },
-      value: {
-        html: link(session.uri + "/unmatched-appointments", __mf("appointments.count.activity", { count: session.unmatchedAppointments.length })) | nhsukMarkdown
-      }
-    }) %}
+{# Unmatched appointments for clinic sessions #}
+{% if session.type === SessionType.Clinic %}
+  {% set unmatchedAppointments = session.unmatchedAppointments %}
+  {% if unmatchedAppointments.length > 0 %}
+    {% set sessionActivityRows = sessionActivityRows | push(
+      {
+        key: {
+          text: __("session.activity.unmatchedAppointments.label")
+        },
+        value: {
+          html: link(session.uri + "/unmatched-appointments", __mf("appointments.count.activity", { count: unmatchedAppointments.length })) | nhsukMarkdown
+        }
+      }) %}
+  {% endif %}
 {% endif %}
 
-{% if sessionActivityRow("getConsent") and session.school_id %}
-  {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("getConsent")) %}
+{# No consent response #}
+{% if session.type === SessionType.School %}
+  {% set noConsentRow = sessionActivityRow("getConsent") %}
+  {% if noConsentRow %}
+    {% set sessionActivityRows = sessionActivityRows | push(noConsentRow) %}
+  {% endif %}
 {% endif %}
 
-{% if sessionActivityRow("followUp") %}
-  {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("followUp")) %}
+{# Consent follow-up requested #}
+{% set followUpRow = sessionActivityRow("followUp") %}
+{% if followUpRow %}
+  {% set sessionActivityRows = sessionActivityRows | push(followUpRow) %}
 {% endif %}
 
-{% if sessionActivityRow("resolveConsent") %}
-  {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("resolveConsent")) %}
+{# Conflicting consent #}
+{% set resolveConsentRow = sessionActivityRow("resolveConsent") %}
+{% if resolveConsentRow %}
+  {% set sessionActivityRows = sessionActivityRows | push(resolveConsentRow) %}
 {% endif %}
 
-{% if sessionActivityRow("instruct") and session.hasPsdProtocol %}
-  {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("instruct")) %}
+{# Can offer additional catch-up vaccinations #}
+{% if session.type === SessionType.Clinic %}
+  {% set catchUpRow = sessionActivityRow("offerCatchUps") %}
+  {% if catchUpRow %}
+    {% set sessionActivityRows = sessionActivityRows | push(catchUpRow) %}
+  {% endif %}
 {% endif %}
 
-{% if sessionActivityRow("record") and session.isActive %}
-  {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("record")) %}
+{# PSD review needed #}
+{% if session.hasPsdProtocol %}
+  {% set psdReviewRow = sessionActivityRow("instruct") %}
+  {% if psdReviewRow %}
+    {% set sessionActivityRows = sessionActivityRows | push(psdReviewRow) %}
+  {% endif %}
+{% endif %}
+
+{# Ready for vaccinator #}
+{% if session.isActive %}
+  {% set readyToVaccinateRow = sessionActivityRow("record") %}
+  {% if readyToVaccinateRow %}
+    {% set sessionActivityRows = sessionActivityRows | push(readyToVaccinateRow) %}
+  {% endif %}
 {% endif %}
 
 {% if sessionActivityRows.length > 0 or session.isCompleted %}

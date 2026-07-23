@@ -26,6 +26,7 @@
           hideClinicStatuses: true,
           hidePatientIneligibleStatus: true,
           hideProgrammeStatuses: account.isSchoolUser,
+          showAdditionalProgrammes: session.type === SessionType.Clinic and (session.isPlanned or session.isActive) and view === 'patients',
           view: view
         }) }}
       </app-auto-submit>
@@ -81,9 +82,15 @@
           }) }}
         {% endif %}
 
+        {% if data.programme_id %}
+          {% set ids = data.programme_id %}
+        {% else %}
+          {# TODO: For clinics, show union of booked and targeted programmes #}
+          {% set ids = session.programme_ids %}
+        {% endif %}
+
         {% for patientSession in results.page %}
           {% set statusHtml %}
-            {% set ids = data.programme_id or session.programme_ids %}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
                 {{ patientSession.formatted.status | nhsukMarkdown }}
@@ -92,7 +99,6 @@
           {% endset %}
 
           {% set consentStatusHtml -%}
-            {% set ids = data.programme_id or session.programme_ids %}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
                 {{ patientSession.formatted.programmeConsent | nhsukMarkdown }}
@@ -134,6 +140,10 @@
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.status.label"),
                   value: consentStatusHtml if account.isSchoolUser else statusHtml
                 } if view != "instruct",
+                additionalProgrammes: {
+                  label: __("patientSession.additionalProgrammes.label"),
+                  value: patientSession.formatted.additionalProgrammesToOffer
+                },
                 clinicAppointment: {
                   label: __("patientSession.clinicAppointment.label"),
                   value: patientSession.clinicAppointment.formatted.timeSlot

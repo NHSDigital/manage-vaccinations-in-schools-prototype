@@ -1,4 +1,5 @@
 export interface PatientFilterQuery {
+  canBeOfferedCatchUps?: string
   clinicStatus?: string
   consent?: string
   instruct?: string
