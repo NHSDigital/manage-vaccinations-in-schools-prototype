@@ -119,14 +119,14 @@ export const getScreenStatus = (patientSession) => {
 
   const responses = Object.values(patientSession.responses)
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
-  const lastTriageNoteWithOutcome = patientSession.triageNotes
-    .filter((event) => event.outcome)
+  const lastTriageNoteWithStatus = patientSession.triageNotes
+    .filter((event) => event.status)
     .at(-1)
 
   if (responsesToTriage.length === 0) {
     // Triage completed without any ‘Yes’ answers to health questions
-    if (lastTriageNoteWithOutcome) {
-      return lastTriageNoteWithOutcome.outcome
+    if (lastTriageNoteWithStatus) {
+      return lastTriageNoteWithStatus.status
     }
 
     // Clinic appointment without any answers to health questions
@@ -139,8 +139,8 @@ export const getScreenStatus = (patientSession) => {
 
   // Triage needed or completed due to answers to health questions
   if (responsesToTriage.length > 0) {
-    if (lastTriageNoteWithOutcome) {
-      return lastTriageNoteWithOutcome.outcome
+    if (lastTriageNoteWithStatus) {
+      return lastTriageNoteWithStatus.status
     }
 
     return ScreenStatus.NeedsTriage

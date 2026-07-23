@@ -110,9 +110,9 @@ export default {
   },
   triage: {
     decision: (triage) =>
-      triage.outcome === ScreenStatus.NeedsTriage
+      triage.status === ScreenStatus.NeedsTriage
         ? 'Triage decision: keep in triage'
-        : `Triage decision: ${lowerCaseFirst(triage.outcome)}`
+        : `Triage decision: ${lowerCaseFirst(triage.status)}`
   },
   vaccination: {
     added: 'Vaccination record added manually',

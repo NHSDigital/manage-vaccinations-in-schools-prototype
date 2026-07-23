@@ -241,7 +241,7 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Can the child be vaccinated (assuming we get the right consent and triage outcomes, if required)?
+   * Can the child be vaccinated (assuming we get the right consent and triage statuses, if required)?
    *
    * @returns {boolean} OK to invite to clinic for a vaccination based on patient status (`true`), or otherwise (`false`)
    */
@@ -841,7 +841,7 @@ export class PatientProgramme extends BaseModel {
       name: activity.triage.decision(event),
       note: event.note,
       type: AuditEventType.ProgrammeNote,
-      outcome: event.outcome,
+      status: event.status,
       outcomeAt_: event.outcomeAt_,
       createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
@@ -849,7 +849,7 @@ export class PatientProgramme extends BaseModel {
     })
 
     let messageTemplate
-    switch (event.outcome) {
+    switch (event.status) {
       case ScreenStatus.DelayVaccination:
         messageTemplate = 'triage-delay-vaccination'
         break

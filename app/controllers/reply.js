@@ -125,7 +125,7 @@ export const replyController = {
           delete reply.contact_uuid
         }
 
-        if (triage?.outcome) {
+        if (triage?.status) {
           patientSession.patientProgramme.recordTriage({
             ...triage,
             ...data?.wizard?.triage, // Wizard values

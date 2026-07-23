@@ -37,8 +37,8 @@
         html: triageNote.note or "—" | nhsukMarkdown
       },
       {
-        header: __("event.outcome.label"),
-        html: triageNote.formatted.outcome
+        header: __("event.status.label"),
+        html: triageNote.formatted.status
       }
     ]) %}
   {% endfor %}
@@ -57,7 +57,7 @@
         },
         { text: __("event.note.label") },
         {
-          text: __("event.outcome.label"),
+          text: __("event.status.label"),
           attributes: {
             width: "25%"
           }
@@ -103,7 +103,7 @@
         text: patientSession.screenVaccineCriteria
       } if patientSession.screenVaccineCriteria,
       items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
-      decorate: "triage.outcome"
+      decorate: "triage.status"
     }) }}
 
     {{ textarea({

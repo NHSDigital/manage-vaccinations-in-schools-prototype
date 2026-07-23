@@ -1635,7 +1635,7 @@ export const en = {
       label: 'Note',
       hint: 'Notes are visible to all users, and cannot be edited or deleted'
     },
-    outcome: {
+    status: {
       label: 'Outcome'
     }
   },
@@ -3417,7 +3417,7 @@ export const en = {
     note: {
       label: 'Triage notes'
     },
-    outcome: {
+    status: {
       label: 'Outcome',
       [ScreenStatus.Vaccinate]: 'Yes, it’s safe to vaccinate',
       [ScreenStatus.VaccinateAlternativeFluInjectionOnly]:
