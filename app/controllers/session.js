@@ -543,18 +543,19 @@ export const sessionController = {
     const programmeTypes = session.programmes.map((programme) => programme.type)
     if (programmeTypes.includes(ProgrammeType.Flu)) {
       vaccineCriteria = Object.values(RecordVaccineCriteria).filter(
-        (outcome) =>
+        (criteria) =>
           ![
             RecordVaccineCriteria.NoMMRPreference,
             RecordVaccineCriteria.AlternativeMMRInjectionOnly
-          ].includes(outcome)
+          ].includes(criteria)
       )
     } else if (programmeTypes.includes(ProgrammeType.MMR)) {
-      vaccineCriteria = Object.values(RecordVaccineCriteria).filter((outcome) =>
-        [
-          RecordVaccineCriteria.NoMMRPreference,
-          RecordVaccineCriteria.AlternativeMMRInjectionOnly
-        ].includes(outcome)
+      vaccineCriteria = Object.values(RecordVaccineCriteria).filter(
+        (criteria) =>
+          [
+            RecordVaccineCriteria.NoMMRPreference,
+            RecordVaccineCriteria.AlternativeMMRInjectionOnly
+          ].includes(criteria)
       )
     }
 
