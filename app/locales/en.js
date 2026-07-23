@@ -2373,8 +2373,12 @@ export const en = {
       }
     },
     assessedBy: {
-      label: 'Practitioner',
+      label: 'Assessed by',
       title: 'Which nurse identified and pre-screened the child'
+    },
+    administeredBy: {
+      label: 'Vaccinated by',
+      title: 'Who will vaccinate the child?'
     },
     check: {
       error:
@@ -2894,14 +2898,34 @@ export const en = {
       count:
         '{count, plural, =0 {no children for {programme}} one {# child for {programme}} other {# children for {programme}}}'
     },
-    fluProtocol: {
+    protocol: {
       label: 'Protocol',
-      title: 'Which protocol will you use for flu vaccinations in this session?'
+      title: 'Vaccination protocol'
     },
-    hasPsdProtocol: {
-      label: 'Use patient specific direction (PSD)',
-      title:
-        'Can healthcare assistants give the nasal spray vaccine using a patient specific direction (PSD)?'
+    protocolNurse: {
+      label: 'Protocol',
+      title: 'Which protocol will registered nurses use to vaccinate children?',
+      pgd: {
+        label: 'A patient group direction (PGD)'
+      },
+      vgd: {
+        label: 'A vaccine group direction (VGD)'
+      }
+    },
+    protocolHCA: {
+      label: 'Protocol for healthcare assistants',
+      title: 'Can healthcare assistants give vaccinations?',
+      no: {
+        label: 'No'
+      },
+      psd: {
+        label:
+          'Yes, the flu nasal spray vaccine under a patient specific direction (PSD)'
+      },
+      vgd: {
+        label:
+          'Yes, the flu nasal spray and injected vaccines under a vaccine group direction (VGD)'
+      }
     },
     'upload-class-list': {
       title: 'Upload class lists'

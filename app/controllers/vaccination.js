@@ -3,7 +3,6 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import {
   VaccinationMethod,
   VaccinationOutcome,
-  VaccinationProtocol,
   VaccinationSite,
   VaccineCriteria,
   UserRole,
@@ -93,9 +92,10 @@ export const vaccinationController = {
       String(patientSession_uuid),
       data
     )
-    const { session, programme, vaccine, instruction } = patientSession
+    const { session, programme, vaccine } = patientSession
     const { identifiedBy, injectionSite, ready, hasSelfIdentified } =
       data.preScreen
+    const administeredBy_uid = data.preScreen?.administeredBy_uid || account.uid
     const assessedBy_uid = data.preScreen?.assessedBy_uid
 
     // Check for default batch
@@ -135,14 +135,8 @@ export const vaccinationController = {
     const role = account.role || UserRole.Nurse
 
     // Flu programme can have PGD or VGD as protocol
-    let protocol = session.fluProtocol || VaccinationProtocol.PGD
-
-    // HCAs uses different protocol depending on vaccine and programme
-    if (role === UserRole.HCA) {
-      if (session.hasPsdProtocol && instruction) {
-        protocol = VaccinationProtocol.PSD
-      }
-    }
+    const protocol =
+      role === UserRole.HCA ? session.protocolHCA : session.protocolNurse
 
     const vaccination = Vaccination.create(
       {
@@ -157,7 +151,7 @@ export const vaccinationController = {
         createdAt: today(),
         createdBy_uid: account.uid,
         administeredAt: today(),
-        administeredBy_uid: account.uid,
+        administeredBy_uid,
         ...(injectionSite && {
           dose: vaccine.dose,
           injectionMethod: VaccinationMethod.Intramuscular,
@@ -387,6 +381,7 @@ export const vaccinationController = {
         })
 
       response.locals.userItems = User.findAll(data)
+        .filter((user) => user.canVaccinate)
         .map((user) => ({
           text: user.fullName,
           value: user.uid

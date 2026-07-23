@@ -91,15 +91,15 @@
     decorate: "preScreen.note"
   }) }}
 
-  {% if session.fluProtocol == VaccinationProtocol.VGD %}
+  {% if session.hasVgdProtocol %}
     {{ select({
       label: { text: __("preScreen.assessedBy.title") },
-      items: userItems(data.users, preScreen.assessedBy),
+      items: userItems(registeredNurseUsers, preScreen.assessedBy),
       decorate: "preScreen.assessedBy_uid",
       attributes: {
         "data-module": "app-autocomplete"
       }
-    }) if options.userIsHCA else input({
+    }) if not account.isRegisteredNurse else input({
       type: "hidden",
       value: account.uid,
       decorate: "preScreen.assessedBy_uid"
@@ -131,6 +131,23 @@
     }
   }) %}
 
+  {% set administeredByHtml = select({
+    label: { text: __("preScreen.administeredBy.title") },
+    items: userItems(allVaccinatingUsers, preScreen.assessedBy),
+    decorate: "preScreen.administeredBy_uid",
+    attributes: {
+      "data-module": "app-autocomplete"
+    }
+  }) %}
+
+  {% if session.hasVgdProtocol and account.isRegisteredNurse and options.canRecordInjectionSite %}
+    {% set preScreenReadyHtml = administeredByHtml + vaccinationSiteHtml %}
+  {% elif session.hasVgdProtocol and account.isRegisteredNurse %}
+    {% set preScreenReadyHtml = administeredByHtml %}
+  {% elif options.canRecordInjectionSite %}
+    {% set preScreenReadyHtml = vaccinationSiteHtml %}
+  {% endif %}
+
   {{ radios({
     fieldset: {
       legend: {
@@ -147,8 +164,8 @@
         text: __("preScreen.ready.yes"),
         value: true,
         conditional: {
-          html: vaccinationSiteHtml
-        } if patientSession.vaccine.criteria != VaccineCriteria.Intranasal
+          html: preScreenReadyHtml
+        } if preScreenReadyHtml
       },
       {
         text: __("preScreen.ready.no"),
@@ -161,7 +178,7 @@
         text: __("preScreen.ready.alternative"),
         value: "alternative",
         conditional: {
-          html: vaccinationSiteHtml
+          html: preScreenReadyHtml
         }
       } if canRecordAlternativeVaccine
     ],

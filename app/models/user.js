@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { UserRole, VaccineMethod } from '../enums.js'
+import { UserRole } from '../enums.js'
 import { formatCode, formatLink } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -84,28 +84,30 @@ export class User extends BaseModel {
   }
 
   /**
-   * Set authorised vaccine methods
+   * User is a registered practitioner?
    *
-   * @param {Array<VaccineMethod>} methods - Vaccine methods
+   * @returns {boolean} User is a registered practitioner?
    */
-  set vaccineMethods(methods) {
-    this.vaccinations = methods
+  get isHealthcareAssistant() {
+    return this.role === UserRole.HCA
   }
 
   /**
-   * Get authorised vaccine methods
+   * User is a registered practitioner?
    *
-   * @returns {Array<VaccineMethod>} Vaccine methods
+   * @returns {boolean} User is a registered practitioner?
    */
-  get vaccineMethods() {
-    switch (true) {
-      case [UserRole.Nurse, UserRole.NursePrescriber].includes(this.role):
-        return [VaccineMethod.Injection, VaccineMethod.Intranasal]
-      case this.role === UserRole.HCA:
-        return [VaccineMethod.Intranasal]
-      default:
-        return []
-    }
+  get isRegisteredNurse() {
+    return [UserRole.Nurse, UserRole.NursePrescriber].includes(this.role)
+  }
+
+  /**
+   * User can vaccinate?
+   *
+   * @returns {boolean} User can vaccinate?
+   */
+  get canVaccinate() {
+    return this.isHealthcareAssistant || this.isRegisteredNurse
   }
 
   /**

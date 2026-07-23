@@ -82,8 +82,8 @@ import { BaseModel } from './base.js'
  * @property {Date} [cancelledAt] - Date session cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
- * @property {VaccinationProtocol} [fluProtocol] - Default protocol for flu programme
- * @property {boolean} [hasPsdProtocol] - Enable PSD protocol
+ * @property {VaccinationProtocol} [protocolNurse] - Default protocol for nurse
+ * @property {VaccinationProtocol} [protocolHCA] - Default protocol for HCA
  */
 
 /**
@@ -122,6 +122,7 @@ export class Session extends BaseModel {
     this.presetNames = stringToArray(options?.presetNames)
     this.cancelledAt = options?.cancelledAt && new Date(options.cancelledAt)
     this.hasRegistration = stringToBoolean(options?.hasRegistration)
+    this.register = options?.register || {}
 
     if (this.type === SessionType.Clinic) {
       this.vaccinationPeriods = options?.vaccinationPeriods
@@ -150,15 +151,9 @@ export class Session extends BaseModel {
 
     // Sessions administering the flu programme can use PGD or VGD protocol
     if (this.programme_ids.includes('flu')) {
-      this.fluProtocol = options?.fluProtocol || VaccinationProtocol.PGD
+      this.protocolNurse = options?.protocolNurse || VaccinationProtocol.PGD
+      this.protocolHCA = options?.protocolHCA || ''
     }
-
-    // PSD protocol can only be enabled if flu protocol is PGD
-    if (this.fluProtocol === VaccinationProtocol.PGD) {
-      this.hasPsdProtocol = stringToBoolean(options?.hasPsdProtocol) || false
-    }
-
-    this.register = options?.register || {}
   }
 
   /**
@@ -348,6 +343,27 @@ export class Session extends BaseModel {
    */
   get isPastSession() {
     return this.academicYear < getCurrentAcademicYear()
+  }
+
+  /**
+   * Does session need to support the PSD protocol?
+   *
+   * @returns {boolean} Session need to support the PSD protocol?
+   */
+  get hasPsdProtocol() {
+    return this.protocolHCA === VaccinationProtocol.PSD
+  }
+
+  /**
+   * Does session need to support the VGD protocol?
+   *
+   * @returns {boolean} Session need to support the VGD protocol?
+   */
+  get hasVgdProtocol() {
+    return (
+      this.protocolNurse === VaccinationProtocol.VGD ||
+      this.protocolHCA === VaccinationProtocol.VGD
+    )
   }
 
   /**
