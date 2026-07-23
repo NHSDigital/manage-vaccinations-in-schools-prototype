@@ -446,7 +446,7 @@ export const sessionController = {
     }
 
     // Filter by sub-status(es)
-    for (const [programmeOutcome, status] of Object.entries({
+    for (const [programmeStatus, status] of Object.entries({
       [PatientStatus.Consent]: 'patientConsent',
       [PatientStatus.Deferred]: 'patientDeferred',
       [PatientStatus.Due]: 'vaccineCriteria',
@@ -454,7 +454,7 @@ export const sessionController = {
       [PatientStatus.Triage]: 'patientTriage',
       [PatientStatus.Vaccinated]: 'patientVaccinated'
     })) {
-      if (filters.status === programmeOutcome && filters[status] !== 'none') {
+      if (filters.status === programmeStatus && filters[status] !== 'none') {
         let statuses = filters[status]
         statuses = Array.isArray(statuses) ? statuses : [statuses]
         results = results.filter((patientSession) =>
