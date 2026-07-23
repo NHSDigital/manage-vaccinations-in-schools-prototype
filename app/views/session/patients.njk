@@ -26,7 +26,7 @@
           hideClinicStatuses: true,
           hidePatientIneligibleStatus: true,
           hideProgrammeStatuses: account.isSchoolUser,
-          showAdditionalProgrammes: session.type === SessionType.Clinic and (session.isPlanned or session.isActive) and view === 'report',
+          showAdditionalProgrammes: session.type === SessionType.Clinic and (session.isPlanned or session.isActive) and view === 'patients',
           view: view
         }) }}
       </app-auto-submit>
@@ -140,6 +140,10 @@
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.status.label"),
                   value: consentStatusHtml if account.isSchoolUser else statusHtml
                 } if view != "instruct",
+                additionalProgrammes: {
+                  label: __("patientSession.additionalProgrammes.label"),
+                  value: patientSession.formatted.additionalProgrammesToOffer
+                },
                 clinicAppointment: {
                   label: __("patientSession.clinicAppointment.label"),
                   value: patientSession.clinicAppointment.formatted.timeSlot

@@ -840,6 +840,18 @@ export class PatientSession extends BaseModel {
               )
               return filters.formatList(outstanding)
             }
+            case 'additionalProgrammesToOffer': {
+              const additionalProgrammesToOffer =
+                this.additionalProgrammesToOffer
+              return additionalProgrammesToOffer.length
+                ? additionalProgrammesToOffer
+                    .map(
+                      (patientProgramme) =>
+                        patientProgramme.formatted.programmeStatus
+                    )
+                    .join('<br>')
+                : undefined
+            }
             case 'vaccineCriteria':
               return formatVaccineCriteria(this.vaccineCriteria)
             case 'yearGroup': {

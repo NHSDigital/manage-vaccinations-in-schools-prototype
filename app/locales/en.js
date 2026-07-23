@@ -2256,6 +2256,9 @@ export const en = {
     },
     clinicAttendanceType: {
       label: 'Attendance type'
+    },
+    additionalProgrammes: {
+      label: 'Can also offer'
     }
   },
   pdsRecord: {
