@@ -258,7 +258,7 @@ export class PatientProgramme extends BaseModel {
             return false
           case PatientDeferredStatus.DelayVaccination: {
             const firstSafeDate =
-              this.lastPatientSession?.triageNotes?.at(-1)?.outcomeAt
+              this.lastPatientSession?.triageNotes?.at(-1)?.statusInvalidAt
             return firstSafeDate === undefined || today() > firstSafeDate
           }
           default:
@@ -842,7 +842,7 @@ export class PatientProgramme extends BaseModel {
       note: event.note,
       type: AuditEventType.ProgrammeNote,
       status: event.status,
-      outcomeAt_: event.outcomeAt_,
+      statusInvalidAt_: event.statusInvalidAt_,
       createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
       programme_ids: [this.programme_id]

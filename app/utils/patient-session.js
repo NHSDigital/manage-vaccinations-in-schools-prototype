@@ -103,8 +103,8 @@ export function getScreenStatusDescription(patientSession) {
     case ScreenStatus.InvitedToClinic:
       return `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should take place at a clinic.`
     case ScreenStatus.DelayVaccination:
-      return triageNote?.outcomeAt
-        ? `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.outcomeAt}.`
+      return triageNote?.statusInvalidAt
+        ? `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.statusInvalidAt}.`
         : `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed`
     case ScreenStatus.DoNotVaccinate:
       return `${user.fullName} decided that ${patientSession.patient.firstName} should not be vaccinated.`

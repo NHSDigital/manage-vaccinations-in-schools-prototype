@@ -3408,7 +3408,7 @@ export const en = {
       title: 'Update triage outcome',
       success: 'Triage outcome updated'
     },
-    outcomeAt: {
+    statusInvalidAt: {
       label: 'Delayed until',
       title:
         'What is the earliest date {{patient.firstName}} can be vaccinated?',

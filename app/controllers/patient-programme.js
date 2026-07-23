@@ -142,7 +142,7 @@ export const patientProgrammeController = {
 
     patientProgramme.recordTriage({
       status: triage.status,
-      outcomeAt_: triage.outcomeAt_,
+      statusInvalidAt_: triage.statusInvalidAt_,
       note: triage.note,
       createdBy_uid: account.uid
     })
