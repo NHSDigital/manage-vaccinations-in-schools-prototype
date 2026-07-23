@@ -2988,7 +2988,7 @@ export const en = {
           '{count, plural, =0 {No children} one {# child} other {# children}} with conflicting consent'
       },
       offerCatchUps: {
-        label: 'Offer catch-ups',
+        label: 'Offer additional vaccinations',
         count:
           '{count, plural, =0 {No children} one {# child} other {# children}} can be offered additional vaccinations'
       },
