@@ -4,7 +4,6 @@ import _ from 'lodash'
 import {
   AcademicYear,
   InstructionStatus,
-  PatientClinicStatus,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -501,24 +500,10 @@ export const sessionController = {
 
     // Remove patients that don't have any additional catch-up vaccinations they can be offered
     if (additional) {
-      results = results.filter((patientSession) => {
-        const bookedProgramme_ids = patientSession.siblingPatientSessions.map(
-          (sibling) => sibling.programme_id
-        )
-        const offerProgramme_ids = Object.values(
-          patientSession.patient.activeProgrammes
-        )
-          .filter((programme) =>
-            [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
-              String(programme.clinicStatus)
-            )
-          )
-          .map((programme) => programme.programme_id)
-
-        return offerProgramme_ids.some(
-          (id) => !bookedProgramme_ids.includes(id)
-        )
-      })
+      results = results.filter(
+        ({ canBeOfferedAdditionalProgrammes }) =>
+          canBeOfferedAdditionalProgrammes
+      )
     }
 
     // Remove patient sessions where outcome returns false

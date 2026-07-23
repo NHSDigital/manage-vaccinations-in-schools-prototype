@@ -346,6 +346,40 @@ export class PatientSession extends BaseModel {
   }
 
   /**
+   * Is the patient booked into clinic for only a subset of the programmes they can be vaccinated for at clinic?
+   *
+   * @returns {boolean} true if can be offered other vaccinations, or false otherwise
+   */
+  get canBeOfferedAdditionalProgrammes() {
+    return this.additionalProgrammesToOffer.length > 0
+  }
+
+  /**
+   * Get any extra programmes that can be offered at clinic beyond what's already planned
+   *
+   * @returns {Array<PatientProgramme>} the additional programmes that can be offered
+   */
+  get additionalProgrammesToOffer() {
+    if (this.session.type !== SessionType.Clinic) {
+      return []
+    }
+
+    const bookedProgramme_ids = this.siblingPatientSessions.map(
+      (sibling) => sibling.programme_id
+    )
+    const programmesToOffer = Object.values(
+      this.patient.activeProgrammes
+    ).filter(
+      (patientProgramme) =>
+        [PatientClinicStatus.Ready, PatientClinicStatus.Invited].includes(
+          String(patientProgramme.clinicStatus)
+        ) && !bookedProgramme_ids.includes(patientProgramme.programme_id)
+    )
+
+    return programmesToOffer
+  }
+
+  /**
    * Get related patient sessions
    *
    * @returns {Array<PatientSession>|undefined} Patient sessions
