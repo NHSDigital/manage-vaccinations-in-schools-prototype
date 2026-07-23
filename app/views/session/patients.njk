@@ -82,9 +82,15 @@
           }) }}
         {% endif %}
 
+        {% if data.programme_id %}
+          {% set ids = data.programme_id %}
+        {% else %}
+          {# TODO: For clinics, show union of booked and targeted programmes #}
+          {% set ids = session.programme_ids %}
+        {% endif %}
+
         {% for patientSession in results.page %}
           {% set statusHtml %}
-            {% set ids = data.programme_id or session.programme_ids %}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
                 {{ patientSession.formatted.status | nhsukMarkdown }}
@@ -93,7 +99,6 @@
           {% endset %}
 
           {% set consentStatusHtml -%}
-            {% set ids = data.programme_id or session.programme_ids %}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
                 {{ patientSession.formatted.programmeConsent | nhsukMarkdown }}
