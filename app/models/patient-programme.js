@@ -31,7 +31,7 @@ import {
   today
 } from '../utils/date.js'
 import {
-  getConsentOutcomeProperties,
+  getConsentStatusProperties,
   getPatientClinicStatusProperties,
   getPatientStatusProperties
 } from '../utils/enum-properties.js'
@@ -736,9 +736,9 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get consent outcome
+   * Get consent status
    *
-   * @returns {ConsentOutcome|PatientStatus} Consent outcome
+   * @returns {ConsentStatus|PatientStatus} Consent status
    */
   get consent() {
     return this.lastPatientSession?.consent
@@ -778,7 +778,7 @@ export class PatientProgramme extends BaseModel {
               return this.consent
                 ? formatProgrammeStatus(
                     this.programme,
-                    getConsentOutcomeProperties(this.consent)
+                    getConsentStatusProperties(this.consent)
                   )
                 : formatProgrammeStatus(
                     this.programme,
@@ -883,7 +883,7 @@ PatientProgramme.relate('patient_uuid', () => Patient, 'patient')
 PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
- * @import { ConsentOutcome, RecordVaccineCriteria } from '../enums.js'
+ * @import { ConsentStatus, RecordVaccineCriteria } from '../enums.js'
  * @import { PatientSession } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

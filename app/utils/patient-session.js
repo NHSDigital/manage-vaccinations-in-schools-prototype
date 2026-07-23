@@ -2,7 +2,7 @@ import filters from '@x-govuk/govuk-prototype-filters'
 import { isToday } from 'date-fns'
 
 import {
-  ConsentOutcome,
+  ConsentStatus,
   ConsentWindow,
   InstructionStatus,
   PatientConsentStatus,
@@ -40,12 +40,12 @@ export function canRecordOutcome(patientSession) {
 }
 
 /**
- * Get expanded description about consent outcome
+ * Get expanded description about consent status
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {string} Consent outcome description
+ * @returns {string} Consent status description
  */
-export function getConsentOutcomeDescription(patientSession) {
+export function getConsentStatusDescription(patientSession) {
   const relationships = filters.formatList(patientSession.parentalRelationships)
   const contactNames = filters.formatList(
     patientSession.contactsRequestingFollowUp
@@ -64,21 +64,21 @@ export function getConsentOutcomeDescription(patientSession) {
   }
 
   switch (patientSession.consent) {
-    case ConsentOutcome.NoResponse:
+    case ConsentStatus.NoResponse:
       return 'No-one responded to our requests for consent.'
-    case ConsentOutcome.NotDelivered:
+    case ConsentStatus.NotDelivered:
       return 'Consent response could not be delivered.'
-    case ConsentOutcome.Inconsistent:
+    case ConsentStatus.Inconsistent:
       return 'You can only vaccinate if all respondents give consent.'
-    case ConsentOutcome.Declined:
+    case ConsentStatus.Declined:
       return `${contactNames} would like to speak to a member of the team about other options for their child’s vaccination.`
-    case ConsentOutcome.Given:
-    case ConsentOutcome.GivenForAlternativeInjection:
-    case ConsentOutcome.GivenForIntranasal:
+    case ConsentStatus.Given:
+    case ConsentStatus.GivenForAlternativeInjection:
+    case ConsentStatus.GivenForIntranasal:
       return `${relationships} gave consent.`
-    case ConsentOutcome.Refused:
+    case ConsentStatus.Refused:
       return `${relationships} refused consent.`
-    case ConsentOutcome.FinalRefusal:
+    case ConsentStatus.FinalRefusal:
       return `Refusal to give consent confirmed by ${relationships}.`
     default:
   }
@@ -192,7 +192,7 @@ export function getVaccinationOutcome(patientSession) {
   if (patientSession.lastVaccinationOutcome) {
     return patientSession.lastVaccinationOutcome.outcome
   } else if (
-    [ConsentOutcome.Refused, ConsentOutcome.FinalRefusal].includes(
+    [ConsentStatus.Refused, ConsentStatus.FinalRefusal].includes(
       patientSession.consent
     )
   ) {
@@ -247,20 +247,20 @@ export function getPatientStatus(patientSession) {
       return PatientStatus.Triage
   }
 
-  // Has consent outcome
+  // Has consent status
   if (patientSession.consentGiven) {
     return PatientStatus.Due
   }
 
   switch (patientSession.consent) {
-    case ConsentOutcome.Declined:
-    case ConsentOutcome.Inconsistent:
-    case ConsentOutcome.Refused:
-    case ConsentOutcome.FinalRefusal:
+    case ConsentStatus.Declined:
+    case ConsentStatus.Inconsistent:
+    case ConsentStatus.Refused:
+    case ConsentStatus.FinalRefusal:
       return PatientStatus.Refused
 
-    case ConsentOutcome.NotDelivered:
-    case ConsentOutcome.NoResponse:
+    case ConsentStatus.NotDelivered:
+    case ConsentStatus.NoResponse:
       return PatientStatus.Consent
 
     default:
@@ -295,15 +295,15 @@ export function getPatientConsentStatus(patientSession) {
   }
 
   switch (patientSession.consent) {
-    case ConsentOutcome.NotDelivered:
+    case ConsentStatus.NotDelivered:
       return PatientConsentStatus.NotDelivered
-    case ConsentOutcome.NoResponse:
+    case ConsentStatus.NoResponse:
       return PatientConsentStatus.NoResponse
-    case ConsentOutcome.Declined:
+    case ConsentStatus.Declined:
       return PatientRefusedStatus.FollowUp
-    case ConsentOutcome.Inconsistent:
+    case ConsentStatus.Inconsistent:
       return PatientRefusedStatus.Conflict
-    case ConsentOutcome.Refused:
+    case ConsentStatus.Refused:
       return PatientRefusedStatus.Refusal
   }
 }
@@ -316,12 +316,12 @@ export function getPatientConsentStatus(patientSession) {
  */
 export function getPatientRefusedStatus(patientSession) {
   switch (patientSession.consent) {
-    case ConsentOutcome.Inconsistent:
+    case ConsentStatus.Inconsistent:
       return PatientRefusedStatus.Conflict
-    case ConsentOutcome.Declined:
+    case ConsentStatus.Declined:
       return PatientRefusedStatus.FollowUp
-    case ConsentOutcome.Refused:
-    case ConsentOutcome.FinalRefusal:
+    case ConsentStatus.Refused:
+    case ConsentStatus.FinalRefusal:
       return PatientRefusedStatus.Refusal
   }
 }

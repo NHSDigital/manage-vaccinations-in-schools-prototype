@@ -1,5 +1,5 @@
 import {
-  ConsentOutcome,
+  ConsentStatus,
   DownloadStatus,
   InstructionStatus,
   PatientClinicStatus,
@@ -13,16 +13,16 @@ import {
   VaccinationSyncStatus
 } from '../enums.js'
 
-const CONSENT_OUTCOME_COLOURS = {
-  [ConsentOutcome.NoResponse]: 'grey',
-  [ConsentOutcome.NotDelivered]: 'orange',
-  [ConsentOutcome.Inconsistent]: 'orange',
-  [ConsentOutcome.Given]: 'green',
-  [ConsentOutcome.GivenForAlternativeInjection]: 'green',
-  [ConsentOutcome.GivenForIntranasal]: 'green',
-  [ConsentOutcome.Declined]: 'yellow',
-  [ConsentOutcome.Refused]: 'red',
-  [ConsentOutcome.FinalRefusal]: 'red'
+const CONSENT_STATUS_COLOURS = {
+  [ConsentStatus.NoResponse]: 'grey',
+  [ConsentStatus.NotDelivered]: 'orange',
+  [ConsentStatus.Inconsistent]: 'orange',
+  [ConsentStatus.Given]: 'green',
+  [ConsentStatus.GivenForAlternativeInjection]: 'green',
+  [ConsentStatus.GivenForIntranasal]: 'green',
+  [ConsentStatus.Declined]: 'yellow',
+  [ConsentStatus.Refused]: 'red',
+  [ConsentStatus.FinalRefusal]: 'red'
 }
 
 const DOWNLOAD_STATUS_COLOURS = {
@@ -112,13 +112,13 @@ export function getPatientClinicStatusProperties(status) {
 }
 
 /**
- * Get consent outcome properties
+ * Get consent status properties
  *
- * @param {ConsentOutcome} outcome - Consent outcome
- * @returns {object} Outcome properties
+ * @param {ConsentStatus} status - Consent status
+ * @returns {object} Status properties
  */
-export function getConsentOutcomeProperties(outcome) {
-  return { colour: CONSENT_OUTCOME_COLOURS[outcome], text: outcome }
+export function getConsentStatusProperties(status) {
+  return { colour: CONSENT_STATUS_COLOURS[status], text: status }
 }
 
 /**

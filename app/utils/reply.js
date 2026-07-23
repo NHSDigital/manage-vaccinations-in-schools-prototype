@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 
 import { healthConditions } from '../datasets/health-conditions.js'
 import {
-  ConsentOutcome,
+  ConsentStatus,
   ConsentVaccineCriteria,
   ProgrammeType,
   ReplyDecision,
@@ -114,27 +114,27 @@ export function getConsentHealthAnswers(patientSession) {
 }
 
 /**
- * Get consent outcome
+ * Get confirmed consent status
  *
  * @param {Reply} reply - Reply
  * @param {Session} session - Session
- * @returns {ConsentOutcome} Consent outcome
+ * @returns {ConsentStatus} Confirmed consent status
  */
-export const getConfirmedConsentOutcome = (reply, session) => {
+export const getConfirmedConsentStatus = (reply, session) => {
   if (!reply.delivered) {
-    return ConsentOutcome.NotDelivered
+    return ConsentStatus.NotDelivered
   }
 
   if (reply.decision === ReplyDecision.NoResponse) {
-    return ConsentOutcome.NoResponse
+    return ConsentStatus.NoResponse
   }
 
   if (reply.decision === ReplyDecision.Refused && reply.hasConfirmedRefusal) {
-    return ConsentOutcome.FinalRefusal
+    return ConsentStatus.FinalRefusal
   }
 
   if (reply.hasRefusedConsent) {
-    return ConsentOutcome.Refused
+    return ConsentStatus.Refused
   }
 
   if (reply.hasGivenConsent) {
@@ -142,7 +142,7 @@ export const getConfirmedConsentOutcome = (reply, session) => {
       session.canOfferAlternativeVaccine &&
       reply.decision === ReplyDecision.OnlyAlternativeInjection
     ) {
-      return ConsentOutcome.GivenForAlternativeInjection
+      return ConsentStatus.GivenForAlternativeInjection
     }
 
     if (
@@ -150,25 +150,25 @@ export const getConfirmedConsentOutcome = (reply, session) => {
       reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
       !reply.hasConsentForAlternativeVaccine
     ) {
-      return ConsentOutcome.GivenForIntranasal
+      return ConsentStatus.GivenForIntranasal
     }
 
-    return ConsentOutcome.Given
+    return ConsentStatus.Given
   }
 
   return reply.decision
 }
 
 /**
- * Get consent outcome
+ * Get consent status
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {ConsentOutcome} Consent outcome
+ * @returns {ConsentStatus} Consent status
  */
-export const getConsentOutcome = (patientSession) => {
+export const getConsentStatus = (patientSession) => {
   // If patient is 16+, assume consent given
   if (patientSession.patient.isPost16) {
-    return ConsentOutcome.Given
+    return ConsentStatus.Given
   }
 
   // Get valid replies
@@ -178,12 +178,12 @@ export const getConsentOutcome = (patientSession) => {
 
   // If no valid replies, no response
   if (validReplies.length === 0) {
-    return ConsentOutcome.NoResponse
+    return ConsentStatus.NoResponse
   }
 
   // If all valid replies were undelivered, request failed
   if (validReplies.every(({ delivered }) => !delivered)) {
-    return ConsentOutcome.NotDelivered
+    return ConsentStatus.NotDelivered
   }
 
   // Get valid and delivered replies
@@ -192,12 +192,12 @@ export const getConsentOutcome = (patientSession) => {
   // If any reply is child self consenting, use child’s decision
   const childReply = replies.find((reply) => reply.hasSelfConsent)
   if (childReply) {
-    return getConfirmedConsentOutcome(childReply, patientSession.session)
+    return getConfirmedConsentStatus(childReply, patientSession.session)
   }
 
   // If only one reply, use that decision
   if (replies.length === 1) {
-    return getConfirmedConsentOutcome(replies[0], patientSession.session)
+    return getConfirmedConsentStatus(replies[0], patientSession.session)
   }
 
   // If many replies, determine if responses are consistent or inconsistent
@@ -209,18 +209,18 @@ export const getConsentOutcome = (patientSession) => {
           hasRefusedConsent && hasConfirmedRefusal
       )
     ) {
-      return ConsentOutcome.FinalRefusal
+      return ConsentStatus.FinalRefusal
     }
 
     // If one of the replies is a refusal, consent is refused
     if (replies.find(({ hasRefusedConsent }) => hasRefusedConsent)) {
-      return ConsentOutcome.Refused
+      return ConsentStatus.Refused
     }
 
     // If one of the replies has requested follow up, show this status
     // over showing inconsistent consent
     if (replies.find(({ hasDeclinedConsent }) => hasDeclinedConsent)) {
-      return ConsentOutcome.Declined
+      return ConsentStatus.Declined
     }
 
     // If consent given, determine which vaccine method has consent
@@ -247,17 +247,17 @@ export const getConsentOutcome = (patientSession) => {
         )
 
         if (someWantInjectionOnly && someWantIntranasalOnly) {
-          return ConsentOutcome.Inconsistent
+          return ConsentStatus.Inconsistent
         }
 
         if (
           allWantInjection ||
           (someWantInjectionOnly && allAcceptAlternative)
         ) {
-          return ConsentOutcome.GivenForAlternativeInjection
+          return ConsentStatus.GivenForAlternativeInjection
         }
 
-        return ConsentOutcome.GivenForIntranasal
+        return ConsentStatus.GivenForIntranasal
       }
 
       // For MMR programme, determine if any consent requested gelatine-free
@@ -268,19 +268,19 @@ export const getConsentOutcome = (patientSession) => {
               hasConsentForAlternativeVaccine
           )
         ) {
-          return ConsentOutcome.GivenForAlternativeInjection
+          return ConsentStatus.GivenForAlternativeInjection
         }
       }
 
       if (replies.every(({ hasGivenConsent }) => hasGivenConsent)) {
-        return ConsentOutcome.Given
+        return ConsentStatus.Given
       }
     }
 
-    return ConsentOutcome.Inconsistent
+    return ConsentStatus.Inconsistent
   }
 
-  return ConsentOutcome.NoResponse
+  return ConsentStatus.NoResponse
 }
 
 /**
