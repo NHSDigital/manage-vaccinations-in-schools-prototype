@@ -380,7 +380,8 @@ export const sessionController = {
    */
   readPatientSessions(request, response, next) {
     const { view } = request.params
-    const { additional, option, q, programme_id, yearGroup } = request.query
+    const { canBeOfferedCatchUps, option, q, programme_id, yearGroup } =
+      request.query
     const { data } = request.session
     const { account, session } = response.locals
 
@@ -499,10 +500,9 @@ export const sessionController = {
     }
 
     // Remove patients that don't have any additional catch-up vaccinations they can be offered
-    if (additional) {
+    if (canBeOfferedCatchUps) {
       results = results.filter(
-        ({ canBeOfferedAdditionalProgrammes }) =>
-          canBeOfferedAdditionalProgrammes
+        ({ canBeOfferedCatchUps }) => canBeOfferedCatchUps
       )
     }
 
@@ -623,7 +623,7 @@ export const sessionController = {
       request,
       ['clinicStatus', 'instruct', 'q', 'register', 'status'],
       [
-        'additional',
+        'canBeOfferedCatchUps',
         'option',
         'patientConsent',
         'patientDeferred',

@@ -350,7 +350,7 @@ export class PatientSession extends BaseModel {
    *
    * @returns {boolean} true if can be offered other vaccinations, or false otherwise
    */
-  get canBeOfferedAdditionalProgrammes() {
+  get canBeOfferedCatchUps() {
     return this.additionalProgrammesToOffer.length > 0
   }
 

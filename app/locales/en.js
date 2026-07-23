@@ -2987,6 +2987,11 @@ export const en = {
         count:
           '{count, plural, =0 {No children} one {# child} other {# children}} with conflicting consent'
       },
+      offerCatchUps: {
+        label: 'Offer catch-ups',
+        count:
+          '{count, plural, =0 {No children} one {# child} other {# children}} can be offered additional vaccinations'
+      },
       instruct: {
         label: 'PSD review needed',
         count:

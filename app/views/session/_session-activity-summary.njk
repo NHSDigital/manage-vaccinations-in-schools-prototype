@@ -36,6 +36,13 @@
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("resolveConsent")) %}
 {% endif %}
 
+{% if session.type === SessionType.Clinic %}
+  {% set catchUpRow = sessionActivityRow("offerCatchUps") %}
+  {% if catchUpRow %}
+    {% set sessionActivityRows = sessionActivityRows | push(catchUpRow) %}
+  {% endif %}
+{% endif %}
+
 {% if sessionActivityRow("instruct") and session.hasPsdProtocol %}
   {% set sessionActivityRows = sessionActivityRows | push(sessionActivityRow("instruct")) %}
 {% endif %}

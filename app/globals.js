@@ -426,6 +426,11 @@ export default () => {
         key: 'patientRefused',
         value: PatientRefusedStatus.Conflict
       },
+      offerCatchUps: {
+        view: 'patients',
+        key: 'canBeOfferedCatchUps',
+        value: true
+      },
       instruct: {
         view: 'instruct',
         key: 'instruct',
