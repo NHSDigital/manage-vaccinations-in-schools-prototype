@@ -20,7 +20,7 @@ import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatContact } from '../utils/string.js'
 import {
-  getScreenOutcomesForConsentMethod,
+  getScreenStatusesForConsentMethod,
   getScreenVaccineCriteria
 } from '../utils/triage.js'
 
@@ -322,8 +322,8 @@ export const replyController = {
         )
       }
 
-      response.locals.screenOutcomesForConsentMethod =
-        getScreenOutcomesForConsentMethod(programme, [reply])
+      response.locals.screenStatusesForConsentMethod =
+        getScreenStatusesForConsentMethod(programme, [reply])
 
       response.locals.screenVaccineCriteria = getScreenVaccineCriteria(
         programme,

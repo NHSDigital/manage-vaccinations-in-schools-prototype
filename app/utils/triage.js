@@ -1,7 +1,7 @@
 import {
   ProgrammeType,
   ReplyDecision,
-  ScreenOutcome,
+  ScreenStatus,
   ScreenVaccineCriteria,
   VaccinationOutcome
 } from '../enums.js'
@@ -9,13 +9,13 @@ import {
 import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
- * Get screen outcomes for vaccination method(s) consented to
+ * Get screening statuses for vaccination method(s) consented to
  *
  * @param {Programme} programme - Programme
  * @param {Array<Reply>} replies - Replies
- * @returns {Array<ScreenOutcome>} Screen outcomes
+ * @returns {Array<ScreenStatus>} Screening statuses
  */
-export const getScreenOutcomesForConsentMethod = (programme, replies) => {
+export const getScreenStatusesForConsentMethod = (programme, replies) => {
   const hasConsentForInjection = replies?.every(
     ({ hasConsentForInjection }) => hasConsentForInjection
   )
@@ -25,25 +25,25 @@ export const getScreenOutcomesForConsentMethod = (programme, replies) => {
   )
 
   return [
-    ...(!programme?.alternativeVaccine ? [ScreenOutcome.Vaccinate] : []),
+    ...(!programme?.alternativeVaccine ? [ScreenStatus.Vaccinate] : []),
     ...(programme?.alternativeVaccine &&
     programme.type === ProgrammeType.Flu &&
     !hasConsentForAlternativeInjectionOnly
-      ? [ScreenOutcome.VaccinateIntranasalOnly]
+      ? [ScreenStatus.VaccinateIntranasalOnly]
       : []),
     ...(programme?.alternativeVaccine &&
     programme.type === ProgrammeType.Flu &&
     hasConsentForInjection
-      ? [ScreenOutcome.VaccinateAlternativeFluInjectionOnly]
+      ? [ScreenStatus.VaccinateAlternativeFluInjectionOnly]
       : []),
     ...(programme?.alternativeVaccine && programme.type === ProgrammeType.MMR
-      ? [ScreenOutcome.VaccinateAlternativeFluInjectionOnly]
+      ? [ScreenStatus.VaccinateAlternativeFluInjectionOnly]
       : []),
     'or',
-    ScreenOutcome.NeedsTriage,
-    ScreenOutcome.InvitedToClinic,
-    ScreenOutcome.DelayVaccination,
-    ScreenOutcome.DoNotVaccinate
+    ScreenStatus.NeedsTriage,
+    ScreenStatus.InvitedToClinic,
+    ScreenStatus.DelayVaccination,
+    ScreenStatus.DoNotVaccinate
   ]
 }
 
@@ -82,12 +82,12 @@ export const getScreenVaccineCriteria = (programme, replies) => {
 }
 
 /**
- * Get screen outcome (what was the triage decision)
+ * Get screening status (what was the triage decision)
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {ScreenOutcome|boolean} Screen outcome
+ * @returns {ScreenStatus|boolean} Screening status
  */
-export const getScreenOutcome = (patientSession) => {
+export const getScreenStatus = (patientSession) => {
   // No consent given, so cannot triage yet
   if (!patientSession.consentGiven) {
     return false
@@ -99,21 +99,21 @@ export const getScreenOutcome = (patientSession) => {
       patientSession.lastVaccinationOutcome.outcome ===
       VaccinationOutcome.InvitedToClinic
     ) {
-      return ScreenOutcome.InvitedToClinic
+      return ScreenStatus.InvitedToClinic
     }
 
     if (
       patientSession.lastVaccinationOutcome.outcome ===
       VaccinationOutcome.DelayVaccination
     ) {
-      return ScreenOutcome.DelayVaccination
+      return ScreenStatus.DelayVaccination
     }
 
     if (
       patientSession.lastVaccinationOutcome.outcome ===
       VaccinationOutcome.DoNotVaccinate
     ) {
-      return ScreenOutcome.DoNotVaccinate
+      return ScreenStatus.DoNotVaccinate
     }
   }
 
@@ -131,7 +131,7 @@ export const getScreenOutcome = (patientSession) => {
 
     // Clinic appointment without any answers to health questions
     if (!responses.length && patientSession.clinicAppointment) {
-      return ScreenOutcome.NeedsTriage
+      return ScreenStatus.NeedsTriage
     }
 
     return false
@@ -143,7 +143,7 @@ export const getScreenOutcome = (patientSession) => {
       return lastTriageNoteWithOutcome.outcome
     }
 
-    return ScreenOutcome.NeedsTriage
+    return ScreenStatus.NeedsTriage
   }
 
   return false

@@ -205,15 +205,15 @@ export default () => {
   }
 
   /**
-   * Get triage outcome form field items
+   * Get triage status form field items
    *
-   * @param {Array} outcomes - Screen outcomes
+   * @param {Array<string>} statuses - Screening statuses
    * @returns {object} Form field items
    */
-  globals.triageOutcomeItems = function (outcomes) {
+  globals.triageStatusItems = function (statuses) {
     const { __ } = this.ctx
 
-    return Object.values(outcomes).map((value) =>
+    return Object.values(statuses).map((value) =>
       value === 'or'
         ? { divider: 'or' }
         : {

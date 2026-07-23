@@ -26,7 +26,7 @@
     decorate: "triage.outcomeAt_"
   }) %}
 
-  {% set outcomeItems = injectConditionalHtml(triageOutcomeItems(screenOutcomesForConsentMethod), ScreenOutcome.VaccinateIntranasal, psdRadiosHtml) if patientSession.programme.alternativeVaccine and reply.decision != ReplyDecision.OnlyAlternativeInjection and account.canPrescribe else triageOutcomeItems(screenOutcomesForConsentMethod) %}
+  {% set statusItems = injectConditionalHtml(triageStatusItems(screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasal, psdRadiosHtml) if patientSession.programme.alternativeVaccine and reply.decision != ReplyDecision.OnlyAlternativeInjection and account.canPrescribe else triageStatusItems(screenStatusesForConsentMethod) %}
 
   {{ radios({
     fieldset: {
@@ -38,7 +38,7 @@
     hint: {
       text: screenVaccineCriteria
     } if screenVaccineCriteria,
-    items: injectConditionalHtml(outcomeItems, ScreenOutcome.DelayVaccination, delayVaccinationHtml),
+    items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
     decorate: "triage.outcome"
   }) }}
 

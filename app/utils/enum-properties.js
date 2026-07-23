@@ -7,7 +7,7 @@ import {
   RegistrationStatus,
   ReplyDecision,
   SchoolStatus,
-  ScreenOutcome,
+  ScreenStatus,
   UploadStatus,
   VaccinationOutcome,
   VaccinationSyncStatus
@@ -66,11 +66,11 @@ const SCHOOL_STATUS_COLOURS = {
   [SchoolStatus.Closed]: 'grey'
 }
 
-const SCREEN_OUTCOME_COLOURS = {
-  [ScreenOutcome.NeedsTriage]: 'blue',
-  [ScreenOutcome.InvitedToClinic]: 'orange',
-  [ScreenOutcome.DelayVaccination]: 'orange',
-  [ScreenOutcome.DoNotVaccinate]: 'red'
+const SCREEN_STATUS_COLOURS = {
+  [ScreenStatus.NeedsTriage]: 'blue',
+  [ScreenStatus.InvitedToClinic]: 'orange',
+  [ScreenStatus.DelayVaccination]: 'orange',
+  [ScreenStatus.DoNotVaccinate]: 'red'
 }
 
 const UPLOAD_STATUS_COLOURS = {
@@ -205,17 +205,17 @@ export function getSchoolStatusProperties(status) {
 }
 
 /**
- * Get screen outcome status properties
+ * Get screen status properties
  *
- * @param {ScreenOutcome|boolean} outcome - Screen outcome
- * @returns {object} Outcome properties
+ * @param {ScreenStatus|boolean} status - Screen status
+ * @returns {object} Status properties
  */
-export function getScreenOutcomeProperties(outcome) {
-  const hasOutcome = String(outcome) in SCREEN_OUTCOME_COLOURS
+export function getScreenStatusProperties(status) {
+  const hasStatus = String(status) in SCREEN_STATUS_COLOURS
 
   return {
-    colour: hasOutcome ? SCREEN_OUTCOME_COLOURS[outcome] : 'green',
-    text: hasOutcome ? outcome : 'No triage needed'
+    colour: hasStatus ? SCREEN_STATUS_COLOURS[status] : 'green',
+    text: hasStatus ? status : 'No triage needed'
   }
 }
 

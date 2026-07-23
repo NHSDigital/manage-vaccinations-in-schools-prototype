@@ -11,7 +11,7 @@ import {
   PatientRefusedStatus,
   PatientStatus,
   ProgrammeType,
-  ScreenOutcome,
+  ScreenStatus,
   SessionStatus,
   SessionType
 } from '../enums.js'
@@ -850,13 +850,13 @@ export class PatientProgramme extends BaseModel {
 
     let messageTemplate
     switch (event.outcome) {
-      case ScreenOutcome.DelayVaccination:
+      case ScreenStatus.DelayVaccination:
         messageTemplate = 'triage-delay-vaccination'
         break
-      case ScreenOutcome.DoNotVaccinate:
+      case ScreenStatus.DoNotVaccinate:
         messageTemplate = 'triage-do-not-vaccinate'
         break
-      case ScreenOutcome.InvitedToClinic:
+      case ScreenStatus.InvitedToClinic:
         messageTemplate = 'triage-invite-to-clinic'
         break
       default:

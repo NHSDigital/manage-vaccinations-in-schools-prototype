@@ -1,4 +1,4 @@
-import { InstructionStatus, PatientStatus, ScreenOutcome } from '../enums.js'
+import { InstructionStatus, PatientStatus, ScreenStatus } from '../enums.js'
 import { lowerCaseFirst } from '../utils/string.js'
 
 export default {
@@ -110,7 +110,7 @@ export default {
   },
   triage: {
     decision: (triage) =>
-      triage.outcome === ScreenOutcome.NeedsTriage
+      triage.outcome === ScreenStatus.NeedsTriage
         ? 'Triage decision: keep in triage'
         : `Triage decision: ${lowerCaseFirst(triage.outcome)}`
   },

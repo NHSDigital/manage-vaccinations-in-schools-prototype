@@ -5,7 +5,7 @@ import {
   RegistrationStatus,
   ReplyDecision,
   ReplyRefusal,
-  ScreenOutcome,
+  ScreenStatus,
   SessionPresetName,
   UploadStatus
 } from '../enums.js'
@@ -3419,17 +3419,17 @@ export const en = {
     },
     outcome: {
       label: 'Outcome',
-      [ScreenOutcome.Vaccinate]: 'Yes, it’s safe to vaccinate',
-      [ScreenOutcome.VaccinateAlternativeFluInjectionOnly]:
+      [ScreenStatus.Vaccinate]: 'Yes, it’s safe to vaccinate',
+      [ScreenStatus.VaccinateAlternativeFluInjectionOnly]:
         'Yes, it’s safe to vaccinate with injected vaccine',
-      [ScreenOutcome.VaccinateAlternativeMMRInjectionOnly]:
+      [ScreenStatus.VaccinateAlternativeMMRInjectionOnly]:
         'Yes, it’s safe to vaccinate with gelatine-free vaccine',
-      [ScreenOutcome.VaccinateIntranasalOnly]:
+      [ScreenStatus.VaccinateIntranasalOnly]:
         'Yes, it’s safe to vaccinate with nasal spray',
-      [ScreenOutcome.DoNotVaccinate]: 'No, do not vaccinate',
-      [ScreenOutcome.InvitedToClinic]: 'No, invite to clinic',
-      [ScreenOutcome.DelayVaccination]: 'No, delay vaccination',
-      [ScreenOutcome.NeedsTriage]: 'No, keep in triage'
+      [ScreenStatus.DoNotVaccinate]: 'No, do not vaccinate',
+      [ScreenStatus.InvitedToClinic]: 'No, invite to clinic',
+      [ScreenStatus.DelayVaccination]: 'No, delay vaccination',
+      [ScreenStatus.NeedsTriage]: 'No, keep in triage'
     },
     psd: {
       label: 'Do you want to add a PSD?'
