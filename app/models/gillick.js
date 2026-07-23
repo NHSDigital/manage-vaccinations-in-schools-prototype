@@ -34,9 +34,9 @@ export class Gillick extends BaseModel {
   }
 
   /**
-   * Get Gillick competency outcome
+   * Get Gillick competency
    *
-   * @returns {object|undefined} Gillick competency outcome
+   * @returns {object|undefined} Gillick competency
    */
   get competent() {
     const questions = [this.q1, this.q2, this.q3, this.q4, this.q5]
