@@ -65,12 +65,6 @@ export class PatientProgramme extends BaseModel {
     super(options, context)
 
     /** @type {string|undefined} */
-    this.instruction_uuid
-
-    /** @type {Patient|undefined} */
-    this.instruction
-
-    /** @type {string|undefined} */
     this.patient_uuid
 
     /** @type {Patient|undefined} */
@@ -461,6 +455,17 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get PSD instruction
+   *
+   * @returns {Instruction|undefined} PSD instruction
+   */
+  get instruction() {
+    return this.patient?.instructions.find(
+      (instruction) => instruction.programme_id === this.programme_id
+    )
+  }
+
+  /**
    * Get vaccination outcomes
    *
    * @returns {Array<Vaccination>|undefined} Vaccinations
@@ -818,10 +823,10 @@ export class PatientProgramme extends BaseModel {
   /**
    * Give PSD instruction
    *
-   * @param {Instruction} instruction - Instruction
+   * @param {Partial<Instruction>} instruction - Instruction
    */
   giveInstruction(instruction) {
-    this.instruction_uuid = instruction.uuid
+    this.patient?.addInstruction(instruction)
 
     this.patient?.addEvent({
       name: activity.psd.added,
@@ -878,7 +883,6 @@ export class PatientProgramme extends BaseModel {
   }
 }
 
-PatientProgramme.relate('instruction_uuid', () => Instruction, 'instruction')
 PatientProgramme.relate('patient_uuid', () => Patient, 'patient')
 PatientProgramme.relate('programme_id', () => Programme, 'programme')
 

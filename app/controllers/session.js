@@ -17,7 +17,6 @@ import {
   Clinic,
   ClinicBooking,
   DefaultBatch,
-  Instruction,
   PatientSession,
   Patient,
   Programme,
@@ -1058,16 +1057,10 @@ export const sessionController = {
       .filter(({ instruct }) => instruct === InstructionStatus.Needed)
 
     for (const patientSession of patientsToInstruct) {
-      const instruction = Instruction.create(
-        {
-          createdBy_uid: account.uid,
-          programme_id: patientSession.programme.id,
-          patientSession_uuid: patientSession.uuid
-        },
-        data
-      )
-
-      patientSession.patientProgramme.giveInstruction(instruction)
+      patientSession.patientProgramme.giveInstruction({
+        createdBy_uid: account.uid,
+        programme_id: patientSession.programme.id
+      })
 
       PatientSession.update(patientSession.uuid, patientSession, data)
     }

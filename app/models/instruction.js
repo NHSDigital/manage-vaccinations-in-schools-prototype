@@ -1,6 +1,4 @@
-import { fakerEN_GB as faker } from '@faker-js/faker'
-
-import { Patient, Programme } from '../models.js'
+import { Programme } from '../models.js'
 
 import { BaseModel } from './base.js'
 
@@ -26,23 +24,15 @@ export class Instruction extends BaseModel {
     super(options, context)
 
     /** @type {string|undefined} */
-    this.patient_uuid
-
-    /** @type {Patient|undefined} */
-    this.patient
-
-    /** @type {string|undefined} */
     this.programme_id
 
     /** @type {Programme|undefined} */
     this.programme
 
     this.context = context
-    this.uuid = options?.uuid || faker.string.uuid()
   }
 }
 
-Instruction.relate('patient_uuid', () => Patient, 'patient')
 Instruction.relate('programme_id', () => Programme, 'programme')
 
 /**

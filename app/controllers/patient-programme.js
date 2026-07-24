@@ -1,6 +1,5 @@
 import { ProgrammeType, VaccinationOutcome } from '../enums.js'
 import {
-  Instruction,
   PatientProgramme,
   Patient,
   Vaccination,
@@ -128,23 +127,17 @@ export const patientProgrammeController = {
     const { __, account, patientProgramme } = response.locals
 
     if (triage.psd) {
-      const instruction = Instruction.create(
-        {
-          createdBy_uid: account.uid,
-          programme_id: patientProgramme.programme.id,
-          patient_uuid: patientProgramme.patient.uuid
-        },
-        data
-      )
-
-      patientProgramme.giveInstruction(instruction)
+      patientProgramme.giveInstruction({
+        createdBy_uid: account.uid,
+        programme_id: patientProgramme.programme.id
+      })
     }
 
     patientProgramme.recordTriage({
+      createdBy_uid: account.uid,
       status: triage.status,
       statusInvalidAt_: triage.statusInvalidAt_,
-      note: triage.note,
-      createdBy_uid: account.uid
+      note: triage.note
     })
 
     // Clean up session data
