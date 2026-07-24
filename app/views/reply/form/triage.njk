@@ -26,7 +26,7 @@
     decorate: "triage.statusInvalidAt_"
   }) %}
 
-  {% set statusItems = injectConditionalHtml(triageStatusItems(screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasal, psdRadiosHtml) if patientSession.programme.alternativeVaccine and reply.decision != ReplyDecision.OnlyAlternativeInjection and account.canPrescribe else triageStatusItems(screenStatusesForConsentMethod) %}
+  {% set statusItems = injectConditionalHtml(triageStatusItems(screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) if patientSession.programme.alternativeVaccine and reply.decision != ReplyDecision.OnlyAlternativeInjection and account.canPrescribe else triageStatusItems(screenStatusesForConsentMethod) %}
 
   {{ radios({
     fieldset: {

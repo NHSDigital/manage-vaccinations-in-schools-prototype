@@ -90,7 +90,7 @@
       decorate: "triage.statusInvalidAt_"
     }) %}
 
-    {% set statusItems = injectConditionalHtml(triageStatusItems(patientSession.screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasal, psdRadiosHtml) if patientSession.programme.alternativeVaccine else triageStatusItems(patientSession.screenStatusesForConsentMethod) %}
+    {% set statusItems = injectConditionalHtml(triageStatusItems(patientSession.screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) if patientSession.programme.alternativeVaccine else triageStatusItems(patientSession.screenStatusesForConsentMethod) %}
 
     {{ radios({
       fieldset: {
