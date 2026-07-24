@@ -21,6 +21,7 @@ import {
   Child,
   ClinicAppointment,
   Contact,
+  Instruction,
   Move,
   PatientProgramme,
   PatientSession,
@@ -62,10 +63,11 @@ import {
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
  * @property {Array<AuditEvent>} [events] - Events
+ * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
- * @property {Array<string>} [reply_uuids] - Reply IDs
- * @property {Array<string>} [contact_uuids] - Contact UUIDS
+ * @property {Array<string>} [contact_uuids] - Contact UUIDs
  * @property {Array<string>} [patientSession_uuids] - Patient session IDs
+ * @property {Array<string>} [reply_uuids] - Reply IDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
 
@@ -98,10 +100,11 @@ export class Patient extends Child {
     this.pendingChanges = options?.pendingChanges || {}
 
     this.events = options?.events || []
+    this.instructions = options?.instructions || []
     this.clinicProgramme_ids = stringToArray(options?.clinicProgramme_ids)
-    this.reply_uuids = stringToArray(options?.reply_uuids)
     this.contact_uuids = stringToArray(options?.contact_uuids)
     this.patientSession_uuids = stringToArray(options?.patientSession_uuids)
+    this.reply_uuids = stringToArray(options?.reply_uuids)
     this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
   }
 
@@ -456,7 +459,7 @@ export class Patient extends Child {
   /**
    * Get clinic appointments
    *
-   * @returns {Array<ClinicAppointment>} appointments
+   * @returns {Array<ClinicAppointment>} Appointments
    */
   get appointments() {
     return ClinicAppointment.findAll(this.context).filter(
@@ -723,15 +726,6 @@ export class Patient extends Child {
   }
 
   /**
-   * Add event to activity log
-   *
-   * @param {object} event - Event
-   */
-  addEvent(event) {
-    this.events.push(new AuditEvent(event))
-  }
-
-  /**
    * Add updates to activity log
    *
    * @param {Patient} before - Original values
@@ -762,6 +756,24 @@ export class Patient extends Child {
       name: activity.patient.contact(contact),
       type: AuditEventType.Record
     })
+  }
+
+  /**
+   * Add event to activity log
+   *
+   * @param {Partial<AuditEvent>} event - Event
+   */
+  addEvent(event) {
+    this.events.push(new AuditEvent(event))
+  }
+
+  /**
+   * Add PSD instruction
+   *
+   * @param {Partial<Instruction>} instruction - PSD instruction
+   */
+  addInstruction(instruction) {
+    this.instructions.push(new Instruction(instruction))
   }
 
   /**
