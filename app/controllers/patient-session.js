@@ -100,10 +100,7 @@ export const patientSessionController = {
       needsTriage: status === PatientStatus.Triage,
       // Patient already triaged
       hasTriage: triageNotes.length > 0,
-      hasInstruct:
-        session.hasPsdProtocol &&
-        patientSession.instruct &&
-        patientSession.session.isActive,
+      hasInstruct: session.hasPsdProtocol && patientSession.instruct,
       userIsHCA,
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
