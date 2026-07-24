@@ -640,7 +640,7 @@ export class PatientSession extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(this)
+    return getConsentHealthAnswers(this.responses)
   }
 
   /**
@@ -649,7 +649,7 @@ export class PatientSession extends BaseModel {
    * @returns {object|boolean} Consent refusal reasons
    */
   get consentRefusalReasons() {
-    return getConsentRefusalReasons(this)
+    return getConsentRefusalReasons(this.responses)
   }
 
   /**

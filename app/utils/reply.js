@@ -51,16 +51,16 @@ export function getRepliesWithHealthAnswers(replies) {
 /**
  * Get combined answers to health questions
  *
- * @param {PatientSession} patientSession - Patient session
+ * @param {Array<Reply>} replies - Consent responses
  * @returns {object|undefined} Combined answers to health questions
  */
-export function getConsentHealthAnswers(patientSession) {
+export function getConsentHealthAnswers(replies) {
   const consentHealthAnswers = {}
 
   // Get consent responses with health answers
-  const responsesWithHealthAnswers = Object.values(
-    patientSession.responses
-  ).filter((reply) => reply.healthAnswers)
+  const responsesWithHealthAnswers = Object.values(replies).filter(
+    (reply) => reply.healthAnswers
+  )
 
   if (responsesWithHealthAnswers.length === 0) {
     return
@@ -286,16 +286,16 @@ export const getConsentStatus = (patientSession) => {
 /**
  * Get combined refusal reasons
  *
- * @param {PatientSession} patientSession - Patient session
+ * @param {Array<Reply>} replies - Consent responses
  * @returns {Array<ReplyRefusal>} Refusal reasons
  */
-export const getConsentRefusalReasons = (patientSession) => {
+export const getConsentRefusalReasons = (replies) => {
   const reasons = []
 
   // Get consent responses with a refusal reason
-  const repliesWithRefusalReasons = Object.values(
-    patientSession.replies
-  ).filter((reply) => reply.refusalReason)
+  const repliesWithRefusalReasons = Object.values(replies).filter(
+    (reply) => reply.refusalReason
+  )
 
   for (const reply of repliesWithRefusalReasons) {
     if (reply.refusalReason && !reply.isInvalidated) {
