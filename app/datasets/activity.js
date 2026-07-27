@@ -118,7 +118,9 @@ export default {
     added: 'Vaccination record added manually',
     recorded: (vaccination) =>
       vaccination.wasGiven
-        ? `Vaccinated with ${vaccination.vaccine?.brand}`
+        ? vaccination.vaccine
+          ? `Vaccinated with ${vaccination.vaccine?.brand}`
+          : 'Vaccinated'
         : `${PatientStatus.Deferred}: ${lowerCaseFirst(vaccination.outcome)}`,
     uploaded: 'Vaccination record uploaded',
     updated: 'Vaccination record updated manually'
