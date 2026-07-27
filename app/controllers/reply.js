@@ -125,6 +125,13 @@ export const replyController = {
           delete reply.contact_uuid
         }
 
+        if (triage?.psd) {
+          patientSession.patientProgramme.giveInstruction({
+            createdBy_uid: account.uid,
+            programme_id: patientSession.programme.id
+          })
+        }
+
         if (triage?.status) {
           patientSession.patientProgramme.recordTriage({
             ...triage,
