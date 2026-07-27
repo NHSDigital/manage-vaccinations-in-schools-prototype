@@ -342,494 +342,520 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @param {string} action - action being carried out i.e. create new vs edit existing
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
-  update(request, response) {
-    const { appointment_uuid, booking_uuid } = request.params
-    const { data } = request.session
-    const { __, booking, paths, patient, session, journeyData } =
-      response.locals
+  update(action) {
+    return (request, response) => {
+      const { appointment_uuid, booking_uuid } = request.params
+      const { data } = request.session
+      const { __, booking, paths, patient, session, journeyData } =
+        response.locals
 
-    // Clean up session data
-    delete data.booking
-    delete data.appointment
-    delete data.journeyData[booking_uuid]
-    delete data.programmesToOffer
+      // Clean up session data
+      delete data.booking
+      delete data.appointment
+      delete data.journeyData[booking_uuid]
+      delete data.programmesToOffer
 
-    // Save to the global context
-    ClinicBooking.update(booking_uuid, booking, data)
+      // Save to the global context
+      ClinicBooking.update(booking_uuid, booking, data)
 
-    if (patient) {
-      // Create the patient-session records for this appointment
+      if (patient) {
+        // Create the patient-session records for this appointment
+        const appointment = booking.findAppointment(appointment_uuid)
+        appointment.addToSession()
+
+        request.flash(
+          'success',
+          __(`clinicBooking.${action}.success`, {
+            fullName: patient.fullName,
+            sessionName: appointment.session.name
+          })
+        )
+      }
+
+      // Get back to where we started, if this isn't the parent journey
+      if (session) {
+        paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/patients'}`
+      } else if (patient) {
+        paths.next = patient.uri
+      }
+
+      return saveAndRedirect(request, response, paths.next)
+    }
+  },
+
+  /**
+   * @param {string} action - action being carried out i.e. create new vs edit existing
+   * @returns {RequestHandler<Record<string, string>>} Request handler
+   */
+  updateFeedback(action) {
+    action // unused so far
+    return (request, response) => {
+      const { booking_uuid, appointment_uuid } = request.params
+      const { data } = request.session
+      const { booking, paths } = response.locals
+
+      // Clean up session data
+      delete data.booking
+      delete data.appointment
+      delete data.journeyData[booking_uuid]
+      delete data.programmesToOffer
+
+      // Record the abandonment
       const appointment = booking.findAppointment(appointment_uuid)
-      appointment.addToSession()
+      appointment.status = ClinicAppointmentStatus.Abandoned
 
-      request.flash(
-        'success',
-        __('clinicBooking.success', {
-          fullName: patient.fullName,
-          sessionName: appointment.session.name
-        })
-      )
+      // Save to the global context
+      ClinicBooking.update(booking_uuid, booking, data)
+
+      return saveAndRedirect(request, response, paths.next)
     }
-
-    // Get back to where we started, if this isn't the parent journey
-    if (session) {
-      paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/patients'}`
-    } else if (patient) {
-      paths.next = patient.uri
-    }
-
-    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @param {string} action - action being carried out i.e. create new vs edit existing
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
-  updateFeedback(request, response) {
-    const { booking_uuid, appointment_uuid } = request.params
-    const { data } = request.session
-    const { booking, paths } = response.locals
+  readForm(action) {
+    action // unused so far
+    return (request, response, next) => {
+      const { appointment_uuid, booking_uuid, view } = request.params
+      const { data, referrer } = request.session
+      const { booking } = response.locals
 
-    // Clean up session data
-    delete data.booking
-    delete data.appointment
-    delete data.journeyData[booking_uuid]
-    delete data.programmesToOffer
+      // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
+      // that postcode is pushed to the appointment
+      if (view === 'clinic-location') {
+        const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const appointment = wizardBooking.findAppointment(appointment_uuid)
+        appointment.preferredPostcode = data.appointment['preferredPostcode']
+        ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
+      }
 
-    // Record the abandonment
-    const appointment = booking.findAppointment(appointment_uuid)
-    appointment.status = ClinicAppointmentStatus.Abandoned
-
-    // Save to the global context
-    ClinicBooking.update(booking_uuid, booking, data)
-
-    return saveAndRedirect(request, response, paths.next)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  readForm(request, response, next) {
-    const { appointment_uuid, booking_uuid, view } = request.params
-    const { data, referrer } = request.session
-    const { booking } = response.locals
-
-    // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
-    // that postcode is pushed to the appointment
-    if (view === 'clinic-location') {
-      const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const appointment = wizardBooking.findAppointment(appointment_uuid)
-      appointment.preferredPostcode = data.appointment['preferredPostcode']
-      ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
-    }
-
-    const journey = {
-      // Appointment journey; once per child
-      ...getAllAppointmentPaths(
-        booking_uuid,
-        request.session.data,
-        booking.appointments
-      ),
-
-      // Confirmation! \o/
-      [`/${booking_uuid}/new/confirmation`]: {}
-    }
-
-    const paths = wizard(journey, request)
-    paths.back = referrer || paths.back
-    response.locals.paths = paths // used later to redirect in updateForm
-
-    return next()
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showForm(request, response) {
-    const { __, __mf, appointment, patient } = response.locals
-    const { data } = request.session
-    let { booking_uuid, view } = request.params
-
-    if (view === 'address-selection') {
-      // Build the options for the selection of a home address address from those already entered
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      response.locals.previousAddressItems = getPreviousAddressItems(
-        booking.appointments
-      )
-    } else if (view === 'session-selection') {
-      // Build the options for the selection of a clinic session from those already chosen for other appointments
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      response.locals.previousSessionItems = getPreviousSessionItems(
-        booking.appointments,
-        data
-      )
-    } else if (view === 'parental-relationship' || view === 'contact') {
-      // Prepare the radio options for the parental relationship
-      response.locals.parentalRelationshipItems = Object.values(
-        ParentalRelationship
-      )
-        .filter((relationship) => relationship !== ParentalRelationship.Unknown)
-        .map((relationship) => ({
-          text: relationship,
-          value: relationship
-        }))
-    } else if (view === 'programmes') {
-      // Create radio options for the programmes invited to (or flu if we've got none)
-      response.locals.programmeItems = data.programmesToOffer.programmes.map(
-        (programme) => {
-          return {
-            text: programme.name,
-            value: programme.id === 'mmrv' ? 'mmr' : programme.id,
-            hint: {
-              text: programme.information.hint
-            }
-          }
-        }
-      )
-    } else if (view === 'availability') {
-      // Note: replace usual MMR content with MMRV as necessary
-      response.locals.programmeNames = programmeNamesListForSentence(
-        appointment.selected_programme_ids,
-        data.programmesToOffer.eligibleForMmrv,
-        ConjunctionType.or,
-        data
-      )
-    } else if (view === 'clinic-location') {
-      const clinicLocationItems = getScheduledClinicLocationItems(
-        data,
-        appointment.selected_programme_ids,
-        patient ? false : true,
-        data.journeyData[booking_uuid].outOfArea
-      )
-      response.locals.clinicLocationItems = clinicLocationItems
-    } else if (view === 'clinic-date') {
-      const scheduledClinicSessions = _.sortBy(
-        Session.findAll(data).filter(
-          (session) =>
-            session.type === SessionType.Clinic &&
-            session.status === SessionStatus.Planned &&
-            session.clinic_id === data.journeyData[booking_uuid].clinic_id
+      const journey = {
+        // Appointment journey; once per child
+        ...getAllAppointmentPaths(
+          booking_uuid,
+          request.session.data,
+          booking.appointments
         ),
-        'date'
-      )
 
-      const clinicDateItems = []
-      scheduledClinicSessions.forEach((session) => {
-        const midday = new Date(session.date)
-
-        const availableTimes = session.availableAppointmentTimes
-        const morningAvailable = availableTimes.some((time) => time < midday)
-        const afternoonAvailable = availableTimes.some((time) => time >= midday)
-        const availability =
-          morningAvailable && afternoonAvailable
-            ? __('clinicBooking.clinicDate.hint.both')
-            : morningAvailable
-              ? __('clinicBooking.clinicDate.hint.morning')
-              : __('clinicBooking.clinicDate.hint.afternoon')
-
-        clinicDateItems.push({
-          text: session.formatted.date,
-          value: session.id,
-          hint: {
-            text: availability
-          }
-        })
-      })
-      response.locals.clinicDateItems = clinicDateItems
-      response.locals.clinicSummary = {
-        location: scheduledClinicSessions.at(0)?.formatted.location,
-        date: '—'
-      }
-    } else if (view === 'appointment-time-range') {
-      const session = Session.findOne(appointment.session_id, data)
-      const availableTimesByHour = _.groupBy(
-        session.availableAppointmentTimes,
-        (time) => time.getHours()
-      )
-
-      const timeRangeItems = []
-      Object.entries(availableTimesByHour).forEach(([hour, times]) => {
-        if (times.length) {
-          const startHourNumber = parseInt(hour)
-          const endHourNumber = startHourNumber + 1
-
-          timeRangeItems.push({
-            text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
-            value: startHourNumber,
-            hint: {
-              text: __mf(
-                'clinicBooking.timeRange.range.appointmentsAvailable',
-                {
-                  count: times.length
-                }
-              )
-            }
-          })
-        }
-      })
-      response.locals.timeRangeItems = timeRangeItems
-      response.locals.clinicSummary = {
-        location: session.formatted.location,
-        date: session.formatted.date
-      }
-    } else if (view === 'appointment-time') {
-      const session = Session.findOne(appointment.session_id, data)
-      const availableTimesByHour = _.groupBy(
-        session.availableAppointmentTimes,
-        (time) => time.getHours()
-      )
-
-      const availabilityForChosenHour = {}
-      for (const date of availableTimesByHour[
-        data.journeyData[booking_uuid].timeRange
-      ]) {
-        const key = formatTime(date, true)
-
-        if (!availabilityForChosenHour[key]) {
-          availabilityForChosenHour[key] = {
-            date: new Date(date),
-            count: 0
-          }
-        }
-
-        availabilityForChosenHour[key].count++
+        // Confirmation! \o/
+        [`/${booking_uuid}/new/confirmation`]: {}
       }
 
-      const appointmentTimeItems = []
-      Object.entries(availabilityForChosenHour).forEach(
-        ([formattedTime, availability]) => {
-          appointmentTimeItems.push({
-            text: formattedTime,
-            value: availability.date.toISOString(),
-            hint: {
-              text: __mf('clinicBooking.time.appointmentsAvailable', {
-                count: availability.count
-              })
-            }
-          })
-        }
-      )
-      response.locals.appointmentTimeItems = appointmentTimeItems
-      response.locals.clinicSummary = {
-        location: session.formatted.location,
-        date: session.formatted.date
-      }
-    } else if (view === 'fully-booked') {
-      // Note: replace usual MMR content with MMRV as necessary
-      response.locals.programmeNames = programmeNamesListForSentence(
-        appointment.selected_programme_ids,
-        data.programmesToOffer.eligibleForMmrv,
-        ConjunctionType.and,
-        data
-      )
-    } else if (view === 'least-convenient') {
-      const reasonItems = appointment.abandonmentReasons.map((reason) => ({
-        text:
-          reason === AppointmentAbandonmentReason.Other
-            ? formatOther(
-                AppointmentAbandonmentReason.Other,
-                appointment.abandonmentReasonOther
-              )
-            : reason,
-        value: reason
-      }))
+      const paths = wizard(journey, request)
+      paths.back = referrer || paths.back
+      response.locals.paths = paths // used later to redirect in updateForm
 
-      response.locals.reasonItems = reasonItems
+      return next()
     }
-
-    // All health questions use the same view
-    let key
-    if (view.startsWith('health-question-')) {
-      key = kebabToCamelCase(view.replace('health-question-', ''))
-      view = 'health-question'
-
-      // The immuneSystem health question, if asked, needs to say which programmes apply
-      if (key == 'immuneSystem') {
-        const mmrVariant = appointment.child.canBeOfferedMmrv ? 'MMRV' : 'MMR'
-        const fluCanBeNasal =
-          appointment.fluDecision !== ReplyDecision.OnlyAlternativeInjection
-        const possibleLiveProgrammeTypes = [
-          ProgrammeType.MMR,
-          ...(fluCanBeNasal ? [ProgrammeType.Flu] : [])
-        ]
-        const selectedLiveVaccineProgrammeNames =
-          appointment.selected_programme_ids
-            .map((id) => Programme.findOne(id, data))
-            .filter(({ type }) => possibleLiveProgrammeTypes.includes(type))
-            .map(({ name }) =>
-              name.replace('MMR', mmrVariant).replace('Flu', 'nasal spray flu')
-            )
-
-        response.locals.liveVaccines = {
-          count: selectedLiveVaccineProgrammeNames.length,
-          vaccineNames: selectedLiveVaccineProgrammeNames.join(' and ')
-        }
-      }
-    }
-
-    // Only ask for details if question does not have sub-questions
-    const hasSubQuestions =
-      appointment?.getHealthQuestionsForSelectedProgrammes(data)[key]
-        ?.conditional
-
-    return response.render(`book-into-a-clinic/form/${view}`, {
-      key,
-      hasSubQuestions
-    })
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @param {string} action - action being carried out i.e. create new vs edit existing
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
-  updateForm(request, response) {
-    const { booking_uuid, appointment_uuid, view } = request.params
-    const { data } = request.session
-    const { paths } = response.locals
+  showForm(action) {
+    action // unused so far
+    return (request, response) => {
+      const { __, __mf, appointment, patient } = response.locals
+      const { data } = request.session
+      let { booking_uuid, view } = request.params
 
-    // Store values from the posted form
-    if (request.body.booking) {
-      ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
+      if (view === 'address-selection') {
+        // Build the options for the selection of a home address address from those already entered
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        response.locals.previousAddressItems = getPreviousAddressItems(
+          booking.appointments
+        )
+      } else if (view === 'session-selection') {
+        // Build the options for the selection of a clinic session from those already chosen for other appointments
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        response.locals.previousSessionItems = getPreviousSessionItems(
+          booking.appointments,
+          data
+        )
+      } else if (view === 'parental-relationship' || view === 'contact') {
+        // Prepare the radio options for the parental relationship
+        response.locals.parentalRelationshipItems = Object.values(
+          ParentalRelationship
+        )
+          .filter(
+            (relationship) => relationship !== ParentalRelationship.Unknown
+          )
+          .map((relationship) => ({
+            text: relationship,
+            value: relationship
+          }))
+      } else if (view === 'programmes') {
+        // Create radio options for the programmes invited to (or flu if we've got none)
+        response.locals.programmeItems = data.programmesToOffer.programmes.map(
+          (programme) => {
+            return {
+              text: programme.name,
+              value: programme.id === 'mmrv' ? 'mmr' : programme.id,
+              hint: {
+                text: programme.information.hint
+              }
+            }
+          }
+        )
+      } else if (view === 'availability') {
+        // Note: replace usual MMR content with MMRV as necessary
+        response.locals.programmeNames = programmeNamesListForSentence(
+          appointment.selected_programme_ids,
+          data.programmesToOffer.eligibleForMmrv,
+          ConjunctionType.or,
+          data
+        )
+      } else if (view === 'clinic-location') {
+        const clinicLocationItems = getScheduledClinicLocationItems(
+          data,
+          appointment.selected_programme_ids,
+          patient ? false : true,
+          data.journeyData[booking_uuid].outOfArea
+        )
+        response.locals.clinicLocationItems = clinicLocationItems
+      } else if (view === 'clinic-date') {
+        const scheduledClinicSessions = _.sortBy(
+          Session.findAll(data).filter(
+            (session) =>
+              session.type === SessionType.Clinic &&
+              session.status === SessionStatus.Planned &&
+              session.clinic_id === data.journeyData[booking_uuid].clinic_id
+          ),
+          'date'
+        )
+
+        const clinicDateItems = []
+        scheduledClinicSessions.forEach((session) => {
+          const midday = new Date(session.date)
+
+          const availableTimes = session.availableAppointmentTimes
+          const morningAvailable = availableTimes.some((time) => time < midday)
+          const afternoonAvailable = availableTimes.some(
+            (time) => time >= midday
+          )
+          const availability =
+            morningAvailable && afternoonAvailable
+              ? __('clinicBooking.clinicDate.hint.both')
+              : morningAvailable
+                ? __('clinicBooking.clinicDate.hint.morning')
+                : __('clinicBooking.clinicDate.hint.afternoon')
+
+          clinicDateItems.push({
+            text: session.formatted.date,
+            value: session.id,
+            hint: {
+              text: availability
+            }
+          })
+        })
+        response.locals.clinicDateItems = clinicDateItems
+        response.locals.clinicSummary = {
+          location: scheduledClinicSessions.at(0)?.formatted.location,
+          date: '—'
+        }
+      } else if (view === 'appointment-time-range') {
+        const session = Session.findOne(appointment.session_id, data)
+        const availableTimesByHour = _.groupBy(
+          session.availableAppointmentTimes,
+          (time) => time.getHours()
+        )
+
+        const timeRangeItems = []
+        Object.entries(availableTimesByHour).forEach(([hour, times]) => {
+          if (times.length) {
+            const startHourNumber = parseInt(hour)
+            const endHourNumber = startHourNumber + 1
+
+            timeRangeItems.push({
+              text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
+              value: startHourNumber,
+              hint: {
+                text: __mf(
+                  'clinicBooking.timeRange.range.appointmentsAvailable',
+                  {
+                    count: times.length
+                  }
+                )
+              }
+            })
+          }
+        })
+        response.locals.timeRangeItems = timeRangeItems
+        response.locals.clinicSummary = {
+          location: session.formatted.location,
+          date: session.formatted.date
+        }
+      } else if (view === 'appointment-time') {
+        const session = Session.findOne(appointment.session_id, data)
+        const availableTimesByHour = _.groupBy(
+          session.availableAppointmentTimes,
+          (time) => time.getHours()
+        )
+
+        const availabilityForChosenHour = {}
+        for (const date of availableTimesByHour[
+          data.journeyData[booking_uuid].timeRange
+        ]) {
+          const key = formatTime(date, true)
+
+          if (!availabilityForChosenHour[key]) {
+            availabilityForChosenHour[key] = {
+              date: new Date(date),
+              count: 0
+            }
+          }
+
+          availabilityForChosenHour[key].count++
+        }
+
+        const appointmentTimeItems = []
+        Object.entries(availabilityForChosenHour).forEach(
+          ([formattedTime, availability]) => {
+            appointmentTimeItems.push({
+              text: formattedTime,
+              value: availability.date.toISOString(),
+              hint: {
+                text: __mf('clinicBooking.time.appointmentsAvailable', {
+                  count: availability.count
+                })
+              }
+            })
+          }
+        )
+        response.locals.appointmentTimeItems = appointmentTimeItems
+        response.locals.clinicSummary = {
+          location: session.formatted.location,
+          date: session.formatted.date
+        }
+      } else if (view === 'fully-booked') {
+        // Note: replace usual MMR content with MMRV as necessary
+        response.locals.programmeNames = programmeNamesListForSentence(
+          appointment.selected_programme_ids,
+          data.programmesToOffer.eligibleForMmrv,
+          ConjunctionType.and,
+          data
+        )
+      } else if (view === 'least-convenient') {
+        const reasonItems = appointment.abandonmentReasons.map((reason) => ({
+          text:
+            reason === AppointmentAbandonmentReason.Other
+              ? formatOther(
+                  AppointmentAbandonmentReason.Other,
+                  appointment.abandonmentReasonOther
+                )
+              : reason,
+          value: reason
+        }))
+
+        response.locals.reasonItems = reasonItems
+      }
+
+      // All health questions use the same view
+      let key
+      if (view.startsWith('health-question-')) {
+        key = kebabToCamelCase(view.replace('health-question-', ''))
+        view = 'health-question'
+
+        // The immuneSystem health question, if asked, needs to say which programmes apply
+        if (key == 'immuneSystem') {
+          const mmrVariant = appointment.child.canBeOfferedMmrv ? 'MMRV' : 'MMR'
+          const fluCanBeNasal =
+            appointment.fluDecision !== ReplyDecision.OnlyAlternativeInjection
+          const possibleLiveProgrammeTypes = [
+            ProgrammeType.MMR,
+            ...(fluCanBeNasal ? [ProgrammeType.Flu] : [])
+          ]
+          const selectedLiveVaccineProgrammeNames =
+            appointment.selected_programme_ids
+              .map((id) => Programme.findOne(id, data))
+              .filter(({ type }) => possibleLiveProgrammeTypes.includes(type))
+              .map(({ name }) =>
+                name
+                  .replace('MMR', mmrVariant)
+                  .replace('Flu', 'nasal spray flu')
+              )
+
+          response.locals.liveVaccines = {
+            count: selectedLiveVaccineProgrammeNames.length,
+            vaccineNames: selectedLiveVaccineProgrammeNames.join(' and ')
+          }
+        }
+      }
+
+      // Only ask for details if question does not have sub-questions
+      const hasSubQuestions =
+        appointment?.getHealthQuestionsForSelectedProgrammes(data)[key]
+          ?.conditional
+
+      return response.render(`book-into-a-clinic/form/${view}`, {
+        key,
+        hasSubQuestions
+      })
     }
-    if (request.body.appointment) {
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const appointment = booking?.findAppointment(appointment_uuid)
-      _.merge(appointment, request.body.appointment)
+  },
 
-      ClinicBooking.update(booking_uuid, booking, data.wizard)
-    }
-    if (request.body.journeyData) {
-      _.merge(data.journeyData[booking_uuid], request.body.journeyData)
-    }
+  /**
+   * @param {string} action - action being carried out i.e. create new vs edit existing
+   * @returns {RequestHandler<Record<string, string>>} Request handler
+   */
+  updateForm(action) {
+    action // unused so far
+    return (request, response) => {
+      const { booking_uuid, appointment_uuid, view } = request.params
+      const { data } = request.session
+      const { paths } = response.locals
 
-    if (view === 'child-count') {
-      // We've just set the child count, so create the appointments we'll need
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      // Store values from the posted form
+      if (request.body.booking) {
+        ClinicBooking.update(booking_uuid, request.body.booking, data.wizard)
+      }
+      if (request.body.appointment) {
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const appointment = booking?.findAppointment(appointment_uuid)
+        _.merge(appointment, request.body.appointment)
 
-      let desiredCount = Number(data.journeyData[booking_uuid].childCount)
-      desiredCount = isNaN(desiredCount) || desiredCount < 1 ? 1 : desiredCount
-      const existingCount = booking.appointments.length
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      }
+      if (request.body.journeyData) {
+        _.merge(data.journeyData[booking_uuid], request.body.journeyData)
+      }
 
-      const childrenToAdd = Math.max(0, desiredCount - existingCount)
-      const childrenToRemove = Math.max(0, existingCount - desiredCount)
-      Array.from({ length: childrenToAdd }).forEach(() =>
-        booking.addAppointment()
-      )
-      Array.from({ length: childrenToRemove }).forEach(() =>
-        booking.removeLastAppointment()
-      )
-      ClinicBooking.update(booking_uuid, booking, data.wizard)
+      if (view === 'child-count') {
+        // We've just set the child count, so create the appointments we'll need
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      // Start the appointment journey for the first child
-      const firstAppointment = booking.appointments[0]
-      const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
-      paths.next = firstAppointmentUrl
-    } else if (view === 'child') {
-      if (
-        !stringToBoolean(data.journeyData[booking_uuid]?.preferredNameChoice)
+        let desiredCount = Number(data.journeyData[booking_uuid].childCount)
+        desiredCount =
+          isNaN(desiredCount) || desiredCount < 1 ? 1 : desiredCount
+        const existingCount = booking.appointments.length
+
+        const childrenToAdd = Math.max(0, desiredCount - existingCount)
+        const childrenToRemove = Math.max(0, existingCount - desiredCount)
+        Array.from({ length: childrenToAdd }).forEach(() =>
+          booking.addAppointment()
+        )
+        Array.from({ length: childrenToRemove }).forEach(() =>
+          booking.removeLastAppointment()
+        )
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+
+        // Start the appointment journey for the first child
+        const firstAppointment = booking.appointments[0]
+        const firstAppointmentUrl = `${firstAppointment.uri.new}/child`
+        paths.next = firstAppointmentUrl
+      } else if (view === 'child') {
+        if (
+          !stringToBoolean(data.journeyData[booking_uuid]?.preferredNameChoice)
+        ) {
+          // If the parent's backed out of using the child's preferred name (say, from the check answers page), then
+          // clear it out of the appointment
+          const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+          const currentAppointment = booking?.findAppointment(appointment_uuid)
+          delete currentAppointment?.child?.preferredFirstName
+          delete currentAppointment?.child?.preferredLastName
+
+          ClinicBooking.update(booking_uuid, booking, data.wizard)
+        }
+      } else if (
+        view === 'address-selection' &&
+        data.journeyData[booking_uuid].addressChoice !== 'new'
       ) {
-        // If the parent's backed out of using the child's preferred name (say, from the check answers page), then
-        // clear it out of the appointment
+        // We've just selected a previous child's address for the current appointment, so copy
+        // that detail to the child record
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+
+        const previous_appointment_uuid = request.body.journeyData.addressChoice
+        const previousAppointment = booking?.findAppointment(
+          previous_appointment_uuid
+        )
+        const currentAppointment = booking?.findAppointment(appointment_uuid)
+
+        if (previousAppointment && currentAppointment) {
+          currentAppointment.child.address = previousAppointment.child.address
+          ClinicBooking.update(booking.uuid, booking, data.wizard)
+        }
+      } else if (
+        view === 'session-selection' &&
+        data.journeyData[booking_uuid].sessionChoice !== 'new'
+      ) {
+        // We've just selected a previous child's session choice for the current appointment;
+        // in this case, the session ID is actually the radio value passed in request.body
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
         const currentAppointment = booking?.findAppointment(appointment_uuid)
-        delete currentAppointment?.child?.preferredFirstName
-        delete currentAppointment?.child?.preferredLastName
-
-        ClinicBooking.update(booking_uuid, booking, data.wizard)
-      }
-    } else if (
-      view === 'address-selection' &&
-      data.journeyData[booking_uuid].addressChoice !== 'new'
-    ) {
-      // We've just selected a previous child's address for the current appointment, so copy
-      // that detail to the child record
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-
-      const previous_appointment_uuid = request.body.journeyData.addressChoice
-      const previousAppointment = booking?.findAppointment(
-        previous_appointment_uuid
-      )
-      const currentAppointment = booking?.findAppointment(appointment_uuid)
-
-      if (previousAppointment && currentAppointment) {
-        currentAppointment.child.address = previousAppointment.child.address
-        ClinicBooking.update(booking.uuid, booking, data.wizard)
-      }
-    } else if (
-      view === 'session-selection' &&
-      data.journeyData[booking_uuid].sessionChoice !== 'new'
-    ) {
-      // We've just selected a previous child's session choice for the current appointment;
-      // in this case, the session ID is actually the radio value passed in request.body
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const currentAppointment = booking?.findAppointment(appointment_uuid)
-      if (currentAppointment) {
-        currentAppointment.session_id =
-          data.journeyData[booking_uuid].sessionChoice
-        ClinicBooking.update(booking.uuid, booking, data.wizard)
-      }
-    } else if (view === 'appointment-time') {
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const appointment = booking?.findAppointment(appointment_uuid)
-      const appointmentLengthInMinutes =
-        Session.findOne(appointment.session_id, data)?.appointmentLength ?? 10
-
-      const startAt = new Date(data.journeyData[booking_uuid].time)
-      const endAt = addMinutes(startAt, appointmentLengthInMinutes)
-      _.merge(appointment, { startAt, endAt })
-
-      ClinicBooking.update(booking_uuid, booking, data.wizard)
-    } else if (view === 'add-another') {
-      // If the user elected to add another, create the new appointment and override the default redirect
-      const addAnother = data.journeyData[booking_uuid].addAnother === 'true'
-      if (addAnother) {
+        if (currentAppointment) {
+          currentAppointment.session_id =
+            data.journeyData[booking_uuid].sessionChoice
+          ClinicBooking.update(booking.uuid, booking, data.wizard)
+        }
+      } else if (view === 'appointment-time') {
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-        const appointment = booking.addAppointment()
+        const appointment = booking?.findAppointment(appointment_uuid)
+        const appointmentLengthInMinutes =
+          Session.findOne(appointment.session_id, data)?.appointmentLength ?? 10
+
+        const startAt = new Date(data.journeyData[booking_uuid].time)
+        const endAt = addMinutes(startAt, appointmentLengthInMinutes)
+        _.merge(appointment, { startAt, endAt })
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      } else if (view === 'add-another') {
+        // If the user elected to add another, create the new appointment and override the default redirect
+        const addAnother = data.journeyData[booking_uuid].addAnother === 'true'
+        if (addAnother) {
+          const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+          const appointment = booking.addAppointment()
+          ClinicBooking.update(booking.uuid, booking, data.wizard)
+
+          // Clear out values we don't want pre-selected for the next child
+          delete data.appointment
+          delete data.journeyData[booking_uuid].addAnother
+          delete data.journeyData[booking_uuid].addressChoice
+          delete data.journeyData[booking_uuid].sessionChoice
+          delete data.journeyData[booking_uuid].timeRange
+          delete data.journeyData[booking_uuid].time
+
+          paths.next = `${appointment.uri.new}/child`
+        }
+      } else if (view === 'contact-selection') {
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        if (booking.contact.uuid !== 'new') {
+          // Just selected an existing parent, so load it into the booking and appointment
+          booking.contact = Contact.findOne(booking.contact.uuid, data)
+          const appointment = booking.findAppointment(appointment_uuid)
+          appointment.parentalRelationship = booking.contact.relationship
+          appointment.parentalRelationshipOther =
+            booking.contact.relationshipOther
+          appointment.parentHasParentalResponsibility =
+            booking.contact.hasParentalResponsibility
+        } else {
+          // Reset the contact ready for new details
+          booking.contact = new Contact({ uuid: 'new' })
+        }
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      } else if (view === 'contact') {
+        // If we've just recorded a new contact for an existing patient, give it a proper UUID
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        if (booking.contact?.uuid === 'new') {
+          booking.contact.uuid = faker.string.uuid()
+          ClinicBooking.update(booking_uuid, booking, data.wizard)
+        }
+      } else if (view === 'delete-appointment') {
+        // The user's chosen to remove an appointment
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        booking.removeAppointment(appointment_uuid)
         ClinicBooking.update(booking.uuid, booking, data.wizard)
 
-        // Clear out values we don't want pre-selected for the next child
-        delete data.appointment
-        delete data.journeyData[booking_uuid].addAnother
-        delete data.journeyData[booking_uuid].addressChoice
-        delete data.journeyData[booking_uuid].sessionChoice
-        delete data.journeyData[booking_uuid].timeRange
-        delete data.journeyData[booking_uuid].time
+        paths.next = `${booking.uri.new}/add-another`
+      }
 
-        paths.next = `${appointment.uri.new}/child`
-      }
-    } else if (view === 'contact-selection') {
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      if (booking.contact.uuid !== 'new') {
-        // Just selected an existing parent, so load it into the booking and appointment
-        booking.contact = Contact.findOne(booking.contact.uuid, data)
-        const appointment = booking.findAppointment(appointment_uuid)
-        appointment.parentalRelationship = booking.contact.relationship
-        appointment.parentalRelationshipOther =
-          booking.contact.relationshipOther
-        appointment.parentHasParentalResponsibility =
-          booking.contact.hasParentalResponsibility
-      } else {
-        // Reset the contact ready for new details
-        booking.contact = new Contact({ uuid: 'new' })
-      }
-      ClinicBooking.update(booking_uuid, booking, data.wizard)
-    } else if (view === 'contact') {
-      // If we've just recorded a new contact for an existing patient, give it a proper UUID
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      if (booking.contact?.uuid === 'new') {
-        booking.contact.uuid = faker.string.uuid()
-        ClinicBooking.update(booking_uuid, booking, data.wizard)
-      }
-    } else if (view === 'delete-appointment') {
-      // The user's chosen to remove an appointment
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      booking.removeAppointment(appointment_uuid)
-      ClinicBooking.update(booking.uuid, booking, data.wizard)
-
-      paths.next = `${booking.uri.new}/add-another`
+      return saveAndRedirect(request, response, paths.next)
     }
-
-    return saveAndRedirect(request, response, paths.next)
   },
 
   /**
