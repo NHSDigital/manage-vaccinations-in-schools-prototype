@@ -75,9 +75,13 @@ router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/contacts', contactRoutes)
 router.use('/patients/:patient_uuid/book-into-a-clinic', bookIntoClinicRoutes)
+router.use(
+  '/patients/:patient_uuid/programmes/:programme_id/replies',
+  replyRoutes
+)
 router.use('/patients/:patient_uuid/programmes', patientProgrammeRoutes)
 router.use('/patients', patientRoutes)
-router.use('/patients', patientRoutes)
+
 router.use('/pds', pdsRecordRoutes)
 router.use('/reports', reportRoutes)
 router.use('/reports/:programme_id/vaccinations', vaccinationRoutes)
@@ -95,10 +99,6 @@ router.use(
 router.use('/sessions/:session_id/consents', consentRoutes)
 router.use('/sessions/:session_id/default-batch', defaultBatchRoutes)
 router.use('/sessions/:session_id/patients', patientSessionRoutes)
-router.use(
-  '/sessions/:session_id/patients/:nhsn/:programme_id/replies',
-  replyRoutes
-)
 router.use('/sessions', sessionRoutes)
 router.use('/uploads', uploadRoutes)
 router.use('/uploads/:upload_id/vaccinations', vaccinationRoutes)
