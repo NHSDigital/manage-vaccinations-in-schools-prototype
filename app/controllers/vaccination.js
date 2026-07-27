@@ -152,11 +152,13 @@ export const vaccinationController = {
         createdBy_uid: account.uid,
         administeredAt: today(),
         administeredBy_uid,
+        ...(session.hasVgdProtocol && {
+          assessedBy_uid
+        }),
         ...(injectionSite && {
           dose: vaccine.dose,
           injectionMethod: VaccinationMethod.Intramuscular,
           injectionSite,
-          assessedBy_uid,
           protocol,
           outcome: VaccinationOutcome.Vaccinated
         }),
@@ -164,7 +166,6 @@ export const vaccinationController = {
           dose: vaccine.dose,
           injectionMethod: VaccinationMethod.Intranasal,
           injectionSite: VaccinationSite.Nose,
-          assessedBy_uid,
           protocol,
           outcome: VaccinationOutcome.Vaccinated
         }),
