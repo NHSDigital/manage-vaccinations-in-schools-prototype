@@ -18,6 +18,7 @@ import {
   Child,
   Contact,
   Patient,
+  PatientSession,
   Programme,
   Session,
   Vaccination
@@ -391,6 +392,22 @@ export class Reply extends BaseModel {
     }
 
     return Object.fromEntries(healthQuestionsForDecision)
+  }
+
+  /**
+   * Get patient session
+   *
+   * @returns {PatientSession|undefined} Patient session
+   */
+  get patientSession() {
+    if (this.session_id) {
+      return PatientSession.findAll(this.context).find(
+        ({ patient_uuid, programme_id, session_id }) =>
+          patient_uuid === this.patient_uuid &&
+          programme_id === this.programme_id &&
+          session_id === this.session_id
+      )
+    }
   }
 
   /**
