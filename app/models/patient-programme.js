@@ -153,7 +153,8 @@ export class PatientProgramme {
    */
   get lastPatientSession() {
     if (this.patientSessions?.length > 0) {
-      return this.patientSessions.at(0)
+      // `patientSessions` is sorted by session date, oldest first
+      return this.patientSessions.at(-1)
     }
   }
 
