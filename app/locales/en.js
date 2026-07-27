@@ -3819,7 +3819,7 @@ export const en = {
       success: 'Vaccination record updated'
     },
     assessedBy: {
-      label: 'Practitioner',
+      label: 'Assessed by',
       title: 'Which nurse identified and pre-screened the child?'
     },
     administeredAt: {
@@ -3836,7 +3836,7 @@ export const en = {
       hint: 'For example, 13 15'
     },
     administeredBy: {
-      label: 'Vaccinator',
+      label: 'Vaccinated by',
       title: 'Who was the vaccinator?'
     },
     createdAt: {
