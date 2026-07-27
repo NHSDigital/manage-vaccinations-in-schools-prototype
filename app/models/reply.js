@@ -472,7 +472,7 @@ export class Reply extends BaseModel {
    * @returns {string} URI
    */
   get uri() {
-    return `/sessions/${this.session_id}/patients/${this.patient.nhsn}/${this.programme_id}/replies/${this.uuid}`
+    return `/patients/${this.patient.uuid}/programmes/${this.programme_id}/replies/${this.uuid}`
   }
 
   /**

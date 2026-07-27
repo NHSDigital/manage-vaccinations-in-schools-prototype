@@ -29,14 +29,14 @@ export const replyController = {
    * @type {RequestParamHandler}
    */
   read(request, response, next, reply_uuid) {
-    const { nhsn, programme_id } = request.params
+    const { patient_uuid, programme_id } = request.params
 
     response.locals.reply = Reply.findOne(reply_uuid, request.session.data)
     response.locals.patientSession = PatientSession.findAll(
       request.session.data
     )
       .filter(({ programme }) => programme.id === programme_id)
-      .find(({ patient }) => patient.nhsn === nhsn)
+      .find(({ patient }) => patient.uuid === patient_uuid)
 
     next()
   },
@@ -45,12 +45,12 @@ export const replyController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
-    const { nhsn, programme_id, session_id } = request.params
+    const { patient_uuid, programme_id } = request.params
 
     return saveAndRedirect(
       request,
       response,
-      `/sessions/${session_id}/patients/${nhsn}/${programme_id}`
+      `/patients/${patient_uuid}/${programme_id}`
     )
   },
 
@@ -65,13 +65,13 @@ export const replyController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
-    const { programme_id, nhsn } = request.params
+    const { patient_uuid, programme_id } = request.params
     const { data } = request.session
     const { account } = response.locals
 
     const patientSession = PatientSession.findAll(request.session.data)
       .filter(({ programme }) => programme.id === programme_id)
-      .find(({ patient }) => patient.nhsn === nhsn)
+      .find(({ patient }) => patient.uuid === patient_uuid)
 
     const createdReply = Reply.create(
       {
