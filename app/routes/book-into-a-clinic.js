@@ -57,9 +57,9 @@ router.post(
 router.post('/:booking_uuid/new/:view', bookIntoClinic.updateForm('new'))
 
 // Editing an appointment
-router.get('/:booking_uuid/new/:appointment_uuid/edit', bookIntoClinic.edit)
+router.get('/:booking_uuid/edit/:appointment_uuid', bookIntoClinic.edit)
 router.post(
-  '/:booking_uuid/new/:appointment_uuid/edit',
+  '/:booking_uuid/edit/:appointment_uuid',
   bookIntoClinic.update('edit')
 )
 
