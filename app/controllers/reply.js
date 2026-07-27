@@ -8,13 +8,7 @@ import {
   ReplyRefusal,
   VaccinationOutcome
 } from '../enums.js'
-import {
-  Contact,
-  PatientSession,
-  Programme,
-  Reply,
-  Vaccination
-} from '../models.js'
+import { Contact, Patient, Programme, Reply, Vaccination } from '../models.js'
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
@@ -30,13 +24,13 @@ export const replyController = {
    */
   read(request, response, next, reply_uuid) {
     const { patient_uuid, programme_id } = request.params
+    const { data } = request.session
 
-    response.locals.reply = Reply.findOne(reply_uuid, request.session.data)
-    response.locals.patientSession = PatientSession.findAll(
-      request.session.data
-    )
-      .filter(({ programme }) => programme.id === programme_id)
-      .find(({ patient }) => patient.uuid === patient_uuid)
+    const patient = Patient.findOne(String(patient_uuid), data)
+    const reply = Reply.findOne(reply_uuid, data)
+
+    response.locals.reply = reply
+    response.locals.patientProgramme = patient.programmes[String(programme_id)]
 
     next()
   },
@@ -66,21 +60,21 @@ export const replyController = {
    */
   new(request, response) {
     const { patient_uuid, programme_id } = request.params
+    const { session_id } = request.query
     const { data } = request.session
     const { account } = response.locals
 
-    const patientSession = PatientSession.findAll(request.session.data)
-      .filter(({ programme }) => programme.id === programme_id)
-      .find(({ patient }) => patient.uuid === patient_uuid)
+    const patient = Patient.findOne(String(patient_uuid), data)
+    const patientProgramme = patient.programmes[String(programme_id)]
 
     const createdReply = Reply.create(
       {
-        child: patientSession.patient,
-        patient_uuid: patientSession.patient.uuid,
-        programme_id: patientSession.programme.id,
-        session_id: patientSession.session.id,
+        child: patientProgramme.patient,
+        patient_uuid,
+        programme_id,
+        session_id,
         createdBy_uid: account.uid,
-        hasSelfConsent: patientSession?.patient?.isPost16
+        hasSelfConsent: patientProgramme?.patient?.isPost16
       },
       data
     )
@@ -88,7 +82,7 @@ export const replyController = {
     const reply = new Reply(createdReply, data)
 
     let next
-    if (patientSession?.patient?.isPost16) {
+    if (patientProgramme?.patient?.isPost16) {
       next = `${reply.uri}/new/decision`
     } else {
       next = `${reply.uri}/new/respondent`
@@ -105,8 +99,8 @@ export const replyController = {
     return (request, response) => {
       const { invalidUuid } = request.app.locals
       const { reply_uuid } = request.params
-      const { data } = request.session
-      const { __, account, patientSession, triage, vaccination } =
+      const { data, referrer } = request.session
+      const { __, account, patientProgramme, triage, vaccination } =
         response.locals
 
       let reply
@@ -118,7 +112,7 @@ export const replyController = {
         Reply.update(reply_uuid, request.body.reply, data)
       } else {
         reply = new Reply(Reply.findOne(reply_uuid, data.wizard), data)
-        next = patientSession.uri
+        next = referrer || patientProgramme.uri
 
         // Remove any contact details in reply if self consent
         if (reply.hasSelfConsent) {
@@ -126,14 +120,14 @@ export const replyController = {
         }
 
         if (triage?.psd) {
-          patientSession.patientProgramme.giveInstruction({
+          patientProgramme.giveInstruction({
             createdBy_uid: account.uid,
-            programme_id: patientSession.programme.id
+            programme_id: patientProgramme.programme_id
           })
         }
 
         if (triage?.status) {
-          patientSession.patientProgramme.recordTriage({
+          patientProgramme.recordTriage({
             ...triage,
             ...data?.wizard?.triage, // Wizard values
             createdBy_uid: account.uid,
@@ -146,9 +140,8 @@ export const replyController = {
           const createdVaccination = Vaccination.create(
             {
               outcome: VaccinationOutcome.AlreadyVaccinated,
-              patient_uuid: patientSession.patient.uuid,
-              programme_id: patientSession.programme.id,
-              session_id: patientSession.session.id,
+              patient_uuid: patientProgramme.patient_uuid,
+              programme_id: patientProgramme.programme_id,
               administeredAt_: vaccination.administeredAt_,
               administeredBy_uid: account.uid,
               createdBy_uid: account.uid,
@@ -164,7 +157,7 @@ export const replyController = {
             data
           )
 
-          patientSession.patient.recordVaccination(createdVaccination)
+          patientProgramme.patient.recordVaccination(createdVaccination)
         }
 
         // Invalidate any replaced response
@@ -174,7 +167,7 @@ export const replyController = {
           delete request.app.locals.invalidUuid
         }
 
-        patientSession.patient.addReply(reply)
+        patientProgramme.patient.addReply(reply)
 
         // Update session data
         Reply.update(reply_uuid, reply, data)
@@ -185,10 +178,7 @@ export const replyController = {
       delete data.triage
       delete data.vaccination
 
-      request.flash(
-        'success',
-        __(`reply.${type}.success`, { reply, patientSession })
-      )
+      request.flash('success', __(`reply.${type}.success`, { reply }))
 
       saveAndRedirect(request, response, next)
     }
@@ -202,7 +192,7 @@ export const replyController = {
     return (request, response, next) => {
       const { reply_uuid } = request.params
       const { data, referrer } = request.session
-      const { patientSession, triage, vaccination } = response.locals
+      const { patientProgramme, triage, vaccination } = response.locals
 
       let reply
       if (type === 'edit') {
@@ -213,19 +203,19 @@ export const replyController = {
         if (!reply) {
           reply = Reply.create(response.locals.reply, data.wizard)
         }
+        reply = new Reply(reply, data)
       }
 
       response.locals.reply = new Reply(reply, data)
-      response.locals.patient = patientSession.patient
+      response.locals.patient = patientProgramme.patient
 
       // Only ask for programme if more than 1 administered in a session
-      const isMultiProgrammeSession =
-        patientSession.session.programmes.length > 1
+      const isMultiProgrammeSession = reply?.session.programmes.length > 1
       response.locals.isMultiProgrammeSession = isMultiProgrammeSession
 
       const programme = isMultiProgrammeSession
         ? reply.programme_id && Programme.findOne(reply.programme_id, data)
-        : patientSession.session.programmes[0]
+        : reply?.session.programmes[0]
       response.locals.programme = programme
 
       response.locals.triage = {
@@ -249,7 +239,7 @@ export const replyController = {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
         [`/${reply_uuid}/${type}/decision`]: {
-          [`/${reply_uuid}/${type}/${reply?.hasSelfConsent && !patientSession.patient.isPost16 ? 'can-notify' : 'health-answers'}`]:
+          [`/${reply_uuid}/${type}/${reply?.hasSelfConsent && !patientProgramme.patient.isPost16 ? 'can-notify' : 'health-answers'}`]:
             {
               data: 'reply.decision',
               value: ReplyDecision.Given
@@ -297,13 +287,13 @@ export const replyController = {
       response.locals.paths = {
         ...wizard(journey, request),
         ...(type === 'edit' && {
-          back: `${patientSession.uri}/replies/${reply_uuid}/edit`,
-          next: `${patientSession.uri}/replies/${reply_uuid}/edit`
+          back: `${reply.uri}/edit`,
+          next: `${reply.uri}/edit`
         }),
         ...(referrer && { back: referrer })
       }
 
-      response.locals.respondentItems = patientSession.patient.contacts.map(
+      response.locals.respondentItems = patientProgramme.patient.contacts.map(
         (contact) => ({
           text: formatContact(contact, false),
           hint: { text: contact.tel },
@@ -312,15 +302,15 @@ export const replyController = {
       )
 
       // Child can self consent if assessed as Gillick competent
-      if (patientSession.gillick?.competent === GillickCompetent.True) {
+      if (reply?.patientSession?.gillick?.competent === GillickCompetent.True) {
         response.locals.respondentItems.unshift({
-          text: `${patientSession.patient?.firstName} (child)`,
+          text: `${patientProgramme.patient?.firstName} (child)`,
           value: 'self'
         })
       }
 
       if (isMultiProgrammeSession) {
-        response.locals.programmeItems = patientSession.session.programmes.map(
+        response.locals.programmeItems = reply.session.programmes.map(
           (programme) => ({
             text: programme.name,
             value: programme.id
@@ -366,7 +356,7 @@ export const replyController = {
     const { respondent } = request.body
     const { reply_uuid } = request.params
     const { data } = request.session
-    let { paths, patientSession, triage, vaccination } = response.locals
+    let { paths, triage, vaccination } = response.locals
 
     // Add contacts from global context to wizard
     data.wizard.contacts = data.contacts
@@ -421,8 +411,7 @@ export const replyController = {
     return saveAndRedirect(
       request,
       response,
-      paths.next ||
-        `${patientSession.uri}/replies/${reply_uuid}/new/check-answers`
+      paths.next || `${reply.uri}/new/check-answers`
     )
   },
 
@@ -432,7 +421,7 @@ export const replyController = {
   followUp(request, response) {
     const { decision } = request.body
     const { data } = request.session
-    const { patientSession, reply } = response.locals
+    const { patientProgramme, reply } = response.locals
 
     if (decision === 'true') {
       return saveAndRedirect(request, response, `${reply.uri}/edit/outcome`)
@@ -444,11 +433,10 @@ export const replyController = {
 
     const newReply = Reply.create(
       {
-        child: patientSession.patient,
+        child: patientProgramme.patient,
         contact_uuid: reply.contact_uuid,
-        patient_uuid: patientSession.patient_uuid,
-        session_id: patientSession.session_id,
-        programme_id: patientSession.programme_id,
+        patient_uuid: patientProgramme.patient_uuid,
+        programme_id: patientProgramme.programme_id,
         method: ReplyMethod.Phone
       },
       data.wizard
@@ -473,7 +461,7 @@ export const replyController = {
     const { note } = request.body.reply
     const { reply_uuid } = request.params
     const { data } = request.session
-    const { __, patientSession } = response.locals
+    const { __, referrer } = response.locals
 
     // Clean up session data
     delete data.reply
@@ -483,7 +471,7 @@ export const replyController = {
 
     request.flash('success', __(`reply.invalidate.success`, { reply }))
 
-    return saveAndRedirect(request, response, patientSession.uri)
+    return saveAndRedirect(request, response, referrer || reply.uri)
   },
 
   /**
@@ -492,8 +480,8 @@ export const replyController = {
   withdraw(request, response) {
     const { refusalReason, refusalReasonOther, note } = request.body.reply
     const { reply_uuid } = request.params
-    const { data } = request.session
-    const { __, account, patientSession, reply } = response.locals
+    const { data, referrer } = request.session
+    const { __, account, patientProgramme, reply } = response.locals
 
     // Create a new reply
     const newReply = Reply.create(
@@ -510,23 +498,22 @@ export const replyController = {
       data
     )
 
-    patientSession.patient.addReply(newReply)
+    patientProgramme.patient.addReply(newReply)
 
     // Add vaccination if refusal reason is already given
     if (refusalReason === ReplyRefusal.AlreadyVaccinated) {
       const vaccination = Vaccination.create(
         {
           outcome: VaccinationOutcome.AlreadyVaccinated,
-          patient_uuid: patientSession.patient_uuid,
-          programme_id: patientSession.programme.id,
-          session_id: patientSession.session.id,
+          patient_uuid: patientProgramme.patient_uuid,
+          programme_id: patientProgramme.programme_id,
           createdBy_uid: account.uid,
           ...(data.reply?.note && { note })
         },
         data
       )
 
-      patientSession.patient.recordVaccination(vaccination)
+      patientProgramme.patient.recordVaccination(vaccination)
     }
 
     // Invalidate existing reply
@@ -537,7 +524,7 @@ export const replyController = {
 
     request.flash('success', __(`reply.withdraw.success`, { reply }))
 
-    return saveAndRedirect(request, response, patientSession.uri)
+    return saveAndRedirect(request, response, referrer || reply.uri)
   }
 }
 

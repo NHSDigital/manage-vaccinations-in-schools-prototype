@@ -19,7 +19,7 @@
   {% if not isVaccinated and not patientSession.patient.isPost16 %}
     {{ actionLink({
       text: __("reply.new.title"),
-      href: patientSession.uri + "/replies/new?referrer=" + referrer
+      href: patientSession.patientProgramme.uri + "/replies/new?session_id=" + session.id + "&referrer=" + referrer
     }) if not isVaccinated }}
 
     {{ appButtonGroup({
