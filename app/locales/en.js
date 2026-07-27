@@ -899,7 +899,9 @@ export const en = {
         description: 'You’ll get a booking confirmation email or text message.'
       }
     },
-    success: 'Added {{fullName}} to the {{sessionName}}',
+    new: {
+      success: 'Added {{fullName}} to the {{sessionName}}'
+    },
     show: {
       title: 'Manage your booking',
       introduction:
@@ -920,6 +922,15 @@ export const en = {
         }
       },
       referenceNumber: 'Your booking reference number is: %s'
+    },
+    edit: {
+      title: 'Edit appointment',
+      summary: {
+        child: 'Child details',
+        appointment: 'Appointment details',
+        contact: 'Contact details'
+      },
+      success: 'Updated {{fullName}} in the {{sessionName}}'
     }
   },
   clinicVaccinationPeriod: {
