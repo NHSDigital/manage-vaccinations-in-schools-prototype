@@ -15,10 +15,11 @@ import {
 import {
   Batch,
   Clinic,
-  PatientSession,
   Patient,
+  PatientSession,
   Programme,
   School,
+  Session,
   User,
   Vaccine
 } from '../models.js'
@@ -130,16 +131,16 @@ export class Vaccination extends BaseModel {
     this.patient
 
     /** @type {string|undefined} */
-    this.patientSession_uuid
-
-    /** @type {PatientSession|undefined} */
-    this.patientSession
-
-    /** @type {string|undefined} */
     this.programme_id
 
     /** @type {Programme|undefined} */
     this.programme
+
+    /** @type {string|undefined} */
+    this.session_id
+
+    /** @type {Session|undefined} */
+    this.session
 
     /** @type {string|undefined} */
     this.vaccine_snomed
@@ -321,13 +322,18 @@ export class Vaccination extends BaseModel {
   }
 
   /**
-   * Get session
+   * Get patient session
    *
-   * @returns {Session|undefined} Session
+   * @returns {PatientSession|undefined} Patient session
    */
-  get session() {
-    if (this.patientSession) {
-      return this.patientSession.session
+  get patientSession() {
+    if (this.session_id) {
+      return PatientSession.findAll(this.context).find(
+        ({ patient_uuid, programme_id, session_id }) =>
+          patient_uuid === this.patient_uuid &&
+          programme_id === this.programme_id &&
+          session_id === this.session_id
+      )
     }
   }
 
@@ -555,17 +561,12 @@ Vaccination.relate('administeredBy_uid', () => User, 'administeredBy')
 Vaccination.relate('assessedBy_uid', () => User, 'assessedBy')
 Vaccination.relate('batch_id', () => Batch, 'batch')
 Vaccination.relate('clinic_id', () => Clinic, 'clinic')
-Vaccination.relate('patient_uuid', () => Patient, 'patient')
-Vaccination.relate(
-  'patientSession_uuid',
-  () => PatientSession,
-  'patientSession'
-)
-Vaccination.relate('programme_id', () => Programme, 'programme')
 Vaccination.relate('school_id', () => School, 'school')
+Vaccination.relate('session_id', () => Session, 'session')
+Vaccination.relate('patient_uuid', () => Patient, 'patient')
+Vaccination.relate('programme_id', () => Programme, 'programme')
 Vaccination.relate('vaccine_snomed', () => Vaccine, 'vaccine')
 
 /**
- * @import { Session } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

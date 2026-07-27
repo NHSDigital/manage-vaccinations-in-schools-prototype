@@ -26,19 +26,15 @@ export const vaccinationController = {
    * @type {RequestParamHandler}
    */
   read(request, response, next, vaccination_uuid) {
-    const { programme_id } = /** @type {{ programme_id?: string }} */ (
-      request.params
-    )
+    const { programme_id } = request.params
+    const { data } = request.session
 
-    const programme = Programme.findOne(programme_id, request.session.data)
-    const vaccination = Vaccination.findOne(
-      vaccination_uuid,
-      request.session.data
-    )
+    const programme = Programme.findOne(String(programme_id), data)
+    const vaccination = Vaccination.findOne(vaccination_uuid, data)
 
-    response.locals.vaccination = vaccination
     response.locals.programme = programme
     response.locals.session = vaccination?.session
+    response.locals.vaccination = vaccination
 
     next()
   },
@@ -92,7 +88,7 @@ export const vaccinationController = {
       String(patientSession_uuid),
       data
     )
-    const { session, programme, vaccine } = patientSession
+    const { session, patient, programme, vaccine } = patientSession
     const { identifiedBy, injectionSite, ready, hasSelfIdentified } =
       data.preScreen
     const administeredBy_uid = data.preScreen?.administeredBy_uid || account.uid
@@ -143,10 +139,10 @@ export const vaccinationController = {
         hasSelfIdentified,
         identifiedBy,
         location: session.formatted.location,
-        programme_id: programme.id,
         school_id: session.school_id,
-        patient_uuid: patientSession.patient.uuid,
-        patientSession_uuid: patientSession.uuid,
+        patient_uuid: patient.uuid,
+        programme_id: programme.id,
+        session_id: session.id,
         vaccine_snomed: vaccine.snomed,
         createdAt: today(),
         createdBy_uid: account.uid,
@@ -210,13 +206,8 @@ export const vaccinationController = {
 
       const vaccination = Vaccination.findOne(vaccination_uuid, data)
 
-      const patientSession = PatientSession.findOne(
-        vaccination.patientSession_uuid,
-        data
-      )
-
       // Update number of vaccinations given during session
-      if (type === 'new' && vaccination.patientSession_uuid) {
+      if (type === 'new' && vaccination.patientSession) {
         if (data?.token?.vaccinations?.[vaccination.vaccine_snomed]) {
           data.token.vaccinations[vaccination.vaccine_snomed] += 1
         } else {
@@ -244,11 +235,11 @@ export const vaccinationController = {
       vaccination.patient.recordVaccination(vaccination)
 
       let next = referrer || vaccination.uri
-      if (type === 'new' && patientSession) {
+      if (type === 'new' && vaccination.patientSession) {
         next =
-          patientSession.outstandingVaccinations.length === 0
+          vaccination.patientSession.outstandingVaccinations.length === 0
             ? `${session.uri}/record`
-            : patientSession.uri
+            : vaccination.patientSession.uri
       }
 
       saveAndRedirect(request, response, next)

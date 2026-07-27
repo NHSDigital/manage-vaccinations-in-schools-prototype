@@ -147,7 +147,6 @@ export const replyController = {
             {
               outcome: VaccinationOutcome.AlreadyVaccinated,
               patient_uuid: patientSession.patient.uuid,
-              patientSession_uuid: patientSession.uuid,
               programme_id: patientSession.programme.id,
               session_id: patientSession.session.id,
               administeredAt_: vaccination.administeredAt_,
@@ -518,7 +517,7 @@ export const replyController = {
       const vaccination = Vaccination.create(
         {
           outcome: VaccinationOutcome.AlreadyVaccinated,
-          patientSession_uuid: patientSession.uuid,
+          patient_uuid: patientSession.patient_uuid,
           programme_id: patientSession.programme.id,
           session_id: patientSession.session.id,
           createdBy_uid: account.uid,
