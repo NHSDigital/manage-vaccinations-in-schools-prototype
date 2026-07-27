@@ -26,6 +26,7 @@ import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
   formatDate,
+  getAcademicYear,
   today
 } from '../utils/date.js'
 import {
@@ -210,6 +211,15 @@ export class Vaccination extends BaseModel {
     if (object) {
       this.administeredAt = convertObjectToIsoDate(object)
     }
+  }
+
+  /**
+   * Get the academic year vaccination was administered
+   *
+   * @returns {number} Academic year vaccination was administered
+   */
+  get academicYear() {
+    return getAcademicYear(this.administeredAt)
   }
 
   /**

@@ -472,9 +472,8 @@ export class PatientProgramme extends BaseModel {
    */
   get vaccinationOutcomes() {
     return this.patient?.vaccinations.filter(
-      ({ programme, session }) =>
-        programme.id === this.programme_id &&
-        session?.academicYear === this.academicYear
+      ({ academicYear, programme_id }) =>
+        programme_id === this.programme_id && academicYear === this.academicYear
     )
   }
 
