@@ -342,6 +342,53 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  edit(request, response) {
+    const { session_id, booking_uuid, appointment_uuid } = request.params
+    const { data } = request.session
+
+    if (!data.journeyData) {
+      data.journeyData = {}
+    }
+
+    // Copy the saved booking to the wizard context, if not already there
+    let booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    if (!booking) {
+      // TODO: response.locals.booking needs to be read from the global context in readBooking()
+      booking = ClinicBooking.create(response.locals.booking, data.wizard)
+    }
+
+    // Track various metadata about the journey that we don't record in the booking itself
+    const journeyType = session_id
+      ? ClinicBookingJourneyType.TeamEditing
+      : ClinicBookingJourneyType.ParentEditing
+    data.journeyData[booking.uuid] = { journeyType }
+
+    // ------------------------- WIP -------------------------
+
+    // TODO: set up the journey data that controls how some values are entered
+    // journeyData.timeRange
+    // journeyData.time
+    // journeyData.preselectedSlot (false)
+    // journeyData.preferredNameChoice
+    // journeyData.clinic_id
+    // journeyData.preferredLocation
+
+    // Give access to the data needed for the summaryRows
+    const bookingWithFullContext = new ClinicBooking(booking, data)
+    response.locals.booking = bookingWithFullContext
+
+    // Show back link to patient session page
+    const appointment = booking.findAppointment(appointment_uuid)
+    if (appointment) {
+      response.locals.back = appointment.uri.matched
+    }
+
+    return response.render('session/edit')
+  },
+
+  /**
    * @param {string} action - action being carried out i.e. create new vs edit existing
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
