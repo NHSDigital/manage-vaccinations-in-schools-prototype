@@ -473,6 +473,7 @@ export const PatientDueStatus = {
 export const PatientRefusedStatus = {
   Conflict: 'Conflicting consent',
   FollowUp: 'Follow-up requested',
+  NotInSchool: 'Do not vaccinate in school',
   Refusal: 'Consent refused'
 }
 

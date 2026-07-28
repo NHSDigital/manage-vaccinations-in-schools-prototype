@@ -322,7 +322,9 @@ export function getPatientRefusedStatus(patientSession) {
       return PatientRefusedStatus.FollowUp
     case ConsentStatus.Refused:
     case ConsentStatus.FinalRefusal:
-      return PatientRefusedStatus.Refusal
+      return patientSession.isVaccinationWantedOutsideSchool
+        ? PatientRefusedStatus.NotInSchool
+        : PatientRefusedStatus.Refusal
   }
 }
 
