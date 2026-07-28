@@ -954,7 +954,7 @@ export class Session extends BaseModel {
               return getSessionActivityCount(this, [
                 {
                   status: PatientStatus.Due,
-                  instruct: InstructionStatus.Needed
+                  instructionStatus: InstructionStatus.Needed
                 }
               ])
             default:

@@ -2115,7 +2115,7 @@ export const en = {
       label: 'Triage status',
       title: 'Triage for %s vaccination'
     },
-    instruct: {
+    instructionStatus: {
       label: 'PSD status',
       title: 'Patient specific direction (PSD)'
     },

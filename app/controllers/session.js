@@ -423,10 +423,10 @@ export const sessionController = {
 
     // Filter defaults
     const filters = {
-      instruct: request.query.instruct || 'none',
       register: request.query.register || 'none',
       status: request.query.status || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
+      instructionStatus: request.query.instructionStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
       patientDeferred: request.query.patientDeferred || 'none',
       patientIneligible: request.query.patientIneligible || 'none',
@@ -575,10 +575,10 @@ export const sessionController = {
     const radioFilters = {
       patients: {
         register: showRegistration && RegistrationStatus,
-        instruct: session.hasPsdProtocol && InstructionStatus
+        instructionStatus: session.hasPsdProtocol && InstructionStatus
       },
       instructions: {
-        instruct: InstructionStatus
+        instructionStatus: InstructionStatus
       }
     }
 
@@ -595,6 +595,7 @@ export const sessionController = {
 
     // Clean up session data
     delete data.option
+    delete data.instructionStatus
     delete data.patientConsent
     delete data.patientDeferred
     delete data.patientIneligible
@@ -603,7 +604,6 @@ export const sessionController = {
     delete data.patientVaccinated
     delete data.programme_id
     delete data.q
-    delete data.instruct
     delete data.register
     delete data.status
     delete data.vaccineCriteria
@@ -620,7 +620,7 @@ export const sessionController = {
 
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'instruct', 'q', 'register', 'status'],
+      ['clinicStatus', 'instructionStatus', 'q', 'register', 'status'],
       [
         'canBeOfferedCatchUps',
         'option',
@@ -1052,9 +1052,11 @@ export const sessionController = {
     const { data } = request.session
     const { __, account, session } = response.locals
 
-    const patientsToInstruct = session.patientSessions
-      .filter(({ status }) => status === PatientStatus.Due)
-      .filter(({ instruct }) => instruct === InstructionStatus.Needed)
+    const patientsToInstruct = session.patientSessions.filter(
+      (patientSession) =>
+        patientSession.status === PatientStatus.Due &&
+        patientSession.instructionStatus === InstructionStatus.Needed
+    )
 
     for (const patientSession of patientsToInstruct) {
       patientSession.patientProgramme.giveInstruction({

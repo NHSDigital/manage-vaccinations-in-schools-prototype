@@ -412,7 +412,7 @@ export class PatientSession extends BaseModel {
 
     // Need consent response (or a clinic appointment) before we can determine
     // the chosen method.
-    // We only want to instruct on patients being vaccinated using nasal spray
+    // We only want to instruct patients being vaccinated using nasal spray
     if (!this.consentGiven) {
       return
     }
@@ -700,7 +700,7 @@ export class PatientSession extends BaseModel {
    *
    * @returns {InstructionStatus|undefined} Instruction status
    */
-  get instruct() {
+  get instructionStatus() {
     return getInstructionStatus(this)
   }
 
@@ -710,7 +710,7 @@ export class PatientSession extends BaseModel {
    * @returns {boolean} Patient has PSD instruction
    */
   get hasInstruction() {
-    return this.instruct === InstructionStatus.Given
+    return this.instructionStatus === InstructionStatus.Given
   }
 
   /**
@@ -794,8 +794,8 @@ export class PatientSession extends BaseModel {
               return getConsentStatusProperties(this.consent)
             case 'screen':
               return getScreenStatusProperties(this.screen)
-            case 'instruct':
-              return getInstructionStatusProperties(this.instruct)
+            case 'instructionStatus':
+              return getInstructionStatusProperties(this.instructionStatus)
             case 'register':
               return getRegistrationStatusProperties(this.register)
             case 'outcome':
@@ -835,10 +835,10 @@ export class PatientSession extends BaseModel {
               )
             case 'screen':
               return this.screen && formatTag(this.statusProperties.screen)
-            case 'instruct':
+            case 'instructionStatus':
               return (
                 this.session?.hasPsdProtocol &&
-                formatTag(this.statusProperties.instruct)
+                formatTag(this.statusProperties.instructionStatus)
               )
             case 'register':
               return formatTag(this.statusProperties.register)

@@ -129,10 +129,10 @@
                   label: __("patientSession.vaccineCriteria.label"),
                   value: patientSession.formatted.vaccineCriteria
                 } if session.canOfferAlternativeVaccine and not account.isSchoolUser,
-                instruct: {
-                  label: __("patientSession.instruct.label"),
-                  value: patientSession.formatted.instruct
-                } if view == "instructions" and patientSession.instruct and not account.isSchoolUser,
+                instructionStatus: {
+                  label: __("patientSession.instructionStatus.label"),
+                  value: patientSession.formatted.instructionStatus
+                } if view == "instructions" and patientSession.instructionStatus and not account.isSchoolUser,
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
