@@ -207,7 +207,6 @@ export const replyController = {
       }
 
       response.locals.reply = new Reply(reply, data)
-      response.locals.patient = patientProgramme.patient
 
       // Only ask for programme if more than 1 administered in a session
       const isMultiProgrammeSession = reply?.session.programmes.length > 1
