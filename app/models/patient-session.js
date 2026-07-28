@@ -48,12 +48,12 @@ import {
 import {
   getConsentStatus,
   getConsentStatusDescription,
+  getInstructionStatus,
   getScreenStatus,
   getScreenStatusDescription
 } from '../utils/patient-programme.js'
 import {
   canRecordOutcome,
-  getInstructionStatus,
   getPatientConsentStatus,
   getPatientDeferredDescription,
   getPatientDeferredStatus,

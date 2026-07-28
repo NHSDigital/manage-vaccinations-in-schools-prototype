@@ -4,9 +4,11 @@ import {
   ConsentStatus,
   ConsentVaccineCriteria,
   ConsentWindow,
+  InstructionStatus,
   ReplyDecision,
   ScreenStatus,
-  VaccinationOutcome
+  VaccinationOutcome,
+  VaccineCriteria
 } from '../enums.js'
 
 import { getRepliesWithHealthAnswers } from './reply.js'
@@ -329,6 +331,26 @@ export function getScreenStatusDescription(patientSession) {
     default:
       return `No triage is needed for ${patientSession.patient.firstName}.`
   }
+}
+
+/**
+ * Get instruction status for nasal spray
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {InstructionStatus|undefined} Instruction status
+ */
+export function getInstructionStatus(patientSession) {
+  if (!patientSession.vaccine) {
+    return
+  }
+
+  if (patientSession.vaccine.criteria === VaccineCriteria.Intranasal) {
+    return patientSession.patientProgramme.instruction
+      ? InstructionStatus.Given
+      : InstructionStatus.Needed
+  }
+
+  return
 }
 
 /**

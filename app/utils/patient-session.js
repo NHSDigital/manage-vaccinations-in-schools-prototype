@@ -3,7 +3,6 @@ import { isToday } from 'date-fns'
 import {
   ConsentStatus,
   ConsentWindow,
-  InstructionStatus,
   PatientConsentStatus,
   PatientDeferredStatus,
   PatientStatus,
@@ -12,8 +11,7 @@ import {
   PatientVaccinatedStatus,
   RegistrationStatus,
   ScreenStatus,
-  VaccinationOutcome,
-  VaccineCriteria
+  VaccinationOutcome
 } from '../enums.js'
 import { getRepliesWithHealthAnswers } from '../utils/reply.js'
 
@@ -36,26 +34,6 @@ export function canRecordOutcome(patientSession) {
   }
 
   return false
-}
-
-/**
- * Get instruction status for nasal spray
- *
- * @param {PatientSession} patientSession - Patient session
- * @returns {InstructionStatus|undefined} Instruction status
- */
-export function getInstructionStatus(patientSession) {
-  if (!patientSession.vaccine) {
-    return
-  }
-
-  if (patientSession.vaccine.criteria === VaccineCriteria.Intranasal) {
-    return patientSession.patientProgramme.instruction
-      ? InstructionStatus.Given
-      : InstructionStatus.Needed
-  }
-
-  return
 }
 
 /**
