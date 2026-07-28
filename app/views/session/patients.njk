@@ -64,9 +64,11 @@
           }) | safe
         }) }}
 
-        {% if view == "instruct" and session.activity.instruct and account.canPrescribe %}
+        {% if view == "instructions" and session.activity.instruct and account.canPrescribe %}
           {% call insetText() %}
-            {{ __("session.instruct.description", session.activity.instruct) | nhsukMarkdown }}
+            {{ __mf("session.instructions.count", {
+              count: session.activity.instruct
+            }) | nhsukMarkdown }}
 
             {{ actionLink({
               text: __("session.giveInstructions.label"),
@@ -130,7 +132,7 @@
                 instruct: {
                   label: __("patientSession.instruct.label"),
                   value: patientSession.formatted.instruct
-                } if view == "instruct" and patientSession.instruct and not account.isSchoolUser,
+                } if view == "instructions" and patientSession.instruct and not account.isSchoolUser,
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,
@@ -139,7 +141,7 @@
                 status: {
                   label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.status.label"),
                   value: consentStatusHtml if account.isSchoolUser else statusHtml
-                } if view != "instruct",
+                } if view != "instructions",
                 additionalProgrammes: {
                   label: __("patientSession.additionalProgrammes.label"),
                   value: patientSession.formatted.additionalProgrammesToOffer

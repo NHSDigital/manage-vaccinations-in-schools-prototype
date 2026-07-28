@@ -87,9 +87,9 @@ export const sessionController = {
         ...(session.hasPsdProtocol
           ? [
               {
-                text: __('session.instruct.label'),
-                href: `${session.uri}/instruct`,
-                current: view === 'instruct'
+                text: __('session.instructions.label'),
+                href: `${session.uri}/instructions`,
+                current: view === 'instructions'
               }
             ]
           : []),
@@ -137,7 +137,7 @@ export const sessionController = {
   show(request, response) {
     let { view } = request.params
 
-    if (['instruct', 'patients', 'record'].includes(String(view))) {
+    if (['instructions', 'patients', 'record'].includes(String(view))) {
       view = 'patients'
     } else if (!view) {
       view = 'show'
@@ -577,7 +577,7 @@ export const sessionController = {
         register: showRegistration && RegistrationStatus,
         instruct: session.hasPsdProtocol && InstructionStatus
       },
-      instruct: {
+      instructions: {
         instruct: InstructionStatus
       }
     }
@@ -1067,7 +1067,7 @@ export const sessionController = {
 
     request.flash('success', __(`session.giveInstructions.success`))
 
-    return saveAndRedirect(request, response, `${session.uri}/instruct`)
+    return saveAndRedirect(request, response, `${session.uri}/instructions`)
   },
 
   /**

@@ -2884,11 +2884,11 @@ export const en = {
       label: 'Triage',
       title: 'Review triage statuses'
     },
-    instruct: {
+    instructions: {
       label: 'PSDs',
       title: 'Review PSDs',
-      description:
-        'There are %s children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.'
+      count:
+        '{count, plural, =0 {There are no children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.} one {There is # child with consent for the nasal flu vaccine who does not require triage and does not yet have a PSD in place.} other {There are # children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.}}'
     },
     register: {
       label: 'Register attendance',
