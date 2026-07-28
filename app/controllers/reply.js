@@ -445,7 +445,7 @@ export const replyController = {
     const newReply = Reply.create(
       {
         child: patientSession.patient,
-        contact: reply.contact,
+        contact_uuid: reply.contact_uuid,
         patient_uuid: patientSession.patient_uuid,
         session_id: patientSession.session_id,
         programme_id: patientSession.programme_id,
