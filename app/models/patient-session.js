@@ -46,8 +46,11 @@ import {
   getVaccinationOutcomeProperties
 } from '../utils/enum-properties.js'
 import {
+  getConsentStatus,
+  getConsentStatusDescription
+} from '../utils/patient-programme.js'
+import {
   canRecordOutcome,
-  getConsentStatusDescription,
   getInstructionStatus,
   getPatientConsentStatus,
   getPatientDeferredDescription,
@@ -63,7 +66,6 @@ import {
 } from '../utils/patient-session.js'
 import {
   countAnswersNeedingTriage,
-  getConsentStatus,
   getConsentHealthAnswers,
   getConsentRefusalReasons
 } from '../utils/reply.js'

@@ -1,4 +1,3 @@
-import filters from '@x-govuk/govuk-prototype-filters'
 import { isToday } from 'date-fns'
 
 import {
@@ -37,51 +36,6 @@ export function canRecordOutcome(patientSession) {
   }
 
   return false
-}
-
-/**
- * Get expanded description about consent status
- *
- * @param {PatientSession} patientSession - Patient session
- * @returns {string} Consent status description
- */
-export function getConsentStatusDescription(patientSession) {
-  const relationships = filters.formatList(patientSession.parentalRelationships)
-  const contactNames = filters.formatList(
-    patientSession.contactsRequestingFollowUp
-  )
-
-  if (patientSession.patient?.isPost16) {
-    return `${patientSession.patient.firstName} is old enough to self-consent.`
-  }
-
-  if (patientSession.patient?.hasNoContactDetails) {
-    return 'There are no contact details for this child.'
-  }
-
-  if (patientSession.session?.consentWindow === ConsentWindow.Opening) {
-    return patientSession.session?.formatted.consentWindowSentence
-  }
-
-  switch (patientSession.consent) {
-    case ConsentStatus.NoResponse:
-      return 'No-one responded to our requests for consent.'
-    case ConsentStatus.NotDelivered:
-      return 'Consent response could not be delivered.'
-    case ConsentStatus.Inconsistent:
-      return 'You can only vaccinate if all respondents give consent.'
-    case ConsentStatus.Declined:
-      return `${contactNames} would like to speak to a member of the team about other options for their child’s vaccination.`
-    case ConsentStatus.Given:
-    case ConsentStatus.GivenForAlternativeInjection:
-    case ConsentStatus.GivenForIntranasal:
-      return `${relationships} gave consent.`
-    case ConsentStatus.Refused:
-      return `${relationships} refused consent.`
-    case ConsentStatus.FinalRefusal:
-      return `Refusal to give consent confirmed by ${relationships}.`
-    default:
-  }
 }
 
 /**
