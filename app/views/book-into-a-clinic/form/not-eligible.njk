@@ -12,7 +12,7 @@
 
       {{ __("clinicBooking.notEligible.description") | nhsukMarkdown }}
 
-      {% set programmeStatusHtml -%}
+      {% set statusHtml -%}
         {%- for id, patientProgramme in patient.activeProgrammes -%}
           {{ patientProgramme.formatted.programmeStatus | nhsukMarkdown }}
         {%- endfor %}
@@ -29,8 +29,8 @@
         rows: summaryRows(patient, {
           dob: {},
           programmeStatus: {
-            label: __("patientSession.report.label"),
-            value: programmeStatusHtml
+            label: __("patientSession.status.label"),
+            value: statusHtml
           },
           upcomingAppointments: {},
           upcomingSchoolSessions: {}
