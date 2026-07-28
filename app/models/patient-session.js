@@ -49,12 +49,6 @@ import {
   getConsentStatus,
   getConsentStatusDescription,
   getInstructionStatus,
-  getScreenStatus,
-  getScreenStatusDescription,
-  getVaccinationOutcome
-} from '../utils/patient-programme.js'
-import {
-  canRecordOutcome,
   getPatientConsentStatus,
   getPatientDeferredDescription,
   getPatientDeferredStatus,
@@ -62,6 +56,12 @@ import {
   getPatientStatusDescription,
   getPatientTriageStatus,
   getPatientVaccinatedStatus,
+  getScreenStatus,
+  getScreenStatusDescription,
+  getVaccinationOutcome
+} from '../utils/patient-programme.js'
+import {
+  canRecordOutcome,
   getRegistrationStatus,
   getRegistrationStatusDescription
 } from '../utils/patient-session.js'

@@ -36,7 +36,7 @@ import {
   getPatientStatusProperties
 } from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
-import { getPatientStatus } from '../utils/patient-session.js'
+import { getPatientStatus } from '../utils/patient-programme.js'
 import {
   formatProgrammeStatus,
   formatTag,
