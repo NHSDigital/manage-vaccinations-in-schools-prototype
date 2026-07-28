@@ -1,10 +1,10 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("triage.label", { patient: patient }) %}
+{% set title = __("triage.label", { patient: reply.patient }) %}
 
 {% block form %}
   {{ appHeading({
-    caption: patient.fullName,
+    caption: reply.patient.fullName,
     title: title
   }) }}
 
@@ -18,7 +18,7 @@
   {% set delayVaccinationHtml = dateInput({
     fieldset: {
       legend: {
-        text: __("triage.statusInvalidAt.title", { patient: patient }),
+        text: __("triage.statusInvalidAt.title", { patient: reply.patient }),
         size: "s"
       }
     },

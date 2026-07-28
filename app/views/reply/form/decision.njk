@@ -1,9 +1,14 @@
 {% extends "_layouts/form.njk" %}
 
 {% if reply.hasSelfConsent %}
-  {% set title = __("reply.decision.title.Child", { programme: programme }) %}
+  {% set title = __("reply.decision.title.Child", {
+    programme: reply.programme
+  }) %}
 {% else %}
-  {% set title = __("reply.decision.title.Contact", { programme: programme, patient: patient }) %}
+  {% set title = __("reply.decision.title.Contact", {
+    programme: reply.programme,
+    patient: reply.patient
+  }) %}
 {% endif %}
 
 {% block form %}
@@ -12,7 +17,7 @@
       legend: {
         html: appHeading({
           classes: "nhsuk-fieldset__legend--l",
-          caption: patient.fullName,
+          caption: reply.patient.fullName,
           title: title
         })
       }
