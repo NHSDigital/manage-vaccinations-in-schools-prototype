@@ -6,7 +6,8 @@ import {
   Checkboxes,
   ErrorSummary,
   Radios,
-  SkipLink
+  SkipLink,
+  Tabs
 } from '/nhsuk-frontend/nhsuk-frontend.min.js'
 
 import { Autocomplete } from './components/autocomplete.js'
@@ -19,4 +20,5 @@ document.addEventListener('DOMContentLoaded', () => {
   createAll(ErrorSummary)
   createAll(Radios)
   createAll(SkipLink)
+  createAll(Tabs)
 })
