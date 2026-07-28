@@ -1834,8 +1834,12 @@ export const en = {
       },
       confirm: 'Send clinic invitations',
       cancel: 'Go back to children list',
-      success:
-        '{count, plural, one {1 child has been invited to clinic} other {{count} children have been invited to clinic}}'
+      success: {
+        invited:
+          '{count, plural, one {1 child has been invited to clinic} other {{count} children have been invited to clinic}}',
+        notInvited:
+          '{count, plural, one {1 child could not be invited due to lack of contact details} other {{count} children could not be invited due to lack of contact details}}'
+      }
     },
     auditEvents: {
       label: 'Activity log'
