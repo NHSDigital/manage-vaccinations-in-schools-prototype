@@ -602,6 +602,10 @@ export const patientController = {
     )) {
       // Work out which of the selected programmes this patient was clinic-ready for
       const { clinicReadyProgramme_ids } = patient
+      if (patient.hasNoContactDetails) {
+        continue
+      }
+
       const invitedProgramme_ids = [
         ...new Set(clinicReadyProgramme_ids).intersection(
           new Set(clinicProgramme_ids)

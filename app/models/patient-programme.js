@@ -245,8 +245,9 @@ export class PatientProgramme extends BaseModel {
     switch (status) {
       case PatientStatus.Ineligible:
         return false
-      case PatientStatus.Due:
+      case PatientStatus.Consent:
       case PatientStatus.Triage:
+      case PatientStatus.Due:
         return true
       case PatientStatus.Deferred: {
         switch (this.lastPatientSession?.patientDeferred) {
@@ -261,8 +262,6 @@ export class PatientProgramme extends BaseModel {
             return true
         }
       }
-      case PatientStatus.Consent:
-        return !this.patient?.hasNoContactDetails
       case PatientStatus.Refused: {
         const lastPatientSession = this.lastPatientSession
         if (!lastPatientSession) return false

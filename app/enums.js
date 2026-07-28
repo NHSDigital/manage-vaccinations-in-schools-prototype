@@ -418,7 +418,7 @@ export const PatientStatus = {
  * @enum {string}
  */
 export const PatientClinicStatus = {
-  Ready: 'Can be invited',
+  Ready: 'Eligible for clinic',
   Invited: 'Invited',
   Booked: 'Booked'
 }
