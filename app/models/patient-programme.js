@@ -243,6 +243,8 @@ export class PatientProgramme extends BaseModel {
     const { status } = this
 
     switch (status) {
+      case PatientStatus.Ineligible:
+        return false
       case PatientStatus.Due:
       case PatientStatus.Triage:
         return true
@@ -260,7 +262,7 @@ export class PatientProgramme extends BaseModel {
         }
       }
       case PatientStatus.Consent:
-        return !this.patient?.hasNoContactDetails || this.patient.isPost16
+        return !this.patient?.hasNoContactDetails
       case PatientStatus.Refused: {
         const lastPatientSession = this.lastPatientSession
         if (!lastPatientSession) return false
