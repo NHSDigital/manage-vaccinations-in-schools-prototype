@@ -217,8 +217,8 @@ export class PatientProgramme extends BaseModel {
       return PatientClinicStatus.Invited
     }
 
-    // Maybe we *can* vaccinate the child, but there are no school sessions left?
-    if (this.canVaccinateAtClinic && !this.hasSchoolSessionPending) {
+    // Is the child at least eligible for vaccination at clinic?
+    if (this.canOfferClinicCatchup) {
       return PatientClinicStatus.Ready
     }
 
