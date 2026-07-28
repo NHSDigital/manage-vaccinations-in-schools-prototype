@@ -103,7 +103,7 @@
 
   {{ summaryList({
     card: {
-      heading: __("triage.label", patient.firstName),
+      heading: __("triage.label", { patient: reply.patient }),
       headingSize: "m"
     },
     lastRowBorder: false,
