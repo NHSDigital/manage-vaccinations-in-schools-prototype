@@ -1,8 +1,8 @@
 {% call card({
   classes: "nhsuk-u-margin-top-3",
   feature: true,
-  heading: programme.name + ": " + (patientSession.patientProgramme.status | lower),
-  headingClasses: "app-card__heading--" + patientSession.patientProgramme.statusColour,
+  heading: programme.name + ": " + (patientProgramme.status | lower),
+  headingClasses: "app-card__heading--" + patientProgramme.statusColour,
   headingSize: "m"
 }) %}
   {# Description #}
@@ -37,6 +37,6 @@
   {# Actions #}
   {{ actionLink({
     text: __("patientSession.patientProgramme.label", programme.nameSentenceCase),
-    href: patientSession.patientProgramme.uri + "?referrer=" + referrer
+    href: patientProgramme.uri + "?referrer=" + referrer
   }) }}
 {% endcall %}
