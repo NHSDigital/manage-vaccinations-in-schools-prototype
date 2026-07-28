@@ -2948,7 +2948,7 @@ export const en = {
       description:
         'Review consent responses, triage health questions and record vaccinations'
     },
-    instructions: {
+    giveInstructions: {
       label: 'Add new PSDs',
       title:
         'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}}?',

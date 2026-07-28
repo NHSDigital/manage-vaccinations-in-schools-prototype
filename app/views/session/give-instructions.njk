@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __mf("session.instructions.title", {
+{% set title = __mf("session.giveInstructions.title", {
   count: session.activity.instruct
 }) %}
 
@@ -24,16 +24,16 @@
     title: title
   }) }}
 
-  {{ __("session.instructions.description", session.activity.instruct) | nhsukMarkdown }}
+  {{ __("session.giveInstructions.description", session.activity.instruct) | nhsukMarkdown }}
 {% endblock %}
 
 {% block afterForm %}
   {{ appButtonGroup({
     buttons: [{
-      text: __("session.instructions.confirm")
+      text: __("session.giveInstructions.confirm")
     }],
     links: [{
-      text: __("session.instructions.cancel"),
+      text: __("session.giveInstructions.cancel"),
       href: session.uri + "/instruct"
     }]
   }) }}

@@ -69,8 +69,8 @@
             {{ __("session.instruct.description", session.activity.instruct) | nhsukMarkdown }}
 
             {{ actionLink({
-              text: __("session.instructions.label"),
-              href: session.uri + "/instructions"
+              text: __("session.giveInstructions.label"),
+              href: session.uri + "/give-instructions"
             }) }}
           {% endcall %}
         {% endif %}

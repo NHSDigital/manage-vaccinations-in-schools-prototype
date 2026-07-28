@@ -1065,7 +1065,7 @@ export const sessionController = {
       PatientSession.update(patientSession.uuid, patientSession, data)
     }
 
-    request.flash('success', __(`session.instructions.success`))
+    request.flash('success', __(`session.giveInstructions.success`))
 
     return saveAndRedirect(request, response, `${session.uri}/instruct`)
   },

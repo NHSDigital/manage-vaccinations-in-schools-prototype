@@ -435,7 +435,7 @@ export default () => {
         view: 'instruct',
         key: 'instruct',
         value: InstructionStatus.Needed,
-        ...(account.canPrescribe && { action: 'instructions' })
+        ...(account.canPrescribe && { action: 'give-instructions' })
       },
       record: {
         view: 'record',
