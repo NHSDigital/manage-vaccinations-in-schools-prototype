@@ -58,11 +58,11 @@ export const patientSessionController = {
     } = patientSession
 
     const vaccinated = patientSession.siblingPatientSessions.findIndex(
-      ({ isVaccinated }) => isVaccinated
+      (patientSession) => patientSession.isVaccinated
     )
 
     const due = patientSession.siblingPatientSessions.filter(
-      ({ status }) => status === PatientStatus.Due
+      (patientSession) => patientSession.status === PatientStatus.Due
     )
 
     const patientProgramme = Object.values(patient.programmes).find(
