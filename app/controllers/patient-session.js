@@ -58,7 +58,7 @@ export const patientSessionController = {
     } = patientSession
 
     const vaccinated = patientSession.siblingPatientSessions.findIndex(
-      ({ status }) => status !== PatientStatus.Vaccinated
+      ({ isVaccinated }) => isVaccinated
     )
 
     const due = patientSession.siblingPatientSessions.filter(
@@ -134,9 +134,7 @@ export const patientSessionController = {
           ]
         : []),
       ...patientSession.siblingPatientSessions.map((patientSession) => ({
-        ...(patientSession.status === PatientStatus.Vaccinated && {
-          icon: 'tick'
-        }),
+        ...(patientSession.isVaccinated && { icon: 'tick' }),
         text: patientSession.programme.name,
         href: patientSession.uri,
         current:

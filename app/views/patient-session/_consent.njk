@@ -1,13 +1,12 @@
 {% from "../_macros/contact-email.njk" import appContactEmail with context %}
 {% from "../_macros/contact-sms.njk" import appContactSms with context %}
-{% set isVaccinated = patientSession.status == PatientStatus.Vaccinated %}
 
 {% call card({
   heading: __("patientSession.consent.title", programme.nameSentenceCase),
   headingSize: "m"
 }) %}
   {# Description #}
-  {% if not isVaccinated %}
+  {% if not patientSession.isVaccinated %}
     {{ patientSession.consentDescription | nhsukMarkdown }}
 
     {% if patientSession.patient.lastReminderDate %}
@@ -16,11 +15,11 @@
   {% endif %}
 
   {# Actions #}
-  {% if not isVaccinated and not patientSession.patient.isPost16 %}
+  {% if not patientSession.isVaccinated and not patientSession.patient.isPost16 %}
     {{ actionLink({
       text: __("reply.new.title"),
       href: patientProgramme.uri + "/replies/new?session_id=" + session.id + "&referrer=" + referrer
-    }) if not isVaccinated }}
+    }) if not patientSession.isVaccinated }}
 
     {{ appButtonGroup({
       buttons: [{

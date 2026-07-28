@@ -1,5 +1,3 @@
-{% set isVaccinated = patientSession.status == PatientStatus.Vaccinated %}
-
 {% call card({
   heading: __("patientSession.screen.title", programme.nameSentenceCase),
   headingSize: "m"
@@ -22,7 +20,7 @@
   {{ actionLink({
     text: __("triage.new.title"),
     href: patientProgramme.uri + "/new/triage?referrer=" + referrer
-  }) if options.canTriage and not options.needsTriage and not isVaccinated }}
+  }) if options.canTriage and not options.needsTriage and not patientSession.isVaccinated }}
 
   {# Decision table #}
   {% set triageNoteRows = [] %}

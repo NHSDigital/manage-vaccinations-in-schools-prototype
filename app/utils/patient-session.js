@@ -28,13 +28,13 @@ export function canRecordOutcome(patientSession) {
  * @returns {RegistrationStatus} Registration status
  */
 export function getRegistrationStatus(patientSession) {
-  const { patient, session, status } = patientSession
+  const { patient, session } = patientSession
 
   if (!session.hasRegistration) {
     return RegistrationStatus.Present
   }
 
-  if (status === PatientStatus.Vaccinated) {
+  if (patientSession.isVaccinated) {
     return RegistrationStatus.Complete
   } else if (session.register[patient.uuid]) {
     return session.register[patient.uuid]

@@ -759,6 +759,15 @@ export class PatientSession extends BaseModel {
   }
 
   /**
+   * Is vaccinated
+   *
+   * @returns {boolean} Is vaccinated
+   */
+  get isVaccinated() {
+    return this.patientProgramme?.status === VaccinationOutcome.Vaccinated
+  }
+
+  /**
    * Get expanded description about patient status
    *
    * @returns {string|undefined} Status description

@@ -1,5 +1,3 @@
-{% set isVaccinated = patientSession.status == PatientStatus.Vaccinated %}
-
 {% call card({
   heading: __("patientSession.gillick.title"),
   headingSize: "m"
@@ -14,5 +12,5 @@
   {{ actionLink({
     text: __("patientSession.gillick." + type + ".title"),
     href: patientSession.uri + "/" + type + "/gillick?referrer=" + referrer
-  }) if not isVaccinated }}
+  }) if not patientSession.isVaccinated }}
 {% endcall %}
