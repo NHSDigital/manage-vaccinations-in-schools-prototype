@@ -354,5 +354,29 @@ export function getInstructionStatus(patientSession) {
 }
 
 /**
+ * Get vaccination (session) outcome
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {VaccinationOutcome|undefined} Vaccination (session) outcome
+ */
+export function getVaccinationOutcome(patientSession) {
+  if (patientSession.lastVaccinationOutcome) {
+    return patientSession.lastVaccinationOutcome.outcome
+  } else if (
+    [ConsentStatus.Refused, ConsentStatus.FinalRefusal].includes(
+      patientSession.consent
+    )
+  ) {
+    return VaccinationOutcome.ConsentRefused
+  } else if (patientSession.screen === ScreenStatus.InvitedToClinic) {
+    return VaccinationOutcome.InvitedToClinic
+  } else if (patientSession.screen === ScreenStatus.DelayVaccination) {
+    return VaccinationOutcome.DelayVaccination
+  } else if (patientSession.screen === ScreenStatus.DoNotVaccinate) {
+    return VaccinationOutcome.DoNotVaccinate
+  }
+}
+
+/**
  * @import { PatientSession, Reply, Session } from '../models.js'
  */

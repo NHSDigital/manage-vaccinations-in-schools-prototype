@@ -50,7 +50,8 @@ import {
   getConsentStatusDescription,
   getInstructionStatus,
   getScreenStatus,
-  getScreenStatusDescription
+  getScreenStatusDescription,
+  getVaccinationOutcome
 } from '../utils/patient-programme.js'
 import {
   canRecordOutcome,
@@ -62,8 +63,7 @@ import {
   getPatientTriageStatus,
   getPatientVaccinatedStatus,
   getRegistrationStatus,
-  getRegistrationStatusDescription,
-  getVaccinationOutcome
+  getRegistrationStatusDescription
 } from '../utils/patient-session.js'
 import {
   countAnswersNeedingTriage,
