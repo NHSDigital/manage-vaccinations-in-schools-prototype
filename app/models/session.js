@@ -950,7 +950,7 @@ export class Session extends BaseModel {
                   consent: ConsentStatus.NoResponse
                 }
               ])
-            case 'instruct':
+            case 'giveInstructions':
               return getSessionActivityCount(this, [
                 {
                   status: PatientStatus.Due,

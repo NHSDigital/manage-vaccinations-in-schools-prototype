@@ -62,7 +62,7 @@
 
 {# PSD review needed #}
 {% if session.hasPsdProtocol %}
-  {% set psdReviewRow = sessionActivityRow("instruct") %}
+  {% set psdReviewRow = sessionActivityRow("giveInstructions") %}
   {% if psdReviewRow %}
     {% set sessionActivityRows = sessionActivityRows | push(psdReviewRow) %}
   {% endif %}

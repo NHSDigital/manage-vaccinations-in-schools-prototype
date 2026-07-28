@@ -431,11 +431,11 @@ export default () => {
         key: 'canBeOfferedCatchUps',
         value: true
       },
-      instruct: {
+      giveInstructions: {
         view: 'instructions',
         key: 'instruct',
         value: InstructionStatus.Needed,
-        ...(account.canPrescribe && { action: 'give-instructions' })
+        ...(account.canPrescribe && { action: 'giveInstructions' })
       },
       record: {
         view: 'record',

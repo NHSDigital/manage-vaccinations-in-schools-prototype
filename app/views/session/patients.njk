@@ -64,10 +64,10 @@
           }) | safe
         }) }}
 
-        {% if view == "instructions" and session.activity.instruct and account.canPrescribe %}
+        {% if view == "instructions" and session.activity.giveInstructions and account.canPrescribe %}
           {% call insetText() %}
             {{ __mf("session.instructions.count", {
-              count: session.activity.instruct
+              count: session.activity.giveInstructions
             }) | nhsukMarkdown }}
 
             {{ actionLink({

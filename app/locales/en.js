@@ -3028,7 +3028,7 @@ export const en = {
         count:
           '{count, plural, =0 {No children} one {# child} other {# children}} can be offered additional vaccinations'
       },
-      instruct: {
+      giveInstructions: {
         label: 'PSD review needed',
         count:
           '{count, plural, =0 {No children} one {# child} other {# children}} need PSD review'

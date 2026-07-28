@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __mf("session.giveInstructions.title", {
-  count: session.activity.instruct
+  count: session.activity.giveInstructions
 }) %}
 
 {% block beforeContent %}
@@ -24,7 +24,7 @@
     title: title
   }) }}
 
-  {{ __("session.giveInstructions.description", session.activity.instruct) | nhsukMarkdown }}
+  {{ __("session.giveInstructions.description", session.activity.giveInstructions) | nhsukMarkdown }}
 {% endblock %}
 
 {% block afterForm %}
