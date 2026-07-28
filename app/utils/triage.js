@@ -2,11 +2,8 @@ import {
   ProgrammeType,
   ReplyDecision,
   ScreenStatus,
-  ScreenVaccineCriteria,
-  VaccinationOutcome
+  ScreenVaccineCriteria
 } from '../enums.js'
-
-import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
  * Get screening statuses for vaccination method(s) consented to
@@ -82,73 +79,5 @@ export const getScreenVaccineCriteria = (programme, replies) => {
 }
 
 /**
- * Get screening status (what was the triage decision)
- *
- * @param {PatientSession} patientSession - Patient session
- * @returns {ScreenStatus|boolean} Screening status
- */
-export const getScreenStatus = (patientSession) => {
-  // No consent given, so cannot triage yet
-  if (!patientSession.consentGiven) {
-    return false
-  }
-
-  // Triage occurred during a previous vaccination session
-  if (patientSession.lastVaccinationOutcome) {
-    if (
-      patientSession.lastVaccinationOutcome.outcome ===
-      VaccinationOutcome.InvitedToClinic
-    ) {
-      return ScreenStatus.InvitedToClinic
-    }
-
-    if (
-      patientSession.lastVaccinationOutcome.outcome ===
-      VaccinationOutcome.DelayVaccination
-    ) {
-      return ScreenStatus.DelayVaccination
-    }
-
-    if (
-      patientSession.lastVaccinationOutcome.outcome ===
-      VaccinationOutcome.DoNotVaccinate
-    ) {
-      return ScreenStatus.DoNotVaccinate
-    }
-  }
-
-  const responses = Object.values(patientSession.responses)
-  const responsesToTriage = getRepliesWithHealthAnswers(responses)
-  const lastTriageNoteWithStatus = patientSession.triageNotes
-    .filter((event) => event.status)
-    .at(-1)
-
-  if (responsesToTriage.length === 0) {
-    // Triage completed without any ‘Yes’ answers to health questions
-    if (lastTriageNoteWithStatus) {
-      return lastTriageNoteWithStatus.status
-    }
-
-    // Clinic appointment without any answers to health questions
-    if (!responses.length && patientSession.clinicAppointment) {
-      return ScreenStatus.NeedsTriage
-    }
-
-    return false
-  }
-
-  // Triage needed or completed due to answers to health questions
-  if (responsesToTriage.length > 0) {
-    if (lastTriageNoteWithStatus) {
-      return lastTriageNoteWithStatus.status
-    }
-
-    return ScreenStatus.NeedsTriage
-  }
-
-  return false
-}
-
-/**
- * @import { PatientSession, Programme, Reply } from '../models.js'
+ * @import { Programme, Reply } from '../models.js'
  */

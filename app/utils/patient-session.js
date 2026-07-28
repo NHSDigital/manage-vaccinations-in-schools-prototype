@@ -39,43 +39,6 @@ export function canRecordOutcome(patientSession) {
 }
 
 /**
- * Get expanded description about screen status
- *
- * @param {PatientSession} patientSession - Patient session
- * @returns {string} Screen status description
- */
-export function getScreenStatusDescription(patientSession) {
-  const triageNote = patientSession.triageNotes.at(-1)
-  const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
-  const person = patientSession.patient.isPost16 ? 'child' : 'parent'
-
-  switch (patientSession.screen) {
-    case ScreenStatus.NeedsTriage:
-      return patientSession.clinicAppointment
-        ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
-        : `You need to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
-    case ScreenStatus.InvitedToClinic:
-      return `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should take place at a clinic.`
-    case ScreenStatus.DelayVaccination:
-      return triageNote?.statusInvalidAt
-        ? `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.statusInvalidAt}.`
-        : `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed`
-    case ScreenStatus.DoNotVaccinate:
-      return `${user.fullName} decided that ${patientSession.patient.firstName} should not be vaccinated.`
-    case ScreenStatus.Vaccinate:
-      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate.`
-    case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
-      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the injected vaccine only.`
-    case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
-      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the gelatine-free injection only.`
-    case ScreenStatus.VaccinateIntranasalOnly:
-      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the nasal spray only.`
-    default:
-      return `No triage is needed for ${patientSession.patient.firstName}.`
-  }
-}
-
-/**
  * Get instruction status for nasal spray
  *
  * @param {PatientSession} patientSession - Patient session

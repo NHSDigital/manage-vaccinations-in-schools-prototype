@@ -4,8 +4,12 @@ import {
   ConsentStatus,
   ConsentVaccineCriteria,
   ConsentWindow,
-  ReplyDecision
+  ReplyDecision,
+  ScreenStatus,
+  VaccinationOutcome
 } from '../enums.js'
+
+import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
  * Get confirmed consent status
@@ -219,6 +223,111 @@ export function getConsentStatusDescription(patientSession) {
     case ConsentStatus.FinalRefusal:
       return `Refusal to give consent confirmed by ${relationships}.`
     default:
+  }
+}
+
+/**
+ * Get screening status (what was the triage decision)
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {ScreenStatus|boolean} Screening status
+ */
+export function getScreenStatus(patientSession) {
+  // No consent given, so cannot triage yet
+  if (!patientSession.consentGiven) {
+    return false
+  }
+
+  // Triage occurred during a previous vaccination session
+  if (patientSession.lastVaccinationOutcome) {
+    if (
+      patientSession.lastVaccinationOutcome.outcome ===
+      VaccinationOutcome.InvitedToClinic
+    ) {
+      return ScreenStatus.InvitedToClinic
+    }
+
+    if (
+      patientSession.lastVaccinationOutcome.outcome ===
+      VaccinationOutcome.DelayVaccination
+    ) {
+      return ScreenStatus.DelayVaccination
+    }
+
+    if (
+      patientSession.lastVaccinationOutcome.outcome ===
+      VaccinationOutcome.DoNotVaccinate
+    ) {
+      return ScreenStatus.DoNotVaccinate
+    }
+  }
+
+  const responses = Object.values(patientSession.responses)
+  const responsesToTriage = getRepliesWithHealthAnswers(responses)
+  const lastTriageNoteWithStatus = patientSession.triageNotes
+    .filter((event) => event.status)
+    .at(-1)
+
+  if (responsesToTriage.length === 0) {
+    // Triage completed without any ‘Yes’ answers to health questions
+    if (lastTriageNoteWithStatus) {
+      return lastTriageNoteWithStatus.status
+    }
+
+    // Clinic appointment without any answers to health questions
+    if (!responses.length && patientSession.clinicAppointment) {
+      return ScreenStatus.NeedsTriage
+    }
+
+    return false
+  }
+
+  // Triage needed or completed due to answers to health questions
+  if (responsesToTriage.length > 0) {
+    if (lastTriageNoteWithStatus) {
+      return lastTriageNoteWithStatus.status
+    }
+
+    return ScreenStatus.NeedsTriage
+  }
+
+  return false
+}
+
+/**
+ * Get expanded description about screen status
+ *
+ * @param {PatientSession} patientSession - Patient session
+ * @returns {string} Screen status description
+ */
+export function getScreenStatusDescription(patientSession) {
+  const triageNote = patientSession.triageNotes.at(-1)
+  const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
+  const person = patientSession.patient.isPost16 ? 'child' : 'parent'
+
+  switch (patientSession.screen) {
+    case ScreenStatus.NeedsTriage:
+      return patientSession.clinicAppointment
+        ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
+        : `You need to decide if it’s safe to vaccinate ${patientSession.patient.firstName}.`
+    case ScreenStatus.InvitedToClinic:
+      return `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should take place at a clinic.`
+    case ScreenStatus.DelayVaccination:
+      return triageNote?.statusInvalidAt
+        ? `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed until ${triageNote.formatted.statusInvalidAt}.`
+        : `${user.fullName} decided that ${patientSession.patient.firstName}’s vaccination should be delayed`
+    case ScreenStatus.DoNotVaccinate:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} should not be vaccinated.`
+    case ScreenStatus.Vaccinate:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate.`
+    case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the injected vaccine only.`
+    case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the gelatine-free injection only.`
+    case ScreenStatus.VaccinateIntranasalOnly:
+      return `${user.fullName} decided that ${patientSession.patient.firstName} is safe to vaccinate using the nasal spray only.`
+    default:
+      return `No triage is needed for ${patientSession.patient.firstName}.`
   }
 }
 

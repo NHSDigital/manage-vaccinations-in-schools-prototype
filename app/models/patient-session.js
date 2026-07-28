@@ -47,7 +47,9 @@ import {
 } from '../utils/enum-properties.js'
 import {
   getConsentStatus,
-  getConsentStatusDescription
+  getConsentStatusDescription,
+  getScreenStatus,
+  getScreenStatusDescription
 } from '../utils/patient-programme.js'
 import {
   canRecordOutcome,
@@ -61,7 +63,6 @@ import {
   getPatientVaccinatedStatus,
   getRegistrationStatus,
   getRegistrationStatusDescription,
-  getScreenStatusDescription,
   getVaccinationOutcome
 } from '../utils/patient-session.js'
 import {
@@ -77,7 +78,6 @@ import {
   formatYearGroup
 } from '../utils/string.js'
 import {
-  getScreenStatus,
   getScreenStatusesForConsentMethod,
   getScreenVaccineCriteria
 } from '../utils/triage.js'
