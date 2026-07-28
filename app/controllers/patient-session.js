@@ -45,17 +45,7 @@ export const patientSessionController = {
       (user) => user.canVaccinate
     )
 
-    const {
-      clinicAppointment,
-      consent,
-      consentGiven,
-      patient,
-      programme,
-      status,
-      session,
-      triageNotes,
-      vaccine
-    } = patientSession
+    const { clinicAppointment, patient, programme, session } = patientSession
 
     const vaccinated = patientSession.siblingPatientSessions.findIndex(
       (patientSession) => patientSession.isVaccinated
@@ -93,19 +83,19 @@ export const patientSessionController = {
         !patient.hasNoContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
-        consent === ConsentStatus.NoResponse,
+        patientSession.consent === ConsentStatus.NoResponse,
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
         session.isActive &&
         !vaccinated &&
-        !consentGiven,
+        !patientSession.consentGiven,
       // Perform triage
       canTriage: account.isRegisteredNurse,
       // Patient needs triage
-      needsTriage: status === PatientStatus.Triage,
+      needsTriage: patientSession.status === PatientStatus.Triage,
       // Patient already triaged
-      hasTriage: triageNotes.length > 0,
+      hasTriage: patientSession.triageNotes.length > 0,
       hasInstruction: session.hasPsdProtocol && patientSession.hasInstruction,
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
@@ -168,17 +158,19 @@ export const patientSessionController = {
     // Use different values for pre-screening questions
     // `IsWell` and `IsPregnant` should persist per patient
     response.locals.preScreenQuestionItems =
-      vaccine &&
-      Object.entries(vaccine.preScreenQuestions).map(([key, text]) => {
-        let value = `${programme.id}-${key}`
-        if (text === PreScreenQuestion.IsWell) {
-          value = `${nhsn}-is-well`
-        } else if (text === PreScreenQuestion.IsPregnant) {
-          value = `${nhsn}-is-pregnant`
-        }
+      patientSession.vaccine &&
+      Object.entries(patientSession.vaccine.preScreenQuestions).map(
+        ([key, text]) => {
+          let value = `${programme.id}-${key}`
+          if (text === PreScreenQuestion.IsWell) {
+            value = `${nhsn}-is-well`
+          } else if (text === PreScreenQuestion.IsPregnant) {
+            value = `${nhsn}-is-pregnant`
+          }
 
-        return { text, value }
-      })
+          return { text, value }
+        }
+      )
 
     next()
   },
