@@ -7,12 +7,12 @@
   {# Description #}
   {{ patientSession.screenDescription | nhsukMarkdown }}
 
-  {% if not patientSession.consentHealthAnswers %}
+  {% if options.needsTriage and not patientSession.consentHealthAnswers %}
     {{ appHeading({
       classes: "nhsuk-u-margin-bottom-2",
       level: 3,
       size: "s",
-      title: "Health questions"
+      title: __("vaccine.healthQuestions.label")
     }) }}
 
     {{ patientSession.vaccine.formatted.healthQuestions | nhsukMarkdown }}
