@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("reply.healthAnswers.title") %}
-{% set vaccineName = "nasal spray flu" if "Flu" in reply.session.presetNames else "MMR" %}
+{% set vaccineName = "nasal spray flu" if reply.programme_id == "flu" else "MMR" %}
 
 {% macro questions(healthQuestions) %}
   {% for key, value in healthQuestions %}

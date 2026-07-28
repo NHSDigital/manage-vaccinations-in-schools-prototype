@@ -135,7 +135,7 @@ export class Reply extends BaseModel {
         ? false // Don’t show non response as invalid
         : stringToBoolean(options?.isInvalidated) || false
     this.method = options?.method
-    this.hasSelfConsent = options?.hasSelfConsent
+    this.hasSelfConsent = options?.hasSelfConsent || false
     this.note = options?.note || ''
     this.contact_uuid = options?.contact_uuid
     this.patient_uuid = options?.patient_uuid
@@ -306,14 +306,11 @@ export class Reply extends BaseModel {
    */
   get healthQuestionsForDecision() {
     const { Flu, HPV, MenACWY, TdIPV, MMR } = ProgrammeType
-    // TODO: is this consent reply really only ever for the session's first programme?
-    const programme = this.session.programmes[0]
-
     const healthQuestionsForDecision = new Map()
     let consentedVaccine
 
     // Consent given for flu programme with method of vaccination
-    if (programme?.type === Flu) {
+    if (this.programme?.type === Flu) {
       consentedVaccine = Object.values(vaccines).filter(
         (programme) => programme.type === Flu
       )
@@ -342,7 +339,7 @@ export class Reply extends BaseModel {
     }
 
     // Consent given for HPV programme
-    if (programme?.type === HPV) {
+    if (this.programme?.type === HPV) {
       consentedVaccine = Object.values(vaccines).find(
         ({ type }) => type === HPV
       )
@@ -363,7 +360,7 @@ export class Reply extends BaseModel {
     }
 
     // Consent given for MMR programme (gelatine-free, or either vaccine)
-    if (programme?.type == MMR) {
+    if (this.programme?.type == MMR) {
       const allowedCriteria = [
         VaccineCriteria.AlternativeInjection,
         ...(this.hasConsentForAlternativeVaccine
@@ -489,7 +486,7 @@ export class Reply extends BaseModel {
    * @returns {string} URI
    */
   get uri() {
-    return `/patients/${this.patient.uuid}/programmes/${this.programme_id}/replies/${this.uuid}`
+    return `/patients/${this.patient_uuid}/programmes/${this.programme_id}/replies/${this.uuid}`
   }
 
   /**

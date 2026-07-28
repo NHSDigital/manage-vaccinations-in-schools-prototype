@@ -209,12 +209,12 @@ export const replyController = {
       response.locals.reply = new Reply(reply, data)
 
       // Only ask for programme if more than 1 administered in a session
-      const isMultiProgrammeSession = reply?.session.programmes.length > 1
+      const isMultiProgrammeSession = reply?.session?.programmes.length > 1
       response.locals.isMultiProgrammeSession = isMultiProgrammeSession
 
       const programme = isMultiProgrammeSession
         ? reply.programme_id && Programme.findOne(reply.programme_id, data)
-        : reply?.session.programmes[0]
+        : reply?.session?.programmes[0]
       response.locals.programme = programme
 
       response.locals.triage = {
@@ -254,7 +254,7 @@ export const replyController = {
         },
         [`/${reply_uuid}/${type}/can-notify`]: {},
         [`/${reply_uuid}/${type}/health-answers`]: {
-          [`/${reply_uuid}/${type}/${countAnswersNeedingTriage(request.session.data.reply?.healthAnswers) ? 'triage' : 'check-answers'}`]: true
+          [`/${reply_uuid}/${type}/${countAnswersNeedingTriage(data.reply?.healthAnswers) ? 'triage' : 'check-answers'}`]: true
         },
         [`/${reply_uuid}/${type}/refusal-reason`]: {
           [`/${reply_uuid}/${type}/refusal-reason-details`]: {
@@ -309,7 +309,7 @@ export const replyController = {
       }
 
       if (isMultiProgrammeSession) {
-        response.locals.programmeItems = reply.session.programmes.map(
+        response.locals.programmeItems = reply.session?.programmes.map(
           (programme) => ({
             text: programme.name,
             value: programme.id
@@ -373,7 +373,6 @@ export const replyController = {
             },
             data.wizard
           ).uuid
-          reply.hasSelfConsent = false
           break
         case 'self':
           reply.method = ReplyMethod.InPerson
@@ -382,7 +381,6 @@ export const replyController = {
         default: // Consent response is an existing respondent
           reply.method = ReplyMethod.Phone
           reply.contact_uuid = respondent
-          reply.hasSelfConsent = false
 
           // Store reply that needs marked as invalid
           // We only want to do this when submitting replacement reply
