@@ -29,7 +29,7 @@
     {% include "book-into-a-clinic/form/_parental-relationship.njk" %}
 
     {{ input({
-      label: { text: __("clinicBooking.contact.email.label") },
+      label: { text: __("clinicBooking.contact.email.label") + ("" if isParentFacing else " (optional)") },
       hint: { text: __("clinicBooking.contact.email.hint") } if isParentFacing,
       decorate: "booking.contact.email"
     }) }}

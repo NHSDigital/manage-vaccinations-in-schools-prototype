@@ -597,11 +597,17 @@ export const patientController = {
     // Invite each of the children to clinic for the subset of the selected programmes
     // that make sense for that child
     let invitedChildrenCount = 0
+    let notInvitedChildrenCount = 0
     for (const patient of clinicPatient_ids.map((id) =>
       Patient.findOne(id, data)
     )) {
       // Work out which of the selected programmes this patient was clinic-ready for
       const { clinicReadyProgramme_ids } = patient
+      if (patient.hasNoContactDetails) {
+        notInvitedChildrenCount++
+        continue
+      }
+
       const invitedProgramme_ids = [
         ...new Set(clinicReadyProgramme_ids).intersection(
           new Set(clinicProgramme_ids)
@@ -617,12 +623,19 @@ export const patientController = {
       }
     }
 
-    request.flash(
-      'success',
-      __mf('patient.bulkInviteToClinic.success', {
-        count: invitedChildrenCount
-      })
-    )
+    // Report success (or otherwise)
+    const details = [
+      invitedChildrenCount > 0 &&
+        __mf('patient.bulkInviteToClinic.success.invited', {
+          count: invitedChildrenCount
+        }),
+      notInvitedChildrenCount > 0 &&
+        __mf('patient.bulkInviteToClinic.success.notInvited', {
+          count: notInvitedChildrenCount
+        })
+    ].filter(Boolean)
+    const messageType = invitedChildrenCount > 0 ? 'success' : 'message'
+    request.flash(messageType, details.join('<br>'))
 
     // Reset the cohort
     delete data.clinicPatient_ids
