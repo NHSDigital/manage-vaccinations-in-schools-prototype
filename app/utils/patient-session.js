@@ -125,11 +125,11 @@ export function getScreenStatusDescription(patientSession) {
  * Get instruction status for nasal spray
  *
  * @param {PatientSession} patientSession - Patient session
- * @returns {InstructionStatus|boolean} Instruction status
+ * @returns {InstructionStatus|undefined} Instruction status
  */
 export function getInstructionStatus(patientSession) {
   if (!patientSession.vaccine) {
-    return false
+    return
   }
 
   if (patientSession.vaccine.criteria === VaccineCriteria.Intranasal) {
@@ -138,7 +138,7 @@ export function getInstructionStatus(patientSession) {
       : InstructionStatus.Needed
   }
 
-  return false
+  return
 }
 
 /**

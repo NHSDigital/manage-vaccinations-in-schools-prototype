@@ -7,6 +7,7 @@ import {
   AuditEventType,
   ClinicAttendanceType,
   ConsentStatus,
+  InstructionStatus,
   PatientStatus,
   PatientClinicStatus,
   PatientConsentStatus,
@@ -695,10 +696,19 @@ export class PatientSession extends BaseModel {
   /**
    * Get instruction status
    *
-   * @returns {InstructionStatus|boolean} Instruction status
+   * @returns {InstructionStatus|undefined} Instruction status
    */
   get instruct() {
     return getInstructionStatus(this)
+  }
+
+  /**
+   * Patient has PSD instruction
+   *
+   * @returns {boolean} Patient has PSD instruction
+   */
+  get hasInstruction() {
+    return this.instruct === InstructionStatus.Given
   }
 
   /**
@@ -996,7 +1006,7 @@ PatientSession.relate('programme_id', () => Programme, 'programme')
 PatientSession.relate('session_id', () => Session, 'session')
 
 /**
- * @import { InstructionStatus, ScreenVaccineCriteria } from '../enums.js'
+ * @import { ScreenVaccineCriteria } from '../enums.js'
  * @import { Contact, PatientProgramme, Reply, Vaccination, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

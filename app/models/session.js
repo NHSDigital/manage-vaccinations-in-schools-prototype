@@ -153,6 +153,7 @@ export class Session extends BaseModel {
     if (this.programme_ids.includes('flu')) {
       this.protocolNurse = options?.protocolNurse || VaccinationProtocol.PGD
       this.protocolHCA = options?.protocolHCA || ''
+      this.hasPsdProtocol = stringToBoolean(options?.hasPsdProtocol) || false
     }
   }
 
@@ -343,15 +344,6 @@ export class Session extends BaseModel {
    */
   get isPastSession() {
     return this.academicYear < getCurrentAcademicYear()
-  }
-
-  /**
-   * Does session need to support the PSD protocol?
-   *
-   * @returns {boolean} Session need to support the PSD protocol?
-   */
-  get hasPsdProtocol() {
-    return this.protocolHCA === VaccinationProtocol.PSD
   }
 
   /**

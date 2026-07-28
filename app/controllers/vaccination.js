@@ -1,12 +1,12 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import {
+  ProgrammeType,
   VaccinationMethod,
   VaccinationOutcome,
   VaccinationSite,
-  VaccineCriteria,
-  UserRole,
-  ProgrammeType
+  VaccinationProtocol,
+  VaccineCriteria
 } from '../enums.js'
 import {
   Batch,
@@ -127,12 +127,21 @@ export const vaccinationController = {
     }
     data.patientSession_uuid = String(patientSession_uuid)
 
-    // Used logged in user as vaccinator, or default to example user
-    const role = account.role || UserRole.Nurse
-
-    // Flu programme can have PGD or VGD as protocol
-    const protocol =
-      role === UserRole.HCA ? session.protocolHCA : session.protocolNurse
+    // Flu programme can use PGD, PSD or VGD protocol
+    let protocol
+    switch (true) {
+      case patientSession.hasInstruction && session.hasPsdProtocol:
+        protocol = VaccinationProtocol.PSD
+        break
+      case account.isHealthcareAssistant && session.hasVgdProtocol:
+        protocol = VaccinationProtocol.VGD
+        break
+      case account.isRegisteredNurse && session.hasVgdProtocol:
+        protocol = VaccinationProtocol.VGD
+        break
+      default:
+        protocol = VaccinationProtocol.PGD
+    }
 
     const vaccination = Vaccination.create(
       {
