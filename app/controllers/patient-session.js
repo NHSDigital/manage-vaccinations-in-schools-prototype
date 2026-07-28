@@ -2,13 +2,11 @@ import {
   AuditEventType,
   ConsentStatus,
   ConsentWindow,
-  InstructionStatus,
   PatientStatus,
   PreScreenQuestion,
   RegistrationStatus,
   SessionType,
   VaccinationOutcome,
-  VaccinationProtocol,
   VaccineCriteria,
   VaccineMethod
 } from '../enums.js'
@@ -71,22 +69,19 @@ export const patientSessionController = {
       (patientProgramme) => patientProgramme.programme_id === programme_id
     )
 
-    const patientHasPsd = patientSession.instruct === InstructionStatus.Given
-
     let vaccineMethods = []
-
-    // Nurses can record all vaccines under any protocol
     if (account.isRegisteredNurse) {
+      // Nurses can record all vaccines under any protocol
       vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
     } else if (account.isHealthcareAssistant) {
       // HCAs can record all vaccines under VGD
-      if (session.protocolHCA === VaccinationProtocol.VGD) {
+      if (session.hasVgdProtocol) {
         vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
       }
 
-      // HCAs can record only nasal vaccines under PSD
-      if (session.protocolHCA === VaccinationProtocol.PSD) {
-        vaccineMethods = patientHasPsd ? [VaccineMethod.Intranasal] : []
+      // HCAs can only record nasal vaccines for children with a PSD
+      if (session.hasPsdProtocol && patientSession.hasInstruction) {
+        vaccineMethods = [VaccineMethod.Intranasal]
       }
     }
 
@@ -111,9 +106,7 @@ export const patientSessionController = {
       needsTriage: status === PatientStatus.Triage,
       // Patient already triaged
       hasTriage: triageNotes.length > 0,
-      hasInstruct:
-        session.protocolHCA === VaccinationProtocol.PSD &&
-        patientSession.instruct,
+      hasInstruction: session.hasPsdProtocol && patientSession.hasInstruction,
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
         vaccineMethods?.includes(patientSession.vaccine?.method) &&

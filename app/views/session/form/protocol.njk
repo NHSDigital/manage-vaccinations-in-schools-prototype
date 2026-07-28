@@ -36,12 +36,29 @@
       text: __("session.protocolHCA.no.label"),
       value: ""
     }, {
-      text: __("session.protocolHCA.psd.label"),
-      value: VaccinationProtocol.PSD
-    }, {
-      text: __("session.protocolHCA.vgd.label"),
+      text: __("session.protocolHCA.yes.label"),
       value: VaccinationProtocol.VGD
     }],
     decorate: "session.protocolHCA"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("session.hasPsdProtocol.title"),
+        size: "m"
+      }
+    },
+    hint: {
+      text: __("session.hasPsdProtocol.hint")
+    },
+    items: [{
+      text: __("session.hasPsdProtocol.no.label"),
+      value: false
+    }, {
+      text: __("session.hasPsdProtocol.yes.label"),
+      value: true
+    }],
+    decorate: "session.hasPsdProtocol"
   }) }}
 {% endblock %}

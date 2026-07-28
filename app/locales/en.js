@@ -2914,17 +2914,25 @@ export const en = {
     },
     protocolHCA: {
       label: 'Protocol for healthcare assistants',
-      title: 'Can healthcare assistants give vaccinations?',
+      title:
+        'Can healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
       no: {
         label: 'No'
       },
-      psd: {
-        label:
-          'Yes, the flu nasal spray vaccine under a patient specific direction (PSD)'
+      yes: {
+        label: 'Yes'
+      }
+    },
+    hasPsdProtocol: {
+      label: 'Can use PSDs',
+      title:
+        'Can the flu nasal spray vaccine be given under a patient specific direction (PSD)?',
+      hint: 'If a PSD is added to a child, they will be vaccinated under a PSD instead of a PGD or VGD',
+      no: {
+        label: 'No'
       },
-      vgd: {
-        label:
-          'Yes, the flu nasal spray and injected vaccines under a vaccine group direction (VGD)'
+      yes: {
+        label: 'Yes'
       }
     },
     'upload-class-list': {
