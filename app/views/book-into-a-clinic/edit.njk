@@ -16,9 +16,6 @@
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {
-      vaccinations: {},
-      fluVaccineType: {},
-      mmrVaccineType: {},
       location: {
         href: appointment.uri.edit + "/clinic-location" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
