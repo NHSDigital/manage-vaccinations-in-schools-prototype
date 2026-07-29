@@ -12,7 +12,7 @@
         href: clinicAppointment.uri.cancel
       }
     ]
-  } if not session.isCancelled and clinicAppointment
+  } if clinicAppointment and (session.isPlanned or session.isActive)
 }) %}
 
   {% if patientSession.clinicAttendanceType === ClinicAttendanceType.Appointment %}
