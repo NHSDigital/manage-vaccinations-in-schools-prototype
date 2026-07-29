@@ -299,9 +299,9 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterChildren(request, response) {
-    const params = getFilterParams(request, ['q'], ['option'])
+    const { appointmentPath } = response.locals
 
-    const appointmentPath = response.locals.appointmentPath
+    const params = getFilterParams(request, ['q'], ['option'])
     const resultsUri = `${appointmentPath}/find-child?${params}`
     return saveAndRedirect(request, response, resultsUri)
   },
@@ -391,14 +391,7 @@ export const bookIntoClinicController = {
     return (request, response) => {
       const { appointment_uuid, booking_uuid } = request.params
       const { data } = request.session
-      const { __, booking, paths, patient, session, journeyData } =
-        response.locals
-
-      // Clean up session data
-      delete data.booking
-      delete data.appointment
-      delete data.journeyData[booking_uuid]
-      delete data.programmesToOffer
+      const { __, booking, paths, patient, session } = response.locals
 
       // Save to the global context
       ClinicBooking.update(booking_uuid, booking, data)
@@ -419,10 +412,19 @@ export const bookIntoClinicController = {
 
       // Get back to where we started, if this isn't the parent journey
       if (session) {
-        paths.next = `${session.uri}${journeyData.preselectedSlot ? '/appointments' : '/patients'}`
+        const journeyStart = data.journeyData[booking_uuid].preselectedSlot
+          ? 'appointments'
+          : 'patients'
+        paths.next = `${session.uri}/${journeyStart}`
       } else if (patient) {
         paths.next = patient.uri
       }
+
+      // Clean up session data
+      delete data.booking
+      delete data.appointment
+      delete data.journeyData[booking_uuid]
+      delete data.programmesToOffer
 
       return saveAndRedirect(request, response, paths.next)
     }
