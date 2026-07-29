@@ -98,7 +98,6 @@ export const ClinicBookingJourneyType = {
   ParentOnline: 'New booking from parent’s invite',
   PhoneBooking: 'New booking from child record',
   DataMigration: 'New booking from clinic session',
-  ParentEditing: 'Parent editing their own booking',
   TeamEditing: 'SAIS team editing a booking'
 }
 

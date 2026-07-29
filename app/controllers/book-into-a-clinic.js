@@ -354,9 +354,7 @@ export const bookIntoClinicController = {
     }
 
     // Track various metadata about the journey that we don't record in the booking itself
-    const journeyType = session_id
-      ? ClinicBookingJourneyType.TeamEditing
-      : ClinicBookingJourneyType.ParentEditing
+    const journeyType = ClinicBookingJourneyType.TeamEditing
     if (!data.journeyData) data.journeyData = {}
     data.journeyData[booking.uuid] = { journeyType }
 
