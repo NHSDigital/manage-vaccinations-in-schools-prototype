@@ -348,21 +348,18 @@ export const bookIntoClinicController = {
     const { session_id, booking_uuid, appointment_uuid } = request.params
     const { data } = request.session
 
-    if (!data.journeyData) {
-      data.journeyData = {}
-    }
-
-    // Copy the saved booking to the wizard context, if not already there
+    // Copy the existing booking to the wizard context, if not already there
     let booking = ClinicBooking.findOne(booking_uuid, data.wizard)
     if (!booking) {
-      // TODO: response.locals.booking needs to be read from the global context in readBooking()
-      booking = ClinicBooking.create(response.locals.booking, data.wizard)
+      const existingBooking = ClinicBooking.findOne(booking_uuid, data)
+      booking = ClinicBooking.create(existingBooking, data.wizard)
     }
 
     // Track various metadata about the journey that we don't record in the booking itself
     const journeyType = session_id
       ? ClinicBookingJourneyType.TeamEditing
       : ClinicBookingJourneyType.ParentEditing
+    if (!data.journeyData) data.journeyData = {}
     data.journeyData[booking.uuid] = { journeyType }
 
     // ------------------------- WIP -------------------------
@@ -385,7 +382,7 @@ export const bookIntoClinicController = {
       response.locals.back = appointment.uri.matched
     }
 
-    return response.render('session/edit')
+    return response.render('book-into-a-clinic/edit')
   },
 
   /**
