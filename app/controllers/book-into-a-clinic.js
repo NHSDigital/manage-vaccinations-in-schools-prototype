@@ -69,6 +69,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readProgrammes(request, response) {
+    console.log('readProgrammes')
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
@@ -141,6 +142,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
+    console.log('new')
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
@@ -190,6 +192,7 @@ export const bookIntoClinicController = {
    * @type {RequestParamHandler}
    */
   readBooking(request, response, next, booking_uuid) {
+    console.log('readBooking')
     const { patient_uuid, session_id } = request.params
     const { data } = request.session
     const { __ } = response.locals
@@ -232,6 +235,7 @@ export const bookIntoClinicController = {
    * @type {RequestParamHandler}
    */
   readAppointment(request, response, next, appointment_uuid) {
+    console.log('readAppointment')
     const { __, booking, isParentFacing } = response.locals
 
     // Give pages access to the appointment and the patient (if one is matched)
@@ -359,6 +363,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   edit(request, response) {
+    console.log('edit')
     const { session_id, booking_uuid, appointment_uuid } = request.params
     const { data } = request.session
 
@@ -477,6 +482,7 @@ export const bookIntoClinicController = {
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(action) {
+    console.log('readForm')
     action // unused so far
     return (request, response, next) => {
       const { appointment_uuid, booking_uuid, view } = request.params
@@ -491,10 +497,13 @@ export const bookIntoClinicController = {
 
       // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
       // that postcode is pushed to the appointment
-      if (view === 'clinic-location') {
+      if (
+        view === 'clinic-location' &&
+        data.appointment?.['preferredPostcode']
+      ) {
         const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
         const appointment = wizardBooking.findAppointment(appointment_uuid)
-        appointment.preferredPostcode = data.appointment['preferredPostcode']
+        appointment.preferredPostcode = data.appointment?.['preferredPostcode']
         ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
       }
 
