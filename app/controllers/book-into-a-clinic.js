@@ -343,8 +343,9 @@ export const bookIntoClinicController = {
    */
   edit(request, response) {
     console.log('edit')
-    const { session_id, booking_uuid, appointment_uuid } = request.params
+    const { booking_uuid, appointment_uuid } = request.params
     const { data } = request.session
+    const { __ } = response.locals
 
     // Copy the existing booking to the wizard context, if not already there
     let booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -371,6 +372,12 @@ export const bookIntoClinicController = {
     // Give access to the data needed for the summaryRows
     const bookingWithFullContext = new ClinicBooking(booking, data)
     response.locals.booking = bookingWithFullContext
+
+    // Show the child context in the caption
+    response.locals.appointmentCaption = __(
+      'clinicBooking.appointment.caption',
+      booking.findAppointment(appointment_uuid)?.fullName
+    )
 
     // Show back link to patient session page
     const appointment = booking.findAppointment(appointment_uuid)
