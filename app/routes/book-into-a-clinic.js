@@ -64,6 +64,23 @@ router.post(
   bookIntoClinic.update('edit')
 )
 
+router.all(
+  '/:booking_uuid/edit/:appointment_uuid/:view',
+  bookIntoClinic.readForm('edit')
+)
+router.all('/:booking_uuid/edit/:view', bookIntoClinic.readForm('edit'))
+
+router.get(
+  '/:booking_uuid/edit/:appointment_uuid/:view',
+  bookIntoClinic.showForm
+)
+router.get('/:booking_uuid/edit/:view', bookIntoClinic.showForm)
+
+router.post(
+  '/:booking_uuid/edit/:appointment_uuid/:view',
+  bookIntoClinic.updateForm
+)
+
 router.get('{/:view}', bookIntoClinic.show)
 
 export const bookIntoClinicRoutes = router
