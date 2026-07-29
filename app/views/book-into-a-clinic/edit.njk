@@ -38,13 +38,13 @@
       fluVaccineType: {},
       mmrVaccineType: {},
       location: {
-        href: "clinic-location" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
+        href: appointment.uri.edit + "/clinic-location" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       date: {
-        href: "clinic-date" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
+        href: appointment.uri.edit + "/clinic-date" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       timeSlot: {
-        href: "appointment-time-range" if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
+        href: appointment.uri.edit + "/appointment-time-range" if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
       }
     })
   }) }}
