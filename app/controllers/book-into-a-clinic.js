@@ -529,234 +529,225 @@ export const bookIntoClinicController = {
   },
 
   /**
-   * @param {string} action - action being carried out i.e. create new vs edit existing
-   * @returns {RequestHandler<Record<string, string>>} Request handler
+   * @type {RequestHandler<Record<string, string>>}
    */
-  showForm(action) {
-    action // unused so far
-    return (request, response) => {
-      const { __mf, appointment, patient } = response.locals
-      const { data } = request.session
-      let { booking_uuid, view } = request.params
+  showForm(request, response) {
+    const { __mf, appointment, patient } = response.locals
+    const { data } = request.session
+    let { booking_uuid, view } = request.params
 
-      if (view === 'address-selection') {
-        // Build the options for the selection of a home address address from those already entered
-        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-        response.locals.previousAddressItems = getPreviousAddressItems(
-          booking.appointments
-        )
-      } else if (view === 'session-selection') {
-        // Build the options for the selection of a clinic session from those already chosen for other appointments
-        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-        response.locals.previousSessionItems = getPreviousSessionItems(
-          booking.appointments,
-          data
-        )
-      } else if (view === 'parental-relationship' || view === 'contact') {
-        // Prepare the radio options for the parental relationship
-        response.locals.parentalRelationshipItems = Object.values(
-          ParentalRelationship
-        )
-          .filter(
-            (relationship) => relationship !== ParentalRelationship.Unknown
-          )
-          .map((relationship) => ({
-            text: relationship,
-            value: relationship
-          }))
-      } else if (view === 'programmes') {
-        // Create radio options for the programmes invited to (or flu if we've got none)
-        response.locals.programmeItems = data.programmesToOffer.programmes.map(
-          (programme) => {
-            return {
-              text: programme.name,
-              value: programme.id === 'mmrv' ? 'mmr' : programme.id,
-              hint: programme.information.hint
-            }
+    if (view === 'address-selection') {
+      // Build the options for the selection of a home address address from those already entered
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      response.locals.previousAddressItems = getPreviousAddressItems(
+        booking.appointments
+      )
+    } else if (view === 'session-selection') {
+      // Build the options for the selection of a clinic session from those already chosen for other appointments
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      response.locals.previousSessionItems = getPreviousSessionItems(
+        booking.appointments,
+        data
+      )
+    } else if (view === 'parental-relationship' || view === 'contact') {
+      // Prepare the radio options for the parental relationship
+      response.locals.parentalRelationshipItems = Object.values(
+        ParentalRelationship
+      )
+        .filter((relationship) => relationship !== ParentalRelationship.Unknown)
+        .map((relationship) => ({
+          text: relationship,
+          value: relationship
+        }))
+    } else if (view === 'programmes') {
+      // Create radio options for the programmes invited to (or flu if we've got none)
+      response.locals.programmeItems = data.programmesToOffer.programmes.map(
+        (programme) => {
+          return {
+            text: programme.name,
+            value: programme.id === 'mmrv' ? 'mmr' : programme.id,
+            hint: programme.information.hint
           }
-        )
-      } else if (view === 'availability') {
-        // Note: replace usual MMR content with MMRV as necessary
-        response.locals.programmeNames = programmeNamesListForSentence(
-          appointment.selected_programme_ids,
-          data.programmesToOffer.eligibleForMmrv,
-          ConjunctionType.or,
-          data
-        )
-      } else if (view === 'clinic-location') {
-        const clinicLocationItems = getBookableClinicLocationItems(
-          data,
-          appointment,
-          patient ? false : true,
-          data.journeyData[booking_uuid].outOfArea
-        )
-        response.locals.clinicLocationItems = clinicLocationItems
-      } else if (view === 'clinic-date') {
-        const clinic_id = data.journeyData[booking_uuid].clinic_id
-        const clinicDateItems = getBookableClinicDateItems(
-          data,
-          clinic_id,
-          appointment,
-          patient ? false : true
-        )
-        const clinic = Clinic.findOne(clinic_id, data)
-        const clinicLocation = clinic.formatted.nameAndAddress
-
-        response.locals.clinicDateItems = clinicDateItems
-        response.locals.clinicSummary = {
-          location: clinicLocation,
-          date: '—'
         }
-      } else if (view === 'appointment-time-range') {
-        const session = Session.findOne(appointment.session_id, data)
-        const availableTimesByHour = _.groupBy(
-          session.bookableStartTimesForAppointment(appointment),
-          (time) => time.getHours()
-        )
+      )
+    } else if (view === 'availability') {
+      // Note: replace usual MMR content with MMRV as necessary
+      response.locals.programmeNames = programmeNamesListForSentence(
+        appointment.selected_programme_ids,
+        data.programmesToOffer.eligibleForMmrv,
+        ConjunctionType.or,
+        data
+      )
+    } else if (view === 'clinic-location') {
+      const clinicLocationItems = getBookableClinicLocationItems(
+        data,
+        appointment,
+        patient ? false : true,
+        data.journeyData[booking_uuid].outOfArea
+      )
+      response.locals.clinicLocationItems = clinicLocationItems
+    } else if (view === 'clinic-date') {
+      const clinic_id = data.journeyData[booking_uuid].clinic_id
+      const clinicDateItems = getBookableClinicDateItems(
+        data,
+        clinic_id,
+        appointment,
+        patient ? false : true
+      )
+      const clinic = Clinic.findOne(clinic_id, data)
+      const clinicLocation = clinic.formatted.nameAndAddress
 
-        const timeRangeItems = []
-        Object.entries(availableTimesByHour).forEach(([hour, times]) => {
-          if (times.length) {
-            const startHourNumber = parseInt(hour)
-            const endHourNumber = startHourNumber + 1
-            const uniqueTimesCount = new Set(
-              times.map((time) => time.getTime())
-            ).size
+      response.locals.clinicDateItems = clinicDateItems
+      response.locals.clinicSummary = {
+        location: clinicLocation,
+        date: '—'
+      }
+    } else if (view === 'appointment-time-range') {
+      const session = Session.findOne(appointment.session_id, data)
+      const availableTimesByHour = _.groupBy(
+        session.bookableStartTimesForAppointment(appointment),
+        (time) => time.getHours()
+      )
 
-            timeRangeItems.push({
-              text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
-              value: startHourNumber,
-              hint: __mf('clinicBooking.timeRange.range.timesAvailable', {
-                count: uniqueTimesCount
-              })
+      const timeRangeItems = []
+      Object.entries(availableTimesByHour).forEach(([hour, times]) => {
+        if (times.length) {
+          const startHourNumber = parseInt(hour)
+          const endHourNumber = startHourNumber + 1
+          const uniqueTimesCount = new Set(times.map((time) => time.getTime()))
+            .size
+
+          timeRangeItems.push({
+            text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
+            value: startHourNumber,
+            hint: __mf('clinicBooking.timeRange.range.timesAvailable', {
+              count: uniqueTimesCount
             })
-          }
-        })
-        response.locals.timeRangeItems = timeRangeItems
-        response.locals.clinicSummary = {
-          location: session.clinic.formatted.nameAndAddress,
-          date: session.formatted.date
-        }
-      } else if (view === 'appointment-time') {
-        const session = Session.findOne(appointment.session_id, data)
-        const availableTimesByHour = _.groupBy(
-          session.bookableStartTimesForAppointment(appointment),
-          (time) => time.getHours()
-        )
-
-        const availabilityForChosenHour = {}
-        for (const date of availableTimesByHour[
-          data.journeyData[booking_uuid].timeRange
-        ]) {
-          const key = formatTime(date, { isHour12: true })
-
-          if (!availabilityForChosenHour[key]) {
-            availabilityForChosenHour[key] = {
-              date: new Date(date),
-              count: 0
-            }
-          }
-
-          availabilityForChosenHour[key].count++
-        }
-
-        const appointmentTimeItems = []
-        Object.entries(availabilityForChosenHour).forEach(
-          ([formattedTime, availability]) => {
-            appointmentTimeItems.push({
-              text: formattedTime,
-              value: availability.date.toISOString()
-            })
-          }
-        )
-        response.locals.appointmentTimeItems = appointmentTimeItems
-        response.locals.clinicSummary = {
-          location: session.clinic.formatted.nameAndAddress,
-          date: session.formatted.date
-        }
-      } else if (view === 'shorten-appointment') {
-        const session = Session.findOne(appointment.session_id, data)
-        const requiredSlots = appointment.slotCount
-        const availableSlots = session.longestAvailableAppointment(
-          appointment.startAt
-        )
-
-        response.locals.requiredSlots = requiredSlots
-        response.locals.requiredMinutes = requiredSlots * session.slotLength
-        response.locals.availableSlots = availableSlots
-        response.locals.availableMinutes = availableSlots * session.slotLength
-
-        if (data.journeyData[booking_uuid].preselectedSlot) {
-          response.locals.slotStartTime = formatTime(appointment.startAt, {
-            isHour12: true
           })
         }
-      } else if (view === 'fully-booked') {
-        // Note: replace usual MMR content with MMRV as necessary
-        response.locals.programmeNames = programmeNamesListForSentence(
-          appointment.selected_programme_ids,
-          data.programmesToOffer.eligibleForMmrv,
-          ConjunctionType.and,
-          data
-        )
-      } else if (view === 'least-convenient') {
-        const reasonItems = appointment.abandonmentReasons.map((reason) => ({
-          text:
-            reason === AppointmentAbandonmentReason.Other
-              ? formatOther(
-                  AppointmentAbandonmentReason.Other,
-                  appointment.abandonmentReasonOther
-                )
-              : reason,
-          value: reason
-        }))
-
-        response.locals.reasonItems = reasonItems
+      })
+      response.locals.timeRangeItems = timeRangeItems
+      response.locals.clinicSummary = {
+        location: session.clinic.formatted.nameAndAddress,
+        date: session.formatted.date
       }
+    } else if (view === 'appointment-time') {
+      const session = Session.findOne(appointment.session_id, data)
+      const availableTimesByHour = _.groupBy(
+        session.bookableStartTimesForAppointment(appointment),
+        (time) => time.getHours()
+      )
 
-      response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
+      const availabilityForChosenHour = {}
+      for (const date of availableTimesByHour[
+        data.journeyData[booking_uuid].timeRange
+      ]) {
+        const key = formatTime(date, { isHour12: true })
 
-      // All health questions use the same view
-      let key
-      if (view.startsWith('health-question-')) {
-        key = kebabToCamelCase(view.replace('health-question-', ''))
-        view = 'health-question'
-
-        // The immuneSystem health question, if asked, needs to say which programmes apply
-        if (key == 'immuneSystem') {
-          const mmrVariant = appointment.child.canBeOfferedMmrv ? 'MMRV' : 'MMR'
-          const fluCanBeNasal =
-            appointment.fluDecision !== ReplyDecision.OnlyAlternativeInjection
-          const possibleLiveProgrammeTypes = [
-            ProgrammeType.MMR,
-            ...(fluCanBeNasal ? [ProgrammeType.Flu] : [])
-          ]
-          const selectedLiveVaccineProgrammeNames =
-            appointment.selected_programme_ids
-              .map((id) => Programme.findOne(id, data))
-              .filter(({ type }) => possibleLiveProgrammeTypes.includes(type))
-              .map(({ name }) =>
-                name
-                  .replace('MMR', mmrVariant)
-                  .replace('Flu', 'nasal spray flu')
-              )
-
-          response.locals.liveVaccines = {
-            count: selectedLiveVaccineProgrammeNames.length,
-            vaccineNames: selectedLiveVaccineProgrammeNames.join(' and ')
+        if (!availabilityForChosenHour[key]) {
+          availabilityForChosenHour[key] = {
+            date: new Date(date),
+            count: 0
           }
         }
+
+        availabilityForChosenHour[key].count++
       }
 
-      // Only ask for details if question does not have sub-questions
-      const hasSubQuestions =
-        appointment?.getUnansweredHealthQuestions(data)[key]?.conditional
+      const appointmentTimeItems = []
+      Object.entries(availabilityForChosenHour).forEach(
+        ([formattedTime, availability]) => {
+          appointmentTimeItems.push({
+            text: formattedTime,
+            value: availability.date.toISOString()
+          })
+        }
+      )
+      response.locals.appointmentTimeItems = appointmentTimeItems
+      response.locals.clinicSummary = {
+        location: session.clinic.formatted.nameAndAddress,
+        date: session.formatted.date
+      }
+    } else if (view === 'shorten-appointment') {
+      const session = Session.findOne(appointment.session_id, data)
+      const requiredSlots = appointment.slotCount
+      const availableSlots = session.longestAvailableAppointment(
+        appointment.startAt
+      )
 
-      return response.render(`book-into-a-clinic/form/${view}`, {
-        key,
-        hasSubQuestions
-      })
+      response.locals.requiredSlots = requiredSlots
+      response.locals.requiredMinutes = requiredSlots * session.slotLength
+      response.locals.availableSlots = availableSlots
+      response.locals.availableMinutes = availableSlots * session.slotLength
+
+      if (data.journeyData[booking_uuid].preselectedSlot) {
+        response.locals.slotStartTime = formatTime(appointment.startAt, {
+          isHour12: true
+        })
+      }
+    } else if (view === 'fully-booked') {
+      // Note: replace usual MMR content with MMRV as necessary
+      response.locals.programmeNames = programmeNamesListForSentence(
+        appointment.selected_programme_ids,
+        data.programmesToOffer.eligibleForMmrv,
+        ConjunctionType.and,
+        data
+      )
+    } else if (view === 'least-convenient') {
+      const reasonItems = appointment.abandonmentReasons.map((reason) => ({
+        text:
+          reason === AppointmentAbandonmentReason.Other
+            ? formatOther(
+                AppointmentAbandonmentReason.Other,
+                appointment.abandonmentReasonOther
+              )
+            : reason,
+        value: reason
+      }))
+
+      response.locals.reasonItems = reasonItems
     }
+
+    response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
+
+    // All health questions use the same view
+    let key
+    if (view.startsWith('health-question-')) {
+      key = kebabToCamelCase(view.replace('health-question-', ''))
+      view = 'health-question'
+
+      // The immuneSystem health question, if asked, needs to say which programmes apply
+      if (key == 'immuneSystem') {
+        const mmrVariant = appointment.child.canBeOfferedMmrv ? 'MMRV' : 'MMR'
+        const fluCanBeNasal =
+          appointment.fluDecision !== ReplyDecision.OnlyAlternativeInjection
+        const possibleLiveProgrammeTypes = [
+          ProgrammeType.MMR,
+          ...(fluCanBeNasal ? [ProgrammeType.Flu] : [])
+        ]
+        const selectedLiveVaccineProgrammeNames =
+          appointment.selected_programme_ids
+            .map((id) => Programme.findOne(id, data))
+            .filter(({ type }) => possibleLiveProgrammeTypes.includes(type))
+            .map(({ name }) =>
+              name.replace('MMR', mmrVariant).replace('Flu', 'nasal spray flu')
+            )
+
+        response.locals.liveVaccines = {
+          count: selectedLiveVaccineProgrammeNames.length,
+          vaccineNames: selectedLiveVaccineProgrammeNames.join(' and ')
+        }
+      }
+    }
+
+    // Only ask for details if question does not have sub-questions
+    const hasSubQuestions =
+      appointment?.getUnansweredHealthQuestions(data)[key]?.conditional
+
+    return response.render(`book-into-a-clinic/form/${view}`, {
+      key,
+      hasSubQuestions
+    })
   },
 
   /**
