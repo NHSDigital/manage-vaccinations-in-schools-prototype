@@ -469,7 +469,7 @@ export const bookIntoClinicController = {
    */
   readForm(action) {
     console.log('readForm')
-    action // unused so far
+
     return (request, response, next) => {
       const { appointment_uuid, booking_uuid, view } = request.params
       const { data, referrer } = request.session
@@ -498,7 +498,8 @@ export const bookIntoClinicController = {
         ...getAllAppointmentPaths(
           booking_uuid,
           request.session.data,
-          booking.appointments
+          booking.appointments,
+          action
         ),
 
         // Confirmation! \o/
