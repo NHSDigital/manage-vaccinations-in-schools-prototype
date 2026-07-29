@@ -108,13 +108,15 @@
             {%- endfor %}
           {%- endset %}
 
+          {% set patientSessionUri = patientSession.clinicAppointment.uri.matched if session.type === SessionType.Clinic else patientSession.uri %}
+
           {% call card({
             classes: "app-card--compact",
             heading: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
             headingLevel: 3,
             headingSize: "s",
             clickable: not showRegistration and not account.isSchoolUser,
-            href: patientSession.uri if not account.isSchoolUser
+            href: patientSessionUri if not account.isSchoolUser
           }) %}
             {{ summaryList({
               lastRowBorder: false,
