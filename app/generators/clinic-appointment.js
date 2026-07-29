@@ -195,6 +195,9 @@ export function generateClinicAppointment(
     }
   }
 
+  // Make sure the editing process still makes it look like the parent went through the booking process
+  const preferredPostcode = session.clinic.postalCode
+
   const {
     selected_programme_ids,
     fluDecision,
@@ -212,6 +215,7 @@ export function generateClinicAppointment(
     parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility,
+    preferredPostcode,
     session_id,
     startAt,
     editedSlotCount,
