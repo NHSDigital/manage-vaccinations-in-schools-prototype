@@ -121,10 +121,6 @@ export const bookIntoClinicController = {
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
-    if (!data.journeyData) {
-      data.journeyData = {}
-    }
-
     // Create a new clinic booking in the wizard context
     const booking = ClinicBooking.create({}, data.wizard)
 
@@ -134,6 +130,7 @@ export const bookIntoClinicController = {
       : session_id
         ? ClinicBookingJourneyType.DataMigration
         : ClinicBookingJourneyType.ParentOnline
+    if (!data.journeyData) data.journeyData = {}
     data.journeyData[booking.uuid] = { journeyType }
 
     // Set up the first appointment
@@ -196,16 +193,6 @@ export const bookIntoClinicController = {
       // Show the session context in the caption
       response.locals.appointmentCaption = `Clinic at ${session.location.name} on ${session.formatted.dateShort}`
     }
-
-    // Adapt content in the views for the journey's audience
-    const journeyType =
-      data.journeyData[booking_uuid]?.journeyType ??
-      ClinicBookingJourneyType.ParentOnline
-    response.locals.isParentFacing =
-      journeyType === ClinicBookingJourneyType.ParentOnline
-
-    // Simplify access to the journey data in the views
-    response.locals.journeyData = data.journeyData[booking_uuid]
 
     // Give access to the booking on a global context
     let booking = ClinicBooking.findOne(booking_uuid, data)
@@ -517,6 +504,16 @@ export const bookIntoClinicController = {
     const { __, __mf, appointment, patient } = response.locals
     const { data } = request.session
     let { booking_uuid, view } = request.params
+
+    // Adapt content in the views for the journey's audience
+    const journeyType =
+      data.journeyData[booking_uuid]?.journeyType ??
+      ClinicBookingJourneyType.ParentOnline
+    response.locals.isParentFacing =
+      journeyType === ClinicBookingJourneyType.ParentOnline
+
+    // Simplify access to the journey data in the views
+    response.locals.journeyData = data.journeyData[booking_uuid]
 
     if (view === 'address-selection') {
       // Build the options for the selection of a home address address from those already entered
