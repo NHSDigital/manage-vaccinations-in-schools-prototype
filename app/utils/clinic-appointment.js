@@ -86,12 +86,14 @@ export const getAppointmentProgrammeOptions = (programme_ids, context) => {
  * @param {string} booking_uuid - the ID of the booking we're creating
  * @param {object} sessionData - the request.session.data object
  * @param {Array<ClinicAppointment>} appointments - the appointments whose journeys we're mapping
+ * @param {string} journeyAction - are we making a new appointment or performing an edit?
  * @returns {object} An object containing all relevant pages and forks
  */
 export const getAllAppointmentPaths = (
   booking_uuid,
   sessionData,
-  appointments
+  appointments,
+  journeyAction
 ) => {
   if (!appointments?.length) {
     return {}
@@ -118,49 +120,57 @@ export const getAllAppointmentPaths = (
       // Find the child (data migration journey only)
       ...(isDataMigrationJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/find-child`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/find-child`]:
+              {}
           }
         : {}),
 
       // Vaccinations wanted
-      [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/availability`]: () => {
-          const vaccinationChoices = appointment.vaccinationChoices
-          vaccinationChoices.selected_programme_ids = stringToArray(
-            sessionData.appointment?.selected_programme_ids
-          )
-          return (
-            getBookableClinicSessions(
-              sessionData,
-              vaccinationChoices,
-              extendForSupportNeeds,
-              isParentJourney
-            ).length === 0
-          )
-        }
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/programmes`]: {
+        [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/availability`]:
+          () => {
+            const vaccinationChoices = appointment.vaccinationChoices
+            vaccinationChoices.selected_programme_ids = stringToArray(
+              sessionData.appointment?.selected_programme_ids
+            )
+            return (
+              getBookableClinicSessions(
+                sessionData,
+                vaccinationChoices,
+                extendForSupportNeeds,
+                isParentJourney
+              ).length === 0
+            )
+          }
       },
       ...(sessionData.appointment?.selected_programme_ids?.includes('flu')
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/flu-choice`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/flu-choice`]:
+              {}
           }
         : {}),
       ...(sessionData.appointment?.fluDecision === ReplyDecision.Given
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/flu-alternative`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/flu-alternative`]:
+              {}
           }
         : {}),
       ...(sessionData.appointment?.selected_programme_ids?.includes('mmr')
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/mmr-alternative`]:
+              {}
           }
         : {}),
       ...(getAdditionalNeeds() === AdditionalNeeds.Basic
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/additional-support`]:
+              {}
           }
         : {
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/impairments`]:
+              {},
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/adjustments`]:
+              {}
           }),
 
       // Interrupt if the appointment is too long for the slot selected on Appointments page
@@ -168,7 +178,8 @@ export const getAllAppointmentPaths = (
       sessionData.journeyData[booking_uuid]?.preselectedSlot &&
       !canAppointmentFitInSchedule(appointment, true, sessionData)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/shorten-appointment`]:
+              {}
           }
         : {}),
       // Interrupt if the appointment is too long for anywhere in the session
@@ -176,7 +187,8 @@ export const getAllAppointmentPaths = (
       !sessionData.journeyData[booking_uuid]?.preselectedSlot &&
       !canAppointmentFitInSchedule(appointment, false, sessionData)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/shorten-appointment`]:
+              {}
           }
         : {}),
 
@@ -184,77 +196,49 @@ export const getAllAppointmentPaths = (
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/session-selection`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
-                () => sessionData.journeyData.addressChoice !== 'new'
-            }
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/session-selection`]:
+              {
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/appointment-time-range`]:
+                  () => sessionData.journeyData.addressChoice !== 'new'
+              }
           }
         : {}),
       ...(!isDataMigrationJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]:
-                () => {
-                  const searchTerm = sessionData.journeyData.preferredLocation
-                  const searchType = getLocationSearchType(searchTerm)
-                  switch (searchType) {
-                    case LocationSearchType.Postcode:
-                    case LocationSearchType.Outcode:
-                      sessionData.appointment.preferredPostcode = searchTerm
-                      sessionData.journeyData.outOfArea = false
-                      return true
-                    case LocationSearchType.Place:
-                    default:
-                      sessionData.journeyData.outOfArea = true
-                      return false
-                  }
-                }
-            },
-            [`/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]:
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/preferred-location`]:
               {
-                [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]:
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/clinic-location`]:
+                  () => {
+                    const searchTerm = sessionData.journeyData.preferredLocation
+                    const searchType = getLocationSearchType(searchTerm)
+                    switch (searchType) {
+                      case LocationSearchType.Postcode:
+                      case LocationSearchType.Outcode:
+                        sessionData.appointment.preferredPostcode = searchTerm
+                        sessionData.journeyData.outOfArea = false
+                        return true
+                      case LocationSearchType.Place:
+                      default:
+                        sessionData.journeyData.outOfArea = true
+                        return false
+                    }
+                  }
+              },
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/preferred-location-matches`]:
+              {
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/preferred-location`]:
                   {
                     data: 'appointment.preferredPostcode',
                     value: 'retry'
                   }
               },
-            [`/${booking_uuid}/new/${appointment_uuid}/clinic-distance`]: {}, // only used for place matching path (for demo/test purposes)
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/clinic-distance`]:
+              {}, // only used for place matching path (for demo/test purposes)
 
             // Session and slot selection
-            [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
-                return (
-                  getBookableClinicSessions(
-                    sessionData,
-                    appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
-                  ).length === 0
-                )
-              }
-            },
-            [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
-                return (
-                  getBookableClinicSessions(
-                    sessionData,
-                    appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
-                  ).length === 0
-                )
-              }
-            }
-          }
-        : {}),
-      ...(!(
-        isDataMigrationJourney &&
-        sessionData.journeyData[booking_uuid]?.preselectedSlot
-      )
-        ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/clinic-location`]:
               {
-                [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]:
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/fully-booked`]:
                   () => {
                     return (
                       getBookableClinicSessions(
@@ -266,46 +250,84 @@ export const getAllAppointmentPaths = (
                     )
                   }
               },
-            [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
-                return (
-                  getBookableClinicSessions(
-                    sessionData,
-                    appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
-                  ).length === 0
-                )
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/clinic-date`]:
+              {
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/fully-booked`]:
+                  () => {
+                    return (
+                      getBookableClinicSessions(
+                        sessionData,
+                        appointment.vaccinationChoices,
+                        extendForSupportNeeds,
+                        isParentJourney
+                      ).length === 0
+                    )
+                  }
+              }
+          }
+        : {}),
+      ...(!(
+        isDataMigrationJourney &&
+        sessionData.journeyData[booking_uuid]?.preselectedSlot
+      )
+        ? {
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/appointment-time-range`]:
+              {
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/fully-booked`]:
+                  () => {
+                    return (
+                      getBookableClinicSessions(
+                        sessionData,
+                        appointment.vaccinationChoices,
+                        extendForSupportNeeds,
+                        isParentJourney
+                      ).length === 0
+                    )
+                  }
               },
-              [`/${booking_uuid}/new/${appointment_uuid}/child`]: () =>
-                isParentJourney,
-              [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
-                () => !isParentJourney
-            }
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/appointment-time`]:
+              {
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/fully-booked`]:
+                  () => {
+                    return (
+                      getBookableClinicSessions(
+                        sessionData,
+                        appointment.vaccinationChoices,
+                        extendForSupportNeeds,
+                        isParentJourney
+                      ).length === 0
+                    )
+                  },
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/child`]:
+                  () => isParentJourney,
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/team-health-questions`]:
+                  () => !isParentJourney
+              }
           }
         : {}),
 
       // Child details
       ...(isParentJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/child`]: {},
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/dob`]: {},
             ...(appointments[0].uuid !== appointment_uuid &&
             getPreviousAddressItems(appointments).length > 2
               ? {
-                  [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
+                  [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/address-selection`]:
                     {
-                      [`/${booking_uuid}/new/${appointment_uuid}/contact`]:
+                      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/contact`]:
                         () => sessionData.journeyData.addressChoice !== 'new'
                     }
                 }
               : {}),
-            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/address`]:
+              {}
           }
         : {
-            [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/team-health-questions`]:
               {
-                [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/contact-selection`]:
                   () => {
                     if (
                       sessionData.journeyData.optedIntoHealthQuestions ===
@@ -316,19 +338,21 @@ export const getAllAppointmentPaths = (
 
                     return appointment.patient.contacts?.length > 0
                   },
-                [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-                  if (
-                    sessionData.journeyData.optedIntoHealthQuestions === 'true'
-                  ) {
-                    return false
-                  }
+                [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/contact`]:
+                  () => {
+                    if (
+                      sessionData.journeyData.optedIntoHealthQuestions ===
+                      'true'
+                    ) {
+                      return false
+                    }
 
-                  return appointment.patient.contacts?.length === 0
-                }
+                    return appointment.patient.contacts?.length === 0
+                  }
               }
           }),
       ...getHealthQuestionPathsForAppointment(
-        `/${booking_uuid}/new/`,
+        `/${booking_uuid}/${journeyAction}/`,
         appointment,
         sessionData
       ),
@@ -336,43 +360,58 @@ export const getAllAppointmentPaths = (
       // Parent contact details
       ...(!isParentJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/contact-selection`]:
+              {}
           }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/contact`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
-          data: 'appointment.parentHasParentalResponsibility',
-          value: 'false'
-        }
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/contact`]: {
+        [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/parental-responsibility`]:
+          {
+            data: 'appointment.parentHasParentalResponsibility',
+            value: 'false'
+          }
       },
-      [`/${booking_uuid}/new/${appointment_uuid}/communication-needs`]: {},
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/communication-needs`]:
+        {},
 
       // Check and confirm
-      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
-        [`/${booking_uuid}/new/confirmation`]: () =>
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/check-answers`]: {
+        [`/${booking_uuid}/${journeyAction}/confirmation`]: () =>
           !appointment.isAbandoned && !appointment.patient_uuid,
-        [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: () =>
-          appointment.isAbandoned
+        [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/thank-you`]:
+          () => appointment.isAbandoned
       },
 
       // Reporting the lack of a convenient option
-      [`/${booking_uuid}/new/${appointment_uuid}/not-convenient`]: {},
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/not-convenient`]:
+        {},
       ...(abandonmentReasons?.length > 1
-        ? { [`/${booking_uuid}/new/${appointment_uuid}/least-convenient`]: {} }
+        ? {
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/least-convenient`]:
+              {}
+          }
         : {}),
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.Distance)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/convenient-distance`]: {}
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/convenient-distance`]:
+              {}
           }
         : {}),
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.DayOfWeek)
-        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-days`]: {} }
+        ? {
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/convenient-days`]:
+              {}
+          }
         : {}),
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.TimeOfDay)
-        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-times`]: {} }
+        ? {
+            [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/convenient-times`]:
+              {}
+          }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/check-feedback`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: {}
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/check-feedback`]:
+        {},
+      [`/${booking_uuid}/${journeyAction}/${appointment_uuid}/thank-you`]: {}
     }
   })
 
