@@ -113,6 +113,9 @@ export function generateClinicAppointment(patient, session, booking) {
     }
   }
 
+  // Make sure the editing process still makes it look like the parent went through the booking process
+  const preferredPostcode = session.clinic.postalCode
+
   // Appointment time
   const startAt = faker.helpers.arrayElement(session.availableAppointmentTimes)
   const slotsCovered = 1 // TODO: take into account health answers
@@ -144,6 +147,7 @@ export function generateClinicAppointment(patient, session, booking) {
     parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility,
+    preferredPostcode,
     session_id,
     startAt,
     endAt,
