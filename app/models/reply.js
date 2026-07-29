@@ -143,10 +143,6 @@ export class Reply extends BaseModel {
     this.method = options?.method
     this.hasSelfConsent = options?.hasSelfConsent || false
     this.note = options?.note || ''
-    this.contact_uuid = options?.contact_uuid
-    this.patient_uuid = options?.patient_uuid
-    this.programme_id = options?.programme_id
-    this.session_id = options?.session_id
 
     // For reasons of simplicity, we use `contact_` this to store contact
     // details in the parental consent journey.
