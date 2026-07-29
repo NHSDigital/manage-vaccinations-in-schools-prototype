@@ -11,24 +11,6 @@
 
   {{ summaryList({
     card: {
-      heading: __("clinicBooking.edit.summary.child"),
-      headingSize: "m"
-    },
-    lastRowBorder: false,
-    rows: summaryRows(appointment.child if isParentFacing else patient, {
-      fullName: {
-        value: appointment.child.fullFriendlyName if isParentFacing
-      },
-      preferredName: {},
-      dob: {},
-      address: {},
-      impairments: {},
-      adjustments: {}
-    })
-  }) }}
-
-  {{ summaryList({
-    card: {
       heading: __("clinicBooking.edit.summary.appointment"),
       headingSize: "m"
     },
@@ -46,27 +28,6 @@
       timeSlot: {
         href: appointment.uri.edit + "/appointment-time-range" if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
       }
-    })
-  }) }}
-
-  {{ summaryList({
-    card: {
-      heading: __("clinicBooking.edit.summary.contact"),
-      headingSize: "m"
-    },
-    lastRowBorder: false,
-    rows: summaryRows(booking.contact, {
-      fullName: {},
-      relationship: {
-        value: appointment.formatted.parentalRelationship
-      },
-      hasParentalResponsibility: {
-        value: appointment.parentHasParentalResponsibility
-      },
-      email: {},
-      tel: {},
-      canSms: {},
-      communicationNeeds: {}
     })
   }) }}
 {% endblock %}
