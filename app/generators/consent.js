@@ -9,7 +9,7 @@ import {
   VaccineCriteria
 } from '../enums.js'
 import { Consent } from '../models.js'
-import { today } from '../utils/date.js'
+import { removeDays, today } from '../utils/date.js'
 import {
   getHealthAnswers,
   getRefusalReason,
@@ -99,13 +99,19 @@ export function generateConsent(patientSession, contact, lastConsentCreatedAt) {
     return
   }
 
+  const createdAt =
+    lastConsentCreatedAt ||
+    faker.date.between({
+      from: session.consentOpenAt,
+      to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
+    })
+
+  // Expire a portion of consent responses
+  // Flu consent responses also expire, but this is handled in the `Reply` model
+  const isExpiredConsent = !isFluProgramme && faker.datatype.boolean(0.25)
+
   return new Consent({
-    createdAt:
-      lastConsentCreatedAt ||
-      faker.date.between({
-        from: session.consentOpenAt,
-        to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
-      }),
+    createdAt: isExpiredConsent ? removeDays(createdAt, 250) : createdAt,
     child,
     decision,
     method,

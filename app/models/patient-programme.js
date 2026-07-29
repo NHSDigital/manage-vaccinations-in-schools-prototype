@@ -715,6 +715,15 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get number of expired responses
+   *
+   * @returns {number} Expired responses
+   */
+  get expiredResponsesCount() {
+    return this.responses.filter((reply) => reply.hasExpired).length
+  }
+
+  /**
    * Get responses with triage notes for consent health answers
    *
    * @returns {Array<Reply>|undefined} Responses with triage notes

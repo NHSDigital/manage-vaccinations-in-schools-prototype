@@ -32,6 +32,10 @@ export function getConfirmedConsentStatus(reply, session) {
     return ConsentStatus.NotDelivered
   }
 
+  if (reply.hasExpired) {
+    return ConsentStatus.Expired
+  }
+
   if (reply.decision === ReplyDecision.NoResponse) {
     return ConsentStatus.NoResponse
   }
@@ -84,6 +88,11 @@ export function getConsentStatus(patientProgramme) {
   const validReplies = Object.values(patientProgramme.validReplies).filter(
     ({ isInvalidated }) => !isInvalidated
   )
+
+  // If all valid replies have expired, consent expired
+  if (validReplies.every(({ hasExpired }) => hasExpired)) {
+    return ConsentStatus.Expired
+  }
 
   // If no valid replies, no response
   if (validReplies.length === 0) {
@@ -220,10 +229,14 @@ export function getConsentStatusDescription(patientProgramme) {
   }
 
   switch (patientProgramme.consent) {
-    case ConsentStatus.NoResponse:
-      return 'No-one responded to our requests for consent.'
     case ConsentStatus.NotDelivered:
       return 'Consent response could not be delivered.'
+    case ConsentStatus.NoResponse:
+      return 'No-one responded to our requests for consent.'
+    case ConsentStatus.Expired:
+      return patientProgramme.expiredResponsesCount > 1
+        ? 'Consent responses expired.'
+        : 'Consent response expired.'
     case ConsentStatus.Inconsistent:
       return 'You can only vaccinate if all respondents give consent.'
     case ConsentStatus.Declined:
@@ -525,6 +538,8 @@ export function getPatientConsentStatus(patientProgramme) {
       return PatientConsentStatus.NotDelivered
     case ConsentStatus.NoResponse:
       return PatientConsentStatus.NoResponse
+    case ConsentStatus.Expired:
+      return PatientConsentStatus.Expired
     case ConsentStatus.Declined:
       return PatientRefusedStatus.FollowUp
     case ConsentStatus.Inconsistent:

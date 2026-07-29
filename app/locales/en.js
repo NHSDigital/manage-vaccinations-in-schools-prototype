@@ -2219,7 +2219,8 @@ export const en = {
       label: 'Consent requests'
     },
     replies: {
-      label: 'Consent responses'
+      label: 'Consent responses',
+      expired: 'Expired consent responses'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',
@@ -2516,6 +2517,9 @@ export const en = {
     },
     createdBy: {
       label: 'Recorded by'
+    },
+    expiredAt: {
+      label: 'Expired'
     },
     respondent: {
       title: 'Who are you trying to get consent from?',

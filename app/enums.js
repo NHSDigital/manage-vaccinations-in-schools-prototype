@@ -113,7 +113,8 @@ export const ConsentStatus = {
   GivenForIntranasal: 'Consent given for nasal spray',
   Declined: 'Follow up requested',
   Refused: 'Consent refused',
-  FinalRefusal: 'Refusal confirmed'
+  FinalRefusal: 'Refusal confirmed',
+  Expired: 'Consent expired'
 }
 
 /**
@@ -433,7 +434,8 @@ export const PatientConsentStatus = {
   Scheduled: 'Request scheduled',
   NoDetails: 'No contact details',
   NotDelivered: 'Request failed',
-  NoResponse: 'No response'
+  NoResponse: 'No response',
+  Expired: 'Response expired'
 }
 
 /**
