@@ -36,7 +36,6 @@ import {
  */
 export class School extends Location {
   static contextKey = 'schools'
-  static identifierKey = 'id'
   static ns = 'school'
 
   /**

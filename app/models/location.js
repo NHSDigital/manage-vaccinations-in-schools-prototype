@@ -22,6 +22,7 @@ import { BaseModel } from './base.js'
  */
 export class Location extends BaseModel {
   static ns = 'location'
+  static identifierKey = 'id'
 
   /**
    * @param {LocationOptions} options - Options

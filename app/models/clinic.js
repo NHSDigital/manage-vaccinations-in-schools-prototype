@@ -6,7 +6,6 @@ import { Location } from '../models.js'
  */
 export class Clinic extends Location {
   static contextKey = 'clinics'
-  static identifierKey = 'id'
   static ns = 'clinic'
 
   /**
