@@ -17,6 +17,7 @@ import { BaseModel } from './base.js'
  */
 export class Move extends BaseModel {
   static contextKey = 'moves'
+  static identifierKey = 'uuid'
   static ns = 'move'
 
   /**
