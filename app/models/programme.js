@@ -38,6 +38,7 @@ import { BaseModel } from './base.js'
  */
 export class Programme extends BaseModel {
   static contextKey = 'programmes'
+  static identifierKey = 'id'
   static ns = 'programme'
 
   /**
