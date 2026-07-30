@@ -28,6 +28,7 @@ import { BaseModel } from './base.js'
  */
 export class Team extends BaseModel {
   static contextKey = 'teams'
+  static identifierKey = 'id'
   static ns = 'team'
 
   /**
