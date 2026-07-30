@@ -1,6 +1,6 @@
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
-import vaccines from '../datasets/vaccines.js'
+import vaccinesData from '../datasets/vaccines.js'
 import { ProgrammeType, VaccineCriteria } from '../enums.js'
 import { PatientSession, Session, Vaccination, Vaccine } from '../models.js'
 import {
@@ -252,7 +252,7 @@ export class Programme extends BaseModel {
             case 'vaccines': {
               const vaccineList = Array.isArray(this.vaccine_snomeds)
                 ? this.vaccine_snomeds.map(
-                    (snomed) => new Vaccine(vaccines[snomed]).brand
+                    (snomed) => new Vaccine(vaccinesData[snomed]).brand
                   )
                 : []
               return vaccineList.join('<br>')

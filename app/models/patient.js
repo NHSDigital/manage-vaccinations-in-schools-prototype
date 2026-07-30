@@ -2,7 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import activity from '../datasets/activity.js'
 import programmesData from '../datasets/programmes.js'
-import schools from '../datasets/schools.js'
+import schoolsData from '../datasets/schools.js'
 import {
   Adjustment,
   AuditEventType,
@@ -610,7 +610,7 @@ export class Patient extends Child {
             case 'newUrn':
               return (
                 this.pendingChanges?.school_id &&
-                schools[this.pendingChanges.school_id].name
+                schoolsData[this.pendingChanges.school_id].name
               )
             case 'archiveReason':
               return formatOther(this.archiveReasonOther, this.archiveReason)

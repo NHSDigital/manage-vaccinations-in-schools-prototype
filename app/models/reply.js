@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMonths } from 'date-fns'
 
-import vaccines from '../datasets/vaccines.js'
+import vaccinesData from '../datasets/vaccines.js'
 import {
   ConsentStatus,
   ConsentVaccineCriteria,
@@ -311,7 +311,7 @@ export class Reply extends BaseModel {
 
     // Consent given for flu programme with method of vaccination
     if (this.programme?.type === Flu) {
-      consentedVaccine = Object.values(vaccines).filter(
+      consentedVaccine = Object.values(vaccinesData).filter(
         (programme) => programme.type === Flu
       )
 
@@ -340,21 +340,21 @@ export class Reply extends BaseModel {
 
     // Consent given for HPV programme
     if (this.programme?.type === HPV) {
-      consentedVaccine = Object.values(vaccines).find(
+      consentedVaccine = Object.values(vaccinesData).find(
         ({ type }) => type === HPV
       )
     }
 
     // Consent given for MenACWY programme only
     if (this.decision === ReplyDecision.OnlyMenACWY) {
-      consentedVaccine = Object.values(vaccines).find(
+      consentedVaccine = Object.values(vaccinesData).find(
         ({ type }) => type === MenACWY
       )
     }
 
     // Consent given for Td/IPV programme only
     if (this.decision === ReplyDecision.OnlyTdIPV) {
-      consentedVaccine = Object.values(vaccines).find(
+      consentedVaccine = Object.values(vaccinesData).find(
         ({ type }) => type === TdIPV
       )
     }
@@ -367,7 +367,7 @@ export class Reply extends BaseModel {
           ? []
           : [VaccineCriteria.Injection])
       ]
-      consentedVaccine = Object.values(vaccines)
+      consentedVaccine = Object.values(vaccinesData)
         .filter(({ type }) => type === ProgrammeType.MMR)
         .filter(({ criteria }) => allowedCriteria.includes(criteria))
     }

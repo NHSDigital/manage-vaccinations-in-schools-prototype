@@ -16,7 +16,7 @@ import uploads from '../.data/uploads.json' with { type: 'json' }
 import users from '../.data/users.json' with { type: 'json' }
 import vaccinations from '../.data/vaccinations.json' with { type: 'json' }
 
-import vaccines from './datasets/vaccines.js'
+import vaccinesData from './datasets/vaccines.js'
 import { ClinicBooking, Consent, Move, Notice, Session } from './models.js'
 
 /**
@@ -47,7 +47,7 @@ const data = {
   uploads,
   users,
   vaccinations,
-  vaccines,
+  vaccines: vaccinesData,
   wizard: {}
 }
 

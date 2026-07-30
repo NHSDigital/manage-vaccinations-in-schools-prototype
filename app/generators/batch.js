@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import vaccines from '../datasets/vaccines.js'
+import vaccinesData from '../datasets/vaccines.js'
 import { Batch } from '../models.js'
 import { addDays } from '../utils/date.js'
 
@@ -12,7 +12,7 @@ import { addDays } from '../utils/date.js'
 export function generateBatch() {
   const createdAt = faker.date.recent({ days: 30 })
   const expiry = addDays(createdAt, 120)
-  const vaccine_snomed = faker.helpers.arrayElement(Object.keys(vaccines))
+  const vaccine_snomed = faker.helpers.arrayElement(Object.keys(vaccinesData))
 
   let archivedAt
   const isArchived = faker.datatype.boolean(0.5)

@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import gpSurgeries from '../datasets/clinics.js'
-import firstNames from '../datasets/first-names.js'
+import clinicsData from '../datasets/clinics.js'
+import firstNamesData from '../datasets/first-names.js'
 import { Adjustment, Gender, Impairment } from '../enums.js'
 import { Child } from '../models.js'
 import { getCurrentAcademicYear, getYearGroup } from '../utils/date.js'
@@ -66,7 +66,7 @@ export function generateChild(schools) {
   }
 
   // Name
-  const firstName = faker.helpers.arrayElement(firstNames[gender])
+  const firstName = faker.helpers.arrayElement(firstNamesData[gender])
   const lastName = faker.person.lastName().replace(`'`, '’')
 
   let preferredFirstName
@@ -146,7 +146,7 @@ export function generateChild(schools) {
   // GP surgery
   let gpSurgery
   if (faker.datatype.boolean(0.8)) {
-    const gpSurgeryNames = Object.values(gpSurgeries).map(
+    const gpSurgeryNames = Object.values(clinicsData).map(
       (surgery) => surgery.name
     )
     gpSurgery = faker.helpers.arrayElement(gpSurgeryNames)

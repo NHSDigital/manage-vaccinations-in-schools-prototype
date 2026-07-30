@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMonths, addWeeks } from 'date-fns'
 
-import vaccines from '../datasets/vaccines.js'
+import vaccinesData from '../datasets/vaccines.js'
 import { VaccinationOutcome, VaccinationSource } from '../enums.js'
 import { Vaccination } from '../models.js'
 
@@ -72,7 +72,7 @@ export function generateVaccination(patientSession, programme, batch, users) {
     vaccine_snomed: batch?.vaccine_snomed,
     ...(vaccinated && {
       batch_id: batch?.id,
-      dose: vaccines[batch?.vaccine_snomed]?.dose,
+      dose: vaccinesData[batch?.vaccine_snomed]?.dose,
       sequence,
       injectionMethod,
       injectionSite
