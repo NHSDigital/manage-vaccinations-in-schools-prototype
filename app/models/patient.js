@@ -2,7 +2,6 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import activity from '../datasets/activity.js'
 import programmesData from '../datasets/programmes.js'
-import schoolsData from '../datasets/schools.js'
 import {
   Adjustment,
   AuditEventType,
@@ -26,6 +25,7 @@ import {
   PatientProgramme,
   PatientSession,
   Reply,
+  School,
   Vaccination
 } from '../models.js'
 import { getUpdatedFields } from '../utils/audit-event.js'
@@ -608,10 +608,8 @@ export class Patient extends Child {
             case 'nhsn':
               return getFormattedNhsn()
             case 'newUrn':
-              return (
-                this.pendingChanges?.school_id &&
-                schoolsData[this.pendingChanges.school_id].name
-              )
+              return School.findOne(this.pendingChanges.school_id, this.context)
+                ?.name
             case 'archiveReason':
               return formatOther(this.archiveReasonOther, this.archiveReason)
             case 'lastReminderDate':

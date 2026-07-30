@@ -114,7 +114,7 @@ export const getSessionYearGroups = (school_id, sessionPresets) => {
     }
   }
 
-  const school = schoolsData[school_id]
+  const school = schoolsData.find((school) => school.id === school_id)
 
   return school.yearGroups.filter((yearGroup) =>
     [...programmeYearGroups].includes(yearGroup)

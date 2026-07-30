@@ -11,8 +11,8 @@ const presetNames = [
   SessionPresetName.MMR
 ]
 
-export default {
-  '888888': {
+export default [
+  {
     id: '888888',
     urn: '888888',
     name: 'Unknown school',
@@ -20,7 +20,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '999999': {
+  {
     id: '999999',
     urn: '999999',
     name: 'Home-educated',
@@ -28,7 +28,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '135335': {
+  {
     id: '135335',
     urn: '135335',
     linkedUrns: ['103737'],
@@ -43,7 +43,7 @@ export default {
     team_ids: ['001', '003'],
     presetNames
   },
-  '137209': {
+  {
     id: '137209',
     urn: '137209',
     name: 'West Coventry Academy',
@@ -57,7 +57,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '137272': {
+  {
     id: '137272',
     urn: '137272',
     name: 'Blue Coat Church of England School and Music College',
@@ -71,7 +71,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '138023': {
+  {
     id: '138023',
     urn: '138023',
     name: 'Coundon Court',
@@ -85,7 +85,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '133556': {
+  {
     id: '133556',
     urn: '133556',
     linkedUrns: ['103708', '103718'],
@@ -100,7 +100,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '139292': {
+  {
     id: '139292',
     urn: '139292',
     name: 'Caludon Castle School',
@@ -114,7 +114,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '140248': {
+  {
     id: '140248',
     urn: '140248',
     name: 'President Kennedy School Academy',
@@ -128,7 +128,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '141104A': {
+  {
     id: '141104A',
     urn: '141104',
     site: 'A',
@@ -143,7 +143,7 @@ export default {
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
-  '141104B': {
+  {
     id: '141104B',
     urn: '141104',
     site: 'B',
@@ -158,7 +158,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '141992': {
+  {
     id: '141992',
     urn: '141992',
     name: 'Cardinal Wiseman Catholic School',
@@ -172,7 +172,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '142205': {
+  {
     id: '142205',
     urn: '142205',
     name: 'Sacred Heart Catholic Primary School',
@@ -186,7 +186,7 @@ export default {
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
-  '142211': {
+  {
     id: '142211',
     urn: '142211',
     name: 'St Gregory’s Catholic Primary School',
@@ -200,7 +200,7 @@ export default {
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
-  '142339': {
+  {
     id: '142339',
     urn: '142339',
     name: 'Barr’s Hill School',
@@ -214,7 +214,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '142700': {
+  {
     id: '142700',
     urn: '142700',
     name: 'Finham Primary School',
@@ -228,7 +228,7 @@ export default {
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
-  '142960': {
+  {
     id: '142960',
     urn: '142960',
     name: 'Lyng Hall School',
@@ -242,7 +242,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '143779': {
+  {
     id: '143779',
     urn: '143779',
     name: 'Parkgate Primary School',
@@ -256,7 +256,7 @@ export default {
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
-  '145179': {
+  {
     id: '145179',
     urn: '145179',
     name: 'Stoke Park School',
@@ -270,7 +270,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '147346': {
+  {
     id: '147346',
     urn: '147346',
     name: 'Cardinal Newman Catholic School',
@@ -284,7 +284,7 @@ export default {
     team_ids: ['001'],
     presetNames
   },
-  '148429': {
+  {
     id: '148429',
     urn: '148429',
     name: 'Meadow Park School',
@@ -299,7 +299,7 @@ export default {
     presetNames
   },
   // Closed
-  '103737': {
+  {
     id: '103737',
     urn: '103737',
     linkedUrns: ['135335'],
@@ -315,7 +315,7 @@ export default {
     team_id: '001'
   },
   // Closing
-  '131574': {
+  {
     id: '131574',
     urn: '131574',
     linkedUrns: ['148726'],
@@ -332,7 +332,7 @@ export default {
     team_id: '001'
   },
   // Opening
-  '148726': {
+  {
     id: '148726',
     urn: '148726',
     linkedUrns: ['131574'],
@@ -347,7 +347,7 @@ export default {
     team_id: '001'
   },
   // Amalgamated/merged
-  '103708': {
+  {
     id: '103708',
     urn: '103708',
     linkedUrns: ['133556'],
@@ -362,7 +362,7 @@ export default {
     postalCode: 'CV2 4FN',
     team_id: '001'
   },
-  '103718': {
+  {
     id: '103718',
     urn: '103718',
     linkedUrns: ['133556'],
@@ -377,4 +377,4 @@ export default {
     postalCode: 'CV1 5HG',
     team_id: '001'
   }
-}
+]
