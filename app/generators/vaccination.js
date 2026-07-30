@@ -11,12 +11,10 @@ import { Vaccination } from '../models.js'
  * @param {PatientSession} patientSession - Patient session
  * @param {Programme} programme - Programme
  * @param {Batch} batch - Batch
- * @param {Array<User>} users - Users
+ * @param {User} user - User
  * @returns {Vaccination} Vaccination
  */
-export function generateVaccination(patientSession, programme, batch, users) {
-  const user = faker.helpers.arrayElement(users)
-
+export function generateVaccination(patientSession, programme, batch, user) {
   let injectionMethod
   let injectionSite
   let sequence

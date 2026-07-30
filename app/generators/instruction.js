@@ -1,5 +1,3 @@
-import { fakerEN_GB as faker } from '@faker-js/faker'
-
 import { Instruction } from '../models.js'
 import { removeDays } from '../utils/date.js'
 
@@ -8,12 +6,10 @@ import { removeDays } from '../utils/date.js'
  *
  * @param {Programme} programme - Programme
  * @param {Session} session - Session
- * @param {Array<User>} users - Users
+ * @param {User} user - User
  * @returns {Instruction} PSD instruction
  */
-export function generateInstruction(programme, session, users) {
-  const user = faker.helpers.arrayElement(users)
-
+export function generateInstruction(programme, session, user) {
   return new Instruction({
     createdAt: removeDays(session.date, 7),
     createdBy_uid: user.uid,
