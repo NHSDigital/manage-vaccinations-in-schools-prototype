@@ -7,8 +7,8 @@ const presetNames = [
   SessionPresetName.MMR
 ]
 
-export default {
-  M84008: {
+export default [
+  {
     id: 'M84008',
     name: 'Spring Hill Medical Centre',
     addressLine1: 'Phil Collins Way',
@@ -19,7 +19,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M84016: {
+  {
     id: 'M84016',
     name: 'Wolston Surgery',
     addressLine1: 'School Street',
@@ -30,7 +30,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86002: {
+  {
     id: 'M86002',
     name: 'Longford Primary Care Centre',
     addressLine1: 'Longford Road',
@@ -41,7 +41,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86003: {
+  {
     id: 'M86003',
     name: 'Sky Blue Medical Group',
     addressLine1: 'Green Lane',
@@ -52,7 +52,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86004: {
+  {
     id: 'M86004',
     name: 'Allesley Park Medical Centre',
     addressLine1: '2 Whitaker Road',
@@ -63,7 +63,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86005: {
+  {
     id: 'M86005',
     name: 'Hillfields Health Centre',
     addressLine1: 'City of Coventry Health Centre',
@@ -74,7 +74,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86010: {
+  {
     id: 'M86010',
     name: 'Forrest Medical Centre',
     addressLine1: '6 Prior Deram Walk',
@@ -85,7 +85,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86012: {
+  {
     id: 'M86012',
     name: 'Priory Gate Practice',
     addressLine1: 'City of Coventry Health Centre',
@@ -96,7 +96,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86014: {
+  {
     id: 'M86014',
     name: 'The Forum Health Centre',
     addressLine1: '1A Farren Road',
@@ -107,7 +107,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86017: {
+  {
     id: 'M86017',
     name: 'Mansfield Medical Centre',
     addressLine1: '56 Binley Road',
@@ -118,7 +118,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86018: {
+  {
     id: 'M86018',
     name: 'Moseley Avenue Surgery',
     addressLine1: '109 Moseley Avenue',
@@ -129,7 +129,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86019: {
+  {
     id: 'M86019',
     name: 'Westwood Medical Health Centre',
     addressLine1: '298 Tile Hill Lane',
@@ -140,7 +140,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86020: {
+  {
     id: 'M86020',
     name: 'Wood End Health Centre',
     addressLine1: '67B Deedmore Road',
@@ -151,7 +151,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86028: {
+  {
     id: 'M86028',
     name: 'Central Medical Centre',
     addressLine1: '42 St Paul’s Road',
@@ -162,7 +162,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86029: {
+  {
     id: 'M86029',
     name: 'Broomfield Park Medical Centre',
     addressLine1: 'Spon End',
@@ -173,7 +173,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86034: {
+  {
     id: 'M86034',
     name: 'Woodside Medical Centre',
     addressLine1: 'Jardine Crescent',
@@ -184,7 +184,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86035: {
+  {
     id: 'M86035',
     name: 'Henley Green Medical Centre',
     addressLine1: 'Henley Road',
@@ -195,7 +195,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86037: {
+  {
     id: 'M86037',
     name: 'Quinton Park Medical Centre',
     addressLine1: '51 Quinton Park',
@@ -206,7 +206,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86038: {
+  {
     id: 'M86038',
     name: 'Bredon Avenue Surgery',
     addressLine1: '232 Bredon Avenue',
@@ -217,7 +217,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86041: {
+  {
     id: 'M86041',
     name: 'Clay Lane Medical Practice',
     addressLine1: '5 Clay Lane',
@@ -228,7 +228,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86045: {
+  {
     id: 'M86045',
     name: 'Paradise Medical Centre',
     addressLine1: 'Broad Street',
@@ -239,7 +239,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86046: {
+  {
     id: 'M86046',
     name: 'Copsewood Medical Centre',
     addressLine1: '95 Momus Boulevard',
@@ -250,7 +250,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86048: {
+  {
     id: 'M86048',
     name: 'Windmill Surgery',
     addressLine1: 'Longford PCC',
@@ -261,7 +261,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86605: {
+  {
     id: 'M86605',
     name: 'Limbrick Wood Surgery',
     addressLine1: 'Jardine Crescent',
@@ -272,7 +272,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86610: {
+  {
     id: 'M86610',
     name: 'St Georges Road Surgery',
     addressLine1: '102 St Georges Road',
@@ -283,7 +283,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86622: {
+  {
     id: 'M86622',
     name: 'Govind Health Centre',
     addressLine1: '77C Moor Street',
@@ -294,7 +294,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86624: {
+  {
     id: 'M86624',
     name: 'Coventry GP Group of Practices',
     addressLine1: 'Jubilee Crescent',
@@ -305,7 +305,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86627: {
+  {
     id: 'M86627',
     name: 'Stoke Aldermoor Medical Centre',
     addressLine1: 'The Barley Lea',
@@ -316,7 +316,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  M86633: {
+  {
     id: 'M86633',
     name: 'Edgwick Medical Centre',
     addressLine1: '2 Queen Mary’s Road',
@@ -327,7 +327,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  Y00060: {
+  {
     id: 'Y00060',
     name: 'The Anchor Centre',
     addressLine1: 'Simon House',
@@ -338,7 +338,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  Y00996: {
+  {
     id: 'Y00996',
     name: 'Meridian Practice',
     addressLine1: 'City of Coventry Health Centre',
@@ -349,7 +349,7 @@ export default {
     team_id: '001',
     presetNames
   },
-  Y00140: {
+  {
     id: 'Y00140',
     name: 'Torcross Medical Centre',
     addressLine1: '40 Torcross Avenue',
@@ -360,4 +360,4 @@ export default {
     team_id: '001',
     presetNames
   }
-}
+]

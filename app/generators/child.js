@@ -146,9 +146,7 @@ export function generateChild(schools) {
   // GP surgery
   let gpSurgery
   if (faker.datatype.boolean(0.8)) {
-    const gpSurgeryNames = Object.values(clinicsData).map(
-      (surgery) => surgery.name
-    )
+    const gpSurgeryNames = clinicsData.map((surgery) => surgery.name)
     gpSurgery = faker.helpers.arrayElement(gpSurgeryNames)
   }
 
