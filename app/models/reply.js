@@ -178,7 +178,7 @@ export class Reply extends BaseModel {
     }
 
     // Already vaccinated response
-    if (this.delivered) {
+    if (this.isDelivered) {
       this.decision =
         options?.refusalReason === ReplyRefusal.AlreadyVaccinatedMMR
           ? ReplyDecision.AlreadyVaccinated
@@ -247,7 +247,7 @@ export class Reply extends BaseModel {
    *
    * @returns {boolean} Response was delivered
    */
-  get delivered() {
+  get isDelivered() {
     // Only invites to give consent online can have delivery failures
     if (this.method !== ReplyMethod.Website) {
       return true
@@ -421,7 +421,7 @@ export class Reply extends BaseModel {
             let decisionStatus = formatTag(
               getReplyDecisionProperties(this.decision)
             )
-            if (!this.delivered) {
+            if (!this.isDelivered) {
               decisionStatus = formatTag(
                 getConsentStatusProperties(ConsentStatus.NotDelivered)
               )

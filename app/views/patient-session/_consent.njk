@@ -54,7 +54,7 @@
           classes: "app-card--compact app-card--offset",
           heading: reply.fullNameAndRelationship,
           headingLevel: 4,
-          href: reply.uri if reply.delivered,
+          href: reply.uri if reply.isDelivered,
           actions: {
             items: [
               {

@@ -708,7 +708,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<Reply>|undefined} Responses
    */
   get responses() {
-    return this.replies?.filter((reply) => reply.delivered)
+    return this.replies?.filter((reply) => reply.isDelivered)
   }
 
   /**

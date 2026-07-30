@@ -28,7 +28,7 @@ import { getRepliesWithHealthAnswers } from './reply.js'
  * @returns {ConsentStatus} Confirmed consent status
  */
 export function getConfirmedConsentStatus(reply, session) {
-  if (!reply.delivered) {
+  if (!reply.isDelivered) {
     return ConsentStatus.NotDelivered
   }
 
@@ -91,12 +91,12 @@ export function getConsentStatus(patientProgramme) {
   }
 
   // If all valid replies were undelivered, request failed
-  if (validReplies.every(({ delivered }) => !delivered)) {
+  if (validReplies.every(({ isDelivered }) => !isDelivered)) {
     return ConsentStatus.NotDelivered
   }
 
   // Get valid and delivered replies
-  const replies = validReplies.filter(({ delivered }) => delivered)
+  const replies = validReplies.filter(({ isDelivered }) => isDelivered)
 
   // If any reply is child self consenting, use child’s decision
   const childReply = replies.find((reply) => reply.hasSelfConsent)
