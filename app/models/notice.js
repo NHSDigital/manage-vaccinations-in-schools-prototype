@@ -17,6 +17,7 @@ import { BaseModel } from './base.js'
  */
 export class Notice extends BaseModel {
   static contextKey = 'notices'
+  static identifierKey = 'uuid'
   static ns = 'notice'
 
   /**
