@@ -44,7 +44,7 @@
     "nhsuk-frontend": "^10.5.2",
     "nhsuk-prototype-kit": "^8.3.0",
     "pg": "^8.22.0",
-    "postcss": "^8.5.19",
+    "postcss": "^8.5.23",
     "response-time": "^2.3.4"
   },
   "devDependencies": {
