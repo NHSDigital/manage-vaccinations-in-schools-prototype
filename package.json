@@ -55,7 +55,7 @@
     "@x-govuk/eslint-config": "^0.0.2",
     "postcss-scss": "^4.0.9",
     "prettier": "^3.9.5",
-    "stylelint": "^17.14.0",
+    "stylelint": "^17.14.1",
     "stylelint-config-gds": "^3.0.0",
     "stylelint-order": "^8.1.1",
     "typed-query-selector": "^2.12.2",
