@@ -698,7 +698,10 @@ export class PatientProgramme extends BaseModel {
    */
   get replies() {
     return this.patient?.replies
-      .filter(({ programme_id }) => programme_id === this.programme_id)
+      .filter(
+        ({ isValid, patientProgramme }) =>
+          patientProgramme.id === this.id && isValid
+      )
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 

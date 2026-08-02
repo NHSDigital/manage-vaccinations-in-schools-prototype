@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { addMonths } from 'date-fns'
+import { addMonths, addYears, isAfter } from 'date-fns'
 
 import vaccinesData from '../datasets/vaccines.js'
 import {
@@ -23,7 +23,13 @@ import {
   Session,
   Vaccination
 } from '../models.js'
-import { formatDate } from '../utils/date.js'
+import {
+  formatDate,
+  getAcademicYear,
+  isBetweenDates,
+  removeDays,
+  today
+} from '../utils/date.js'
 import {
   getConsentStatusProperties,
   getReplyDecisionProperties
@@ -263,6 +269,66 @@ export class Reply extends BaseModel {
   }
 
   /**
+   * Get the academic year reply was submitted
+   *
+   * @returns {number} Academic year reply was submitted
+   */
+  get academicYear() {
+    return getAcademicYear(this.createdAt)
+  }
+
+  /**
+   * Get expiry date
+   *
+   * @returns {Date|undefined} Expiry date
+   */
+  get expiredAt() {
+    if (!this.isDelivered) {
+      return
+    }
+
+    // Responses for seasonal programmes expire when the programme year ends
+    if (this.programme.isSeasonal) {
+      return this.patientProgramme.eligibilityEndAt
+    }
+
+    // Responses for routine programmes expire after a year
+    return addYears(removeDays(this.createdAt, 1), 1)
+  }
+
+  /**
+   * Has consent response expired?
+   *
+   * @returns {boolean} Consent response has expired
+   */
+  get hasExpired() {
+    return this.expiredAt && isAfter(today(), this.expiredAt)
+  }
+
+  /**
+   * Is consent response valid (delivered, not invalidated and not expired)?
+   *
+   * @returns {boolean} Consent response is valid
+   */
+  get isValid() {
+    // Invalidated consent responses are invalid
+    if (this.isInvalidated) {
+      return false
+    }
+
+    // Responses for seasonal programmes are only valid during programme year
+    if (this.programme.isSeasonal) {
+      return isBetweenDates(
+        this.createdAt,
+        this.patientProgramme.eligibilityStartAt,
+        this.patientProgramme.eligibilityEndAt
+      )
+    }
+
+    return !this.hasExpired
+  }
+
+  /**
    * Get chosen vaccine method
    *
    * @returns {ConsentVaccineCriteria|undefined} Chosen vaccination method
@@ -392,6 +458,19 @@ export class Reply extends BaseModel {
   }
 
   /**
+   * Get patient programme
+   *
+   * @returns {PatientProgramme|undefined} Patient programme
+   */
+  get patientProgramme() {
+    return Object.values(this.patient?.programmes).find(
+      (patientProgramme) =>
+        patientProgramme.programme_id === this.programme_id &&
+        patientProgramme.academicYear === this.academicYear
+    )
+  }
+
+  /**
    * Get patient session
    *
    * @returns {PatientSession|undefined} Patient session
@@ -505,5 +584,6 @@ Reply.relate('programme_id', () => Programme, 'programme')
 Reply.relate('session_id', () => Session, 'session')
 
 /**
+ * @import { PatientProgramme } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */
