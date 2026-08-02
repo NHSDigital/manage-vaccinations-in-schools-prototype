@@ -770,26 +770,17 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get valid replies
+   * Get valid consent responses for programme
    *
-   * @returns {Array<Reply>|undefined} Valid replies
-   */
-  get validReplies() {
-    return this.patient?.replies
-      .filter(
-        ({ isValid, patientProgramme }) =>
-          patientProgramme.id === this.id && isValid
-      )
-      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
-  }
-
-  /**
-   * Get responses (consent requests that were delivered)
-   *
-   * @returns {Array<Reply>|undefined} Responses
+   * @returns {Array<Reply>|undefined} Consent responses
    */
   get replies() {
-    return this.validReplies?.filter((reply) => reply.isDelivered)
+    return this.patient?.replies
+      .filter(
+        ({ patientProgramme, isValid }) =>
+          patientProgramme?.id === this.id && isValid
+      )
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
@@ -1418,6 +1409,6 @@ PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
  * @import { PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
- * @import { PatientSession, Vaccine } from '../models.js'
+ * @import { ConsentRequest, PatientSession, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

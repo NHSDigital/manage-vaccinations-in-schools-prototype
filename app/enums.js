@@ -132,6 +132,15 @@ export const ClinicBookingJourneyType = {
  * @readonly
  * @enum {string}
  */
+export const ConsentRequestStatus = {
+  NotDelivered: 'Request failed',
+  NoResponse: 'No response'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentStatus = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',

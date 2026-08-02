@@ -1006,6 +1006,21 @@ export const en = {
       label: 'Vaccinators'
     }
   },
+  consentRequest: {
+    label: 'Consent request',
+    createdAt: {
+      label: 'Request sent'
+    },
+    email: {
+      label: 'Email address'
+    },
+    tel: {
+      label: 'Phone number'
+    },
+    status: {
+      label: 'Status'
+    }
+  },
   consent: {
     label: 'Consent response',
     title: 'Review consent responses',

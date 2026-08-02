@@ -21,28 +21,27 @@ import {
  * Generate fake consent
  *
  * @param {PatientSession} patientSession - Patient session
- * @param {Contact} contact - Contact
- * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
- * @param {object} [overrides] - Choices to make instead of leaving them to chance
+ * @param {ConsentRequest} consentRequest - Consent request
+ * @param {object} [overrides] - Choices to make instead of leaving to chance
  * @param {ReplyDecision} [overrides.decision] - Decision
  * @param {boolean} [overrides.hasConsentForAlternativeVaccine] - Also gives
- *   consent for the alternative (injected) vaccine, if the decision is to give consent
+ *   consent for alternative (injected) vaccine, if decision is to give consent
  * @param {boolean} [overrides.needsTriage] - Answers to health questions do (or
  *   do not) need triage
  * @returns {Consent|undefined} Consent
  */
 export function generateConsent(
   patientSession,
-  contact,
-  lastConsentCreatedAt,
+  consentRequest,
   overrides = {}
 ) {
   const child = patientSession.patient
+  const contact = consentRequest.contact
   const programme = patientSession.programme
   const session = patientSession.session
 
-  // Can’t create a consent response if no contact associated with child
-  if (!contact) {
+  // Can’t get a response if unable to deliver request
+  if (!consentRequest.canDeliver) {
     return
   }
 
@@ -127,12 +126,10 @@ export function generateConsent(
   }
 
   return new Consent({
-    createdAt:
-      lastConsentCreatedAt ||
-      faker.date.between({
-        from: session.consentOpenAt,
-        to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
-      }),
+    createdAt: faker.date.between({
+      from: session.consentOpenAt,
+      to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
+    }),
     child,
     decision,
     method,
@@ -180,5 +177,5 @@ export function generateConsent(
 }
 
 /**
- * @import { Contact, PatientSession } from '../models.js'
+ * @import { ConsentRequest, PatientSession } from '../models.js'
  */
