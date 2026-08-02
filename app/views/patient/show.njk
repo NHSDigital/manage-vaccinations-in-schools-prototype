@@ -92,7 +92,7 @@
       {% set patientProgrammeRows = patientProgrammeRows | push([
         {
           header: __("patientProgramme.name.label"),
-          html: patientProgramme.programme.name
+          html: patientProgramme.name
         },
         {
           header: __("patientProgramme.consent.label"),
@@ -103,7 +103,7 @@
       {% set patientProgrammeRows = patientProgrammeRows | push([
         {
           header: __("patientProgramme.name.label"),
-          html: link(patientProgramme.uri, patientProgramme.programme.name)
+          html: link(patientProgramme.uri, patientProgramme.name)
         },
         {
           header: __("patientProgramme.status.label"),
