@@ -8,7 +8,6 @@ import {
   ClinicAppointmentStatus,
   Impairment,
   NoticeType,
-  NotifyEmailStatus,
   PatientClinicStatus,
   SessionStatus,
   SessionType,
@@ -19,6 +18,7 @@ import {
   AuditEvent,
   Child,
   ClinicAppointment,
+  ConsentRequest,
   Contact,
   Instruction,
   Move,
@@ -66,6 +66,7 @@ import {
  * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<string>} [contact_uuids] - Contact UUIDs
+ * @property {Array<string>} [consentRequest_uuids] - Consent request UUIDs
  * @property {Array<string>} [patientSession_uuids] - Patient session UUIDs
  * @property {Array<string>} [reply_uuids] - Reply UUIDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
@@ -103,6 +104,7 @@ export class Patient extends Child {
     this.instructions = options?.instructions || []
     this.clinicProgramme_ids = stringToArray(options?.clinicProgramme_ids)
     this.contact_uuids = stringToArray(options?.contact_uuids)
+    this.consentRequest_uuids = stringToArray(options?.consentRequest_uuids)
     this.patientSession_uuids = stringToArray(options?.patientSession_uuids)
     this.reply_uuids = stringToArray(options?.reply_uuids)
     this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
@@ -443,6 +445,18 @@ export class Patient extends Child {
     return Object.values(this.programmes)
       .filter(({ clinicStatus }) => clinicStatus === PatientClinicStatus.Ready)
       .map(({ programme_id }) => programme_id)
+  }
+
+  /**
+   * Get consent requests
+   *
+   * @returns {Array<ConsentRequest>|undefined} Consent requests
+   */
+  get consentRequests() {
+    return this.consentRequest_uuids
+      .map((uuid) => ConsentRequest.findOne(uuid, this.context))
+      .filter((reply) => reply?.patient_uuid === this.uuid)
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
@@ -796,6 +810,26 @@ export class Patient extends Child {
   }
 
   /**
+   * Invite contact to give consent
+   *
+   * @param {ConsentRequest} consentRequest - Consent request
+   */
+  requestConsent(consentRequest) {
+    this.consentRequest_uuids.push(consentRequest.uuid)
+
+    this.addEvent({
+      name: activity.notify.invite(consentRequest.contact),
+      type: AuditEventType.ProgrammeNote,
+      messageRecipient: consentRequest.contact,
+      messageTemplate: 'invite',
+      createdAt: consentRequest.session.consentOpenAt,
+      patient_uuid: this.uuid,
+      programme_ids: consentRequest.session.programme_ids,
+      session_id: consentRequest.session.id
+    })
+  }
+
+  /**
    * Invite contact to book a clinic appointment
    *
    * @param {Array<string>} programme_ids - The programmes for which the child's invited
@@ -818,31 +852,6 @@ export class Patient extends Child {
   }
 
   /**
-   * Invite contact to give consent
-   *
-   * @param {PatientSession} patientSession - Patient session
-   */
-  requestConsent(patientSession) {
-    for (const contact of this.contacts) {
-      if (
-        contact.email &&
-        contact.emailStatus === NotifyEmailStatus.Delivered
-      ) {
-        this.addEvent({
-          name: activity.notify.invite(contact),
-          type: AuditEventType.ProgrammeNote,
-          messageRecipient: contact,
-          messageTemplate: 'invite',
-          createdAt: patientSession.session.consentOpenAt,
-          patient_uuid: this.uuid,
-          programme_ids: patientSession.session.programme_ids,
-          session_id: patientSession.session.id
-        })
-      }
-    }
-  }
-
-  /**
    * Record reply
    *
    * @param {Reply} reply - Reply
@@ -855,7 +864,7 @@ export class Patient extends Child {
     const isNew = !this.replies[reply.uuid]
 
     let name
-    if (reply.isInvalidated) {
+    if (!reply.isValid) {
       name = activity.consent.invalid(reply)
     } else if (isNew) {
       name = activity.consent.created(reply)

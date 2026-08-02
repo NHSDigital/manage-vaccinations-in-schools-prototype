@@ -693,26 +693,28 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get valid replies
+   * Get consent requests
    *
-   * @returns {Array<Reply>|undefined} Valid replies
+   * @returns {Array<ConsentRequest>|undefined} Consent requests
    */
-  get validReplies() {
-    return this.patient?.replies
-      .filter(
-        ({ isValid, patientProgramme }) =>
-          patientProgramme.id === this.id && isValid
-      )
+  get consentRequests() {
+    return this.patient?.consentRequests
+      .filter(({ programme_ids }) => programme_ids.includes(this.id))
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
-   * Get responses (consent requests that were delivered)
+   * Get valid consent responses for programme
    *
-   * @returns {Array<Reply>|undefined} Responses
+   * @returns {Array<Reply>|undefined} Consent responses
    */
   get replies() {
-    return this.validReplies?.filter((reply) => reply.isDelivered)
+    return this.patient?.replies
+      .filter(
+        ({ patientProgramme, isValid }) =>
+          patientProgramme?.id === this.id && isValid
+      )
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
@@ -1178,9 +1180,7 @@ export class PatientProgramme extends BaseModel {
         return this.patientRefused
       }
       case PatientStatus.Consent:
-        return this.lastPatientSession
-          ? this.patientConsent
-          : PatientConsentStatus.NotScheduled
+        return this.patientConsent
     }
   }
 
@@ -1325,6 +1325,6 @@ PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
  * @import { PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
- * @import { PatientSession, Vaccine } from '../models.js'
+ * @import { ConsentRequest, PatientSession, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

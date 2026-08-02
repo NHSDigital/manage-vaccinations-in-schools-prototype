@@ -46,9 +46,9 @@
   {% endif %}
 
   {% if patientProgramme.replies | length %}
-    {# Requests with responses or requests that couldn’t be delivered #}
+    {# Responses to consent requests #}
     {{ heading({
-      text: __("patientSession.replies.label") if patientProgramme.replies.length > 0 else __("patientSession.consentRequests.label"),
+      text: __("patientSession.replies.label"),
       level: 3,
       size: "s"
     }) }}
@@ -61,7 +61,7 @@
             text: reply.fullNameAndRelationship,
             level: 4
           },
-          href: reply.uri if reply.isDelivered,
+          href: reply.uri,
           actions: {
             items: [
               {
@@ -81,12 +81,8 @@
         },
         lastRowBorder: false,
         rows: summaryRows(reply, {
-          email: {
-            value: appContactEmail(reply.contact, reply.hasGivenConsent)
-          } if reply.contact.email,
-          tel: {
-            value: appContactSms(reply.contact, reply.hasGivenConsent)
-          } if reply.contact.tel,
+          email: {},
+          tel: {},
           communicationNeeds: {
             label: __("contact.communicationNeeds.label"),
             value: reply.contact.communicationNeeds
@@ -95,40 +91,38 @@
           decisionStatus: {},
           vaccineCriteria: {}
         })
-      }) }}
+      }) if reply.programme_id == patientProgramme.programme_id }}
     {% endfor %}
-  {% elif patientProgramme.patient.hasContactDetails and not patientProgramme.patient.isPost16 %}
+  {% else %}
     {# Requests that have been sent but with no response yet #}
-    {# We don’t create replies so use contact details instead #}
-
     {{ heading({
       text: __("patientSession.consentRequests.label"),
       level: 3,
       size: "s"
     }) }}
 
-    {% for contact in patientProgramme.patient.contacts %}
+    {% for consentRequest in patientProgramme.consentRequests %}
+      {# Consent request #}
       {{ summaryList({
         card: {
           classes: "app-card--compact app-card--offset",
           heading: {
-            text: contact.fullNameAndRelationship,
+            text: consentRequest.contact.fullNameAndRelationship,
             level: 4
           }
         },
         lastRowBorder: false,
-        rows: summaryRows(contact, {
-          email: {},
-          tel: {},
-          decisionStatus: {
-            label: __("reply.decisionStatus.label"),
-            value: tag({
-              classes: "nhsuk-tag--grey",
-              text: PatientConsentStatus.Scheduled if session.consentWindow == ConsentWindow.Opening else PatientConsentStatus.NoResponse
-            })
-          }
+        rows: summaryRows(consentRequest, {
+          createdAt: {},
+          email: {
+            value: appContactEmail(consentRequest.contact)
+          } if consentRequest.contact.email,
+          tel: {
+            value: appContactSms(consentRequest.contact)
+          } if consentRequest.contact.tel,
+          status: {}
         })
-      }) if contact.email or contact.tel }}
+      }) }}
     {% endfor %}
   {% endif %}
 {% endcall %}

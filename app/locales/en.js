@@ -892,6 +892,21 @@ export const en = {
       referenceNumber: 'Your booking reference number is: %s'
     }
   },
+  consentRequest: {
+    label: 'Consent request',
+    createdAt: {
+      label: 'Request sent'
+    },
+    email: {
+      label: 'Email address'
+    },
+    tel: {
+      label: 'Phone number'
+    },
+    status: {
+      label: 'Status'
+    }
+  },
   consent: {
     label: 'Consent response',
     title: 'Review consent responses',
