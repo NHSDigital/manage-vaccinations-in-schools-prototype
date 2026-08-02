@@ -3,13 +3,9 @@ import { addMonths, addYears, isAfter } from 'date-fns'
 
 import vaccinesData from '../datasets/vaccines.js'
 import {
-  ConsentStatus,
   ConsentVaccineCriteria,
-  NotifyEmailStatus,
-  NotifySmsStatus,
   ProgrammeType,
   ReplyDecision,
-  ReplyMethod,
   ReplyRefusal,
   VaccineCriteria,
   VaccineMethod
@@ -30,10 +26,7 @@ import {
   removeDays,
   today
 } from '../utils/date.js'
-import {
-  getConsentStatusProperties,
-  getReplyDecisionProperties
-} from '../utils/enum-properties.js'
+import { getReplyDecisionProperties } from '../utils/enum-properties.js'
 import {
   formatMarkdown,
   formatOther,
@@ -184,12 +177,10 @@ export class Reply extends BaseModel {
     }
 
     // Already vaccinated response
-    if (this.isDelivered) {
-      this.decision =
-        options?.refusalReason === ReplyRefusal.AlreadyVaccinatedMMR
-          ? ReplyDecision.AlreadyVaccinated
-          : this.decision
-    }
+    this.decision =
+      options?.refusalReason === ReplyRefusal.AlreadyVaccinatedMMR
+        ? ReplyDecision.AlreadyVaccinated
+        : this.decision
 
     if (
       [ReplyDecision.AlreadyVaccinated, ReplyDecision.Refused].includes(
@@ -249,26 +240,6 @@ export class Reply extends BaseModel {
   }
 
   /**
-   * Was the consent response delivered?
-   *
-   * @returns {boolean} Response was delivered
-   */
-  get isDelivered() {
-    // Only invites to give consent online can have delivery failures
-    if (this.method !== ReplyMethod.Website) {
-      return true
-    }
-
-    const hasEmailGotEmail =
-      this.contact?.email &&
-      this.contact?.emailStatus === NotifyEmailStatus.Delivered
-    const hasTelSmsGotSms =
-      this.contact?.tel && this.contact?.smsStatus === NotifySmsStatus.Delivered
-
-    return hasEmailGotEmail || hasTelSmsGotSms
-  }
-
-  /**
    * Get the academic year reply was submitted
    *
    * @returns {number} Academic year reply was submitted
@@ -283,10 +254,6 @@ export class Reply extends BaseModel {
    * @returns {Date|undefined} Expiry date
    */
   get expiredAt() {
-    if (!this.isDelivered) {
-      return
-    }
-
     // Responses for seasonal programmes expire when the programme year ends
     if (this.patientProgramme && this.programme.isSeasonal) {
       return this.patientProgramme.eligibilityEndAt
@@ -516,11 +483,7 @@ export class Reply extends BaseModel {
             let decisionStatus = formatTag(
               getReplyDecisionProperties(this.decision)
             )
-            if (!this.isDelivered) {
-              decisionStatus = formatTag(
-                getConsentStatusProperties(ConsentStatus.NotDelivered)
-              )
-            } else if (this.isInvalidated) {
+            if (this.isInvalidated) {
               decisionStatus = formatWithSecondaryText(
                 formatTag({
                   colour: 'grey',
@@ -600,7 +563,7 @@ Reply.relate('programme_id', () => Programme, 'programme')
 Reply.relate('session_id', () => Session, 'session')
 
 /**
- * @import { ScreenStatus, ScreenVaccineCriteria } from '../enums.js'
+ * @import { ReplyMethod, ScreenStatus, ScreenVaccineCriteria } from '../enums.js'
  * @import { PatientProgramme } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

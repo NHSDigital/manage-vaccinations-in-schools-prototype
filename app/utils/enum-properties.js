@@ -13,6 +13,11 @@ import {
   VaccinationSyncStatus
 } from '../enums.js'
 
+const CONSENT_REQUEST_STATUS_COLOURS = {
+  [ConsentStatus.NoResponse]: 'grey',
+  [ConsentStatus.NotDelivered]: 'orange'
+}
+
 const CONSENT_STATUS_COLOURS = {
   [ConsentStatus.NoResponse]: 'grey',
   [ConsentStatus.NotDelivered]: 'orange',
@@ -109,6 +114,16 @@ export function getPatientClinicStatusProperties(status) {
     colour: PATIENT_CLINIC_STATUS_COLOURS[status] ?? 'white',
     text: status
   }
+}
+
+/**
+ * Get consent request status properties
+ *
+ * @param {ConsentStatus} status - Consent request status
+ * @returns {object} Status properties
+ */
+export function getConsentRequestStatusProperties(status) {
+  return { colour: CONSENT_REQUEST_STATUS_COLOURS[status], text: status }
 }
 
 /**

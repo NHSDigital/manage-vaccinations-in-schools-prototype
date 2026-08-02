@@ -28,10 +28,6 @@ import { getRepliesWithHealthAnswers } from './reply.js'
  * @returns {ConsentStatus} Confirmed consent status
  */
 export function getConfirmedConsentStatus(reply, session) {
-  if (!reply.isDelivered) {
-    return ConsentStatus.NotDelivered
-  }
-
   if (reply.decision === ReplyDecision.NoResponse) {
     return ConsentStatus.NoResponse
   }
@@ -81,20 +77,14 @@ export function getConsentStatus(patientProgramme) {
   }
 
   // Get valid replies
-  const validReplies = Object.values(patientProgramme.validReplies)
+  const replies = Object.values(patientProgramme.replies).filter(
+    ({ isValid }) => isValid
+  )
 
   // If no valid replies, no response
-  if (validReplies.length === 0) {
+  if (replies.length === 0) {
     return ConsentStatus.NoResponse
   }
-
-  // If all valid replies were undelivered, request failed
-  if (validReplies.every(({ isDelivered }) => !isDelivered)) {
-    return ConsentStatus.NotDelivered
-  }
-
-  // Get valid and delivered replies
-  const replies = validReplies.filter(({ isDelivered }) => isDelivered)
 
   // If any reply is child self consenting, use child’s decision
   const childReply = replies.find((reply) => reply.hasSelfConsent)
@@ -197,7 +187,6 @@ export function getConsentStatus(patientProgramme) {
  * @returns {string} Consent status description
  */
 export function getConsentStatusDescription(patientProgramme) {
-  const session = patientProgramme.lastPatientSession?.session
   const relationships = filters.formatList(
     patientProgramme.parentalRelationships
   )
@@ -213,6 +202,11 @@ export function getConsentStatusDescription(patientProgramme) {
     return 'There are no contact details for this child.'
   }
 
+  if (patientProgramme.patientSessions.length === 0) {
+    return PatientConsentStatus.NotScheduled
+  }
+
+  const session = patientProgramme.lastPatientSession?.session
   if (session?.consentWindow === ConsentWindow.Opening) {
     return session?.formatted.consentWindowSentence
   }
@@ -506,6 +500,10 @@ export function getPatientConsentStatus(patientProgramme) {
 
   if (!patientProgramme.patient?.hasContactDetails) {
     return PatientConsentStatus.NoDetails
+  }
+
+  if (patientProgramme.patientSessions.length === 0) {
+    return PatientConsentStatus.NotScheduled
   }
 
   // Only school sessions have a consent window
