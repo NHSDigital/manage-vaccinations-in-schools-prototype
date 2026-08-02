@@ -66,8 +66,8 @@ import {
  * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<string>} [contact_uuids] - Contact UUIDs
- * @property {Array<string>} [patientSession_uuids] - Patient session IDs
- * @property {Array<string>} [reply_uuids] - Reply IDs
+ * @property {Array<string>} [patientSession_uuids] - Patient session UUIDs
+ * @property {Array<string>} [reply_uuids] - Reply UUIDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
  */
 
