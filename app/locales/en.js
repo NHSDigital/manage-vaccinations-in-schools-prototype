@@ -2214,10 +2214,11 @@ export const en = {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
     },
+    consentRequests: {
+      label: 'Consent requests'
+    },
     replies: {
-      pending: 'Consent requests',
-      requests: 'Consent requests',
-      responses: 'Consent responses'
+      label: 'Consent responses'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',

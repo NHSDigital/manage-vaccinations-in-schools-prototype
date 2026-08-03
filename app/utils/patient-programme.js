@@ -81,7 +81,7 @@ export function getConsentStatus(patientProgramme) {
   }
 
   // Get valid replies
-  const validReplies = Object.values(patientProgramme.replies).filter(
+  const validReplies = Object.values(patientProgramme.validReplies).filter(
     ({ isInvalidated }) => !isInvalidated
   )
 
@@ -276,7 +276,7 @@ export function getScreenStatus(patientProgramme) {
     }
   }
 
-  const responses = Object.values(patientProgramme.responses)
+  const responses = Object.values(patientProgramme.replies)
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
   const lastTriageNoteWithStatus = patientProgramme.triageNotes
     .filter((event) => event.status)
@@ -541,7 +541,7 @@ export function getPatientConsentStatus(patientProgramme) {
  * @returns {PatientTriageStatus|undefined} Patient triage status
  */
 export function getPatientTriageStatus(patientProgramme) {
-  const responses = Object.values(patientProgramme.responses)
+  const responses = Object.values(patientProgramme.replies)
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
 
   if (patientProgramme.screen === ScreenStatus.NeedsTriage) {

@@ -45,7 +45,7 @@
     {{ appHeading({
       level: 3,
       size: "s",
-      title: __("patientSession.replies.responses") if patientProgramme.responses.length > 0 else __("patientSession.replies.requests")
+      title: __("patientSession.replies.label") if patientProgramme.replies.length > 0 else __("patientSession.consentRequests.label")
     }) }}
 
     {% for reply in patientProgramme.replies %}
@@ -97,7 +97,7 @@
     {{ appHeading({
       level: 3,
       size: "s",
-      title: __("patientSession.replies.pending")
+      title: __("patientSession.consentRequests.label")
     }) }}
 
     {% for contact in patientProgramme.patient.contacts %}

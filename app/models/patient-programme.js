@@ -692,11 +692,11 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get replies for patient session
+   * Get valid replies
    *
-   * @returns {Array<Reply>|undefined} Replies
+   * @returns {Array<Reply>|undefined} Valid replies
    */
-  get replies() {
+  get validReplies() {
     return this.patient?.replies
       .filter(
         ({ isValid, patientProgramme }) =>
@@ -710,8 +710,8 @@ export class PatientProgramme extends BaseModel {
    *
    * @returns {Array<Reply>|undefined} Responses
    */
-  get responses() {
-    return this.replies?.filter((reply) => reply.isDelivered)
+  get replies() {
+    return this.validReplies?.filter((reply) => reply.isDelivered)
   }
 
   /**
@@ -719,8 +719,8 @@ export class PatientProgramme extends BaseModel {
    *
    * @returns {Array<Reply>|undefined} Responses with triage notes
    */
-  get responsesWithTriageNotes() {
-    return this.responses?.filter((response) => response.triageNote)
+  get repliesWithTriageNotes() {
+    return this.replies?.filter((response) => response.triageNote)
   }
 
   /**
@@ -729,7 +729,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(this.responses)
+    return getConsentHealthAnswers(this.replies)
   }
 
   /**
@@ -747,7 +747,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|boolean} Consent refusal reasons
    */
   get consentRefusalReasons() {
-    return getConsentRefusalReasons(this.responses)
+    return getConsentRefusalReasons(this.replies)
   }
 
   /**
@@ -756,8 +756,8 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<string>|undefined} Parental relationships
    */
   get parentalRelationships() {
-    if (this.responses) {
-      return this.responses
+    if (this.replies) {
+      return this.replies
         .filter((reply) => !reply.isInvalidated)
         .flatMap((reply) => reply.relationship || 'Parent or guardian')
     }
@@ -769,8 +769,8 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<string>|undefined} Contact names and relationships
    */
   get contactsRequestingFollowUp() {
-    if (this.responses) {
-      return this.responses
+    if (this.replies) {
+      return this.replies
         .filter((reply) => !reply.isInvalidated)
         .filter((reply) => reply.hasDeclinedConsent)
         .flatMap((reply) => reply.contact.fullNameAndRelationship)
@@ -786,7 +786,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForInjection() {
-    return this.responses?.every(
+    return this.replies?.every(
       ({ hasConsentForInjection }) => hasConsentForInjection
     )
   }
@@ -800,7 +800,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForAlternativeInjectionOnly() {
-    return this.responses?.every(
+    return this.replies?.every(
       ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
     )
   }
@@ -830,7 +830,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<ScreenStatus>} Screen statuses
    */
   get screenStatusesForConsentMethod() {
-    return getScreenStatusesForConsentMethod(this.programme, this.responses)
+    return getScreenStatusesForConsentMethod(this.programme, this.replies)
   }
 
   /**
@@ -839,7 +839,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {ScreenVaccineCriteria|boolean} Criteria
    */
   get screenVaccineCriteria() {
-    return getScreenVaccineCriteria(this.programme, this.responses)
+    return getScreenVaccineCriteria(this.programme, this.replies)
   }
 
   /**
