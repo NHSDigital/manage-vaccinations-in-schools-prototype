@@ -90,7 +90,7 @@
         })
       }) }}
     {% endfor %}
-  {% elif not patientProgramme.patient.hasNoContactDetails and not patientProgramme.patient.isPost16 %}
+  {% elif patientProgramme.patient.hasContactDetails and not patientProgramme.patient.isPost16 %}
     {# Requests that have been sent but with no response yet #}
     {# We don’t create replies so use contact details instead #}
 

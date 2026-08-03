@@ -135,12 +135,12 @@ export class Patient extends Child {
   }
 
   /**
-   * Has no contact details
+   * Has contact details
    *
-   * @returns {boolean} Has no contact details
+   * @returns {boolean} Has contact details
    */
-  get hasNoContactDetails() {
-    return this.contacts.every((contact) => !contact.email && !contact.tel)
+  get hasContactDetails() {
+    return this.contacts.every((contact) => contact.hasContactDetails)
   }
 
   /**

@@ -80,6 +80,15 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Has contact details
+   *
+   * @returns {boolean} Has contact details
+   */
+  get hasContactDetails() {
+    return !!this.email || !!this.tel
+  }
+
+  /**
    * Get formatted values
    *
    * @returns {object} Formatted values

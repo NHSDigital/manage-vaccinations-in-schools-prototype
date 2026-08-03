@@ -77,7 +77,7 @@ export const patientSessionController = {
       showOutstandingVaccinations: vaccinated && due.length > 1,
       // Send a reminder to give consent
       canRemind:
-        !patient.hasNoContactDetails &&
+        patient.hasContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
         patientProgramme.consent === ConsentStatus.NoResponse,

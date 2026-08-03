@@ -599,7 +599,7 @@ export const patientController = {
     )) {
       // Work out which of the selected programmes this patient was clinic-ready for
       const { clinicReadyProgramme_ids } = patient
-      if (patient.hasNoContactDetails) {
+      if (!patient.hasContactDetails) {
         notInvitedChildrenCount++
         continue
       }

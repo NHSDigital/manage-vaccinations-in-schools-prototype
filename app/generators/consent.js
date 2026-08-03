@@ -42,7 +42,7 @@ export function generateConsent(
   }
 
   // Can’t create a consent response if no contact details
-  if (!contact.email && !contact.tel) {
+  if (!contact.hasContactDetails) {
     return
   }
 

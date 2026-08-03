@@ -211,7 +211,7 @@ export function getConsentStatusDescription(patientProgramme) {
     return `${patientProgramme.patient.firstName} is old enough to self-consent.`
   }
 
-  if (patientProgramme.patient?.hasNoContactDetails) {
+  if (!patientProgramme.patient?.hasContactDetails) {
     return 'There are no contact details for this child.'
   }
 
@@ -506,7 +506,7 @@ export function getPatientConsentStatus(patientProgramme) {
     return PatientConsentStatus.SelfConsent
   }
 
-  if (patientProgramme.patient?.hasNoContactDetails) {
+  if (!patientProgramme.patient?.hasContactDetails) {
     return PatientConsentStatus.NoDetails
   }
 
