@@ -1035,6 +1035,18 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Can apply bulk instruction
+   *
+   * @returns {boolean} Can apply bulk instruction
+   */
+  get canBulkInstruct() {
+    return (
+      this.status === PatientStatus.Due &&
+      this.instructionStatus === InstructionStatus.Needed
+    )
+  }
+
+  /**
    * Get instruction status
    *
    * @returns {InstructionStatus|undefined} Instruction status

@@ -1053,9 +1053,7 @@ export const sessionController = {
     const { __, account, session } = response.locals
 
     const patientsToInstruct = session.patientSessions.filter(
-      ({ patientProgramme }) =>
-        patientProgramme.status === PatientStatus.Due &&
-        patientProgramme.instructionStatus === InstructionStatus.Needed
+      ({ patientProgramme }) => patientProgramme.canBulkInstruct
     )
 
     for (const patientSession of patientsToInstruct) {
