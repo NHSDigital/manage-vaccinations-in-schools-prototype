@@ -1076,7 +1076,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean} Is vaccinated
    */
   get isVaccinated() {
-    return this.status === VaccinationOutcome.Vaccinated
+    return this.status === PatientStatus.Vaccinated
   }
 
   /**
