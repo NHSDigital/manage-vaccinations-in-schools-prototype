@@ -332,10 +332,20 @@ export class Download extends BaseModel {
     return [headers.join(','), ...rows].join('\n')
   }
 
+  /**
+   * Get progress percentage
+   *
+   * @returns {number} Progress percentage
+   */
   get progress() {
     return 50
   }
 
+  /**
+   * Get status
+   *
+   * @returns {DownloadStatus} Status
+   */
   get status() {
     if (this.createdAt) {
       const completedAt = addSeconds(this.createdAt, 30)

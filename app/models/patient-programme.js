@@ -1082,7 +1082,7 @@ export class PatientProgramme extends BaseModel {
   /**
    * Get status
    *
-   * @returns {PatientStatus} Status properties
+   * @returns {PatientStatus} Status
    */
   get status() {
     return getPatientStatus(this)

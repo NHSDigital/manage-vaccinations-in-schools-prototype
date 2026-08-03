@@ -361,7 +361,7 @@ export class Session extends BaseModel {
   /**
    * Get status
    *
-   * @returns {string} Status
+   * @returns {SessionStatus} Status
    */
   get status() {
     switch (true) {
