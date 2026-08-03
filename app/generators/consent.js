@@ -19,22 +19,15 @@ import {
 /**
  * Generate fake consent
  *
- * @param {Programme} programme - Programme
- * @param {Session} session - Session
  * @param {PatientSession} patientSession - Patient session
  * @param {Contact} contact - Contact
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
  * @returns {Consent|undefined} Consent
  */
-export function generateConsent(
-  programme,
-  session,
-  patientSession,
-  contact,
-  lastConsentCreatedAt
-) {
-  // Child
+export function generateConsent(patientSession, contact, lastConsentCreatedAt) {
   const child = patientSession.patient
+  const programme = patientSession.programme
+  const session = patientSession.session
 
   // Can’t create a consent response if no contact associated with child
   if (!contact) {
@@ -154,5 +147,5 @@ export function generateConsent(
 }
 
 /**
- * @import { Contact, PatientSession, Programme, Session } from '../models.js'
+ * @import { Contact, PatientSession } from '../models.js'
  */
