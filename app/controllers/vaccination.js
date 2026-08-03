@@ -88,7 +88,7 @@ export const vaccinationController = {
       String(patientSession_uuid),
       data
     )
-    const { session, patient, programme, vaccine } = patientSession
+    const { session, patient, programme, patientProgramme } = patientSession
     const { identifiedBy, injectionSite, ready, hasSelfIdentified } =
       data.preScreen
     const administeredBy_uid = data.preScreen?.administeredBy_uid || account.uid
@@ -96,7 +96,9 @@ export const vaccinationController = {
 
     // Check for default batch
     const defaultBatch = DefaultBatch.findAll(data)
-      .filter((batch) => batch.vaccine_snomed === vaccine?.snomed)
+      .filter(
+        (batch) => batch.vaccine_snomed === patientProgramme.vaccine?.snomed
+      )
       .find((batch) => batch.session_id === session?.id)
 
     const readyToVaccine = ['true', 'alternative'].includes(ready)
@@ -104,7 +106,8 @@ export const vaccinationController = {
       VaccinationSite.ArmLeftUpper,
       VaccinationSite.ArmRightUpper
     ].includes(injectionSite)
-    const isNasalSpray = vaccine?.criteria === VaccineCriteria.Intranasal
+    const isNasalSpray =
+      patientProgramme.vaccine?.criteria === VaccineCriteria.Intranasal
     const VaccinationSiteGiven = injectionSiteGiven || isNasalSpray
 
     switch (true) {
@@ -130,7 +133,7 @@ export const vaccinationController = {
     // Flu programme can use PGD, PSD or VGD protocol
     let protocol
     switch (true) {
-      case patientSession.hasInstruction && session.hasPsdProtocol:
+      case patientProgramme.hasInstruction && session.hasPsdProtocol:
         protocol = VaccinationProtocol.PSD
         break
       case account.isHealthcareAssistant && session.hasVgdProtocol:
@@ -152,7 +155,7 @@ export const vaccinationController = {
         patient_uuid: patient.uuid,
         programme_id: programme.id,
         session_id: session.id,
-        vaccine_snomed: vaccine.snomed,
+        vaccine_snomed: patientProgramme.vaccine.snomed,
         createdAt: today(),
         createdBy_uid: account.uid,
         administeredAt: today(),
@@ -161,14 +164,14 @@ export const vaccinationController = {
           assessedBy_uid
         }),
         ...(injectionSite && {
-          dose: vaccine.dose,
+          dose: patientProgramme.vaccine.dose,
           injectionMethod: VaccinationMethod.Intramuscular,
           injectionSite,
           protocol,
           outcome: VaccinationOutcome.Vaccinated
         }),
         ...(isNasalSpray && {
-          dose: vaccine.dose,
+          dose: patientProgramme.vaccine.dose,
           injectionMethod: VaccinationMethod.Intranasal,
           injectionSite: VaccinationSite.Nose,
           protocol,
@@ -281,6 +284,7 @@ export const vaccinationController = {
         data.patientSession_uuid,
         data
       )
+      const { patientProgramme } = patientSession
 
       response.locals.patientSession = patientSession
       response.locals.session = patientSession?.session
@@ -353,7 +357,7 @@ export const vaccinationController = {
 
       response.locals.batchItems = Batch.findAll(data)
         .filter(
-          (batch) => batch.vaccine.snomed === patientSession?.vaccine.snomed
+          (batch) => batch.vaccine.snomed === patientProgramme?.vaccine.snomed
         )
         .filter((batch) => !batch.archivedAt)
 
