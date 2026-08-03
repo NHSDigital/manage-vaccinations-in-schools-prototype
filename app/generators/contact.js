@@ -67,6 +67,14 @@ export function generateContact(patient, isMum) {
     { value: NotifyEmailStatus.Technical, weight: 1 }
   ])
 
+  // If telephone number provided, sometimes add a communication need
+  const hasCommunicationNeeds = faker.datatype.boolean(0.2)
+  let communicationNeeds
+  if (tel && hasCommunicationNeeds) {
+    communicationNeeds =
+      'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
+  }
+
   return new Contact({
     fullName: `${firstName} ${lastName}`,
     relationship,
@@ -82,6 +90,8 @@ export function generateContact(patient, isMum) {
       canSms,
       ...(smsStatus && { smsStatus })
     }),
+    hasCommunicationNeeds,
+    communicationNeeds,
     patient_uuid: patient.uuid
   })
 }
