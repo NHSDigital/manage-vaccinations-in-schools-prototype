@@ -69,4 +69,18 @@
       }) }}
     {% endfor %}
   {% endif %}
+
+  {% if patientProgramme.expiredReplies | length %}
+    {{ heading({
+      text: __("patientProgramme.expiredReplies.label"),
+      level: 2,
+      size: "m"
+    }) }}
+
+    {% for reply in patientProgramme.expiredReplies %}
+      {{ appReply({
+        reply: reply
+      }) }}
+    {% endfor %}
+  {% endif %}
 {% endblock %}
