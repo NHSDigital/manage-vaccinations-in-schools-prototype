@@ -11,6 +11,7 @@ import {
 import {
   Batch,
   DefaultBatch,
+  Patient,
   PatientSession,
   Programme,
   User,
@@ -284,7 +285,8 @@ export const vaccinationController = {
         data.patientSession_uuid,
         data
       )
-      const { patientProgramme } = patientSession
+      const patient = Patient.findOne(vaccination.patient_uuid, data)
+      const patientProgramme = patient.programmes[vaccination.programme_id]
 
       response.locals.patientSession = patientSession
       response.locals.session = patientSession?.session
@@ -355,11 +357,14 @@ export const vaccinationController = {
         response.locals.paths.back = referrer || vaccination.uri
       }
 
-      response.locals.batchItems = Batch.findAll(data)
-        .filter(
-          (batch) => batch.vaccine.snomed === patientProgramme?.vaccine.snomed
-        )
-        .filter((batch) => !batch.archivedAt)
+      // When recording a previous vaccination, we don’t know the vaccine
+      if (patientProgramme?.vaccine) {
+        response.locals.batchItems = Batch.findAll(data)
+          .filter(
+            (batch) => batch.vaccine.snomed === patientProgramme?.vaccine.snomed
+          )
+          .filter((batch) => !batch.archivedAt)
+      }
 
       response.locals.injectionMethodItems = Object.entries(VaccinationMethod)
         .filter(([, value]) => value !== VaccinationMethod.Intranasal)
