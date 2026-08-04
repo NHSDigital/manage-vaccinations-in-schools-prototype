@@ -27,10 +27,11 @@ export const replyController = {
     const { data } = request.session
 
     const patient = Patient.findOne(String(patient_uuid), data)
+    const patientProgramme = patient.programmes[String(programme_id)]
     const reply = Reply.findOne(reply_uuid, data)
 
     response.locals.reply = reply
-    response.locals.patientProgramme = patient.programmes[String(programme_id)]
+    response.locals.patientProgramme = patientProgramme
 
     next()
   },
