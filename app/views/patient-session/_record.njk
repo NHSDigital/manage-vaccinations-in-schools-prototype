@@ -59,11 +59,11 @@
 
   {{ appHeading({
     classes: "nhsuk-u-margin-bottom-2",
-    level: 4,
-    size: "s",
     title: __("preScreen.label", {
       patient: patient
-    })
+    }),
+    level: 4,
+    size: "s"
   }) }}
 
 {% filter nhsukMarkdown %}

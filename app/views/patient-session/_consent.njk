@@ -43,9 +43,9 @@
   {% if patientProgramme.replies | length %}
     {# Requests with responses or requests that couldn’t be delivered #}
     {{ appHeading({
+      title: __("patientSession.replies.label") if patientProgramme.replies.length > 0 else __("patientSession.consentRequests.label"),
       level: 3,
-      size: "s",
-      title: __("patientSession.replies.label") if patientProgramme.replies.length > 0 else __("patientSession.consentRequests.label")
+      size: "s"
     }) }}
 
     {% for reply in patientProgramme.replies %}
@@ -95,9 +95,9 @@
     {# We don’t create replies so use contact details instead #}
 
     {{ appHeading({
+      title: __("patientSession.consentRequests.label"),
       level: 3,
-      size: "s",
-      title: __("patientSession.consentRequests.label")
+      size: "s"
     }) }}
 
     {% for contact in patientProgramme.patient.contacts %}

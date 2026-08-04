@@ -11,9 +11,9 @@
 {% block content %}
   {% if (view == "record") and not session.isActive %}
     {{ appHeading({
+      title: __("session." + view + ".title"),
       level: 2,
       size: "m",
-      title: __("session." + view + ".title"),
       summary: __("session." + view + ".information") | safe
     }) }}
   {% else %}
@@ -54,9 +54,9 @@
         {% endif %}
 
         {{ appHeading({
+          title: title | replace(",", " or "),
           level: 2,
           size: "m",
-          title: title | replace(",", " or "),
           summary: __mf("patient.results.summary", {
             from: results.from,
             to: results.to,

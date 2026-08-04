@@ -27,9 +27,9 @@
 
   {{ appHeading({
     classes: "nhsuk-u-margin-bottom-2",
+    title: __("session.date.label"),
     level: 2,
-    size: "m",
-    title: __("session.date.label")
+    size: "m"
   }) }}
 
   {{ session.formatted.date | nhsukMarkdown }}
@@ -48,12 +48,12 @@
   {% call insetText() %}
     {{ appHeading({
       classes: "nhsuk-u-margin-bottom-2",
-      level: 3,
-      size: "s",
       title: __("session.reminders.activity", {
         contacts: session.tally(session.programmes[0].id, PatientStatus.Consent),
         patients: session.tally(session.programmes[0].id)
-      })
+      }),
+      level: 3,
+      size: "s"
     }) }}
 
     {{ __("session.nextReminderDate.text", session.formatted.nextReminderDate) | nhsukMarkdown }}
@@ -61,9 +61,9 @@
 
   {{ appHeading({
     classes: "nhsuk-u-margin-bottom-2",
+    title: "Send parents a manual consent reminder",
     level: 2,
-    size: "m",
-    title: "Send parents a manual consent reminder"
+    size: "m"
   }) }}
 
   {{ __("session.reminders.preConfirm") | nhsukMarkdown }}

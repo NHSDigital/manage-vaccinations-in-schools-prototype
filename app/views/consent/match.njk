@@ -56,16 +56,16 @@
 
       {% if initial %}
         {{ appHeading({
+          title: __("search.results"),
           level: 2,
           size: "m",
-          title: __("search.results"),
           summary: __("search.initial.default") | safe
         }) }}
       {% else %}
         {{ appHeading({
+          title: __("search.results"),
           level: 2,
           size: "m",
-          title: __("search.results"),
           summary: __mf("patient.results.summary", {
             from: results.from,
             to: results.to,

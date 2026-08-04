@@ -6,12 +6,12 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
       {{ appHeading({
-        size: "xl",
-        title: __("clinicBooking.start.title")
+        title: __("clinicBooking.start.title"),
+        size: "xl"
       }) }}
 
       {{ __("clinicBooking.start.intro") | nhsukMarkdown }}
-      
+
       {% if data.programmesToOffer.programmes.length > 1 %}
         <h2>About the vaccinations</h2>
       {% endif %}
@@ -27,7 +27,7 @@
       {% endfor %}
 
       <h2>{{ __("clinicBooking.start.online.title") }}</h2>
-      
+
       {{ __("clinicBooking.start.online.description") | nhsukMarkdown }}
 
       {{ button({

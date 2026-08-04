@@ -8,8 +8,8 @@
 
 {% block form %}
   {{ appHeading({
-    title: title,
-    caption: appointmentCaption
+    caption: appointmentCaption,
+    title: title
   }) }}
 
   {{ appPatientSearch({
@@ -21,16 +21,16 @@
 
   {% if noFiltersApplied %}
     {{ appHeading({
+      title: __("search.results"),
       level: 2,
       size: "m",
-      title: __("search.results"),
       summary: __("search.initial.clinicBooking") | safe
     }) }}
   {% else %}
     {{ appHeading({
+      title: __("search.results"),
       level: 2,
       size: "m",
-      title: __("search.results"),
       summary: __mf("patient.results.summary", {
         from: results.from,
         to: results.to,
