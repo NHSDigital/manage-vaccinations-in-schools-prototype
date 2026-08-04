@@ -101,6 +101,8 @@ export const getAllAppointmentPaths = (
     sessionData.appointment?.abandonmentReasons
   )
 
+  // TODO: check the journey type and leave out any pages that aren't part of editing accordingly
+
   // Note: the journey data will be unavailable on the confirmation page (which is parent-facing only)
   const journeyType =
     sessionData.journeyData[booking_uuid]?.journeyType ??
