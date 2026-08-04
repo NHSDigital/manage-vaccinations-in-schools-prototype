@@ -30,8 +30,10 @@
       ]
     }) }}
 
-    <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">
-      {{ __("school." + params.view + ".title") }}
-    </h2>
+    {{ appHeading({
+      classes: "nhsuk-u-visually-hidden",
+      title: __("school." + params.view + ".title"),
+      level: 2
+    }) }}
   {% endif %}
 {% endmacro %}
