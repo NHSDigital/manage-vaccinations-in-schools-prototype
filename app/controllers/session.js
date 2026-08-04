@@ -513,7 +513,7 @@ export const sessionController = {
     if (view === 'record') {
       results = results.filter(
         (patientSession) =>
-          patientSession.canRecordOutcome &&
+          patientSession.canRecordSessionOutcome &&
           getAccountVaccineMethods(account, patientSession)
       )
     }
