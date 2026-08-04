@@ -2074,6 +2074,9 @@ export const en = {
       label: 'Consent responses',
       title: 'Manage consent responses'
     },
+    expiredReplies: {
+      label: 'Expired consent responses'
+    },
     screen: {
       label: 'Triage',
       title: 'Manage triage'
@@ -2537,6 +2540,9 @@ export const en = {
     },
     createdBy: {
       label: 'Recorded by'
+    },
+    expiredAt: {
+      label: 'Expired'
     },
     respondent: {
       title: 'Who are you trying to get consent from?',

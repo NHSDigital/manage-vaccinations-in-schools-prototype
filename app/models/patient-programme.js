@@ -744,6 +744,20 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get expired consent responses for this programme
+   *
+   * @returns {Array<Reply>|undefined} Consent responses
+   */
+  get expiredReplies() {
+    return this.patient?.replies
+      .filter(
+        ({ patientProgramme, hasExpired }) =>
+          patientProgramme?.id === this.id && hasExpired
+      )
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
+  }
+
+  /**
    * Get responses with triage notes for consent health answers
    *
    * @returns {Array<Reply>|undefined} Responses with triage notes
