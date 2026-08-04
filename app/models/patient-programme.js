@@ -271,6 +271,15 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Has triage notes
+   *
+   * @returns {boolean} Has triage notes
+   */
+  get hasTriageNotes() {
+    return this.triageNotes.length > 0
+  }
+
+  /**
    * Get patient sessions for this patient programme
    *
    * @returns {Array<PatientSession>} Patient sessions
@@ -1083,6 +1092,15 @@ export class PatientProgramme extends BaseModel {
    */
   get patientConsent() {
     return getPatientConsentStatus(this)
+  }
+
+  /**
+   * Needs triage
+   *
+   * @returns {boolean} Needs triage
+   */
+  get needsTriage() {
+    return this.status === PatientStatus.Triage
   }
 
   /**
