@@ -19,14 +19,14 @@
 {# Triage #}
 {% call card({
   heading: {
-    text: __("patientSession.screen.title", programme.nameSentenceCase),
+    text: __("patientSession.screen.title", patientProgramme.programme.nameSentenceCase),
     size: "m"
   }
 }) %}
   {# Description #}
   {{ patientProgramme.screenDescription | nhsukMarkdown }}
 
-  {% if options.needsTriage and not patientProgramme.consentHealthAnswers %}
+  {% if patientProgramme.needsTriage and not patientProgramme.consentHealthAnswers %}
     {{ heading({
       text: __("vaccine.healthQuestions.label"),
       level: 3,
@@ -40,18 +40,14 @@
   {{ actionLink({
     text: __("triage.new.title"),
     href: patientProgramme.uri + "/new/triage?referrer=" + referrer
-  }) if options.canTriage and not options.needsTriage and not patientProgramme.isVaccinated }}
+  }) if options.canTriage and not patientProgramme.needsTriage and not patientProgramme.isVaccinated }}
 
   {# Decision table #}
   {{ appTriageNotes({
     triageNotes: patientProgramme.triageNotes
   }) }}
 
-  {% if options.needsTriage and not triageNoteRows.length %}
-    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
-  {% endif %}
-
-  {% if options.canTriage and options.needsTriage %}
+  {% if options.canTriage and patientProgramme.needsTriage %}
     {{ appTriageForm({
       context: patientProgramme,
       size: "s"

@@ -2075,7 +2075,8 @@ export const en = {
       title: 'Manage consent responses'
     },
     screen: {
-      label: 'Triage'
+      label: 'Triage',
+      title: 'Manage triage'
     },
     status: {
       label: 'Status'

@@ -76,10 +76,6 @@ export const patientSessionController = {
         !patientProgramme.consentGiven,
       // Perform triage
       canTriage: account.isRegisteredNurse,
-      // Patient needs triage
-      needsTriage: patientProgramme.status === PatientStatus.Triage,
-      // Patient already triaged
-      hasTriage: patientProgramme.triageNotes.length > 0,
       hasInstruction: session.hasPsdProtocol && patientProgramme.hasInstruction,
       canAssess:
         account.isRegisteredNurse ||
