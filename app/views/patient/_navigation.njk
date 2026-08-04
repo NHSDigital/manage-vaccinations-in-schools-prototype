@@ -24,8 +24,8 @@
   }) }}
 
   {{ heading({
-    classes: "nhsuk-u-visually-hidden",
-    text: patientProgramme.name or __("patient." + params.view + ".title"),
-    level: 2
+    text: patientProgramme.title or __("patient." + params.view + ".title"),
+    level: 2,
+    size: "m"
   }) }}
 {% endmacro %}

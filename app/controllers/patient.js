@@ -40,7 +40,7 @@ export const patientController = {
 
     response.locals.sectionNavigationItems = [
       {
-        text: recordTitle,
+        text: __('patient.show.label'),
         href: patient.uri,
         current: currentPath === patient.uri
       },
