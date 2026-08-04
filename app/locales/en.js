@@ -2213,7 +2213,15 @@ export const en = {
         '{count, plural, =0 {No vaccination record} one {Vaccination record} other {# vaccination records}}'
     },
     consent: {
-      label: 'Consent'
+      label: 'Consent',
+      title: 'Consent for %s vaccination'
+    },
+    consentRequests: {
+      label: 'Consent requests'
+    },
+    replies: {
+      label: 'Consent responses',
+      title: 'Manage consent responses'
     },
     screen: {
       label: 'Triage'
@@ -2399,12 +2407,6 @@ export const en = {
     invite: {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
-    },
-    consentRequests: {
-      label: 'Consent requests'
-    },
-    replies: {
-      label: 'Consent responses'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',
@@ -2662,6 +2664,9 @@ export const en = {
   },
   reply: {
     label: 'Response',
+    list: {
+      title: 'Consent for %s vaccination'
+    },
     show: {
       title: 'Consent response from %s'
     },
@@ -2708,7 +2713,7 @@ export const en = {
       success: 'Consent response from {{reply.fullName}} withdrawn'
     },
     createdAt: {
-      label: 'Date'
+      label: 'Date received'
     },
     createdBy: {
       label: 'Recorded by'

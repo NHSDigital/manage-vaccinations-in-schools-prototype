@@ -1,0 +1,44 @@
+{%- from "nhsuk/components/summary-list/macro.njk" import summaryList -%}
+
+{% macro appReply(params) -%}
+{% set classes = ["app-card--compact"] %}
+{% if params.classes %}
+  {% set classes = classes | push(params.classes) %}
+{% endif %}
+{{ summaryList({
+  card: {
+    classes: classes | join(" "),
+    heading: params.reply.fullNameAndRelationship,
+    headingLevel: 4,
+    href: params.reply.uri,
+    actions: {
+      items: [
+        {
+          text: __("reply.withdraw.label"),
+          href: params.reply.uri + "/edit/withdraw"
+        } if params.reply.hasGivenConsent,
+        {
+          text: __("reply.follow-up.label"),
+          href: params.reply.uri + "/edit/follow-up"
+        } if not params.reply.hasConfirmedRefusal and not params.reply.hasGivenConsent,
+        {
+          text: __("reply.invalidate.label"),
+          href: params.reply.uri + "/edit/invalidate"
+        }
+      ]
+    } if params.reply.isValid
+  },
+  lastRowBorder: false,
+  rows: summaryRows(params.reply, {
+    email: {},
+    tel: {},
+    communicationNeeds: {
+      label: __("contact.communicationNeeds.label"),
+      value: params.reply.contact.communicationNeeds
+    } if params.reply.contact.communicationNeeds,
+    createdAt: {},
+    decisionStatus: {},
+    vaccineCriteria: {}
+  })
+}) if params.reply.programme_id == params.reply.patientProgramme.programme_id }}
+{% endmacro %}

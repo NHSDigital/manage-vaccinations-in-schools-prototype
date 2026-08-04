@@ -35,6 +35,23 @@ export const replyController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  readAll(request, response, next) {
+    const { patient_uuid, programme_id } = request.params
+    const { data } = request.session
+
+    const patient = Patient.findOne(String(patient_uuid), data)
+    const patientProgramme = patient.programmes[String(programme_id)]
+
+    response.locals.referrer = request.originalUrl
+    response.locals.replies = patientProgramme.replies
+    response.locals.patientProgramme = patientProgramme
+
+    return next()
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   redirect(request, response) {
     const { patient_uuid, programme_id } = request.params
 
@@ -50,6 +67,13 @@ export const replyController = {
    */
   show(request, response) {
     return response.render('reply/show')
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  list(request, response) {
+    return response.render('reply/list')
   },
 
   /**
