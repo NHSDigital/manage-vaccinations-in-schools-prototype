@@ -298,30 +298,26 @@ export class Reply extends BaseModel {
    * @returns {boolean} Consent response has expired
    */
   get hasExpired() {
-    return this.expiredAt && isAfter(today(), this.expiredAt)
-  }
-
-  /**
-   * Is consent response valid (delivered, not invalidated and not expired)?
-   *
-   * @returns {boolean} Consent response is valid
-   */
-  get isValid() {
-    // Invalidated consent responses are invalid
-    if (this.isInvalidated) {
-      return false
-    }
-
-    // Responses for seasonal programmes are only valid during programme year
-    if (this.programme.isSeasonal) {
-      return isBetweenDates(
-        this.createdAt,
+    // Responses for seasonal programmes expire outside programme year
+    if (this.programme?.isSeasonal) {
+      return !isBetweenDates(
+        today(),
         this.patientProgramme.eligibilityStartAt,
         this.patientProgramme.eligibilityEndAt
       )
     }
 
-    return !this.hasExpired
+    // Responses for routine programmes after a year
+    return isAfter(today(), this.expiredAt)
+  }
+
+  /**
+   * Is valid consent response (not invalidated and not expired)?
+   *
+   * @returns {boolean} Is valid consent response
+   */
+  get isValid() {
+    return !this.isInvalidated && !this.hasExpired
   }
 
   /**

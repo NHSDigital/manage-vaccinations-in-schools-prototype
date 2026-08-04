@@ -81,9 +81,7 @@ export function getConsentStatus(patientProgramme) {
   }
 
   // Get valid replies
-  const validReplies = Object.values(patientProgramme.validReplies).filter(
-    ({ isInvalidated }) => !isInvalidated
-  )
+  const validReplies = Object.values(patientProgramme.validReplies)
 
   // If no valid replies, no response
   if (validReplies.length === 0) {

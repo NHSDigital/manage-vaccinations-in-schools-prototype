@@ -122,7 +122,7 @@ export const getConsentRefusalReasons = (replies) => {
   )
 
   for (const reply of repliesWithRefusalReasons) {
-    if (reply.refusalReason && !reply.isInvalidated) {
+    if (reply.refusalReason && reply.isValid) {
       // Indicate confirmed refusal reason
       const refusalReason = reply.hasConfirmedRefusal
         ? `${reply.refusalReason}<br><b>Confirmed</b>`

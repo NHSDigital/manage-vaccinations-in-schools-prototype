@@ -33,17 +33,17 @@
         {
           text: __("reply.withdraw.label"),
           href: reply.uri + "/edit/withdraw"
-        } if not reply.isInvalidated and reply.hasGivenConsent,
+        } if reply.hasGivenConsent,
         {
           text: __("reply.follow-up.label"),
           href: reply.uri + "/edit/follow-up"
-        } if not reply.isInvalidated and not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
+        } if not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
         {
           text: __("reply.invalidate.label"),
           href: reply.uri + "/edit/invalidate"
-        } if not reply.isInvalidated
+        }
       ]
-    }) }}
+    }) if reply.isValid }}
 
     {{ summaryList({
       card: {

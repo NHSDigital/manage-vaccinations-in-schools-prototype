@@ -57,7 +57,7 @@ const unmatchedAppointmentCount = ClinicBooking.findAll(data)
   .filter(({ patient_uuid }) => !patient_uuid).length
 const unmatchedConsentCount =
   Consent.findAll(data)
-    .filter((consent) => !consent.isInvalidated)
+    .filter((consent) => consent.isValid)
     .filter((consent) => !consent.patient_uuid).length || 0
 const moveCount = Move.findAll(data).length || 0
 const noticeCount =
