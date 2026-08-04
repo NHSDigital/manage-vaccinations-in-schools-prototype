@@ -52,7 +52,7 @@ export const patientController = {
       ...Object.values(patient.activeProgrammes).map((patientProgramme) => {
         if (!account.isSchoolUser) {
           return {
-            text: patientProgramme.name,
+            text: patientProgramme.programme.name,
             href: patientProgramme.uri,
             current: currentPath === patientProgramme.uri
           }

@@ -20,7 +20,9 @@
     items: sectionNavigationItems
   }) }}
 
-  <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">
-    {{ __("patient." + params.view + ".title") }}
-  </h2>
+  {{ appHeading({
+    classes: "nhsuk-u-visually-hidden",
+    title: patientProgramme.name or __("patient." + params.view + ".title"),
+    level: 2
+  }) }}
 {% endmacro %}

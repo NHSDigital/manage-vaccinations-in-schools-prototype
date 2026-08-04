@@ -1976,7 +1976,8 @@ export const en = {
       label: 'Year group'
     },
     contacts: {
-      label: 'Contacts'
+      label: 'Contacts',
+      title: 'Contacts'
     },
     vaccinations: {
       label: 'Vaccinations'
