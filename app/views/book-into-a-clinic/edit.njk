@@ -3,6 +3,11 @@
 {% set confirmButtonText = __("form.confirm") %}
 {% set title = __("clinicBooking.edit.title") %}
 
+{% macro editPath(view) -%}
+  {# TODO: write this macro to format the href for edit locations and referrer (copied from check-answers in give-or-refuse-consent) #}
+  {{- view }}?referrer={{ session.consentUrl }}/{{ consent.uuid}}/new/check-answers
+{%- endmacro %}
+
 {% block form %}
   {{ appHeading({
     caption: appointmentCaption,
