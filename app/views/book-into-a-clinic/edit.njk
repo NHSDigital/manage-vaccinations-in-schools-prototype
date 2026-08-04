@@ -3,6 +3,10 @@
 {% set confirmButtonText = __("form.confirm") %}
 {% set title = __("clinicBooking.edit.title") %}
 
+{% macro changePathWithReferrer(view) -%}
+  {{- appointment.uri.edit }}/{{ view }}?referrer={{ appointment.uri.edit }}/edit
+{%- endmacro %}
+
 {% block form %}
   {{ appHeading({
     caption: appointmentCaption,
@@ -17,13 +21,13 @@
     lastRowBorder: false,
     rows: summaryRows(appointment, {
       location: {
-        href: appointment.uri.edit + "/clinic-location" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
+        href: changePathWithReferrer("clinic-location") if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       date: {
-        href: appointment.uri.edit + "/clinic-date" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
+        href: changePathWithReferrer("clinic-date") if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
       },
       timeSlot: {
-        href: appointment.uri.edit + "/appointment-time-range" if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
+        href: changePathWithReferrer("appointment-time-range") if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
       }
     })
   }) }}
