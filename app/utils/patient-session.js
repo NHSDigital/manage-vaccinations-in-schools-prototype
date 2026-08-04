@@ -1,4 +1,4 @@
-import { PatientStatus, RegistrationStatus } from '../enums.js'
+import { RegistrationStatus } from '../enums.js'
 
 /**
  * Get ready to record outcome
@@ -7,14 +7,10 @@ import { PatientStatus, RegistrationStatus } from '../enums.js'
  * @param {PatientSession} patientSession - Patient session
  * @returns {boolean} Ready to record outcome
  */
-export function canRecordOutcome(patientSession) {
+export function canRecordSessionOutcome(patientSession) {
   const { patientProgramme, register, session } = patientSession
 
-  if (
-    [PatientStatus.Due, PatientStatus.Deferred].includes(
-      patientProgramme.status
-    )
-  ) {
+  if (patientProgramme.canRecordVaccinationInSession) {
     if (session.hasRegistration && register !== RegistrationStatus.Present) {
       return false
     }

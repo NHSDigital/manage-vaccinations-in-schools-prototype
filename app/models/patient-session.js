@@ -28,7 +28,7 @@ import {
 } from '../utils/date.js'
 import { getRegistrationStatusProperties } from '../utils/enum-properties.js'
 import {
-  canRecordOutcome,
+  canRecordSessionOutcome,
   getRegistrationStatus,
   getRegistrationStatusDescription
 } from '../utils/patient-session.js'
@@ -279,8 +279,8 @@ export class PatientSession extends BaseModel {
    *
    * @returns {boolean} Ready to record outcome
    */
-  get canRecordOutcome() {
-    return canRecordOutcome(this)
+  get canRecordSessionOutcome() {
+    return canRecordSessionOutcome(this)
   }
 
   /**

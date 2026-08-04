@@ -86,7 +86,7 @@
     {{ actionLink({
       text: __("vaccination.new.alreadyVaccinated.title"),
       href: patientProgramme.uri + "/new/vaccination"
-    }) if patientProgramme.isActive }}
+    }) if patientProgramme.canRecordVaccination }}
   {% endcall %}
 
   {% if patientProgramme.tetanusVaccinations %}

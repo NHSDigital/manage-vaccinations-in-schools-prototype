@@ -1092,6 +1092,35 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Can record vaccination
+   *
+   * @returns {boolean} Can record vaccination
+   */
+  get canRecordVaccination() {
+    if (this.isIneligible) {
+      return false
+    }
+
+    if (this.isVaccinated) {
+      return false
+    }
+
+    return this.isActive
+  }
+
+  /**
+   * Can record vaccination within a session
+   *
+   * @returns {boolean} Can record vaccination within a session
+   */
+  get canRecordVaccinationInSession() {
+    return (
+      this.canRecordVaccination &&
+      [PatientStatus.Due, PatientStatus.Deferred].includes(this.status)
+    )
+  }
+
+  /**
    * Get status
    *
    * @returns {PatientStatus} Status

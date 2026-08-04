@@ -53,7 +53,7 @@ export const patientSessionController = {
     )
 
     const due = patientSession.siblingPatientSessions.filter(
-      ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
+      (patientSession) => patientSession.canRecordSessionOutcome
     )
 
     const vaccineMethods = getAccountVaccineMethods(account, patientSession)
@@ -83,7 +83,7 @@ export const patientSessionController = {
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
         vaccineMethods?.includes(patientProgramme.vaccine?.method) &&
-        patientSession.canRecordOutcome &&
+        patientSession.canRecordSessionOutcome &&
         session.isActive,
       canRecordInjectionSite:
         patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal
