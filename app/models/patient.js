@@ -140,7 +140,7 @@ export class Patient extends Child {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return this.contacts.every((contact) => contact.hasContactDetails)
+    return this.contacts.some((contact) => contact.hasContactDetails)
   }
 
   /**
