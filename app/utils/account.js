@@ -1,4 +1,4 @@
-import { VaccineMethod } from '../enums.js'
+import { VaccineMethod, VaccinationProtocol } from '../enums.js'
 
 /**
  *
@@ -13,7 +13,7 @@ export function getAccountVaccineMethods(account, patientSession) {
     vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
   } else if (account.isHealthcareAssistant) {
     // HCAs can record all vaccines under VGD
-    if (patientSession.session.hasVgdProtocol) {
+    if (patientSession.session.protocolHCA === VaccinationProtocol.VGD) {
       vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
     }
 
