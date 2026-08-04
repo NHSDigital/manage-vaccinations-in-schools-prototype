@@ -483,7 +483,16 @@ export class Reply extends BaseModel {
             let decisionStatus = formatTag(
               getReplyDecisionProperties(this.decision)
             )
-            if (this.isInvalidated) {
+            if (this.hasExpired) {
+              decisionStatus = formatWithSecondaryText(
+                formatTag({
+                  colour: 'grey',
+                  html: `<s>${this.decision}</s>`
+                }),
+                'Expired',
+                false
+              )
+            } else if (this.isInvalidated) {
               decisionStatus = formatWithSecondaryText(
                 formatTag({
                   colour: 'grey',
@@ -514,6 +523,10 @@ export class Reply extends BaseModel {
               })
             case 'createdBy':
               return this.createdBy?.fullName || ''
+            case 'expiredAt':
+              return this.hasExpired
+                ? formatDate(this.expiredAt, { dateStyle: 'long' })
+                : ''
             case 'decisionStatus':
               return getDecisionStatus()
             case 'contact':
