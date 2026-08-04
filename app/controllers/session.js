@@ -24,6 +24,7 @@ import {
   Session,
   Team
 } from '../models.js'
+import { getAccountVaccineMethods } from '../utils/account.js'
 import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
   convertIsoDateToObject,
@@ -511,10 +512,9 @@ export const sessionController = {
     // Only show patients ready to vaccinate, and that a user can vaccinate
     if (view === 'record') {
       results = results.filter(
-        ({ patientProgramme, register }) =>
-          patientProgramme.status === PatientStatus.Due &&
-          register !== RegistrationStatus.Pending &&
-          account.vaccineMethods?.includes(patientProgramme.vaccine?.method)
+        (patientSession) =>
+          patientSession.canRecordOutcome &&
+          getAccountVaccineMethods(account, patientSession)
       )
     }
 

@@ -7,8 +7,7 @@ import {
   RegistrationStatus,
   SessionType,
   VaccinationOutcome,
-  VaccineCriteria,
-  VaccineMethod
+  VaccineCriteria
 } from '../enums.js'
 import {
   ClinicBooking,
@@ -17,6 +16,7 @@ import {
   User,
   Vaccination
 } from '../models.js'
+import { getAccountVaccineMethods } from '../utils/account.js'
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { stringToBoolean } from '../utils/string.js'
@@ -56,21 +56,7 @@ export const patientSessionController = {
       ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
     )
 
-    let vaccineMethods = []
-    if (account.isRegisteredNurse) {
-      // Nurses can record all vaccines under any protocol
-      vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
-    } else if (account.isHealthcareAssistant) {
-      // HCAs can record all vaccines under VGD
-      if (session.hasVgdProtocol) {
-        vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
-      }
-
-      // HCAs can only record nasal vaccines for children with a PSD
-      if (session.hasPsdProtocol && patientProgramme.hasInstruction) {
-        vaccineMethods = [VaccineMethod.Intranasal]
-      }
-    }
+    const vaccineMethods = getAccountVaccineMethods(account, patientSession)
 
     response.locals.options = {
       // Show outstanding vaccinations
