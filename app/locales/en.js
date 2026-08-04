@@ -1836,9 +1836,9 @@ export const en = {
       cancel: 'Go back to children list',
       success: {
         invited:
-          '{count, plural, one {1 child has been invited to clinic} other {{count} children have been invited to clinic}}',
+          '{count, plural, one {1 child invited to clinic} other {{count} children invited to clinic}}',
         notInvited:
-          '{count, plural, one {1 child could not be invited due to lack of contact details} other {{count} children could not be invited due to lack of contact details}}'
+          '{count, plural, one {1 child could not be invited because of missing contact details} other {{count} children could not be invited because of missing contact details}}'
       }
     },
     auditEvents: {
