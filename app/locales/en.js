@@ -1905,7 +1905,8 @@ export const en = {
       description: 'Find pupils and view their consent status'
     },
     show: {
-      title: 'Child record'
+      label: 'Overview',
+      title: 'Overview'
     },
     edit: {
       label: 'Edit record',
@@ -2212,7 +2213,10 @@ export const en = {
         '{count, plural, =0 {No vaccination record} one {Vaccination record} other {# vaccination records}}'
     },
     consent: {
-      label: 'Consent status'
+      label: 'Consent'
+    },
+    screen: {
+      label: 'Triage'
     },
     status: {
       label: 'Status'

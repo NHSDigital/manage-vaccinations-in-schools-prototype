@@ -155,6 +155,23 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get programme title
+   *
+   * @returns {string} Programme title
+   */
+  get title() {
+    if (this.programme.type === ProgrammeType.MMR && this.patient?.age <= 6) {
+      return 'Measles, mumps, rubella and varicella (MMRV)'
+    }
+
+    if (this.programme.type === ProgrammeType.Flu) {
+      return `Children’s flu (${this.eligibilityStartAt.getFullYear()} to ${this.eligibilityEndAt.getFullYear()} season)`
+    }
+
+    return this.programme.title
+  }
+
+  /**
    * Is active programme
    *
    * @returns {boolean} Is active programme
