@@ -123,8 +123,8 @@
               level: 3,
               size: "s"
             },
-            clickable: not showRegistration and not account.isSchoolUser,
-            href: patientSessionUri if not account.isSchoolUser
+            clickable: not showRegistration,
+            href: patientSessionUri if not account.isSchoolUser and not session.isCompleted else patientSession.patient.uri
           }) %}
             {{ summaryList({
               lastRowBorder: false,
