@@ -94,11 +94,15 @@ export const sessionController = {
               }
             ]
           : []),
-        {
-          text: __('session.record.label'),
-          href: `${session.uri}/record`,
-          current: view === 'record'
-        }
+        ...(session.isActive
+          ? [
+              {
+                text: __('session.record.label'),
+                href: `${session.uri}/record`,
+                current: view === 'record'
+              }
+            ]
+          : [])
       ]
     }
 
