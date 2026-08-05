@@ -282,12 +282,12 @@ export const patientSessionController = {
   preScreen(request, response) {
     const { preScreen } = request.body
     const { data } = request.session
-    const { account, patientSession, programme } = response.locals
+    const { patientSession, programme } = response.locals
 
     // Pre-screen interview
     patientSession.preScreen({
       note: preScreen.note,
-      createdBy_uid: account.uid
+      createdBy_uid: preScreen.assessedBy_uid
     })
 
     // Pre-screening outcome is to vaccinate with the alternative vaccine
