@@ -1,11 +1,11 @@
 {# Health answers #}
 {{ summaryList({
   card: {
-    classes: "nhsuk-card--warning" if patientProgramme.answersNeedingTriageCount,
     heading: __mf("healthAnswers.count", {
       count: patientProgramme.answersNeedingTriageCount
     }),
-    headingSize: "m"
+    headingSize: "m",
+    variant: "warning" if patientProgramme.answersNeedingTriageCount
   },
   classes: "app-summary-list--full-width",
   rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
