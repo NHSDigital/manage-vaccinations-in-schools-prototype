@@ -170,7 +170,7 @@
     {% endcall %}
   {% endif %}
 
-  {% if patientProgramme.patientSessions.length %}
+  {% if patientProgramme.patientSessions.length and patientProgramme.canRecordVaccination %}
     {% call card({
       heading: {
         text: __("patientProgramme.patientSessions.label"),
