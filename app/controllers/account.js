@@ -4,14 +4,21 @@ import { saveAndRedirect } from '../utils/redirect.js'
 
 export const accountController = {
   /**
+   * Change (to pre-assigned user with) role
+   *
    * @type {RequestHandler<Record<string, string>>}
    */
   changeRole(request, response) {
     const { role } = request.body.account
     const { referrer } = /** @type {{ referrer?: string }} */ (request.query)
+    const { data } = request.session
+
+    const accountWithRole = User.findAll(data).find(
+      (user) => user.role === role
+    )
 
     // Update account role
-    response.locals.account.role = role || UserRole.Nurse
+    response.locals.account = accountWithRole
 
     // Update session token
     // Drop the `context` to prevent circular dependency
