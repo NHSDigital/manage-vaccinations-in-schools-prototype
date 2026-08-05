@@ -1,3 +1,17 @@
+{# Health answers #}
+{{ summaryList({
+  card: {
+    classes: "nhsuk-card--warning" if patientProgramme.answersNeedingTriageCount,
+    heading: __mf("healthAnswers.count", {
+      count: patientProgramme.answersNeedingTriageCount
+    }),
+    headingSize: "m"
+  },
+  classes: "app-summary-list--full-width",
+  rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
+}) if patientProgramme.consentHealthAnswers }}
+
+{# Triage #}
 {% call card({
   heading: __("patientSession.screen.title", programme.nameSentenceCase),
   headingSize: "m"
