@@ -195,6 +195,7 @@ export class PatientProgramme extends BaseModel {
       .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       .filter(({ status }) => status)
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
   }
 
   /**
