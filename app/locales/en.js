@@ -2921,7 +2921,7 @@ export const en = {
     protocolHCA: {
       label: 'Protocol for healthcare assistants',
       title:
-        'Can healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
+        'Will healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
       no: {
         label: 'No'
       },
