@@ -536,6 +536,10 @@ export function formatYearGroups(yearGroups) {
  * @returns {string} String with lower cased first letter
  */
 export function lowerCaseFirst(string) {
+  if (!string) {
+    return ''
+  }
+
   return string.charAt(0).toLowerCase() + string.slice(1)
 }
 
@@ -548,7 +552,9 @@ export function lowerCaseFirst(string) {
  * @returns {string} - the formatted name
  */
 export function formatFullName(firstName, lastName, isParentFacing = false) {
-  if (!firstName || !lastName) return ''
+  if (!firstName || !lastName) {
+    return ''
+  }
 
   return isParentFacing
     ? [firstName, lastName].join(' ')
@@ -559,10 +565,12 @@ export function formatFullName(firstName, lastName, isParentFacing = false) {
  * Get programme names that can be used in a sentence
  *
  * @param {string} string - String to change
- * @returns {string|undefined} Sentence cased programme names
+ * @returns {string} Sentence cased programme names
  */
 export function sentenceCaseProgrammeName(string) {
-  if (!string) return
+  if (!string) {
+    return ''
+  }
 
   return string
     .replaceAll('Children', 'children') // Children’s flu vaccine
