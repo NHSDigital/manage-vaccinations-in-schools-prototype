@@ -1,14 +1,14 @@
 {% set heading -%}
-  {%- if patientSession.programme.alternativeVaccine %}
-    <span class="app-vaccine-criteria" data-value="{{ patientSession.vaccineCriteria }}">
+  {%- if patientProgramme.programme.alternativeVaccine %}
+    <span class="app-vaccine-criteria" data-value="{{ patientProgramme.vaccineCriteria }}">
       {{- __("patientSession.record.titleWithMethod", {
-        programme: patientSession.programme,
-        method: patientSession.vaccineCriteria | lower | replace("only", "") | replace("preferred", "")
+        programme: patientProgramme.programme,
+        method: patientProgramme.vaccineCriteria | lower | replace("only", "") | replace("preferred", "")
       }) | safe -}}
     </span>
   {%- else -%}
     {{- __("patientSession.record.title", {
-      programme: patientSession.programme
+      programme: patientProgramme.programme
     }) | safe -}}
   {%- endif -%}
 {% endset %}
@@ -22,6 +22,7 @@
       legend: {
         classes: "nhsuk-u-font-size-22",
         text: __("preScreen.hasSelfIdentified.label", {
+          prefix: "Has a nurse" if account.isHCA else "Have you",
           patient: patient
         }),
         size: "s"
@@ -67,8 +68,11 @@
   }) }}
 
 {% filter nhsukMarkdown %}
-{{ __("preScreen.description", { patient: patient }) }}
-{% for question in patientSession.patientProgramme.vaccine.preScreenQuestions %}
+{{ __("preScreen.description", {
+  prefix: "Has a nurse" if account.isHCA else "Have you",
+  patient: patient
+}) }}
+{% for question in patientProgramme.vaccine.preScreenQuestions %}
 - {{ question }}
 {% endfor %}
 {% endfilter %}
@@ -154,8 +158,8 @@
         classes: "nhsuk-fieldset__legend--m nhsuk-u-font-size-22",
         text: __("preScreen.ready.label", {
           patient: patient,
-          programme: patientSession.programme,
-          method: patientSession.patientProgramme.vaccine.method | lower
+          programme: patientProgramme.programme,
+          method: patientProgramme.vaccine.method | lower
         }) | safe
       }
     },
@@ -186,7 +190,7 @@
     _validate: {
       presence: {
         message: __("preScreen.ready.error", {
-          programme: patientSession.programme
+          programme: patientProgramme.programme
         })
       }
     }

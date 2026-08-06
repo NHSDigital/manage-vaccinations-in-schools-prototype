@@ -137,7 +137,7 @@ export const vaccinationController = {
       case patientProgramme.hasInstruction && session.hasPsdProtocol:
         protocol = VaccinationProtocol.PSD
         break
-      case account.isHealthcareAssistant && session.hasVgdProtocol:
+      case account.isHCA && session.hasVgdProtocol:
         protocol = VaccinationProtocol.VGD
         break
       case account.isRegisteredNurse && session.hasVgdProtocol:

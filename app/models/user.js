@@ -89,7 +89,7 @@ export class User extends BaseModel {
    *
    * @returns {boolean} User is a registered practitioner?
    */
-  get isHealthcareAssistant() {
+  get isHCA() {
     return this.role === UserRole.HCA
   }
 
@@ -108,7 +108,7 @@ export class User extends BaseModel {
    * @returns {boolean} User can vaccinate?
    */
   get canVaccinate() {
-    return this.isHealthcareAssistant || this.isRegisteredNurse
+    return this.isHCA || this.isRegisteredNurse
   }
 
   /**
