@@ -455,11 +455,13 @@ export class Reply extends BaseModel {
    * @returns {PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
-    return Object.values(this.patient?.programmes).find(
-      (patientProgramme) =>
-        patientProgramme.programme_id === this.programme_id &&
-        patientProgramme.academicYear === this.academicYear
-    )
+    if (this.patient?.programmes) {
+      return Object.values(this.patient.programmes).find(
+        (patientProgramme) =>
+          patientProgramme.programme_id === this.programme_id &&
+          patientProgramme.academicYear === this.academicYear
+      )
+    }
   }
 
   /**
