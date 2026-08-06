@@ -2360,9 +2360,9 @@ export const en = {
   },
   preScreen: {
     label: 'Pre-screening checks',
-    description: 'Have you checked that {{patient.firstName}}:',
+    description: '{{ prefix }} checked that {{patient.firstName}}:',
     hasSelfIdentified: {
-      label: 'Has {{patient.firstName}} confirmed their identity?',
+      label: '{{ prefix }} confirmed {{patient.firstName}}’s identity?',
       true: 'Yes',
       false: 'No, it was confirmed by somebody else'
     },

@@ -11,7 +11,7 @@ export function getAccountVaccineMethods(account, patientSession) {
   if (account.isRegisteredNurse) {
     // Nurses can record all vaccines under any protocol
     vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
-  } else if (account.isHealthcareAssistant) {
+  } else if (account.isHCA) {
     // HCAs can record all vaccines under VGD
     if (patientSession.session.protocolHCA === VaccinationProtocol.VGD) {
       vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
