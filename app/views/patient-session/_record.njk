@@ -22,7 +22,7 @@
       legend: {
         classes: "nhsuk-u-font-size-22",
         text: __("preScreen.hasSelfIdentified.label", {
-          prefix: "Has a nurse" if account.isHCA else "Have you",
+          prefix: "Have you" if options.canAssess else "Has a nurse",
           patient: patient
         }),
         size: "s"
@@ -69,7 +69,7 @@
 
 {% filter nhsukMarkdown %}
 {{ __("preScreen.description", {
-  prefix: "Has a nurse" if account.isHCA else "Have you",
+  prefix: "Have you" if options.canAssess else "Has a nurse",
   patient: patient
 }) }}
 {% for question in patientProgramme.vaccine.preScreenQuestions %}

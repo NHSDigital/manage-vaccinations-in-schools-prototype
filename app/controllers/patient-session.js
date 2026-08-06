@@ -80,6 +80,9 @@ export const patientSessionController = {
       // Patient already triaged
       hasTriage: patientProgramme.triageNotes.length > 0,
       hasInstruction: session.hasPsdProtocol && patientProgramme.hasInstruction,
+      canAssess:
+        account.isRegisteredNurse ||
+        (account.isHCA && patientProgramme.hasInstruction),
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
         vaccineMethods?.includes(patientProgramme.vaccine?.method) &&
