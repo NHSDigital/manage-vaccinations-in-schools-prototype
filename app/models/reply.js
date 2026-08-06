@@ -284,7 +284,7 @@ export class Reply extends BaseModel {
     }
 
     // Responses for seasonal programmes expire when the programme year ends
-    if (this.programme.isSeasonal) {
+    if (this.patientProgramme && this.programme.isSeasonal) {
       return this.patientProgramme.eligibilityEndAt
     }
 
@@ -299,7 +299,7 @@ export class Reply extends BaseModel {
    */
   get hasExpired() {
     // Responses for seasonal programmes expire outside programme year
-    if (this.programme?.isSeasonal) {
+    if (this.patientProgramme && this.programme?.isSeasonal) {
       return !isBetweenDates(
         today(),
         this.patientProgramme.eligibilityStartAt,
