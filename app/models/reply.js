@@ -42,6 +42,10 @@ import {
   formatWithSecondaryText,
   stringToBoolean
 } from '../utils/string.js'
+import {
+  getScreenStatusesForConsentMethod,
+  getScreenVaccineCriteria
+} from '../utils/triage.js'
 
 import { BaseModel } from './base.js'
 
@@ -358,6 +362,24 @@ export class Reply extends BaseModel {
   }
 
   /**
+   * Get screen statuses for vaccination method(s) consented to
+   *
+   * @returns {Array<ScreenStatus>} Screen statuses
+   */
+  get screenStatusesForConsentMethod() {
+    return getScreenStatusesForConsentMethod(this.programme, [this])
+  }
+
+  /**
+   * Get vaccination criteria consented to use if safe to vaccinate
+   *
+   * @returns {ScreenVaccineCriteria|boolean} Criteria
+   */
+  get screenVaccineCriteria() {
+    return getScreenVaccineCriteria(this.programme, [this])
+  }
+
+  /**
    * Get health questions to show based on programme and decision given
    *
    * @returns {Array} Health questions
@@ -578,6 +600,7 @@ Reply.relate('programme_id', () => Programme, 'programme')
 Reply.relate('session_id', () => Session, 'session')
 
 /**
+ * @import { ScreenStatus, ScreenVaccineCriteria } from '../enums.js'
  * @import { PatientProgramme } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

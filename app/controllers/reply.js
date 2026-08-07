@@ -13,10 +13,6 @@ import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatContact } from '../utils/string.js'
-import {
-  getScreenStatusesForConsentMethod,
-  getScreenVaccineCriteria
-} from '../utils/triage.js'
 
 export const replyController = {
   /**
@@ -317,14 +313,6 @@ export const replyController = {
           })
         )
       }
-
-      response.locals.screenStatusesForConsentMethod =
-        getScreenStatusesForConsentMethod(programme, [reply])
-
-      response.locals.screenVaccineCriteria = getScreenVaccineCriteria(
-        programme,
-        [reply]
-      )
 
       next()
     }
