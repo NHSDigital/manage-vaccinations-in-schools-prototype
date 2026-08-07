@@ -1,4 +1,4 @@
-import { isAfter, isBefore } from 'date-fns'
+import { addYears, isAfter, isBefore } from 'date-fns'
 
 import activity from '../datasets/activity.js'
 import {
@@ -419,16 +419,16 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Date patient left eligible for programme
+   * Date patient no longer eligible for programme
    *
-   * @returns {Date|undefined} Date patient left eligible for programme
+   * @returns {Date} Date patient no longer eligible for programme
    */
   get eligibilityEndAt() {
-    if (!this.programme?.isSeasonal) {
-      return
+    if (this.programme?.isSeasonal) {
+      return new Date(`${this.academicYear + 1}-03-31`)
     }
 
-    return new Date(`${this.academicYear + 1}-03-31`)
+    return addYears(this.patient.dob, this.programme.eligibilityEndAge)
   }
 
   /**

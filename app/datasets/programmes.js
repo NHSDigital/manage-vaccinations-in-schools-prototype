@@ -18,6 +18,7 @@ export default {
     title: '4-in-1 pre-school booster',
     isHidden: true,
     isTetanusVaccine: true,
+    eligibilityEndAge: 10,
     sequence: ['1P', '2P', '3P'],
     sequenceDefault: '1P'
   },
@@ -28,6 +29,7 @@ export default {
     title: '5-in-1',
     isHidden: true,
     isTetanusVaccine: true,
+    eligibilityEndAge: 10,
     sequence: ['1B'],
     sequenceDefault: '1B'
   },
@@ -38,6 +40,7 @@ export default {
     title: '6-in-1',
     isHidden: true,
     isTetanusVaccine: true,
+    eligibilityEndAge: 10,
     sequence: ['1P', '2P', '3P', '4P'],
     sequenceDefault: '1P'
   },
@@ -83,6 +86,7 @@ export default {
       url: 'https://www.gov.uk/government/publications/hpv-vaccine-vaccination-guide-leaflet',
       hint: 'including in other languages and alternative formats, including BSL and Braille'
     },
+    eligibilityEndAge: 25,
     sequence: ['1P'],
     immunocompromisedSequence: ['1P', '2P', '3P'],
     sequenceDefault: '1P',
@@ -108,6 +112,7 @@ export default {
       url: 'https://www.gov.uk/government/publications/menacwy-vaccine-information-for-young-people',
       hint: 'with links to information in other languages'
     },
+    eligibilityEndAge: 25,
     sequence: ['1P'],
     sequenceDefault: '1P',
     targetYearGroup: 9,
@@ -138,6 +143,7 @@ export default {
       url: 'https://www.gov.uk/government/publications/mmr-for-all-general-leaflet',
       hint: 'including in other languages'
     },
+    eligibilityEndAge: 99,
     sequence: ['1P', '2P'],
     sequenceDefault: '1P',
     targetYearGroup: -3,
@@ -162,6 +168,7 @@ export default {
       url: 'https://www.gov.uk/government/publications/a-guide-to-the-3-in-1-teenage-booster-tdipv',
       hint: 'with links to information in other languages'
     },
+    eligibilityEndAge: 99,
     sequence: ['2B'],
     sequenceDefault: '2B',
     yearGroups: [9, 10, 11],
