@@ -1,4 +1,5 @@
 {%- from "_macros/triage-form.njk" import appTriageForm with context %}
+{%- from "_macros/triage-notes.njk" import appTriageNotes with context %}
 
 {# Health answers #}
 {{ summaryList({
@@ -39,47 +40,9 @@
   }) if options.canTriage and not options.needsTriage and not patientProgramme.isVaccinated }}
 
   {# Decision table #}
-  {% set triageNoteRows = [] %}
-  {% for triageNote in patientProgramme.triageNotes | reverse %}
-    {% set triageNoteRows = triageNoteRows | push([
-      {
-        header: __("event.createdAt.label"),
-        html: triageNote.summary.createdAtAndBy
-      },
-      {
-        header: __("event.note.label"),
-        html: triageNote.note or "—" | nhsukMarkdown
-      },
-      {
-        header: __("event.status.label"),
-        html: triageNote.formatted.status
-      }
-    ]) %}
-  {% endfor %}
-
-  {% if options.hasTriage %}
-    {{ table({
-      id: "triage-notes",
-      caption: __("triage.note.label"),
-      responsive: true,
-      head: [
-        {
-          text: __("event.createdAt.label"),
-          attributes: {
-            width: "25%"
-          }
-        },
-        { text: __("event.note.label") },
-        {
-          text: __("event.status.label"),
-          attributes: {
-            width: "25%"
-          }
-        }
-      ],
-      rows: triageNoteRows
-    }) }}
-  {% endif %}
+  {{ appTriageNotes({
+    triageNotes: patientProgramme.triageNotes
+  }) }}
 
   {% if options.needsTriage and not triageNoteRows.length %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
