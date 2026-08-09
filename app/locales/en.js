@@ -3448,7 +3448,7 @@ export const en = {
   },
   triage: {
     title: 'Triage',
-    label: 'Is it safe to vaccinate {{patient.firstName}}?',
+    label: 'Triage',
     confirm: 'Save triage',
     new: {
       title: 'Update triage outcome',
@@ -3464,7 +3464,7 @@ export const en = {
       label: 'Triage notes'
     },
     status: {
-      label: 'Outcome',
+      label: 'Is it safe to vaccinate {{patient.firstName}}?',
       [ScreenStatus.Vaccinate]: 'Yes, it’s safe to vaccinate',
       [ScreenStatus.VaccinateAlternativeFluInjectionOnly]:
         'Yes, it’s safe to vaccinate with injected vaccine',

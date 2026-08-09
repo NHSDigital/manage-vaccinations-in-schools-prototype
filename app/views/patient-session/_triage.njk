@@ -1,3 +1,5 @@
+{%- from "_macros/triage-form.njk" import appTriageForm with context %}
+
 {# Health answers #}
 {{ summaryList({
   card: {
@@ -84,46 +86,9 @@
   {% endif %}
 
   {% if options.canTriage and options.needsTriage %}
-    {% set psdRadiosHtml = radios({
-      fieldset: { legend: { text: __("triage.psd.label") } },
-      inline: true,
-      items: getBooleanItems(),
-      decorate: "triage.psd"
-    }) if account.canPrescribe %}
-
-    {% set delayVaccinationHtml = dateInput({
-      fieldset: {
-        legend: {
-          text: __("triage.statusInvalidAt.title", { patient: patient }),
-          size: "s"
-        }
-      },
-      hint: { text: __("triage.statusInvalidAt.hint", { date: DelayDate }) },
-      decorate: "triage.statusInvalidAt_"
-    }) %}
-
-    {% set statusItems = injectConditionalHtml(triageStatusItems(patientProgramme.screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) if patientProgramme.programme.alternativeVaccine else triageStatusItems(patientProgramme.screenStatusesForConsentMethod) %}
-
-    {{ radios({
-      fieldset: {
-        legend: {
-          classes: "nhsuk-fieldset__legend--m nhsuk-u-font-size-22",
-          text: __("triage.label", { patient: patient })
-        }
-      },
-      hint: {
-        text: patientProgramme.screenVaccineCriteria
-      } if patientProgramme.screenVaccineCriteria,
-      items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
-      decorate: "triage.status"
-    }) }}
-
-    {{ textarea({
-      label: {
-        text: __("triage.note.label") + " (optional)"
-      },
-      rows: 5,
-      decorate: "triage.note"
+    {{ appTriageForm({
+      context: patientProgramme,
+      size: "s"
     }) }}
 
     {{ button({
