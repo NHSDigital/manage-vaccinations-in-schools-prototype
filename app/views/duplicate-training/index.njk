@@ -1,0 +1,44 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Duplicate record training" %}
+{% set headerOptions = {
+  service: {
+    text: serviceName
+  }
+} %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <!-- Duplicate training demo index -->
+      <h1 class="nhsuk-heading-l">Duplicate record training</h1>
+      <p class="nhsuk-body">Demo scenarios for reviewing duplicate vaccination records at different set sizes.</p>
+
+      <ul class="nhsuk-list">
+        <li class="nhsuk-u-margin-bottom-4">
+          <a class="nhsuk-link" href="/duplicate-training/2-records">2 records</a>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">Near-identical duplicate pair from the same session</p>
+        </li>
+        <li class="nhsuk-u-margin-bottom-4">
+          <a class="nhsuk-link" href="/duplicate-training/3-records">3 records</a>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">Near-duplicates plus one clearly different record (different vaccinator and source)</p>
+        </li>
+        <li class="nhsuk-u-margin-bottom-4">
+          <a class="nhsuk-link" href="/duplicate-training/5-records">5 records</a>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">Mixed set wrapping onto a second row, including a long school name that wraps within its card</p>
+        </li>
+        <li class="nhsuk-u-margin-bottom-4">
+          <a class="nhsuk-link" href="/duplicate-training/3-records-selected">3 records, selection made</a>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">Pre-selected state: preferred record already chosen, tags and highlighted border from load</p>
+        </li>
+        <li class="nhsuk-u-margin-bottom-4">
+          <a class="nhsuk-link" href="/duplicate-training/20-records">20 records</a>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">Full-scale set with outliers, blank fields and wrapping values</p>
+        </li>
+      </ul>
+      <!-- /Duplicate training demo index -->
+
+    </div>
+  </div>
+{% endblock %}

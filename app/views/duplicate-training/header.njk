@@ -1,0 +1,60 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Duplicate page header" %}
+{% set headerOptions = {
+  service: {
+    text: serviceName
+  }
+} %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+
+      <!-- Duplicate page header -->
+
+      <!-- Patient name -->
+      <h1 class="nhsuk-heading-l nhsuk-u-display-inline-block nhsuk-u-margin-bottom-3">
+        Jenny Doppleganger
+      </h1>
+      <a class="nhsuk-link nhsuk-u-margin-left-3" href="#">View full child record</a>
+
+      <!-- Patient details -->
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-grid-column-one-third">
+          <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+            <span class="nhsuk-u-font-weight-bold">NHS Number</span><br>
+            999 000 1499
+          </p>
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+          <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+            <span class="nhsuk-u-font-weight-bold">Date of birth</span><br>
+            1 January 2010
+          </p>
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+          <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+            <span class="nhsuk-u-font-weight-bold">Address</span><br>
+            55792 McCullough Center, Apt. 165, New Joi, PS5 6DR
+          </p>
+        </div>
+      </div>
+
+      <!-- Duplicate details: tinted panel (background is the nhsuk grey-4 token,
+           #d8dde0, the frameworks template-background surface colour) separating
+           this comparison-task context from the patient identity above -->
+      <div class="nhsuk-u-padding-4 nhsuk-u-margin-bottom-5" style="background: #d8dde0;">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Duplicate details</h2>
+        <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+          <span class="nhsuk-u-font-weight-bold">Date:</span> 12 August 2026
+          <span class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-4">Programme:</span> MMR
+          <span class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-4">Outcome:</span> Vaccinated
+        </p>
+      </div>
+
+      <!-- /Duplicate page header -->
+
+    </div>
+  </div>
+{% endblock %}
