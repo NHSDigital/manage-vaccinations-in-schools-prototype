@@ -348,20 +348,22 @@
     <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
     <!-- /Duplicate record grid -->
   </div>
-  <!-- Sticky set navigation: game-mode queue bar. Copy TBD. Done and Skip both
-       link to the next demo scenario as a placeholder for advancing the queue
-       (no real queue or saved state yet); the last set returns to the index.
-       The spacer below keeps the fixed bar from covering the last grid row when
-       scrolled to the bottom. -->
+  <!-- Sticky set navigation: game-mode queue bar. Both status strings are
+       placeholder wording. One action button tracks the selection radios: it
+       reads Skip (white secondary style) until a record is chosen, then Done
+       (green primary). Same link either way, to the next demo scenario as a
+       placeholder for advancing the queue (no real queue or saved state yet);
+       the last set returns to the index. Clear choice sits next to the status
+       text, hidden until a record is chosen; it unselects the radios and
+       returns everything, button included, to the initial state. The spacer
+       below keeps the fixed bar from covering the last grid row when scrolled
+       to the bottom. -->
   <div style="height: 96px"></div>
   <div style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #ffffff; border-top: 1px solid #d8dde0; padding-bottom: env(safe-area-inset-bottom);">
     <div class="nhsuk-width-container-fluid nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
       <div style="max-width: 1720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0">Record set 2 of 4</p>
-        <div style="display: flex; column-gap: 12px;">
-          <a class="nhsuk-button nhsuk-u-margin-bottom-0" data-module="nhsuk-button" href="/duplicate-training/5-records" role="button" draggable="false">Done</a>
-          <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" href="/duplicate-training/5-records" role="button" draggable="false">Skip</a>
-        </div>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0"><span data-set-status>Choose your preferred record</span> <a class="nhsuk-link nhsuk-u-margin-left-2 nhsuk-u-display-none" href="#" data-clear-choice>Clear choice</a></p>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" data-set-action href="/duplicate-training/5-records" role="button" draggable="false">Skip</a>
       </div>
     </div>
   </div>
@@ -376,22 +378,38 @@
        value fires no toggle event, so the sync converges without loops), then shows or
        hides the additional field rows. The last visible row must not have a bottom border:
        Batch rows (data-border-when-expanded) gain one while expanded, Protocol rows never
-       have one. -->
+       have one. A single renderer owns the whole selection state (tags, borders, status
+       text, Clear choice visibility, the Skip/Done action button), with null meaning no
+       choice; the radio change handler and the Clear choice link both go through it, so
+       the pieces can never disagree. -->
   <script>
-    for (const radio of document.querySelectorAll('input[name="preferred-record"]')) {
-      radio.addEventListener("change", () => {
-        for (const cell of document.querySelectorAll("[data-record-tag]")) {
-          const tag = cell.querySelector(".nhsuk-tag")
-          const chosen = cell.dataset.recordTag === radio.value
-          tag.classList.toggle("nhsuk-tag--blue", chosen)
-          tag.classList.toggle("nhsuk-tag--grey", !chosen)
-          tag.textContent = chosen ? "Your preferred record" : "Duplicate record"
-        }
-        for (const box of document.querySelectorAll("[data-record-box]")) {
-          box.style.border = box.dataset.recordBox === radio.value ? "2px solid #005eb8" : "1px solid #d8dde0"
-        }
-      })
+    const renderChoice = (value) => {
+      for (const cell of document.querySelectorAll("[data-record-tag]")) {
+        const tag = cell.querySelector(".nhsuk-tag")
+        const chosen = cell.dataset.recordTag === value
+        tag.classList.toggle("nhsuk-tag--blue", chosen)
+        tag.classList.toggle("nhsuk-tag--grey", !chosen)
+        tag.textContent = chosen ? "Your preferred record" : "Duplicate record"
+      }
+      for (const box of document.querySelectorAll("[data-record-box]")) {
+        box.style.border = box.dataset.recordBox === value ? "2px solid #005eb8" : "1px solid #d8dde0"
+      }
+      document.querySelector("[data-set-status]").textContent = value ? "Preferred record chosen" : "Choose your preferred record"
+      document.querySelector("[data-clear-choice]").classList.toggle("nhsuk-u-display-none", !value)
+      const action = document.querySelector("[data-set-action]")
+      action.textContent = value ? "Done" : "Skip"
+      action.classList.toggle("nhsuk-button--secondary", !value)
     }
+
+    for (const radio of document.querySelectorAll('input[name="preferred-record"]')) {
+      radio.addEventListener("change", () => renderChoice(radio.value))
+    }
+
+    document.querySelector("[data-clear-choice]").addEventListener("click", (event) => {
+      event.preventDefault()
+      for (const radio of document.querySelectorAll('input[name="preferred-record"]')) radio.checked = false
+      renderChoice(null)
+    })
 
     const viewAllToggles = document.querySelectorAll("[data-view-all-toggle]")
     for (const toggle of viewAllToggles) {
