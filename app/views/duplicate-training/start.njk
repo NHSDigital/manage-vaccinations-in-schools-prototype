@@ -1,0 +1,136 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Review duplicate vaccination records (start page)" %}
+{% block header %}
+  <!-- Mavis site chrome: environment banner and site header exactly as rendered
+       on /notices, with the Review item current. Static copy for presentation
+       only; these demo pages do not actually live under /notices yet. -->
+  <div class="app-environment nhsuk-tag--grey">
+    <div class="nhsuk-width-container">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Prototype</strong>
+      This is a prototype used for research.
+    </div>
+  </div>
+  <header class="nhsuk-header" data-module="nhsuk-header" role="banner">
+    <div class="nhsuk-header__container nhsuk-width-container">
+      <div class="nhsuk-header__service">
+        <a class="nhsuk-header__service-logo" href="/home" aria-label="NHS Manage vaccinations in schools homepage">
+          <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+            <title>NHS</title>
+            <path fill="currentcolor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+          </svg>
+          <span class="nhsuk-header__service-name">Manage vaccinations in schools</span>
+        </a>
+      </div>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            JOY, Jane (Nurse)
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/change-role">Change role</a>
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/sign-out">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/schools">Schools</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/patients">Children</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/sessions">Sessions</a>
+          </li>
+          <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--current app-header__navigation-item--with-badge">
+            <a class="nhsuk-header__navigation-link" href="/reviews" aria-current="true"><strong class="nhsuk-header__navigation-item-current-fallback">Review<strong class="app-badge">124</strong></strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/reports">Reports</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/uploads">Uploads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/downloads">Downloads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/vaccines">Vaccines</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/teams/001">Your team</a>
+          </li>
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse </span>More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <!-- Review section chrome: page heading and section navigation as on /notices,
+       plus a Duplicates tab shown as current. Presentation only: the tab href is
+       a placeholder and these pages do not actually live under /notices yet.
+       This page has no wide content, so it uses the default width container and
+       needs no fluid band. -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-l">Review</h1>
+      <nav class="app-section-navigation" data-module="app-section-navigation" aria-label="Section navigation">
+        <ul class="app-section-navigation__list">
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/notices">Important notices<span class="app-section-navigation__suffix"><strong class="app-badge">4</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/consents">Consent responses<span class="app-section-navigation__suffix"><strong class="app-badge">0</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/unmatched-appointments">Clinic appointments<span class="app-section-navigation__suffix"><strong class="app-badge">23</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/moves">School moves<span class="app-section-navigation__suffix"><strong class="app-badge">90</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item app-section-navigation__item--current">
+            <a class="app-section-navigation__link" href="#" aria-current="page"><strong class="app-section-navigation__current">Duplicates<span class="app-section-navigation__suffix"><strong class="app-badge">7</strong></span></strong></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <!-- /Review section chrome -->
+
+  <!-- Start page shell: heading and body are placeholders for the content
+       designer; the CTA points at the 2-records demo as a stand-in for the
+       first record set in the flow. -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-l">About this review</h1>
+      <p class="nhsuk-body">[Content to be added: what this review is, and why you are being asked to look at these vaccination records.]</p>
+      <p class="nhsuk-body">[Content to be added: what choosing a preferred record does, and what happens after you confirm your choice.]</p>
+      <!-- Start button: gov.uk start now pattern, as the nhsuk-frontend v10
+           button macro renders it with an end-placed arrow-right-circle icon.
+           inline-flex overrides the variants display: flex, which would
+           otherwise stretch the button to the full column width -->
+      <a class="nhsuk-button nhsuk-button--icon" style="display: inline-flex" data-module="nhsuk-button" href="/duplicate-training/2-records" role="button" draggable="false">
+        <span class="nhsuk-button__content">Start review</span>
+        <svg class="nhsuk-icon nhsuk-icon--arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+          <path d="M12 2a10 10 0 0 0-10 9h11.7l-4-4a1 1 0 0 1 1.5-1.4l5.6 5.7a1 1 0 0 1 0 1.4l-5.6 5.7a1 1 0 0 1-1.5 0 1 1 0 0 1 0-1.4l4-4H2A10 10 0 1 0 12 2z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <!-- /Start page shell -->
+{% endblock %}
