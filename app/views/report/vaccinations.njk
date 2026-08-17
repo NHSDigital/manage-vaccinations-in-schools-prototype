@@ -72,8 +72,10 @@
 
       {{ table({
         responsive: true,
-        caption: __("report.vaccinations.team", account.team.ods),
-        captionSize: "m",
+        caption: {
+          text: __("report.vaccinations.team", account.team.ods),
+          size: "m"
+        },
         head: [
           {
             text: "Month"
