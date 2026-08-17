@@ -15,19 +15,22 @@
       }
     },
     hint: __("clinicBooking.contact.hasCommunicationNeeds.hint." + audience),
-    items: [{
-      label: __("clinicBooking.contact.hasCommunicationNeeds.yes"),
-      value: true,
-      conditional: {
-        html: textarea({
-          label: __("clinicBooking.contact.communicationNeeds.title"),
-          decorate: "booking.contact.communicationNeeds"
-        })
+    items: [
+      {
+        label: __("clinicBooking.contact.hasCommunicationNeeds.yes"),
+        value: true,
+        conditional: {
+          html: textarea({
+            label: __("clinicBooking.contact.communicationNeeds.title"),
+            decorate: "booking.contact.communicationNeeds"
+          })
+        }
+      },
+      {
+        label: __("clinicBooking.contact.hasCommunicationNeeds.no"),
+        value: false
       }
-    }, {
-      label: __("clinicBooking.contact.hasCommunicationNeeds.no"),
-      value: false
-    }],
+    ],
     decorate: "booking.contact.hasCommunicationNeeds"
   }) }}
 {% endblock %}

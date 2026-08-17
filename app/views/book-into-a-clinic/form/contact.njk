@@ -41,10 +41,12 @@
     }) }}
 
     {{ checkboxes({
-      items: [{
-        label: __("clinicBooking.contact.canSms.label", "you" if isParentFacing else "they"),
-        value: true
-      }],
+      items: [
+        {
+          label: __("clinicBooking.contact.canSms.label", "you" if isParentFacing else "they"),
+          value: true
+        }
+      ],
       decorate: "booking.contact.canSms"
     }) }}
 

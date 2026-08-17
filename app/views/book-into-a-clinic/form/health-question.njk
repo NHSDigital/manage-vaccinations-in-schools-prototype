@@ -36,19 +36,21 @@
 
     {{ radios({
       hint: hint,
-      items: [{
-        label: __("clinicBooking.healthAnswers.yes"),
-        conditional: {
-          html: textarea({
-            label: __("clinicBooking.healthAnswers.details"),
-            hint: __("healthQuestions." + key + ".detailsHint"),
-            decorate: ["appointment", "healthAnswers", key, "details"]
-          })
-        } if not hasSubQuestions
-      },
-      {
-        label: __("clinicBooking.healthAnswers.no")
-      }],
+      items: [
+        {
+          label: __("clinicBooking.healthAnswers.yes"),
+          conditional: {
+            html: textarea({
+              label: __("clinicBooking.healthAnswers.details"),
+              hint: __("healthQuestions." + key + ".detailsHint"),
+              decorate: ["appointment", "healthAnswers", key, "details"]
+            })
+          } if not hasSubQuestions
+        },
+        {
+          label: __("clinicBooking.healthAnswers.no")
+        }
+      ],
       decorate: ["appointment", "healthAnswers", key, "answer"]
     }) }}
   {% endcall %}

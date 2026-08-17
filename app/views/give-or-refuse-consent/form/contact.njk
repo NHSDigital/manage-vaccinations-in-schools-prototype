@@ -73,10 +73,12 @@
   }) }}
 
   {{ checkboxes({
-    items: [{
-      label: __("consent.contact.canSms.label"),
-      value: true
-    }],
+    items: [
+      {
+        label: __("consent.contact.canSms.label"),
+        value: true
+      }
+    ],
     decorate: "consent.contact_.canSms"
   }) }}
 {% endblock %}

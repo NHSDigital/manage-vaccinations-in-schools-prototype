@@ -31,22 +31,25 @@
     fieldset: {
       legend: __("clinicBooking.child.hasPreferredName.label")
     },
-    items: [{
-      label: __("clinicBooking.child.hasPreferredName.yes"),
-      value: true,
-      conditional: {
-        html: input({
-          label: __("clinicBooking.child.preferredFirstName.label") + " (optional)",
-          decorate: "appointment.child.preferredFirstName"
-        }) + input({
-          label: __("clinicBooking.child.preferredLastName.label") + " (optional)",
-          decorate: "appointment.child.preferredLastName"
-        })
+    items: [
+      {
+        label: __("clinicBooking.child.hasPreferredName.yes"),
+        value: true,
+        conditional: {
+          html: input({
+            label: __("clinicBooking.child.preferredFirstName.label") + " (optional)",
+            decorate: "appointment.child.preferredFirstName"
+          }) + input({
+            label: __("clinicBooking.child.preferredLastName.label") + " (optional)",
+            decorate: "appointment.child.preferredLastName"
+          })
+        }
+      },
+      {
+        label: __("clinicBooking.child.hasPreferredName.no"),
+        value: false
       }
-    }, {
-      label: __("clinicBooking.child.hasPreferredName.no"),
-      value: false
-    }],
+    ],
     decorate: "journeyData.preferredNameChoice"
   }) }}
 {% endblock %}

@@ -25,15 +25,19 @@
         {% set clinicRows = clinicRows | push([
           {
             html: clinic.formatted.nameAndAddress or "Not provided"
-          }, {
+          },
+          {
             html: appActionList({
-              items: [{
-                text: __("clinic.edit.label"),
-                href: clinic.uri + "/edit"
-              }, {
-                text: __("clinic.delete.label"),
-                href: clinic.uri + "/delete"
-              }]
+              items: [
+                {
+                  text: __("clinic.edit.label"),
+                  href: clinic.uri + "/edit"
+                },
+                {
+                  text: __("clinic.delete.label"),
+                  href: clinic.uri + "/delete"
+                }
+              ]
             })
           }
         ]) %}

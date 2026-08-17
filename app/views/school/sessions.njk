@@ -52,16 +52,20 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("school.list.title"),
-      href: "/schools"
-    }, {
-      text: school.name,
-      href: school.uri
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("school.list.title"),
+        href: "/schools"
+      },
+      {
+        text: school.name,
+        href: school.uri
+      }
+    ]
   }) }}
 {% endblock %}
 

@@ -36,14 +36,18 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("session.cancel.confirmation.confirm"),
-      variant: "warning"
-    }],
-    links: [{
-      text: __("session.cancel.confirmation.cancel"),
-      href: session.uri
-    }]
+    buttons: [
+      {
+        text: __("session.cancel.confirmation.confirm"),
+        variant: "warning"
+      }
+    ],
+    links: [
+      {
+        text: __("session.cancel.confirmation.cancel"),
+        href: session.uri
+      }
+    ]
   }) }}
 {% endblock %}
 

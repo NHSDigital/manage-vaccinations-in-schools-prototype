@@ -14,16 +14,20 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("school.action.confirm", type),
-      variant: "warning",
-      attributes: {
-        formAction: school.uri + "/" + type
+    buttons: [
+      {
+        text: __("school.action.confirm", type),
+        variant: "warning",
+        attributes: {
+          formAction: school.uri + "/" + type
+        }
       }
-    }],
-    links: [{
-      text: __("school.action.cancel"),
-      href: school.uri + "/edit"
-    }]
+    ],
+    links: [
+      {
+        text: __("school.action.cancel"),
+        href: school.uri + "/edit"
+      }
+    ]
   }) }}
 {% endblock %}

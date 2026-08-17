@@ -9,12 +9,14 @@
   }) }}
 
   {{ appActionList({
-    items: [{
-      tag: {
-        text: __("patient.isArchived.label"),
-        classes: "nhsuk-tag--grey"
+    items: [
+      {
+        tag: {
+          text: __("patient.isArchived.label"),
+          classes: "nhsuk-tag--grey"
+        }
       }
-    }]
+    ]
   }) if patient.isArchived }}
 
   {{ appSectionNavigation({

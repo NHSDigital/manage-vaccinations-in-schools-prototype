@@ -12,16 +12,20 @@
     }) }}
 
     {{ appActionList({
-      items: [{
-        text: __("appointments.match.label"),
-        href: appointmentPath + "/match?referrer=" + appointmentPath
-      }, {
-        text: __("appointments.add.label"),
-        href: appointmentPath + "/add?referrer=" + appointmentPath
-      }, {
-        text: __("appointments.archive.label"),
-        href: appointmentPath + "/archive?referrer=" + appointmentPath
-      }]
+      items: [
+        {
+          text: __("appointments.match.label"),
+          href: appointmentPath + "/match?referrer=" + appointmentPath
+        },
+        {
+          text: __("appointments.add.label"),
+          href: appointmentPath + "/add?referrer=" + appointmentPath
+        },
+        {
+          text: __("appointments.archive.label"),
+          href: appointmentPath + "/archive?referrer=" + appointmentPath
+        }
+      ]
     }) }}
 
     {{ summaryList({

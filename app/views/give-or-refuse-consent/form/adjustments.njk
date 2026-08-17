@@ -11,38 +11,47 @@
         size: "l"
       }
     },
-    items: [{
-      label: __("consent.child.adjustments.assistanceAnimal.label"),
-      value: Adjustment.AssistanceAnimal
-    }, {
-      label: __("consent.child.adjustments.distraction.label"),
-      value: Adjustment.Distraction
-    }, {
-      label: __("consent.child.adjustments.extendedAppointment.label"),
-      value: Adjustment.ExtendedAppointment
-    }, {
-      label: __("consent.child.adjustments.firstAppointment.label"),
-      value: Adjustment.FirstAppointment
-    }, {
-      label: __("consent.child.adjustments.lastAppointment.label"),
-      value: Adjustment.LastAppointment
-    }, {
-      label: __("consent.child.adjustments.privacy.label"),
-      value: Adjustment.Privacy,
-      hint: __("consent.child.adjustments.privacy.hint")
-    }, {
-      label: __("consent.child.adjustments.homeVisit.label"),
-      value: Adjustment.HomeVisit
-    }, {
-      label: __("consent.child.adjustments.other.label"),
-      value: Adjustment.Other,
-      conditional: {
-        html: input({
-          label: __("consent.child.adjustmentsOther.title"),
-          decorate: "consent.child.adjustmentsOther"
-        })
+    items: [
+      {
+        label: __("consent.child.adjustments.assistanceAnimal.label"),
+        value: Adjustment.AssistanceAnimal
+      },
+      {
+        label: __("consent.child.adjustments.distraction.label"),
+        value: Adjustment.Distraction
+      },
+      {
+        label: __("consent.child.adjustments.extendedAppointment.label"),
+        value: Adjustment.ExtendedAppointment
+      },
+      {
+        label: __("consent.child.adjustments.firstAppointment.label"),
+        value: Adjustment.FirstAppointment
+      },
+      {
+        label: __("consent.child.adjustments.lastAppointment.label"),
+        value: Adjustment.LastAppointment
+      },
+      {
+        label: __("consent.child.adjustments.privacy.label"),
+        value: Adjustment.Privacy,
+        hint: __("consent.child.adjustments.privacy.hint")
+      },
+      {
+        label: __("consent.child.adjustments.homeVisit.label"),
+        value: Adjustment.HomeVisit
+      },
+      {
+        label: __("consent.child.adjustments.other.label"),
+        value: Adjustment.Other,
+        conditional: {
+          html: input({
+            label: __("consent.child.adjustmentsOther.title"),
+            decorate: "consent.child.adjustmentsOther"
+          })
+        }
       }
-    }],
+    ],
     decorate: "consent.child.adjustments"
   }) }}
 {% endblock %}

@@ -27,14 +27,18 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("clinicBooking.deleteAppointment.confirm"),
-      variant: "warning"
-    }],
-    links: [{
-      text: __("clinicBooking.deleteAppointment.cancel"),
-      href: booking.uri.new + "/add-another"
-    }]
+    buttons: [
+      {
+        text: __("clinicBooking.deleteAppointment.confirm"),
+        variant: "warning"
+      }
+    ],
+    links: [
+      {
+        text: __("clinicBooking.deleteAppointment.cancel"),
+        href: booking.uri.new + "/add-another"
+      }
+    ]
   }) }}
 {% endblock %}
 

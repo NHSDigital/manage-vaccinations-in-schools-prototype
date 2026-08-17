@@ -30,25 +30,28 @@
         size: "s"
       }
     },
-    items: [{
-      label: __("preScreen.hasSelfIdentified.true"),
-      value: true
-    }, {
-      label: __("preScreen.hasSelfIdentified.false"),
-      value: false,
-      conditional: {
-        html: input({
-          label: __("preScreen.identifiedBy.name.title"),
-          width: 20,
-          decorate: "preScreen.identifiedBy.name"
-        }) + input({
-          label: __("preScreen.identifiedBy.relationship.title"),
-          hint: __("preScreen.identifiedBy.relationship.hint"),
-          width: 20,
-          decorate: "preScreen.identifiedBy.relationship"
-        })
+    items: [
+      {
+        label: __("preScreen.hasSelfIdentified.true"),
+        value: true
+      },
+      {
+        label: __("preScreen.hasSelfIdentified.false"),
+        value: false,
+        conditional: {
+          html: input({
+            label: __("preScreen.identifiedBy.name.title"),
+            width: 20,
+            decorate: "preScreen.identifiedBy.name"
+          }) + input({
+            label: __("preScreen.identifiedBy.relationship.title"),
+            hint: __("preScreen.identifiedBy.relationship.hint"),
+            width: 20,
+            decorate: "preScreen.identifiedBy.relationship"
+          })
+        }
       }
-    }],
+    ],
     decorate: "preScreen.hasSelfIdentified"
   }) }}
 
@@ -71,9 +74,11 @@
 {% endfilter %}
 
   {{ checkboxes({
-    items: [{
-      label: __("preScreen.check.label")
-    }],
+    items: [
+      {
+        label: __("preScreen.check.label")
+      }
+    ],
     decorate: ["preScreen", "check"],
     _validate: {
       presence: {
@@ -109,13 +114,11 @@
     fieldset: {
       legend: __("preScreen.injectionSite.label")
     },
-    items: [{
-      label: VaccinationSite.ArmLeftUpper
-    }, {
-      label: VaccinationSite.ArmRightUpper
-    }, {
-      label: VaccinationSite.Other
-    }],
+    items: [
+      { label: VaccinationSite.ArmLeftUpper },
+      { label: VaccinationSite.ArmRightUpper },
+      { label: VaccinationSite.Other }
+    ],
     decorate: "preScreen.injectionSite",
     _validate: {
       conditional: {

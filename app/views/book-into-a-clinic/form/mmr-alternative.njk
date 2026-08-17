@@ -22,13 +22,16 @@
       }
     },
     hint: hint,
-    items: [{
-      label: __("clinicBooking.mmrAlternative.yes.label." + audience, firstName),
-      value: true
-    }, {
-      label: __("clinicBooking.mmrAlternative.no.label." + audience, firstName),
-      value: false
-    }],
+    items: [
+      {
+        label: __("clinicBooking.mmrAlternative.yes.label." + audience, firstName),
+        value: true
+      },
+      {
+        label: __("clinicBooking.mmrAlternative.no.label." + audience, firstName),
+        value: false
+      }
+    ],
     decorate: "appointment.mmrAlternative"
   }) }}
 {% endblock %}

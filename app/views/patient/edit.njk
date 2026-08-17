@@ -21,125 +21,153 @@
       }
     },
     lastRowBorder: false,
-    rows: [{
-      key: {
-        text: __("patient.nhsn.label")
+    rows: [
+      {
+        key: {
+          text: __("patient.nhsn.label")
+        },
+        value: {
+          html: patient.formatted.nhsn
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/nhsn",
+              visuallyHiddenText: "the child’s NHS number"
+            }
+          ]
+        }
       },
-      value: {
-        html: patient.formatted.nhsn
+      {
+        key: {
+          text: __("patient.fullName.label")
+        },
+        value: {
+          text: patient.fullName
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/name"
+            }
+          ]
+        }
       },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/nhsn",
-          visuallyHiddenText: "the child’s NHS number"
-        }]
+      {
+        key: {
+          text: __("patient.dob.label")
+        },
+        value: {
+          text: patient.formatted.dob
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/dob"
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: __("patient.gender.label")
+        },
+        value: {
+          text: patient.gender
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/gender",
+              visuallyHiddenText: __("patient.gender")
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: __("patient.address.label")
+        },
+        value: {
+          html: patient.formatted.address
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/address"
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: __("patient.school.label")
+        },
+        value: {
+          text: patient.formatted.schoolName
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/school"
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: __("patient.yearGroup.label")
+        },
+        value: {
+          text: patient.formatted.yearGroup
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/year-group"
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: __("patient.registrationGroup.label")
+        },
+        value: {
+          text: patient.registrationGroup or "Not provided"
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/registration-group"
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: __("patient.gpSurgery.label")
+        },
+        value: {
+          html: patient.gpSurgery if patient.gpSurgery else '<a href="edit/gp-surgery">Add ' + __("patient.gpSurgery.label") + "</a>"
+        },
+        actions: {
+          items: [
+            {
+              text: __("actions.change"),
+              href: "edit/gp-surgery"
+            }
+          ]
+        } if patient.gpSurgery
       }
-    }, {
-      key: {
-        text: __("patient.fullName.label")
-      },
-      value: {
-        text: patient.fullName
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/name"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.dob.label")
-      },
-      value: {
-        text: patient.formatted.dob
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/dob"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.gender.label")
-      },
-      value: {
-        text: patient.gender
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/gender",
-          visuallyHiddenText: __("patient.gender")
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.address.label")
-      },
-      value: {
-        html: patient.formatted.address
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/address"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.school.label")
-      },
-      value: {
-        text: patient.formatted.schoolName
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/school"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.yearGroup.label")
-      },
-      value: {
-        text: patient.formatted.yearGroup
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/year-group"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.registrationGroup.label")
-      },
-      value: {
-        text: patient.registrationGroup or "Not provided"
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/registration-group"
-        }]
-      }
-    }, {
-      key: {
-        text: __("patient.gpSurgery.label")
-      },
-      value: {
-        html: patient.gpSurgery if patient.gpSurgery else '<a href="edit/gp-surgery">Add ' + __("patient.gpSurgery.label") + "</a>"
-      },
-      actions: {
-        items: [{
-          text: __("actions.change"),
-          href: "edit/gp-surgery"
-        }] if patient.gpSurgery
-      }
-    }]
+    ]
   }) }}
 {% endblock %}

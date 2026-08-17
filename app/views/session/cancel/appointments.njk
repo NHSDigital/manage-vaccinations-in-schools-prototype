@@ -10,14 +10,18 @@
     {{ __("session.cancel.bookings.choice") | nhsukMarkdown }}
 
     {{ appButtonGroup({
-      buttons: [{
-        text: __("session.cancel.bookings.confirm"),
-        variant: "reverse"
-      }],
-      links: [{
-        text: __("session.cancel.bookings.cancel"),
-        href: session.uri
-      }]
+      buttons: [
+        {
+          text: __("session.cancel.bookings.confirm"),
+          variant: "reverse"
+        }
+      ],
+      links: [
+        {
+          text: __("session.cancel.bookings.cancel"),
+          href: session.uri
+        }
+      ]
     }) }}
   {% endset %}
 

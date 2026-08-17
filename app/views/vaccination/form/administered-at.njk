@@ -28,18 +28,21 @@
       }
     },
     hint: __("vaccination.administeredAt_time.hint"),
-    items: [{
-      label: "Hour",
-      width: 2,
-      id: "vaccination-administeredAt_-hour",
-      name: "[vaccination][administeredAt_][hour]",
-      value: vaccination.administeredAt_.hour
-    }, {
-      label: "Minute",
-      width: 2,
-      id: "vaccination-administeredAt_-minute",
-      name: "[vaccination][administeredAt_][minute]",
-      value: vaccination.administeredAt_.minute
-    }]
+    items: [
+      {
+        label: "Hour",
+        width: 2,
+        id: "vaccination-administeredAt_-hour",
+        name: "[vaccination][administeredAt_][hour]",
+        value: vaccination.administeredAt_.hour
+      },
+      {
+        label: "Minute",
+        width: 2,
+        id: "vaccination-administeredAt_-minute",
+        name: "[vaccination][administeredAt_][minute]",
+        value: vaccination.administeredAt_.minute
+      }
+    ]
   }) if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated }}
 {% endblock %}

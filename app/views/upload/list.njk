@@ -55,21 +55,24 @@
         }) }}
 
         {{ appButtonGroup({
-          buttons: [{
-            text: __("search.confirm"),
-            small: true,
-            variant: "secondary",
-            attributes: {
-              formaction: params.formaction,
-              formmethod: "post",
-              role: "search"
-            }
-          }, {
-            text: __("search.clear"),
-            href: "/uploads",
-            small: true,
-            variant: "secondary"
-          } if data.type or data.status]
+          buttons: [
+            {
+              text: __("search.confirm"),
+              small: true,
+              variant: "secondary",
+              attributes: {
+                formaction: params.formaction,
+                formmethod: "post",
+                role: "search"
+              }
+            },
+            {
+              text: __("search.clear"),
+              href: "/uploads",
+              small: true,
+              variant: "secondary"
+            } if data.type or data.status
+          ]
         }) }}
       {% endcall %}
     </app-auto-submit>

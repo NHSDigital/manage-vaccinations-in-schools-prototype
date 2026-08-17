@@ -15,13 +15,16 @@
       }
     },
     small: true,
-    items: [{
-      label: __("upload.show.partial.decision.ignore.label", type),
-      value: "ignore"
-    }, {
-      label: __("upload.show.partial.decision.restore.label", type),
-      value: "restore"
-    }],
+    items: [
+      {
+        label: __("upload.show.partial.decision.ignore.label", type),
+        value: "ignore"
+      },
+      {
+        label: __("upload.show.partial.decision.restore.label", type),
+        value: "restore"
+      }
+    ],
     decorate: "pending-record-" + loop.index0
   }) %}
   {% set archiveDecision = __("upload.show.partial.decision.restore.label", type) %}
@@ -48,16 +51,20 @@
       }
     },
     small: true,
-    items: [{
-      label: __("upload.show.partial.decision.original.label", type),
-      value: "original"
-    }, {
-      label: __("upload.show.partial.decision.duplicate.label", type),
-      value: "duplicate"
-    }, {
-      label: __("upload.show.partial.decision.both.label", type),
-      value: "both"
-    } if patient.hasMissingNhsNumber],
+    items: [
+      {
+        label: __("upload.show.partial.decision.original.label", type),
+        value: "original"
+      },
+      {
+        label: __("upload.show.partial.decision.duplicate.label", type),
+        value: "duplicate"
+      },
+      {
+        label: __("upload.show.partial.decision.both.label", type),
+        value: "both"
+      } if patient.hasMissingNhsNumber
+    ],
     decorate: "decision-" + loop.index0
   }) %}
   {% set duplicateDecision = __("upload.show.partial.decision.duplicate.label", type) %}

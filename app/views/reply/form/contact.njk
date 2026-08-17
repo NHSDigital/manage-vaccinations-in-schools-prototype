@@ -80,19 +80,22 @@
     fieldset: {
       legend: __("contact.hasCommunicationNeeds.title")
     },
-    items: [{
-      label: __("contact.hasCommunicationNeeds.yes"),
-      value: true,
-      conditional: {
-        html: textarea({
-          label: __("contact.communicationNeeds.title"),
-          decorate: "reply.contact.communicationNeeds"
-        })
+    items: [
+      {
+        label: __("contact.hasCommunicationNeeds.yes"),
+        value: true,
+        conditional: {
+          html: textarea({
+            label: __("contact.communicationNeeds.title"),
+            decorate: "reply.contact.communicationNeeds"
+          })
+        }
+      },
+      {
+        label: __("contact.hasCommunicationNeeds.no"),
+        value: false
       }
-    }, {
-      label: __("contact.hasCommunicationNeeds.no"),
-      value: false
-    }],
+    ],
     decorate: "reply.contact.hasCommunicationNeeds"
   }) }}
 {% endblock %}

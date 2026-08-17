@@ -8,13 +8,16 @@
 {% block beforeContent %}
   {{ breadcrumb({
     classes: "nhsuk-breadcrumb--reverse",
-    items: [{
-      text: session.name,
-      href: session.uri
-    }, {
-      text: __("session.patients.title"),
-      href: session.uri + "/patients"
-    }]
+    items: [
+      {
+        text: session.name,
+        href: session.uri
+      },
+      {
+        text: __("session.patients.title"),
+        href: session.uri + "/patients"
+      }
+    ]
   }) }}
 {% endblock %}
 

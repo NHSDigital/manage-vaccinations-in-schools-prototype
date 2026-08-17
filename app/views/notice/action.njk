@@ -16,16 +16,20 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("notice.action.confirm", type),
-      variant: "warning",
-      attributes: {
-        formAction: notice.uri + "/" + type
+    buttons: [
+      {
+        text: __("notice.action.confirm", type),
+        variant: "warning",
+        attributes: {
+          formAction: notice.uri + "/" + type
+        }
       }
-    }],
-    links: [{
-      text: __("notice.action.cancel"),
-      href: "/notices"
-    }]
+    ],
+    links: [
+      {
+        text: __("notice.action.cancel"),
+        href: "/notices"
+      }
+    ]
   }) }}
 {% endblock %}

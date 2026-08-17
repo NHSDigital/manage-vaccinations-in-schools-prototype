@@ -21,19 +21,21 @@
 
     {{ radios({
       hint: __("healthQuestions." + key + ".hint", vaccineName),
-      items: [{
-        label: __("consent.healthAnswers.yes"),
-        conditional: {
-          html: textarea({
-            label: __("consent.healthAnswers.details"),
-            hint: __("healthQuestions." + key + ".detailsHint"),
-            decorate: ["consent", "healthAnswers", key, "details"]
-          })
-        } if not hasSubQuestions
-      },
-      {
-        label: __("consent.healthAnswers.no")
-      }],
+      items: [
+        {
+          label: __("consent.healthAnswers.yes"),
+          conditional: {
+            html: textarea({
+              label: __("consent.healthAnswers.details"),
+              hint: __("healthQuestions." + key + ".detailsHint"),
+              decorate: ["consent", "healthAnswers", key, "details"]
+            })
+          } if not hasSubQuestions
+        },
+        {
+          label: __("consent.healthAnswers.no")
+        }
+      ],
       decorate: ["consent", "healthAnswers", key, "answer"]
     }) }}
   {% endcall %}

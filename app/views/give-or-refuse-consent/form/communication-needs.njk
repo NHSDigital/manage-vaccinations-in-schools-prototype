@@ -12,19 +12,22 @@
       }
     },
     hint: __("consent.contact.hasCommunicationNeeds.hint"),
-    items: [{
-      label: __("consent.contact.hasCommunicationNeeds.yes"),
-      value: true,
-      conditional: {
-        html: textarea({
-          label: __("consent.contact.communicationNeeds.title"),
-          decorate: "consent.contact_.communicationNeeds"
-        })
+    items: [
+      {
+        label: __("consent.contact.hasCommunicationNeeds.yes"),
+        value: true,
+        conditional: {
+          html: textarea({
+            label: __("consent.contact.communicationNeeds.title"),
+            decorate: "consent.contact_.communicationNeeds"
+          })
+        }
+      },
+      {
+        label: __("consent.contact.hasCommunicationNeeds.no"),
+        value: false
       }
-    }, {
-      label: __("consent.contact.hasCommunicationNeeds.no"),
-      value: false
-    }],
+    ],
     decorate: "consent.contact_.hasCommunicationNeeds"
   }) }}
 {% endblock %}

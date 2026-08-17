@@ -1,28 +1,32 @@
 {% set rows = [] %}
 {% for programme in session.programmes %}
-  {% set rows = rows.concat([{
-    key: {
-      text: __("session.tally.vaccinatedWithVaccineCriteria.label", {
-        programme: programme,
-        vaccineCriteria: programme.standardVaccine.criteria
-      }) | safe
-    },
-    value: {
-      text: session.tally(programme.id, PatientStatus.Vaccinated, programme.standardVaccine.criteria)
-    }
-  }]) %}
-  {% if programme.alternativeVaccine %}
-    {% set rows = rows.concat([{
+  {% set rows = rows.concat([
+    {
       key: {
         text: __("session.tally.vaccinatedWithVaccineCriteria.label", {
           programme: programme,
-          vaccineCriteria: programme.alternativeVaccine.criteria
+          vaccineCriteria: programme.standardVaccine.criteria
         }) | safe
       },
       value: {
-        text: session.tally(programme.id, PatientStatus.Vaccinated, programme.alternativeVaccine.criteria)
+        text: session.tally(programme.id, PatientStatus.Vaccinated, programme.standardVaccine.criteria)
       }
-    }]) %}
+    }
+  ]) %}
+  {% if programme.alternativeVaccine %}
+    {% set rows = rows.concat([
+      {
+        key: {
+          text: __("session.tally.vaccinatedWithVaccineCriteria.label", {
+            programme: programme,
+            vaccineCriteria: programme.alternativeVaccine.criteria
+          }) | safe
+        },
+        value: {
+          text: session.tally(programme.id, PatientStatus.Vaccinated, programme.alternativeVaccine.criteria)
+        }
+      }
+    ]) %}
   {% endif %}
 {% endfor %}
 

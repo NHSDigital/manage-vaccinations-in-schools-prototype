@@ -15,13 +15,16 @@
       }
     },
     hint: __("clinicBooking.fluAlternative.hint"),
-    items: [{
-      label: __("clinicBooking.fluAlternative.yes.label." + audience),
-      value: true
-    }, {
-      label: __("clinicBooking.fluAlternative.no.label." + audience),
-      value: false
-    }],
+    items: [
+      {
+        label: __("clinicBooking.fluAlternative.yes.label." + audience),
+        value: true
+      },
+      {
+        label: __("clinicBooking.fluAlternative.no.label." + audience),
+        value: false
+      }
+    ],
     decorate: "appointment.fluAlternative"
   }) }}
 {% endblock %}

@@ -13,18 +13,23 @@
         })
       }
     },
-    items: [{
-      label: __("patientSession.registration.present"),
-      value: RegistrationStatus.Present
-    }, {
-      label: __("patientSession.registration.absent"),
-      value: RegistrationStatus.Absent
-    }, {
-      divider: "or"
-    }, {
-      label: __("patientSession.registration.pending"),
-      value: RegistrationStatus.Pending
-    }],
+    items: [
+      {
+        label: __("patientSession.registration.present"),
+        value: RegistrationStatus.Present
+      },
+      {
+        label: __("patientSession.registration.absent"),
+        value: RegistrationStatus.Absent
+      },
+      {
+        divider: "or"
+      },
+      {
+        label: __("patientSession.registration.pending"),
+        value: RegistrationStatus.Pending
+      }
+    ],
     decorate: "patientSession.register"
   }) }}
 {% endblock %}

@@ -5,13 +5,16 @@
   {% set items = getBooleanItems() %}
 {% else %}
   {% set title = __("vaccination.programme.title", { patient: vaccination.patient }) %}
-  {% set items = [{
-    label: "MMRV",
-    value: true
-  }, {
-    label: "MMR",
-    value: false
-  }] %}
+  {% set items = [
+    {
+      label: "MMRV",
+      value: true
+    },
+    {
+      label: "MMR",
+      value: false
+    }
+  ] %}
 {% endif %}
 
 {% block form %}

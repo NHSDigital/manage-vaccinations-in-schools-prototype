@@ -35,14 +35,18 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("patientSession.clinicAppointment.cancel.confirm.confirm"),
-      variant: "warning"
-    }],
-    links: [{
-      text: __("patientSession.clinicAppointment.cancel.confirm.cancel"),
-      href: patientSession.uri
-    }]
+    buttons: [
+      {
+        text: __("patientSession.clinicAppointment.cancel.confirm.confirm"),
+        variant: "warning"
+      }
+    ],
+    links: [
+      {
+        text: __("patientSession.clinicAppointment.cancel.confirm.cancel"),
+        href: patientSession.uri
+      }
+    ]
   }) }}
 {% endblock %}
 

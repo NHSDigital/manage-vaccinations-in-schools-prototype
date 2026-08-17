@@ -16,13 +16,16 @@
       },
       {
         html: appActionList({
-          items: [{
-            text: __("actions.change"),
-            href: appointment.uri.new + "/check-answers"
-          }, {
-            text: __("actions.delete"),
-            href: appointment.uri.new + "/delete-appointment"
-          } if booking.appointments.length > 1]
+          items: [
+            {
+              text: __("actions.change"),
+              href: appointment.uri.new + "/check-answers"
+            },
+            {
+              text: __("actions.delete"),
+              href: appointment.uri.new + "/delete-appointment"
+            } if booking.appointments.length > 1
+          ]
         })
       }
     ]) %}

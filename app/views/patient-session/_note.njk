@@ -19,26 +19,30 @@
         size: "s"
       }
     },
-    items: [{
-      label: "Session",
-      value: AuditEventType.SessionNote,
-      hint: __("patientSession.sessionNote.hint")
-    }, {
-      label: "Programme",
-      value: AuditEventType.ProgrammeNote,
-      conditional: {
-        html: checkboxes({
-          items: programmeItems,
-          decorate: "programme_ids"
-        })
+    items: [
+      {
+        label: "Session",
+        value: AuditEventType.SessionNote,
+        hint: __("patientSession.sessionNote.hint")
+      },
+      {
+        label: "Programme",
+        value: AuditEventType.ProgrammeNote,
+        conditional: {
+          html: checkboxes({
+            items: programmeItems,
+            decorate: "programme_ids"
+          })
+        }
+      } if session.programmes.length > 1 else {
+        label: session.programmeNames.titleCase + " programme",
+        value: AuditEventType.ProgrammeNote
+      },
+      {
+        label: "Child record",
+        value: AuditEventType.RecordNote
       }
-    } if session.programmes.length > 1 else {
-      label: session.programmeNames.titleCase + " programme",
-      value: AuditEventType.ProgrammeNote
-    }, {
-      label: "Child record",
-      value: AuditEventType.RecordNote
-    }],
+    ],
     decorate: "type"
   }) }}
 

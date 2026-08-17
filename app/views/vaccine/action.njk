@@ -14,16 +14,20 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("vaccine.action.confirm", type),
-      variant: "warning",
-      attributes: {
-        formAction: vaccine.uri + "/" + type
+    buttons: [
+      {
+        text: __("vaccine.action.confirm", type),
+        variant: "warning",
+        attributes: {
+          formAction: vaccine.uri + "/" + type
+        }
       }
-    }],
-    links: [{
-      text: __("vaccine.action.cancel"),
-      href: vaccine.uri
-    }]
+    ],
+    links: [
+      {
+        text: __("vaccine.action.cancel"),
+        href: vaccine.uri
+      }
+    ]
   }) }}
 {% endblock %}
