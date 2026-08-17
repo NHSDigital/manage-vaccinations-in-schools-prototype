@@ -22,8 +22,10 @@
   {% endset %}
 
   {{ panel({
-    titleText: title,
-    titleSize: "l",
+    heading: {
+      text: title,
+      size: "l"
+    },
     variant: "interruption",
     html: panelHtml
   }) }}
