@@ -2,15 +2,12 @@
 {% for move in upload.moves %}
   {% set moveRows = moveRows | push([
     {
-      header: __("patient.fullNameAndNhsn.label"),
       html: move.patient.formatted.fullNameAndNhsn
     },
     {
-      header: __("move.label"),
       html: move.movementForImport
     },
     {
-      header: __("upload.show.moves.decision.label"),
       html: radios({
         formGroup: {
           classes: "nhsuk-u-margin-bottom-2"

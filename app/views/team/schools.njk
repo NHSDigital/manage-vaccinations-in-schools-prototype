@@ -23,13 +23,10 @@
       {% for school in team.schools %}
         {% set schoolRows = schoolRows | push([
           {
-            header: __("school.name.label"),
             html: school.formatted.nameAndAddress or "Not provided"
           }, {
-            header: __("school.urn.label"),
             html: school.formatted.id or "Not provided"
           }, {
-            header: __("actions.label"),
             html: appActionList({
               items: [{
                 text: __("school.edit.label"),

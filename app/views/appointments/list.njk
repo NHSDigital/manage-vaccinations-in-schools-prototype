@@ -30,27 +30,21 @@
   {% for appointment in results.page %}
     {% set appointmentRows = appointmentRows | push([
       {
-        header: __("appointments.summary.label"),
         html: appointment.link.unmatched.withParent | replace("/unmatched-appointments", appointmentsPath)
       },
       {
-        header: __("appointments.location.label"),
         text: appointment.formatted.locationName
       } if not session,
       {
-        header: __("appointments.date.label"),
         text: appointment.formatted.date
       } if not session,
       {
-        header: __("appointments.time.label"),
         text: appointment.formatted.timeSlot
       } if session,
       {
-        header: __("appointments.vaccinations.label"),
         text: appointment.formatted.vaccinations | safe
       } if session,
       {
-        header: __("actions.label"),
         html: appActionList({
           items: [{
             text: __("appointments.match.label"),

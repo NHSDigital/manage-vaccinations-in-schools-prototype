@@ -11,11 +11,9 @@
   {% for appointment in booking.appointments %}
     {% set appointmentRows = appointmentRows | push([
       {
-        header: __("clinicBooking.addAnother.summary.child.label"),
         html: appointment.fullFriendlyName
       },
       {
-        header: __("actions.label"),
         html: appActionList({
           items: [{
             text: __("actions.change"),

@@ -537,15 +537,12 @@ export default () => {
 
       tableRows.push([
         {
-          header: __('vaccine.label'),
           text: vaccine.brand
         },
         {
-          header: __('user.vaccinations.label'),
           text: vaccinationCount
         },
         {
-          header: __('defaultBatch.label'),
           html: defaultBatchHtml
         }
       ])

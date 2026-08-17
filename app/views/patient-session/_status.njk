@@ -15,11 +15,9 @@
   {% for vaccination in patientProgramme.vaccinationOutcomes | reverse %}
     {% set vaccinationRows = vaccinationRows | push([
       {
-        header: __("vaccination.administeredAt_date.label"),
         html: vaccination.link.administeredAt
       },
       {
-        header: __("vaccination.outcome.label"),
         html: vaccination.formatted.outcome
       }
     ]) %}
