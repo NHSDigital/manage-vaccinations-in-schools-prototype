@@ -15,9 +15,11 @@
   classes: classes | join(" "),
   clickable: true if params.href,
   href: params.href,
-  heading: params.heading,
-  headingLevel: params.headingLevel | default(5),
-  headingSize: params.headingSize | default("xs")
+  heading: {
+    text: params.heading.text,
+    level: params.heading.level | default(5),
+    size: params.heading.size | default("xs")
+  }
 }) %}
   <p class="nhsuk-card__description app-card__data">
     {{- params.data | default(0) -}}

@@ -35,8 +35,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("upload.show.summary"),
-      headingSize: "m",
+      heading: {
+        text: __("upload.show.summary"),
+        size: "m"
+      },
       actions: {
         items: [
           {
@@ -96,20 +98,24 @@
 
   {{ card({
     feature: true,
-    heading: __("upload.devoid.title"),
-    headingClasses: "app-card__heading--grey",
-    headingLevel: 2,
-    headingSize: "m",
+    heading: {
+      text: __("upload.devoid.title"),
+      classes: "app-card__heading--grey",
+      level: 2,
+      size: "m"
+    },
     description: __("upload.devoid.description")
   }) if upload.status == UploadStatus.Devoid }}
 
   {% if upload.status == UploadStatus.Invalid %}
     {% call card({
       feature: true,
-      heading: __("upload.invalid.title"),
-      headingClasses: "app-card__heading--red",
-      headingLevel: 2,
-      headingSize: "m"
+      heading: {
+        text: __("upload.invalid.title"),
+        classes: "app-card__heading--red",
+        level: 2,
+        size: "m"
+      }
     }) %}
       <div class="nhsuk-u-reading-width">
         {{ actionLink({
@@ -135,10 +141,12 @@
     {% call card({
       classes: "nhsuk-u-margin-bottom-6",
       feature: true,
-      heading: __("upload.failed.title"),
-      headingClasses: "app-card__heading--red",
-      headingLevel: 2,
-      headingSize: "m"
+      heading: {
+        text: __("upload.failed.title"),
+        classes: "app-card__heading--red",
+        level: 2,
+        size: "m"
+      }
     }) %}
       <div class="nhsuk-u-reading-width">
         {{ __("upload.failed.description") | nhsukMarkdown }}

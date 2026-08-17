@@ -28,8 +28,10 @@
     <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       {% call card({
         feature: true,
-        heading: move.source,
-        headingSize: "m"
+        heading: {
+          text: move.source,
+          size: "m"
+        }
       }) %}
         {{ appStatus({
           text: __("move.team_id.description", { move: move }),
@@ -56,8 +58,10 @@
       {{ summaryList({
         card: {
           feature: true,
-          heading: __("patient.label"),
-          headingSize: "m"
+          heading: {
+            text: __("patient.label"),
+            size: "m"
+          }
         },
         lastRowBorder: false,
         rows: summaryRows(move.patient, {

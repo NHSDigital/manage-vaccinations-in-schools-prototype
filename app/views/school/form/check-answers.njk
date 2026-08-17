@@ -10,8 +10,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("school.new.summary"),
-      headingClasses: "nhsuk-heading-m"
+      heading: {
+        text: __("school.new.summary"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(school, {

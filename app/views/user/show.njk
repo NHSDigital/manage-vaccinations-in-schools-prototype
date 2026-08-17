@@ -14,8 +14,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("user.show.summary"),
-        headingSize: "m"
+        heading: {
+          text: __("user.show.summary"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(user, {

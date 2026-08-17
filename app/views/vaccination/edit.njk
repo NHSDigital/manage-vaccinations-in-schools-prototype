@@ -13,8 +13,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("vaccination.edit.summary"),
-      headingSize: "m"
+      heading: {
+        text: __("vaccination.edit.summary"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(vaccination, {

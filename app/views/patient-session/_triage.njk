@@ -4,10 +4,12 @@
 {# Health answers #}
 {{ summaryList({
   card: {
-    heading: __mf("healthAnswers.count", {
-      count: patientProgramme.answersNeedingTriageCount
-    }),
-    headingSize: "m",
+    heading: {
+      text: __mf("healthAnswers.count", {
+        count: patientProgramme.answersNeedingTriageCount
+      }),
+      size: "m"
+    },
     variant: "warning" if patientProgramme.answersNeedingTriageCount
   },
   classes: "app-summary-list--full-width",
@@ -16,8 +18,10 @@
 
 {# Triage #}
 {% call card({
-  heading: __("patientSession.screen.title", programme.nameSentenceCase),
-  headingSize: "m"
+  heading: {
+    text: __("patientSession.screen.title", programme.nameSentenceCase),
+    size: "m"
+  }
 }) %}
   {# Description #}
   {{ patientProgramme.screenDescription | nhsukMarkdown }}

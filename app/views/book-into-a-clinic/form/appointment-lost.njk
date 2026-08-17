@@ -11,8 +11,10 @@
 
   {{ summaryList({
     card: {
-      heading: "Appointment details",
-      headingSize: "m"
+      heading: {
+        text: "Appointment details",
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {

@@ -25,8 +25,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("consent.label"),
-        headingSize: "m"
+        heading: {
+          text: __("consent.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -40,8 +42,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("contact.label"),
-        headingSize: "m"
+        heading: {
+          text: __("contact.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent.contact, {
@@ -57,8 +61,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("child.label"),
-        headingSize: "m"
+        heading: {
+          text: __("child.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent.child, {
@@ -75,8 +81,10 @@
     {{ summaryList({
       classes: "app-summary-list--full-width",
       card: {
-        heading: __("consent.healthAnswers.label"),
-        headingSize: "m"
+        heading: {
+          text: __("consent.healthAnswers.label"),
+          size: "m"
+        }
       },
       rows: healthAnswerRows(consent.healthAnswers)
     }) if consent.healthAnswers }}

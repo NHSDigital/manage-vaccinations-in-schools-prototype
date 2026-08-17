@@ -49,8 +49,10 @@
       id: "notices",
       responsive: true,
       card: {
-        heading: __mf("notice.count", { count: notices.length }),
-        headingLevel: 3
+        heading: {
+          text: __mf("notice.count", { count: notices.length }),
+          level: 3
+        }
       },
       head: [
         { text: __("patient.label") },

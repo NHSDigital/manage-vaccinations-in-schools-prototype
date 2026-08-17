@@ -18,8 +18,10 @@
       {{ summaryList({
         card: {
           feature: true,
-          heading: __("appointments.label"),
-          headingSize: "m"
+          heading: {
+            text: __("appointments.label"),
+            size: "m"
+          }
         },
         lastRowBorder: false,
         rows: summaryRows(appointment.child, {
@@ -48,8 +50,10 @@
       {{ summaryList({
         card: {
           feature: true,
-          heading: __("patient.label"),
-          headingSize: "m"
+          heading: {
+            text: __("patient.label"),
+            size: "m"
+          }
         },
         lastRowBorder: false,
         rows: summaryRows(patient, {

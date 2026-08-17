@@ -7,8 +7,10 @@
   {% call card({
     classes: "app-filters",
     feature: true,
-    heading: __("report.search.label"),
-    headingLevel: params.headingLevel | default(2)
+    heading: {
+      text: __("report.search.label"),
+      level: 3
+    }
   }) %}
     {{ radios({
       fieldset: {

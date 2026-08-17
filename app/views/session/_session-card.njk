@@ -1,9 +1,11 @@
 {{ summaryList({
   card: {
     classes: "app-card--compact",
-    heading: session.formatted.date | highlightQuery(data.q) | safe,
-    headingSize: "s",
-    headingLevel: 4,
+    heading: {
+      text: session.formatted.date | highlightQuery(data.q) | safe,
+      size: "s",
+      level: 4
+    },
     href: session.uri + "/patients",
     clickable: true
   },
@@ -19,9 +21,11 @@
 }) if account.isSchoolUser else summaryList({
   card: {
     classes: "app-card--compact",
-    heading: session.location.name | highlightQuery(data.q) | safe,
-    headingLevel: 3,
-    headingSize: "s",
+    heading: {
+      text: session.location.name | highlightQuery(data.q) | safe,
+      level: 3,
+      size: "s"
+    },
     href: session.uri,
     clickable: true
   },

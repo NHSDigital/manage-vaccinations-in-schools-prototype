@@ -89,22 +89,28 @@
 
   {% else %}
     {{ card({
-      heading: __("vaccination.new.check-answers.summary"),
-      headingSize: "m",
-      descriptionHtml: vaccinationSummaryListHtml
+      heading: {
+        text: __("vaccination.new.check-answers.summary"),
+        size: "m"
+      },
+      description: {
+        html: vaccinationSummaryListHtml
+      }
     }) }}
   {% endif %}
 
   {{ card({
     headingHtml: " ",
-    descriptionHtml: textarea({
-      classes: "nhsuk-u-margin-bottom-0",
-      label: {
-        text: __("vaccination.note.label") + " (optional)",
-        size: "m"
-      },
-      hint: { text: __("vaccination.note.hint") if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated else __("vaccination.note.hintAlreadyVaccinated") },
-      decorate: "vaccination.note"
-    })
+    description: {
+      html: textarea({
+        classes: "nhsuk-u-margin-bottom-0",
+        label: {
+          text: __("vaccination.note.label") + " (optional)",
+          size: "m"
+        },
+        hint: { text: __("vaccination.note.hint") if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated else __("vaccination.note.hintAlreadyVaccinated") },
+        decorate: "vaccination.note"
+      })
+    }
   }) }}
 {% endblock %}

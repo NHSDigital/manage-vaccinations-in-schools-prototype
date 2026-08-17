@@ -86,9 +86,11 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
-            headingSize: "s",
-            headingLevel: 4,
+            heading: {
+              text: patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
+              size: "s",
+              level: 4
+            },
             href: patient.uri,
             clickable: true
           },

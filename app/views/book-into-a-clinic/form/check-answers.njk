@@ -12,8 +12,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("clinicBooking.check-answers.summary.child"),
-      headingSize: "m"
+      heading: {
+        text: __("clinicBooking.check-answers.summary.child"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(appointment.child if isParentFacing else patient, {
@@ -41,8 +43,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("clinicBooking.check-answers.summary.appointment"),
-      headingSize: "m"
+      heading: {
+        text: __("clinicBooking.check-answers.summary.appointment"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {
@@ -69,8 +73,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("clinicBooking.check-answers.summary.contact"),
-      headingSize: "m"
+      heading: {
+        text: __("clinicBooking.check-answers.summary.contact"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(booking.contact, {

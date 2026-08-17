@@ -44,8 +44,10 @@
 
     <div class="nhsuk-grid-column-two-thirds">
       {% call card({
-        heading: __("emails." + dir + "." + template + ".name", placeholders) | safe,
-        headingSize: "s"
+        heading: {
+          text: __("emails." + dir + "." + template + ".name", placeholders) | safe,
+          size: "s"
+        }
       }) %}
         <article class="prototype-email">
           <footer class="prototype-email__header">

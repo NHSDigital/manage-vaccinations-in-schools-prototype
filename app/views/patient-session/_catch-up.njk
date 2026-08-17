@@ -28,8 +28,10 @@
   {% endfor %}
 
   {% call card({
-    heading: __("patientSession.catchUps.title"),
-    headingLevel: 3
+    heading: {
+      text: __("patientSession.catchUps.title"),
+      level: 3
+    }
   }) %}
     {% if patientProgrammeRows.length > 0 %}
       {{ table({

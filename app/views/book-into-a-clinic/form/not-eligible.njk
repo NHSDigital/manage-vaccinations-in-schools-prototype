@@ -21,9 +21,11 @@
       {{ summaryList({
         card: {
           classes: "app-card--compact",
-          heading: patient.fullName | safe,
-          headingSize: "s",
-          headingLevel: 2
+          heading: {
+            text: patient.fullName | safe,
+            level: 2,
+            size: "s"
+          }
         },
         lastRowBorder: false,
         rows: summaryRows(patient, {
