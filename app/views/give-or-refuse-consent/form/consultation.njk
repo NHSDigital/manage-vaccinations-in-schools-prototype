@@ -1,7 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("consent.hasRequestedConsultation.title") %}
-{% set hint = __("consent.hasRequestedConsultation.hint." + consent.refusalReason) %}
 
 {% block form %}
   {{ radios({
@@ -13,13 +12,13 @@
         })
       }
     },
-    hint: { text: hint } if hint,
+    hint: __("consent.hasRequestedConsultation.hint." + consent.refusalReason),
     items: [{
-      text: __("consent.hasRequestedConsultation.yes"),
+      label: __("consent.hasRequestedConsultation.yes"),
       value: true
     },
     {
-      text: __("consent.hasRequestedConsultation.no"),
+      label: __("consent.hasRequestedConsultation.no"),
       value: false
     }],
     decorate: "consent.hasRequestedConsultation"

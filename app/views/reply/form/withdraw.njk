@@ -13,23 +13,23 @@
   {{ radios({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("reply.refusalReason.label")
+        text: __("reply.refusalReason.label"),
+        size: "m"
       }
     },
     items: [
-      { text: ReplyRefusal.Gelatine } if programme.type == ProgrammeType.Flu,
-      { text: ReplyRefusal.GelatineMMR } if programme.type == ProgrammeType.MMR,
-      { text: ReplyRefusal.AlreadyVaccinated },
-      { text: ReplyRefusal.GettingElsewhere },
-      { text: ReplyRefusal.Medical },
-      { text: ReplyRefusal.Personal },
+      { label: ReplyRefusal.Gelatine } if programme.type == ProgrammeType.Flu,
+      { label: ReplyRefusal.GelatineMMR } if programme.type == ProgrammeType.MMR,
+      { label: ReplyRefusal.AlreadyVaccinated },
+      { label: ReplyRefusal.GettingElsewhere },
+      { label: ReplyRefusal.Medical },
+      { label: ReplyRefusal.Personal },
       { divider: "or" },
       {
-        text: ReplyRefusal.Other,
+        label: ReplyRefusal.Other,
         conditional: {
           html: input({
-            label: { text: __("reply.refusalReasonOther.label") },
+            label: __("reply.refusalReasonOther.label"),
             decorate: "reply.refusalReasonOther"
           })
         }
@@ -40,8 +40,8 @@
 
   {{ textarea({
     label: {
-      classes: "nhsuk-label--m",
-      text: __("reply.note.label")
+      text: __("reply.note.label"),
+      size: "m"
     },
     decorate: "reply.note"
   }) }}

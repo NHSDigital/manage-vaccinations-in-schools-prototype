@@ -9,7 +9,7 @@
   }) }}
 
   {{ __("session.vaccinationPeriods.hint") | nhsukMarkdown }}
-  
+
   {% for vaccinationPeriod in session.vaccinationPeriods %}
     {% call fieldset({
       legend: {
@@ -21,11 +21,11 @@
     {{ dateInput({
       fieldset: {
         legend: {
-          size: "m" if session.vaccinationPeriods.length === 1 else "s",
-          text: __("session.vaccinationPeriods.period.startTime.label")
+          text: __("session.vaccinationPeriods.period.startTime.label"),
+          size: "m" if session.vaccinationPeriods.length === 1 else "s"
         }
       },
-      hint: { text: __("session.vaccinationPeriods.period.startTime.hint") },
+      hint: __("session.vaccinationPeriods.period.startTime.hint"),
       items: [
         {
           label: "Hour",
@@ -49,11 +49,11 @@
     {{ dateInput({
       fieldset: {
         legend: {
-          size: "m" if session.vaccinationPeriods.length === 1 else "s",
-          text: __("session.vaccinationPeriods.period.endTime.label")
+          text: __("session.vaccinationPeriods.period.endTime.label"),
+          size: "m" if session.vaccinationPeriods.length === 1 else "s"
         }
       },
-      hint: { text: __("session.vaccinationPeriods.period.endTime.hint") },
+      hint: __("session.vaccinationPeriods.period.endTime.hint"),
       items: [
         {
           label: "Hour",

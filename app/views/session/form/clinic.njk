@@ -14,7 +14,7 @@
     })}}
   {% else %}
     {{ select({
-      label: { text: __("session.clinic.search.label") },
+      label: __("session.clinic.search.label"),
       items: locationItems(clinics, session.clinic_id),
       decorate: "session.clinic_id",
       attributes: {

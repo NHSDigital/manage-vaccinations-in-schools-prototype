@@ -258,9 +258,7 @@ export const giveOrRefuseConsentController = {
         {
           text: __('consent.decision.no.label'),
           value: ReplyDecision.Refused,
-          hint: {
-            text: __('consent.decision.no.hint')
-          }
+          hint: __('consent.decision.no.hint')
         }
       ]
 
@@ -276,20 +274,18 @@ export const giveOrRefuseConsentController = {
       response.locals.decisionItems = [
         {
           text: __('consent.decision.nasal.label'),
-          hint: { text: __('consent.decision.nasal.hint') },
+          hint: __('consent.decision.nasal.hint'),
           value: ReplyDecision.Given
         },
         {
           text: __('consent.decision.injection.label'),
-          hint: { text: __('consent.decision.injection.hint') },
+          hint: __('consent.decision.injection.hint'),
           value: ReplyDecision.OnlyAlternativeInjection
         },
         {
           text: __('consent.decision.no.label'),
           value: ReplyDecision.Refused,
-          hint: {
-            text: __('consent.decision.no.hint')
-          }
+          hint: __('consent.decision.no.hint')
         }
       ]
     } else if (session.presetNames.includes(SessionPresetName.MMR)) {
@@ -302,9 +298,7 @@ export const giveOrRefuseConsentController = {
         {
           text: __('consent.decision.no.label'),
           value: ReplyDecision.Refused,
-          hint: {
-            text: __('consent.decision.no.hint')
-          }
+          hint: __('consent.decision.no.hint')
         },
         {
           divider: 'or'
@@ -312,9 +306,7 @@ export const giveOrRefuseConsentController = {
         {
           text: __('consent.decision.alreadyVaccinated.label'),
           value: ReplyDecision.AlreadyVaccinated,
-          hint: {
-            text: __('consent.decision.alreadyVaccinated.hint')
-          }
+          hint: __('consent.decision.alreadyVaccinated.hint')
         }
       ]
     } else {
@@ -327,9 +319,7 @@ export const giveOrRefuseConsentController = {
         {
           text: __('consent.decision.no.label'),
           value: ReplyDecision.Refused,
-          hint: {
-            text: __('consent.decision.no.hint')
-          }
+          hint: __('consent.decision.no.hint')
         }
       ]
     }

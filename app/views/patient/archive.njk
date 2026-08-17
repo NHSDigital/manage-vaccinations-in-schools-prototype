@@ -5,14 +5,14 @@
 
 {% block form %}
   {% set duplicateHtml = input({
-    label: { text: __("patient.archive.duplicate.label") },
-    hint: { text: __("patient.archive.duplicate.hint") },
+    label: __("patient.archive.duplicate.label"),
+    hint: __("patient.archive.duplicate.hint"),
     code: true,
     width: 10
   }) %}
 
   {% set otherHtml = input({
-    label: { text: __("patient.archiveReasonOther.label") },
+    label: __("patient.archiveReasonOther.label"),
     decorate: "patient.archiveReasonOther"
   }) %}
 

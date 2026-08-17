@@ -16,10 +16,10 @@
       }
     },
     items: [{
-      text: __("session.protocolNurse.pgd.label"),
+      label: __("session.protocolNurse.pgd.label"),
       value: VaccinationProtocol.PGD
     }, {
-      text: __("session.protocolNurse.vgd.label"),
+      label: __("session.protocolNurse.vgd.label"),
       value: VaccinationProtocol.VGD
     }],
     decorate: "session.protocolNurse"
@@ -33,10 +33,10 @@
       }
     },
     items: [{
-      text: __("session.protocolHCA.no.label"),
+      label: __("session.protocolHCA.no.label"),
       value: ""
     }, {
-      text: __("session.protocolHCA.yes.label"),
+      label: __("session.protocolHCA.yes.label"),
       value: VaccinationProtocol.VGD
     }],
     decorate: "session.protocolHCA"
@@ -49,14 +49,12 @@
         size: "m"
       }
     },
-    hint: {
-      text: __("session.hasPsdProtocol.hint")
-    },
+    hint: __("session.hasPsdProtocol.hint"),
     items: [{
-      text: __("session.hasPsdProtocol.no.label"),
+      label: __("session.hasPsdProtocol.no.label"),
       value: false
     }, {
-      text: __("session.hasPsdProtocol.yes.label"),
+      label: __("session.hasPsdProtocol.yes.label"),
       value: true
     }],
     decorate: "session.hasPsdProtocol"

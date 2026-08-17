@@ -23,45 +23,35 @@
       }
     },
     items: [{
-      text: ProgrammeType.Flu,
-      value: "flu",
-      hint: {
-        text: __mf("school.inviteToClinic.flu", {
-          count: school.patientsToInviteToSession('flu').length
-        })
-      }
+      label: ProgrammeType.Flu,
+      hint: __mf("school.inviteToClinic.flu", {
+        count: school.patientsToInviteToSession('flu').length
+      }),
+      value: "flu"
     } if school.patientsToInviteToSession('flu').length, {
-      text: ProgrammeType.HPV,
-      value: "hpv",
-      hint: {
-        text: __mf("school.inviteToClinic.hpv", {
-          count: school.patientsToInviteToSession('hpv').length
-        })
-      }
+      label: ProgrammeType.HPV,
+      hint: __mf("school.inviteToClinic.hpv", {
+        count: school.patientsToInviteToSession('hpv').length
+      }),
+      value: "hpv"
     } if school.patientsToInviteToSession('hpv').length, {
-      text: ProgrammeType.MenACWY,
-      value: "menacwy",
-      hint: {
-        text: __mf("school.inviteToClinic.menacwy", {
-          count: school.patientsToInviteToSession('menacwy').length
-        })
-      }
+      label: ProgrammeType.MenACWY,
+      hint: __mf("school.inviteToClinic.menacwy", {
+        count: school.patientsToInviteToSession('menacwy').length
+      }),
+      value: "menacwy"
     } if school.patientsToInviteToSession('menacwy').length, {
-      text: ProgrammeType.MMR,
-      value: "mmr",
-      hint: {
-        text: __mf("school.inviteToClinic.mmr", {
-          count: school.patientsToInviteToSession('mmr').length
-        })
-      }
+      label: ProgrammeType.MMR,
+      hint: __mf("school.inviteToClinic.mmr", {
+        count: school.patientsToInviteToSession('mmr').length
+      }),
+      value: "mmr"
     } if school.patientsToInviteToSession('mmr').length, {
-      text: ProgrammeType.TdIPV,
-      value: "td-ipv",
-      hint: {
-        text: __mf("school.inviteToClinic.td-ipv", {
-          count: school.patientsToInviteToSession('td-ipv').length
-        })
-      }
+      label: ProgrammeType.TdIPV,
+      hint: __mf("school.inviteToClinic.td-ipv", {
+        count: school.patientsToInviteToSession('td-ipv').length
+      }),
+      value: "td-ipv"
     } if school.patientsToInviteToSession('td-ipv').length],
     decorate: "clinicProgramme_ids"
   }) }}

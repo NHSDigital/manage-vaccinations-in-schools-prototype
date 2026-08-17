@@ -15,13 +15,13 @@
     },
     items: [
       {
-        text: LocationType.Home
+        label: LocationType.Home
       },
       {
-        text: LocationType.Clinic,
+        label: LocationType.Clinic,
         conditional: {
           html: select({
-            label: { text: __("vaccination.clinic_id.title") },
+            label: __("vaccination.clinic_id.title"),
             items: locationItems(data.clinics, vaccination.clinic_id),
             decorate: "vaccination.clinic_id",
             attributes: {
@@ -31,10 +31,10 @@
         }
       },
       {
-        text: LocationType.School,
+        label: LocationType.School,
         conditional: {
           html: select({
-            label: { text: __("vaccination.school_id.title") },
+            label: __("vaccination.school_id.title"),
             items: locationItems(data.schools, vaccination.school_id),
             decorate: "vaccination.school_id",
             attributes: {
@@ -47,8 +47,8 @@
         divider: "or"
       },
       {
-        text: LocationType.Other,
-        hint: { text: __("vaccination.locationOther.hint") }
+        label: LocationType.Other,
+        hint: __("vaccination.locationOther.hint")
       }
     ],
     decorate: "vaccination.locationType"

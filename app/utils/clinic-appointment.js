@@ -474,9 +474,7 @@ export const getPreviousSessionItems = (appointments, sessionContext) => {
   let previousClinicSessionItems = previousClinicSessions.map((session) => ({
     text: session.formatted.location,
     value: session.id,
-    hint: {
-      text: session.formatted.date
-    }
+    hint: session.formatted.date
   }))
 
   return [

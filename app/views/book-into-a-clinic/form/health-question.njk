@@ -15,7 +15,6 @@
 {% else %}
   {% set hint = __("healthQuestions." + key + ".hint") %}
 {% endif %}
-{% set detailsHint = __("healthQuestions." + key + ".detailsHint") %}
 
 {% block form %}
   {% call fieldset({
@@ -35,19 +34,19 @@
     {% endif %}
 
     {{ radios({
-      hint: { text: hint } if hint,
+      hint: hint,
       items: [{
-        text: __("clinicBooking.healthAnswers.yes"),
+        label: __("clinicBooking.healthAnswers.yes"),
         conditional: {
           html: textarea({
-            label: { text: __("clinicBooking.healthAnswers.details") },
-            hint: { text: detailsHint } if detailsHint,
+            label: __("clinicBooking.healthAnswers.details"),
+            hint: __("healthQuestions." + key + ".detailsHint"),
             decorate: ["appointment", "healthAnswers", key, "details"]
           })
         } if not hasSubQuestions
       },
       {
-        text: __("clinicBooking.healthAnswers.no")
+        label: __("clinicBooking.healthAnswers.no")
       }],
       decorate: ["appointment", "healthAnswers", key, "answer"]
     }) }}

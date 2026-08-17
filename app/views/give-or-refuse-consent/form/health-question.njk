@@ -2,8 +2,6 @@
 
 {% set title = __("healthQuestions." + key + ".label") %}
 {% set vaccineName = "nasal spray flu" if "Flu" in session.presetNames else "MMR" %}
-{% set hint = __("healthQuestions." + key + ".hint", vaccineName) %}
-{% set detailsHint = __("healthQuestions." + key + ".detailsHint") %}
 
 {% block form %}
   {% call fieldset({
@@ -23,19 +21,19 @@
     {% endif %}
 
     {{ radios({
-      hint: { text: hint } if hint,
+      hint: __("healthQuestions." + key + ".hint", vaccineName),
       items: [{
-        text: __("consent.healthAnswers.yes"),
+        label: __("consent.healthAnswers.yes"),
         conditional: {
           html: textarea({
-            label: { text: __("consent.healthAnswers.details") },
-            hint: { text: detailsHint } if detailsHint,
+            label: __("consent.healthAnswers.details"),
+            hint: __("healthQuestions." + key + ".detailsHint"),
             decorate: ["consent", "healthAnswers", key, "details"]
           })
         } if not hasSubQuestions
       },
       {
-        text: __("consent.healthAnswers.no")
+        label: __("consent.healthAnswers.no")
       }],
       decorate: ["consent", "healthAnswers", key, "answer"]
     }) }}

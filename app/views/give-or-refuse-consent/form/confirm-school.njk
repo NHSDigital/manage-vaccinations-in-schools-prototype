@@ -18,13 +18,13 @@
 
   {{ radios({
     fieldset: {
-      legend: { text: __("consent.child.confirm-school.label") }
+      legend: __("consent.child.confirm-school.label")
     },
     items: [{
-      text: __("consent.child.confirm-school.yes"),
+      label: __("consent.child.confirm-school.yes"),
       value: "yes"
     }, {
-      text: __("consent.child.confirm-school.no"),
+      label: __("consent.child.confirm-school.no"),
       value: "no"
     }],
     decorate: "confirmSchool"

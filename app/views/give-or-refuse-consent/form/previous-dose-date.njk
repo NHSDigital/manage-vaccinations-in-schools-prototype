@@ -17,25 +17,21 @@
           size: "l"
         }
       },
-      hint: {
-        text: __("consent." + key + ".isScheduled.hint")
-      },
+      hint: __("consent." + key + ".isScheduled.hint"),
       items: [
         {
-          text: __("consent.previousDose.isScheduled.yes"),
+          label: __("consent.previousDose.isScheduled.yes"),
           value: true
         },
         {
-          text: __("consent.previousDose.isScheduled.no"),
+          label: __("consent.previousDose.isScheduled.no"),
           value: false,
           conditional: {
             html: dateInput({
               fieldset: {
-                legend: {
-                  text: __("consent." + key + ".createdAt.title")
-                }
+                legend: __("consent." + key + ".createdAt.title")
               },
-              hint: { text: __("consent.previousDose.createdAt.hint") },
+              hint: __("consent.previousDose.createdAt.hint"),
               decorate: ["consent", key, "createdAt_"]
             })
           }
@@ -52,7 +48,7 @@
           size: "l"
         }
       },
-      hint: { text: __("consent.previousDose.createdAt.hint") },
+      hint: __("consent.previousDose.createdAt.hint"),
       decorate: ["consent", key, "createdAt_"]
     }) }}
   {% endif %}

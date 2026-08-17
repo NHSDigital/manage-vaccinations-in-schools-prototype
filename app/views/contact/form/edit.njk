@@ -10,25 +10,25 @@
   }) }}
 
   {{ input({
-    label: { text: __("contact.fullName.label") },
+    label: __("contact.fullName.label"),
     decorate: "contact.fullName"
   }) }}
 
   {{ radios({
     fieldset: {
-      legend: { text: __("contact.relationship.label") }
+      legend: __("contact.relationship.label")
     },
     items: [{
-      text: ParentalRelationship.Mum
+      label: ParentalRelationship.Mum
     }, {
-      text: ParentalRelationship.Dad
+      label: ParentalRelationship.Dad
     }, {
-      text: ParentalRelationship.Guardian
+      label: ParentalRelationship.Guardian
     }, {
-      text: ParentalRelationship.Other,
+      label: ParentalRelationship.Other,
       conditional: {
         html: input({
-          label: { text: __("contact.relationshipOther.label") },
+          label: __("contact.relationshipOther.label"),
           decorate: "contact.relationshipOther"
         })
       }
@@ -37,32 +37,30 @@
   }) }}
 
   {{ input({
-    label: { text: __("contact.email.label") },
+    label: __("contact.email.label"),
     decorate: "contact.email"
   }) }}
 
   {{ input({
-    label: { text: __("contact.tel.label") },
+    label: __("contact.tel.label"),
     decorate: "contact.tel"
   }) }}
 
   {{ radios({
     fieldset: {
-      legend: {
-        text: __("contact.hasCommunicationNeeds.label")
-      }
+      legend: __("contact.hasCommunicationNeeds.label")
     },
     items: [{
-      text: __("contact.hasCommunicationNeeds.yes"),
+      label: __("contact.hasCommunicationNeeds.yes"),
       value: true,
       conditional: {
         html: textarea({
-          label: { text: __("contact.communicationNeeds.label") },
+          label: __("contact.communicationNeeds.label"),
           decorate: "contact.communicationNeeds"
         })
       }
     }, {
-      text: __("contact.hasCommunicationNeeds.no"),
+      label: __("contact.hasCommunicationNeeds.no"),
       value: false
     }],
     decorate: "contact.hasCommunicationNeeds"

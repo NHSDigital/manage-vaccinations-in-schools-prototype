@@ -35,12 +35,10 @@
     {% for vaccinationPeriod in session.vaccinationPeriods %}
       {% set variableVaccinatorCountHtml = variableVaccinatorCountHtml ~
         input({
-          label: {
-            text: __("session.vaccinators.input.singlePeriodLabel", {
-              startAt_: vaccinationPeriod.startAt_,
-              endAt_: vaccinationPeriod.endAt_
-            })
-          },
+          label: __("session.vaccinators.input.singlePeriodLabel", {
+            startAt_: vaccinationPeriod.startAt_,
+            endAt_: vaccinationPeriod.endAt_
+          }),
           suffix: __("session.vaccinators.input.suffix"),
           width: 2,
           inputmode: "numeric",
@@ -54,9 +52,7 @@
 
     {# Set conditional HTML for consistent staffing levels #}
     {% set consistentVaccinatorCountHtml = input({
-      label: {
-        text: __("session.vaccinators.input.allPeriodsLabel")
-      },
+      label: __("session.vaccinators.input.allPeriodsLabel"),
       suffix: __("session.vaccinators.input.suffix"),
       width: 2,
       inputmode: "numeric",

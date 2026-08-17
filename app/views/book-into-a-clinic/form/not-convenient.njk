@@ -11,7 +11,7 @@
   {{ __("clinicBooking.notConvenient.intro") | nhsukMarkdown }}
 
   {%- set otherHtml = input({
-    label: { text: __("clinicBooking.notConvenient.otherDetails") },
+    label: __("clinicBooking.notConvenient.otherDetails"),
     decorate: "appointment.abandonmentReasonOther"
   }) %}
   {% set reasonRadioItems = injectConditionalHtml(enumItems(AppointmentAbandonmentReason), AppointmentAbandonmentReason.Other, otherHtml) %}
@@ -26,7 +26,7 @@
         })
       }
     },
-    hint: { text: __("clinicBooking.notConvenient.hint") },
+    hint: __("clinicBooking.notConvenient.hint"),
     items: reasonRadioItems,
     decorate: "appointment.abandonmentReasons"
   }) }}

@@ -8,7 +8,7 @@
   }) }}
 
   {{ select({
-    label: { text: __("session.school_id.title") },
+    label: __("session.school_id.title"),
     items: locationItems(schools, session.school_id),
     decorate: "session.school_id",
     attributes: {

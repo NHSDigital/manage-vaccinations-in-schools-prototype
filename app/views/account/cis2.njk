@@ -20,13 +20,13 @@
     },
     name: "method",
     items: [
-      { text: __("account.cis2.method.smartcard") },
-      { text: __("account.cis2.method.hello") },
-      { text: __("account.cis2.method.key") },
-      { text: __("account.cis2.method.ipad") },
-      { text: __("account.cis2.method.authenticator") },
-      { text: __("account.cis2.method.nhsMail") },
-      { text: __("account.cis2.method.passkey") }
+      { label: __("account.cis2.method.smartcard") },
+      { label: __("account.cis2.method.hello") },
+      { label: __("account.cis2.method.key") },
+      { label: __("account.cis2.method.ipad") },
+      { label: __("account.cis2.method.authenticator") },
+      { label: __("account.cis2.method.nhsMail") },
+      { label: __("account.cis2.method.passkey") }
     ]
   }) }}
 
@@ -45,8 +45,8 @@
 
   {{ checkboxes({
     items: [{
-      text: __("account.cis2.remember.label"),
-      hint: { text: __("account.cis2.remember.hint") }
+      label: __("account.cis2.remember.label"),
+      hint: __("account.cis2.remember.hint")
     }]
   }) }}
 {% endblock %}

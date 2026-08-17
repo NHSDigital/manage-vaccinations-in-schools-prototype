@@ -18,15 +18,11 @@
   }) }}
 
   {{ input({
-    label: {
-      text: __("school.urn.label")
-    },
-    hint: {
-      text: __("school.urn.hint")
-    },
+    label: __("school.urn.label"),
+    hint: __("school.urn.hint"),
     code: true,
     width: 10,
     decorate: "school.urn",
-    errorMessage: { text: __("school.urn.error") } if data.error
+    errorMessage: __("school.urn.error") if data.error
   }) }}
 {% endblock %}

@@ -10,34 +10,34 @@
   {{ __("consent.child.description") | nhsukMarkdown }}
 
   {{ input({
-    label: { text: __("consent.child.firstName.label") },
-    hint: { text: __("consent.child.firstName.hint") },
+    label: __("consent.child.firstName.label"),
+    hint: __("consent.child.firstName.hint"),
     decorate: "consent.child.firstName"
   }) }}
 
   {{ input({
-    label: { text: __("consent.child.lastName.label") },
-    hint: { text: __("consent.child.lastName.hint") },
+    label: __("consent.child.lastName.label"),
+    hint: __("consent.child.lastName.hint"),
     decorate: "consent.child.lastName"
   }) }}
 
   {{ radios({
     fieldset: {
-      legend: { text: __("consent.child.hasPreferredName.label") }
+      legend: __("consent.child.hasPreferredName.label")
     },
     items: [{
-      text: __("consent.child.hasPreferredName.yes"),
+      label: __("consent.child.hasPreferredName.yes"),
       conditional: {
         html: input({
-          label: { text: __("consent.child.preferredFirstName.label") + " (optional)" },
+          label: __("consent.child.preferredFirstName.label") + " (optional)",
           decorate: "consent.child.preferredFirstName"
         }) + input({
-          label: { text: __("consent.child.preferredLastName.label") + " (optional)" },
+          label: __("consent.child.preferredLastName.label") + " (optional)",
           decorate: "consent.child.preferredLastName"
         })
       }
     }, {
-      text: __("consent.child.hasPreferredName.no")
+      label: __("consent.child.hasPreferredName.no")
     }],
     decorate: "child.preferred-name-choice"
   }) }}

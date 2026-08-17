@@ -6,10 +6,10 @@
 {% else %}
   {% set title = __("vaccination.programme.title", { patient: vaccination.patient }) %}
   {% set items = [{
-    text: "MMRV",
+    label: "MMRV",
     value: true
   }, {
-    text: "MMR",
+    label: "MMR",
     value: false
   }] %}
 {% endif %}
@@ -25,9 +25,9 @@
         })
       }
     },
-    hint: {
-      text: __("vaccination.isVariant.hint", { patient: vaccination.patient })
-    } if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated,
+    hint: __("vaccination.isVariant.hint", {
+      patient: vaccination.patient
+    }) if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated,
     items: items,
     decorate: "vaccination.isVariant"
   }) }}

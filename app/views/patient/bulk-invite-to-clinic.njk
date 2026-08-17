@@ -9,21 +9,23 @@
   {% set checkboxItems = checkboxItems | push({
     text: programme.name,
     value: programme.id,
-    hint: { html: __("patient.bulkInviteToClinic.programme.hint.combined",
-      {
-        childrenHint: __mf(
-          'patient.bulkInviteToClinic.programme.hint.children',
-          {
-            count: programme.childrenCount,
-            programmeName: programme.name | replace("Flu", "flu")
-          }),
-        clinicsHint: __mf(
-          'patient.bulkInviteToClinic.programme.hint.clinics',
-          {
-            count: programme.clinicCount,
-            programmeName: programme.name | replace("Flu", "flu")
-          })
-      })
+    hint: {
+      html: __("patient.bulkInviteToClinic.programme.hint.combined",
+        {
+          childrenHint: __mf(
+            'patient.bulkInviteToClinic.programme.hint.children',
+            {
+              count: programme.childrenCount,
+              programmeName: programme.name | replace("Flu", "flu")
+            }),
+          clinicsHint: __mf(
+            'patient.bulkInviteToClinic.programme.hint.clinics',
+            {
+              count: programme.clinicCount,
+              programmeName: programme.name | replace("Flu", "flu")
+            })
+        })
+      }
     }
   }) %}
 {% endfor %}

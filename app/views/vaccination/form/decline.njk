@@ -17,26 +17,26 @@
     },
     items: [
       {
-        text: __("vaccination.outcome.absent"),
+        label: __("vaccination.outcome.absent"),
         value: VaccinationOutcome.Absent
       },
       {
-        text: __("vaccination.outcome.refused"),
+        label: __("vaccination.outcome.refused"),
         value: VaccinationOutcome.Refused
       },
       {
-        text: __("vaccination.outcome.unwell"),
+        label: __("vaccination.outcome.unwell"),
         value: VaccinationOutcome.Unwell
       },
       {
         divider: "or"
       },
       {
-        text: __("vaccination.outcome.inviteToClinic"),
+        label: __("vaccination.outcome.inviteToClinic"),
         value: VaccinationOutcome.InvitedToClinic
       },
       {
-        text: __("vaccination.outcome.delayVaccination"),
+        label: __("vaccination.outcome.delayVaccination"),
         value: VaccinationOutcome.DelayVaccination,
         conditional: {
           html: dateInput({
@@ -48,13 +48,13 @@
                 size: "s"
               }
             },
-            hint: { text: __("triage.statusInvalidAt.hint", { date: DelayDate }) },
+            hint: __("triage.statusInvalidAt.hint", { date: DelayDate }),
             decorate: "triage.statusInvalidAt_"
           })
         }
       },
       {
-        text: __("vaccination.outcome.doNotVaccinate"),
+        label: __("vaccination.outcome.doNotVaccinate"),
         value: VaccinationOutcome.DoNotVaccinate
       }
     ],

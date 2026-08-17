@@ -5,20 +5,18 @@
 
 {% macro questions(healthQuestions) %}
   {% for key, value in healthQuestions %}
-    {% set hint = __("healthQuestions." + key + ".hint", vaccineName) %}
-    {% set detailsHint = __("healthQuestions." + key + ".detailsHint") %}
     {{ radios({
       fieldset: {
-        legend: { text: __("healthQuestions." + key + ".label") }
+        legend: __("healthQuestions." + key + ".label")
       },
-      hint: { text: hint } if hint,
+      hint: __("healthQuestions." + key + ".hint", vaccineName),
       items: [
         {
-          text: __("reply.healthAnswers.yes"),
+          label: __("reply.healthAnswers.yes"),
           conditional: {
             html: textarea({
-              label: { text: __("reply.healthAnswers.details") },
-              hint: { text: detailsHint } if detailsHint,
+              label: __("reply.healthAnswers.details"),
+              hint: __("healthQuestions." + key + ".detailsHint"),
               decorate: ["reply", "healthAnswers", key, "details"]
             })
           } if not value.conditional else {
@@ -26,7 +24,7 @@
           }
         },
         {
-          text: __("reply.healthAnswers.no")
+          label: __("reply.healthAnswers.no")
         }
       ],
       decorate: ["reply", "healthAnswers", key, "answer"]

@@ -1,29 +1,29 @@
   {%- set fosterCarerHtml = radios({
     fieldset: {
-      legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.delegatedLabel") }
+      legend: __("clinicBooking.parentalRelationship.hasParentalResponsibility.delegatedLabel")
     },
-    hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
+    hint: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "appointment.parentHasParentalResponsibility"
   }) %}
 
   {%- set guardianHtml = radios({
     fieldset: {
-      legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label") }
+      legend: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label")
     },
-    hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
+    hint: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "appointment.parentHasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
-    label: { text: __("clinicBooking.parentalRelationship.relationshipOther.label") },
+    label: __("clinicBooking.parentalRelationship.relationshipOther.label"),
     decorate: "appointment.parentalRelationshipOther"
   }) + radios({
     fieldset: {
-      legend: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label") }
+      legend: __("clinicBooking.parentalRelationship.hasParentalResponsibility.label")
     },
-    hint: { text: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint") },
+    hint: __("clinicBooking.parentalRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "appointment.parentHasParentalResponsibility"
   }) %}
@@ -39,7 +39,7 @@
 
   {{ radios({
     fieldset: {
-      legend: { text: __("clinicBooking.parentalRelationship.relationship.label") }
+      legend: __("clinicBooking.parentalRelationship.relationship.label")
     },
     items: items,
     decorate: "appointment.parentalRelationship"

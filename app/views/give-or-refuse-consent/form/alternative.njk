@@ -13,14 +13,12 @@
         })
       }
     },
-    hint: {
-      text: __("consent.hasConsentForAlternativeVaccine." + programme_id + ".hint")
-    },
+    hint: __("consent.hasConsentForAlternativeVaccine." + programme_id + ".hint"),
     items: [{
-      text: __("consent.hasConsentForAlternativeVaccine." + programme_id + ".yes.label"),
+      label: __("consent.hasConsentForAlternativeVaccine." + programme_id + ".yes.label"),
       value: true
     }, {
-      text: __("consent.hasConsentForAlternativeVaccine." + programme_id + ".no.label"),
+      label: __("consent.hasConsentForAlternativeVaccine." + programme_id + ".no.label"),
       value: false
     }],
     decorate: "consent.hasConsentForAlternativeVaccine"

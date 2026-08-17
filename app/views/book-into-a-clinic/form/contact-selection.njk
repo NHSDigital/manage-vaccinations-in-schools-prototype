@@ -15,7 +15,7 @@
     text: contact.fullNameAndRelationship,
     value: contact.uuid,
     hint: {
-      text: contactMethods | join('<br>') | safe
+      html: contactMethods | join('<br>') | safe
     }
   }) %}
 {% endfor %}
@@ -37,7 +37,7 @@
         })
       }
     },
-    hint: { text: __("clinicBooking.contactSelection.hint") },
+    hint: __("clinicBooking.contactSelection.hint"),
     items: contactItems,
     decorate: "booking.contact.uuid"
   }) }}

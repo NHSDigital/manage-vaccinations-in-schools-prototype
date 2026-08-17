@@ -16,10 +16,10 @@
     },
     small: true,
     items: [{
-      text: __("upload.show.partial.decision.ignore.label", type),
+      label: __("upload.show.partial.decision.ignore.label", type),
       value: "ignore"
     }, {
-      text: __("upload.show.partial.decision.restore.label", type),
+      label: __("upload.show.partial.decision.restore.label", type),
       value: "restore"
     }],
     decorate: "pending-record-" + loop.index0
@@ -49,13 +49,13 @@
     },
     small: true,
     items: [{
-      text: __("upload.show.partial.decision.original.label", type),
+      label: __("upload.show.partial.decision.original.label", type),
       value: "original"
     }, {
-      text: __("upload.show.partial.decision.duplicate.label", type),
+      label: __("upload.show.partial.decision.duplicate.label", type),
       value: "duplicate"
     }, {
-      text: __("upload.show.partial.decision.both.label", type),
+      label: __("upload.show.partial.decision.both.label", type),
       value: "both"
     } if patient.hasMissingNhsNumber],
     decorate: "decision-" + loop.index0
