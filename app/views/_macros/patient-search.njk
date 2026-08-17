@@ -303,7 +303,7 @@
     {% endset %}
 
     {{ details({
-      summaryText: __("search.advanced"),
+      summary: __("search.advanced"),
       open: true if data.option,
       html: searchDetailsHtml
     }) if not params.hideAdvancedFilters }}

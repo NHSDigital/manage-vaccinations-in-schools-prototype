@@ -22,9 +22,7 @@
 
 {{ details({
   classes: "nhsuk-expander",
-  summaryText: __mf("upload.failed.count", {
-    count: patientRows.length
-  }),
+  summary: __mf("upload.failed.count", { count: patientRows.length }),
   html: table({
     id: "failed",
     headingLevel: 2,
