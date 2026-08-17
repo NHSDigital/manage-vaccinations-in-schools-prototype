@@ -32,8 +32,10 @@
     {{ table({
       classes: "nhsuk-u-margin-bottom-6",
       id: "users",
-      caption: role,
-      captionClasses: "nhsuk-u-font-size-32",
+      caption: {
+        classes: "nhsuk-u-font-size-32",
+        text: role
+      },
       responsive: true,
       head: [
         { text: __("user.fullName.label") },
