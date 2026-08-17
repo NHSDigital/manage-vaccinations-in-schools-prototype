@@ -23,10 +23,8 @@
       {% for clinic in team.clinics %}
         {% set clinicRows = clinicRows | push([
           {
-            header: __("clinic.name.label"),
             html: clinic.formatted.nameAndAddress or "Not provided"
           }, {
-            header: __("actions.label"),
             html: appActionList({
               items: [{
                 text: __("clinic.edit.label"),

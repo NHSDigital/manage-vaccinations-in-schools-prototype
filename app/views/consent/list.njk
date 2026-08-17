@@ -30,19 +30,15 @@
   {% for consent in results.page %}
     {% set consentRows = consentRows | push([
       {
-        header: __("consent.summary.label"),
         html: consent.link.summary | replace("/consents", consentsPath)
       },
       {
-        header: __("consent.createdAt.label"),
         text: consent.formatted.createdAt
       },
       {
-        header: __("consent.decision.label"),
         text: consent.decision
       },
       {
-        header: __("actions.label"),
         html: appActionList({
           items: [{
             text: __("consent.match.label"),

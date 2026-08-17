@@ -64,20 +64,16 @@
 
   {% set patientRows = patientRows | push([
     {
-      header: __("patient.fullNameAndNhsn.label"),
       html: patient.formatted.fullNameAndNhsn
     },
     {
       classes: "app-table__cell--summary-list",
-      header: __("upload.show.partial.label." + upload.status),
       html: archiveChangeset if loop.first else duplicateChangeset
     },
     {
-      header: __("upload.show.partial.decision.label"),
       html: archiveRadios if upload.status == UploadStatus.Review else archiveDecision
     } if loop.first,
     {
-      header: __("upload.show.partial.decision.label"),
       html: duplicateRadios if upload.status == UploadStatus.Review else duplicateDecision
     } if not loop.first
   ]) %}

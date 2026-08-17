@@ -16,25 +16,21 @@
     {% for notice in notices | sort(false, false, "createdAt") %}
       {% set noticeRows = noticeRows | push([
         {
-          header: __("patient.label"),
           html: notice.patient.link.fullNameAndNhsn,
           attributes: {
             width: "20%"
           }
         },
         {
-          header: __("notice.createdAt.label"),
           html: notice.formatted.createdAt,
           attributes: {
             width: "20%"
           }
         },
         {
-          header: __("notice.label"),
           html: notice.patient.notice.name or "Not provided"
         },
         {
-          header: __("actions.label"),
           html: appActionList({
             items: [{
               text: __("actions.archive"),

@@ -684,14 +684,12 @@ export const sessionController = {
       const rows = allSlotTimes.map((time) => {
         const rowValues = []
         rowValues.push({
-          header: headers[0],
           timeSlot: formatTime(time, false)
         })
         rowValues.push(
           ...allAppointments
             .filter((appointment) => appointment.coversSlot(time))
-            .map((appointment, index) => ({
-              header: headers[index + rowValues.length],
+            .map((appointment) => ({
               appointment,
               spaceToExtend: extendableAppointmentTimes.some(
                 (extendableTime) =>
@@ -702,8 +700,7 @@ export const sessionController = {
         rowValues.push(
           ...Array(vaccinationPeriod.vaccinatorCount - rowValues.length + 1)
             .keys()
-            .map((index) => ({
-              header: headers[index + rowValues.length],
+            .map(() => ({
               appointment: null,
               spaceToExtend: false
             }))

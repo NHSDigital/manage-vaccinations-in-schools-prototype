@@ -2,19 +2,15 @@
 {% for patient in upload.patients %}
   {% set patientRows = patientRows | push([
     {
-      header: __("patient.firstName.label"),
       html: patient.lastName
     },
     {
-      header: __("patient.lastName.label"),
       html: patient.firstName
     },
     {
-      header: __("patient.dob.label"),
       html: patient.formatted.dob
     },
     {
-      header: __("patient.postalCode.label"),
       text: patient.postalCode
     }
   ]) %}
@@ -25,7 +21,6 @@
   summary: __mf("upload.failed.count", { count: patientRows.length }),
   html: table({
     id: "failed",
-    headingLevel: 2,
     responsive: true,
     head: [
       { text: __("patient.firstName.label") },

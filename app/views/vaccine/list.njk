@@ -37,19 +37,15 @@
       {% for batch in vaccine.batches | rejectattr("archivedAt") %}
         {% set batchRows = batchRows | push([
           {
-            header: __("batch.id.label"),
             html: batch.formatted.id
           },
           {
-            header: __("batch.createdAt.label"),
             html: batch.formatted.createdAt or "Not provided"
           },
           {
-            header: __("batch.expiry.label"),
             html: batch.formatted.expiry or "Not provided"
           },
           {
-            header: __("actions.label"),
             html: appActionList({
               items: [{
                 text: __("actions.archive"),

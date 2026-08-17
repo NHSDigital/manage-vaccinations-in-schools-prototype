@@ -8,26 +8,21 @@
     {% for patient in params.patients %}
       {% set patientRows = patientRows | push([
         {
-          header: __("patient.fullName.label"),
           html: patient.vaccinations[0].link.fullNameAndNhsn if upload.type == UploadType.Report else patient.formatted.fullNameAndNhsn,
           attributes: {
             width: "30%"
           }
         },
         {
-          header: __("patient.dob.label"),
           html: patient.formatted.dob
         },
         {
-          header: __("patient.postalCode.label"),
           text: patient.postalCode
         },
         {
-          header: __("patient.yearGroup.label"),
           text: patient.formatted.yearGroup
         } if upload.type == UploadType.School,
         {
-          header: __("vaccination.administeredAt.label"),
           text: patient.vaccinations[0].formatted.administeredAt_dateShort
         } if upload.type == UploadType.Report
       ]) %}
@@ -49,7 +44,6 @@
       }),
       html: table({
         id: "new",
-        headingLevel: 2,
         responsive: true,
         head: [
           { text: __("patient.fullNameAndNhsn.label") },

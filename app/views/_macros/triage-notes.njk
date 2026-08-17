@@ -5,15 +5,12 @@
   {% for triageNote in params.triageNotes | reverse %}
     {% set triageNoteRows = triageNoteRows | push([
       {
-        header: __("event.createdAt.label"),
         html: triageNote.summary.createdAtAndBy
       },
       {
-        header: __("event.note.label"),
         html: triageNote.note or "—" | nhsukMarkdown
       },
       {
-        header: __("event.status.label"),
         html: triageNote.formatted.status
       }
     ]) %}

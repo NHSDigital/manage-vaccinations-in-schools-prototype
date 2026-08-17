@@ -15,15 +15,12 @@
     {% for user in users | sort(false, false, "fullName") %}
       {% set userRows = userRows | push([
         {
-          header: __("user.fullName.label"),
           html: user.link.fullName or "Not provided"
         },
         {
-          header: __("user.uid.label"),
           html: user.formatted.uid or "Not provided"
         },
         {
-          header: __("user.email.label"),
           html: user.email or "Not provided"
         }
       ]) %}

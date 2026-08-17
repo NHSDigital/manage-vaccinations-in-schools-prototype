@@ -22,15 +22,12 @@
   {% for move in results.page %}
     {% set resultRows = resultRows | push([
       {
-        header: __("move.createdAt.label"),
         text: move.formatted.createdAt
       },
       {
-        header: __("child.label"),
         html: move.patient.fullName
       },
       {
-        header: __("move.label"),
         html: move.movement + (appStatus({
           classes: "app-status--small nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0",
           text: __("move.team_id.label"),
@@ -39,7 +36,6 @@
         }) if move.team_id)
       },
       {
-        header: __("actions.label"),
         html: appActionList({
           items: [{
             text: __("actions.review"),

@@ -54,19 +54,15 @@
       {% for vaccination in patientProgramme.vaccinationsGiven %}
         {% set vaccinationRows = vaccinationRows | push([
           {
-            header: __("vaccination.administeredAt.label"),
             html: vaccination.link.administeredAt
           },
           {
-            header: __("vaccination.age.label"),
             text: patient.dob | age(at=vaccination.administeredAt)
           },
           {
-            header: __("vaccination.programme.label"),
             html: vaccination.formatted.programmeWithSequence
           },
           {
-            header: __("vaccination.source.label"),
             text: vaccination.source
           }
         ]) %}
@@ -102,19 +98,15 @@
       {% for vaccination in patientProgramme.tetanusVaccinations %}
         {% set tetanusVaccinationRows = tetanusVaccinationRows | push([
           {
-            header: __("vaccination.administeredAt.label"),
             text: vaccination.formatted.administeredAt_date
           },
           {
-            header: __("vaccination.age.label"),
             text: patient.dob | age(at=vaccination.administeredAt)
           },
           {
-            header: __("vaccination.programme.label"),
             html: vaccination.formatted.programmeWithSequence
           },
           {
-            header: __("vaccination.tetanus.label"),
             html: loop.index | ordinal
           }
         ]) %}
@@ -150,15 +142,12 @@
       {% for patientSession in patientProgramme.patientSessions %}
         {% set patientSessionRows = patientSessionRows | push([
           {
-            header: __("session.location.label"),
             html: link(patientSession.uri, patientSession.session.location.name)
           },
           {
-            header: __("session.date.label"),
             html: patientSession.session.formatted.date if patientSession.session.date else patientSession.session.status
           },
           {
-            header: __("patientSession.outcome.label"),
             html: patientSession.formatted.outcome or "No outcome"
           }
         ]) %}
@@ -222,15 +211,12 @@
       {% for patientProgramme in patientProgramme.otherSeasons %}
         {% set otherSeasonRows = otherSeasonRows | push([
           {
-            header: __("patientProgramme.name.label"),
             html: link(patientProgramme.uri, patientProgramme.name)
           },
           {
-            header: __("patientProgramme.status.label"),
             html: patientProgramme.formatted.status
           },
           {
-            header: __("patientProgramme.statusNotes.label"),
             html: patientProgramme.statusNotes
           }
         ]) %}
