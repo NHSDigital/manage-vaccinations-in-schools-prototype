@@ -26,7 +26,6 @@
   {{ __("session.reminders.description") | nhsukMarkdown }}
 
   {{ appHeading({
-    classes: "nhsuk-u-margin-bottom-2",
     title: __("session.date.label"),
     level: 2,
     size: "m"
@@ -47,7 +46,6 @@
 
   {% call insetText() %}
     {{ appHeading({
-      classes: "nhsuk-u-margin-bottom-2",
       title: __("session.reminders.activity", {
         contacts: session.tally(session.programmes[0].id, PatientStatus.Consent),
         patients: session.tally(session.programmes[0].id)
@@ -60,7 +58,6 @@
   {% endcall %}
 
   {{ appHeading({
-    classes: "nhsuk-u-margin-bottom-2",
     title: "Send parents a manual consent reminder",
     level: 2,
     size: "m"
