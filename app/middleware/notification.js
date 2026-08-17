@@ -12,7 +12,7 @@ export const notification = (request, response, next) => {
   }))[0]
 
   response.locals.message = request.flash('message').map((text) => ({
-    titleText: 'Information',
+    title: 'Information',
     html: filters(nunjucksEnv)
       .nhsukMarkdown(text)
       .replace('nhsuk-body', 'nhsuk-notification-banner__heading')
