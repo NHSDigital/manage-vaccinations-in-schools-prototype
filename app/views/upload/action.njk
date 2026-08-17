@@ -14,13 +14,17 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("upload.action.confirm", type),
-      variant: "warning"
-    }],
-    links: [{
-      text: __("upload.action.cancel"),
-      href: upload.uri
-    }]
+    buttons: [
+      {
+        text: __("upload.action.confirm", type),
+        variant: "warning"
+      }
+    ],
+    links: [
+      {
+        text: __("upload.action.cancel"),
+        href: upload.uri
+      }
+    ]
   }) }}
 {% endblock %}

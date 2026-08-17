@@ -10,13 +10,16 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("school.list.title"),
-      href: "/schools"
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("school.list.title"),
+        href: "/schools"
+      }
+    ]
   }) }}
 {% endblock %}
 

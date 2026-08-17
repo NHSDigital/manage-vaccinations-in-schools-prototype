@@ -19,21 +19,24 @@
 
   {% set filterButtonGroup %}
     {{ appButtonGroup({
-      buttons: [{
-        text: __("search.confirm"),
-        small: true,
-        variant: "secondary",
-        attributes: {
-          formaction: params.formaction,
-          formmethod: "post",
-          role: "search"
-        }
-      }, {
-        text: __("search.clear"),
-        href: params.clear or "/patients",
-        small: true,
-        variant: "secondary"
-      } if data.q or data.programme or data.yearGroup or data.dob or data.status or data.hasMissingNhsNumber or data.clinicStatus]
+      buttons: [
+        {
+          text: __("search.confirm"),
+          small: true,
+          variant: "secondary",
+          attributes: {
+            formaction: params.formaction,
+            formmethod: "post",
+            role: "search"
+          }
+        },
+        {
+          text: __("search.clear"),
+          href: params.clear or "/patients",
+          small: true,
+          variant: "secondary"
+        } if data.q or data.programme or data.yearGroup or data.dob or data.status or data.hasMissingNhsNumber or data.clinicStatus
+      ]
     }) }}
   {% endset %}
 
@@ -147,103 +150,120 @@
           size: "s"
         }
       },
-      items: [{
-        label: "Any",
-        value: "none",
-        checked: not data.status or data.status == "none"
-      }, {
-        label: PatientStatus.Ineligible,
-        conditional: {
-          html: checkboxes({
-            small: true,
-            items: enumItems(PatientIneligibleStatus),
-            decorate: "patientIneligible"
-          })
-        } if data.status == PatientStatus.Ineligible
-      } if not params.hidePatientIneligibleStatus, {
-        label: PatientStatus.Consent,
-        conditional: {
-          html: checkboxes({
-            small: true,
-            items: enumItems(PatientConsentStatus),
-            decorate: "patientConsent"
-          })
-        } if data.status == PatientStatus.Consent
-      }, {
-        label: PatientStatus.Refused,
-        conditional: {
-          html: checkboxes({
-            small: true,
-            items: enumItems(PatientRefusedStatus),
-            decorate: "patientRefused"
-          })
-        } if data.status == PatientStatus.Refused
-      }, {
-        label: PatientStatus.Triage,
-        conditional: {
-          html: checkboxes({
-            small: true,
-            items: enumItems(PatientTriageStatus),
-            decorate: "patientTriage"
-          })
-        } if data.status == PatientStatus.Triage
-      }, {
-        label: PatientStatus.Due,
-        conditional: {
-          html: (checkboxes({
-            fieldset: {
-              legend: {
-                text: ProgrammeType.Flu + " vaccine type",
-                size: "s"
-              }
-            } if not session,
-            small: true,
-            items: enumItems(RecordVaccineCriteria),
-            items: [{
-              label: RecordVaccineCriteria.AlternativeFluInjectionOnly
-            }, {
-              label: RecordVaccineCriteria.IntranasalOnly
-            }, {
-              label: RecordVaccineCriteria.IntranasalPreferred
-            }],
-            decorate: "vaccineCriteria"
-          }) if showFluVaccineCriteria) + (checkboxes({
-            fieldset: {
-              legend: {
-                text: ProgrammeType.MMR + " vaccine type",
-                size: "s"
-              }
-            } if not session,
-            small: true,
-            items: [{
-              label: RecordVaccineCriteria.NoMMRPreference
-            }, {
-              label: RecordVaccineCriteria.AlternativeMMRInjectionOnly
-            }],
-            decorate: "vaccineCriteria"
-          }) if showMMRVaccineCriteria)
-        } if data.status == PatientStatus.Due
-      }, {
-        label: PatientStatus.Deferred,
-        conditional: {
-          html: checkboxes({
-            small: true,
-            items: enumItems(PatientDeferredStatus),
-            decorate: "patientDeferred"
-          })
-        } if data.status == PatientStatus.Deferred
-      }, {
-        label: PatientStatus.PartiallyVaccinated
-      }, {
-        label: PatientStatus.Vaccinated,
-        conditional: {
-          html: checkboxes({
-            small: true,
-            items: enumItems(PatientVaccinatedStatus),
-            decorate: "patientVaccinated"
-          })
-        } if data.status == PatientStatus.Vaccinated
-      }],
+      items: [
+        {
+          label: "Any",
+          value: "none",
+          checked: not data.status or data.status == "none"
+        },
+        {
+          label: PatientStatus.Ineligible,
+          conditional: {
+            html: checkboxes({
+              small: true,
+              items: enumItems(PatientIneligibleStatus),
+              decorate: "patientIneligible"
+            })
+          } if data.status == PatientStatus.Ineligible
+        } if not params.hidePatientIneligibleStatus,
+        {
+          label: PatientStatus.Consent,
+          conditional: {
+            html: checkboxes({
+              small: true,
+              items: enumItems(PatientConsentStatus),
+              decorate: "patientConsent"
+            })
+          } if data.status == PatientStatus.Consent
+        },
+        {
+          label: PatientStatus.Refused,
+          conditional: {
+            html: checkboxes({
+              small: true,
+              items: enumItems(PatientRefusedStatus),
+              decorate: "patientRefused"
+            })
+          } if data.status == PatientStatus.Refused
+        },
+        {
+          label: PatientStatus.Triage,
+          conditional: {
+            html: checkboxes({
+              small: true,
+              items: enumItems(PatientTriageStatus),
+              decorate: "patientTriage"
+            })
+          } if data.status == PatientStatus.Triage
+        },
+        {
+          label: PatientStatus.Due,
+          conditional: {
+            html: (checkboxes({
+              fieldset: {
+                legend: {
+                  text: ProgrammeType.Flu + " vaccine type",
+                  size: "s"
+                }
+              } if not session,
+              small: true,
+              items: enumItems(RecordVaccineCriteria),
+              items: [
+                {
+                  label: RecordVaccineCriteria.AlternativeFluInjectionOnly
+                },
+                {
+                  label: RecordVaccineCriteria.IntranasalOnly
+                },
+                {
+                  label: RecordVaccineCriteria.IntranasalPreferred
+                }
+              ],
+              decorate: "vaccineCriteria"
+            }) if showFluVaccineCriteria) + (checkboxes({
+              fieldset: {
+                legend: {
+                  text: ProgrammeType.MMR + " vaccine type",
+                  size: "s"
+                }
+              } if not session,
+              small: true,
+              items: [
+                {
+                  label: RecordVaccineCriteria.NoMMRPreference
+                },
+                {
+                  label: RecordVaccineCriteria.AlternativeMMRInjectionOnly
+                }
+              ],
+              decorate: "vaccineCriteria"
+            }) if showMMRVaccineCriteria)
+          } if data.status == PatientStatus.Due
+        },
+        {
+          label: PatientStatus.Deferred,
+          conditional: {
+            html: checkboxes({
+              small: true,
+              items: enumItems(PatientDeferredStatus),
+              decorate: "patientDeferred"
+            })
+          } if data.status == PatientStatus.Deferred
+        },
+        {
+          label: PatientStatus.PartiallyVaccinated
+        },
+        {
+          label: PatientStatus.Vaccinated,
+          conditional: {
+            html: checkboxes({
+              small: true,
+              items: enumItems(PatientVaccinatedStatus),
+              decorate: "patientVaccinated"
+            })
+          } if data.status == PatientStatus.Vaccinated
+        }
+      ],
       decorate: "status"
     }) if not params.hideProgrammeStatuses }}
 

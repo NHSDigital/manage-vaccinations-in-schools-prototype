@@ -4,19 +4,24 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("session.list.title"),
-      href: "/sessions"
-    }, {
-      text: reply.session.location.name,
-      href: reply.session.uri
-    }, {
-      text: reply.patient.fullName,
-      href: reply.session.uri + "/patients/" + reply.patient.nhsn + "/" + reply.programme.id
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("session.list.title"),
+        href: "/sessions"
+      },
+      {
+        text: reply.session.location.name,
+        href: reply.session.uri
+      },
+      {
+        text: reply.patient.fullName,
+        href: reply.session.uri + "/patients/" + reply.patient.nhsn + "/" + reply.programme.id
+      }
+    ]
   }) }}
 {% endblock %}
 

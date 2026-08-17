@@ -19,21 +19,20 @@
     fieldset: {
       legend: __("contact.relationship.label")
     },
-    items: [{
-      label: ParentalRelationship.Mum
-    }, {
-      label: ParentalRelationship.Dad
-    }, {
-      label: ParentalRelationship.Guardian
-    }, {
-      label: ParentalRelationship.Other,
-      conditional: {
-        html: input({
-          label: __("contact.relationshipOther.label"),
-          decorate: "contact.relationshipOther"
-        })
+    items: [
+      { label: ParentalRelationship.Mum },
+      { label: ParentalRelationship.Dad },
+      { label: ParentalRelationship.Guardian },
+      {
+        label: ParentalRelationship.Other,
+        conditional: {
+          html: input({
+            label: __("contact.relationshipOther.label"),
+            decorate: "contact.relationshipOther"
+          })
+        }
       }
-    }],
+    ],
     decorate: "contact.relationship"
   }) }}
 
@@ -51,19 +50,22 @@
     fieldset: {
       legend: __("contact.hasCommunicationNeeds.label")
     },
-    items: [{
-      label: __("contact.hasCommunicationNeeds.yes"),
-      value: true,
-      conditional: {
-        html: textarea({
-          label: __("contact.communicationNeeds.label"),
-          decorate: "contact.communicationNeeds"
-        })
+    items: [
+      {
+        label: __("contact.hasCommunicationNeeds.yes"),
+        value: true,
+        conditional: {
+          html: textarea({
+            label: __("contact.communicationNeeds.label"),
+            decorate: "contact.communicationNeeds"
+          })
+        }
+      },
+      {
+        label: __("contact.hasCommunicationNeeds.no"),
+        value: false
       }
-    }, {
-      label: __("contact.hasCommunicationNeeds.no"),
-      value: false
-    }],
+    ],
     decorate: "contact.hasCommunicationNeeds"
   }) }}
 {% endblock %}

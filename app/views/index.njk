@@ -71,13 +71,16 @@
 
           {{ contentsList({
             classes: "nhsuk-u-margin-left-1",
-            items: [{
-              href: navigation.consentUrl[preset.name] + "/emails",
-              text: preset.name + " consent emails"
-            }, {
-              href: navigation.consentUrl[preset.name] + "/texts",
-              text: preset.name + " consent text messages"
-            }]
+            items: [
+              {
+                href: navigation.consentUrl[preset.name] + "/emails",
+                text: preset.name + " consent emails"
+              },
+              {
+                href: navigation.consentUrl[preset.name] + "/texts",
+                text: preset.name + " consent text messages"
+              }
+            ]
           }) }}
         {% endif %}
       {% endfor %}

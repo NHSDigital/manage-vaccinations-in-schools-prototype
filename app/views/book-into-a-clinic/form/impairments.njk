@@ -13,49 +13,57 @@
         })
       }
     },
-    items: [{
-      label: Impairment.Vision,
-      hint: __("consent.child.impairments.vision.hint"),
-      exclusiveGroup: "impairments-list"
-    }, {
-      label: Impairment.Hearing,
-      hint: __("consent.child.impairments.hearing.hint"),
-      exclusiveGroup: "impairments-list"
-    }, {
-      label: Impairment.Mobility,
-      hint: __("consent.child.impairments.mobility.hint"),
-      exclusiveGroup: "impairments-list"
-    }, {
-      label: Impairment.Memory,
-      hint: __("consent.child.impairments.memory.hint"),
-      exclusiveGroup: "impairments-list"
-    }, {
-      label: Impairment.MentalHealth,
-      hint: __("consent.child.impairments.mentalHealth.hint"),
-      exclusiveGroup: "impairments-list"
-    }, {
-      label: Impairment.Communicative,
-      hint: __("consent.child.impairments.communicative.hint"),
-      exclusiveGroup: "impairments-list"
-    }, {
-      label: Impairment.Other,
-      conditional: {
-        html: input({
-          label: __("consent.child.impairmentsOther.title"),
-          decorate: "appointment.child.impairmentsOther"
-        })
+    items: [
+      {
+        label: Impairment.Vision,
+        hint: __("consent.child.impairments.vision.hint"),
+        exclusiveGroup: "impairments-list"
       },
-      exclusiveGroup: "impairments-list"
-    },
-    {
-      divider: 'or'
-    },
-    {
-      label: __("clinicBooking.impairments.none.label", firstName),
-      value: Impairment.None,
-      behaviour: "exclusive",
-      behaviourGroup: "impairments-list"
-    }],
+      {
+        label: Impairment.Hearing,
+        hint: __("consent.child.impairments.hearing.hint"),
+        exclusiveGroup: "impairments-list"
+      },
+      {
+        label: Impairment.Mobility,
+        hint: __("consent.child.impairments.mobility.hint"),
+        exclusiveGroup: "impairments-list"
+      },
+      {
+        label: Impairment.Memory,
+        hint: __("consent.child.impairments.memory.hint"),
+        exclusiveGroup: "impairments-list"
+      },
+      {
+        label: Impairment.MentalHealth,
+        hint: __("consent.child.impairments.mentalHealth.hint"),
+        exclusiveGroup: "impairments-list"
+      },
+      {
+        label: Impairment.Communicative,
+        hint: __("consent.child.impairments.communicative.hint"),
+        exclusiveGroup: "impairments-list"
+      },
+      {
+        label: Impairment.Other,
+        conditional: {
+          html: input({
+            label: __("consent.child.impairmentsOther.title"),
+            decorate: "appointment.child.impairmentsOther"
+          })
+        },
+        exclusiveGroup: "impairments-list"
+      },
+      {
+        divider: 'or'
+      },
+      {
+        label: __("clinicBooking.impairments.none.label", firstName),
+        value: Impairment.None,
+        behaviour: "exclusive",
+        behaviourGroup: "impairments-list"
+      }
+    ],
     decorate: "appointment.child.impairments"
   }) }}
 {% endblock %}

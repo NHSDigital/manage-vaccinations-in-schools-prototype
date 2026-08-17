@@ -11,10 +11,12 @@
       hint: "Expires " + batch.formatted.expiry,
       conditional: {
         html: checkboxes({
-          items: [{
-            label: __("defaultBatch.id.title"),
-            value: batch.id
-          }],
+          items: [
+            {
+              label: __("defaultBatch.id.title"),
+              value: batch.id
+            }
+          ],
           decorate: "defaultBatchId"
         })
       } if type == "new"

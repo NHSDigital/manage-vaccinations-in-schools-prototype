@@ -173,29 +173,32 @@
             }) }}
 
             {{ appButtonGroup({
-              buttons: [{
-                text: __("patientSession.registration.actions.present.label"),
-                small: true,
-                variant: "secondary",
-                decorate: "patientSession.register",
-                value: RegistrationStatus.Present,
-                attributes: {
-                  "aria-label": __("patientSession.registration.actions.present.title", { patient: patientSession.patient }),
-                  formaction: patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view + "&register=" + data.register,
-                  formmethod: "post"
+              buttons: [
+                {
+                  text: __("patientSession.registration.actions.present.label"),
+                  small: true,
+                  variant: "secondary",
+                  decorate: "patientSession.register",
+                  value: RegistrationStatus.Present,
+                  attributes: {
+                    "aria-label": __("patientSession.registration.actions.present.title", { patient: patientSession.patient }),
+                    formaction: patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view + "&register=" + data.register,
+                    formmethod: "post"
+                  }
+                },
+                {
+                  classes: "app-button--secondary-warning",
+                  text: __("patientSession.registration.actions.absent.label"),
+                  small: true,
+                  decorate: "patientSession.register",
+                  value: RegistrationStatus.Absent,
+                  attributes: {
+                    "aria-label": __("patientSession.registration.actions.absent.title", { patient: patientSession.patient }),
+                    formaction: patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view + "&register=" + data.register,
+                    formmethod: "post"
+                  }
                 }
-              }, {
-                classes: "app-button--secondary-warning",
-                text: __("patientSession.registration.actions.absent.label"),
-                small: true,
-                decorate: "patientSession.register",
-                value: RegistrationStatus.Absent,
-                attributes: {
-                  "aria-label": __("patientSession.registration.actions.absent.title", { patient: patientSession.patient }),
-                  formaction: patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view + "&register=" + data.register,
-                  formmethod: "post"
-                }
-              }]
+              ]
             }) if showRegistration and patientSession.register == RegistrationStatus.Pending }}
           {% endcall %}
         {% endfor %}

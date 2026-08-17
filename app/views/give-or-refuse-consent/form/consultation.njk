@@ -12,14 +12,16 @@
       }
     },
     hint: __("consent.hasRequestedConsultation.hint." + consent.refusalReason),
-    items: [{
-      label: __("consent.hasRequestedConsultation.yes"),
-      value: true
-    },
-    {
-      label: __("consent.hasRequestedConsultation.no"),
-      value: false
-    }],
+    items: [
+      {
+        label: __("consent.hasRequestedConsultation.yes"),
+        value: true
+      },
+      {
+        label: __("consent.hasRequestedConsultation.no"),
+        value: false
+      }
+    ],
     decorate: "consent.hasRequestedConsultation"
   }) }}
 {% endblock %}

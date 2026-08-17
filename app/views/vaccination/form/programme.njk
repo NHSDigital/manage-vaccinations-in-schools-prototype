@@ -13,35 +13,42 @@
         })
       }
     },
-    items: [{
-      label: data.programmes["6in1"].title + " (Children born on or after 1st August 2017)",
-      hint: "DTaP-Hib-HepB-IPV",
-      value: "6in1"
-    }, {
-      label: data.programmes["5in1"].title + " (Children born before 1st August 2017)",
-      hint: "DTaP-Hib-IPV",
-      value: "5in1"
-    }, {
-      label: data.programmes["4in1"].title,
-      hint: "DTaP-IPV",
-      value: "4in1"
-    }, {
-      label: "3-in-1 teenage booster",
-      hint: "Td-IPV",
-      value: "td-ipv"
-    }, {
-      divider: "or"
-    }, {
-      label: data.programmes["other"].title,
-      value: "other",
-      conditional: {
-        html: input({
-          label: "What disease(s) did the vaccination provide protection against?",
-          hint: "For example, DTaP-IPV",
-          decorate: "vaccination.programmeOther"
-        })
+    items: [
+      {
+        label: data.programmes["6in1"].title + " (Children born on or after 1st August 2017)",
+        hint: "DTaP-Hib-HepB-IPV",
+        value: "6in1"
+      },
+      {
+        label: data.programmes["5in1"].title + " (Children born before 1st August 2017)",
+        hint: "DTaP-Hib-IPV",
+        value: "5in1"
+      },
+      {
+        label: data.programmes["4in1"].title,
+        hint: "DTaP-IPV",
+        value: "4in1"
+      },
+      {
+        label: "3-in-1 teenage booster",
+        hint: "Td-IPV",
+        value: "td-ipv"
+      },
+      {
+        divider: "or"
+      },
+      {
+        label: data.programmes["other"].title,
+        value: "other",
+        conditional: {
+          html: input({
+            label: "What disease(s) did the vaccination provide protection against?",
+            hint: "For example, DTaP-IPV",
+            decorate: "vaccination.programmeOther"
+          })
+        }
       }
-    }],
+    ],
     decorate: "vaccination.programme_id"
   }) }}
 {% endblock %}

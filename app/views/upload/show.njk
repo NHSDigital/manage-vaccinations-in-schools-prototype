@@ -13,16 +13,20 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("upload.list.title"),
-      href: "/uploads"
-    }, {
-      text: __("upload.imported.title"),
-      href: "/uploads/imported"
-    } if upload.status == UploadStatus.Approved]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("upload.list.title"),
+        href: "/uploads"
+      },
+      {
+        text: __("upload.imported.title"),
+        href: "/uploads/imported"
+      } if upload.status == UploadStatus.Approved
+    ]
   }) }}
 {% endblock %}
 
@@ -166,30 +170,35 @@
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
-      buttons: [{
-        text: __("upload.approve.confirm"),
-        attributes: {
-          formaction: upload.uri + "/approve"
+      buttons: [
+        {
+          text: __("upload.approve.confirm"),
+          attributes: {
+            formaction: upload.uri + "/approve"
+          }
+        },
+        {
+          text: __("upload.delete.confirm"),
+          variant: "secondary",
+          attributes: {
+            formaction: upload.uri + "/delete"
+          }
         }
-      }, {
-        text: __("upload.delete.confirm"),
-        variant: "secondary",
-        attributes: {
-          formaction: upload.uri + "/delete"
-        }
-      }]
+      ]
     }) }}
   {% elif upload.status != UploadStatus.Processing and upload.status != UploadStatus.Approved %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
-      buttons: [{
-        text: __("upload.delete.label"),
-        variant: "secondary",
-        attributes: {
-          formaction: upload.uri + "/delete"
+      buttons: [
+        {
+          text: __("upload.delete.label"),
+          variant: "secondary",
+          attributes: {
+            formaction: upload.uri + "/delete"
+          }
         }
-      }]
+      ]
     }) }}
   {% endif %}
 {% endblock %}

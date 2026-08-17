@@ -77,21 +77,24 @@
         }) }}
 
         {{ appButtonGroup({
-          buttons: [{
-            text: __("search.confirm"),
-            small: true,
-            variant: "secondary",
-            attributes: {
-              formaction: params.formaction,
-              formmethod: "post",
-              role: "search"
-            }
-          }, {
-            text: __("search.clear"),
-            href: "/schools",
-            small: true,
-            variant: "secondary"
-          } if data.q or data.phase or data.option]
+          buttons: [
+            {
+              text: __("search.confirm"),
+              small: true,
+              variant: "secondary",
+              attributes: {
+                formaction: params.formaction,
+                formmethod: "post",
+                role: "search"
+              }
+            },
+            {
+              text: __("search.clear"),
+              href: "/schools",
+              small: true,
+              variant: "secondary"
+            } if data.q or data.phase or data.option
+          ]
         }) }}
       {% endcall %}
     </app-auto-submit>

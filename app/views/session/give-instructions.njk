@@ -6,16 +6,20 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("session.list.title"),
-      href: "/sessions"
-    }, {
-      text: session.location.name,
-      href: session.uri
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("session.list.title"),
+        href: "/sessions"
+      },
+      {
+        text: session.location.name,
+        href: session.uri
+      }
+    ]
   }) }}
 {% endblock %}
 
@@ -30,12 +34,16 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("session.giveInstructions.confirm")
-    }],
-    links: [{
-      text: __("session.giveInstructions.cancel"),
-      href: session.uri + "/instructions"
-    }]
+    buttons: [
+      {
+        text: __("session.giveInstructions.confirm")
+      }
+    ],
+    links: [
+      {
+        text: __("session.giveInstructions.cancel"),
+        href: session.uri + "/instructions"
+      }
+    ]
   }) }}
 {% endblock %}

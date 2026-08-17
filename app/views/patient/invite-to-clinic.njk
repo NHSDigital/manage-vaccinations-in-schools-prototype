@@ -86,14 +86,18 @@
   {# Include a link to back out if there are no clinics available for the clinic-ready programmes #}
   {% if clinicReadyProgrammes.length === clinicReadyProgrammesWithoutClinics.count %}
     {{ appButtonGroup({
-      buttons: [{
-        text: confirmButtonText,
-        variant: confirmButtonVariant
-      }],
-      links: [{
-        text: __("patient.inviteToClinic.cancel"),
-        href: paths.back
-      }]
+      buttons: [
+        {
+          text: confirmButtonText,
+          variant: confirmButtonVariant
+        }
+      ],
+      links: [
+        {
+          text: __("patient.inviteToClinic.cancel"),
+          href: paths.back
+        }
+      ]
     }) }}
   {% else %}
     {{ super() }}

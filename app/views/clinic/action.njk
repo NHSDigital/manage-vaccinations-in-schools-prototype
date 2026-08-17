@@ -12,16 +12,20 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("clinic.action.confirm", type),
-      variant: "warning",
-      attributes: {
-        formAction: clinic.uri + "/" + type
+    buttons: [
+      {
+        text: __("clinic.action.confirm", type),
+        variant: "warning",
+        attributes: {
+          formAction: clinic.uri + "/" + type
+        }
       }
-    }],
-    links: [{
-      text: __("clinic.action.cancel"),
-      href: paths.back
-    }]
+    ],
+    links: [
+      {
+        text: __("clinic.action.cancel"),
+        href: paths.back
+      }
+    ]
   }) }}
 {% endblock %}

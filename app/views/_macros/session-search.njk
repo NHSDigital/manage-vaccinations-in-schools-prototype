@@ -79,21 +79,24 @@
     }) if not account.isSchoolUser }}
 
     {{ appButtonGroup({
-      buttons: [{
-        text: __("search.confirm"),
-        small: true,
-        variant: "secondary",
-        attributes: {
-          formaction: params.formaction,
-          formmethod: "post",
-          role: "search"
-        }
-      }, {
-        text: __("search.clear"),
-        href: params.clear or "/sessions",
-        small: true,
-        variant: "secondary"
-      } if data.q or data.programme_id or data.status != "none" or data.type != "none"]
+      buttons: [
+        {
+          text: __("search.confirm"),
+          small: true,
+          variant: "secondary",
+          attributes: {
+            formaction: params.formaction,
+            formmethod: "post",
+            role: "search"
+          }
+        },
+        {
+          text: __("search.clear"),
+          href: params.clear or "/sessions",
+          small: true,
+          variant: "secondary"
+        } if data.q or data.programme_id or data.status != "none" or data.type != "none"
+      ]
     }) }}
   {% endcall %}
 {% endmacro %}

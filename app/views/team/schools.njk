@@ -25,14 +25,18 @@
         {% set schoolRows = schoolRows | push([
           {
             html: school.formatted.nameAndAddress or "Not provided"
-          }, {
+          },
+          {
             html: school.formatted.id or "Not provided"
-          }, {
+          },
+          {
             html: appActionList({
-              items: [{
-                text: __("school.edit.label"),
-                href: school.uri + "/edit"
-              }]
+              items: [
+                {
+                  text: __("school.edit.label"),
+                  href: school.uri + "/edit"
+                }
+              ]
             })
           }
         ]) %}
@@ -51,7 +55,8 @@
               {
                 text: __("school.new.label"),
                 href: "/schools/new"
-              }, {
+              },
+              {
                 text: __("school.new-site.label"),
                 href: "/schools/new-site"
               }

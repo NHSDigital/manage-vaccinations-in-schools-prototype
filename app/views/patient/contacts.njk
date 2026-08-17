@@ -8,13 +8,16 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("patient.list.title"),
-      href: "/patients"
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("patient.list.title"),
+        href: "/patients"
+      }
+    ]
   }) }}
 {% endblock %}
 
@@ -40,13 +43,16 @@
           size: "m"
         },
         actions: {
-          items: [{
-            text: __("actions.edit"),
-            href: contact.uri + "/edit"
-          }, {
-            text: __("actions.delete"),
-            href: contact.uri + "/delete"
-          }]
+          items: [
+            {
+              text: __("actions.edit"),
+              href: contact.uri + "/edit"
+            },
+            {
+              text: __("actions.delete"),
+              href: contact.uri + "/delete"
+            }
+          ]
         }
       },
       lastRowBorder: false,

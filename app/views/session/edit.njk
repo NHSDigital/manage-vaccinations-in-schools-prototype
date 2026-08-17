@@ -123,13 +123,17 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: confirmButtonText,
-      variant: confirmButtonVariant
-    }],
-    links: [{
-      text: __("session.edit.cancel"),
-      href: session.uri
-    }]
+    buttons: [
+      {
+        text: confirmButtonText,
+        variant: confirmButtonVariant
+      }
+    ],
+    links: [
+      {
+        text: __("session.edit.cancel"),
+        href: session.uri
+      }
+    ]
   }) }}
 {% endblock afterForm %}

@@ -33,16 +33,20 @@
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("patient.archive.confirm"),
-      variant: "warning",
-      attributes: {
-        formAction: patient.uri + "/archive"
+    buttons: [
+      {
+        text: __("patient.archive.confirm"),
+        variant: "warning",
+        attributes: {
+          formAction: patient.uri + "/archive"
+        }
       }
-    }],
-    links: [{
-      text: __("patient.archive.cancel"),
-      href: patient.uri
-    }]
+    ],
+    links: [
+      {
+        text: __("patient.archive.cancel"),
+        href: patient.uri
+      }
+    ]
   }) }}
 {% endblock %}

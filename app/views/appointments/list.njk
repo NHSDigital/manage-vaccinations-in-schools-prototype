@@ -6,16 +6,20 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("session.list.title"),
-      href: "/sessions"
-    }, {
-      text: session.location.name,
-      href: session.uri
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("session.list.title"),
+        href: "/sessions"
+      },
+      {
+        text: session.location.name,
+        href: session.uri
+      }
+    ]
   }) if session }}
 {% endblock %}
 
@@ -46,13 +50,16 @@
       } if session,
       {
         html: appActionList({
-          items: [{
-            text: __("appointments.match.label"),
-            href: appointmentsPath + "/" + appointment.uuid + "/match?referrer=" + appointmentsPath
-          }, {
-            text: __("appointments.archive.label"),
-            href: appointmentsPath + "/" + appointment.uuid + "/archive?referrer=" + appointmentsPath
-          }]
+          items: [
+            {
+              text: __("appointments.match.label"),
+              href: appointmentsPath + "/" + appointment.uuid + "/match?referrer=" + appointmentsPath
+            },
+            {
+              text: __("appointments.archive.label"),
+              href: appointmentsPath + "/" + appointment.uuid + "/archive?referrer=" + appointmentsPath
+            }
+          ]
         })
       }
     ]) %}

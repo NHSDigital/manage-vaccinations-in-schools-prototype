@@ -49,12 +49,14 @@
     }) }}
 
     {{ appButtonGroup({
-      buttons: [{
-        text: __("search.clear"),
-        href: params.clear or "/reports",
-        small: true,
-        variant: "secondary"
-      } if data.programme_id or data.gender != "none" or data.yearGroup != "none"]
+      buttons: [
+        {
+          text: __("search.clear"),
+          href: params.clear or "/reports",
+          small: true,
+          variant: "secondary"
+        } if data.programme_id or data.gender != "none" or data.yearGroup != "none"
+      ]
     }) }}
   {% endcall %}
 {% endmacro %}

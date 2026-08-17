@@ -9,19 +9,24 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("patient.list.title"),
-      href: "/patients"
-    }, {
-      text: patient.fullName,
-      href: patient.uri
-    } if patientProgramme.activeSeason and not patientProgramme.isActive, {
-      text: patientProgramme.activeSeason.programme.name,
-      href: patientProgramme.activeSeason.uri
-    } if patientProgramme.activeSeason and not patientProgramme.isActive]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("patient.list.title"),
+        href: "/patients"
+      },
+      {
+        text: patient.fullName,
+        href: patient.uri
+      } if patientProgramme.activeSeason and not patientProgramme.isActive,
+      {
+        text: patientProgramme.activeSeason.programme.name,
+        href: patientProgramme.activeSeason.uri
+      } if patientProgramme.activeSeason and not patientProgramme.isActive
+    ]
   }) }}
 {% endblock %}
 
@@ -174,19 +179,22 @@
       }) }}
 
       {{ appButtonGroup({
-        buttons: [{
-          text: __("patientProgramme.inviteToClinic.label") | safe,
-          variant: "secondary",
-          decorate: "programme_ids",
-          value: patientProgramme.programme.id,
-          attributes: {
-            formaction: patient.uri + "/invite-to-clinic?referrer=" + patientProgramme.uri
+        buttons: [
+          {
+            text: __("patientProgramme.inviteToClinic.label") | safe,
+            variant: "secondary",
+            decorate: "programme_ids",
+            value: patientProgramme.programme.id,
+            attributes: {
+              formaction: patient.uri + "/invite-to-clinic?referrer=" + patientProgramme.uri
+            }
+          },
+          {
+            text: __("patientProgramme.activeClinics.label") | safe,
+            variant: "secondary",
+            href: patientProgramme.uri + "/clinics"
           }
-        }, {
-          text: __("patientProgramme.activeClinics.label") | safe,
-          variant: "secondary",
-          href: patientProgramme.uri + "/clinics"
-        }]
+        ]
       }) if patientProgramme.status != PatientStatus.Vaccinated and not patientProgramme.isIneligible and patientProgramme.isActive }}
     {% endcall %}
   {% endif %}

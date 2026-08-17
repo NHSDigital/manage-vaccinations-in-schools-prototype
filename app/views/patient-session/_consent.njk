@@ -24,21 +24,24 @@
     }) if not patientProgramme.isVaccinated }}
 
     {{ appButtonGroup({
-      buttons: [{
-        text: __("remind.new.title"),
-        variant: "secondary",
-        attributes: {
-          formaction: patientSession.uri + "/new/remind",
-          formmethod: "post"
+      buttons: [
+        {
+          text: __("remind.new.title"),
+          variant: "secondary",
+          attributes: {
+            formaction: patientSession.uri + "/new/remind",
+            formmethod: "post"
+          }
+        } if options.canRemind,
+        {
+          text: __("patientSession.invite.label"),
+          variant: "secondary",
+          attributes: {
+            formaction: patientSession.uri + "/new/invite",
+            formmethod: "post"
+          }
         }
-      } if options.canRemind, {
-        text: __("patientSession.invite.label"),
-        variant: "secondary",
-        attributes: {
-          formaction: patientSession.uri + "/new/invite",
-          formmethod: "post"
-        }
-      }]
+      ]
     }) }}
   {% endif %}
 

@@ -3,13 +3,17 @@
 {% block afterForm %}
   {% if not patient %}
     {{ appButtonGroup({
-      buttons: [{
-        text: __("form.continue")
-      }],
-      links: [{
-        text: __("clinicBooking.abandon.label"),
-        href: appointment.uri.new + "/not-convenient"
-      }]
+      buttons: [
+        {
+          text: __("form.continue")
+        }
+      ],
+      links: [
+        {
+          text: __("clinicBooking.abandon.label"),
+          href: appointment.uri.new + "/not-convenient"
+        }
+      ]
     }) }}
   {% else %}
     {{ super() }}

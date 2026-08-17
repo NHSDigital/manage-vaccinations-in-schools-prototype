@@ -4,19 +4,24 @@
 
 {% block beforeContent %}
   {{ breadcrumb({
-    items: [{
-      text: __("home.show.title"),
-      href: "/"
-    }, {
-      text: __("patient.list.title"),
-      href: "/patients"
-    }, {
-      text: vaccination.patient.fullName,
-      href: vaccination.patient.uri
-    }, {
-      text: vaccination.patient.programmes[vaccination.programme_id].programme.name,
-      href: vaccination.patient.programmes[vaccination.programme_id].uri
-    }]
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("patient.list.title"),
+        href: "/patients"
+      },
+      {
+        text: vaccination.patient.fullName,
+        href: vaccination.patient.uri
+      },
+      {
+        text: vaccination.patient.programmes[vaccination.programme_id].programme.name,
+        href: vaccination.patient.programmes[vaccination.programme_id].uri
+      }
+    ]
   }) }}
 {% endblock %}
 

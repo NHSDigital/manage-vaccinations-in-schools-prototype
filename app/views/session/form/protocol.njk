@@ -16,13 +16,16 @@
         size: "m"
       }
     },
-    items: [{
-      label: __("session.protocolNurse.pgd.label"),
-      value: VaccinationProtocol.PGD
-    }, {
-      label: __("session.protocolNurse.vgd.label"),
-      value: VaccinationProtocol.VGD
-    }],
+    items: [
+      {
+        label: __("session.protocolNurse.pgd.label"),
+        value: VaccinationProtocol.PGD
+      },
+      {
+        label: __("session.protocolNurse.vgd.label"),
+        value: VaccinationProtocol.VGD
+      }
+    ],
     decorate: "session.protocolNurse"
   }) }}
 
@@ -33,13 +36,16 @@
         size: "m"
       }
     },
-    items: [{
-      label: __("session.protocolHCA.no.label"),
-      value: ""
-    }, {
-      label: __("session.protocolHCA.yes.label"),
-      value: VaccinationProtocol.VGD
-    }],
+    items: [
+      {
+        label: __("session.protocolHCA.no.label"),
+        value: ""
+      },
+      {
+        label: __("session.protocolHCA.yes.label"),
+        value: VaccinationProtocol.VGD
+      }
+    ],
     decorate: "session.protocolHCA"
   }) }}
 
@@ -51,13 +57,16 @@
       }
     },
     hint: __("session.hasPsdProtocol.hint"),
-    items: [{
-      label: __("session.hasPsdProtocol.no.label"),
-      value: false
-    }, {
-      label: __("session.hasPsdProtocol.yes.label"),
-      value: true
-    }],
+    items: [
+      {
+        label: __("session.hasPsdProtocol.no.label"),
+        value: false
+      },
+      {
+        label: __("session.hasPsdProtocol.yes.label"),
+        value: true
+      }
+    ],
     decorate: "session.hasPsdProtocol"
   }) }}
 {% endblock %}

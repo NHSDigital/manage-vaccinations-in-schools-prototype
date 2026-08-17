@@ -13,24 +13,27 @@
   {{ __("upload.removeRelationships.description") | nhsukMarkdown }}
 
   {{ radios({
-    items: [{
-      label: __("upload.removeRelationships.nonConsenting")
-    }, {
-      label: __("upload.removeRelationships.all")
-    }],
+    items: [
+      { label: __("upload.removeRelationships.nonConsenting") },
+      { label: __("upload.removeRelationships.all") }
+    ],
     decorate: "removeRelationships.type"
   }) }}
 {% endblock %}
 
 {% block afterForm %}
   {{ appButtonGroup({
-    buttons: [{
-      text: __("upload.removeRelationships.confirm"),
-      href: upload.uri + "/remove-relationships"
-    }],
-    links: [{
-      text: __("upload.removeRelationships.cancel"),
-      href: upload.uri
-    }]
+    buttons: [
+      {
+        text: __("upload.removeRelationships.confirm"),
+        href: upload.uri + "/remove-relationships"
+      }
+    ],
+    links: [
+      {
+        text: __("upload.removeRelationships.cancel"),
+        href: upload.uri
+      }
+    ]
   }) }}
 {% endblock %}

@@ -12,16 +12,20 @@
     }) }}
 
     {{ appActionList({
-      items: [{
-        text: __("consent.match.label"),
-        href: consentPath + "/match?referrer=" + consentPath
-      }, {
-        text: __("consent.add.label"),
-        href: consentPath + "/add?referrer=" + consentPath
-      }, {
-        text: __("consent.invalidate.label"),
-        href: consentPath + "/invalidate?referrer=" + consentPath
-      }]
+      items: [
+        {
+          text: __("consent.match.label"),
+          href: consentPath + "/match?referrer=" + consentPath
+        },
+        {
+          text: __("consent.add.label"),
+          href: consentPath + "/add?referrer=" + consentPath
+        },
+        {
+          text: __("consent.invalidate.label"),
+          href: consentPath + "/invalidate?referrer=" + consentPath
+        }
+      ]
     }) }}
 
     {{ summaryList({
