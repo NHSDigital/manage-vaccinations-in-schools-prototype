@@ -6,9 +6,7 @@
 {% block form %}
   {% set programmeRadiosHtml = radios({
     fieldset: {
-      legend: {
-        text: "Which vaccinations do you give consent for?"
-      }
+      legend: "Which vaccinations do you give consent for?"
     },
     items: programmeItems,
     decorate: "decision"
@@ -22,9 +20,7 @@
         })
       }
     },
-    hint: {
-      text: __("consent.decision." + programme_id + ".hint") if type else null
-    },
+    hint: __("consent.decision." + programme_id + ".hint") if type else null,
     items: injectConditionalHtml(decisionItems, "_one", programmeRadiosHtml) if programmeItems else decisionItems,
     decorate: "consent.decision"
   }) }}

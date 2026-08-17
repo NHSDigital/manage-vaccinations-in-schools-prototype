@@ -195,9 +195,7 @@ export const downloadController = {
       .map((type) => ({
         text: type,
         value: type,
-        hint: {
-          text: __(`download.type.hint.${type}`)
-        }
+        hint: __(`download.type.hint.${type}`)
       }))
 
     response.locals.paths = {

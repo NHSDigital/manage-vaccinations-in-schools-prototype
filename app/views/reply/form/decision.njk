@@ -24,14 +24,12 @@
     },
     items: [
       {
-        text: __('reply.decision.nasal.label') if programme.alternativeVaccine else __('reply.decision.yes.label'),
+        label: __('reply.decision.nasal.label') if programme.alternativeVaccine else __('reply.decision.yes.label'),
         value: ReplyDecision.Given,
         conditional: {
           html: radios({
             fieldset: {
-              legend: {
-                text: __("reply.hasConsentForAlternativeVaccine.title")
-              }
+              legend: __("reply.hasConsentForAlternativeVaccine.title")
             },
             items: getBooleanItems(),
             decorate: "reply.hasConsentForAlternativeVaccine"
@@ -39,18 +37,18 @@
         } if programme.alternativeVaccine
       },
       {
-        text: __('reply.decision.injection.label'),
+        label: __('reply.decision.injection.label'),
         value: ReplyDecision.OnlyAlternativeInjection
       } if programme.alternativeVaccine,
       {
-        text: __('reply.decision.no.label'),
+        label: __('reply.decision.no.label'),
         value: ReplyDecision.Refused
       },
       {
         divider: "or"
       },
       {
-        text: __('reply.decision.noResponse.label'),
+        label: __('reply.decision.noResponse.label'),
         value: ReplyDecision.NoResponse
       }
     ],

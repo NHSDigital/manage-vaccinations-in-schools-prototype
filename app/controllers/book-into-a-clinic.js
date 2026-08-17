@@ -481,9 +481,7 @@ export const bookIntoClinicController = {
           return {
             text: programme.name,
             value: programme.id === 'mmrv' ? 'mmr' : programme.id,
-            hint: {
-              text: programme.information.hint
-            }
+            hint: programme.information.hint
           }
         }
       )
@@ -531,9 +529,7 @@ export const bookIntoClinicController = {
         clinicDateItems.push({
           text: session.formatted.date,
           value: session.id,
-          hint: {
-            text: availability
-          }
+          hint: availability
         })
       })
       response.locals.clinicDateItems = clinicDateItems
@@ -557,14 +553,9 @@ export const bookIntoClinicController = {
           timeRangeItems.push({
             text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
             value: startHourNumber,
-            hint: {
-              text: __mf(
-                'clinicBooking.timeRange.range.appointmentsAvailable',
-                {
-                  count: times.length
-                }
-              )
-            }
+            hint: __mf('clinicBooking.timeRange.range.appointmentsAvailable', {
+              count: times.length
+            })
           })
         }
       })
@@ -602,11 +593,9 @@ export const bookIntoClinicController = {
           appointmentTimeItems.push({
             text: formattedTime,
             value: availability.date.toISOString(),
-            hint: {
-              text: __mf('clinicBooking.time.appointmentsAvailable', {
-                count: availability.count
-              })
-            }
+            hint: __mf('clinicBooking.time.appointmentsAvailable', {
+              count: availability.count
+            })
           })
         }
       )

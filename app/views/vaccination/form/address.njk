@@ -13,25 +13,25 @@
     }
   }) %}
     {{ input({
-      label: { text: __("location.name.label") },
+      label: __("location.name.label"),
       decorate: "vaccination.locationName"
     }) }}
 
     {{ input({
-      label: { text: __("location.addressLine1.label") + " (optional)" },
+      label: __("location.addressLine1.label") + " (optional)",
       autocomplete: "address-line1",
       decorate: "vaccination.addressLine1"
     }) }}
 
     {{ input({
-      label: { text: __("location.addressLine2.label") + " (optional)" },
+      label: __("location.addressLine2.label") + " (optional)",
       autocomplete: "address-line2",
       decorate: "vaccination.addressLine2"
     }) }}
 
     {{ input({
       classes: "nhsuk-u-width-two-thirds",
-      label: { text: __("location.addressLevel1.label") },
+      label: __("location.addressLevel1.label"),
       autocomplete: "address-level1",
       decorate: "vaccination.addressLevel1"
     }) }}
@@ -44,22 +44,22 @@
       },
       items: [
         {
-          text: __("vaccination.country.england")
+          label: __("vaccination.country.england")
         },
         {
-          text: __("vaccination.country.scotland")
+          label: __("vaccination.country.scotland")
         },
         {
-          text: __("vaccination.country.wales")
+          label: __("vaccination.country.wales")
         },
         {
-          text: __("vaccination.country.ni")
+          label: __("vaccination.country.ni")
         },
         {
-          text: __("vaccination.country.other"),
+          label: __("vaccination.country.other"),
           conditional: {
             html: select({
-              label: { text: __("vaccination.countryOther.title") },
+              label: __("vaccination.countryOther.title"),
               items: otherCountryItems(Country, vaccination.countryOther),
               decorate: "vaccination.countryOther",
               attributes: {

@@ -14,26 +14,26 @@
     <p class="nhsuk-hint">{{ __("consent.child.address.hint") }}</p>
 
     {{ input({
-      label: { text: __("location.addressLine1.label") },
+      label: __("location.addressLine1.label"),
       autocomplete: "address-line1",
       decorate: "consent.child.address.addressLine1"
     }) }}
 
     {{ input({
-      label: { text: __("location.addressLine2.label") + " (optional)" },
+      label: __("location.addressLine2.label") + " (optional)",
       autocomplete: "address-line2",
       decorate: "consent.child.address.addressLine2"
     }) }}
 
     {{ input({
       classes: "nhsuk-u-width-two-thirds",
-      label: { text: __("location.addressLevel1.label") },
+      label: __("location.addressLevel1.label"),
       autocomplete: "address-level1",
       decorate: "consent.child.address.addressLevel1"
     }) }}
 
     {{ input({
-      label: { text: __("location.postalCode.label") },
+      label: __("location.postalCode.label"),
       autocomplete: "postal-code",
       width: 10,
       decorate: "consent.child.address.postalCode"

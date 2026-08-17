@@ -18,12 +18,10 @@
   {% set checkboxItems = checkboxItems | push({
     text: patientProgramme.programme.type,
     value: patientProgramme.programme_id,
-    hint: { text: __mf("patient.inviteToClinic.clinicCount.hint",
-      {
-        programmeName: patientProgramme.programme.name | replace("Flu", "flu"),
-        count: patientProgramme.scheduledClinicsCount
-      })
-    }
+    hint: __mf("patient.inviteToClinic.clinicCount.hint", {
+      programmeName: patientProgramme.programme.name | replace("Flu", "flu"),
+      count: patientProgramme.scheduledClinicsCount
+    })
   }) %}
 {% endfor %}
 

@@ -10,25 +10,25 @@
 
   {{ radios({
     fieldset: {
-      legend: { text: __("clinicBooking.preferredLocationMatches.hits.label") }
+      legend: __("clinicBooking.preferredLocationMatches.hits.label")
     },
     items: [{
-      text: journeyData.preferredLocation + ' upon Tyne, NE1',
+      label: journeyData.preferredLocation + ' upon Tyne, NE1',
       value: 'NE1'
     },
     {
-      text: journeyData.preferredLocation + '-under-Lyme, ST5',
+      label: journeyData.preferredLocation + '-under-Lyme, ST5',
       value: 'ST5'
     },
     {
-      text: journeyData.preferredLocation + ', SY7',
+      label: journeyData.preferredLocation + ', SY7',
       value: 'SY7'
     },
     {
       divider: 'or'
     },
     {
-      text: __('clinicBooking.preferredLocationMatches.tryAgain'),
+      label: __('clinicBooking.preferredLocationMatches.tryAgain'),
       value: 'retry'
     }],
     decorate: "appointment.preferredPostcode"

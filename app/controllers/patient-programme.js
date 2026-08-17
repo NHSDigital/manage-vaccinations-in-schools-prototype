@@ -29,7 +29,7 @@ export const patientProgrammeController = {
     response.locals.activeClinicsItems = patientProgramme.activeClinics.map(
       (session) => ({
         text: session.location.name,
-        hint: { text: session.clinic.formatted.address },
+        hint: session.clinic.formatted.address,
         value: session.id
       })
     )

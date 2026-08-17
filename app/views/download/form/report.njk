@@ -17,8 +17,8 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("download.academicYear.title")
+        text: __("download.academicYear.title"),
+        size: "m"
       }
     },
     items: academicYearItems,
@@ -31,8 +31,8 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("download.programmeType.title")
+        text: __("download.programmeType.title"),
+        size: "m"
       }
     },
     items: programmeTypeItems,
@@ -45,13 +45,11 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("download.startAt.title") + " (optional)"
+        text: __("download.startAt.title") + " (optional)",
+        size: "m"
       }
     },
-    hint: {
-      text: __("download.startAt.hint")
-    },
+    hint: __("download.startAt.hint"),
     decorate: "download.startAt_"
   }) }}
 
@@ -61,13 +59,11 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("download.endAt.title") + " (optional)"
+        text: __("download.endAt.title") + " (optional)",
+        size: "m"
       }
     },
-    hint: {
-      text: __("download.endAt.hint")
-    },
+    hint: __("download.endAt.hint"),
     decorate: "download.endAt_"
   }) }}
 
@@ -77,8 +73,8 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("download.teams.title")
+        text: __("download.teams.title"),
+        size: "m"
       }
     },
     items: teamItems,
@@ -91,8 +87,8 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("download.format.title")
+        text: __("download.format.title"),
+        size: "m"
       }
     },
     items: enumItems(DownloadFormat),

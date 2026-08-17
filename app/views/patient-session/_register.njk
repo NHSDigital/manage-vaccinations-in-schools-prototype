@@ -14,15 +14,16 @@
     {{ radios({
       fieldset: {
         legend: {
-          classes: "nhsuk-fieldset__legend--m nhsuk-u-font-size-22",
-          text: __("patientSession.registration.label", { patient: patient })
+          classes: "nhsuk-u-font-size-22",
+          text: __("patientSession.registration.label", { patient: patient }),
+          size: "m"
         }
       },
       items: [{
-        text: __("patientSession.registration.present"),
+        label: __("patientSession.registration.present"),
         value: RegistrationStatus.Present
       }, {
-        text: __("patientSession.registration.absent"),
+        label: __("patientSession.registration.absent"),
         value: RegistrationStatus.Absent
       }],
       decorate: "patientSession.register"

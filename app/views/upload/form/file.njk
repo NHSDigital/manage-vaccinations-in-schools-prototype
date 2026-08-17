@@ -38,11 +38,9 @@
     id: "upload",
     name: "upload",
     label: {
-      size: "m",
-      text: __("upload.file.label")
+      text: __("upload.file.label"),
+      size: "m"
     },
-    errorMessage: {
-      text: errors.upload
-    } if errors.upload
+    errorMessage: errors.upload if errors.upload
   }) }}
 {% endblock %}

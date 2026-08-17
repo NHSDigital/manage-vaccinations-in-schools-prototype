@@ -205,9 +205,7 @@ export const sessionController = {
       .map(([programme_id, count]) => ({
         text: Programme.findOne(programme_id, data)?.name,
         value: programme_id,
-        hint: {
-          text: __mf('session.advertise.programmes.programme.hint', { count })
-        }
+        hint: __mf('session.advertise.programmes.programme.hint', { count })
       }))
       .sort((a, b) => a.text.localeCompare(b.text))
 
@@ -895,9 +893,7 @@ export const sessionController = {
                 attributes: {
                   'data-hint': clinic.formatted.address
                 },
-                hint: {
-                  text: clinic.formatted.address
-                }
+                hint: clinic.formatted.address
               })
             }))
         } else {

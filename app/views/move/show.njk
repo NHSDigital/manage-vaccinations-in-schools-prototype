@@ -82,39 +82,37 @@
     },
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("move.show.decision.label")
+        text: __("move.show.decision.label"),
+        size: "m"
       }
     },
     items: [{
-      text: __("move.show.decision.switch"),
+      label: __("move.show.decision.switch"),
       value: "switch",
       conditional: {
         html: radios({
           fieldset: {
-            legend: { text: __("move.show.session.label", {
+            legend: __("move.show.session.label", {
               firstName: move.patient.firstName
-            }) }
-          },
-          hint: {
-            text: __("move.show.session.hint", {
-              school: move.formatted.to,
-              dates: "Wednesday 6 March 2025 and Thursday 7 March 2025"
             })
           },
+          hint: __("move.show.session.hint", {
+            school: move.formatted.to,
+            dates: "Wednesday 6 March 2025 and Thursday 7 March 2025"
+          }),
           items: [{
-            text: __("move.show.session.clinic"),
+            label: __("move.show.session.clinic"),
             value: "clinic",
             checked: true
           }, {
-            text: __("move.show.session.school"),
+            label: __("move.show.session.school"),
             value: "school"
           }],
           decorate: "session"
         })
       } if move.from_urn == "888888" or move.from_urn == "999999"
     }, {
-      text: __("move.show.decision.ignore"),
+      label: __("move.show.decision.ignore"),
       value: "ignore"
     }],
     decorate: "decision"

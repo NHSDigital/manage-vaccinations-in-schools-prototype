@@ -37,15 +37,15 @@
   {{ radios({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("reply.follow-up.decision.label")
+        text: __("reply.follow-up.decision.label"),
+        size: "m"
       }
     },
     items: [{
-      text: __("reply.follow-up.decision.consent.label"),
+      label: __("reply.follow-up.decision.consent.label"),
       value: false
     }, {
-      text: __("reply.follow-up.decision.refuse.label"),
+      label: __("reply.follow-up.decision.refuse.label"),
       value: true
     }],
     decorate: "decision"

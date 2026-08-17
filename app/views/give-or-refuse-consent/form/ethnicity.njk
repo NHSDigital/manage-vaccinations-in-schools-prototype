@@ -6,11 +6,11 @@
 {% block form %}
   {% call fieldset({
     legend: {
-        html: appHeading({
-          classes: "nhsuk-fieldset__legend--l",
-          title: title
-        })
-      }
+      html: appHeading({
+        classes: "nhsuk-fieldset__legend--l",
+        title: title
+      })
+    }
   }) %}
     {{ __("consent.hasEthnicityAnswers.description") | nhsukMarkdown }}
 
@@ -22,10 +22,10 @@
         }
       },
       items: [{
-        text: __("consent.hasEthnicityAnswers.yes.label"),
+        label: __("consent.hasEthnicityAnswers.yes.label"),
         value: true
       }, {
-        text: __("consent.hasEthnicityAnswers.no.label"),
+        label: __("consent.hasEthnicityAnswers.no.label"),
         value: false
       }],
       decorate: "consent.hasEthnicityAnswers"

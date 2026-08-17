@@ -8,36 +8,36 @@
   }) }}
 
   {{ input({
-    label: { text: __("consent.contact.fullName.label") },
+    label: __("consent.contact.fullName.label"),
     decorate: "consent.contact_.fullName"
   }) }}
 
   {%- set fosterCarerHtml = radios({
     fieldset: {
-      legend: { text: __("consent.contact.hasParentalResponsibility.delegatedLabel") }
+      legend: __("consent.contact.hasParentalResponsibility.delegatedLabel")
     },
-    hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
+    hint: __("consent.contact.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "consent.contact_.hasParentalResponsibility"
   }) %}
 
   {%- set guardianHtml = radios({
     fieldset: {
-      legend: { text: __("consent.contact.hasParentalResponsibility.label") }
+      legend: __("consent.contact.hasParentalResponsibility.label")
     },
-    hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
+    hint: __("consent.contact.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "consent.contact_.hasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
-    label: { text: __("consent.contact.relationshipOther.label") },
+    label: __("consent.contact.relationshipOther.label"),
     decorate: "consent.contact_.relationshipOther"
   }) + radios({
     fieldset: {
-      legend: { text: __("consent.contact.hasParentalResponsibility.label") }
+      legend: __("consent.contact.hasParentalResponsibility.label")
     },
-    hint: { text: __("consent.contact.hasParentalResponsibility.hint") },
+    hint: __("consent.contact.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "consent.contact_.hasParentalResponsibility"
   }) %}
@@ -53,27 +53,27 @@
 
   {{ radios({
     fieldset: {
-      legend: { text: __("consent.contact.relationship.label") }
+      legend: __("consent.contact.relationship.label")
     },
     items: items,
     decorate: "consent.contact_.relationship"
   }) }}
 
   {{ input({
-    label: { text: __("consent.contact.email.label") },
-    hint: { text: __("consent.contact.email.hint") },
+    label: __("consent.contact.email.label"),
+    hint: __("consent.contact.email.hint"),
     decorate: "consent.contact_.email"
   }) }}
 
   {{ input({
-    label: { text: __("consent.contact.tel.label") + " (optional)" },
-    hint: { text: __("consent.contact.tel.hint") },
+    label: __("consent.contact.tel.label") + " (optional)",
+    hint: __("consent.contact.tel.hint"),
     decorate: "consent.contact_.tel"
   }) }}
 
   {{ checkboxes({
     items: [{
-      text: __("consent.contact.canSms.label"),
+      label: __("consent.contact.canSms.label"),
       value: true
     }],
     decorate: "consent.contact_.canSms"

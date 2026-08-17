@@ -8,13 +8,11 @@
     {% set batches = batches | push({
       html: batch.formatted.id + " (" + batch.vaccine.brand + ")",
       value: batch.id,
-      hint: {
-        text: "Expires " + batch.formatted.expiry
-      },
+      hint: "Expires " + batch.formatted.expiry,
       conditional: {
         html: checkboxes({
           items: [{
-            text: __("defaultBatch.id.title"),
+            label: __("defaultBatch.id.title"),
             value: batch.id
           }],
           decorate: "defaultBatchId"

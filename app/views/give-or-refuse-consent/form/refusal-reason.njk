@@ -23,39 +23,39 @@
     },
     items: [
       {
-        text: __n("consent.refusalReason.alreadyVaccinatedMMR"),
+        label: __n("consent.refusalReason.alreadyVaccinatedMMR"),
         value: ReplyRefusal.AlreadyVaccinatedMMR
       } if SessionPresetName.MMR in session.presetNames else {
-        text: __n("consent.refusalReason.alreadyVaccinated", vaccinations),
+        label: __n("consent.refusalReason.alreadyVaccinated", vaccinations),
         value: ReplyRefusal.AlreadyVaccinated
       },
       {
-        text: __n("consent.refusalReason.gettingElsewhere", vaccinations),
+        label: __n("consent.refusalReason.gettingElsewhere", vaccinations),
         value: ReplyRefusal.GettingElsewhere
       },
       {
-        text: ReplyRefusal.OutsideSchool
+        label: ReplyRefusal.OutsideSchool
       },
       {
-        text: ReplyRefusal.Gelatine
+        label: ReplyRefusal.Gelatine
       } if vaccineIncludesGelatine and SessionPresetName.Flu in session.presetNames,
       {
-        text: ReplyRefusal.GelatineMMR
+        label: ReplyRefusal.GelatineMMR
       } if vaccineIncludesGelatine and SessionPresetName.MMR in session.presetNames,
       {
-        text: ReplyRefusal.Medical
+        label: ReplyRefusal.Medical
       },
       {
-        text: ReplyRefusal.Personal
+        label: ReplyRefusal.Personal
       },
       {
         divider: "or"
       },
       {
-        text: ReplyRefusal.Other,
+        label: ReplyRefusal.Other,
         conditional: {
           html: input({
-            label: { text: __("consent.refusalReason.label") },
+            label: __("consent.refusalReason.label"),
             decorate: "consent.refusalReasonOther"
           })
         }

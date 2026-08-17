@@ -20,14 +20,12 @@
         })
       }
     },
-    hint: {
-      text: hint
-    },
+    hint: hint,
     items: [{
-      text: __("clinicBooking.mmrAlternative.yes.label." + audience, firstName),
+      label: __("clinicBooking.mmrAlternative.yes.label." + audience, firstName),
       value: true
     }, {
-      text: __("clinicBooking.mmrAlternative.no.label." + audience, firstName),
+      label: __("clinicBooking.mmrAlternative.no.label." + audience, firstName),
       value: false
     }],
     decorate: "appointment.mmrAlternative"

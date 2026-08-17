@@ -10,7 +10,7 @@
   }) }}
 
   {{ input({
-    label: { text: __("batch.id.label") },
+    label: __("batch.id.label"),
     code: true,
     width: 10,
     decorate: "batch.id"
@@ -18,9 +18,9 @@
 
   {{ dateInput({
     fieldset: {
-      legend: { text: __("batch.expiry.label") }
+      legend: __("batch.expiry.label")
     },
-    hint: { text: __("batch.expiry.hint") },
+    hint: __("batch.expiry.hint"),
     decorate: "batch.expiry_"
   }) }}
 {% endblock %}

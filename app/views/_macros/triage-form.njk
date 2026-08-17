@@ -5,9 +5,7 @@
 {% macro appTriageForm(params) %}
   {% set psdRadiosHtml = radios({
     fieldset: {
-      legend: {
-        text: __("triage.psd.label")
-      }
+      legend: __("triage.psd.label")
     },
     inline: true,
     items: getBooleanItems(),
@@ -16,15 +14,11 @@
 
   {% set delayVaccinationHtml = dateInput({
     fieldset: {
-      legend: {
-        text: __("triage.statusInvalidAt.title", {
-          patient: params.context.patient
-        })
-      }
+      legend: __("triage.statusInvalidAt.title", {
+        patient: params.context.patient
+      })
     },
-    hint: {
-      text: __("triage.statusInvalidAt.hint", { date: DelayDate })
-    },
+    hint: __("triage.statusInvalidAt.hint", { date: DelayDate }),
     decorate: "triage.statusInvalidAt_"
   }) %}
 
@@ -40,9 +34,7 @@
         size: params.size or "m"
       }
     },
-    hint: {
-      text: params.context.screenVaccineCriteria
-    } if params.context.screenVaccineCriteria,
+    hint: params.context.screenVaccineCriteria,
     items: injectConditionalHtml(statusItems, ScreenStatus.DelayVaccination, delayVaccinationHtml),
     decorate: "triage.status"
   }) }}

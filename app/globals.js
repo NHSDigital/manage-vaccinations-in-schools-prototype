@@ -35,8 +35,8 @@ export default () => {
    */
   globals.getBooleanItems = function () {
     return [
-      { text: 'Yes', value: true },
-      { text: 'No', value: false }
+      { label: 'Yes', value: true },
+      { label: 'No', value: false }
     ]
   }
 
@@ -252,7 +252,7 @@ export default () => {
     return Object.values(Enum)
       .sort((a, b) => a.localeCompare(b))
       .map((value) => ({
-        text: value,
+        label: value,
         value,
         checked: value === selected
       }))
@@ -272,12 +272,12 @@ export default () => {
       : Object.values(Enum)
     return [
       {
-        text: 'Any',
+        label: 'Any',
         value: 'none',
         checked: !selected || selected === 'none'
       },
       ...values.map((value) => ({
-        text: value,
+        label: value,
         value,
         checked: value === selected
       }))

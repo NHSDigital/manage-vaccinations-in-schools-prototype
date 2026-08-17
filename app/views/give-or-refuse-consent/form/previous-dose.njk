@@ -14,7 +14,7 @@
         size: "m"
       }
     },
-    hint: { text: __("consent.previousDose.createdAt.hint") },
+    hint: __("consent.previousDose.createdAt.hint"),
     decorate: "consent.firstDose.createdAt_"
   }) }}
 
@@ -27,26 +27,26 @@
     },
     items: [
       {
-        text: __("consent.previousDose.country.england")
+        label: __("consent.previousDose.country.england")
       },
       {
-        text: __("consent.previousDose.country.scotland")
+        label: __("consent.previousDose.country.scotland")
       },
       {
-        text: __("consent.previousDose.country.wales")
+        label: __("consent.previousDose.country.wales")
       },
       {
-        text: __("consent.previousDose.country.ni")
+        label: __("consent.previousDose.country.ni")
       },
       {
         divider: "or"
       },
       {
-        text: __("consent.previousDose.country.other"),
+        label: __("consent.previousDose.country.other"),
         value: "Other",
         conditional: {
           html: select({
-            label: { text: __("consent.previousDose.countryOther.title") },
+            label: __("consent.previousDose.countryOther.title"),
             items: otherCountryItems(Country, consent.previousDose.countryOther),
             decorate: "consent.firstDose.countryOther",
             attributes: {

@@ -31,25 +31,19 @@
       }
     },
     items: [{
-      text: __("preScreen.hasSelfIdentified.true"),
+      label: __("preScreen.hasSelfIdentified.true"),
       value: true
     }, {
-      text: __("preScreen.hasSelfIdentified.false"),
+      label: __("preScreen.hasSelfIdentified.false"),
       value: false,
       conditional: {
         html: input({
-          label: {
-            text: __("preScreen.identifiedBy.name.title")
-          },
+          label: __("preScreen.identifiedBy.name.title"),
           width: 20,
           decorate: "preScreen.identifiedBy.name"
         }) + input({
-          label: {
-            text: __("preScreen.identifiedBy.relationship.title")
-          },
-          hint: {
-            text: __("preScreen.identifiedBy.relationship.hint")
-          },
+          label: __("preScreen.identifiedBy.relationship.title"),
+          hint: __("preScreen.identifiedBy.relationship.hint"),
           width: 20,
           decorate: "preScreen.identifiedBy.relationship"
         })
@@ -78,7 +72,7 @@
 
   {{ checkboxes({
     items: [{
-      text: __("preScreen.check.label")
+      label: __("preScreen.check.label")
     }],
     decorate: ["preScreen", "check"],
     _validate: {
@@ -89,14 +83,14 @@
   }) if account.isRegisteredNurse }}
 
   {{ textarea({
-    label: { text: __("preScreen.note.label") + " (optional)" },
+    label: __("preScreen.note.label") + " (optional)",
     rows: 2,
     decorate: "preScreen.note"
   }) }}
 
   {% if session.hasVgdProtocol %}
     {{ select({
-      label: { text: __("preScreen.assessedBy.title") },
+      label: __("preScreen.assessedBy.title"),
       items: userItems(registeredNurseUsers, preScreen.assessedBy),
       decorate: "preScreen.assessedBy_uid",
       attributes: {
@@ -113,14 +107,14 @@
 
   {% set vaccinationSiteHtml = radios({
     fieldset: {
-      legend: { text: __("preScreen.injectionSite.label") }
+      legend: __("preScreen.injectionSite.label")
     },
     items: [{
-      text: VaccinationSite.ArmLeftUpper
+      label: VaccinationSite.ArmLeftUpper
     }, {
-      text: VaccinationSite.ArmRightUpper
+      label: VaccinationSite.ArmRightUpper
     }, {
-      text: VaccinationSite.Other
+      label: VaccinationSite.Other
     }],
     decorate: "preScreen.injectionSite",
     _validate: {
@@ -135,7 +129,7 @@
   }) %}
 
   {% set administeredByHtml = select({
-    label: { text: __("preScreen.administeredBy.title") },
+    label: __("preScreen.administeredBy.title"),
     items: userItems(allVaccinatingUsers, preScreen.assessedBy),
     decorate: "preScreen.administeredBy_uid",
     attributes: {
@@ -154,31 +148,32 @@
   {{ radios({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m nhsuk-u-font-size-22",
+        classes: "nhsuk-u-font-size-22",
         text: __("preScreen.ready.label", {
           patient: patient,
           programme: patientProgramme.programme,
           method: patientProgramme.vaccine.method | lower
-        }) | safe
+        }) | safe,
+        size: "m"
       }
     },
     items: [
       {
-        text: __("preScreen.ready.yes"),
+        label: __("preScreen.ready.yes"),
         value: true,
         conditional: {
           html: preScreenReadyHtml
         } if preScreenReadyHtml
       },
       {
-        text: __("preScreen.ready.no"),
+        label: __("preScreen.ready.no"),
         value: false
       },
       {
         divider: "or"
       } if canRecordAlternativeVaccine,
       {
-        text: __("preScreen.ready.alternative"),
+        label: __("preScreen.ready.alternative"),
         value: "alternative",
         conditional: {
           html: preScreenReadyHtml

@@ -16,19 +16,19 @@
       }
     },
     items: [{
-      text: __("vaccination.hasSelfIdentified.true"),
+      label: __("vaccination.hasSelfIdentified.true"),
       value: true
     }, {
-      text: __("vaccination.hasSelfIdentified.false"),
+      label: __("vaccination.hasSelfIdentified.false"),
       value: false,
       conditional: {
         html: input({
-          label: { text: __("vaccination.identifiedBy.name.title") },
+          label: __("vaccination.identifiedBy.name.title"),
           width: 20,
           decorate: "vaccination.identifiedBy.name"
         }) + input({
-          label: { text: __("vaccination.identifiedBy.relationship.title") },
-          hint: { text: __("vaccination.identifiedBy.relationship.hint") },
+          label: __("vaccination.identifiedBy.relationship.title"),
+          hint: __("vaccination.identifiedBy.relationship.hint"),
           width: 20,
           decorate: "vaccination.identifiedBy.relationship"
         })

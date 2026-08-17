@@ -16,26 +16,24 @@
       }
     },
     items: [{
-      text: __("consent.child.adjustments.assistanceAnimal.label"),
+      label: __("consent.child.adjustments.assistanceAnimal.label"),
       value: Adjustment.AssistanceAnimal,
       exclusiveGroup: "adjustments-list"
     },{
-      text: __("consent.child.adjustments.distraction.label"),
+      label: __("consent.child.adjustments.distraction.label"),
       value: Adjustment.Distraction,
       exclusiveGroup: "adjustments-list"
     }, {
-      text: __("consent.child.adjustments.privacy.label"),
+      label: __("consent.child.adjustments.privacy.label"),
       value: Adjustment.Privacy,
-      hint: {
-        text: __("consent.child.adjustments.privacy.hint")
-      },
+      hint: __("consent.child.adjustments.privacy.hint"),
       exclusiveGroup: "adjustments-list"
     }, {
-      text: __("consent.child.adjustments.other.label"),
+      label: __("consent.child.adjustments.other.label"),
       value: Adjustment.Other,
       conditional: {
         html: input({
-          label: { text: __("consent.child.adjustmentsOther.title") },
+          label: __("consent.child.adjustmentsOther.title"),
           decorate: "appointment.child.adjustmentsOther"
         })
       },
@@ -45,7 +43,7 @@
       divider: 'or'
     },
     {
-      text: __("clinicBooking.adjustments.none.label", firstName),
+      label: __("clinicBooking.adjustments.none.label", firstName),
       value: Adjustment.None,
       exclusiveGroup: "adjustments-list",
       exclusive: true

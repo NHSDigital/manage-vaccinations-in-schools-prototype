@@ -14,30 +14,30 @@
 
   {%- set fosterCarerHtml = radios({
     fieldset: {
-      legend: { text: __("contact.hasParentalResponsibility.delegatedLabel") }
+      legend: __("contact.hasParentalResponsibility.delegatedLabel")
     },
-    hint: { text: __("contact.hasParentalResponsibility.hint") },
+    hint: __("contact.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "reply.contact.hasParentalResponsibility"
   }) %}
 
   {%- set guardianHtml = radios({
     fieldset: {
-      legend: { text: __("contact.hasParentalResponsibility.label") }
+      legend: __("contact.hasParentalResponsibility.label")
     },
-    hint: { text: __("contact.hasParentalResponsibility.hint") },
+    hint: __("contact.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "reply.contact.hasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
-    label: { text: __("contact.relationshipOther.label") },
+    label: __("contact.relationshipOther.label"),
     decorate: "reply.contact.relationshipOther"
   }) + radios({
     fieldset: {
-      legend: { text: __("contact.hasParentalResponsibility.label") }
+      legend: __("contact.hasParentalResponsibility.label")
     },
-    hint: { text: __("contact.hasParentalResponsibility.hint") },
+    hint: __("contact.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
     decorate: "reply.contact.hasParentalResponsibility"
   }) %}
@@ -52,46 +52,44 @@
   {% set items = injectConditionalHtml(items, ParentalRelationship.Other, otherHtml) %}
 
   {{ input({
-    label: { text: __("contact.fullName.label") },
+    label: __("contact.fullName.label"),
     decorate: "reply.contact.fullName"
   }) }}
 
   {# `pop` removes `Other` and `Unknown` from ParentalRelationship array #}
   {{ radios({
     fieldset: {
-      legend: { text: __("contact.relationship.label") }
+      legend: __("contact.relationship.label")
     },
     items: items,
     decorate: "reply.contact.relationship"
   }) }}
 
   {{ input({
-    label: { text: __("contact.email.label") },
+    label: __("contact.email.label"),
     decorate: "reply.contact.email"
   }) }}
 
   {{ input({
-    label: { text: __("contact.tel.label") + " (optional)" },
+    label: __("contact.tel.label") + " (optional)",
     decorate: "reply.contact.tel"
   }) }}
 
   {{ radios({
     fieldset: {
-      legend: {
-        text: __("contact.hasCommunicationNeeds.title")
-      }
+      legend: __("contact.hasCommunicationNeeds.title")
     },
     items: [{
-      text: __("contact.hasCommunicationNeeds.yes"),
+      label: __("contact.hasCommunicationNeeds.yes"),
       value: true,
       conditional: {
         html: textarea({
-          label: { text: __("contact.communicationNeeds.title") },
+          label: __("contact.communicationNeeds.title"),
           decorate: "reply.contact.communicationNeeds"
         })
       }
     }, {
-      text: __("contact.hasCommunicationNeeds.no"),
+      label: __("contact.hasCommunicationNeeds.no"),
       value: false
     }],
     decorate: "reply.contact.hasCommunicationNeeds"

@@ -11,22 +11,22 @@
   {{ dateInput({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("vaccination.administeredAt_date.label")
+        text: __("vaccination.administeredAt_date.label"),
+        size: "m"
       }
     },
-    hint: { text: __("vaccination.administeredAt_date.hint") },
+    hint: __("vaccination.administeredAt_date.hint"),
     decorate: "vaccination.administeredAt_"
   }) }}
 
   {{ dateInput({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--m",
-        text: __("vaccination.administeredAt_time.label")
+        text: __("vaccination.administeredAt_time.label"),
+        size: "m"
       }
     },
-    hint: { text: __("vaccination.administeredAt_time.hint") },
+    hint: __("vaccination.administeredAt_time.hint"),
     items: [{
       label: "Hour",
       width: 2,

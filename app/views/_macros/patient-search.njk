@@ -50,7 +50,7 @@
         text: __("search.label"),
         size: "s"
       },
-      hint: { text: __("search.hint.patient") },
+      hint: __("search.hint.patient"),
       attributes: {
         formaction: params.formaction,
         formmethod: "post"
@@ -92,7 +92,7 @@
       small: true,
       items: [
       {
-        text: 'Can be offered additional vaccinations',
+        label: "Can be offered additional vaccinations",
         value: true
       }
       ],
@@ -148,11 +148,11 @@
         }
       },
       items: [{
-        text: "Any",
+        label: "Any",
         value: "none",
         checked: not data.status or data.status == "none"
       }, {
-        text: PatientStatus.Ineligible,
+        label: PatientStatus.Ineligible,
         conditional: {
           html: checkboxes({
             small: true,
@@ -161,7 +161,7 @@
           })
         } if data.status == PatientStatus.Ineligible
       } if not params.hidePatientIneligibleStatus, {
-        text: PatientStatus.Consent,
+        label: PatientStatus.Consent,
         conditional: {
           html: checkboxes({
             small: true,
@@ -170,7 +170,7 @@
           })
         } if data.status == PatientStatus.Consent
       }, {
-        text: PatientStatus.Refused,
+        label: PatientStatus.Refused,
         conditional: {
           html: checkboxes({
             small: true,
@@ -179,7 +179,7 @@
           })
         } if data.status == PatientStatus.Refused
       }, {
-        text: PatientStatus.Triage,
+        label: PatientStatus.Triage,
         conditional: {
           html: checkboxes({
             small: true,
@@ -188,7 +188,7 @@
           })
         } if data.status == PatientStatus.Triage
       }, {
-        text: PatientStatus.Due,
+        label: PatientStatus.Due,
         conditional: {
           html: (checkboxes({
             fieldset: {
@@ -200,11 +200,11 @@
             small: true,
             items: enumItems(RecordVaccineCriteria),
             items: [{
-              text: RecordVaccineCriteria.AlternativeFluInjectionOnly
+              label: RecordVaccineCriteria.AlternativeFluInjectionOnly
             }, {
-              text: RecordVaccineCriteria.IntranasalOnly
+              label: RecordVaccineCriteria.IntranasalOnly
             }, {
-              text: RecordVaccineCriteria.IntranasalPreferred
+              label: RecordVaccineCriteria.IntranasalPreferred
             }],
             decorate: "vaccineCriteria"
           }) if showFluVaccineCriteria) + (checkboxes({
@@ -216,15 +216,15 @@
             } if not session,
             small: true,
             items: [{
-              text: RecordVaccineCriteria.NoMMRPreference
+              label: RecordVaccineCriteria.NoMMRPreference
             }, {
-              text: RecordVaccineCriteria.AlternativeMMRInjectionOnly
+              label: RecordVaccineCriteria.AlternativeMMRInjectionOnly
             }],
             decorate: "vaccineCriteria"
           }) if showMMRVaccineCriteria)
         } if data.status == PatientStatus.Due
       }, {
-        text: PatientStatus.Deferred,
+        label: PatientStatus.Deferred,
         conditional: {
           html: checkboxes({
             small: true,
@@ -233,9 +233,9 @@
           })
         } if data.status == PatientStatus.Deferred
       }, {
-        text: PatientStatus.PartiallyVaccinated
+        label: PatientStatus.PartiallyVaccinated
       }, {
-        text: PatientStatus.Vaccinated,
+        label: PatientStatus.Vaccinated,
         conditional: {
           html: checkboxes({
             small: true,
@@ -280,20 +280,20 @@
         small: true,
         items: [
           {
-            value: "isArchived",
-            text: __("patient.search.isArchived")
+            label: __("patient.search.isArchived"),
+            value: "isArchived"
           },
           {
-            value: "hasImpairment",
-            html: __("patient.search.hasImpairment")
+            label: __("patient.search.hasImpairment"),
+            value: "hasImpairment"
           },
           {
-            value: "hasAdjustment",
-            html: __("patient.search.hasAdjustment")
+            label: __("patient.search.hasAdjustment"),
+            value: "hasAdjustment"
           },
           {
-            value: "hasMissingNhsNumber",
-            html: __("patient.search.hasMissingNhsNumber")
+            label: __("patient.search.hasMissingNhsNumber"),
+            value: "hasMissingNhsNumber"
           }
         ],
         decorate: "option"

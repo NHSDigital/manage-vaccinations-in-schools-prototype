@@ -10,13 +10,13 @@
   }) }}
 
   {{ textarea({
-    label: { text: __("reply.note.label") },
+    label: __("reply.note.label"),
     decorate: "reply.note"
   }) }}
 
   {{ radios({
     fieldset: {
-      legend: { text: __("reply.hasConfirmedRefusal.label") }
+      legend: __("reply.hasConfirmedRefusal.label")
     },
     inline: true,
     items: getBooleanItems(),

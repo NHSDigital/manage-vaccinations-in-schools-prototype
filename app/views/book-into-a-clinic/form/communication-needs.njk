@@ -2,7 +2,6 @@
 
 {% set audience = "parent" if isParentFacing else "team" %}
 {% set title = __("clinicBooking.contact.hasCommunicationNeeds.title." + audience) %}
-{% set hint = __("clinicBooking.contact.hasCommunicationNeeds.hint." + audience) %}
 
 {% block form %}
   {{ radios({
@@ -14,18 +13,18 @@
         })
       }
     },
-    hint: { text: hint },
+    hint: __("clinicBooking.contact.hasCommunicationNeeds.hint." + audience),
     items: [{
-      text: __("clinicBooking.contact.hasCommunicationNeeds.yes"),
+      label: __("clinicBooking.contact.hasCommunicationNeeds.yes"),
       value: true,
       conditional: {
         html: textarea({
-          label: { text: __("clinicBooking.contact.communicationNeeds.title") },
+          label: __("clinicBooking.contact.communicationNeeds.title"),
           decorate: "booking.contact.communicationNeeds"
         })
       }
     }, {
-      text: __("clinicBooking.contact.hasCommunicationNeeds.no"),
+      label: __("clinicBooking.contact.hasCommunicationNeeds.no"),
       value: false
     }],
     decorate: "booking.contact.hasCommunicationNeeds"

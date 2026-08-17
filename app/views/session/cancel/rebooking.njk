@@ -12,18 +12,16 @@
         })
       }
     },
-    hint: {
-      text: __mf("session.cancel.rebooking.hint", { count: 0 })
-    },
+    hint: __mf("session.cancel.rebooking.hint", { count: 0 }),
     items: [
-    {
-      text: __("session.cancel.rebooking.yes"),
-      value: true
-    },
-    {
-      text: __("session.cancel.rebooking.no"),
-      value: false
-    }
+      {
+        label: __("session.cancel.rebooking.yes"),
+        value: true
+      },
+      {
+        label: __("session.cancel.rebooking.no"),
+        value: false
+      }
     ],
     decorate: "cancellation.offerRebooking"
   }) }}

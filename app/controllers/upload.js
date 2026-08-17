@@ -225,7 +225,7 @@ export const uploadController = {
       response.locals.typeItems = Object.entries(UploadType).map(
         ([key, value]) => ({
           text: UploadType[key],
-          hint: { text: __(`upload.type.hint.${key}`) },
+          hint: __(`upload.type.hint.${key}`),
           value
         })
       )

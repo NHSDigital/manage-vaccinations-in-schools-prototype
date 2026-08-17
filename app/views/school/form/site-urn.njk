@@ -8,7 +8,7 @@
   }) }}
 
   {{ select({
-    label: { text: __("school.site-urn.label") },
+    label: __("school.site-urn.label"),
     items: locationItems(data.schools, school.id),
     decorate: "school.id",
     attributes: {

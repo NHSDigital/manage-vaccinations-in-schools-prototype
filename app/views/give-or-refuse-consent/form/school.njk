@@ -12,7 +12,7 @@
   }) | nhsukMarkdown }}
 
   {{ select({
-    label: { text: __("consent.child.school.label") },
+    label: __("consent.child.school.label"),
     items: locationItems(data.schools, consent.child.school_id),
     decorate: "consent.child.school_id",
     attributes: {

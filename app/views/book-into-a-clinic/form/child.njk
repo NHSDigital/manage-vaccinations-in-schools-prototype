@@ -15,35 +15,35 @@
   {{ __("clinicBooking.child.description") | nhsukMarkdown }}
 
   {{ input({
-    label: { text: __("clinicBooking.child.firstName.label") },
-    hint: { text: __("clinicBooking.child.firstName.hint") },
+    label: __("clinicBooking.child.firstName.label"),
+    hint: __("clinicBooking.child.firstName.hint"),
     decorate: "appointment.child.firstName"
   }) }}
 
   {{ input({
-    label: { text: __("clinicBooking.child.lastName.label") },
-    hint: { text: __("clinicBooking.child.lastName.hint") },
+    label: __("clinicBooking.child.lastName.label"),
+    hint: __("clinicBooking.child.lastName.hint"),
     decorate: "appointment.child.lastName"
   }) }}
 
   {{ radios({
     fieldset: {
-      legend: { text: __("clinicBooking.child.hasPreferredName.label") }
+      legend: __("clinicBooking.child.hasPreferredName.label")
     },
     items: [{
-      text: __("clinicBooking.child.hasPreferredName.yes"),
+      label: __("clinicBooking.child.hasPreferredName.yes"),
       value: true,
       conditional: {
         html: input({
-          label: { text: __("clinicBooking.child.preferredFirstName.label") + " (optional)" },
+          label: __("clinicBooking.child.preferredFirstName.label") + " (optional)",
           decorate: "appointment.child.preferredFirstName"
         }) + input({
-          label: { text: __("clinicBooking.child.preferredLastName.label") + " (optional)" },
+          label: __("clinicBooking.child.preferredLastName.label") + " (optional)",
           decorate: "appointment.child.preferredLastName"
         })
       }
     }, {
-      text: __("clinicBooking.child.hasPreferredName.no"),
+      label: __("clinicBooking.child.hasPreferredName.no"),
       value: false
     }],
     decorate: "journeyData.preferredNameChoice"

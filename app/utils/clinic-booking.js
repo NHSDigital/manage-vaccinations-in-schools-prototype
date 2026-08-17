@@ -96,9 +96,7 @@ export const getScheduledClinicLocationItems = (
     clinicLocationItems.push({
       text: sessions[0].formatted.location,
       value: clinic_id,
-      hint: {
-        text: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
-      }
+      hint: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
     })
     distanceToClinic += 2.1
   })
