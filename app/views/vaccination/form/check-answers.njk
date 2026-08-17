@@ -100,8 +100,8 @@
     descriptionHtml: textarea({
       classes: "nhsuk-u-margin-bottom-0",
       label: {
-        classes: "nhsuk-label--m nhsuk-u-margin-bottom-2",
-        text: __("vaccination.note.label") + " (optional)"
+        text: __("vaccination.note.label") + " (optional)",
+        size: "m"
       },
       hint: { text: __("vaccination.note.hint") if vaccination.outcome != VaccinationOutcome.AlreadyVaccinated else __("vaccination.note.hintAlreadyVaccinated") },
       decorate: "vaccination.note"
