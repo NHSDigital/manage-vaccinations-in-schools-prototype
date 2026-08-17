@@ -10,8 +10,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("patientSession.clinicAppointment.cancel.confirm.details"),
-      headingSize: "m"
+      heading: {
+        text: __("patientSession.clinicAppointment.cancel.confirm.details"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(patientSession.clinicAppointment, {

@@ -9,8 +9,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("pdsRecord.label"),
-      headingSize: "m"
+      heading: {
+        text: __("pdsRecord.label"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(pdsRecord, {

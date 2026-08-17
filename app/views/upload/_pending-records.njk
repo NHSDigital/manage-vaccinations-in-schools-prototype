@@ -97,11 +97,13 @@
   id: "partial",
   responsive: true,
   card: {
-    heading: __mf("upload.show.partial.count." + upload.status, {
-      count: patientRows.length
-    }),
-    headingLevel: 3,
-    headingSize: "s"
+    heading: {
+      text: __mf("upload.show.partial.count." + upload.status, {
+        count: patientRows.length
+      }),
+      level: 3,
+      size: "s"
+    }
   },
   head: [
     { text: __("patient.fullNameAndNhsn.label") },

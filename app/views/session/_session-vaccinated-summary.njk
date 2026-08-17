@@ -28,9 +28,11 @@
 
 {{ summaryList({
   card: {
-    heading:  __("session.tally.vaccinated.label"),
-    headingLevel: 2,
-    headingSize: "m"
+    heading: {
+      text: __("session.tally.vaccinated.label"),
+      level: 2,
+      size: "m"
+    }
   },
   rows: rows | removeLastSummaryBorder
 }) }}

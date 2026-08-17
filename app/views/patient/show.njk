@@ -27,8 +27,10 @@
   }) }}
 
   {% call card({
-    heading: recordTitle,
-    headingLevel: 3,
+    heading: {
+      text: recordTitle,
+      level: 3
+    },
     actions: {
       items: [
         {
@@ -120,8 +122,10 @@
   {% endfor %}
 
   {% call card({
-    heading: __("patient.programmes.label"),
-    headingLevel: 3,
+    heading: {
+      text: __("patient.programmes.label"),
+      level: 3
+    },
     actions: {
       items: [
         {
@@ -149,11 +153,15 @@
 
   {# Activity log card #}
   {{ card({
-    heading: __("patient.auditEvents.label"),
-    headingLevel: 3,
-    descriptionHtml: appTimeline({
-      items: timelineItems(patient.auditEvents)
-    })
+    heading: {
+      text: __("patient.auditEvents.label"),
+      level: 3
+    },
+    description: {
+      html: appTimeline({
+        items: timelineItems(patient.auditEvents)
+      })
+    }
   }) if patient.auditEvents.length and not account.isSchoolUser }}
 
   {% if not account.isSchoolUser %}

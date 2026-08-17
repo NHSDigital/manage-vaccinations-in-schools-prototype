@@ -18,8 +18,10 @@
     <aside class="nhsuk-grid-column-one-third" data-module="app-sticky">
       {% call card({
         feature: true,
-        heading: __("appointments.label"),
-        headingLevel: 2
+        heading: {
+          text: __("appointments.label"),
+          level: 2
+        }
       }) %}
         {{ summaryList({
           classes: "nhsuk-u-margin-bottom-4 app-summary-list--full-width",
@@ -77,9 +79,11 @@
           {{ summaryList({
             card: {
               classes: "app-card--compact",
-              heading: patient.fullName | highlightQuery(data.q) | safe,
-              headingLevel: 3,
-              headingSize: "s",
+              heading: {
+                text: patient.fullName | highlightQuery(data.q) | safe,
+                level: 3,
+                size: "s"
+              },
               clickable: true,
               href: appointmentPath + "/link?patient_uuid=" + patient.uuid
             },

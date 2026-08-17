@@ -11,8 +11,10 @@
   {% if session.type === SessionType.School %}
     {{ summaryList({
       card: {
-        heading: __("session.summary"),
-        headingSize: "m"
+        heading: {
+          text: __("session.summary"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(session, {
@@ -57,8 +59,10 @@
   {% else %}
     {{ summaryList({
       card: {
-        heading: __("session.summary"),
-        headingSize: "m"
+        heading: {
+          text: __("session.summary"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(session, {

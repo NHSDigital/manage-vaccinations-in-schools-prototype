@@ -8,17 +8,19 @@
     title: title
   }) }}
 
-  {# 
+  {#
     Note: primaryAbandonmentReason INTENTIONALLY differs in name from the model’s abandonmentPrimaryReason, as we
     want the primary reason recorded even if there's only one reason (it'll make later querying easier) but we
     don’t want summaryRows to pick up the value from the object's abandonmentPrimaryReason key when the formatted
     getter returns undefined for it
   #}
-  
+
   {{ summaryList({
     card: {
-      heading: __("clinicBooking.check-feedback.summary"),
-      headingSize: "m"
+      heading: {
+        text: __("clinicBooking.check-feedback.summary"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {

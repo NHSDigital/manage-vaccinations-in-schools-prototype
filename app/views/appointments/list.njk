@@ -69,8 +69,10 @@
       id: "appointments",
       responsive: true,
       card: {
-        heading: __mf("appointments.count.session", { count: appointments.length, location: session.location.name }) if session else __mf("appointments.count.total", { count: appointments.length }),
-        headingLevel: 3
+        heading: {
+          text: __mf("appointments.count.session", { count: appointments.length, location: session.location.name }) if session else __mf("appointments.count.total", { count: appointments.length }),
+          level: 3
+        }
       },
       head: [
         { text: __("appointments.summary.label") },

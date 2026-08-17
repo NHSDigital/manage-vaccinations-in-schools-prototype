@@ -9,9 +9,11 @@
 
   {{ summaryList({
     card: {
-      heading: appointment.fullFriendlyName,
-      headingSize: "s",
-      headingLevel: 4
+      heading: {
+        text: appointment.fullFriendlyName,
+        level: 4,
+        size: "s"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {

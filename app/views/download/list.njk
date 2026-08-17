@@ -21,8 +21,10 @@
       {% call card({
         classes: "app-filters",
         feature: true,
-        heading: __("download.search.label"),
-        headingLevel: 2
+        heading: {
+          text: __("download.search.label"),
+          level: 2
+        }
       }) %}
         {{ radios({
           fieldset: {
@@ -78,9 +80,11 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: download.name,
-            headingSize: "s",
-            headingLevel: 3,
+            heading: {
+              text: download.name,
+              level: 3,
+              size: "s"
+            }
             href: download.uri + "/download" if download.status == DownloadStatus.Ready,
             clickable: true if download.status == DownloadStatus.Ready
           },

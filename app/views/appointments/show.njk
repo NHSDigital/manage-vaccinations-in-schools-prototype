@@ -25,8 +25,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("appointments.label"),
-        headingSize: "m"
+        heading: {
+          text: __("appointments.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(appointment, {
@@ -41,8 +43,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("contact.label"),
-        headingSize: "m"
+        heading: {
+          text: __("contact.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(appointment.contact, {
@@ -58,8 +62,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("child.label"),
-        headingSize: "m"
+        heading: {
+          text: __("child.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(appointment.child, {

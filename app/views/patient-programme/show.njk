@@ -40,10 +40,12 @@
   {% endif %}
 
   {% call card({
-    heading: __mf("patientProgramme.vaccinationsGiven.count", {
-      count: patientProgramme.vaccinationsGiven.length
-    }),
-    headingLevel: 3
+    heading: {
+      text: __mf("patientProgramme.vaccinationsGiven.count", {
+        count: patientProgramme.vaccinationsGiven.length
+      }),
+      level: 3
+    }
   }) %}
     {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
 
@@ -91,8 +93,10 @@
 
   {% if patientProgramme.tetanusVaccinations %}
     {% call card({
-      heading: __("patientProgramme.tetanus.label"),
-      headingLevel: 3
+      heading: {
+        text: __("patientProgramme.tetanus.label"),
+        level: 3
+      }
     }) %}
       {% set tetanusVaccinationRows = [] %}
       {% for vaccination in patientProgramme.tetanusVaccinations %}
@@ -137,8 +141,10 @@
 
   {% if patientProgramme.patientSessions.length %}
     {% call card({
-      heading: __("patientProgramme.patientSessions.label"),
-      headingLevel: 3
+      heading: {
+        text: __("patientProgramme.patientSessions.label"),
+        level: 3
+      }
     }) %}
       {% set patientSessionRows = [] %}
       {% for patientSession in patientProgramme.patientSessions %}
@@ -194,17 +200,23 @@
   {% endif %}
 
   {{ card({
-    heading: __("patientProgramme.auditEvents.label"),
-    headingLevel: 3,
-    descriptionHtml: appTimeline({
-      items: timelineItems(patientProgramme.auditEvents)
-    })
+    heading: {
+      text: __("patientProgramme.auditEvents.label"),
+      level: 3
+    },
+    description: {
+      html: appTimeline({
+        items: timelineItems(patientProgramme.auditEvents)
+      })
+    }
   }) if patientProgramme.auditEvents.length }}
 
   {% if patientProgramme.otherSeasons %}
     {% call card({
-      heading: __("patientProgramme.otherSeasons.label", patientProgramme.programme.nameSentenceCase),
-      headingLevel: 3
+      heading: {
+        text: __("patientProgramme.otherSeasons.label", patientProgramme.programme.nameSentenceCase),
+        level: 3
+      }
     }) %}
       {% set otherSeasonRows = [] %}
       {% for patientProgramme in patientProgramme.otherSeasons %}

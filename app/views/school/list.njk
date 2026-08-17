@@ -16,8 +16,10 @@
       {% call card({
         classes: "app-filters",
         feature: true,
-        heading: __("school.search.label") ,
-        headingLevel: 2
+        heading: {
+          text: __("school.search.label"),
+          level: 2
+        }
       }) %}
         {{ searchInput({
           label: {
@@ -117,9 +119,11 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: school.name | highlightQuery(data.q) | safe,
-            headingSize: "s",
-            headingLevel: 3,
+            heading: {
+              text: school.name | highlightQuery(data.q) | safe,
+              size: "s",
+              level: 3
+            },
             href: school.uri,
             clickable: true
           },

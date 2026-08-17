@@ -11,14 +11,16 @@
     }) }}
 
     <div class="nhsuk-u-reading-width">
-        {{ __("clinicBooking.show.introduction") | nhsukMarkdown }}
+      {{ __("clinicBooking.show.introduction") | nhsukMarkdown }}
     </div>
 
     {% for appointment in clinicBooking.appointments %}
       {{ summaryList({
         card: {
-          heading: __("clinicBooking.show.appointment.title", loop.index),
-          headingSize: "m"
+          heading: {
+            text: __("clinicBooking.show.appointment.title", loop.index),
+            size: "m"
+          }
         },
         lastRowBorder: false,
         rows: summaryRows(appointment, {
@@ -46,8 +48,10 @@
     {# Contact details #}
     {{ summaryList({
       card: {
-        heading: __("clinicBooking.show.contact.title"),
-        headingSize: "m"
+        heading: {
+          text: __("clinicBooking.show.contact.title"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(clinicBooking.contact, {

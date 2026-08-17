@@ -22,9 +22,11 @@
 
   {# Session details (and edit/cancel actions, plus offline sheet) #}
   {% call card({
-    heading: __("session.summary"),
-    headingLevel: 2,
-    headingSize: "m",
+    heading: {
+      text: __("session.summary"),
+      level: 2,
+      size: "m"
+    },
     actions: {
       items: [
       {

@@ -14,8 +14,10 @@
 
   {{ summaryList({
     card: {
-      heading:  __("school.edit.summary"),
-      headingClasses: "nhsuk-heading-m"
+      heading: {
+        text: __("school.edit.summary"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(school, {

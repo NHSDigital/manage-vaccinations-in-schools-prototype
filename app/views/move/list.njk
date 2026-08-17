@@ -55,8 +55,10 @@
       id: "moves",
       responsive: true,
       card: {
-        heading: __mf("move.count", { count: moves.length }),
-        headingLevel: 3
+        heading: {
+          text: __mf("move.count", { count: moves.length }),
+          level: 3
+        }
       },
       head: [
         { text: __("move.createdAt.label") },

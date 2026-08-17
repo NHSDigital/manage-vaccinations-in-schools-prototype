@@ -49,9 +49,11 @@
   id: "moves",
   responsive: true,
   card: {
-    heading: __mf("upload.show.moves.count", { count: moveRows.length }),
-    headingLevel: 3,
-    headingSize: "s"
+    heading: {
+      text: __mf("upload.show.moves.count", { count: moveRows.length }),
+      level: 3,
+      size: "s"
+    }
   },
   head: [
     { text: __("patient.fullNameAndNhsn.label") },

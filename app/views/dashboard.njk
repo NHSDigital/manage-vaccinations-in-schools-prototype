@@ -22,18 +22,22 @@
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("report.list.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("report.list.title"),
+          size: "xs"
+        },
         href: "/reports",
-        descriptionHtml: __("report.list.description") | nhsukMarkdown
+        description: __("report.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("manual.show.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("manual.show.title"),
+          size: "xs"
+        },
         href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
         description: __("manual.show.description")
       }) }}
@@ -43,30 +47,36 @@
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("patient.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("patient.list.title"),
+          size: "s"
+        },
         href: "/patients",
-        descriptionHtml: "Find children and view their consent status" | nhsukMarkdown
+        description: "Find children and view their consent status"
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("session.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("session.list.title"),
+          size: "s"
+        },
         href: "/sessions",
-        descriptionHtml: "View vaccination sessions and the children in them" | nhsukMarkdown
+        description: "View vaccination sessions and the children in them"
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("upload.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("upload.list.title"),
+          size: "s"
+        },
         href: "/uploads",
-        descriptionHtml: "Upload class lists" | nhsukMarkdown
+        description: "Upload class lists"
       }) }}
     </li>
     {% else %}
@@ -74,38 +84,46 @@
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("school.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("school.list.title"),
+          size: "s"
+        },
         href: "/schools",
-        descriptionHtml: __("school.list.description") | nhsukMarkdown
+        description: __("school.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("patient.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("patient.list.title"),
+          size: "s"
+        },
         href: "/patients",
-        descriptionHtml: __("patient.list.description") | nhsukMarkdown
+        description: __("patient.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("session.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("session.list.title"),
+          size: "s"
+        },
         href: "/sessions",
-        descriptionHtml: __("session.list.description") | nhsukMarkdown
+        description: __("session.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
-        heading: __("review.list.title"),
-        headingSize: "s",
+        heading: {
+          text: __("review.list.title"),
+          size: "s"
+        },
         href: "/reviews",
         description: __("review.list.description")
       }) }}
@@ -117,38 +135,46 @@
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("report.list.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("report.list.title"),
+          size: "xs"
+        },
         href: "/reports",
-        descriptionHtml: __("report.list.description") | nhsukMarkdown
+        description: __("report.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("upload.list.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("upload.list.title"),
+          size: "xs"
+        },
         href: "/uploads",
-        descriptionHtml: __("upload.list.description") | nhsukMarkdown
+        description: __("upload.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("download.list.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("download.list.title"),
+          size: "xs"
+        },
         href: "/downloads",
-        descriptionHtml: __("download.list.description") | nhsukMarkdown
+        description: __("download.list.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("vaccine.list.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("vaccine.list.title"),
+          size: "xs"
+        },
         href: "/vaccines",
         description: __("vaccine.list.description")
       }) }}
@@ -157,8 +183,10 @@
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("team.show.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("team.show.title"),
+          size: "xs"
+        },
         href: team.uri,
         description: __("team.show.description")
       }) }}
@@ -167,8 +195,10 @@
       {{ card({
         clickable: true,
         secondary: true,
-        heading: __("manual.show.title"),
-        headingSize: "xs",
+        heading: {
+          text: __("manual.show.title"),
+          size: "xs"
+        },
         href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
         description: __("manual.show.description")
       }) }}

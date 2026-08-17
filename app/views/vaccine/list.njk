@@ -11,8 +11,10 @@
 
   {% for vaccine in vaccines %}
     {% call card({
-      heading: vaccine.brandWithType,
-      headingSize: "m",
+      heading: {
+        text: vaccine.brandWithType,
+        size: "m"
+      },
       href: vaccine.uri
     }) %}
       {{ summaryList({

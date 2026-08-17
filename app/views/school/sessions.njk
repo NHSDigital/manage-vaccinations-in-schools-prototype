@@ -13,9 +13,11 @@
 {% macro sessionCard(session) %}
   {% call card({
     classes: "app-card--compact",
-    heading: session.formatted.date,
-    headingSize: "s",
-    headingLevel: 4,
+    heading: {
+      text: session.formatted.date,
+      size: "s",
+      level: 4
+    },
     href: session.uri
   }) %}
     {{ summaryList({

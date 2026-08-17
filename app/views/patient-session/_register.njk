@@ -1,6 +1,8 @@
 {% call card({
-  heading: __("patientSession.register.title"),
-  headingSize: "m"
+  heading: {
+    text: __("patientSession.register.title"),
+    size: "m"
+  }
 }) %}
   {# Description #}
   {{ patientSession.registerDescription | nhsukMarkdown }}

@@ -50,9 +50,11 @@
       {{ summaryList({
         card: {
           classes: "app-card--compact",
-          heading: patient.fullName | highlightQuery(data.q) | safe,
-          headingLevel: 3,
-          headingSize: "s",
+          heading: {
+            text: patient.fullName | highlightQuery(data.q) | safe,
+            level: 3,
+            size: "s"
+          },
           clickable: true,
           href: appointmentPath + "/link-child?patient_uuid=" + patient.uuid
         },

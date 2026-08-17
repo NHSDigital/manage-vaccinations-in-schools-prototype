@@ -2,8 +2,10 @@
 {% from "../_macros/contact-sms.njk" import appContactSms with context %}
 
 {% call card({
-  heading: __("patientSession.consent.title", programme.nameSentenceCase),
-  headingSize: "m"
+  heading: {
+    text: __("patientSession.consent.title", programme.nameSentenceCase),
+    size: "m"
+  }
 }) %}
   {# Description #}
   {% if not patientProgramme.isVaccinated %}
@@ -52,8 +54,10 @@
       {{ summaryList({
         card: {
           classes: "app-card--compact app-card--offset",
-          heading: reply.fullNameAndRelationship,
-          headingLevel: 4,
+          heading: {
+            text: reply.fullNameAndRelationship,
+            level: 4
+          },
           href: reply.uri if reply.isDelivered,
           actions: {
             items: [
@@ -104,8 +108,10 @@
       {{ summaryList({
         card: {
           classes: "app-card--compact app-card--offset",
-          heading: contact.fullNameAndRelationship,
-          headingLevel: 4
+          heading: {
+            text: contact.fullNameAndRelationship,
+            level: 4
+          }
         },
         lastRowBorder: false,
         rows: summaryRows(contact, {

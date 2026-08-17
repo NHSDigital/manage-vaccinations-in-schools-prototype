@@ -24,8 +24,10 @@
       {% call card({
         classes: "app-filters",
         feature: true,
-        heading: __("upload.search.label") ,
-        headingLevel: 2
+        heading: {
+          text: __("upload.search.label"),
+          level: 2
+        }
       }) %}
         {{ radios({
           fieldset: {
@@ -93,9 +95,11 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: upload.formatted.createdAt,
-            headingSize: "s",
-            headingLevel: 3,
+            heading: {
+              text: upload.formatted.createdAt,
+              size: "s",
+              level: 3
+            },
             href: upload.uri,
             clickable: true
           },

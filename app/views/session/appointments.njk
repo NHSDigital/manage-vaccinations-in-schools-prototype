@@ -80,12 +80,14 @@
       responsive: true,
       firstCellIsHeader: true,
       card: {
-        headingHtml: appHeading({
-          title: periodHeading,
-          summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators,
-          level: 2,
-          size: "m"
-        })
+        heading: {
+          html: appHeading({
+            title: periodHeading,
+            summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators,
+            level: 2,
+            size: "m"
+          })
+        }
       },
       rows: tableRows
     }) }}

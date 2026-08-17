@@ -30,8 +30,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("vaccination.show.summary"),
-        headingSize: "m",
+        heading: {
+          text: __("vaccination.show.summary"),
+          size: "m"
+        },
         actions: {
           items: [
             {

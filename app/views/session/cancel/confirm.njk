@@ -10,8 +10,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("session.cancel.confirmation.details"),
-      headingSize: "m"
+      heading: {
+        text: __("session.cancel.confirmation.details"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(session, {

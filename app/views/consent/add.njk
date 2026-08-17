@@ -13,8 +13,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("patient.label"),
-      headingSize: "m"
+      heading: {
+        text: __("patient.label"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(consent.child, {
@@ -31,8 +33,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("consent.label"),
-      headingSize: "m"
+      heading: {
+        text: __("consent.label"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(consent, {
@@ -44,8 +48,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("consent.healthAnswers.label"),
-      headingSize: "m"
+      heading: {
+        text: __("consent.healthAnswers.label"),
+        size: "m"
+      }
     },
     classes: "app-summary-list--full-width",
     rows: healthAnswerRows(consent.healthAnswers)

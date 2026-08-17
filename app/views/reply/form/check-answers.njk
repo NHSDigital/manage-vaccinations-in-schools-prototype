@@ -12,8 +12,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("reply.label"),
-      headingSize: "m"
+      heading: {
+        text: __("reply.label"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(reply, {
@@ -44,8 +46,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("child.label"),
-      headingSize: "m"
+      heading: {
+        text: __("child.label"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(reply.child, {
@@ -60,8 +64,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("contact.label"),
-      headingSize: "m"
+      heading: {
+        text: __("contact.label"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(reply.contact, {
@@ -92,8 +98,10 @@
   {{ summaryList({
     classes: "app-summary-list--full-width",
     card: {
-      heading: __("reply.healthAnswers.label"),
-      headingSize: "m"
+      heading: {
+        text: __("reply.healthAnswers.label"),
+        size: "m"
+      }
     },
     rows: healthAnswerRows(
       reply.healthAnswers,
@@ -103,8 +111,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("triage.label", { patient: reply.patient }),
-      headingSize: "m"
+      heading: {
+        text: __("triage.label", { patient: reply.patient }),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(triage, {

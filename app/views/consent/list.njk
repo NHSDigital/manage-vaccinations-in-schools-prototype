@@ -61,8 +61,10 @@
       id: "consents",
       responsive: true,
       card: {
-        heading: __mf("consent.count", { count: consents.length }),
-        headingLevel: 3
+        heading: {
+          text: __mf("consent.count", { count: consents.length }),
+          level: 3
+        }
       },
       head: [
         { text: __("consent.summary.label") },

@@ -17,8 +17,10 @@
   {% if consent.decision == ReplyDecision.OnlyMenACWY %}
     {{ summaryList({
       card: {
-        heading: "Consent for the MenACWY vaccination",
-        headingSize: "m"
+        heading: {
+          text: "Consent for the MenACWY vaccination",
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -31,8 +33,10 @@
 
     {{ summaryList({
       card: {
-        heading: "Consent for the Td/IPV vaccination",
-        headingSize: "m"
+        heading: {
+          text: "Consent for the Td/IPV vaccination",
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -51,8 +55,10 @@
   {% elif consent.decision == ReplyDecision.OnlyTdIPV %}
     {{ summaryList({
       card: {
-        heading: "Consent for the MenACWY vaccination",
-        headingSize: "m"
+        heading: {
+          text: "Consent for the MenACWY vaccination",
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -71,8 +77,10 @@
 
     {{ summaryList({
       card: {
-        heading: "Consent for the Td/IPV vaccination",
-        headingSize: "m"
+        heading: {
+          text: "Consent for the Td/IPV vaccination",
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -85,8 +93,10 @@
   {% else %}
     {{ summaryList({
       card: {
-        heading: __("consent.decision.summary", { session: session }) | safe,
-        headingSize: "m"
+        heading: {
+          text: __("consent.decision.summary", { session: session }) | safe,
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -112,8 +122,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("consent.child.summary"),
-      headingSize: "m"
+      heading: {
+        text: __("consent.child.summary"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(consent.child, {
@@ -144,8 +156,10 @@
 
   {{ summaryList({
     card: {
-      heading: __("consent.contact.summary"),
-      headingSize: "m"
+      heading: {
+        text: __("consent.contact.summary"),
+        size: "m"
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(consent.contact_, {
@@ -176,8 +190,10 @@
   {{ summaryList({
     classes: "app-summary-list--full-width",
     card: {
-      heading: __("consent.healthAnswers.label"),
-      headingSize: "m"
+      heading: {
+        text: __("consent.healthAnswers.label"),
+        size: "m"
+      }
     },
     rows: healthAnswerRows(
       consent.healthAnswers,
@@ -189,8 +205,10 @@
   {% if SessionPresetName.MMR in session.presetNames and consent.decision == ReplyDecision.AlreadyVaccinated %}
     {{ summaryList({
       card: {
-        heading: __("consent.firstDose.label"),
-        headingSize: "m"
+        heading: {
+          text: __("consent.firstDose.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -209,8 +227,10 @@
 
     {{ summaryList({
       card: {
-        heading: __("consent.secondDose.label"),
-        headingSize: "m"
+        heading: {
+          text: __("consent.secondDose.label"),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {
@@ -229,8 +249,10 @@
   {% elif consent.refusalReason == ReplyRefusal.AlreadyVaccinated %}
     {{ summaryList({
       card: {
-        heading: __("consent.previousDose.label", session.programmes[0].nameSentenceCase),
-        headingSize: "m"
+        heading: {
+          text: __("consent.previousDose.label", session.programmes[0].nameSentenceCase),
+          size: "m"
+        }
       },
       lastRowBorder: false,
       rows: summaryRows(consent, {

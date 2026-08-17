@@ -112,9 +112,11 @@
 
           {% call card({
             classes: "app-card--compact",
-            heading: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
-            headingLevel: 3,
-            headingSize: "s",
+            heading: {
+              text: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
+              level: 3,
+              size: "s"
+            },
             clickable: not showRegistration and not account.isSchoolUser,
             href: patientSessionUri if not account.isSchoolUser
           }) %}

@@ -56,9 +56,13 @@
       {% for auditEvent in patientSession.sessionNotes %}
         {{ card({
           classes: "nhsuk-u-margin-top-2 app-card--orange",
-          heading: __("patientSession.sessionNote.label"),
-          headingLevel: 3,
-          descriptionHtml: appEvent({ auditEvent: auditEvent, showProgrammes: true })
+          heading: {
+            text: __("patientSession.sessionNote.label"),
+            level: 3
+          },
+          description: {
+            html: appEvent({ auditEvent: auditEvent, showProgrammes: true })
+          }
         }) }}
       {% endfor %}
 

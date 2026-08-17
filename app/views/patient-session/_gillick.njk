@@ -1,6 +1,8 @@
 {% call card({
-  heading: __("patientSession.gillick.title"),
-  headingSize: "m"
+  heading: {
+    text: __("patientSession.gillick.title"),
+    size: "m"
+  }
 }) %}
   {# Description #}
   {% if patientSession.gillick %}

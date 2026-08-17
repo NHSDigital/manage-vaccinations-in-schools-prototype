@@ -34,9 +34,11 @@
   {% for contact in patient.contacts %}
     {{ summaryList({
       card: {
-        heading: contact.fullNameAndRelationship,
-        headingLevel: 4,
-        headingSize: "m",
+        heading: {
+          text: contact.fullNameAndRelationship,
+          level: 4,
+          size: "m"
+        },
         actions: {
           items: [{
             text: __("actions.edit"),

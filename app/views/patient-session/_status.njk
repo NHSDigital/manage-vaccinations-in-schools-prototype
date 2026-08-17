@@ -1,9 +1,11 @@
 {% call card({
   classes: "nhsuk-u-margin-top-3",
   feature: true,
-  heading: programme.name + ": " + (patientProgramme.status | lower),
-  headingClasses: "app-card__heading--" + patientProgramme.statusColour,
-  headingSize: "m"
+  heading: {
+    text: programme.name + ": " + (patientProgramme.status | lower),
+    classes: "app-card__heading--" + patientProgramme.statusColour,
+    size: "m"
+  }
 }) %}
   {# Description #}
   {{ patientProgramme.statusDescription | nhsukMarkdown }}
