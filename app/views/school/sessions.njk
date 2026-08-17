@@ -79,8 +79,8 @@
   }) if school.isOpen }}
 
   {% if activeSession %}
-    {{ appHeading({
-      title: __("school.sessions.isActive"),
+    {{ heading({
+      text: __("school.sessions.isActive"),
       level: 3,
       size: "m"
     }) }}
@@ -93,8 +93,8 @@
   {% endif %}
 
   {% if plannedSessions.length %}
-    {{ appHeading({
-      title: __("school.sessions.isPlanned"),
+    {{ heading({
+      text: __("school.sessions.isPlanned"),
       level: 3,
       size: "m"
     }) }}
@@ -109,8 +109,8 @@
   {% endif %}
 
   {% if completedSessions.length %}
-    {{ appHeading({
-      title: __("school.sessions.isCompleted"),
+    {{ heading({
+      text: __("school.sessions.isCompleted"),
       level: 3,
       size: "m"
     }) }}

@@ -6,10 +6,10 @@
   {{ radios({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--l",
-        html: appHeading({
+        html: heading({
           caption: vaccination.patient.fullName,
-          title: title
+          text: title,
+          size: "l"
         })
       }
     },

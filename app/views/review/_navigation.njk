@@ -1,9 +1,10 @@
-{% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/section-navigation.njk" import appSectionNavigation %}
+{%- from "nhsuk/components/heading/macro.njk" import heading %}
+{%- from "_macros/section-navigation.njk" import appSectionNavigation %}
 
 {% macro reviewNavigation(params) %}
-  {{ appHeading({
-    title: __("review.list.title")
+  {{ heading({
+    text: __("review.list.title"),
+    size: "l"
   }) }}
 
   {{ appSectionNavigation({
@@ -35,9 +36,9 @@
     ]
   }) }}
 
-  {{ appHeading({
+  {{ heading({
     classes: "nhsuk-u-visually-hidden",
-    title: __(params.view + ".list.title"),
+    text: __(params.view + ".list.title"),
     level: 2
   }) }}
 {% endmacro %}

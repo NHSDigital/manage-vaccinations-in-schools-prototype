@@ -9,8 +9,9 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ actionLink({
@@ -29,33 +30,44 @@
 
     <div class="app-grid-column-results">
       {% if initial %}
-        {{ appHeading({
-          title: __("search.results"),
+        {{ heading({
+          caption: {
+            text: __("search.initial.default"),
+            placement: "after"
+          },
+          text: __("search.results"),
           level: 2,
-          size: "m",
-          summary: __("search.initial.default") | safe
+          size: "m"
         }) }}
       {% else %}
-        {{ appHeading({
-          title: __("search.results"),
+        {{ heading({
+          caption: {
+            html: __mf("patient.results.summary", {
+              from: results.from,
+              to: results.to,
+              count: results.count
+            }),
+            placement: "after"
+          },
+          text: __("search.results"),
           level: 2,
-          size: "m",
-          summary: __mf("patient.results.summary", {
-            from: results.from,
-            to: results.to,
-            count: results.count
-          }) | safe
+          size: "m"
         }) }}
 
         {% if showingClinicReady and results.count > 0 %}
           {% call insetText({
             classes: "nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4"
           }) %}
-            {{ appHeading({
-              title: __mf("patient.results.inviteToClinic.title", { count: results.count }),
+            {{ heading({
+              caption: {
+                text: __("patient.results.inviteToClinic.hint"),
+                placement: "after"
+              },
+              text: __mf("patient.results.inviteToClinic.title", {
+                count: results.count
+              }),
               level: 3,
-              size: "s",
-              summary: __("patient.results.inviteToClinic.hint")
+              size: "s"
             }) }}
 
             {{ actionLink({

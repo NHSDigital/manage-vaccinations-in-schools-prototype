@@ -29,8 +29,9 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({
@@ -125,8 +126,8 @@
       </div>
 
       {% for row, validations in upload.validations %}
-        {{ appHeading({
-          title: "Row " + row,
+        {{ heading({
+          text: "Row " + row,
           level: 3,
           size: "s"
         }) }}

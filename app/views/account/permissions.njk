@@ -8,8 +8,9 @@
 {% block content %}
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      {{ appHeading({
-        title: title
+      {{ heading({
+        text: title,
+        size: "l"
       }) }}
 
       {{ __("account.permissions.org.description", { ra: ra }) | nhsukMarkdown if type == "org" }}

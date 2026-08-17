@@ -5,9 +5,10 @@
 {% block content %}
   {{ super() }}
 
-  {{ appHeading({
+  {{ heading({
     caption: __("user.list.caption"),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {% for role, users in users | groupby("role") %}

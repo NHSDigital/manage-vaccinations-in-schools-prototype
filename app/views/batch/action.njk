@@ -3,9 +3,10 @@
 {% set title = __("batch.action.title", type) %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: batch.vaccine.brand + ", " + batch.id,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("batch.action.description") | nhsukMarkdown }}

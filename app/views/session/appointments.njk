@@ -1,7 +1,7 @@
 {% extends "_layouts/session.njk" %}
 
 {% set title = session.shortName %}
-{% set heading = title %}
+{% set headingText = title %}
 {% set caption = session.formatted.date %}
 
 {% block content %}
@@ -79,9 +79,12 @@
       firstCellIsHeader: true,
       card: {
         heading: {
-          html: appHeading({
-            title: periodHeading,
-            summary: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators,
+          html: heading({
+            caption: {
+              text: "From " + vaccinationPeriodTable.vaccinationPeriod.formatted.startAndEndTimes + ", with " + vaccinationPeriodTable.vaccinationPeriod.formatted.vaccinators,
+              placement: "after"
+            },
+            text: periodHeading,
             level: 2,
             size: "m"
           })

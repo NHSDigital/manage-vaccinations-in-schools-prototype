@@ -3,9 +3,10 @@
 {% set title = __("upload.action.title", type) %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("upload.show.title", { upload: upload }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("upload.action.description") | nhsukMarkdown }}

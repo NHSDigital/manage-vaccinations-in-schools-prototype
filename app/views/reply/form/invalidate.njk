@@ -5,9 +5,10 @@
 {% set title = __("reply.invalidate.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("reply.invalidate.caption", { reply: reply }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("reply.invalidate.description") | nhsukMarkdown }}

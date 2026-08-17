@@ -7,8 +7,9 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ actionLink({
@@ -65,15 +66,18 @@
         {% set title = __("download.list.results") %}
       {% endif %}
 
-      {{ appHeading({
-        title: title,
+      {{ heading({
+        caption: {
+          html: __mf("download.results", {
+            from: results.from,
+            to: results.to,
+            count: results.count
+          }),
+          placement: "after"
+        },
+        text: title,
         level: 2,
-        size: "m",
-        summary: __mf("download.results", {
-          from: results.from,
-          to: results.to,
-          count: results.count
-        }) | safe
+        size: "m"
       }) }}
 
       {% for download in results.page %}

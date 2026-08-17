@@ -3,9 +3,10 @@
 {% set title = __("patientSession.clinicAppointment.cancel.confirm.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: appointmentSummary,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

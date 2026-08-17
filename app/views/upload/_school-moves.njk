@@ -32,13 +32,16 @@
   ]) %}
 {% endfor %}
 
-{{ appHeading({
-  title: __("upload.show.moves.title." + upload.status),
+{{ heading({
+  caption: {
+    text: __mf("upload.show.moves.summary." + upload.status, {
+      count: upload.moves.length
+    }),
+    placement: "after"
+  },
+  text: __("upload.show.moves.title." + upload.status),
   level: 2,
-  size: "m",
-  summary: __mf("upload.show.moves.summary." + upload.status, {
-    count: upload.moves.length
-  })
+  size: "m"
 }) }}
 
 {{ table({

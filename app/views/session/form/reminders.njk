@@ -5,10 +5,10 @@
 {% block form %}
   {{ input({
     label: {
-      classes: "nhsuk-label--l",
-      html: appHeading({
+      html: heading({
         caption: session.location.name if type == "edit",
-        title: title
+        text: title,
+        size: "l"
       })
     },
     hint: __("session.reminderWeeks.hint"),

@@ -6,10 +6,10 @@
   {{ dateInput({
     fieldset: {
       legend: {
-        classes: "nhsuk-fieldset__legend--l",
-        html: appHeading({
+        html: heading({
           caption: patient.fullName,
-          title: title
+          text: title,
+          size: "l"
         })
       }
     },

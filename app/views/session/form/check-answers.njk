@@ -4,8 +4,9 @@
 {% set title = __("session.new.check-answers.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {% if session.type === SessionType.School %}

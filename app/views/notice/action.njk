@@ -1,9 +1,10 @@
 {% extends "_layouts/form.njk" %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: notice.patient.fullName,
-    title: __("notice.action.title", type)
+    text: __("notice.action.title", type),
+    size: "l"
   }) }}
 
   {{ insetText({

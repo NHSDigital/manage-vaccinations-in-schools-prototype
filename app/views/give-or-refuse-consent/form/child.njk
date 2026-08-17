@@ -3,8 +3,9 @@
 {% set title = __("consent.child.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("consent.child.description") | nhsukMarkdown }}

@@ -5,9 +5,10 @@
 {% set title = __("appointments.archive.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("appointments.archive.caption", { appointment: appointment }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("appointments.archive.description") | nhsukMarkdown }}

@@ -7,9 +7,10 @@
 {% set title = __("clinicBooking.findChild.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: appointmentCaption,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ appPatientSearch({
@@ -20,22 +21,28 @@
   }) }}
 
   {% if noFiltersApplied %}
-    {{ appHeading({
-      title: __("search.results"),
+    {{ heading({
+      caption: {
+        text: __("search.initial.clinicBooking"),
+        placement: "after"
+      },
+      text: __("search.results"),
       level: 2,
-      size: "m",
-      summary: __("search.initial.clinicBooking") | safe
+      size: "m"
     }) }}
   {% else %}
-    {{ appHeading({
-      title: __("search.results"),
+    {{ heading({
+      caption: {
+        html: __mf("patient.results.summary", {
+          from: results.from,
+          to: results.to,
+          count: results.count
+        }),
+        placement: "after"
+      },
+      text: __("search.results"),
       level: 2,
-      size: "m",
-      summary: __mf("patient.results.summary", {
-        from: results.from,
-        to: results.to,
-        count: results.count
-      }) | safe
+      size: "m"
     }) }}
 
     {% for patient in results.page %}

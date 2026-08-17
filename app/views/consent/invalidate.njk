@@ -5,9 +5,10 @@
 {% set title = __("consent.invalidate.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("consent.invalidate.caption", { consent: consent }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("consent.invalidate.description") | nhsukMarkdown }}

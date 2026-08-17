@@ -3,9 +3,10 @@
 {% set title = __("clinicBooking.preferredLocationMatches.title", journeyData.preferredLocation) %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: appointmentCaption,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ radios({

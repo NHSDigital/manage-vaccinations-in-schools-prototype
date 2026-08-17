@@ -3,13 +3,14 @@
 {% macro programmeHtml(programme) %}
   {% set columnWidth = "quarter" if session.canOfferAlternativeVaccine or programme.type == ProgrammeType.MMR else "third" %}
 
-  {{ appHeading({
-    title: programme.name,
+  {{ heading({
+    caption: {
+      text: __mf("session.eligible.count", { count: session.patients.length }),
+      placement: "after"
+    },
+    text: programme.name,
     level: 2,
-    size: "m",
-    summary: __mf("session.eligible.count", {
-      count: session.patients.length
-    })
+    size: "m"
   }) }}
 
   <div class="nhsuk-grid-row nhsuk-card-group">

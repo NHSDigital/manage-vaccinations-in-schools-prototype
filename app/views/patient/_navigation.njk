@@ -1,10 +1,11 @@
-{% from "_macros/action-list.njk" import appActionList %}
-{% from "_macros/heading.njk" import appHeading %}
-{% from "_macros/section-navigation.njk" import appSectionNavigation %}
+{%- from "nhsuk/components/heading/macro.njk" import heading %}
+{%- from "_macros/action-list.njk" import appActionList %}
+{%- from "_macros/section-navigation.njk" import appSectionNavigation %}
 
 {% macro patientNavigation(params) %}
-  {{ appHeading({
-    title: params.patient.fullName
+  {{ heading({
+    text: params.patient.fullName,
+    size: "l"
   }) }}
 
   {{ appActionList({
@@ -20,9 +21,9 @@
     items: sectionNavigationItems
   }) }}
 
-  {{ appHeading({
+  {{ heading({
     classes: "nhsuk-u-visually-hidden",
-    title: patientProgramme.name or __("patient." + params.view + ".title"),
+    text: patientProgramme.name or __("patient." + params.view + ".title"),
     level: 2
   }) }}
 {% endmacro %}

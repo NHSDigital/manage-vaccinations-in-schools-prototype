@@ -63,14 +63,13 @@
     {{ radios({
       fieldset: {
         legend: {
-          html: appHeading({
-            title: title
-          })
+          isPageHeading: true,
+          text: title,
+          size: "l"
         }
       },
       items: staffingLevelItems,
       decorate: "transaction.hasVariableVaccinatorCounts"
     }) }}
   {% endif %}
-
 {% endblock %}

@@ -4,9 +4,10 @@
 {% set title = __("reply.follow-up.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("reply.follow-up.caption", { reply: reply }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ insetText({

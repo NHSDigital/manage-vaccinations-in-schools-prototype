@@ -27,8 +27,8 @@
   {{ patientProgramme.screenDescription | nhsukMarkdown }}
 
   {% if options.needsTriage and not patientProgramme.consentHealthAnswers %}
-    {{ appHeading({
-      title: __("vaccine.healthQuestions.label"),
+    {{ heading({
+      text: __("vaccine.healthQuestions.label"),
       level: 3,
       size: "s"
     }) }}

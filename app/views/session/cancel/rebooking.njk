@@ -6,9 +6,10 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          title: title,
-          caption: session.shortName
+        html: heading({
+          caption: session.shortName,
+          text: title,
+          size: "l"
         })
       }
     },

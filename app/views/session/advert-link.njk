@@ -4,8 +4,9 @@
 {% set hideConfirmButton = true %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ code({

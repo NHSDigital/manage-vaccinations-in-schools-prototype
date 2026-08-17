@@ -4,9 +4,10 @@
 {% set title = __("contact." + type + ".title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: contact.patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ input({

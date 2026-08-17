@@ -3,8 +3,9 @@
 {% set title = __("consent.previousDose.title", session.programmes[0].nameSentenceCase) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ dateInput({

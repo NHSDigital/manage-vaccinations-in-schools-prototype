@@ -1,7 +1,7 @@
 {% extends "_layouts/session.njk" %}
 
 {% set title = patient.initials + " – " + session.shortName + " – " + __("patientSession.appointment.title") %}
-{% set heading = patientSession.patient.fullName %}
+{% set headingText = patientSession.patient.fullName %}
 {% set stickyBanner = true %}
 {% set view = "appointment" %}
 

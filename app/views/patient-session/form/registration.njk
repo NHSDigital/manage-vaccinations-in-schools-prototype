@@ -6,10 +6,10 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          classes: "nhsuk-fieldset__legend--l",
+        html: heading({
           caption: session.location.name,
-          title: title
+          text: title,
+          size: "l"
         })
       }
     },

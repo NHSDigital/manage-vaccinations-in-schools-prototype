@@ -10,15 +10,17 @@
   {{ checkboxes({
     fieldset: {
       legend: {
-        html: appHeading({
-          title: title,
-          caption: appointmentCaption,
-          summary: __mf("clinicBooking.programmes.eligibility", {
-            count: programmeItems.length,
-            firstName: patient.firstName
-          }) | nhsukMarkdown if patient
-        }),
-        size: "l"
+        html: heading({
+          caption: {
+            html: __mf("clinicBooking.programmes.eligibility", {
+              count: programmeItems.length,
+              firstName: patient.firstName
+            }),
+            placement: "after"
+          } if patient,
+          text: title,
+          size: "l"
+        })
       }
     },
     hint: __("clinicBooking.programmes.hint") if programmeItems.length > 1 and isParentFacing,

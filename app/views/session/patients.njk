@@ -3,18 +3,21 @@
 {% extends "_layouts/session.njk" %}
 
 {% set title = session.shortName + " – " + __("session." + view + ".title") %}
-{% set heading = session.shortName %}
+{% set headingText = session.shortName %}
 {% set caption = session.formatted.date
    + (" – " + session.formatted.yearGroups if session.type === SessionType.School)
 %}
 
 {% block content %}
   {% if (view == "record") and not session.isActive %}
-    {{ appHeading({
-      title: __("session." + view + ".title"),
+    {{ heading({
+      caption: {
+        html: __("session." + view + ".information"),
+        placement: "after"
+      },
+      text: __("session." + view + ".title"),
       level: 2,
-      size: "m",
-      summary: __("session." + view + ".information") | safe
+      size: "m"
     }) }}
   {% else %}
     <div class="nhsuk-grid-row">
@@ -53,15 +56,18 @@
           {% set title = __("session." + view + ".title") %}
         {% endif %}
 
-        {{ appHeading({
-          title: title | replace(",", " or "),
+        {{ heading({
+          caption: {
+            html: __mf("patient.results.summary", {
+              from: results.from,
+              to: results.to,
+              count: results.count
+            }),
+            placement: "after"
+          },
+          text: title | replace(",", " or "),
           level: 2,
-          size: "m",
-          summary: __mf("patient.results.summary", {
-            from: results.from,
-            to: results.to,
-            count: results.count
-          }) | safe
+          size: "m"
         }) }}
 
         {% if view == "instructions" and session.activity.giveInstructions and account.canPrescribe %}

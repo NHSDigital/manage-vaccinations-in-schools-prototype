@@ -6,10 +6,10 @@
 {% block form %}
   {{ textarea({
     label: {
-      html: appHeading({
-        classes: "nhsuk-label--l",
+      html: heading({
         caption: __("reply.show.title", reply.fullName),
-        title: title
+        text: title,
+        size: "l"
       })
     },
     decorate: "reply.note"

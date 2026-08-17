@@ -5,10 +5,8 @@
 {% block form %}
   {{ textarea({
     label: {
-      html: appHeading({
-        classes: "nhsuk-label--l",
-        title: title
-      })
+      text: title,
+      size: "l"
     },
     decorate: "consent.refusalReasonDetails"
   }) }}

@@ -19,8 +19,9 @@
     errorList: errorList(errors)
   }) if errors }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {% if upload.type == UploadType.Report %}

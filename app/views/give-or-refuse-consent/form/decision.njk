@@ -14,10 +14,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          classes: "nhsuk-fieldset__legend--l",
-          title: title
-        })
+        isPageHeading: true,
+        text: title,
+        size: "l"
       }
     },
     hint: __("consent.decision." + programme_id + ".hint") if type else null,

@@ -20,8 +20,9 @@
 {% endblock %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("session.giveInstructions.description", session.activity.giveInstructions) | nhsukMarkdown }}

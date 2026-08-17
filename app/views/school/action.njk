@@ -3,9 +3,10 @@
 {% set paths = { back: school.uri + "/edit" } %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: school.name,
-    title: __("school.action.title", type)
+    text: __("school.action.title", type),
+    size: "l"
   }) }}
 
   {{ __("school.action.description") | nhsukMarkdown }}

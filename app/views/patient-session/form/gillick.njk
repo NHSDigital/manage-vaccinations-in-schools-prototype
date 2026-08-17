@@ -4,9 +4,10 @@
 {% set confirmButtonText = __("patientSession.gillick." + type + ".confirm") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ insetText({

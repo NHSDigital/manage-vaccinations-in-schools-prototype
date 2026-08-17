@@ -3,9 +3,10 @@
 {% set title = __("defaultBatch.edit.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: session.location.name,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {% set batches = [] %}
