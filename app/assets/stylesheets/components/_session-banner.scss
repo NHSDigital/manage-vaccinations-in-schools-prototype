@@ -6,7 +6,9 @@
   color: $nhsuk-reverse-text-colour;
   background-color: nhsuk-shade($nhsuk-brand-colour, 20%);
 
-  @include nhsuk-print-colour;
+  @media print {
+    color: $nhsuk-print-text-colour;
+  }
 
   .nhsuk-caption-l {
     color: nhsuk-colour("grey-5");
