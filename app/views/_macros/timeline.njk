@@ -31,7 +31,7 @@
       {% for detail in item.details %}
         {{ details({
           classes: detail.classes,
-          summaryText: detail.summaryText,
+          summary: detail.summary,
           html: detail.html | safe | trim
         }) }}
       {% endfor %}
@@ -49,9 +49,7 @@
         {% endfor %}
         {{ details({
           classes: detail.classes,
-          summaryText: __mf("count.updates", {
-            count: item.updatedFields.length
-          }),
+          summary: __mf("count.updates", { count: item.updatedFields.length }),
           html: summaryList({ rows: summaryRows })
         }) }}
       {% endif %}

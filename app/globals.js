@@ -132,7 +132,7 @@ export default () => {
 
         details.push({
           classes: 'app-details--notify-message',
-          summaryText: `Email sent to ${auditEvent.messageRecipient?.email}`,
+          summary: `Email sent to ${auditEvent.messageRecipient?.email}`,
           html: formatMarkdown(`### ${subject}\n\n${body}`)
         })
       }
@@ -145,7 +145,7 @@ export default () => {
       ) {
         details.push({
           classes: 'app-details--notify-message',
-          summaryText: `Message sent to ${auditEvent.messageRecipient?.tel}`,
+          summary: `Message sent to ${auditEvent.messageRecipient?.tel}`,
           html: formatMarkdown(
             nunjucksEnv.renderString(
               `${en.texts.consent[auditEvent.messageTemplate].text}`,
