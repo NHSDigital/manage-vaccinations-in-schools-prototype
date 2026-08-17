@@ -5,10 +5,10 @@
 {% block form %}
   {{ input({
     label: {
-      html: appHeading({
-        classes: "nhsuk-label--l",
+      html: heading({
         caption: vaccination.patient.fullName,
-        title: title
+        text: title,
+        size: "l"
       })
     },
     suffix: "ml",
@@ -17,10 +17,10 @@
   }) if vaccination.vaccine.criteria != VaccineCriteria.Intranasal else radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          classes: "nhsuk-fieldset__legend--l",
+        html: heading({
           caption: vaccination.patient.fullName,
-          title: __("vaccination.dosage.title")
+          text: __("vaccination.dosage.title"),
+          size: "l"
         })
       }
     },

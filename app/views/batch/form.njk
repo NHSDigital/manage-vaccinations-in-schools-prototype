@@ -4,9 +4,10 @@
 {% set title = __("batch.new.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: vaccine.brand,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ input({

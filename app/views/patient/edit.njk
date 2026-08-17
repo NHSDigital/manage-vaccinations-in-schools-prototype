@@ -7,9 +7,10 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
+  {{ heading({
     caption: patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

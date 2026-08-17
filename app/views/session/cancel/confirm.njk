@@ -3,9 +3,10 @@
 {% set title = __("session.cancel.confirmation.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title,
-    caption: session.shortName
+  {{ heading({
+    caption: session.shortName,
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

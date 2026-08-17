@@ -14,16 +14,18 @@
 
 {% block form %}
   {% if patientProgramme.activeClinicsCount == 0 %}
-    {{ appHeading({
+    {{ heading({
       caption: patient.fullName,
-      title: title
+      text: title,
+      size: "l"
     }) }}
 
     {{ __("patientProgramme.newClinicSession.description") | nhsukMarkdown }}
   {% elif patientProgramme.activeClinicsCount == 1 %}
-    {{ appHeading({
+    {{ heading({
       caption: patient.fullName,
-      title: title
+      text: title,
+      size: "l"
     }) }}
 
     {% call insetText({
@@ -43,9 +45,10 @@
   {% else %}
     {% call fieldset({
       legend: {
-        html: appHeading({
+        html: heading({
           caption: patient.fullName,
-          title: title
+          text: title,
+          size: "l"
         })
       }
     }) %}

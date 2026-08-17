@@ -3,8 +3,8 @@
 {% set title = __mf("clinicBooking.notConvenient.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title,
+  {{ heading({
+    text: title,
     size: "l"
   }) }}
 
@@ -19,11 +19,8 @@
   {{ checkboxes({
     fieldset: {
       legend: {
-        html: appHeading({
-          title: __("clinicBooking.notConvenient.label"),
-          level: 2,
-          size: "s"
-        })
+        text: __("clinicBooking.notConvenient.label"),
+        size: "s"
       }
     },
     hint: __("clinicBooking.notConvenient.hint"),

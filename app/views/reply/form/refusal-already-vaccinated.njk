@@ -3,9 +3,10 @@
 {% set title = __("reply.alreadyVaccinated.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: reply.patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ dateInput({

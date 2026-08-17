@@ -3,9 +3,10 @@
 {% set title = __("clinicBooking.timeRange.title", firstName) %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: appointmentCaption,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {% include "book-into-a-clinic/form/_session-summary.njk" %}

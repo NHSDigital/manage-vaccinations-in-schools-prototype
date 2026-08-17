@@ -5,9 +5,9 @@
 {% block form %}
   {{ select({
     label: {
-      html: appHeading({
-        title: title
-      })
+      isPageHeading: true,
+      text: title,
+      size: "l"
     },
     items: locationItems(data.schools, upload.school_id),
     decorate: "upload.school_id",

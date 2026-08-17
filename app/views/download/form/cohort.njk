@@ -5,8 +5,9 @@
 {% set title = __("download.create.title", type) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("download.create.description." + download.type, today + " at 1pm") | nhsukMarkdown }}

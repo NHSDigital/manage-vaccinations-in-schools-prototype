@@ -3,8 +3,9 @@
 {% set title = __("pdsRecord.search.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ input({

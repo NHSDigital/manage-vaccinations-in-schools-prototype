@@ -5,8 +5,9 @@
 {% block content %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {% for vaccine in vaccines %}

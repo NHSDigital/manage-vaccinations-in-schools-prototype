@@ -5,9 +5,10 @@
 {% block content %}
   {{ super() }}
 
-  {{ appHeading({
+  {{ heading({
     caption: team.name,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   <div class="nhsuk-grid-row">

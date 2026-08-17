@@ -1,9 +1,10 @@
 {% extends "_layouts/form.njk" %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: clinic.name,
-    title: __("clinic.action.title", type)
+    text: __("clinic.action.title", type),
+    size: "l"
   }) }}
 
   {{ __("clinic.action.description") | nhsukMarkdown }}

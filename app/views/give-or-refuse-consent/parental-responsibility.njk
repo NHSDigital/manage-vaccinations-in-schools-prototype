@@ -5,8 +5,9 @@
 {% block content %}
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      {{ appHeading({
-        title: title
+      {{ heading({
+        text: title,
+        size: "l"
       }) }}
 
       {{ __("consent.parental-responsibility.description", {

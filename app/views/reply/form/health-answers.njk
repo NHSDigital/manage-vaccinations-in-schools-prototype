@@ -33,9 +33,10 @@
 {% endmacro %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: reply.patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ questions(reply.healthQuestionsForDecision) }}

@@ -5,9 +5,10 @@
 {% set title = __("triage.new.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ appTriageForm({

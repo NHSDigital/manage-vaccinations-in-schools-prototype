@@ -4,9 +4,10 @@
 {% set paths = { back: upload.uri } %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("upload.show.title", { upload: upload }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("upload.removeRelationships.description") | nhsukMarkdown }}

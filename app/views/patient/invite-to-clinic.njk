@@ -26,12 +26,11 @@
 {% endfor %}
 
 {% block form %}
-  {{ appHeading({
-    attributes: {
-      "id": "checkboxes-heading"
-    },
+  {{ heading({
     caption: patient.fullName,
-    title: title
+    text: title,
+    size: "l",
+    id: "checkboxes-heading"
   }) }}
 
   {% if clinicReadyProgrammes.length > 1 %}

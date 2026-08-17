@@ -4,13 +4,17 @@
 {% set hideConfirmButton = true %}
 
 {% block form %}
-  {{ appHeading({
-    title: title,
-    summary: __mf("pdsRecord.results", {
-      from: results.from,
-      to: results.to,
-      count: results.count
-    }) | safe
+  {{ heading({
+    caption: {
+      html: __mf("pdsRecord.results", {
+        from: results.from,
+        to: results.to,
+        count: results.count
+      }),
+      placement: "after"
+    },
+    text: title,
+    size: "l"
   }) }}
 
   {% for pdsRecord in results.page %}

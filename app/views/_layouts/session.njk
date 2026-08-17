@@ -9,14 +9,14 @@
         {{ notificationBanner(success) if success }}
         {{ notificationBanner(message) if message }}
 
-        <h1 class="nhsuk-heading-l">
-          {{ heading }}
-        </h1>
-        {% if caption %}
-        <p class="nhsuk-caption-l nhsuk-caption--bottom">
-          {{ caption }}
-        </p>
-        {% endif %}
+        {{ heading({
+          caption: {
+            text: caption,
+            placement: "after"
+          } if caption,
+          text: headingText,
+          size: "l"
+        }) }}
       </div>
 
       {{ appSectionNavigation({
@@ -38,8 +38,8 @@
   {% if not session.isActive %}
   <form class="app-dev-tools" action="{{ session.uri }}/status" method="post">
     <div class="nhsuk-width-container">
-      {{ appHeading({
-        title: "Prototype tools",
+      {{ heading({
+        text: "Prototype tools",
         level: 2,
         size: "s"
       }) }}

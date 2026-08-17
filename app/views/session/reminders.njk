@@ -19,14 +19,15 @@
 {% endblock %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("session.reminders.description") | nhsukMarkdown }}
 
-  {{ appHeading({
-    title: __("session.date.label"),
+  {{ heading({
+    text: __("session.date.label"),
     level: 2,
     size: "m"
   }) }}
@@ -45,8 +46,8 @@
   }) }}
 
   {% call insetText() %}
-    {{ appHeading({
-      title: __("session.reminders.activity", {
+    {{ heading({
+      text: __("session.reminders.activity", {
         contacts: session.tally(session.programmes[0].id, PatientStatus.Consent),
         patients: session.tally(session.programmes[0].id)
       }),
@@ -57,8 +58,8 @@
     {{ __("session.nextReminderDate.text", session.formatted.nextReminderDate) | nhsukMarkdown }}
   {% endcall %}
 
-  {{ appHeading({
-    title: "Send parents a manual consent reminder",
+  {{ heading({
+    text: "Send parents a manual consent reminder",
     level: 2,
     size: "m"
   }) }}

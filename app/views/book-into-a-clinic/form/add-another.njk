@@ -3,8 +3,9 @@
 {% set title = __mf("clinicBooking.addAnother.title", { count: booking.appointments.length }) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {% set appointmentRows = [] %}
@@ -46,10 +47,8 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          size: "m",
-          title: __("clinicBooking.addAnother.question")
-        })
+        text: __("clinicBooking.addAnother.question"),
+        size: "m"
       }
     },
     items: getBooleanItems(),

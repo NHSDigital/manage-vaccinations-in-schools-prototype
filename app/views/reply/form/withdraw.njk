@@ -5,9 +5,10 @@
 {% set title = __("reply.withdraw.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("reply.withdraw.caption", { reply: reply }),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ radios({

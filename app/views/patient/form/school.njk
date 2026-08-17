@@ -5,10 +5,10 @@
 {% block form %}
   {{ select({
     label: {
-      classes: "nhsuk-label--l",
-      html: appHeading({
+      html: heading({
         caption: patient.fullName,
-        title: title
+        text: title,
+        size: "l"
       })
     },
     items: locationItems(data.schools, patient.school_id),

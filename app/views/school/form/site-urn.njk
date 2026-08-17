@@ -3,8 +3,9 @@
 {% set title = __("school.site-urn.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ select({

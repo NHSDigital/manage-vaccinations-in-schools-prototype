@@ -3,9 +3,10 @@
 {% set title = __("session.protocol.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: session.location.name,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ radios({

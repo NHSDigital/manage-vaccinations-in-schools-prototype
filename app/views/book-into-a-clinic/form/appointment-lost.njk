@@ -5,8 +5,9 @@
 {% set title = __("clinicBooking.appointmentLost.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

@@ -5,9 +5,10 @@
 {% set mismatchedMethods = vaccination.vaccine.method != vaccination.patientSession.patientProgramme.vaccine.method and not patientSession.patientProgramme.canRecordAlternativeVaccine %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: vaccination.patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {% set vaccinationSummaryListHtml = summaryList({

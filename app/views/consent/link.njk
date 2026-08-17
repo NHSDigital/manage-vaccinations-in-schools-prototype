@@ -8,9 +8,10 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
+  {{ heading({
     caption: __("consent.link.caption", { contact: consent.contact } ),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   <div class="nhsuk-grid-row nhsuk-card-group">

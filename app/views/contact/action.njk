@@ -1,12 +1,13 @@
 {% extends "_layouts/form.njk" %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: contact.patient.fullName,
-    title: __("contact.action.title", {
+    text: __("contact.action.title", {
       contact: contact,
       type: type
-    })
+    }),
+    size: "l"
   }) }}
 
   {{ __("contact.action.description", {

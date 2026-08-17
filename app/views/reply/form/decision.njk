@@ -15,10 +15,10 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          classes: "nhsuk-fieldset__legend--l",
+        html: heading({
           caption: reply.patient.fullName,
-          title: title
+          text: title,
+          size: "l"
         })
       }
     },

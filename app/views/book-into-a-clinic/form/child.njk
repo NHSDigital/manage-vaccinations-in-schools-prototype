@@ -7,9 +7,10 @@
 {% endif %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("clinicBooking.child.caption", childNumber | ordinal) if childCount > 1,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("clinicBooking.child.description") | nhsukMarkdown }}

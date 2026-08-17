@@ -5,10 +5,11 @@
 {% block form %}
   {{ textarea({
     label: {
-      classes: "nhsuk-label--l",
-      caption: vaccination.patient.fullName,
-      isPageHeading: true,
-      text: title
+      html: heading({
+        caption: vaccination.patient.fullName,
+        text: title,
+        size: "l"
+      })
     },
     hint: __("vaccination.note.hint"),
     decorate: "vaccination.note"

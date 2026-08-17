@@ -3,8 +3,9 @@
 {% set title = __("pdsRecord.result.title", pdsRecord.fullName) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

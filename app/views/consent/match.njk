@@ -10,8 +10,9 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   <div class="nhsuk-grid-row">
@@ -57,22 +58,28 @@
       }) }}
 
       {% if initial %}
-        {{ appHeading({
-          title: __("search.results"),
+        {{ heading({
+          caption: {
+            text: __("search.initial.default"),
+            placement: "after"
+          },
+          text: __("search.results"),
           level: 2,
-          size: "m",
-          summary: __("search.initial.default") | safe
+          size: "m"
         }) }}
       {% else %}
-        {{ appHeading({
-          title: __("search.results"),
+        {{ heading({
+          caption: {
+            html: __mf("patient.results.summary", {
+              from: results.from,
+              to: results.to,
+              count: results.count
+            }),
+            placement: "after"
+          },
+          text: __("search.results"),
           level: 2,
-          size: "m",
-          summary: __mf("patient.results.summary", {
-            from: results.from,
-            to: results.to,
-            count: results.count
-          }) | safe
+          size: "m"
         }) }}
 
         {% for patient in results.page %}

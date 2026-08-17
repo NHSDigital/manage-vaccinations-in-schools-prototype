@@ -7,8 +7,9 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   <div class="nhsuk-grid-row">
@@ -102,15 +103,18 @@
         {% set title = "All schools" %}
       {% endif %}
 
-      {{ appHeading({
-        title: title,
+      {{ heading({
+        caption: {
+          html: __mf("school.results", {
+            from: results.from,
+            to: results.to,
+            count: results.count
+          }),
+          placement: "after"
+        },
+        text: title,
         level: 2,
-        size: "m",
-        summary: __mf("school.results", {
-          from: results.from,
-          to: results.to,
-          count: results.count
-        }) | safe
+        size: "m"
       }) }}
 
       {% for school in results.page %}

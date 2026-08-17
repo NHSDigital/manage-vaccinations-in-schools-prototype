@@ -31,9 +31,12 @@
 {% endfor %}
 
 {% block form %}
-  {{ appHeading({
-    caption: __mf("patient.bulkInviteToClinic.caption", { count: cohortDetails.childrenCount }),
-    title: title
+  {{ heading({
+    caption: __mf("patient.bulkInviteToClinic.caption", {
+      count: cohortDetails.childrenCount
+    }),
+    text: title,
+    size: "l"
   }) }}
 
   {# e.g. 271 children can be invited to clinic for HPV, MenACWY, or Td/IPV programmes. #}

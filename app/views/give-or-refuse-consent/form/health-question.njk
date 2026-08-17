@@ -6,10 +6,9 @@
 {% block form %}
   {% call fieldset({
     legend: {
-      html: appHeading({
-        classes: "nhsuk-fieldset__legend--l",
-        title: title | replace('the child', 'your child')
-      })
+      isPageHeading: true,
+      text: title | replace("the child", "your child"),
+      size: "l"
     }
   }) %}
     {% if __("healthQuestions." + key + ".options") %}

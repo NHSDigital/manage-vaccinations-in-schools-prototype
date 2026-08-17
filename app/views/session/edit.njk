@@ -7,9 +7,10 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
+  {{ heading({
     caption: session.location.name,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {% if session.type === SessionType.School %}

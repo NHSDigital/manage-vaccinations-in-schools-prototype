@@ -10,8 +10,9 @@
 {%- endmacro %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {% if consent.decision == ReplyDecision.OnlyMenACWY %}

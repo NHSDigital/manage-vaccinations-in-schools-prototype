@@ -13,9 +13,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: appHeading({
-          title: title
-        })
+        isPageHeading: true,
+        text: title,
+        size: "l"
       }
     },
     name: "method",
@@ -30,9 +30,9 @@
     ]
   }) }}
 
-  {{ appHeading({
+  {{ heading({
     classes: "nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-5",
-    title: __("account.cis2.terms.title"),
+    text: __("account.cis2.terms.title"),
     level: 2,
     size: "xs"
   }) }}

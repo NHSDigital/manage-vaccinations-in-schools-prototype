@@ -1,6 +1,6 @@
-{%- from "nhsuk/components/details/macro.njk" import details -%}
-{%- from "nhsuk/components/tables/macro.njk" import table -%}
-{%- from "_macros/heading.njk" import appHeading -%}
+{%- from "nhsuk/components/details/macro.njk" import details %}
+{%- from "nhsuk/components/heading/macro.njk" import heading %}
+{%- from "nhsuk/components/tables/macro.njk" import table %}
 
 {% macro patientRecords(params) %}
   {% if params.patients.length %}
@@ -28,13 +28,16 @@
       ]) %}
     {% endfor %}
 
-    {{ appHeading({
-      title: __("upload.show." + params.key + ".title"),
+    {{ heading({
+      caption: {
+        text: __mf("upload.show." + params.key + ".summary", {
+          count: patientRows.length
+        }),
+        placement: "after"
+      } if params.key != "imported",
+      text: __("upload.show." + params.key + ".title"),
       level: 2,
-      size: "m",
-      summary: __mf("upload.show." + params.key + ".summary", {
-        count: patientRows.length
-      }) if params.key != "imported"
+      size: "m"
     }) }}
 
     {{ details({

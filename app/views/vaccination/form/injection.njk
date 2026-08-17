@@ -3,9 +3,10 @@
 {% set title = __("vaccination.injection.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: vaccination.patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ radios({

@@ -6,9 +6,10 @@
 {% block form %}
   {{ super() }}
 
-  {{ appHeading({
+  {{ heading({
     caption: vaccination.patient.fullName,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

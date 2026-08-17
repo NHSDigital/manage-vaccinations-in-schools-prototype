@@ -79,13 +79,16 @@
   ]) %}
 {% endfor %}
 
-{{ appHeading({
-  title: __("upload.show.partial.title." + upload.status),
+{{ heading({
+  caption: {
+    text: __mf("upload.show.partial.summary." + upload.status, {
+      count: patientRows.length
+    }),
+    placement: "after"
+  },
+  text: __("upload.show.partial.title." + upload.status),
   level: 2,
-  size: "m",
-  summary: __mf("upload.show.partial.summary." + upload.status, {
-    count: patientRows.length
-  })
+  size: "m"
 }) }}
 
 {{ table({

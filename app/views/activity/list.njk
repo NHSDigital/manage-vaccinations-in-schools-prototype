@@ -5,13 +5,14 @@
 {% block content %}
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      {{ appHeading({
-        title: title
+      {{ heading({
+        text: title,
+        size: "l"
       }) }}
 
       {% for group in activityLog %}
-        {{ appHeading({
-          title: group.title,
+        {{ heading({
+          text: group.title,
           level: 2,
           size: "m"
         }) }}

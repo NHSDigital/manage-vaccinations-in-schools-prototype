@@ -5,9 +5,13 @@
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
 
 {% block form %}
-  {{ appHeading({
-    title: title,
-    summary: "Check the appointment details before completing the booking."
+  {{ heading({
+    caption: {
+      text: "Check the appointment details before completing the booking.",
+      placement: "after"
+    },
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({

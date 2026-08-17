@@ -4,9 +4,10 @@
 {% set confirmButtonText = __("session.inviteToClinic.confirm") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: session.location.name,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ __mf("session.inviteToClinic.count", {

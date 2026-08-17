@@ -3,9 +3,10 @@
 {% set paths = { back: vaccine.uri } %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: vaccine.brand,
-    title: __("vaccine.action.title", type)
+    text: __("vaccine.action.title", type),
+    size: "l"
   }) }}
 
   {{ __("vaccine.action.description") | nhsukMarkdown }}

@@ -5,9 +5,8 @@
 {% block content %}
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      {{ appHeading({
-        title: __("consent.start.title." + session.presetNames[0]),
-        size: "xl"
+      {{ heading({
+        text: __("consent.start.title." + session.presetNames[0])
       }) }}
 
       {% for programme in session.programmes %}

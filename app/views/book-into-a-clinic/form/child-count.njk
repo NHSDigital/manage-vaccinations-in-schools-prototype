@@ -3,8 +3,9 @@
 {% set title = __("clinicBooking.childCount.title") %}
 
 {% block form %}
-  {{ appHeading({
-    title: title
+  {{ heading({
+    text: title,
+    size: "l"
   }) }}
 
   {{ __("clinicBooking.childCount.description") | nhsukMarkdown }}

@@ -3,9 +3,10 @@
 {% set title = __("team.contact.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: team.name,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ input({

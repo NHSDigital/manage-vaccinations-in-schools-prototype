@@ -5,9 +5,10 @@
 {% block form %}
   {{ input({
     label: {
-      html: appHeading({
+      html: heading({
         caption: patient.fullName,
-        title: title
+        text: title,
+        size: "l"
       })
     },
     code: true,

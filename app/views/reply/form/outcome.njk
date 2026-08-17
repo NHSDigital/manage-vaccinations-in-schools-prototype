@@ -4,9 +4,10 @@
 {% set title = __("reply.outcome.title") %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: __("reply.show.title", reply.fullName),
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ textarea({

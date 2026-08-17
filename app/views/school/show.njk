@@ -52,15 +52,18 @@
         })) | nhsukMarkdown
       }) if school.patientsMissingNhsNumber.length }}
 
-      {{ appHeading({
-        title: __("search.results"),
+      {{ heading({
+        caption: {
+          html: __mf("patient.results.summary", {
+            from: results.from,
+            to: results.to,
+            count: results.count
+          }),
+          placement: "after"
+        },
+        text: __("search.results"),
         level: 3,
-        size: "m",
-        summary: __mf("patient.results.summary", {
-          from: results.from,
-          to: results.to,
-          count: results.count
-        }) | safe
+        size: "m"
       }) }}
 
       {{ actionLink({

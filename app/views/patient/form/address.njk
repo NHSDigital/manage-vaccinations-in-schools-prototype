@@ -5,10 +5,10 @@
 {% block form %}
   {% call fieldset({
     legend: {
-      html: appHeading({
-        classes: "nhsuk-fieldset__legend--l",
+      html: heading({
         caption: patient.fullName,
-        title: title
+        text: title,
+        size: "l"
       })
     }
   }) %}

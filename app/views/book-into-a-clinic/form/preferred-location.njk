@@ -4,9 +4,10 @@
 {% set title = __("clinicBooking.preferredLocation.title." + audience, firstName) %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: appointmentCaption,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ input({

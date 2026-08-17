@@ -33,9 +33,10 @@
       patient: patient
     }) }}
   {% else %}
-    {{ appHeading({
+    {{ heading({
       caption: patient.fullName,
-      title: patientProgramme.name
+      text: patientProgramme.name,
+      size: "l"
     }) }}
   {% endif %}
 
