@@ -97,11 +97,13 @@ export default (env) => {
    * Format markdown
    *
    * @param {string} string - Markdown
-   * @param {string} headingsStartWith - Initial heading size
+   * @param {object} [options] - Options
+   * @param {string} [options.headingsStartWith] - Initial heading size
+   * @param {boolean} [options.inline] - Render inline Markdown only
    * @returns {string} HTML decorated with nhsuk-* typography classes
    */
-  filters.nhsukMarkdown = (string, headingsStartWith) => {
-    return env.filters.safe(formatMarkdown(string, headingsStartWith))
+  filters.nhsukMarkdown = (string, options) => {
+    return env.filters.safe(formatMarkdown(string, options))
   }
 
   /**

@@ -279,14 +279,18 @@ export function formatList(array) {
  * Format markdown
  *
  * @param {string} string - Markdown
- * @param {string} headingsStartWith - Initial heading size
+ * @param {object} [options] - Options
+ * @param {string} [options.headingsStartWith] - Initial heading size
+ * @param {boolean} [options.inline] - Render inline Markdown only
  * @returns {string|undefined} HTML decorated with nhsuk-* classes
  */
-export function formatMarkdown(string, headingsStartWith = 'l') {
+export function formatMarkdown(string, options) {
   if (!string) return
 
   const markdown = prototypeFilters.govukMarkdown(string, {
-    headingsStartWith
+    headingsStartWith: 'l',
+    inline: false,
+    ...options
   })
   const nhsukMarkdown = String(markdown)
     .replaceAll('govuk-', 'nhsuk-')
