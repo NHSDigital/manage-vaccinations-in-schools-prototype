@@ -1,4 +1,4 @@
-{% set headingHtml -%}
+{% set headingText -%}
   {%- if patientProgramme.programme.alternativeVaccine %}
     <span class="app-vaccine-criteria" data-value="{{ patientProgramme.vaccineCriteria }}">
       {{- __("patientSession.record.titleWithMethod", {
@@ -15,7 +15,7 @@
 
 {% call card({
   heading: {
-    html: headingHtml,
+    text: headingText | safe,
     size: "m"
   }
 }) %}
