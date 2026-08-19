@@ -1,0 +1,30 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.removeLocation.title") %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __("clinicBooking.removeLocation.intro") | nhsukMarkdown }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [
+      {
+        text: __("clinicBooking.removeLocation.confirm"),
+        variant: "warning"
+      }
+    ],
+    links: [
+      {
+        text: __("clinicBooking.removeLocation.cancel"),
+        href: "./check-feedback"
+      }
+    ]
+  }) }}
+{% endblock %}
+
