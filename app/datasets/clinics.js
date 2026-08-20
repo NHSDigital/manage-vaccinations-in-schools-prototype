@@ -136,6 +136,8 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV4 9DR',
+    directions:
+      'Please use the car park on Rotary Way and enter via the rear of the building',
     tel: '024 76466106',
     team_id: '001',
     presetNames
@@ -213,6 +215,8 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV3 2FD',
+    directions:
+      'If attending by car, please use the free car park opposite the Civic Centre, not the staff car park',
     tel: '024 76458777',
     team_id: '001',
     presetNames
@@ -345,6 +349,8 @@ export default [
     addressLine2: '2 Stoney Stanton Road',
     addressLevel1: 'Coventry',
     postalCode: 'CV1 4FS',
+    directions:
+      'Please note that the bus stop on Upper Stanton Road is currently out of use',
     tel: '024 75263599',
     team_id: '001',
     presetNames
