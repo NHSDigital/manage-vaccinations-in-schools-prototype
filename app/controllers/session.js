@@ -848,6 +848,7 @@ export const sessionController = {
             }
           : {
               [`/${session_id}/${type}/clinic`]: {},
+              [`/${session_id}/${type}/clinic-directions`]: {},
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
               [`/${session_id}/${type}/vaccinators`]: {},
@@ -972,6 +973,12 @@ export const sessionController = {
       // Add the first vaccination period, if not already there
       if (!session.vaccinationPeriods?.length) {
         session.addVaccinationPeriod()
+        Session.update(session_id, session, data.wizard)
+      }
+
+      // Copy the default directions from the clinic location
+      if (view === 'clinic') {
+        session.directions = Clinic.findOne(session.clinic_id, data)?.directions
         Session.update(session_id, session, data.wizard)
       }
 

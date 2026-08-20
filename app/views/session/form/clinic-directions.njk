@@ -1,0 +1,17 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.clinicDirections.title") %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ textarea({
+    label: __("session.clinicDirections.label"),
+    hint: __("session.clinicDirections.hint"),
+    decorate: "session.directions"
+  }) }}
+
+{% endblock %}
