@@ -45,6 +45,9 @@ export const en = {
     },
     postalCode: {
       label: 'Postcode'
+    },
+    directions: {
+      label: 'Directions'
     }
   },
   defaultBatch: {
@@ -3129,6 +3132,14 @@ export const en = {
       search: {
         label: 'Enter the clinic location'
       }
+    },
+    clinicDirections: {
+      label: 'Directions (optional)',
+      hint: 'These will be included in booking confirmation and reminder emails',
+      title: 'Give directions to the site, a specific entrance, or a room'
+    },
+    directions: {
+      label: 'Directions'
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',

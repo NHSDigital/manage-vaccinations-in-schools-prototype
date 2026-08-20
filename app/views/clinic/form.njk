@@ -2,6 +2,7 @@
 
 {% set title = __("clinic." + type + ".title") %}
 {% set confirmButtonText = __("clinic." + type + ".confirm") %}
+{% set optionalSuffix = " (optional)" %}
 
 {% block form %}
   {% call fieldset({
@@ -23,7 +24,7 @@
     }) }}
 
     {{ input({
-      label: __("location.addressLine2.label") + " (optional)",
+      label: __("location.addressLine2.label") + optionalSuffix,
       autocomplete: "address-line2",
       decorate: "clinic.addressLine2"
     }) }}
@@ -40,6 +41,13 @@
       autocomplete: "postal-code",
       width: 10,
       decorate: "clinic.postalCode"
+    }) }}
+
+    {{ textarea({
+      label: {
+        text: __("location.directions.label") + optionalSuffix
+      },
+      decorate: "clinic.directions"
     }) }}
   {% endcall %}
 {% endblock %}
