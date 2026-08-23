@@ -816,6 +816,14 @@ export const bookIntoClinicController = {
       ClinicBooking.update(booking.uuid, booking, data.wizard)
 
       paths.next = `${booking.uri.new}/add-another`
+    } else if (view === 'remove-preferred-location') {
+      // The user doesn't want their preferred location included in clinic convenience feedback
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = booking.findAppointment(appointment_uuid)
+      appointment.preferredPostcode = undefined
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
+
+      paths.next = `${appointment.uri.new}/check-feedback`
     }
 
     return saveAndRedirect(request, response, paths.next)

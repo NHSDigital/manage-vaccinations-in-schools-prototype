@@ -26,7 +26,10 @@
     lastRowBorder: false,
     rows: summaryRows(appointment, {
       vaccinations: {},
-      preferredPostcode: {},
+      preferredPostcode: {
+        href: appointment.uri.new + "/remove-preferred-location",
+        changeText: __("clinicBooking.check-feedback.remove")
+      },
       abandonmentReasons: {
         href: appointment.uri.new + "/not-convenient"
       },

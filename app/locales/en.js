@@ -745,6 +745,7 @@ export const en = {
     'check-feedback': {
       title: 'Check and send your feedback',
       summary: 'Your answers',
+      remove: 'Remove',
       confirm: 'Send feedback'
     },
     removeLocation: {
