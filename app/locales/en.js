@@ -750,7 +750,7 @@ export const en = {
     removeLocation: {
       title: 'Are you sure you want to remove the preferred location?',
       intro:
-        'Sending your preferred location can help the vaccination team to plan clinics that are more convenient for you and others. The information will not be used for any other purpose.\n\nIf you still have concerns, you are free to remove the location from your feedback.',
+        'Knowing your preferred location helps the vaccinations team plan clinics that are more convenient for you and others. The information will not be used for any other purpose.',
       confirm: 'Remove my preferred location',
       cancel: 'Return to my feedback'
     },
