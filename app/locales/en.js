@@ -2373,7 +2373,7 @@ export const en = {
     label: 'Pre-screening checks',
     description: '{{ prefix }} checked that {{patient.firstName}}:',
     hasSelfIdentified: {
-      label: '{{ prefix }} confirmed {{patient.firstName}}’s identity?',
+      label: 'Has {{patient.firstName}} confirmed their identity?',
       true: 'Yes',
       false: 'No, it was confirmed by somebody else'
     },
@@ -3938,11 +3938,11 @@ export const en = {
       unwell: 'They were not well enough'
     },
     hasSelfIdentified: {
-      true: 'The child',
-      false: 'Somebody else'
+      true: 'Yes',
+      false: 'No, it was confirmed by somebody else'
     },
     identifiedBy: {
-      title: 'Who confirmed {{patient.firstName}}’s identity?',
+      title: 'Did {{patient.firstName}} confirm their identity?',
       label: 'Child identified by',
       name: {
         label: 'Name',
