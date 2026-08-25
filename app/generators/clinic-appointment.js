@@ -114,7 +114,7 @@ export function generateClinicAppointment(patient, session, booking) {
   }
 
   // Appointment time
-  const startAt = faker.helpers.arrayElement(session.availableAppointmentTimes)
+  const startAt = faker.helpers.arrayElement(session.availableSlotStartTimes)
   const slotsCovered = 1 // TODO: take into account health answers
   const endAt = addMinutes(startAt, session.slotLength * slotsCovered)
 

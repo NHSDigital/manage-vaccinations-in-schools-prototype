@@ -55,7 +55,7 @@ export const getBookableClinicSessions = (
       session.status === SessionStatus.Planned &&
       session.programme_ids.some((id) => programme_ids.includes(id)) &&
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
-      session.availableAppointmentCount > 0
+      session.availableSlotCount > 0
   )
 
   return scheduledClinics
