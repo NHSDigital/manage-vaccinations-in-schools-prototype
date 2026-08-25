@@ -69,9 +69,9 @@ export function generateSession(preset, user, options) {
     consentOpenAt = removeDays(date, TeamDefaults.SessionOpenWeeks * 7)
   }
 
-  let appointmentLength
+  let slotLength
   if (clinic_id) {
-    appointmentLength = preset.name === SessionPresetName.Flu ? 5 : 10
+    slotLength = preset.name === SessionPresetName.Flu ? 5 : 10
   }
 
   let yearGroups
@@ -90,7 +90,7 @@ export function generateSession(preset, user, options) {
     ...(clinic_id && {
       type: SessionType.Clinic,
       clinic_id,
-      appointmentLength
+      slotLength
     }),
     ...(school_id && { type: SessionType.School, school_id, yearGroups })
   })

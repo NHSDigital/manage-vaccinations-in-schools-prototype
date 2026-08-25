@@ -116,7 +116,7 @@ export function generateClinicAppointment(patient, session, booking) {
   // Appointment time
   const startAt = faker.helpers.arrayElement(session.availableAppointmentTimes)
   const slotsCovered = 1 // TODO: take into account health answers
-  const endAt = addMinutes(startAt, session.appointmentLength * slotsCovered)
+  const endAt = addMinutes(startAt, session.slotLength * slotsCovered)
 
   // Have the child signed up for whatever they were invited for
   const selected_programme_ids = patient.clinicProgramme_ids
