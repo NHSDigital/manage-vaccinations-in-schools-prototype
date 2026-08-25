@@ -21,7 +21,6 @@ import { BaseModel } from './base.js'
  * @class ClinicVaccinationPeriod
  */
 export class ClinicVaccinationPeriod extends BaseModel {
-  // TODO: add this to the locale file
   static ns = 'clinicVaccinationPeriod'
 
   /**
