@@ -904,6 +904,14 @@ export const en = {
       referenceNumber: 'Your booking reference number is: %s'
     }
   },
+  clinicVaccinationPeriod: {
+    startAndEndTimes: {
+      label: 'Start and end times'
+    },
+    vaccinators: {
+      label: 'Vaccinators'
+    }
+  },
   consent: {
     label: 'Consent response',
     title: 'Review consent responses',
