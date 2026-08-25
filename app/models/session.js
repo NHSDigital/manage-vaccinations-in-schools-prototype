@@ -1053,7 +1053,7 @@ export class Session extends BaseModel {
           const getVaccinationPeriodData = () => {
             let startAndEndTimes = ''
             let vaccinatorCounts = ''
-            let totalAppointments = 0
+            let totalSlots = 0
 
             if (this.type === SessionType.Clinic) {
               let lastVaccinatorCount = -1
@@ -1079,9 +1079,7 @@ export class Session extends BaseModel {
                       lastVaccinatorCount !== thisVaccinatorCount)
                   lastVaccinatorCount = thisVaccinatorCount
 
-                  totalAppointments += vaccinationPeriod.slotCount(
-                    this.slotLength
-                  )
+                  totalSlots += vaccinationPeriod.slotCount(this.slotLength)
                 }
               )
 
@@ -1090,7 +1088,7 @@ export class Session extends BaseModel {
               }
             }
 
-            return { startAndEndTimes, vaccinatorCounts, totalAppointments }
+            return { startAndEndTimes, vaccinatorCounts, totalSlots }
           }
 
           switch (prop) {
@@ -1174,8 +1172,8 @@ export class Session extends BaseModel {
               return getVaccinationPeriodData().startAndEndTimes
             case 'vaccinators':
               return getVaccinationPeriodData().vaccinatorCounts
-            case 'totalAppointments':
-              return getVaccinationPeriodData().totalAppointments
+            case 'totalSlots':
+              return getVaccinationPeriodData().totalSlots
             case 'slotLength':
               return `${this.slotLength} minutes`
             default:

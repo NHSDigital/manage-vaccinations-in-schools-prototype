@@ -3189,13 +3189,13 @@ export const en = {
       }
     },
     slotLength: {
-      label: 'Appointment length'
+      label: 'Slot length'
     },
     appointmentLength: {
       title: 'How long are your appointments?',
       suffix: 'minutes'
     },
-    totalAppointments: {
+    totalSlots: {
       label: 'Number of slots'
     },
     appointments: {
