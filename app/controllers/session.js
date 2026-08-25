@@ -1,4 +1,5 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
+import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
 import {
@@ -686,7 +687,9 @@ export const sessionController = {
         })
         rowValues.push(
           ...allAppointments
-            .filter((appointment) => appointment.coversSlot(time))
+            .filter((appointment) =>
+              appointment.coversSlot(time, addMinutes(time, session.slotLength))
+            )
             .map((appointment) => ({
               appointment,
               spaceToExtend: extendableAppointmentTimes.some(

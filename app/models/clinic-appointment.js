@@ -412,13 +412,14 @@ export class ClinicAppointment {
   }
 
   /**
-   * Does this appointment cover the slot whose start time is given?
+   * Does this appointment overlap the slot whose start and end times are given?
    *
-   * @param {Date} slotStartTime - the time of the slot we're comparing to
-   * @returns {boolean} True if this appointment covers the slot, or false otherwise
+   * @param {Date} slotStartTime - the start time of the slot we're comparing to
+   * @param {Date} slotEndTime - the end time of the slot we're comparing to
+   * @returns {boolean} True if this appointment overlaps the slot, or false otherwise
    */
-  coversSlot(slotStartTime) {
-    return slotStartTime >= this.startAt && slotStartTime < this.endAt
+  coversSlot(slotStartTime, slotEndTime) {
+    return slotEndTime > this.startAt && slotStartTime < this.endAt
   }
 
   /**
