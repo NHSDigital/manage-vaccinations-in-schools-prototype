@@ -545,9 +545,9 @@ export class Session extends BaseModel {
    */
   get bookedSlotStartTimes() {
     const appointments = this.appointments
-    return appointments.map(({ startAt }) => startAt)
-
-    // TODO: expand on this when we can have appointments that cover multiple slots
+    return appointments.flatMap((appointment) =>
+      appointment.coveredSlotStartTimes(this.slotLength).toArray()
+    )
   }
 
   /**
