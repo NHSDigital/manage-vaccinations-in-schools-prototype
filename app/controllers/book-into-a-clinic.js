@@ -149,10 +149,7 @@ export const bookIntoClinicController = {
       if (slot) {
         const session = Session.findOne(session_id, data)
         appointment.startAt = new Date(slot)
-        appointment.endAt = addMinutes(
-          appointment.startAt,
-          session.appointmentLength
-        )
+        appointment.endAt = addMinutes(appointment.startAt, session.slotLength)
 
         data.journeyData[booking.uuid].preselectedSlot = appointment.startAt
       }
@@ -760,11 +757,11 @@ export const bookIntoClinicController = {
     } else if (view === 'appointment-time') {
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking?.findAppointment(appointment_uuid)
-      const appointmentLengthInMinutes =
-        Session.findOne(appointment.session_id, data)?.appointmentLength ?? 10
+      const slotLengthInMinutes =
+        Session.findOne(appointment.session_id, data)?.slotLength ?? 10
 
       const startAt = new Date(data.journeyData[booking_uuid].time)
-      const endAt = addMinutes(startAt, appointmentLengthInMinutes)
+      const endAt = addMinutes(startAt, slotLengthInMinutes)
       _.merge(appointment, { startAt, endAt })
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)

@@ -433,15 +433,15 @@ function getPreciseSlotTime(time) {
 /**
  * @param {Array<Date>} availableSlots - Times of all booked appointments in a session or period
  * @param {Array<Date>} bookedSlots - Times of all slots in the session or period
- * @param {number} appointmentLength - Length of a slot in minutes
+ * @param {number} slotLength - Length of a slot in minutes
  * @returns {Array<Date>} Array of the booked slot times that can be extended
  */
 export function getExtendableAppointmentTimes(
   availableSlots,
   bookedSlots,
-  appointmentLength
+  slotLength
 ) {
-  const appointmentLengthInMilliseconds = appointmentLength * 60 * 1000
+  const appointmentLengthInMilliseconds = slotLength * 60 * 1000
 
   const preciseAvailableSlots = new Set(
     availableSlots.map((slot) => getPreciseSlotTime(slot).getTime())

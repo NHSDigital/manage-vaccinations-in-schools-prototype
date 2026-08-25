@@ -73,7 +73,7 @@ import { BaseModel } from './base.js'
  *
  *   Clinics only
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
- * @property {number} [appointmentLength] - Standard length of the clinic appointment, in minutes
+ * @property {number} [slotLength] - Length of a single clinic appointment slot, in minutes
  * @property {string} [venueInformation] - Venue information e.g. entrance to use, room to find, etc.
  *
  *   Schools only
@@ -132,7 +132,7 @@ export class Session extends BaseModel {
             (period) => new ClinicVaccinationPeriod(period)
           )
         : []
-      this.appointmentLength = options?.appointmentLength
+      this.slotLength = options?.slotLength
       this.venueInformation = options?.venueInformation
     }
 
@@ -534,7 +534,7 @@ export class Session extends BaseModel {
   get allAppointmentTimes() {
     const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
     return sortedPeriods
-      .map((period) => period.allAppointmentTimes(this.appointmentLength))
+      .map((period) => period.allAppointmentTimes(this.slotLength))
       .flat()
   }
 
@@ -655,7 +655,7 @@ export class Session extends BaseModel {
       const startAt = new Date()
       startAt.setTime(Number(key))
       const vaccinationPeriod = this.vaccinationPeriods.find((period) =>
-        period.includesAppointmentTime(startAt, this.appointmentLength)
+        period.includesAppointmentTime(startAt, this.slotLength)
       )
       if (!vaccinationPeriod) {
         // No longer part of a vaccination period, so cancel all appointments at this time
@@ -1081,7 +1081,7 @@ export class Session extends BaseModel {
                   lastVaccinatorCount = thisVaccinatorCount
 
                   totalAppointments += vaccinationPeriod.appointmentCount(
-                    this.appointmentLength
+                    this.slotLength
                   )
                 }
               )
@@ -1177,8 +1177,8 @@ export class Session extends BaseModel {
               return getVaccinationPeriodData().vaccinatorCounts
             case 'totalAppointments':
               return getVaccinationPeriodData().totalAppointments
-            case 'appointmentLength':
-              return `${this.appointmentLength} minutes`
+            case 'slotLength':
+              return `${this.slotLength} minutes`
             default:
               return undefined
           }

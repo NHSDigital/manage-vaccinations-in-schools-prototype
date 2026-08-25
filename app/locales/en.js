@@ -3180,8 +3180,10 @@ export const en = {
         label: 'The number will not vary'
       }
     },
+    slotLength: {
+      label: 'Appointment length'
+    },
     appointmentLength: {
-      label: 'Appointment length',
       title: 'How long are your appointments?',
       suffix: 'minutes'
     },

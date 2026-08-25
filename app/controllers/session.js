@@ -658,7 +658,7 @@ export const sessionController = {
     const extendableAppointmentTimes = getExtendableAppointmentTimes(
       availableSlotTimes,
       bookedSlotTimes,
-      session.appointmentLength
+      session.slotLength
     )
 
     // Feed the view all of the information (incl. headers) it needs to present in the day view
@@ -667,7 +667,7 @@ export const sessionController = {
       const allSlotTimes = [
         ...new Set(
           vaccinationPeriod
-            .allAppointmentTimes(session.appointmentLength)
+            .allAppointmentTimes(session.slotLength)
             .map((time) => time.getTime())
         )
       ].map((time) => new Date(time))
