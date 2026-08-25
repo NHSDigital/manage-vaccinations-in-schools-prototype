@@ -534,7 +534,7 @@ export class Session extends BaseModel {
   get allAppointmentTimes() {
     const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
     return sortedPeriods
-      .map((period) => period.allAppointmentTimes(this.slotLength))
+      .map((period) => period.allSlotStartTimes(this.slotLength))
       .flat()
   }
 
@@ -655,7 +655,7 @@ export class Session extends BaseModel {
       const startAt = new Date()
       startAt.setTime(Number(key))
       const vaccinationPeriod = this.vaccinationPeriods.find((period) =>
-        period.includesAppointmentTime(startAt, this.slotLength)
+        period.includesSlotStartTime(startAt, this.slotLength)
       )
       if (!vaccinationPeriod) {
         // No longer part of a vaccination period, so cancel all appointments at this time
@@ -1080,7 +1080,7 @@ export class Session extends BaseModel {
                       lastVaccinatorCount !== thisVaccinatorCount)
                   lastVaccinatorCount = thisVaccinatorCount
 
-                  totalAppointments += vaccinationPeriod.appointmentCount(
+                  totalAppointments += vaccinationPeriod.slotCount(
                     this.slotLength
                   )
                 }

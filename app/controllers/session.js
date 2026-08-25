@@ -667,7 +667,7 @@ export const sessionController = {
       const allSlotTimes = [
         ...new Set(
           vaccinationPeriod
-            .allAppointmentTimes(session.slotLength)
+            .allSlotStartTimes(session.slotLength)
             .map((time) => time.getTime())
         )
       ].map((time) => new Date(time))

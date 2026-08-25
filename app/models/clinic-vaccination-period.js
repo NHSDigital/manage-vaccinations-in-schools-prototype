@@ -36,12 +36,12 @@ export class ClinicVaccinationPeriod extends BaseModel {
   }
 
   /**
-   * Get the total number of appointments that can be booked in this period
+   * Get the total number of slots in this period
    *
-   * @param {number} appointmentLengthInMinutes - the length of a single appointment, in minutes
-   * @returns {number} - the number of whole appointments that can fitted into this period
+   * @param {number} slotLengthInMinutes - the length of a single slot, in minutes
+   * @returns {number} - the number of whole slots in this period
    */
-  appointmentCount(appointmentLengthInMinutes) {
+  slotCount(slotLengthInMinutes) {
     if (!this.endAt || !this.startAt) {
       return 0
     }
@@ -53,7 +53,7 @@ export class ClinicVaccinationPeriod extends BaseModel {
 
     const periodLengthInMinutes = periodLengthInMs / (1000 * 60)
     return (
-      Math.floor(periodLengthInMinutes / appointmentLengthInMinutes) *
+      Math.floor(periodLengthInMinutes / slotLengthInMinutes) *
       this.vaccinatorCount
     )
   }
@@ -101,20 +101,20 @@ export class ClinicVaccinationPeriod extends BaseModel {
   /**
    * Does the given appointment start time fall within this period?
    *
-   * @param {Date} appointmentTime - the start time of appointment
-   * @param {number} appointmentLengthInMinutes - the length of slots in minutes
+   * @param {Date} slotStartTime - the start time of appointment
+   * @param {number} slotLengthInMinutes - the length of slots in minutes
    * @returns {boolean} - true if the slot falls within this period, or false otherwise
    */
-  includesAppointmentTime(appointmentTime, appointmentLengthInMinutes) {
-    const firstSlotTime = this.startAt.getTime()
-    const lastSlotTime = addMinutes(
+  includesSlotStartTime(slotStartTime, slotLengthInMinutes) {
+    const firstSlotStartTime = this.startAt.getTime()
+    const lastSlotStartTime = addMinutes(
       this.endAt,
-      -appointmentLengthInMinutes
-    ).getTime()
+      -slotLengthInMinutes
+    ).getTime() // bug here? only true if period is exact number of slots long?
 
     return (
-      appointmentTime.getTime() >= firstSlotTime &&
-      appointmentTime.getTime() <= lastSlotTime
+      slotStartTime.getTime() >= firstSlotStartTime &&
+      slotStartTime.getTime() <= lastSlotStartTime
     )
   }
 
@@ -146,28 +146,24 @@ export class ClinicVaccinationPeriod extends BaseModel {
   /**
    * Get all appointment slot start times, replicated for the number of vaccinators
    *
-   * @param {number} appointmentLengthInMinutes - the length of a single appointment slot, in minutes
+   * @param {number} slotLengthInMinutes - the length of a single appointment slot, in minutes
    * @returns {Array<Date>} All appointment slot start times
    */
-  allAppointmentTimes(appointmentLengthInMinutes) {
+  allSlotStartTimes(slotLengthInMinutes) {
     const totalMinutesInPeriod =
       (this.endAt.getTime() - this.startAt.getTime()) / 1000 / 60
     if (totalMinutesInPeriod <= 0) {
       throw new Error('Vaccination period end time must be after start time')
     }
 
-    const wholeAppointmentsInPeriodPerVaccinator = Math.floor(
-      totalMinutesInPeriod / appointmentLengthInMinutes
+    const wholeSlotsInPeriodPerVaccinator = Math.floor(
+      totalMinutesInPeriod / slotLengthInMinutes
     )
 
-    const appointmentStartTimes = _.range(
-      wholeAppointmentsInPeriodPerVaccinator
-    )
+    const slotStartTimes = _.range(wholeSlotsInPeriodPerVaccinator)
       .flatMap((index) => Array(this.vaccinatorCount).fill(index))
-      .map((index) =>
-        addMinutes(this.startAt, index * appointmentLengthInMinutes)
-      )
-    return appointmentStartTimes
+      .map((index) => addMinutes(this.startAt, index * slotLengthInMinutes))
+    return slotStartTimes
   }
 }
 
