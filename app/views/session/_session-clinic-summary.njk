@@ -14,7 +14,7 @@
         level: 3
       },
       compact: true,
-      data: session.totalAppointmentCount
+      data: session.totalSlotCount
     }) }}
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -23,9 +23,9 @@
         text: __("session.tally.appointments.available.label"),
         level: 3
       },
-      colour: "white" if session.availableAppointmentCount > 10 else ("orange" if session.availableAppointmentCount > 0 else "red"),
+      colour: "white" if session.availableSlotCount > 10 else ("orange" if session.availableSlotCount > 0 else "red"),
       compact: true,
-      data: session.availableAppointmentCount
+      data: session.availableSlotCount
     }) }}
   </div>
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">

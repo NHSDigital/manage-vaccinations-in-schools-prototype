@@ -654,8 +654,8 @@ export const sessionController = {
     const allAppointments = session.appointments
 
     // Figure out which of the current appointments can be extended
-    const bookedSlotTimes = session.bookedAppointmentTimes
-    const availableSlotTimes = session.availableAppointmentTimes
+    const bookedSlotTimes = session.bookedSlotStartTimes
+    const availableSlotTimes = session.availableSlotStartTimes
     const extendableAppointmentTimes = getExtendableAppointmentTimes(
       availableSlotTimes,
       bookedSlotTimes,

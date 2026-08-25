@@ -513,7 +513,7 @@ export const bookIntoClinicController = {
       scheduledClinicSessions.forEach((session) => {
         const midday = new Date(session.date)
 
-        const availableTimes = session.availableAppointmentTimes
+        const availableTimes = session.availableSlotStartTimes
         const morningAvailable = availableTimes.some((time) => time < midday)
         const afternoonAvailable = availableTimes.some((time) => time >= midday)
         const availability =
@@ -537,7 +537,7 @@ export const bookIntoClinicController = {
     } else if (view === 'appointment-time-range') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
-        session.availableAppointmentTimes,
+        session.availableSlotStartTimes,
         (time) => time.getHours()
       )
 
@@ -564,7 +564,7 @@ export const bookIntoClinicController = {
     } else if (view === 'appointment-time') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
-        session.availableAppointmentTimes,
+        session.availableSlotStartTimes,
         (time) => time.getHours()
       )
 

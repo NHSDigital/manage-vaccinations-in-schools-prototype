@@ -452,8 +452,8 @@ export class Session extends BaseModel {
    *
    * @returns {number} Total number of appointment slots in this clinic session
    */
-  get totalAppointmentCount() {
-    return this.allAppointmentTimes.length
+  get totalSlotCount() {
+    return this.allSlotStartTimes.length
   }
 
   /**
@@ -461,8 +461,8 @@ export class Session extends BaseModel {
    *
    * @returns {number} Number of appointment slots remaining in this clinic session
    */
-  get availableAppointmentCount() {
-    return this.availableAppointmentTimes.length
+  get availableSlotCount() {
+    return this.availableSlotStartTimes.length
   }
 
   /**
@@ -522,8 +522,8 @@ export class Session extends BaseModel {
    *
    * @returns {Array<Date>} List of appointment times available to book
    */
-  get availableAppointmentTimes() {
-    return removeSlots(this.allAppointmentTimes, this.bookedAppointmentTimes)
+  get availableSlotStartTimes() {
+    return removeSlots(this.allSlotStartTimes, this.bookedSlotStartTimes)
   }
 
   /**
@@ -531,7 +531,7 @@ export class Session extends BaseModel {
    *
    * @returns {Array<Date>} Start times of all possible appointments in this clinic
    */
-  get allAppointmentTimes() {
+  get allSlotStartTimes() {
     const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
     return sortedPeriods
       .map((period) => period.allSlotStartTimes(this.slotLength))
@@ -543,7 +543,7 @@ export class Session extends BaseModel {
    *
    * @returns {Array<Date>} List of appointment times booked so far
    */
-  get bookedAppointmentTimes() {
+  get bookedSlotStartTimes() {
     const appointments = this.appointments
     return appointments.map(({ startAt }) => startAt)
 
@@ -562,13 +562,12 @@ export class Session extends BaseModel {
       )
     }
 
-    if (!this.allAppointmentTimes.length) {
+    if (!this.allSlotStartTimes.length) {
       return 100
     }
 
     return Math.round(
-      (this.bookedAppointmentTimes.length / this.allAppointmentTimes.length) *
-        100
+      (this.bookedSlotStartTimes.length / this.allSlotStartTimes.length) * 100
     )
   }
 
