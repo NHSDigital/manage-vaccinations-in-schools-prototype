@@ -5,7 +5,7 @@
 {% set caption = session.formatted.date %}
 
 {% block content %}
-  {% macro buildSlotHtml(appointment, bookingQueryString, spaceToExtend) %}
+  {% macro buildSlotHtml(appointment, bookingQueryString) %}
     {% if appointment !== null %}
       {# Link from child’s name #}
       {% if appointment.patient_uuid %}
@@ -41,12 +41,6 @@
         <br>
         {{ appointment.formatted.impairmentsCount | safe }}
       {% endif %}
-
-      {# Option to extend the appointment #}
-      {% if spaceToExtend and session.isPlanned %}
-        <br>
-        {{ appointment.link.extend | safe }}
-      {% endif %}
     {% else %}
       {{ link(session.uri + "/add-appointment/?" + bookingQueryString, "Book") | safe }}
     {% endif %}
@@ -65,7 +59,7 @@
           }
           if rowValue.timeSlot else
           {
-            html: buildSlotHtml(rowValue.appointment, row.bookingQueryString, rowValue.spaceToExtend)
+            html: buildSlotHtml(rowValue.appointment, row.bookingQueryString)
           }
         ) %}
       {% endfor %}

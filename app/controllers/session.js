@@ -30,7 +30,6 @@ import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
   convertIsoDateToObject,
   getDateValueDifference,
-  getExtendableAppointmentTimes,
   today
 } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -653,15 +652,6 @@ export const sessionController = {
     const { session } = response.locals
     const allAppointments = session.appointments
 
-    // Figure out which of the current appointments can be extended
-    const bookedSlotTimes = session.bookedSlotStartTimes
-    const availableSlotTimes = session.availableSlotStartTimes
-    const extendableAppointmentTimes = getExtendableAppointmentTimes(
-      availableSlotTimes,
-      bookedSlotTimes,
-      session.slotLength
-    )
-
     // Feed the view all of the information (incl. headers) it needs to present in the day view
     const vaccinationPeriodTables = []
     for (const vaccinationPeriod of session.vaccinationPeriods) {
@@ -691,19 +681,14 @@ export const sessionController = {
               appointment.coversSlot(time, addMinutes(time, session.slotLength))
             )
             .map((appointment) => ({
-              appointment,
-              spaceToExtend: extendableAppointmentTimes.some(
-                (extendableTime) =>
-                  extendableTime.getTime() === appointment.startAt.getTime()
-              )
+              appointment
             }))
         )
         rowValues.push(
           ...Array(vaccinationPeriod.vaccinatorCount - rowValues.length + 1)
             .keys()
             .map(() => ({
-              appointment: null,
-              spaceToExtend: false
+              appointment: null
             }))
         )
 
