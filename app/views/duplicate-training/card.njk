@@ -16,7 +16,7 @@
     <div data-record-box="record-2" style="grid-column: 2; grid-row: 1 / 21; border: 1px solid #d8dde0; background: #ffffff;"></div>
 
     <!-- Headings -->
-    <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5" style="grid-column: 1; grid-row: 1;">Key fields</h2>
+    <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5" style="grid-column: 1; grid-row: 1;">Top rows</h2>
     <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 1;">Record 2</h2>
 
     <!-- Selection tags: grey by default; the script swaps the chosen one to blue in place -->
@@ -92,10 +92,10 @@
     <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 19;">Protocol</p>
     <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 19;">PGD</p>
 
-    <!-- View all fields control: one per row, all synced to a single logical state by the script -->
+    <!-- View all rows control: one per row, all synced to a single logical state by the script -->
     <details class="nhsuk-details nhsuk-u-font-size-16 nhsuk-u-margin-top-4" data-view-all-toggle style="grid-column: 1; grid-row: 20;">
       <summary class="nhsuk-details__summary">
-        <span class="nhsuk-details__summary-text">View all fields</span>
+        <span class="nhsuk-details__summary-text">View all rows</span>
       </summary>
     </details>
     <!-- Choose this record -->
@@ -118,7 +118,7 @@
        a record swaps its tag to blue Your preferred record IN PLACE (class + text only,
        no element inserted or removed, so card height never changes) and gives its underlay
        the heavier blue border. Re-selecting moves everything; no state persists.
-       One logical View all fields state exposed at every row's toggle. Toggling any
+       One logical View all rows state exposed at every row's toggle. Toggling any
        instance drives all instances to the same open state (setting .open to its current
        value fires no toggle event, so the sync converges without loops), then shows or
        hides the additional field rows. The last visible row must not have a bottom border:
