@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { formatDuration, intervalToDuration } from 'date-fns'
+import { addMinutes, formatDuration, intervalToDuration } from 'date-fns'
 
 import activity from '../datasets/activity.js'
 import {
@@ -420,6 +420,20 @@ export class ClinicAppointment {
    */
   coversSlot(slotStartTime, slotEndTime) {
     return slotEndTime > this.startAt && slotStartTime < this.endAt
+  }
+
+  /**
+   * Get the start times of slots that this appointment occupies
+   *
+   * @param {number} slotLength - the length of a slot, in minutes
+   * @yields {Date} - the start times of the slots that this appointment occupies
+   */
+  *coveredSlotStartTimes(slotLength) {
+    let slotStartTime = this.startAt
+    while (slotStartTime < this.endAt) {
+      yield slotStartTime
+      slotStartTime = addMinutes(slotStartTime, slotLength)
+    }
   }
 
   /**
