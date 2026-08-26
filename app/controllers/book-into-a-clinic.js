@@ -1,6 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
-import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
 import {
@@ -149,7 +148,7 @@ export const bookIntoClinicController = {
       if (slot) {
         const session = Session.findOne(session_id, data)
         appointment.startAt = new Date(slot)
-        appointment.endAt = addMinutes(appointment.startAt, session.slotLength)
+        appointment.appointmentLength = session.slotLength
 
         data.journeyData[booking.uuid].preselectedSlot = appointment.startAt
       }
@@ -748,21 +747,33 @@ export const bookIntoClinicController = {
       // We've just selected a previous child's session choice for the current appointment;
       // in this case, the session ID is actually the radio value passed in request.body
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const currentAppointment = booking?.findAppointment(appointment_uuid)
+      const currentAppointment = booking.findAppointment(appointment_uuid)
       if (currentAppointment) {
         currentAppointment.session_id =
           data.journeyData[booking_uuid].sessionChoice
+        currentAppointment.appointmentLength = Session.findOne(
+          currentAppointment.session_id,
+          data
+        ).slotLength
+
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
+    } else if (view === 'clinic-date') {
+      // We now know the session and so can calculate the appointment length
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = booking.findAppointment(appointment_uuid)
+      appointment.appointmentLength = Session.findOne(
+        appointment.session_id,
+        data
+      ).slotLength
+
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
     } else if (view === 'appointment-time') {
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const appointment = booking?.findAppointment(appointment_uuid)
-      const slotLengthInMinutes =
-        Session.findOne(appointment.session_id, data)?.slotLength ?? 10
+      const appointment = booking.findAppointment(appointment_uuid)
 
       const startAt = new Date(data.journeyData[booking_uuid].time)
-      const endAt = addMinutes(startAt, slotLengthInMinutes)
-      _.merge(appointment, { startAt, endAt })
+      _.merge(appointment, { startAt })
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'add-another') {

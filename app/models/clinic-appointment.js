@@ -54,7 +54,7 @@ import {
  * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
- * @property {Date} [endAt] - Slot end time
+ * @property {number} [appointmentLength] - Length of the appointment, in minutes
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
@@ -96,7 +96,7 @@ export class ClinicAppointment {
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
-    this.endAt = options?.endAt ? new Date(options.endAt) : undefined
+    this.appointmentLength = options?.appointmentLength
 
     this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
@@ -409,6 +409,15 @@ export class ClinicAppointment {
     }
 
     return Object.fromEntries(questions)
+  }
+
+  /**
+   * What is the end time of this appointment, precisely (ignoring slot boundaries)
+   *
+   * @returns {Date} - the end time of the appointment
+   */
+  get endAt() {
+    return addMinutes(this.startAt, this.appointmentLength)
   }
 
   /**
