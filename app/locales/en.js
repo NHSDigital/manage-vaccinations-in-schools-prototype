@@ -3216,6 +3216,9 @@ export const en = {
     totalSlots: {
       label: 'Number of slots'
     },
+    totalAppointments: {
+      label: 'Number of appointments'
+    },
     appointments: {
       label: 'Appointments'
     },

@@ -1103,6 +1103,17 @@ export class Session extends BaseModel {
             let startAndEndTimes = ''
             let vaccinatorCounts = ''
             let totalSlots = 0
+            let maxAppointments = {
+              nasal: 0,
+              injection: 0
+            }
+
+            const slotsForNasal = Math.ceil(
+              this.nasalSprayLength / this.slotLength
+            )
+            const slotsForFirstInjection = Math.ceil(
+              this.firstInjectionLength / this.slotLength
+            )
 
             if (this.type === SessionType.Clinic) {
               let lastVaccinatorCount = -1
@@ -1128,7 +1139,16 @@ export class Session extends BaseModel {
                       lastVaccinatorCount !== thisVaccinatorCount)
                   lastVaccinatorCount = thisVaccinatorCount
 
-                  totalSlots += vaccinationPeriod.slotCount(this.slotLength)
+                  const slotsInThisPeriod = vaccinationPeriod.slotCount(
+                    this.slotLength
+                  )
+                  totalSlots += slotsInThisPeriod
+                  maxAppointments.nasal += Math.floor(
+                    slotsInThisPeriod / slotsForNasal
+                  )
+                  maxAppointments.injection += Math.floor(
+                    slotsInThisPeriod / slotsForFirstInjection
+                  )
                 }
               )
 
@@ -1137,7 +1157,12 @@ export class Session extends BaseModel {
               }
             }
 
-            return { startAndEndTimes, vaccinatorCounts, totalSlots }
+            return {
+              startAndEndTimes,
+              vaccinatorCounts,
+              totalSlots,
+              maxAppointments
+            }
           }
 
           switch (prop) {
@@ -1229,6 +1254,10 @@ export class Session extends BaseModel {
               return `${this.nasalSprayLength} minutes`
             case 'timeForInjections':
               return `${this.firstInjectionLength} minutes, plus ${this.additionalInjectionLength} minutes per additional injection`
+            case 'totalAppointments': {
+              const periodData = getVaccinationPeriodData()
+              return `Up to ${periodData.maxAppointments.nasal} for nasal sprays or ${periodData.maxAppointments.injection} for injections`
+            }
             default:
               return undefined
           }
