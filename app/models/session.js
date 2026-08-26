@@ -11,6 +11,7 @@ import {
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
+  ReplyDecision,
   SessionPresets,
   SessionPresetName,
   SessionStatus,
@@ -73,7 +74,9 @@ import { BaseModel } from './base.js'
  *
  *   Clinics only
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
- * @property {number} [slotLength] - Length of a single clinic appointment slot, in minutes
+ * @property {number} [nasalSprayLength] - Time allocated for a nasal spray, in minutes
+ * @property {number} [firstInjectionLength] - Time allocated for the first injection in an appointment, in minutes
+ * @property {number} [additionalInjectionLength] - Time allocated for 2nd and subsequent injections in an appointment, in minutes
  * @property {string} [venueInformation] - Venue information e.g. entrance to use, room to find, etc.
  *
  *   Schools only
@@ -132,7 +135,9 @@ export class Session extends BaseModel {
             (period) => new ClinicVaccinationPeriod(period)
           )
         : []
-      this.slotLength = options?.slotLength
+      this.nasalSprayLength = options?.nasalSprayLength
+      this.firstInjectionLength = options?.firstInjectionLength
+      this.additionalInjectionLength = options?.additionalInjectionLength
       this.venueInformation = options?.venueInformation
     }
 
@@ -450,29 +455,41 @@ export class Session extends BaseModel {
    * @returns {number} - the number of minutes to allocate for the given appointment
    */
   calculateAppointmentLength(appointment) {
-    // let injectionCount = 0
-    // let nasalCount = 0
+    let injectionCount = 0
+    let nasalCount = 0
 
-    // const programme_ids = appointment.selected_programme_ids
-    // if (programme_ids.includes('flu')) {
-    //   if (appointment.fluDecision === ReplyDecision.OnlyAlternativeInjection) {
-    //     injectionCount++
-    //   } else {
-    //     nasalCount = 1
-    //   }
-    // }
-    // injectionCount += programme_ids.filter((id) => id !== 'flu').length
+    const programme_ids = appointment.selected_programme_ids
+    if (programme_ids.includes('flu')) {
+      if (appointment.fluDecision === ReplyDecision.OnlyAlternativeInjection) {
+        injectionCount++
+      } else {
+        nasalCount = 1
+      }
+    }
+    injectionCount += programme_ids.filter((id) => id !== 'flu').length
 
-    // let appointmentLength = this.nasalSprayLength * nasalCount
-    // if (injectionCount > 0) {
-    //   appointmentLength += this.firstInjectionLength
-    //   appointmentLength += this.additionalInjectionLength * (injectionCount - 1)
-    // }
+    let appointmentLength = this.nasalSprayLength * nasalCount
+    if (injectionCount > 0) {
+      appointmentLength += this.firstInjectionLength
+      appointmentLength += this.additionalInjectionLength * (injectionCount - 1)
+    }
 
-    // return appointmentLength
+    return appointmentLength
+  }
 
-    appointment
-    return this.slotLength
+  /**
+   * Get the slot length for this clinic session
+   *
+   * @returns {number} - the slot length for this session
+   */
+  get slotLength() {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    return this.nasalSprayLength
+      ? Math.min(this.nasalSprayLength, this.firstInjectionLength)
+      : this.firstInjectionLength
   }
 
   /**
