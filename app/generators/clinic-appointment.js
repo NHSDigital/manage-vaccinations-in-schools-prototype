@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { addMinutes, addYears } from 'date-fns'
+import { addYears } from 'date-fns'
 
 import {
   ClinicAppointmentStatus,
@@ -113,11 +113,6 @@ export function generateClinicAppointment(patient, session, booking) {
     }
   }
 
-  // Appointment time
-  const startAt = faker.helpers.arrayElement(session.availableSlotStartTimes)
-  const slotsCovered = 1 // TODO: take into account health answers
-  const endAt = addMinutes(startAt, session.slotLength * slotsCovered)
-
   // Have the child signed up for whatever they were invited for
   const selected_programme_ids = patient.clinicProgramme_ids
   let fluDecision, fluAlternative, mmrAlternative
@@ -134,6 +129,11 @@ export function generateClinicAppointment(patient, session, booking) {
     mmrAlternative = faker.datatype.boolean(0.15)
   }
 
+  // Appointment time
+  const startAt = faker.helpers.arrayElement(session.availableSlotStartTimes)
+  const slotsCovered = 1 // TODO: take into account vaccinations and methods thereof
+  const appointmentLength = session.slotLength * slotsCovered
+
   const status = ClinicAppointmentStatus.Booked
 
   return booking.addAppointment({
@@ -146,7 +146,7 @@ export function generateClinicAppointment(patient, session, booking) {
     parentHasParentalResponsibility,
     session_id,
     startAt,
-    endAt,
+    appointmentLength,
     selected_programme_ids,
     fluDecision,
     fluAlternative,
