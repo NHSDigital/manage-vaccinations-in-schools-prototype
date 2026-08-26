@@ -3191,9 +3191,27 @@ export const en = {
     slotLength: {
       label: 'Slot length'
     },
-    appointmentLength: {
-      title: 'How long are your appointments?',
+    vaccinationDuration: {
+      nasal: {
+        title: 'How long will a nasal spray appointment take, in minutes?',
+        hint: 'This will be used in appointments that have flu as an additional vaccination.',
+        label: 'Time for nasal spray'
+      },
+      injections: {
+        title: 'How long will an injection appointment take, in minutes?',
+        hint: 'It’s best if the time for one injection uses a multiple of the time allowed for the nasal spray. For example, if the time for the nasal spray is 3 minutes, use 9 minutes for the time for one injection.',
+        label: {
+          first: 'Time for one injection',
+          additional: 'Time for each additional injection'
+        }
+      },
       suffix: 'minutes'
+    },
+    timeForNasalSpray: {
+      label: 'Time for nasal spray'
+    },
+    timeForInjections: {
+      label: 'Time for injections'
     },
     totalSlots: {
       label: 'Number of slots'

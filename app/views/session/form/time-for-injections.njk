@@ -1,0 +1,37 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.vaccinationDuration.injections.title") %}
+
+{% block form %}
+  {% call fieldset({
+    legend: {
+      text: title,
+      size: "l",
+      isPageHeading: true
+    }
+  }) %}
+
+  <p class="nhsuk-hint">
+    {{ __("session.vaccinationDuration.injections.hint") }}
+  </p>
+
+  {{ input({
+    label: __("session.vaccinationDuration.injections.label.first"),
+    suffix: __("session.vaccinationDuration.suffix"),
+    width: 2,
+    inputmode: "numeric",
+    spellcheck: false,
+    decorate: "session.firstInjectionLength"
+  }) }}
+
+  {{ input({
+    label: __("session.vaccinationDuration.injections.label.additional"),
+    suffix: __("session.vaccinationDuration.suffix"),
+    width: 2,
+    inputmode: "numeric",
+    spellcheck: false,
+    decorate: "session.additionalInjectionLength"
+  }) }}
+
+  {% endcall %}
+{% endblock %}
