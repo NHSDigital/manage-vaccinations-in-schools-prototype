@@ -88,8 +88,11 @@
         vaccinators: {
           href: session.uri + "/edit/vaccinators"
         },
-        slotLength: {
-          href: session.uri + "/edit/appointment-length" if not session.hasAppointments
+        timeForNasalSpray: {
+          href: session.uri + "/new/time-for-nasal-spray" if not session.hasAppointments
+        },
+        timeForInjections: {
+          href: session.uri + "/new/time-for-injections" if not session.hasAppointments
         },
         totalSlots: {},
         hasRegistration: {

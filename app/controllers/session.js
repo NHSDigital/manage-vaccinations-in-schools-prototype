@@ -839,9 +839,9 @@ export const sessionController = {
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
               [`/${session_id}/${type}/vaccinators`]: {},
-              [`/${session_id}/${type}/appointment-length`]: {}
+              [`/${session_id}/${type}/time-for-nasal-spray`]: {},
+              [`/${session_id}/${type}/time-for-injections`]: {}
             }),
-        //[`/${session_id}/${type}/date-check`]: {},
         ...(session.presetNames?.includes(SessionPresetName.MMR) &&
         session.type === SessionType.School
           ? {

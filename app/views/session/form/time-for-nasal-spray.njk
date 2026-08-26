@@ -1,0 +1,23 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.vaccinationDuration.nasal.title") %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  <p class="nhsuk-hint">
+    {{ __("session.vaccinationDuration.nasal.hint") }}
+  </p>
+
+  {{ input({
+    label: __("session.vaccinationDuration.nasal.label"),
+    suffix: __("session.vaccinationDuration.suffix"),
+    width: 2,
+    inputmode: "numeric",
+    spellcheck: false,
+    decorate: "session.nasalSprayLength"
+  }) }}
+{% endblock %}
