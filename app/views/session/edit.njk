@@ -82,6 +82,9 @@
         date: {
           href: session.uri + "/edit/date" if not session.hasAppointments
         },
+        hasRegistration: {
+          href: session.uri + "/edit/registration"
+        },
         vaccinationPeriods: {
           href: session.uri + "/edit/vaccination-periods"
         },
@@ -94,10 +97,7 @@
         timeForInjections: {
           href: session.uri + "/new/time-for-injections" if not session.hasAppointments
         },
-        totalSlots: {},
-        hasRegistration: {
-          href: session.uri + "/edit/registration"
-        }
+        totalAppointments: {}
       })
     }) }}
 
