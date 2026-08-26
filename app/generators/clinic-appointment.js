@@ -130,13 +130,12 @@ export function generateClinicAppointment(patient, session, booking) {
   }
 
   // Appointment time
+  // TODO: find a slot that will fit the appointment based on its length in the given session
   const startAt = faker.helpers.arrayElement(session.availableSlotStartTimes)
-  const slotsCovered = 1 // TODO: take into account vaccinations and methods thereof
-  const appointmentLength = session.slotLength * slotsCovered
 
   const status = ClinicAppointmentStatus.Booked
 
-  return booking.addAppointment({
+  const appointment = booking.addAppointment({
     uuid,
     booking_uuid,
     patient_uuid,
@@ -146,13 +145,17 @@ export function generateClinicAppointment(patient, session, booking) {
     parentHasParentalResponsibility,
     session_id,
     startAt,
-    appointmentLength,
+    appointmentLength: session.slotLength,
     selected_programme_ids,
     fluDecision,
     fluAlternative,
     mmrAlternative,
     status
   })
+  appointment.appointmentLength =
+    session.calculateAppointmentLength(appointment)
+
+  return appointment
 }
 
 /**
