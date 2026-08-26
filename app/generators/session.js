@@ -69,9 +69,11 @@ export function generateSession(preset, user, options) {
     consentOpenAt = removeDays(date, TeamDefaults.SessionOpenWeeks * 7)
   }
 
-  let slotLength
+  let nasalSprayLength, firstInjectionLength, additionalInjectionLength
   if (clinic_id) {
-    slotLength = preset.name === SessionPresetName.Flu ? 5 : 10
+    nasalSprayLength = faker.datatype.boolean(0.75) ? 5 : 3
+    firstInjectionLength = faker.datatype.boolean(0.75) ? 10 : 8
+    additionalInjectionLength = firstInjectionLength / 2
   }
 
   let yearGroups
@@ -90,7 +92,9 @@ export function generateSession(preset, user, options) {
     ...(clinic_id && {
       type: SessionType.Clinic,
       clinic_id,
-      slotLength
+      nasalSprayLength,
+      firstInjectionLength,
+      additionalInjectionLength
     }),
     ...(school_id && { type: SessionType.School, school_id, yearGroups })
   })
