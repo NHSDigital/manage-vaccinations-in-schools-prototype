@@ -148,7 +148,8 @@ export const bookIntoClinicController = {
       if (slot) {
         const session = Session.findOne(session_id, data)
         appointment.startAt = new Date(slot)
-        appointment.appointmentLength = session.slotLength
+        appointment.appointmentLength =
+          session.calculateAppointmentLength(appointment)
 
         data.journeyData[booking.uuid].preselectedSlot = appointment.startAt
       }
@@ -687,7 +688,25 @@ export const bookIntoClinicController = {
       _.merge(data.journeyData[booking_uuid], request.body.journeyData)
     }
 
-    if (view === 'child-count') {
+    if (
+      [
+        'programmes',
+        'flu-choice',
+        'flu-alternative',
+        'mmr-alternative'
+      ].includes(view)
+    ) {
+      // If we already know the session, we can update the default appointment length now
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = booking.findAppointment(appointment_uuid)
+      if (appointment.session_id) {
+        const session = Session.findOne(appointment.session_id, data)
+        appointment.appointmentLength =
+          session.calculateAppointmentLength(appointment)
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+      }
+    } else if (view === 'child-count') {
       // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
@@ -751,10 +770,10 @@ export const bookIntoClinicController = {
       if (currentAppointment) {
         currentAppointment.session_id =
           data.journeyData[booking_uuid].sessionChoice
-        currentAppointment.appointmentLength = Session.findOne(
-          currentAppointment.session_id,
-          data
-        ).slotLength
+
+        const session = Session.findOne(currentAppointment.session_id, data)
+        currentAppointment.appointmentLength =
+          session.calculateAppointmentLength(currentAppointment)
 
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
@@ -762,10 +781,9 @@ export const bookIntoClinicController = {
       // We now know the session and so can calculate the appointment length
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking.findAppointment(appointment_uuid)
-      appointment.appointmentLength = Session.findOne(
-        appointment.session_id,
-        data
-      ).slotLength
+      const session = Session.findOne(appointment.session_id, data)
+      appointment.appointmentLength =
+        session.calculateAppointmentLength(appointment)
 
       ClinicBooking.update(booking.uuid, booking, data.wizard)
     } else if (view === 'appointment-time') {

@@ -444,6 +444,38 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Calculate the default length of the given appointment using this session's setup, in minutes
+   *
+   * @param {ClinicAppointment} appointment - the appointment with its vaccination info
+   * @returns {number} - the number of minutes to allocate for the given appointment
+   */
+  calculateAppointmentLength(appointment) {
+    // let injectionCount = 0
+    // let nasalCount = 0
+
+    // const programme_ids = appointment.selected_programme_ids
+    // if (programme_ids.includes('flu')) {
+    //   if (appointment.fluDecision === ReplyDecision.OnlyAlternativeInjection) {
+    //     injectionCount++
+    //   } else {
+    //     nasalCount = 1
+    //   }
+    // }
+    // injectionCount += programme_ids.filter((id) => id !== 'flu').length
+
+    // let appointmentLength = this.nasalSprayLength * nasalCount
+    // if (injectionCount > 0) {
+    //   appointmentLength += this.firstInjectionLength
+    //   appointmentLength += this.additionalInjectionLength * (injectionCount - 1)
+    // }
+
+    // return appointmentLength
+
+    appointment
+    return this.slotLength
+  }
+
+  /**
    * How many appointments in total are possible in this clinic session?
    *
    * The returned value assumes that not of the appointments is an extended
