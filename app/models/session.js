@@ -1102,7 +1102,6 @@ export class Session extends BaseModel {
           const getVaccinationPeriodData = () => {
             let startAndEndTimes = ''
             let vaccinatorCounts = ''
-            let totalSlots = 0
             let maxAppointments = {
               nasal: 0,
               injection: 0
@@ -1142,7 +1141,6 @@ export class Session extends BaseModel {
                   const slotsInThisPeriod = vaccinationPeriod.slotCount(
                     this.slotLength
                   )
-                  totalSlots += slotsInThisPeriod
                   maxAppointments.nasal += Math.floor(
                     slotsInThisPeriod / slotsForNasal
                   )
@@ -1160,7 +1158,6 @@ export class Session extends BaseModel {
             return {
               startAndEndTimes,
               vaccinatorCounts,
-              totalSlots,
               maxAppointments
             }
           }
@@ -1246,8 +1243,6 @@ export class Session extends BaseModel {
               return getVaccinationPeriodData().startAndEndTimes
             case 'vaccinators':
               return getVaccinationPeriodData().vaccinatorCounts
-            case 'totalSlots':
-              return getVaccinationPeriodData().totalSlots
             case 'timeForNasalSpray':
               return `${this.nasalSprayLength} minutes`
             case 'timeForInjections':
