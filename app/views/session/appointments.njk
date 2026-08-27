@@ -59,7 +59,8 @@
           }
           if rowValue.timeSlot else
           {
-            html: buildSlotHtml(rowValue.appointment, row.bookingQueryString)
+            html: buildSlotHtml(rowValue.appointment, row.bookingQueryString),
+            rowspan: rowValue.slotSpan
           }
         ) %}
       {% endfor %}

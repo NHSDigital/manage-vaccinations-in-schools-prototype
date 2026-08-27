@@ -1,5 +1,4 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
-import { addMinutes } from 'date-fns'
 import _ from 'lodash'
 
 import {
@@ -670,26 +669,46 @@ export const sessionController = {
           .map((index) => `Vaccinator ${index + 1}`)
       ]
 
-      const rows = allSlotTimes.map((time) => {
+      // Track which column index is free at which row, to avoid overlap
+      const columnFreeFromRow = Array(vaccinationPeriod.vaccinatorCount).fill(0)
+
+      const rows = allSlotTimes.map((time, rowIndex) => {
         const rowValues = []
         rowValues.push({
           timeSlot: formatTime(time, false)
         })
-        rowValues.push(
-          ...allAppointments
-            .filter((appointment) =>
-              appointment.coversSlot(time, addMinutes(time, session.slotLength))
-            )
-            .map((appointment) => ({
-              appointment
-            }))
+
+        const appointmentsStartingNow = allAppointments.filter(
+          (appointment) => appointment.startAt.getTime() === time.getTime()
         )
+
+        for (const appointment of appointmentsStartingNow) {
+          // Find the first free column
+          const freeColumnIndex = columnFreeFromRow.findIndex(
+            (nextFreeRow) => nextFreeRow <= rowIndex
+          )
+          if (freeColumnIndex === -1) {
+            // Overbooked! Every column is occupied by an earlier appointment
+            throw new Error(
+              `No free vaccinator column for appointment ${appointment.uuid} at ${time.toISOString()} — session may be overbooked`
+            )
+          }
+
+          const slotSpan = session.calculateSlotCount(appointment)
+          columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
+          rowValues.push({ appointment, slotSpan })
+        }
+
+        // Only need "Book" cells where a column's not already covered by an appointment
+        const freeSlotCount = columnFreeFromRow.filter(
+          (nextFreeRow) => nextFreeRow <= rowIndex
+        ).length
+
         rowValues.push(
-          ...Array(vaccinationPeriod.vaccinatorCount - rowValues.length + 1)
-            .keys()
-            .map(() => ({
-              appointment: null
-            }))
+          ...Array.from({ length: freeSlotCount }, () => ({
+            appointment: null,
+            slotSpan: 1
+          }))
         )
 
         const params = new URLSearchParams()

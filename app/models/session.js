@@ -478,6 +478,17 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Calculate the number of slots covered by the given appointment
+   *
+   * @param {ClinicAppointment} appointment - the appointment with its vaccination info
+   * @returns {number} - the number of slots consumed by the appointment
+   */
+  calculateSlotCount(appointment) {
+    const minutes = this.calculateAppointmentLength(appointment)
+    return Math.ceil(minutes / this.slotLength)
+  }
+
+  /**
    * Get the slot length for this clinic session
    *
    * @returns {number} - the slot length for this session
