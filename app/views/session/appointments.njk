@@ -60,7 +60,8 @@
           if rowValue.timeSlot else
           {
             html: buildSlotHtml(rowValue.appointment, row.bookingQueryString),
-            rowspan: rowValue.slotSpan
+            rowspan: rowValue.slotSpan,
+            classes: "app-table__cell--appointment" if rowValue.appointment else "app-table__cell--book"
           }
         ) %}
       {% endfor %}
@@ -70,6 +71,7 @@
     {% set periodHeading = "Vaccination period " + vaccinationPeriodTable.periodNumber if vaccinationPeriodTables.length > 1 else "All appointments" %}
     {{ table({
       id: "appointments",
+      classes: "app-table--appointments",
       responsive: true,
       firstCellIsHeader: true,
       card: {
