@@ -46,8 +46,9 @@ export const en = {
     postalCode: {
       label: 'Postcode'
     },
-    directions: {
-      label: 'Directions'
+    venueInformation: {
+      label: 'Clinic information',
+      hint: 'How to access the clinic — for example, parking or entrance information (this displays in the parent’s booking confirmation)'
     }
   },
   defaultBatch: {
@@ -3134,13 +3135,10 @@ export const en = {
         label: 'Enter the clinic location'
       }
     },
-    clinicDirections: {
-      label: 'Directions (optional)',
-      hint: 'These will be included in booking confirmation and reminder emails',
-      title: 'Give directions to the site, a specific entrance, or a room'
-    },
-    directions: {
-      label: 'Directions'
+    venueInformation: {
+      label: 'Clinic information',
+      title: 'Edit clinic information',
+      hint: 'How to access the clinic — for example, parking or entrance information (this displays in the parent’s booking confirmation)'
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',

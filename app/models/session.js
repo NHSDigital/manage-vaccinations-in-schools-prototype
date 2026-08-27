@@ -74,7 +74,7 @@ import { BaseModel } from './base.js'
  *   Clinics only
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [appointmentLength] - Standard length of the clinic appointment, in minutes
- * @property {string} [directions] - Directions to the clinic or to the specific room on-site
+ * @property {string} [venueInformation] - Venue information e.g. entrance to use, room to find, etc.
  *
  *   Schools only
  * @property {Array<number>} [yearGroups] - Year groups
@@ -133,7 +133,7 @@ export class Session extends BaseModel {
           )
         : []
       this.appointmentLength = options?.appointmentLength
-      this.directions = options?.directions
+      this.venueInformation = options?.venueInformation
     }
 
     if (this.type === SessionType.School) {
@@ -1161,9 +1161,9 @@ export class Session extends BaseModel {
               return Object.values(this.location).filter(Boolean).join(', ')
             case 'clinic':
               return this.clinic && this.clinic.name
-            case 'directions':
-              return this.directions
-                ? formatMarkdown(this.directions, { inline: true })
+            case 'venueInformation':
+              return this.venueInformation
+                ? formatMarkdown(this.venueInformation, { inline: true })
                 : 'None given'
             case 'school':
               return this.school && this.school.name

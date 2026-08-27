@@ -44,10 +44,9 @@
     }) }}
 
     {{ textarea({
-      label: {
-        text: __("location.directions.label") + optionalSuffix
-      },
-      decorate: "clinic.directions"
+      label: __("location.venueInformation.label") + optionalSuffix,
+      hint: __("location.venueInformation.hint"),
+      decorate: "clinic.venueInformation"
     }) }}
   {% endcall %}
 {% endblock %}

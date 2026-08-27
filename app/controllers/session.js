@@ -848,7 +848,7 @@ export const sessionController = {
             }
           : {
               [`/${session_id}/${type}/clinic`]: {},
-              [`/${session_id}/${type}/clinic-directions`]: {},
+              [`/${session_id}/${type}/clinic-information`]: {},
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
               [`/${session_id}/${type}/vaccinators`]: {},
@@ -976,9 +976,12 @@ export const sessionController = {
         Session.update(session_id, session, data.wizard)
       }
 
-      // Copy the default directions from the clinic location
+      // Copy the default venue information from the clinic location
       if (view === 'clinic') {
-        session.directions = Clinic.findOne(session.clinic_id, data)?.directions
+        session.venueInformation = Clinic.findOne(
+          session.clinic_id,
+          data
+        )?.venueInformation
         Session.update(session_id, session, data.wizard)
       }
 

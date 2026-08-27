@@ -14,7 +14,7 @@ import { BaseModel } from './base.js'
  * @property {string} [addressLine2] - Address line 2
  * @property {string} [addressLevel1] - Address level 1
  * @property {string} [postalCode] - Postcode
- * @property {string} [directions] - Directions
+ * @property {string} [venueInformation] - Venue information e.g. entrance to use
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  */
 
@@ -45,7 +45,7 @@ export class Location extends BaseModel {
     this.addressLine2 = options?.addressLine2
     this.addressLevel1 = options?.addressLevel1
     this.postalCode = options?.postalCode
-    this.directions = options?.directions
+    this.venueInformation = options?.venueInformation
     this.presetNames = options?.presetNames || []
   }
 
