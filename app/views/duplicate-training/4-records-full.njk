@@ -212,6 +212,15 @@
           <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2">Duplicate record</strong>
         </div>
 
+        <!-- Fit sentinel: 1px marker on the top line of the field rows. The
+             observer below hides the sticky choose blocks whenever their pinned
+             position would reach this line - i.e. while the viewport is so close
+             to the card header that a pinned block would clamp against the top
+             of its travel range and sit over the title, tag and first rows.
+             They reappear, pinned at the viewport bottom, as soon as there is
+             room below the header. -->
+        <div data-fit-sentinel style="grid-column: 1; grid-row: 3; align-self: start; height: 1px;"></div>
+
         <!-- Vaccine row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 3; border-bottom: 1px solid #d8dde0;">Vaccine</p>
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 3; border-bottom: 1px solid #d8dde0;">Priorix</p>
@@ -342,6 +351,10 @@
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 4; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 5; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
 
+        <!-- Rest sentinel: 1px marker sitting on the card bottom line; the
+             observer below uses it to tell pinned from at-rest -->
+        <div data-rest-sentinel style="grid-column: 1; grid-row: 21; align-self: end; height: 1px;"></div>
+
         <!-- Choose this record: sticky card footer. Each block spans the full
              field area (grid rows 3-21) and aligns to the card bottom; position:
              sticky with a bottom offset clearing the fixed set-navigation bar
@@ -352,7 +365,17 @@
              block: at rest they sit exactly over the underlay border, and while
              floating the card reads as wrapped, capped by the block's bottom
              edge. The grid area bounds the travel: it stops
-             at the card bottom and at the top of the field rows. -->
+             at the card bottom and at the top of the field rows.
+             An absolutely positioned 96px panel in the page background colour
+             (#f0f4f5, the nhsuk grey-5 body background) hangs just below each
+             block's bottom border (the sticky block is its containing block),
+             sitting over the gap between the pinned block and the fixed
+             set-navigation bar so the card content is not seen through it: the
+             card appears to roll up behind the block. It reaches 2px past each
+             side to cover the underlay borders behind the gap and takes no
+             clicks. An IntersectionObserver on the rest sentinel hides the
+             panels once the blocks settle at the card bottom, so nothing hangs
+             below the card at rest. -->
         <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-1" style="grid-column: 2; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
           <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
             <div class="nhsuk-radios__item">
@@ -362,6 +385,7 @@
               </label>
             </div>
           </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
         </div>
         <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-2" style="grid-column: 3; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
           <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
@@ -372,6 +396,7 @@
               </label>
             </div>
           </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
         </div>
         <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-3" style="grid-column: 4; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
           <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
@@ -382,6 +407,7 @@
               </label>
             </div>
           </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
         </div>
         <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-4" style="grid-column: 5; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
           <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
@@ -392,10 +418,11 @@
               </label>
             </div>
           </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
         </div>
     </div>
-    <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
-    <!-- /Duplicate record grid -->
+    <!-- /Duplicate record grid: no section-break rule here - it only earns its
+         place between grids when a set wraps onto multiple rows of cards -->
   </div>
   <!-- Sticky set navigation: game-mode queue bar. Both status strings are
        placeholder wording. One action button tracks the selection radios: it
@@ -442,8 +469,10 @@
         box.style.border = box.dataset.recordBox === value ? "2px solid #005eb8" : "1px solid #d8dde0"
       }
       for (const footer of document.querySelectorAll("[data-record-footer]")) {
-        footer.style.border = footer.dataset.recordFooter === value ? "2px solid #005eb8" : "1px solid #d8dde0"
+        const chosen = footer.dataset.recordFooter === value
+        footer.style.border = chosen ? "2px solid #005eb8" : "1px solid #d8dde0"
         footer.style.borderTop = "0"
+        footer.querySelector("[data-roll-panel]").style.top = chosen ? "calc(100% + 2px)" : "calc(100% + 1px)"
       }
       document.querySelector("[data-set-status]").textContent = value ? "Preferred record chosen" : "Choose your preferred record"
       document.querySelector("[data-clear-choice]").classList.toggle("nhsuk-u-display-none", !value)
@@ -451,6 +480,18 @@
       action.textContent = value ? "Review next duplicate" : "Skip to next duplicate"
       action.classList.toggle("nhsuk-button--secondary", !value)
     }
+
+    const rollPanels = document.querySelectorAll("[data-roll-panel]")
+    new IntersectionObserver(([entry]) => {
+      for (const panel of rollPanels) panel.style.display = entry.isIntersecting ? "none" : ""
+    }, { rootMargin: "0px 0px -96px 0px" }).observe(document.querySelector("[data-rest-sentinel]"))
+
+    const stickyFooters = document.querySelectorAll("[data-record-footer]")
+    const footerClearance = 96 + stickyFooters[0].offsetHeight
+    new IntersectionObserver(([entry]) => {
+      const room = entry.isIntersecting || entry.boundingClientRect.top < 0
+      for (const footer of stickyFooters) footer.style.visibility = room ? "" : "hidden"
+    }, { rootMargin: `0px 0px -${footerClearance}px 0px` }).observe(document.querySelector("[data-fit-sentinel]"))
 
     for (const radio of document.querySelectorAll('input[name="preferred-record"]')) {
       radio.addEventListener("change", () => renderChoice(radio.value))
