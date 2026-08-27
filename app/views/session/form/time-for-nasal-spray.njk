@@ -8,9 +8,11 @@
     size: "l"
   }) }}
 
-  <p class="nhsuk-hint">
-    {{ __("session.vaccinationDuration.nasal.hint") }}
-  </p>
+  {% if 'flu' not in session.programme_ids %}
+    <p class="nhsuk-hint">
+      {{ __("session.vaccinationDuration.nasal.hint") }}
+    </p>
+  {% endif %}
 
   {{ input({
     label: __("session.vaccinationDuration.nasal.label"),
