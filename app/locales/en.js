@@ -3088,10 +3088,22 @@ export const en = {
       appointments: {
         label: 'Clinic details',
         total: {
-          label: 'Total slots'
+          label: 'Total slots',
+          nasal: {
+            label: 'Total capacity if nasal sprays'
+          },
+          injection: {
+            label: 'Total capacity if injections'
+          }
         },
         available: {
-          label: 'Available slots'
+          label: 'Available slots',
+          nasal: {
+            label: 'Available capacity if nasal sprays'
+          },
+          injection: {
+            label: 'Available capacity if injections'
+          }
         },
         programmeRequests: {
           label: '%s appointments'

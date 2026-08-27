@@ -7,27 +7,77 @@
 <div class="nhsuk-grid-row nhsuk-card-group">
   {% set columnWidth = "quarter" %}
 
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: {
-        text: __("session.tally.appointments.total.label"),
-        level: 3
-      },
-      compact: true,
-      data: session.totalSlotCount
-    }) }}
-  </div>
-  <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-    {{ appDataCard({
-      heading: {
-        text: __("session.tally.appointments.available.label"),
-        level: 3
-      },
-      colour: "white" if session.availableSlotCount > 10 else ("orange" if session.availableSlotCount > 0 else "red"),
-      compact: true,
-      data: session.availableSlotCount
-    }) }}
-  </div>
+  {% if ('flu' in session.programme_ids) or (session.programmeAppointments('flu').length > 0) %}
+    {# Capacity, broken down by nasal spray vs. injection appointments #}
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: {
+          text: __("session.tally.appointments.total.nasal.label"),
+          level: 3
+        },
+        compact: true,
+        data: session.maximumCapacity(VaccineMethod.Intranasal)
+      }) }}
+    </div>
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: {
+          text: __("session.tally.appointments.total.injection.label"),
+          level: 3
+        },
+        colour: "white",
+        compact: true,
+        data: session.maximumCapacity(VaccineMethod.Injection)
+      }) }}
+    </div>
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: {
+          text: __("session.tally.appointments.available.nasal.label"),
+          level: 3
+        },
+        colour: "white",
+        compact: true,
+        data: session.availableCapacity(VaccineMethod.Intranasal)
+      }) }}
+    </div>
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: {
+          text: __("session.tally.appointments.available.injection.label"),
+          level: 3
+        },
+        colour: "white",
+        compact: true,
+        data: session.availableCapacity(VaccineMethod.Injection)
+      }) }}
+    </div>
+  {% else %}
+    {# Capacity, assuming all appointments are for injections #}
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: {
+          text: __("session.tally.appointments.total.label"),
+          level: 3
+        },
+        compact: true,
+        data: session.totalSlotCount
+      }) }}
+    </div>
+    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
+      {{ appDataCard({
+        heading: {
+          text: __("session.tally.appointments.available.label"),
+          level: 3
+        },
+        colour: "white" if session.availableSlotCount > 10 else ("orange" if session.availableSlotCount > 0 else "red"),
+        compact: true,
+        data: session.availableSlotCount
+      }) }}
+    </div>
+  {% endif %}
+
+  {# Vaccinators and days left to book #}
   <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
     {{ appDataCard({
       heading: {
@@ -49,6 +99,8 @@
       data: session.daysLeftToBook
     }) }}
   </div>
+
+  {# Appointments booked per programme #}
   {% for programme in session.bookedProgrammes %}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({
