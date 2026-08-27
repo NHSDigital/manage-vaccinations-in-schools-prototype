@@ -5,6 +5,7 @@ import _ from 'lodash'
 
 import programmesData from '../datasets/programmes.js'
 import {
+  ClinicAppointmentStatus,
   ConsentStatus,
   ConsentWindow,
   InstructionStatus,
@@ -18,7 +19,7 @@ import {
   SessionType,
   TeamDefaults,
   VaccineCriteria,
-  ClinicAppointmentStatus,
+  VaccineMethod,
   VaccinationProtocol
 } from '../enums.js'
 import {
@@ -1042,6 +1043,100 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Get the number of appointments of a given vaccination method that we have capacity for,
+   * before any bookings are made
+   *
+   * @param {VaccineMethod} vaccineMethod - the method of vaccination used in the appointment
+   * @returns {number} The number of appointments of the given type that we have capacity for
+   */
+  maximumCapacity(vaccineMethod) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have capacity statistics')
+    }
+
+    let capacity = 0
+    const appointmentLength =
+      vaccineMethod === VaccineMethod.Intranasal
+        ? this.nasalSprayLength
+        : this.firstInjectionLength
+    const slotsForAppointment = Math.ceil(appointmentLength / this.slotLength)
+
+    // NOTE: by treating the vaccination periods as completely separate, we may underestimate
+    // the capacity if the periods are perfectly back to back
+    this.vaccinationPeriods.forEach((vaccinationPeriod) => {
+      const slotsInThisPeriod = vaccinationPeriod.slotCount(this.slotLength)
+      capacity += Math.floor(slotsInThisPeriod / slotsForAppointment)
+    })
+
+    return capacity
+  }
+
+  /**
+   * Get the number of appointments of a given vaccination method that we have capacity for,
+   * taking into account existing bookings
+   *
+   * @param {VaccineMethod} vaccineMethod - the method of vaccination used in the appointment
+   * @returns {number} The number of appointments of the given type that we have capacity for
+   */
+  availableCapacity(vaccineMethod) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have capacity statistics')
+    }
+
+    const appointmentLength =
+      vaccineMethod === VaccineMethod.Intranasal
+        ? this.nasalSprayLength
+        : this.firstInjectionLength
+    const slotsForAppointment = Math.ceil(appointmentLength / this.slotLength)
+
+    // How many free vaccinator slots are there at each start time?
+    const freeSlotCounts = new Map()
+    for (const startTime of this.availableSlotStartTimes) {
+      const key = startTime.getTime()
+      freeSlotCounts.set(key, (freeSlotCounts.get(key) || 0) + 1)
+    }
+
+    let capacity = 0
+
+    // NOTE: as with maximumCapacity, treating vaccination periods as completely separate may
+    // underestimate capacity if the periods are perfectly back to back
+    this.vaccinationPeriods.forEach((vaccinationPeriod) => {
+      const slotStartTimes = [
+        ...new Set(
+          vaccinationPeriod
+            .allSlotStartTimes(this.slotLength)
+            .map((time) => time.getTime())
+        )
+      ].sort((a, b) => a - b)
+
+      // Remaining free capacity at each slot, discounted as appointments are packed in
+      const remainingCapacity = slotStartTimes.map(
+        (time) => freeSlotCounts.get(time) || 0
+      )
+
+      // For each slot start time, put an appointment (starting at that time) in as many
+      // columns as we can
+      for (
+        let startIndex = 0;
+        startIndex <= remainingCapacity.length - slotsForAppointment;
+        startIndex++
+      ) {
+        const coveredIndexes = _.range(
+          startIndex,
+          startIndex + slotsForAppointment
+        )
+
+        while (coveredIndexes.every((index) => remainingCapacity[index] > 0)) {
+          coveredIndexes.forEach((index) => remainingCapacity[index]--)
+          capacity++
+        }
+      }
+    })
+
+    return capacity
+  }
+
+  /**
    * Get patient sessions that can be moved to a clinic session
    *
    * @returns {Array<PatientSession>} Patient sessions
@@ -1109,21 +1204,10 @@ export class Session extends BaseModel {
             return { consentWindow, consentWindowSentence }
           }
 
-          // Lazily harvest various things from the vaccination periods
+          // Lazily harvest values from each vaccination period
           const getVaccinationPeriodData = () => {
             let startAndEndTimes = ''
             let vaccinatorCounts = ''
-            let maxAppointments = {
-              nasal: 0,
-              injection: 0
-            }
-
-            const slotsForNasal = Math.ceil(
-              this.nasalSprayLength / this.slotLength
-            )
-            const slotsForFirstInjection = Math.ceil(
-              this.firstInjectionLength / this.slotLength
-            )
 
             if (this.type === SessionType.Clinic) {
               let lastVaccinatorCount = -1
@@ -1148,16 +1232,6 @@ export class Session extends BaseModel {
                     (lastVaccinatorCount !== -1 &&
                       lastVaccinatorCount !== thisVaccinatorCount)
                   lastVaccinatorCount = thisVaccinatorCount
-
-                  const slotsInThisPeriod = vaccinationPeriod.slotCount(
-                    this.slotLength
-                  )
-                  maxAppointments.nasal += Math.floor(
-                    slotsInThisPeriod / slotsForNasal
-                  )
-                  maxAppointments.injection += Math.floor(
-                    slotsInThisPeriod / slotsForFirstInjection
-                  )
                 }
               )
 
@@ -1168,8 +1242,7 @@ export class Session extends BaseModel {
 
             return {
               startAndEndTimes,
-              vaccinatorCounts,
-              maxAppointments
+              vaccinatorCounts
             }
           }
 
@@ -1259,8 +1332,7 @@ export class Session extends BaseModel {
             case 'timeForInjections':
               return `${this.firstInjectionLength} minutes, plus ${this.additionalInjectionLength} minutes per additional injection`
             case 'totalAppointments': {
-              const periodData = getVaccinationPeriodData()
-              return `Up to ${periodData.maxAppointments.nasal} for nasal sprays or ${periodData.maxAppointments.injection} for injections`
+              return `Up to ${this.maximumCapacity(VaccineMethod.Intranasal)} for nasal sprays or ${this.maximumCapacity(VaccineMethod.Injection)} for injections`
             }
             default:
               return undefined
