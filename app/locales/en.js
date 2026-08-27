@@ -3188,9 +3188,6 @@ export const en = {
         label: 'The number will not vary'
       }
     },
-    slotLength: {
-      label: 'Slot length'
-    },
     vaccinationDuration: {
       nasal: {
         title: 'How long will a nasal spray appointment take, in minutes?',

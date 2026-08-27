@@ -1248,8 +1248,6 @@ export class Session extends BaseModel {
               return getVaccinationPeriodData().vaccinatorCounts
             case 'totalSlots':
               return getVaccinationPeriodData().totalSlots
-            case 'slotLength':
-              return `${this.slotLength} minutes`
             case 'timeForNasalSpray':
               return `${this.nasalSprayLength} minutes`
             case 'timeForInjections':
