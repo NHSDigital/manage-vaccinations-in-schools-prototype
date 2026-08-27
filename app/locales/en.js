@@ -3210,9 +3210,6 @@ export const en = {
     timeForInjections: {
       label: 'Time for injections'
     },
-    totalSlots: {
-      label: 'Number of slots'
-    },
     totalAppointments: {
       label: 'Number of appointments'
     },
