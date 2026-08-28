@@ -1043,6 +1043,36 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Get how many vaccinator slots are free at each available start time
+   *
+   * @returns {Map<number, number>} Map of start time (in milliseconds) to free slot count
+   */
+  #freeSlotCountsByStartTime() {
+    const freeSlotCounts = new Map()
+    for (const startTime of this.availableSlotStartTimes) {
+      const key = startTime.getTime()
+      freeSlotCounts.set(key, (freeSlotCounts.get(key) || 0) + 1)
+    }
+    return freeSlotCounts
+  }
+
+  /**
+   * Get the distinct, sorted slot start times for a vaccination period
+   *
+   * @param {ClinicVaccinationPeriod} vaccinationPeriod - the vaccination period
+   * @returns {Array<number>} Sorted, distinct slot start times, in milliseconds
+   */
+  #slotStartTimesForPeriod(vaccinationPeriod) {
+    return [
+      ...new Set(
+        vaccinationPeriod
+          .allSlotStartTimes(this.slotLength)
+          .map((time) => time.getTime())
+      )
+    ].sort((a, b) => a - b)
+  }
+
+  /**
    * Get the number of appointments of a given vaccination method that we have capacity for,
    * before any bookings are made
    *
@@ -1088,26 +1118,14 @@ export class Session extends BaseModel {
         ? this.nasalSprayLength
         : this.firstInjectionLength
     const slotsForAppointment = Math.ceil(appointmentLength / this.slotLength)
-
-    // How many free vaccinator slots are there at each start time?
-    const freeSlotCounts = new Map()
-    for (const startTime of this.availableSlotStartTimes) {
-      const key = startTime.getTime()
-      freeSlotCounts.set(key, (freeSlotCounts.get(key) || 0) + 1)
-    }
+    const freeSlotCounts = this.#freeSlotCountsByStartTime()
 
     let capacity = 0
 
     // NOTE: as with maximumCapacity, treating vaccination periods as completely separate may
     // underestimate capacity if the periods are perfectly back to back
     this.vaccinationPeriods.forEach((vaccinationPeriod) => {
-      const slotStartTimes = [
-        ...new Set(
-          vaccinationPeriod
-            .allSlotStartTimes(this.slotLength)
-            .map((time) => time.getTime())
-        )
-      ].sort((a, b) => a - b)
+      const slotStartTimes = this.#slotStartTimesForPeriod(vaccinationPeriod)
 
       // Remaining free capacity at each slot, discounted as appointments are packed in
       const remainingCapacity = slotStartTimes.map(
@@ -1134,6 +1152,54 @@ export class Session extends BaseModel {
     })
 
     return capacity
+  }
+
+  /**
+   * Get the start times at which the given appointment could be booked, taking into account
+   * existing bookings
+   *
+   * Used to work out which start times to offer when booking an appointment — proactively,
+   * to only offer a parent start times that have room, and reactively, to check a start time a
+   * staff member has already picked on the schedule
+   *
+   * @param {ClinicAppointment} appointment - the appointment with its vaccination info
+   * @returns {Array<Date>} Start times with enough contiguous free capacity for the appointment
+   */
+  bookableSlotStartTimesFor(appointment) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const slotsForAppointment = this.calculateSlotCount(appointment)
+    const freeSlotCounts = this.#freeSlotCountsByStartTime()
+
+    const bookableStartTimes = []
+
+    const sortedPeriods = _.sortBy(this.vaccinationPeriods, 'startAt')
+    sortedPeriods.forEach((vaccinationPeriod) => {
+      const slotStartTimes = this.#slotStartTimesForPeriod(vaccinationPeriod)
+
+      for (
+        let startIndex = 0;
+        startIndex <= slotStartTimes.length - slotsForAppointment;
+        startIndex++
+      ) {
+        const coveredIndexes = _.range(
+          startIndex,
+          startIndex + slotsForAppointment
+        )
+
+        const hasCapacity = coveredIndexes.every(
+          (index) => (freeSlotCounts.get(slotStartTimes[index]) || 0) > 0
+        )
+
+        if (hasCapacity) {
+          bookableStartTimes.push(new Date(slotStartTimes[startIndex]))
+        }
+      }
+    })
+
+    return bookableStartTimes
   }
 
   /**
