@@ -8,11 +8,10 @@ import {
   ClinicBookingJourneyType,
   ParentalRelationship,
   ProgrammeType,
-  ReplyDecision,
-  SessionStatus,
-  SessionType
+  ReplyDecision
 } from '../enums.js'
 import {
+  Clinic,
   ClinicBooking,
   Contact,
   Patient,
@@ -28,7 +27,8 @@ import {
 } from '../utils/clinic-appointment.js'
 import {
   getBookableClinicSessions,
-  getScheduledClinicLocationItems
+  getBookableClinicDateItems,
+  getBookableClinicLocationItems
 } from '../utils/clinic-booking.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
@@ -76,7 +76,8 @@ export const bookIntoClinicController = {
     if (patient_uuid) {
       // Starting the booking process from a child record
       programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
-      nextPath = getBookableClinicSessions(data, programme_ids, false).length
+      nextPath = getBookableClinicSessions(data, programme_ids, null, false)
+        .length
         ? 'new'
         : 'availability'
     } else if (session_id) {
@@ -97,7 +98,8 @@ export const bookIntoClinicController = {
       programme_ids = Array.isArray(programme_id)
         ? programme_id
         : [programme_id]
-      nextPath = getBookableClinicSessions(data, programme_ids, true).length
+      nextPath = getBookableClinicSessions(data, programme_ids, null, true)
+        .length
         ? 'start'
         : 'availability'
     }
@@ -444,7 +446,7 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
-    const { __, __mf, appointment, patient } = response.locals
+    const { __mf, appointment, patient } = response.locals
     const { data } = request.session
     let { booking_uuid, view } = request.params
 
@@ -491,53 +493,33 @@ export const bookIntoClinicController = {
         data
       )
     } else if (view === 'clinic-location') {
-      const clinicLocationItems = getScheduledClinicLocationItems(
+      const clinicLocationItems = getBookableClinicLocationItems(
         data,
-        appointment.selected_programme_ids,
+        appointment,
         patient ? false : true,
         data.journeyData[booking_uuid].outOfArea
       )
       response.locals.clinicLocationItems = clinicLocationItems
     } else if (view === 'clinic-date') {
-      const scheduledClinicSessions = _.sortBy(
-        Session.findAll(data).filter(
-          (session) =>
-            session.type === SessionType.Clinic &&
-            session.status === SessionStatus.Planned &&
-            session.clinic_id === data.journeyData[booking_uuid].clinic_id
-        ),
-        'date'
+      const clinic_id = data.journeyData[booking_uuid].clinic_id
+      const clinicDateItems = getBookableClinicDateItems(
+        data,
+        clinic_id,
+        appointment,
+        patient ? false : true
       )
+      const clinic = Clinic.findOne(clinic_id, data)
+      const clinicLocation = clinic.formatted.nameAndAddress
 
-      const clinicDateItems = []
-      scheduledClinicSessions.forEach((session) => {
-        const midday = new Date(session.date)
-
-        const availableTimes = session.availableSlotStartTimes
-        const morningAvailable = availableTimes.some((time) => time < midday)
-        const afternoonAvailable = availableTimes.some((time) => time >= midday)
-        const availability =
-          morningAvailable && afternoonAvailable
-            ? __('clinicBooking.clinicDate.hint.both')
-            : morningAvailable
-              ? __('clinicBooking.clinicDate.hint.morning')
-              : __('clinicBooking.clinicDate.hint.afternoon')
-
-        clinicDateItems.push({
-          text: session.formatted.date,
-          value: session.id,
-          hint: availability
-        })
-      })
       response.locals.clinicDateItems = clinicDateItems
       response.locals.clinicSummary = {
-        location: scheduledClinicSessions.at(0)?.formatted.location,
+        location: clinicLocation,
         date: '—'
       }
     } else if (view === 'appointment-time-range') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
-        session.availableSlotStartTimes,
+        session.bookableSlotStartTimesFor(appointment),
         (time) => time.getHours()
       )
 
@@ -558,13 +540,13 @@ export const bookIntoClinicController = {
       })
       response.locals.timeRangeItems = timeRangeItems
       response.locals.clinicSummary = {
-        location: session.formatted.location,
+        location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
     } else if (view === 'appointment-time') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
-        session.availableSlotStartTimes,
+        session.bookableSlotStartTimesFor(appointment),
         (time) => time.getHours()
       )
 
@@ -598,7 +580,7 @@ export const bookIntoClinicController = {
       )
       response.locals.appointmentTimeItems = appointmentTimeItems
       response.locals.clinicSummary = {
-        location: session.formatted.location,
+        location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
     } else if (view === 'fully-booked') {

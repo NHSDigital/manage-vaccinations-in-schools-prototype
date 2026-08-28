@@ -2,7 +2,9 @@ import _ from 'lodash'
 
 import programmesData from '../datasets/programmes.js'
 import { SessionPresets, SessionStatus, SessionType } from '../enums.js'
-import { Session } from '../models.js'
+import { ClinicAppointment, Session } from '../models.js'
+
+import i18n from './i18n.js'
 
 /**
  * Generate a URL to book into a clinic for vaccination in the given presets' programmes
@@ -39,14 +41,19 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
 /**
  * Get a list of clinic sessions serving any of the given programmes and that are open to booking
  *
+ * When called with a null or undefined appointment, we're only checking to see whether the
+ * right programmes are being served, not checking for enough space for a specific appointment.
+ *
  * @param {object} context - the data context for the models to check
  * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
+ * @param {ClinicAppointment} appointment - the appointment that we want to book
  * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
   programme_ids,
+  appointment,
   requiresStockingPeriod
 ) => {
   const scheduledClinics = Session.findAll(context).filter(
@@ -55,7 +62,8 @@ export const getBookableClinicSessions = (
       session.status === SessionStatus.Planned &&
       session.programme_ids.some((id) => programme_ids.includes(id)) &&
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
-      session.availableSlotCount > 0
+      (!appointment ||
+        session.bookableSlotStartTimesFor(appointment).length > 0)
   )
 
   return scheduledClinics
@@ -65,20 +73,21 @@ export const getBookableClinicSessions = (
  * Get the clinic location options to present to the user
  *
  * @param {object} context - Data context for the models to check
- * @param {Array<string>} programme_ids - Programmes that must be served at the clinics
+ * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
  * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
  * @param {boolean|undefined} isFakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
  * @returns {Array<object>} Set of radio buttons to present to the user, one per location
  */
-export const getScheduledClinicLocationItems = (
+export const getBookableClinicLocationItems = (
   context,
-  programme_ids,
+  appointment,
   requiresStockingPeriod,
   isFakeOutOfArea
 ) => {
   const scheduledClinics = getBookableClinicSessions(
     context,
-    programme_ids,
+    appointment.selected_programme_ids,
+    appointment,
     requiresStockingPeriod
   )
   const sessionsByLocation = _.groupBy(
@@ -102,4 +111,53 @@ export const getScheduledClinicLocationItems = (
   })
 
   return clinicLocationItems
+}
+
+/**
+ * Get the clinic date options to present to the user
+ *
+ * @param {object} context - Data context for the models to check
+ * @param {string} clinic_id - the ID of the clinic location we're booking into
+ * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
+ * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
+ * @returns {Array<object>} Set of radio buttons to present to the user, one per location
+ */
+export const getBookableClinicDateItems = (
+  context,
+  clinic_id,
+  appointment,
+  requiresStockingPeriod
+) => {
+  const bookableSessions = _.sortBy(
+    getBookableClinicSessions(
+      context,
+      appointment.selected_programme_ids,
+      appointment,
+      requiresStockingPeriod
+    ).filter((session) => session.clinic_id === clinic_id),
+    'date'
+  )
+
+  const clinicDateItems = []
+  bookableSessions.forEach((session) => {
+    const midday = new Date(session.date)
+
+    const availableTimes = session.bookableSlotStartTimesFor(appointment)
+    const morningAvailable = availableTimes.some((time) => time < midday)
+    const afternoonAvailable = availableTimes.some((time) => time >= midday)
+    const availability =
+      morningAvailable && afternoonAvailable
+        ? i18n.__('clinicBooking.clinicDate.hint.both')
+        : morningAvailable
+          ? i18n.__('clinicBooking.clinicDate.hint.morning')
+          : i18n.__('clinicBooking.clinicDate.hint.afternoon')
+
+    clinicDateItems.push({
+      text: session.formatted.date,
+      value: session.id,
+      hint: availability
+    })
+  })
+
+  return clinicDateItems
 }
