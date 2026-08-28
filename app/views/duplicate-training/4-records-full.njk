@@ -166,19 +166,28 @@
        sticky scrollport and stop the Choose this record blocks sticking to
        the viewport. -->
   <div style="max-width: 1720px; margin: 0 auto;">
-    <!-- Duplicate details: tinted panel (background is the nhsuk grey-4 token,
-         #d8dde0, the frameworks template-background surface colour) separating
-         this comparison-task context from the patient identity above -->
-    <div class="nhsuk-u-padding-4 nhsuk-u-margin-bottom-5" style="background: #d8dde0;">
-      <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Duplicate details</h2>
-      <p class="nhsuk-body nhsuk-u-margin-bottom-0">
-        <span class="nhsuk-u-font-weight-bold">Date:</span> 9 March 2026
-        <span class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-4">Programme:</span> MMR
-        <span class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-4">Outcome:</span> Vaccinated
-      </p>
+    <!-- Duplicate summary: reuses the Mavis listing-page sidebar treatment
+         (app-filters card: translucent grey-4 background, card
+         border, no feature heading tab) -->
+    <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">4 duplicate records</h2>
+        <p class="nhsuk-body nhsuk-u-margin-bottom-2">We have 4 records about the same vaccination.</p>
+        <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+          <span class="nhsuk-u-font-weight-bold">Date:</span> 9 March 2026
+          <span class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-4">Programme:</span> MMR
+          <span class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-4">Outcome:</span> Vaccinated
+        </p>
+      </div>
     </div>
 
     <!-- Duplicate record grid -->
+    <!-- Record plane: a padded recess hanging off the summary card's bottom
+         edge. The fill stays page grey-5; the depth comes from a grey-4 border
+         (no top edge - the card supplies it) and a soft inset shadow. Note the
+         inset shadow is outside the NHS service manual vocabulary - a prototype
+         choice to be argued for or dropped after testing -->
+    <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
     <!-- Whole record on show: every field row is always visible, so there is
          no View all rows control and no hidden rows; the View this record links
          sit permanently at the card bottom, outside the sticky choose footer. -->
@@ -420,6 +429,7 @@
           </div>
           <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
         </div>
+    </div>
     </div>
     <!-- /Duplicate record grid: no section-break rule here - it only earns its
          place between grids when a set wraps onto multiple rows of cards -->
