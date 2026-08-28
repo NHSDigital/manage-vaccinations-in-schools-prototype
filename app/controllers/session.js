@@ -848,7 +848,6 @@ export const sessionController = {
             }
           : {
               [`/${session_id}/${type}/clinic`]: {},
-              [`/${session_id}/${type}/clinic-information`]: {},
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
               [`/${session_id}/${type}/vaccinators`]: {},
