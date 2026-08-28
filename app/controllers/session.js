@@ -689,13 +689,15 @@ export const sessionController = {
           )
           if (freeColumnIndex === -1) {
             // Overbooked! Every column is occupied by an earlier appointment
-            throw new Error(
-              `No free vaccinator column for appointment ${appointment.uuid} at ${time.toISOString()} — session may be overbooked`
+            console.log(
+              `No free vaccinator column at ${time.toISOString()} — session may be overbooked`
             )
           }
 
           const slotSpan = session.calculateSlotCount(appointment)
-          columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
+          if (freeColumnIndex >= 0) {
+            columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
+          }
           rowValues.push({ appointment, slotSpan })
         }
 
