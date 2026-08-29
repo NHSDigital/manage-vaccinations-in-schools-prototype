@@ -1,0 +1,85 @@
+{% from "../_macros/consent-request.njk" import appConsentRequest with context %}
+{% from "../_macros/reply.njk" import appReply with context %}
+
+{% extends "_layouts/form.njk" %}
+
+{% set gridColumns = "full" %}
+{% set hideConfirmButton = true %}
+{% set title = patient.fullName + " – " + patient.programmes[programme.slug].name %}
+{% set formAction = patientProgramme.uri + "/record?referrer=" + referrer %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [{
+      text: __("home.show.title"),
+      href: "/"
+    }, {
+      text: __("patient.list.title"),
+      href: "/patients"
+    }, {
+      text: patientProgramme.patient.fullName,
+      href: patientProgramme.patient.uri
+    }, {
+      text: patientProgramme.activeSeason.programme.name,
+      href: patientProgramme.activeSeason.uri
+    }]
+  }) }}
+{% endblock %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ appHeading({
+    caption: patientProgramme.patient.fullName,
+    title: __("reply.list.title", patientProgramme.programme.nameSentenceCase)
+  }) }}
+
+  <div class="nhsuk-u-reading-width">
+    {{ patientProgramme.consentDescription | nhsukMarkdown }}
+  </div>
+
+  {{ actionLink({
+    text: __("reply.new.title"),
+    href: patientProgramme.uri + "/replies/new?referrer=" + referrer
+  }) if not patientProgramme.isVaccinated and not patientProgramme.patient.isPost16 }}
+
+  {% if patientProgramme.replies | length %}
+    {{ appHeading({
+      title: __("patientProgramme.replies.label"),
+      level: 2,
+      size: "m"
+    }) }}
+
+    {% for reply in patientProgramme.replies %}
+      {{ appReply({
+        reply: reply
+      }) }}
+    {% endfor %}
+  {% elif patientProgramme.consentRequests | length %}
+    {{ appHeading({
+      title: __("patientProgramme.consentRequests.label"),
+      level: 2,
+      size: "m"
+    }) }}
+
+    {% for consentRequest in patientProgramme.consentRequests %}
+      {{ appConsentRequest({
+        consentRequest: consentRequest
+      }) }}
+    {% endfor %}
+  {% endif %}
+
+  {% if patientProgramme.expiredReplies | length %}
+    {{ appHeading({
+      title: __("patientProgramme.expiredReplies.label"),
+      level: 2,
+      size: "m"
+    }) }}
+
+    {% for reply in patientProgramme.expiredReplies %}
+      {{ appReply({
+        reply: reply
+      }) }}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

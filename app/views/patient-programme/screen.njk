@@ -1,0 +1,91 @@
+{%- from "patient/_navigation.njk" import patientNavigation with context %}
+{%- from "_macros/triage-form.njk" import appTriageForm with context %}
+{%- from "_macros/triage-notes.njk" import appTriageNotes with context %}
+
+{% extends "_layouts/form.njk" %}
+
+{% set gridColumns = "three-quarters" %}
+{% set hideConfirmButton = true %}
+{% set title = patient.fullName + " – " + __("patientSession.screen.title", patientProgramme.programme.nameSentenceCase) %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [{
+      text: __("home.show.title"),
+      href: "/"
+    }, {
+      text: __("patient.list.title"),
+      href: "/patients"
+    }, {
+      text: patient.fullName,
+      href: patient.uri
+    }, {
+      text: patientProgramme.activeSeason.programme.name,
+      href: patientProgramme.activeSeason.uri
+    }]
+  }) }}
+{% endblock %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ appHeading({
+    caption: patient.fullName,
+    title: __("patientSession.screen.title", patientProgramme.programme.nameSentenceCase)
+  }) }}
+
+  {# Description #}
+  {{ patientProgramme.screenDescription | nhsukMarkdown }}
+
+  {# Health answers #}
+  {% if patientProgramme.consentHealthAnswers %}
+    {{ summaryList({
+      card: {
+        heading: __mf("healthAnswers.count", {
+          count: patientProgramme.answersNeedingTriageCount
+        }),
+        headingSize: "m",
+        variant: "warning" if patientProgramme.answersNeedingTriageCount
+      },
+      classes: "app-summary-list--full-width",
+      rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
+    }) if patientProgramme.consentHealthAnswers }}
+  {% else %}
+    {{ card({
+      heading: __("vaccine.healthQuestions.label"),
+      headingLevel: 3,
+      headingSize: "m",
+      descriptionHtml: patientProgramme.vaccine.formatted.healthQuestions
+    }) }}
+  {% endif %}
+
+  {# Decision table #}
+  {{ appTriageNotes({
+    card: {
+      heading: __("triage.note.label"),
+      headingLevel: 3,
+      headingSize: "m"
+    },
+    triageNotes: patientProgramme.triageNotes
+  }) }}
+
+  {% if options.canTriage %}
+    {% call card({
+      heading: __("triage.new.title"),
+      headingLevel: 3,
+      headingSize: "m"
+    }) %}
+      {{ appTriageForm({
+        context: patientProgramme,
+        size: "s"
+      }) }}
+
+      {{ button({
+        text: __("triage.confirm"),
+        attributes: {
+          formaction: patientProgramme.uri + "/new/triage?referrer=" + referrer
+        }
+      }) }}
+    {% endcall %}
+  {% endif %}
+{% endblock %}

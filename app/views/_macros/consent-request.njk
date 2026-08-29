@@ -1,0 +1,28 @@
+{%- from "nhsuk/components/summary-list/macro.njk" import summaryList -%}
+{%- from "../_macros/contact-email.njk" import appContactEmail with context -%}
+{%- from "../_macros/contact-sms.njk" import appContactSms with context -%}
+
+{% macro appConsentRequest(params) -%}
+{% set classes = ["app-card--compact"] %}
+{% if params.classes %}
+  {% set classes = classes | push(params.classes) %}
+{% endif %}
+{{ summaryList({
+  card: {
+    classes: classes | join(" "),
+    heading: params.consentRequest.contact.fullNameAndRelationship,
+    headingLevel: 4
+  },
+  lastRowBorder: false,
+  rows: summaryRows(params.consentRequest, {
+    createdAt: {},
+    email: {
+      value: appContactEmail(params.consentRequest.contact)
+    } if params.consentRequest.contact.email,
+    tel: {
+      value: appContactSms(params.consentRequest.contact)
+    } if params.consentRequest.contact.tel,
+    status: {}
+  })
+}) }}
+{% endmacro %}

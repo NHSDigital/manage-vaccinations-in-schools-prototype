@@ -4,7 +4,7 @@ import { replyController as reply } from '../controllers/reply.js'
 
 const router = express.Router({ strict: true, mergeParams: true })
 
-router.get('/', reply.redirect)
+router.get('/', reply.readAll, reply.list)
 
 router.get('/new', reply.new)
 

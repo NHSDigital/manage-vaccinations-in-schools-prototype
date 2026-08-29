@@ -1036,15 +1036,15 @@ export class Session extends BaseModel {
             switch (this.consentWindow) {
               case ConsentWindow.Opening:
                 consentWindow = `Opens ${formatDate(this.consentOpenAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window opens on ${formatDate(this.consentOpenAt, consentDateStyle)}.`
+                consentWindowSentence = `Consent opens on ${formatDate(this.consentOpenAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Closed:
                 consentWindow = `Closed ${formatDate(this.consentCloseAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window closed on ${formatDate(this.consentCloseAt, consentDateStyle)}.`
+                consentWindowSentence = `Consent closed on ${formatDate(this.consentCloseAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Open:
                 consentWindow = `Open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window is open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}.`
+                consentWindowSentence = `Consent open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}.`
                 break
             }
             return { consentWindow, consentWindowSentence }
