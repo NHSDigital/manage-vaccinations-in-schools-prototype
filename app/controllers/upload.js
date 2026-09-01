@@ -28,7 +28,11 @@ export const uploadController = {
     let uploads = Upload.findAll(data)
 
     if (account.isSchoolUser) {
-      uploads = uploads.filter((upload) => upload.type === UploadType.School)
+      uploads = uploads.filter(
+        (upload) =>
+          upload.type === UploadType.School &&
+          ![UploadStatus.Review, UploadStatus.Devoid].includes(upload.status)
+      )
     }
 
     response.locals.uploads = uploads
@@ -51,7 +55,7 @@ export const uploadController = {
   list(request, response) {
     const { status, type } = request.query
     const { data } = request.session
-    const { uploads } = response.locals
+    const { account, uploads } = response.locals
 
     let results = uploads
 
@@ -73,6 +77,21 @@ export const uploadController = {
     // Results
     response.locals.results = getResults(results, request.query, 40)
     response.locals.pages = getPagination(results, request.query, 40)
+
+    // Upload status filter options
+    response.locals.uploadStatusItems = Object.values(UploadStatus)
+      .filter((value) => {
+        if (account.isSchoolUser) {
+          return ![UploadStatus.Review, UploadStatus.Devoid].includes(value)
+        }
+        return value
+      })
+      .sort((a, b) => a.localeCompare(b))
+      .map((value) => ({
+        text: value,
+        value,
+        checked: status === value
+      }))
 
     // Clean up session data
     delete data.status
