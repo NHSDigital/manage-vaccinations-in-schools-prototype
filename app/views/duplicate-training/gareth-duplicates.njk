@@ -356,14 +356,13 @@
     </div>
     <!-- /Duplicate record grid -->
   </div>
-  <!-- Sticky set navigation: game-mode queue bar. Both status strings are
-       placeholder wording. One action button tracks the selection radios: it
-       reads Skip to next duplicate (white secondary style) until a record is chosen, then Review next duplicate
-       (green primary). Same link either way, to the next demo scenario as a
-       placeholder for advancing the queue (no real queue or saved state yet);
-       the last set returns to the index. Clear choice sits next to the status
-       text, hidden until a record is chosen; it unselects the radios and
-       returns everything, button included, to the initial state. The spacer
+  <!-- Sticky set navigation, child-record entry: there is no queue here, so
+       the next-duplicate action button is hidden (kept in the DOM because the
+       selection script updates it). What the bar's action should be from this
+       entry point is a deferred decision. Status strings are placeholder
+       wording. Clear choice sits next to the status text, hidden until a
+       record is chosen; it unselects the radios and returns everything to the
+       initial state. The spacer
        below keeps the fixed bar from covering the last grid row when scrolled
        to the bottom. -->
   <div style="height: 96px"></div>
@@ -371,7 +370,7 @@
     <div class="nhsuk-width-container-fluid nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
       <div style="max-width: 1720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0"><span data-set-status>Choose your preferred record</span> <a class="nhsuk-link nhsuk-u-margin-left-2 nhsuk-u-display-none" href="#" data-clear-choice>Clear choice</a></p>
-        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" data-set-action href="/duplicate-training/gareth-record" role="button" draggable="false">Skip to next duplicate</a>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-display-none" data-module="nhsuk-button" data-set-action href="/duplicate-training/gareth-record" role="button" draggable="false">Skip to next duplicate</a>
       </div>
     </div>
   </div>
