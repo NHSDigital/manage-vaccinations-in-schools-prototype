@@ -32,6 +32,11 @@
       hasConsentForAlternativeVaccine: {
         href: reply.uri + "/new/decision"
       },
+      canNotify: {
+        label: __("reply.contact.canNotify.label"),
+        value: reply.contact.canNotify,
+        href: reply.uri + "/new/can-notify"
+      } if reply.hasSelfConsent,
       refusalReason: {
         href: reply.uri + "/new/refusal-reason"
       },
@@ -81,9 +86,6 @@
       hasParentalResponsibility: {
         href: reply.uri + "/new/contact"
       },
-      canNotify: {
-        href: reply.uri + "/new/can-notify"
-      },
       email: {
         href: reply.uri + "/new/contact"
       },
@@ -94,7 +96,7 @@
         href: reply.uri + "/new/contact"
       }
     })
-  }) if reply.contact.relationship or reply.contact.canNotify !== undefined }}
+  }) if not reply.hasSelfConsent }}
 
   {{ summaryList({
     classes: "app-summary-list--full-width",
