@@ -230,10 +230,10 @@ export class Reply extends BaseModel {
    * @returns {string|undefined} Relationship to child
    */
   get relationship() {
-    if (this.contact) {
-      return this.contact.relationship
-    } else if (this.child) {
+    if (this.hasSelfConsent) {
       return `${this.child.fullName} (child)`
+    } else if (this.contact) {
+      return this.contact.relationship
     }
   }
 
