@@ -359,7 +359,12 @@
        returns everything, button included, to the initial state. The spacer
        below keeps the fixed bar from covering the last grid row when scrolled
        to the bottom. -->
-  <div style="height: 96px"></div>
+  <!-- Clearance for the fixed bar: padding at the very end of the document
+       (below the footer) rather than a spacer above it, so scrolling to the
+       bottom brings the footer fully above the bar -->
+  <style>
+    body { padding-bottom: 96px; }
+  </style>
   <div style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #ffffff; border-top: 1px solid #d8dde0; padding-bottom: env(safe-area-inset-bottom);">
     <div class="nhsuk-width-container nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
       <div style="display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
