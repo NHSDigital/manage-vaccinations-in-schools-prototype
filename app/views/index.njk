@@ -23,20 +23,29 @@
         size: "m"
       }) }}
 
-      <p class="nhsuk-body">
+      <p>
         {{ actionLink({
-          classes: "nhsuk-u-margin-bottom-0",
+          classes: "nhsuk-u-margin-bottom-2",
           text: "Start page for nurses and administrators",
           href: "/start"
         }) }}
       </p>
 
-      <p class="nhsuk-body">
-        {{ actionLink({
-          text: "Start page for school administrators",
-          href: "/start-schools"
-        }) }}
-      </p>
+      {{ actionLink({
+        classes: "nhsuk-u-margin-bottom-2",
+        text: "Start page for school administrators",
+        href: "/start-schools"
+      }) }}
+
+      {{ contentsList({
+        classes: "nhsuk-u-margin-left-3",
+        items: [
+          {
+            href: "/schools/emails",
+            text: "Emails SAIS teams send to schools"
+          }
+        ]
+      }) }}
 
       {% set userItems = [] %}
       {% for uid, user in data.users %}
@@ -49,7 +58,7 @@
       {{ "Log in to the service with the following role:" | nhsukMarkdown }}
 
       {{ contentsList({
-        classes: "nhsuk-u-margin-left-1",
+        classes: "nhsuk-u-margin-left-3",
         items: userItems
       }) }}
 
@@ -70,7 +79,7 @@
           }) }}
 
           {{ contentsList({
-            classes: "nhsuk-u-margin-left-1",
+            classes: "nhsuk-u-margin-left-3",
             items: [
               {
                 href: navigation.consentUrl[preset.name] + "/emails",

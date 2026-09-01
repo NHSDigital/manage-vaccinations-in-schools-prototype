@@ -9,6 +9,8 @@ const router = express.Router({ strict: true })
 router.get('/', school.readAll, school.list)
 router.post('/', school.filterList)
 
+router.get('/emails', school.showEmails)
+
 router.get('/new', school.new('school'))
 router.get('/new-site', school.new('site'))
 

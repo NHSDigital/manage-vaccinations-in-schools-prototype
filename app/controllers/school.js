@@ -41,6 +41,16 @@ export const schoolController = {
   },
 
   /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  showEmails(request, response) {
+    response.locals.assetsName = 'prototype'
+    response.locals.school = School.findAll(request.session.data)[0]
+
+    return response.render('school/emails')
+  },
+
+  /**
    * @param {string} type - Form type
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */

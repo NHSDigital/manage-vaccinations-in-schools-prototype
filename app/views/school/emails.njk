@@ -1,0 +1,20 @@
+{% extends "_layouts/emails.njk" %}
+{% set placeholders = {
+  from: {
+    name: account.team.name,
+    email: account.team.email
+  },
+  to: {
+    name: school.name,
+    email: school.email or "example@example.com"
+  },
+  team: team
+} %}
+
+{% set defaultTemplate = "request-class-lists" %}
+{% set dir = "schools" %}
+{% set templates = {
+  "Class lists": [
+    "request-class-lists"
+  ]
+} %}

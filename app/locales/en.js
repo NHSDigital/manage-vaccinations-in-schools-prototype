@@ -1637,6 +1637,12 @@ export const en = {
         label: 'Information for students',
         name: 'You can get an {{session.vaccinationNames.sentenceCase}} on {{session.formatted.nextDate}}'
       }
+    },
+    schools: {
+      'request-class-lists': {
+        label: 'Request for class lists',
+        name: 'Providing pupil information for vaccinations'
+      }
     }
   },
   event: {
