@@ -11,14 +11,56 @@ import { Child, ClinicAppointment } from '../models.js'
 import { generateContact } from './contact.js'
 
 /**
+ * Decide which programmes and vaccine choices a patient's clinic appointment will cover
+ *
+ * Split out from generateClinicAppointment so the resulting appointment length is known before
+ * a session (and slot within it) is chosen for the appointment
+ *
+ * @param {Patient} patient - The patient being invited to a clinic appointment
+ * @returns {ClinicVaccinationChoices} The selected programmes and vaccine choices for the appointment
+ */
+export function decideClinicVaccinationChoices(patient) {
+  const selected_programme_ids = patient.clinicProgramme_ids
+  let fluDecision, fluAlternative, mmrAlternative
+
+  if (selected_programme_ids.includes('flu')) {
+    fluDecision = faker.helpers.weightedArrayElement([
+      { value: ReplyDecision.Given, weight: 95 },
+      { value: ReplyDecision.OnlyAlternativeInjection, weight: 5 }
+    ])
+    if (fluDecision === ReplyDecision.Given) {
+      fluAlternative = faker.datatype.boolean(0.5)
+    }
+  }
+  if (selected_programme_ids.includes('mmr')) {
+    mmrAlternative = faker.datatype.boolean(0.15)
+  }
+
+  return {
+    selected_programme_ids,
+    fluDecision,
+    fluAlternative,
+    mmrAlternative
+  }
+}
+
+/**
  * Generate fake clinic appointment
  *
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices, from decideClinicVaccinationChoices
+ * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
-export function generateClinicAppointment(patient, session, booking) {
+export function generateClinicAppointment(
+  patient,
+  session,
+  booking,
+  vaccinationChoices,
+  startAt
+) {
   const uuid = faker.string.uuid()
   const booking_uuid = booking.uuid
   const session_id = session.id
@@ -113,25 +155,12 @@ export function generateClinicAppointment(patient, session, booking) {
     }
   }
 
-  // Have the child signed up for whatever they were invited for
-  const selected_programme_ids = patient.clinicProgramme_ids
-  let fluDecision, fluAlternative, mmrAlternative
-  if (selected_programme_ids.includes('flu')) {
-    fluDecision = faker.helpers.weightedArrayElement([
-      { value: ReplyDecision.Given, weight: 95 },
-      { value: ReplyDecision.OnlyAlternativeInjection, weight: 5 }
-    ])
-    if (fluDecision === ReplyDecision.Given) {
-      fluAlternative = faker.datatype.boolean(0.5)
-    }
-  }
-  if (selected_programme_ids.includes('mmr')) {
-    mmrAlternative = faker.datatype.boolean(0.15)
-  }
-
-  // Appointment time
-  // TODO: find a slot that will fit the appointment based on its length in the given session
-  const startAt = faker.helpers.arrayElement(session.availableSlotStartTimes)
+  const {
+    selected_programme_ids,
+    fluDecision,
+    fluAlternative,
+    mmrAlternative
+  } = vaccinationChoices
 
   const status = ClinicAppointmentStatus.Booked
 
@@ -145,19 +174,21 @@ export function generateClinicAppointment(patient, session, booking) {
     parentHasParentalResponsibility,
     session_id,
     startAt,
-    appointmentLength: session.slotLength,
+    appointmentLength: session.calculateAppointmentLength(vaccinationChoices),
     selected_programme_ids,
     fluDecision,
     fluAlternative,
     mmrAlternative,
     status
   })
-  appointment.appointmentLength =
-    session.calculateAppointmentLength(appointment)
 
   return appointment
 }
 
 /**
- * @import { ClinicBooking, Patient, Session } from '../models.js'
+ * @typedef {AppointmentLengthFactors & {fluAlternative: (boolean|undefined), mmrAlternative: (boolean|undefined)}} ClinicVaccinationChoices
+ */
+
+/**
+ * @import { AppointmentLengthFactors, ClinicBooking, Patient, Session } from '../models.js'
  */

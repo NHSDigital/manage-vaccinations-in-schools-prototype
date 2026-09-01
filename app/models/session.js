@@ -93,6 +93,13 @@ import { BaseModel } from './base.js'
  */
 
 /**
+ * The minimal shape of appointment data needed to work out how long an appointment will take,
+ * and so which slots it could be booked into.
+ *
+ * @typedef {Pick<ClinicAppointment, 'selected_programme_ids' | 'fluDecision'>} AppointmentLengthFactors
+ */
+
+/**
  * @class Session
  */
 export class Session extends BaseModel {
@@ -452,16 +459,19 @@ export class Session extends BaseModel {
   /**
    * Calculate the default length of the given appointment using this session's setup, in minutes
    *
-   * @param {ClinicAppointment} appointment - the appointment with its vaccination info
+   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
    * @returns {number} - the number of minutes to allocate for the given appointment
    */
-  calculateAppointmentLength(appointment) {
+  calculateAppointmentLength(appointmentProperties) {
     let injectionCount = 0
     let nasalCount = 0
 
-    const programme_ids = appointment.selected_programme_ids
+    const programme_ids = appointmentProperties.selected_programme_ids
     if (programme_ids.includes('flu')) {
-      if (appointment.fluDecision === ReplyDecision.OnlyAlternativeInjection) {
+      if (
+        appointmentProperties.fluDecision ===
+        ReplyDecision.OnlyAlternativeInjection
+      ) {
         injectionCount++
       } else {
         nasalCount = 1
@@ -481,11 +491,11 @@ export class Session extends BaseModel {
   /**
    * Calculate the number of slots covered by the given appointment
    *
-   * @param {ClinicAppointment} appointment - the appointment with its vaccination info
+   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
    * @returns {number} - the number of slots consumed by the appointment
    */
-  calculateSlotCount(appointment) {
-    const minutes = this.calculateAppointmentLength(appointment)
+  calculateSlotCount(appointmentProperties) {
+    const minutes = this.calculateAppointmentLength(appointmentProperties)
     return Math.ceil(minutes / this.slotLength)
   }
 
@@ -1162,15 +1172,15 @@ export class Session extends BaseModel {
    * to only offer a parent start times that have room, and reactively, to check a start time a
    * staff member has already picked on the schedule
    *
-   * @param {ClinicAppointment} appointment - the appointment with its vaccination info
+   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
    * @returns {Array<Date>} Start times with enough contiguous free capacity for the appointment
    */
-  bookableSlotStartTimesFor(appointment) {
+  bookableSlotStartTimesFor(appointmentProperties) {
     if (this.type !== SessionType.Clinic) {
       throw new Error('Session must be a clinic to have booking slots')
     }
 
-    const slotsForAppointment = this.calculateSlotCount(appointment)
+    const slotsForAppointment = this.calculateSlotCount(appointmentProperties)
     const freeSlotCounts = this.#freeSlotCountsByStartTime()
 
     const bookableStartTimes = []
