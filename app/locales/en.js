@@ -2954,7 +2954,7 @@ export const en = {
       }
     },
     'upload-class-list': {
-      title: 'Upload class lists'
+      title: 'Upload class list'
     },
     list: {
       label: 'Sessions',
