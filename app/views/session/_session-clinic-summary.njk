@@ -7,27 +7,18 @@
 <div class="nhsuk-grid-row nhsuk-card-group">
   {% set columnWidth = "quarter" %}
 
+  {% set percentBooked = session.percentBooked %}
   {% if ('flu' in session.programme_ids) or (session.programmeAppointments('flu').length > 0) %}
-    {# Capacity, broken down by nasal spray vs. injection appointments #}
+    {# Remaining capacity broken down by nasal spray vs. injection appointments #}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({
         heading: {
-          text: __("session.tally.appointments.total.nasal.label"),
+          text: __("session.tally.appointments.percentBooked.label"),
           level: 3
         },
+        colour: "white" if percentBooked < 90 else ("orange" if percentBooked < 100 else "red"),
         compact: true,
-        data: session.maximumCapacity(VaccineMethod.Intranasal)
-      }) }}
-    </div>
-    <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
-      {{ appDataCard({
-        heading: {
-          text: __("session.tally.appointments.total.injection.label"),
-          level: 3
-        },
-        colour: "white",
-        compact: true,
-        data: session.maximumCapacity(VaccineMethod.Injection)
+        data: percentBooked ~ "%"
       }) }}
     </div>
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -53,15 +44,16 @@
       }) }}
     </div>
   {% else %}
-    {# Capacity, assuming all appointments are for injections #}
+    {# Remaining capacity assumes all appointments are for injections #}
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
       {{ appDataCard({
         heading: {
-          text: __("session.tally.appointments.total.label"),
+          text: __("session.tally.appointments.percentBooked.label"),
           level: 3
         },
+        colour: "white" if percentBooked < 90 else ("orange" if percentBooked < 100 else "red"),
         compact: true,
-        data: session.totalSlotCount
+        data: percentBooked ~ "%"
       }) }}
     </div>
     <div class="nhsuk-grid-column-one-{{ columnWidth }} nhsuk-card-group__item">
@@ -70,7 +62,6 @@
           text: __("session.tally.appointments.available.label"),
           level: 3
         },
-        colour: "white" if session.availableSlotCount > 10 else ("orange" if session.availableSlotCount > 0 else "red"),
         compact: true,
         data: session.availableSlotCount
       }) }}
