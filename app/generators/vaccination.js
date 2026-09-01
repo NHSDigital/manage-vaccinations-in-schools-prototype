@@ -2,7 +2,13 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addMonths, addWeeks } from 'date-fns'
 
 import vaccinesData from '../datasets/vaccines.js'
-import { VaccinationOutcome, VaccinationSource } from '../enums.js'
+import {
+  VaccinationMethod,
+  VaccinationOutcome,
+  VaccinationSite,
+  VaccinationSource,
+  VaccineMethod
+} from '../enums.js'
 import { Vaccination } from '../models.js'
 
 /**
@@ -15,9 +21,18 @@ import { Vaccination } from '../models.js'
  * @returns {Vaccination} Vaccination
  */
 export function generateVaccination(patientSession, programme, batch, user) {
-  let injectionMethod
-  let injectionSite
+  let injectionMethod = VaccinationMethod.Intramuscular
+  let injectionSite = VaccinationSite.ArmLeftUpper
   let sequence
+
+  if (batch.vaccine.method === VaccineMethod.Intranasal) {
+    injectionMethod = VaccinationMethod.Intranasal
+    injectionSite = VaccinationSite.Nose
+  }
+
+  if (programme.sequence) {
+    sequence = programme.sequenceDefault
+  }
 
   const outcome = faker.helpers.weightedArrayElement([
     { value: VaccinationOutcome.Vaccinated, weight: 4 },
@@ -27,10 +42,6 @@ export function generateVaccination(patientSession, programme, batch, user) {
     { value: VaccinationOutcome.Refused, weight: 2 },
     { value: VaccinationOutcome.Unwell, weight: 2 }
   ])
-
-  if (programme.sequence) {
-    sequence = programme.sequenceDefault
-  }
 
   const vaccinated =
     outcome === VaccinationOutcome.Vaccinated ||

@@ -24,6 +24,7 @@ export class Sticky extends Component {
     // Support stuck details elements
     this.detailsElement = $root.closest('details')
     if (this.detailsElement) {
+      this.contentHeightBeforeClose = 0
       this.handleDetailsToggle = this.handleDetailsToggle.bind(this)
       this.detailsElement.addEventListener('toggle', this.handleDetailsToggle)
     }
@@ -75,15 +76,14 @@ export class Sticky extends Component {
       return
     }
 
-    let contentHeightBeforeClose = 0
     if (this.detailsElement.open) {
       // Details is open - store current state
-      contentHeightBeforeClose = this.detailsElement.scrollHeight
+      this.contentHeightBeforeClose = this.detailsElement.scrollHeight
     } else {
       // Details is closed - calculate and apply scroll adjustment
       const currentScrollY = window.scrollY
       const newContentHeight = this.detailsElement.scrollHeight
-      const heightDifference = contentHeightBeforeClose - newContentHeight
+      const heightDifference = this.contentHeightBeforeClose - newContentHeight
 
       const elementTop =
         this.stickyElement.getBoundingClientRect().top + window.scrollY

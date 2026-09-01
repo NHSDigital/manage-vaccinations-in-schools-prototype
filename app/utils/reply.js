@@ -206,15 +206,18 @@ export const getPreferredNames = (replies) => {
  * @returns {string} Refusal reason
  */
 export const getRefusalReason = (type, decision) => {
-  // Gelatine content only a valid refusal reason for flu vaccine
-  let refusalReasons = Object.values(ReplyRefusal).filter((value) =>
-    type !== ProgrammeType.Flu ? value !== ReplyRefusal.Gelatine : value
-  )
+  // Gelatine content only a valid refusal reason for flu and MMR vaccines
+  let refusalReasons = Object.values(ReplyRefusal).filter((value) => {
+    if (value === ReplyRefusal.Gelatine) {
+      return type === ProgrammeType.Flu
+    }
 
-  // Gelatine content only a valid refusal reason for MMR vaccine
-  refusalReasons = Object.values(ReplyRefusal).filter((value) =>
-    type !== ProgrammeType.MMR ? value !== ReplyRefusal.GelatineMMR : value
-  )
+    if (value === ReplyRefusal.GelatineMMR) {
+      return type === ProgrammeType.MMR
+    }
+
+    return true
+  })
 
   // You cannot decline on the basis of already having had the vaccine
   if (decision === ReplyDecision.Declined) {
