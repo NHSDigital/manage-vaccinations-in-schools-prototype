@@ -300,10 +300,10 @@
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 4; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
         <!-- Protocol row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 19;">Protocol</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 19;">&nbsp;</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 19;">&nbsp;</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 4; grid-row: 19;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 19; border-bottom: 1px solid #d8dde0;">Protocol</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 19; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 19; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-4 nhsuk-u-margin-right-4 nhsuk-u-display-none" data-all-fields style="grid-column: 4; grid-row: 19; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
         <!-- View all rows control: one per row, all synced to a single logical state by the script -->
         <details class="nhsuk-details nhsuk-u-font-size-16 nhsuk-u-margin-top-4" data-view-all-toggle style="grid-column: 1; grid-row: 20;">
@@ -383,8 +383,9 @@
        instance drives all instances to the same open state (setting .open to its current
        value fires no toggle event, so the sync converges without loops), then shows or
        hides the additional field rows. The last visible row must not have a bottom border:
-       Batch rows (data-border-when-expanded) gain one while expanded, Protocol rows never
-       have one. A single renderer owns the whole selection state (tags, borders, status
+       Batch rows (data-border-when-expanded) gain one while expanded. Protocol rows
+       keep a static border so the View this record link below does not read as
+       part of the row. A single renderer owns the whole selection state (tags, borders, status
        text, Clear choice visibility, the Skip to next duplicate/Review next duplicate action button), with null meaning no
        choice; the radio change handler and the Clear choice link both go through it, so
        the pieces can never disagree. -->
