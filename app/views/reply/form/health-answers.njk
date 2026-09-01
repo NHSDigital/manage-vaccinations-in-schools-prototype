@@ -12,7 +12,7 @@
       hint: __("healthQuestions." + key + ".hint", vaccineName),
       items: [
         {
-          label: __("reply.healthAnswers.yes"),
+          text: __("reply.healthAnswers.yes"),
           conditional: {
             html: textarea({
               label: __("reply.healthAnswers.details"),
@@ -24,7 +24,7 @@
           }
         },
         {
-          label: __("reply.healthAnswers.no")
+          text: __("reply.healthAnswers.no")
         }
       ],
       decorate: ["reply", "healthAnswers", key, "answer"]
