@@ -528,12 +528,14 @@ export const bookIntoClinicController = {
         if (times.length) {
           const startHourNumber = parseInt(hour)
           const endHourNumber = startHourNumber + 1
+          const uniqueTimesCount = new Set(times.map((time) => time.getTime()))
+            .size
 
           timeRangeItems.push({
             text: `${formatHour(startHourNumber)} to ${formatHour(endHourNumber)}`,
             value: startHourNumber,
-            hint: __mf('clinicBooking.timeRange.range.appointmentsAvailable', {
-              count: times.length
+            hint: __mf('clinicBooking.timeRange.range.timesAvailable', {
+              count: uniqueTimesCount
             })
           })
         }
@@ -571,10 +573,7 @@ export const bookIntoClinicController = {
         ([formattedTime, availability]) => {
           appointmentTimeItems.push({
             text: formattedTime,
-            value: availability.date.toISOString(),
-            hint: __mf('clinicBooking.time.appointmentsAvailable', {
-              count: availability.count
-            })
+            value: availability.date.toISOString()
           })
         }
       )

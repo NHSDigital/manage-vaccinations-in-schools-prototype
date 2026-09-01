@@ -700,8 +700,8 @@ export const en = {
         label: 'Available time ranges'
       },
       range: {
-        appointmentsAvailable:
-          '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
+        timesAvailable:
+          '{count, plural, =0 {No times available} one {1 time available} other {{count} times available}}'
       }
     },
     time: {
@@ -711,9 +711,7 @@ export const en = {
       },
       times: {
         label: 'Available appointment times'
-      },
-      appointmentsAvailable:
-        '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
+      }
     },
     abandon: {
       label: 'I cannot find a convenient appointment'
