@@ -152,7 +152,7 @@ export const uploadController = {
     // If type provided in query string, start journey at upload question
     data.startPath = type
       ? type === UploadType.School
-        ? 'year-groups'
+        ? 'school'
         : 'file'
       : 'type'
 
