@@ -13,7 +13,7 @@
   }) }}
 
   {{ actionLink({
-    href: "/uploads/new?type=" + UploadType.School + "&school_id=" + account.team.schools[0].id,
+    href: "/uploads/new?type=" + UploadType.School,
     text: __("session.upload-class-list.title")
   }) if account.isSchoolUser else actionLink({
     href: "/uploads/new",
