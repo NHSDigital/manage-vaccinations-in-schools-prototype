@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { PatientStatus } from '../enums.js'
-import { Patient, Programme, School } from '../models.js'
+import { Patient, Programme, School, Team } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -38,6 +38,19 @@ export const schoolController = {
     const view = request.params.view || 'show'
 
     return response.render(`school/${view}`)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  showEmails(request, response) {
+    const { data } = request.session
+
+    response.locals.assetsName = 'prototype'
+    response.locals.school = School.findAll(data)[0]
+    response.locals.team = Team.findOne('001', data)
+
+    return response.render('school/emails')
   },
 
   /**
