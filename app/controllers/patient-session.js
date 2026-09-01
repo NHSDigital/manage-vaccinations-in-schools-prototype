@@ -48,7 +48,7 @@ export const patientSessionController = {
     const { clinicAppointment, patient, patientProgramme, programme, session } =
       patientSession
 
-    const vaccinated = patientSession.siblingPatientSessions.findIndex(
+    const vaccinated = patientSession.siblingPatientSessions.find(
       ({ patientProgramme }) => patientProgramme.isVaccinated
     )
 
