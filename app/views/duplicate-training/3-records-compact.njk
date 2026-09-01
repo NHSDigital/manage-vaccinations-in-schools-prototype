@@ -159,30 +159,33 @@
   <!-- Card canvas at the standard page width. The grid stops compressing at
        880px and gains a horizontal scrollbar on narrower viewports. -->
   <div>
-    <!-- Divider between the child details above and the record details below -->
-    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4">
 
-    <!-- Duplicate summary: plain at the standard page width - the grey card
-         and recessed grid plane are only needed to hold a full-width canvas
-         together -->
-    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">3 duplicate records</h2>
-    <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-2">We have 3 records for the same vaccination.</p>
-    <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-4">
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">Date</dt>
-        <dd class="nhsuk-summary-list__value">14 May 2026</dd>
+    <!-- Duplicate summary: reuses the Mavis listing-page sidebar treatment
+         (app-filters card: translucent grey-4 background, card
+         border, no feature heading tab) -->
+    <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">3 duplicate records</h2>
+        <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-2">We have 3 records for the same vaccination.</p>
+        <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-0">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Date</dt>
+            <dd class="nhsuk-summary-list__value">14 May 2026</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Programme</dt>
+            <dd class="nhsuk-summary-list__value">MMR</dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Outcome</dt>
+            <dd class="nhsuk-summary-list__value">Vaccinated</dd>
+          </div>
+        </dl>
       </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">Programme</dt>
-        <dd class="nhsuk-summary-list__value">MMR</dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">Outcome</dt>
-        <dd class="nhsuk-summary-list__value">Vaccinated</dd>
-      </div>
-    </dl>
+    </div>
 
     <!-- Duplicate record grid -->
+    <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
     <!-- Records 1 to 3: one shared grid; each field is a grid row spanning the label column and all cards -->
     <div style="overflow-x: auto;">
       <div style="display: grid; grid-template-columns: 8.5rem repeat(3, 1fr); column-gap: 16px; min-width: 880px;">
@@ -355,6 +358,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
     <!-- /Duplicate record grid -->
   </div>
