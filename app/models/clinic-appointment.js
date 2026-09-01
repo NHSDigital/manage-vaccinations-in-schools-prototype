@@ -631,6 +631,9 @@ export class ClinicAppointment {
                 )
               )
 
+            case 'appointmentLength':
+              return this.duration
+
             case 'adjustmentsCount':
               if (!this.requiresAdjustments) return undefined
               return formatSecondaryText(

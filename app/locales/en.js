@@ -369,6 +369,9 @@ export const en = {
     timeSlot: {
       label: 'Time'
     },
+    appointmentLength: {
+      label: 'Appointment length'
+    },
     vaccinations: {
       label: 'Vaccinations'
     },
