@@ -27,12 +27,18 @@ export function generateUpload(
     { value: UploadStatus.Invalid, weight: 1 },
     { value: UploadStatus.Failed, weight: 1 },
     { value: UploadStatus.Devoid, weight: 1 },
-    { value: UploadStatus.Review, weight: 10 },
-    { value: UploadStatus.Approved, weight: 8 }
+    { value: UploadStatus.Review, weight: 8 },
+    { value: UploadStatus.Approved, weight: 8 },
+    ...(type === UploadType.School
+      ? [{ value: UploadStatus.Rejected, weight: 3 }]
+      : [])
   ])
 
-  let hasFailed
+  let updatedAt
+  let updatedBy_uid
+  let rejectionReason
   let validations
+  let hasFailed
   let isApproved
   switch (status) {
     case UploadStatus.Invalid:
@@ -57,15 +63,14 @@ export function generateUpload(
       break
     case UploadStatus.Approved:
       isApproved = true
+      updatedAt = new Date(createdAt.getTime() + 72 * 60000)
+      updatedBy_uid = user.uid
       break
-  }
-
-  // Approved upload
-  let updatedAt
-  let updatedBy_uid
-  if (status === UploadStatus.Approved) {
-    updatedAt = new Date(createdAt.getTime() + 72 * 60000)
-    updatedBy_uid = user.uid
+    case UploadStatus.Rejected:
+      isApproved = false
+      rejectionReason =
+        'These records appear to be for the wrong school. Please check that you have uploaded records for the correct school.'
+      break
   }
 
   return new Upload({
@@ -75,9 +80,10 @@ export function generateUpload(
     updatedBy_uid,
     fileName,
     type,
+    rejectionReason,
+    validations,
     hasFailed,
     isApproved,
-    validations,
     patient_uuids,
     ...(school && {
       yearGroups: school.yearGroups,

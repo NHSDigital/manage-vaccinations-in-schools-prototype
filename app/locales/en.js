@@ -3521,6 +3521,17 @@ export const en = {
       confirm: 'Approve and upload records',
       success: 'Upload approved'
     },
+    reject: {
+      title: 'Reject uploaded class list',
+      description: 'Confirm you would like to reject this class list',
+      confirm: 'Reject upload',
+      success: 'Upload rejected'
+    },
+    rejectionReason: {
+      label: 'Reason for rejection',
+      title: 'Why are you rejecting this upload?',
+      hint: 'This information will be shown to the school user'
+    },
     list: {
       label: 'Uploads',
       title: 'Uploads',
@@ -3546,18 +3557,30 @@ export const en = {
       partial: {
         label: {
           [UploadStatus.Review]: 'Changes to review',
+          [UploadStatus.Rejected]: 'Changes reviewed',
           [UploadStatus.Approved]: 'Changes reviewed'
         },
         title: {
           [UploadStatus.Review]:
             'Close matches to existing records – need review',
+          [UploadStatus.Rejected]: 'Close matches to existing records',
           [UploadStatus.Approved]: 'Issues resolved for this upload'
         },
         count: {
           [UploadStatus.Review]:
             '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
+          [UploadStatus.Rejected]:
+            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
           [UploadStatus.Approved]:
             '{count, plural, =0 {No upload issues} one {1 upload issue} other {# upload issues}}'
+        },
+        summary: {
+          [UploadStatus.Review]:
+            'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
+          [UploadStatus.Rejected]:
+            'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
+          [UploadStatus.Approved]:
+            '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed'
         },
         decision: {
           label: 'Decision',
@@ -3580,12 +3603,6 @@ export const en = {
           ignore: {
             label: 'Keep archived'
           }
-        },
-        summary: {
-          [UploadStatus.Review]:
-            'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
-          [UploadStatus.Approved]:
-            '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed'
         }
       },
       matched: {
@@ -3682,6 +3699,10 @@ export const en = {
         'The records could not be uploaded as an unusually low number of records were matched to PDS (spine). PDS successfully matched only 60 records, a 10% match rate.\n\nReview your file and try uploading it again.',
       count:
         '{count, plural, =0 {No unmatched records} one {1 unmatched record} other {# unmatched records}}'
+    },
+    rejected: {
+      title: 'Upload rejected',
+      description: 'This upload was rejected for the following reason:'
     },
     id: {
       label: 'ID'

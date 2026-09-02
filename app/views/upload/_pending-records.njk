@@ -79,10 +79,10 @@
     },
     {
       html: archiveRadios if upload.status == UploadStatus.Review else archiveDecision
-    } if loop.first,
+    } if loop.first and upload.status == UploadStatus.Approved,
     {
       html: duplicateRadios if upload.status == UploadStatus.Review else duplicateDecision
-    } if not loop.first
+    } if not loop.first and upload.status == UploadStatus.Approved
   ]) %}
 {% endfor %}
 
@@ -114,7 +114,7 @@
   head: [
     { text: __("patient.fullNameAndNhsn.label") },
     { html: appChange("Existing record", "Uploaded record") },
-    { html: __("upload.show.partial.decision.label") }
+    { html: __("upload.show.partial.decision.label") } if upload.status == UploadStatus.Approved
   ],
   rows: patientRows
 }) }}

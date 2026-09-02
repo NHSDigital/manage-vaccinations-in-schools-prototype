@@ -1,0 +1,24 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("upload.reject.title") %}
+{% set paths = {
+  back: upload.uri
+} %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __("upload.reject.description") | nhsukMarkdown }}
+
+  {{ textarea({
+    label: {
+      text: __("upload.rejectionReason.title"),
+      size: "m"
+    },
+    hint: __("upload.rejectionReason.hint"),
+    decorate: "upload.rejectionReason"
+  }) }}
+{% endblock %}

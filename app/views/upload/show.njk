@@ -62,7 +62,12 @@
     })
   }) }}
 
-  {% if upload.status == UploadStatus.Review %}
+  {% if upload.status in [UploadStatus.Review, UploadStatus.Rejected] %}
+    {{ warningCallout({
+      heading: __("upload.rejected.title"),
+      html: upload.rejectionReason | nhsukMarkdown
+    }) if upload.status == UploadStatus.Rejected and account.isSchoolUser }}
+
     {{ patientRecords({
       key: "new",
       patients: upload.patients | selectattr("isNewUpload")
@@ -173,6 +178,11 @@
             formaction: upload.uri + "/approve"
           }
         },
+        {
+          text: __("upload.reject.confirm"),
+          href: upload.uri + "/reject",
+          variant: "warning"
+        } if upload.createdBy.isSchoolUser,
         {
           text: __("upload.delete.confirm"),
           variant: "secondary",

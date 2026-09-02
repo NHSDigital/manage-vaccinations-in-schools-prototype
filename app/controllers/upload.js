@@ -306,13 +306,36 @@ export const uploadController = {
       {
         updatedAt: new Date(),
         updatedBy_uid: account.uid,
-        isApproved: true,
-        status: UploadStatus.Approved
+        isApproved: true
       },
       data
     )
 
-    request.flash('success', __(`upload.approve.success`))
+    request.flash('success', __('upload.approve.success'))
+
+    return saveAndRedirect(request, response, '/uploads')
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  reject(request, response) {
+    const { upload_id } = request.params
+    const { rejectionReason } = request.body.upload
+    const { data } = request.session
+    const { __, account } = response.locals
+
+    Upload.update(
+      upload_id,
+      {
+        updatedBy_uid: account.uid,
+        rejectionReason,
+        isApproved: false
+      },
+      data
+    )
+
+    request.flash('success', __('upload.reject.success'))
 
     return saveAndRedirect(request, response, '/uploads')
   },
