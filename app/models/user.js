@@ -49,24 +49,6 @@ export class User extends BaseModel {
   }
 
   /**
-   * Can provide PSD instruction
-   *
-   * @returns {boolean} Can provide PSD instruction
-   */
-  get canPrescribe() {
-    return [UserRole.NursePrescriber, UserRole.Pharmacist].includes(this.role)
-  }
-
-  /**
-   * Is a school user
-   *
-   * @returns {boolean} Is a school user
-   */
-  get isSchoolUser() {
-    return this.role === UserRole.SchoolSecretary
-  }
-
-  /**
    * Get full name, formatted as LASTNAME, Firstname
    *
    * @returns {string} Full name
@@ -100,6 +82,24 @@ export class User extends BaseModel {
    */
   get isRegisteredNurse() {
     return [UserRole.Nurse, UserRole.NursePrescriber].includes(this.role)
+  }
+
+  /**
+   * Is a school user
+   *
+   * @returns {boolean} Is a school user
+   */
+  get isSchoolUser() {
+    return this.role === UserRole.SchoolSecretary
+  }
+
+  /**
+   * Can provide PSD instruction
+   *
+   * @returns {boolean} Can provide PSD instruction
+   */
+  get canPrescribe() {
+    return [UserRole.NursePrescriber, UserRole.Pharmacist].includes(this.role)
   }
 
   /**
