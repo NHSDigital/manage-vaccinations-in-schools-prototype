@@ -23,6 +23,7 @@ import { BaseModel } from './base.js'
  * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
  * @property {string} [fileName] - Original file name
+ * @property {string} [rejectionReason] - Rejection reason
  * @property {object} [validations] - File validations
  * @property {boolean} [hasFailed] - Records failed data integrity checks
  * @property {boolean} [isApproved] - Upload approved
@@ -55,6 +56,7 @@ export class Upload extends BaseModel {
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
     this.type = options?.type || UploadType.Cohort
     this.fileName = options?.fileName
+    this.rejectionReason = options?.rejectionReason
     this.validations = options?.validations || []
     this.hasFailed = stringToBoolean(options?.hasFailed)
     this.isApproved = stringToBoolean(options?.isApproved)
@@ -237,11 +239,16 @@ export class Upload extends BaseModel {
               return getUpdatedAt()
             case 'updatedBy':
               return this.updatedBy?.fullName
-            case 'updated':
-              return (
-                this.updatedAt &&
-                `${getUpdatedAt()} by ${this.updatedBy?.fullName}`
-              )
+            case 'isApproved':
+              return this.isApproved === true
+                ? this.updatedAt &&
+                    `${getUpdatedAt()} by ${this.updatedBy?.fullName}`
+                : ''
+            case 'isRejected':
+              return this.isApproved === false
+                ? this.updatedAt &&
+                    `${getUpdatedAt()} by ${this.updatedBy?.fullName}`
+                : ''
             case 'school':
               if (this.type !== UploadType.School) return undefined
               return this.school?.name
