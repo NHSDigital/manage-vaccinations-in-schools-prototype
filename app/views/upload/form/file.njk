@@ -35,6 +35,10 @@
     html: templateFormat
   }) }}
 
+  {{ insetText({
+    text: __("upload.file.description.schools")
+  }) if account.isSchoolUser }}
+
   {{ fileUpload({
     id: "upload",
     name: "upload",
