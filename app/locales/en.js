@@ -3639,6 +3639,8 @@ export const en = {
       description: {
         report:
           'You can add vaccination records by uploading:\n\n- a Mavis CSV file\n- a SystmOne file',
+        schools:
+          'If you use BromCom, SIMS or Arbor, you can upload a CSV file directly without further formatting.',
         other:
           'The file you upload should use the Mavis CSV format for {{type}}'
       },
