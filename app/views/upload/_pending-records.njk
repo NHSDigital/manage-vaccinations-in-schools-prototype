@@ -1,5 +1,6 @@
 {%- from "_macros/change.njk" import appChange with context -%}
 
+{% set needsDecision = upload.status == UploadStatus.Review %}
 {% set patientRows = [] %}
 {% for patient in pendingRecords %}
   {% set type = "vaccination" if upload.type == UploadType.Report else "child" %}

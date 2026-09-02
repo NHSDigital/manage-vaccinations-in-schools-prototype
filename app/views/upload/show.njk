@@ -50,17 +50,19 @@
     lastRowBorder: false,
     rows: summaryRows(upload, {
       createdBy: {},
-      updated: {},
       fileName: {},
       type: {},
-      status: {},
       school: {},
       yearGroups: {},
-      patients: {}
+      patients: {},
+      status: {},
+      isApproved: {},
+      isRejected: {},
+      rejectionReason: {}
     })
   }) }}
 
-  {% if upload.status == UploadStatus.Review %}
+  {% if upload.status in [UploadStatus.Review, UploadStatus.Rejected] %}
     {{ patientRecords({
       key: "new",
       patients: upload.patients | selectattr("isNewUpload")
@@ -160,6 +162,11 @@
             formaction: upload.uri + "/approve"
           }
         },
+        {
+          text: __("upload.reject.confirm"),
+          href: upload.uri + "/reject",
+          variant: "warning"
+        } if not upload.createdBy.isSchoolUser,
         {
           text: __("upload.delete.confirm"),
           variant: "secondary",

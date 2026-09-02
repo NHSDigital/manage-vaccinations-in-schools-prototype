@@ -28,7 +28,7 @@ router.get(
 router.post('/:upload_id/remove-relationships', upload.removeRelationships)
 
 router.post('/:upload_id/approve', upload.approve)
-
+router.post('/:upload_id/reject', upload.reject)
 router.post('/:upload_id/delete', upload.delete)
 
 router.get('/:upload_id{/:view}', upload.show)

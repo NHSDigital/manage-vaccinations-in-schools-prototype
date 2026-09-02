@@ -26,13 +26,17 @@ export function generateUpload(
   const status = faker.helpers.weightedArrayElement([
     { value: UploadStatus.Invalid, weight: 1 },
     { value: UploadStatus.Failed, weight: 1 },
-    { value: UploadStatus.Review, weight: 10 },
-    { value: UploadStatus.Approved, weight: 8 }
+    { value: UploadStatus.Review, weight: 8 },
+    { value: UploadStatus.Approved, weight: 8 },
+    ...(type === UploadType.School
+      ? [{ value: UploadStatus.Rejected, weight: 3 }]
+      : [])
   ])
 
   let hasFailed
   let validations
   let isApproved
+  let rejectionReason
   let updatedAt
   let updatedBy_uid
   switch (status) {
@@ -58,6 +62,11 @@ export function generateUpload(
       updatedBy_uid = user.uid
       isApproved = true
       break
+    case UploadStatus.Rejected:
+      isApproved = false
+      rejectionReason =
+        'These records appear to be for the wrong school. Please check that you have uploaded records for the correct school.'
+      break
   }
 
   return new Upload({
@@ -69,6 +78,7 @@ export function generateUpload(
     type,
     hasFailed,
     isApproved,
+    rejectionReason,
     validations,
     patient_uuids,
     ...(school && {
