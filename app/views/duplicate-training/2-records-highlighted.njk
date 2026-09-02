@@ -224,8 +224,8 @@
          unmarked to keep the noise down. Blanks show as a padded highlighted
          no-break space: an otherwise invisible value made visible. This pair is
          near-identical, so only Batch (record 2 arrived without one), Dose number,
-         Reported on, SNOMED procedure and Site differ - and all but Batch sit
-         behind View all rows. -->
+         Reported on, SNOMED procedure and Site differ - Batch and Dose number
+         are visible from load, the rest sit behind View all rows. -->
     <div style="overflow-x: auto;" data-record-grid>
       <div style="display: grid; grid-template-columns: 10rem repeat(4, 1fr); column-gap: 24px; min-width: 1216px;">
         <!-- Card boundaries: one bordered underlay per record column (border swapped by the selection script) -->
@@ -275,14 +275,14 @@
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 7; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
         <!-- Batch row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" data-border-when-expanded style="grid-column: 1; grid-row: 8;">Batch</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" data-border-when-expanded style="grid-column: 2; grid-row: 8;"><mark class="app-highlight"><span class="nhsuk-u-font-code">CD5678</span><br><span class="nhsuk-u-secondary-text-colour">Expires 14 April 2027</span></mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" data-border-when-expanded style="grid-column: 3; grid-row: 8;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" data-border-when-expanded style="grid-column: 1; grid-row: 9;">Batch</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" data-border-when-expanded style="grid-column: 2; grid-row: 9;"><mark class="app-highlight"><span class="nhsuk-u-font-code">CD5678</span><br><span class="nhsuk-u-secondary-text-colour">Expires 14 April 2027</span></mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" data-border-when-expanded style="grid-column: 3; grid-row: 9;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
 
         <!-- Dose number row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 9; border-bottom: 1px solid #d8dde0;">Dose number</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 8; border-bottom: 1px solid #d8dde0;">Dose number</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
 
         <!-- Reported by row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 10; border-bottom: 1px solid #d8dde0;">Reported by</p>
