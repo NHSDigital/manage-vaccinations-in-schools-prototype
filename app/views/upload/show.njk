@@ -47,7 +47,7 @@
             href: upload.uri + "/bulk-remove-relationships"
           }
         ]
-      } if upload.status == UploadStatus.Approved and upload.type != UploadType.Report
+      } if upload.status == UploadStatus.Approved and upload.type != UploadType.Report and not account.isSchoolUser
     },
     lastRowBorder: false,
     rows: summaryRows(upload, {
