@@ -32,12 +32,6 @@ export function generateUpload(
     { value: UploadStatus.Approved, weight: 8 }
   ])
 
-  // Processing upload
-  let progress
-  if (status === UploadStatus.Processing) {
-    progress = faker.number.int({ min: 1, max: 100 })
-  }
-
   // Devoid upload
   if (status === UploadStatus.Devoid) {
     patient_uuids = []
@@ -75,7 +69,6 @@ export function generateUpload(
     fileName,
     status,
     type,
-    progress,
     validations,
     patient_uuids,
     ...(school && {
