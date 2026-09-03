@@ -41,6 +41,7 @@
   .nhsuk-table__header.nhsuk-table__header {
     // stylelint-disable-next-line declaration-no-important
     width: nhsuk-spacing(8) !important;
+    @include nhsuk-responsive-padding(2, ("top", "bottom"));
     white-space: nowrap;
   }
 
