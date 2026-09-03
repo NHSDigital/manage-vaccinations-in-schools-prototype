@@ -25,7 +25,9 @@ export const uploadController = {
     const { data } = request.session
     const { account } = response.locals
 
-    let uploads = Upload.findAll(data)
+    let uploads = Upload.findAll(data).filter(
+      (upload) => upload.createdBy.team_id === account.team_id
+    )
 
     if (account.isSchoolUser) {
       uploads = uploads.filter(
