@@ -91,13 +91,19 @@
         vaccinators: {
           href: session.uri + "/edit/vaccinators"
         },
-        timeForNasalSpray: {
-          href: session.uri + "/new/time-for-nasal-spray" if not session.hasAppointments
-        },
-        timeForInjections: {
-          href: session.uri + "/new/time-for-injections" if not session.hasAppointments
-        },
-        totalAppointments: {}
+        timeForFluNasal: {
+          href: session.uri + "/edit/time-for-flu-nasal" if not session.hasAppointments
+        } if session.isFluOnlyClinic,
+        timeForFluInjection: {
+          href: session.uri + "/edit/time-for-flu-injection" if not session.hasAppointments
+        } if session.isFluOnlyClinic,
+        timeForVaccinationsSingle: {
+          href: session.uri + "/edit/time-for-vaccinations-single" if not session.hasAppointments
+        } if not session.isFluOnlyClinic,
+        timeForVaccinationsMultiple: {
+          href: session.uri + "/edit/time-for-vaccinations-multiple" if not session.hasAppointments
+        } if not session.isFluOnlyClinic,
+        totalSlots: {}
       })
     }) }}
 
