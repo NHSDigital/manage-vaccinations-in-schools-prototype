@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadStatus, UploadType } from '../enums.js'
 import { Upload } from '../models.js'
-import { getDateValueDifference } from '../utils/date.js'
+import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup } from '../utils/string.js'
@@ -118,6 +118,7 @@ export const uploadController = {
 
     const upload = Upload.create(
       {
+        createdAt: today(),
         createdBy_uid: account.uid,
         programme_id,
         type,
@@ -164,7 +165,6 @@ export const uploadController = {
       // This means the existing failed or invalid status should be replaced
       if (type === 'edit') {
         upload.status = UploadStatus.Processing
-        upload.progress = 10
       }
 
       upload = Upload.create(upload, data)
@@ -291,6 +291,7 @@ export const uploadController = {
     Upload.update(
       upload_id,
       {
+        updatedAt: new Date(),
         updatedBy_uid: account.uid,
         status: UploadStatus.Approved
       },

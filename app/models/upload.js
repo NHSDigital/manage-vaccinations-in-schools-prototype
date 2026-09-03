@@ -3,7 +3,7 @@ import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
 import { UploadStatus, UploadType } from '../enums.js'
 import { Move, Patient, School } from '../models.js'
-import { formatDate } from '../utils/date.js'
+import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
 import {
   formatLink,
@@ -22,7 +22,6 @@ import { BaseModel } from './base.js'
  * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
  * @property {string} [fileName] - Original file name
- * @property {number} [progress] - Upload import progress
  * @property {object} [validations] - File validations
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
@@ -54,13 +53,25 @@ export class Upload extends BaseModel {
     this.status = options?.status || UploadStatus.Processing
     this.type = options?.type || UploadType.Cohort
     this.fileName = options?.fileName
-    this.progress = options?.progress || 100
     this.validations = options?.validations || []
     this.patient_uuids = options?.patient_uuids || []
 
     if (this.type === UploadType.School) {
       this.yearGroups = stringToArray(options?.yearGroups)
     }
+  }
+
+  /**
+   * Get upload progress
+   * Fake this by getting number of seconds since upload created
+   *
+   * @returns {number} Progress
+   */
+  get progress() {
+    const date = this.updatedAt || this.createdAt
+    const seconds = (today().getTime() - new Date(date).getTime()) / 1000
+
+    return Math.min(Math.floor(seconds), 100)
   }
 
   /**
