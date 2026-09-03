@@ -152,13 +152,19 @@
   }) }}
 {% endblock %}
 
-{% block beforeContent %}
-  {{ backLink({ href: paths.back or back }) if paths.back or back }}
-{% endblock %}
-
-{% block content %}
-  {{ notificationBanner(success) if success }}
-  {{ notificationBanner(message) if message }}
+{% block main %}
+  <div class="nhsuk-width-container {%- if containerClasses %} {{ containerClasses }}{% endif %}">
+    {% block beforeContent %}
+      {{ backLink({ href: paths.back or back }) if paths.back or back }}
+    {% endblock %}
+    <main class="nhsuk-main-wrapper {%- if mainClasses %} {{ mainClasses }}{% endif %}" id="maincontent" {%- if mainLang %} lang="{{ mainLang }}"{% endif %}>
+      {% block content %}
+        {{ notificationBanner(success) if success }}
+        {{ notificationBanner(message) if message }}
+      {% endblock %}
+    </main>
+    {% block afterContent %}{% endblock %}
+  </div>
 {% endblock %}
 
 {% block footer %}

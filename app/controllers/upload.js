@@ -1,7 +1,7 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadStatus, UploadType } from '../enums.js'
-import { Upload } from '../models.js'
+import { Patient, Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -131,7 +131,7 @@ export const uploadController = {
    */
   new(request, response) {
     const { programme_id } = request.params
-    const { type, school_id } = request.query
+    const { type, school_id, status } = request.query
     const { data } = request.session
     const { account } = response.locals
 
@@ -141,13 +141,35 @@ export const uploadController = {
         createdBy_uid: account.uid,
         programme_id,
         type,
-        status: UploadStatus.Processing,
+        status: status || UploadStatus.Processing,
         progress: 1,
         fileName: 'example.csv',
         ...(type === UploadType.School && school_id && { school_id })
       },
       data.wizard
     )
+
+    if ([UploadStatus.Failed, UploadStatus.Invalid].includes(upload.status)) {
+      upload.patient_uuids = Patient.findAll(data)
+        .map((patient) => patient.uuid)
+        .slice(101)
+    }
+
+    // Add validations to invalid file upload
+    if (upload.status === UploadStatus.Invalid) {
+      upload.validations = {
+        3: {
+          CHILD_FIRST_NAME: 'is required but missing',
+          CHILD_POSTCODE:
+            '‘24 High Street’ should be a postcode, like SW1A 1AA',
+          CHILD_NHS_NUMBER:
+            '‘QQ 12 34 56 A’ should be a valid NHS number, like 485 777 3456'
+        },
+        8: {
+          CHILD_DOB: '‘Simon’ should be formatted as YYYY-MM-DD'
+        }
+      }
+    }
 
     // If type provided in query string, start journey at upload question
     data.startPath = type
@@ -186,7 +208,9 @@ export const uploadController = {
       delete data.upload
       delete data.wizard
 
-      request.flash('success', __(`upload.${type}.success`))
+      if (upload.status === UploadStatus.Processing) {
+        request.flash('success', __(`upload.${type}.success`))
+      }
 
       saveAndRedirect(request, response, referrer || upload.uri)
     }

@@ -128,3 +128,19 @@
     </div>
   </div>
 {% endblock %}
+
+{% block afterContent %}
+  <div class="app-dev-tools">
+    <div class="nhsuk-width-container">
+      {{ heading({
+        text: "Prototype tools",
+        level: 2,
+        size: "s"
+      }) }}
+
+      {{ link("/uploads/new?type=" + UploadType.School + "&status=" + UploadStatus.Invalid, "Upload a class list with validation errors") | nhsukMarkdown }}
+
+      {{ link("/uploads/new?type=" + UploadType.School + "&status=" + UploadStatus.Failed, "Upload a class list with suspicious changeset") | nhsukMarkdown }}
+    </div>
+  </div>
+{% endblock %}
