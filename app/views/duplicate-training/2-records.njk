@@ -168,29 +168,57 @@
          border, no feature heading tab) -->
     <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
       <div class="nhsuk-card__content">
-        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">2 duplicate records</h2>
-        <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-2">We have 2 records for the same vaccination.</p>
-        <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-0">
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">Date</dt>
-            <dd class="nhsuk-summary-list__value">12 August 2026</dd>
+        <!-- Highlight differences toggle: small checkbox, on by default, sits on
+             the right of the panel. Unticking flips data-highlights-off on the
+             grid wrapper; the style block below then neutralises every
+             app-highlight mark without touching the markup -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; column-gap: 24px;">
+          <div>
+            <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">2 duplicate records</h2>
+            <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-2">We have 2 records for the same vaccination. Help us learn how to manage duplicates by choosing the record you trust most.</p>
+            <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-0">
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">Date</dt>
+                <dd class="nhsuk-summary-list__value">12 August 2026</dd>
+              </div>
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">Programme</dt>
+                <dd class="nhsuk-summary-list__value">MMR</dd>
+              </div>
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">Outcome</dt>
+                <dd class="nhsuk-summary-list__value">Vaccinated</dd>
+              </div>
+            </dl>
           </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">Programme</dt>
-            <dd class="nhsuk-summary-list__value">MMR</dd>
+          <div class="nhsuk-form-group nhsuk-u-margin-bottom-0" style="flex-shrink: 0;">
+            <div class="nhsuk-checkboxes nhsuk-checkboxes--small" data-module="nhsuk-checkboxes">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="highlight-differences" name="highlight-differences" type="checkbox" value="yes" checked data-highlight-toggle>
+                <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="highlight-differences">
+                  Highlight differences
+                </label>
+              </div>
+            </div>
           </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">Outcome</dt>
-            <dd class="nhsuk-summary-list__value">Vaccinated</dd>
-          </div>
-        </dl>
+        </div>
       </div>
     </div>
+    <style>
+      [data-highlights-off] .app-highlight {
+        border-bottom-color: transparent;
+        background-color: transparent;
+      }
+      [data-highlights-off] .app-highlight::before,
+      [data-highlights-off] .app-highlight::after {
+        content: none;
+      }
+    </style>
 
     <!-- Duplicate record grid -->
     <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
     <!-- Records 1 to 2: one shared grid; each field is a grid row spanning the label column and all cards -->
-    <div style="overflow-x: auto;">
+    <div style="overflow-x: auto;" data-record-grid>
       <div style="display: grid; grid-template-columns: 10rem repeat(4, 1fr); column-gap: 24px; min-width: 1216px;">
         <!-- Card boundaries: one bordered underlay per record column (border swapped by the selection script) -->
         <div data-record-box="record-1" style="grid-column: 2; grid-row: 1 / 21; border: 1px solid #d8dde0; background: #ffffff;"></div>
@@ -245,8 +273,8 @@
 
         <!-- Dose number row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 8; border-bottom: 1px solid #d8dde0;">Dose number</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 8; border-bottom: 1px solid #d8dde0;">1</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 8; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
 
         <!-- Reported by row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 10; border-bottom: 1px solid #d8dde0;">Reported by</p>
@@ -255,8 +283,8 @@
 
         <!-- Reported on row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 11; border-bottom: 1px solid #d8dde0;">Reported on</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 11; border-bottom: 1px solid #d8dde0;">13 August 2026</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 11; border-bottom: 1px solid #d8dde0;">14 August 2026</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">13 August 2026</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">14 August 2026</mark></p>
 
         <!-- Child identified by row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 12; border-bottom: 1px solid #d8dde0;">Child identified by</p>
@@ -265,8 +293,8 @@
 
         <!-- SNOMED procedure row: code joined with its term. GP-sourced records deliberately disagree (dose-specific, generic MMR, catch-all administration code, even a product code) to simulate GP shotgun coding; uploads mostly carry none -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 13; border-bottom: 1px solid #d8dde0;">SNOMED procedure</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 13; border-bottom: 1px solid #d8dde0;">170433008 (Measles mumps and rubella vaccination - first dose)</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 13; border-bottom: 1px solid #d8dde0;">33879002 (Administration of vaccine to produce active immunity)</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">170433008 (Measles mumps and rubella vaccination - first dose)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">33879002 (Administration of vaccine to produce active immunity)</mark></p>
 
         <!-- Notes row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 14; border-bottom: 1px solid #d8dde0;">Notes</p>
@@ -280,8 +308,8 @@
 
         <!-- Site row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 16; border-bottom: 1px solid #d8dde0;">Site</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 16; border-bottom: 1px solid #d8dde0;">Left upper arm</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 16; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 2; grid-row: 16; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Left upper arm</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5 nhsuk-u-display-none" data-all-fields style="grid-column: 3; grid-row: 16; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
 
         <!-- Dose volume row -->
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold nhsuk-u-display-none" data-all-fields style="grid-column: 1; grid-row: 17; border-bottom: 1px solid #d8dde0;">Dose volume</p>
@@ -414,5 +442,14 @@
         }
       })
     }
+
+    const highlightToggle = document.querySelector("[data-highlight-toggle]")
+    const renderHighlights = () => {
+      for (const grid of document.querySelectorAll("[data-record-grid]")) {
+        grid.toggleAttribute("data-highlights-off", !highlightToggle.checked)
+      }
+    }
+    highlightToggle.addEventListener("change", renderHighlights)
+    renderHighlights()
   </script>
 {% endblock %}
