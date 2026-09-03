@@ -61,7 +61,6 @@
         }) }}
       {% endcall %}
     </app-auto-submit>
-
     <div class="app-grid-column-results">
       {% if data.type and data.type != "none" %}
         {% set title = data.type | replace("records", "record downloads") %}
@@ -82,7 +81,6 @@
         level: 2,
         size: "m"
       }) }}
-
       {% for download in results.page %}
         {{ summaryList({
           card: {
@@ -91,7 +89,7 @@
               text: download.name,
               level: 3,
               size: "s"
-            }
+            },
             href: download.uri + "/download" if download.status == DownloadStatus.Ready,
             clickable: true if download.status == DownloadStatus.Ready
           },
