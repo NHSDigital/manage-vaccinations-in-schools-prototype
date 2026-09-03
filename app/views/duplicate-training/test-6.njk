@@ -1,0 +1,553 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Review duplicate vaccination records (user testing set 6)" %}
+{% set containerClasses = "nhsuk-width-container-fluid" %}
+{% block header %}
+  <!-- Mavis site chrome: environment banner and site header exactly as rendered
+       on /notices, with the Review item current. Static copy for presentation
+       only; these demo pages do not actually live under /notices yet. -->
+  <div class="app-environment nhsuk-tag--grey">
+    <div class="nhsuk-width-container">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Prototype</strong>
+      This is a prototype used for research.
+    </div>
+  </div>
+  <header class="nhsuk-header" data-module="nhsuk-header" role="banner">
+    <div class="nhsuk-header__container nhsuk-width-container">
+      <div class="nhsuk-header__service">
+        <a class="nhsuk-header__service-logo" href="/home" aria-label="NHS Manage vaccinations in schools homepage">
+          <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+            <title>NHS</title>
+            <path fill="currentcolor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+          </svg>
+          <span class="nhsuk-header__service-name">Manage vaccinations in schools</span>
+        </a>
+      </div>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            JOY, Jane (Nurse)
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/change-role">Change role</a>
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/sign-out">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/schools">Schools</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/patients">Children</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/sessions">Sessions</a>
+          </li>
+          <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--current app-header__navigation-item--with-badge">
+            <a class="nhsuk-header__navigation-link" href="/reviews" aria-current="true"><strong class="nhsuk-header__navigation-item-current-fallback">Review<strong class="app-badge">124</strong></strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/reports">Reports</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/uploads">Uploads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/downloads">Downloads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/vaccines">Vaccines</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/teams/001">Your team</a>
+          </li>
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse </span>More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <!-- Standard-width band: the Review chrome and the patient tier of the page
+       header stay the standard page width (1100px here), matching the site
+       header. The duplicate details panel and record grid below share the wider
+       card canvas. margin: 0 auto stops the nested width container doubling the
+       fluid containers side margins at narrower viewports. -->
+  <div class="nhsuk-width-container" style="margin: 0 auto">
+    <!-- Review section chrome: page heading and section navigation as on /notices,
+         plus a Duplicates tab shown as current. Presentation only: the tab href is
+         a placeholder and these pages do not actually live under /notices yet. -->
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-l">Review</h1>
+        <nav class="app-section-navigation" data-module="app-section-navigation" aria-label="Section navigation">
+          <ul class="app-section-navigation__list">
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/notices">Important notices<span class="app-section-navigation__suffix"><strong class="app-badge">4</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/consents">Consent responses<span class="app-section-navigation__suffix"><strong class="app-badge">0</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/unmatched-appointments">Clinic appointments<span class="app-section-navigation__suffix"><strong class="app-badge">23</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/moves">School moves<span class="app-section-navigation__suffix"><strong class="app-badge">90</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item app-section-navigation__item--current">
+              <a class="app-section-navigation__link" href="#" aria-current="page"><strong class="app-section-navigation__current">Duplicate records<span class="app-section-navigation__suffix"><strong class="app-badge">7</strong></span></strong></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- /Review section chrome -->
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+
+        <!-- Duplicate page header -->
+
+        <!-- Patient name -->
+        <h1 class="nhsuk-heading-l nhsuk-u-display-inline-block nhsuk-u-margin-bottom-3">
+          Amara Okonkwo
+        </h1>
+        <a class="nhsuk-link nhsuk-u-margin-left-3" href="#">View full child record</a>
+
+        <!-- Patient details -->
+        <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">NHS Number</span><br>
+              999 512 3406
+            </p>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">Date of birth</span><br>
+              30 November 2012
+            </p>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">Address</span><br>
+              12 Milton Avenue, Manor Park, London, E12 6UX
+            </p>
+          </div>
+        </div>
+
+        <!-- /Duplicate page header -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Card canvas: duplicate details panel and record comparison grid, centred and
+       capped at 1720px. The NHS design system has no wide-container token
+       (standard page width is 1100px in this prototype), so the cap is set
+       directly. Below 1280px viewports each grid stops compressing (min-width
+       1216px = 1280px minus the 2 x 32px page margins) and the page gains a
+       horizontal scrollbar instead: there is no overflow-x wrapper, because an
+       overflow container would become the sticky scrollport and stop the
+       Choose this record blocks sticking to the viewport. -->
+  <div style="max-width: 1720px; margin: 0 auto;">
+    <!-- Duplicate summary: reuses the Mavis listing-page sidebar treatment
+         (app-filters card: translucent grey-4 background, card
+         border, no feature heading tab) -->
+    <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-card__content">
+        <!-- Highlight differences toggle: small checkbox, on by default, sits on
+             the right of the panel. Unticking flips data-highlights-off on the
+             grid wrapper; the style block below then neutralises every
+             app-highlight mark without touching the markup -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; column-gap: 24px;">
+          <div>
+            <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">4 duplicate records</h2>
+            <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-2">We have 4 records for the same vaccination. Help us learn how to manage duplicates by choosing the record you trust most.</p>
+            <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-0">
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">Date</dt>
+                <dd class="nhsuk-summary-list__value">26 May 2016</dd>
+              </div>
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">Programme</dt>
+                <dd class="nhsuk-summary-list__value">MMR</dd>
+              </div>
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">Outcome</dt>
+                <dd class="nhsuk-summary-list__value">Vaccinated</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="nhsuk-form-group nhsuk-u-margin-bottom-0" style="flex-shrink: 0;">
+            <div class="nhsuk-checkboxes nhsuk-checkboxes--small" data-module="nhsuk-checkboxes">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="highlight-differences" name="highlight-differences" type="checkbox" value="yes" checked data-highlight-toggle>
+                <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="highlight-differences">
+                  Highlight differences
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+      [data-highlights-off] .app-highlight {
+        border-bottom-color: transparent;
+        background-color: transparent;
+      }
+      [data-highlights-off] .app-highlight::before,
+      [data-highlights-off] .app-highlight::after {
+        content: none;
+      }
+    </style>
+
+    <!-- Duplicate record grid -->
+    <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
+    <!-- Records 1 to 4: one shared grid; each field is a grid row spanning the label column and all cards -->
+    <div data-record-grid style="display: grid; grid-template-columns: 10rem repeat(4, 1fr); grid-template-rows: repeat(20, auto) 88px; column-gap: 24px; min-width: 1216px;">
+        <!-- Card boundaries: one bordered underlay per record column (border swapped by the selection script) -->
+        <div data-record-box="record-1" style="grid-column: 2; grid-row: 1 / 22; border: 1px solid #d8dde0; background: #ffffff;"></div>
+        <div data-record-box="record-2" style="grid-column: 3; grid-row: 1 / 22; border: 1px solid #d8dde0; background: #ffffff;"></div>
+        <div data-record-box="record-3" style="grid-column: 4; grid-row: 1 / 22; border: 1px solid #d8dde0; background: #ffffff;"></div>
+        <div data-record-box="record-4" style="grid-column: 5; grid-row: 1 / 22; border: 1px solid #d8dde0; background: #ffffff;"></div>
+
+        <!-- Headings -->
+        <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5" style="grid-column: 1; grid-row: 1;">Top rows</h2>
+        <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 1;">Record 1</h2>
+        <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 3; grid-row: 1;">Record 2</h2>
+        <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 4; grid-row: 1;">Record 3</h2>
+        <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 5; grid-row: 1;">Record 4</h2>
+
+        <!-- Selection tags: grey by default; the script swaps the chosen one to blue in place -->
+        <div data-record-tag="record-1" class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 2;">
+          <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2">Duplicate record</strong>
+        </div>
+        <div data-record-tag="record-2" class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 3; grid-row: 2;">
+          <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2">Duplicate record</strong>
+        </div>
+        <div data-record-tag="record-3" class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 4; grid-row: 2;">
+          <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2">Duplicate record</strong>
+        </div>
+        <div data-record-tag="record-4" class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 5; grid-row: 2;">
+          <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2">Duplicate record</strong>
+        </div>
+
+        <!-- Fit sentinel: 1px marker on the top line of the field rows. The
+             observer below hides the sticky choose blocks whenever their pinned
+             position would reach this line - i.e. while the viewport is so close
+             to the card header that a pinned block would clamp against the top
+             of its travel range and sit over the title, tag and first rows.
+             They reappear, pinned at the viewport bottom, as soon as there is
+             room below the header. -->
+        <div data-fit-sentinel style="grid-column: 1; grid-row: 3; align-self: start; height: 1px;"></div>
+
+        <!-- Vaccine row: values verbatim from duplicate-sets/set data -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 3; border-bottom: 1px solid #d8dde0;">Vaccine</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 3; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 3; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Priorix</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 3; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 3; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+
+        <!-- Source row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 4; border-bottom: 1px solid #d8dde0;">Source</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 4; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Uploaded as a historical vaccination</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 4; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 4; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 4; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p>
+
+        <!-- Location row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 5; border-bottom: 1px solid #d8dde0;">Location</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 5; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 5; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 5; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 5; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">E12 HEALTH</mark></p>
+
+        <!-- Time row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 6; border-bottom: 1px solid #d8dde0;">Time</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 6; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 6; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">12:42pm</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 6; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">12:42pm</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 6; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">12:42pm</mark></p>
+
+        <!-- Vaccinator row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 7; border-bottom: 1px solid #d8dde0;">Vaccinator</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 7; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 7; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 7; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 7; border-bottom: 1px solid #d8dde0;">Unknown</p>
+
+        <!-- Dose number row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 8; border-bottom: 1px solid #d8dde0;">Dose number</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">2nd</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">2nd</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+
+        <!-- Batch row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 9; border-bottom: 1px solid #d8dde0;">Batch</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight"><span class="nhsuk-u-font-code">A69CD981A</span><br><span class="nhsuk-u-secondary-text-colour">Expires 31 January 2017</span></mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+
+        <!-- Reported by row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 10; border-bottom: 1px solid #d8dde0;">Reported by</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 10; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 10; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 10; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 10; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+
+        <!-- Reported on row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 11; border-bottom: 1px solid #d8dde0;">Reported on</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">16 March 2026 at 4:50pm</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+
+        <!-- Child identified by row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 12; border-bottom: 1px solid #d8dde0;">Child identified by</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 12; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 12; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 12; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 12; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+
+        <!-- SNOMED procedure row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 13; border-bottom: 1px solid #d8dde0;">SNOMED procedure</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">170433008 – Administration of second dose of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">170431005 – Administration of booster dose of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">170432003 – MMR pre-school booster vaccination</mark></p>
+
+        <!-- Notes row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 14; border-bottom: 1px solid #d8dde0;">Notes</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 14; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 14; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 14; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Reported dose number string: Dose sequence not recorded</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 14; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Reported dose number string: Dose sequence not recorded</mark></p>
+
+        <!-- Method row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 15; border-bottom: 1px solid #d8dde0;">Method</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 15; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 15; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Intramuscular (IM) injection</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 15; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 15; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+
+        <!-- Site row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 16; border-bottom: 1px solid #d8dde0;">Site</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 16; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 16; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Right arm (upper position)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 16; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 16; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Not provided</mark></p>
+
+        <!-- Dose volume row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 17; border-bottom: 1px solid #d8dde0;">Dose volume</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 17; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 17; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">0.5 ml</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 17; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 17; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+
+        <!-- Supplier row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 18; border-bottom: 1px solid #d8dde0;">Supplier</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+
+        <!-- Protocol row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 19; border-bottom: 1px solid #d8dde0;">Protocol</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 19; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Patient group direction (PGD)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 19; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 4; grid-row: 19; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 5; grid-row: 19; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+
+        <!-- View this record: static link row at the card bottom, in normal flow
+             outside the sticky footer, so only the choose control floats -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 3; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 4; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 5; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
+
+        <!-- Rest sentinel: 1px marker sitting on the card bottom line; the
+             observer below uses it to tell pinned from at-rest -->
+        <div data-rest-sentinel style="grid-column: 1; grid-row: 21; align-self: end; height: 1px;"></div>
+
+        <!-- Choose this record: sticky card footer. Each block spans the full
+             field area (grid rows 3-21) and aligns to the card bottom; position:
+             sticky with a bottom offset clearing the fixed set-navigation bar
+             keeps it on screen while the card is taller than the viewport,
+             floating over the field rows and settling into the reserved 88px
+             final grid row when the card bottom scrolls into view. Left, right
+             and bottom borders (no top) continue the card outline through the
+             block: at rest they sit exactly over the underlay border, and while
+             floating the card reads as wrapped, capped by the block's bottom
+             edge. The grid area bounds the travel: it stops
+             at the card bottom and at the top of the field rows.
+             An absolutely positioned 96px panel in the page background colour
+             (#f0f4f5, the nhsuk grey-5 body background) hangs just below each
+             block's bottom border (the sticky block is its containing block),
+             sitting over the gap between the pinned block and the fixed
+             set-navigation bar so the card content is not seen through it: the
+             card appears to roll up behind the block. It reaches 2px past each
+             side to cover the underlay borders behind the gap and takes no
+             clicks. An IntersectionObserver on the rest sentinel hides the
+             panels once the blocks settle at the card bottom, so nothing hangs
+             below the card at rest. -->
+        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-1" style="grid-column: 2; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
+          <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input" id="record-1" name="preferred-record" type="radio" value="record-1">
+              <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" for="record-1">
+                Choose this record
+              </label>
+            </div>
+          </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
+        </div>
+        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-2" style="grid-column: 3; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
+          <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input" id="record-2" name="preferred-record" type="radio" value="record-2">
+              <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" for="record-2">
+                Choose this record
+              </label>
+            </div>
+          </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
+        </div>
+        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-3" style="grid-column: 4; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
+          <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input" id="record-3" name="preferred-record" type="radio" value="record-3">
+              <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" for="record-3">
+                Choose this record
+              </label>
+            </div>
+          </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
+        </div>
+        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-4" style="grid-column: 5; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
+          <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input" id="record-4" name="preferred-record" type="radio" value="record-4">
+              <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" for="record-4">
+                Choose this record
+              </label>
+            </div>
+          </div>
+          <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
+        </div>
+    </div>
+    </div>
+    <!-- /Duplicate record grid -->
+  </div>
+  <!-- Sticky set navigation: game-mode queue bar. Both status strings are
+       placeholder wording. One action button tracks the selection radios: it
+       reads Skip to next duplicate (white secondary style) until a record is chosen, then Review next duplicate
+       (green primary). Same link either way, to the next demo scenario as a
+       placeholder for advancing the queue (no real queue or saved state yet);
+       the last set returns to the index. Clear choice sits next to the status
+       text, hidden until a record is chosen; it unselects the radios and
+       returns everything, button included, to the initial state. The spacer
+       below keeps the fixed bar from covering the last grid row when scrolled
+       to the bottom. -->
+  <!-- Clearance for the fixed bar: padding at the very end of the document
+       (below the footer) rather than a spacer above it, so scrolling to the
+       bottom brings the footer fully above the bar -->
+  <style>
+    body { padding-bottom: 96px; }
+  </style>
+  <div style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #ffffff; border-top: 1px solid #d8dde0; padding-bottom: env(safe-area-inset-bottom);">
+    <div class="nhsuk-width-container-fluid nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
+      <div style="max-width: 1720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0"><span data-set-status>Choose your preferred record</span> <a class="nhsuk-link nhsuk-u-margin-left-2 nhsuk-u-display-none" href="#" data-clear-choice>Clear choice</a></p>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" data-set-action href="/duplicate-training" role="button" draggable="false">Skip to next duplicate</a>
+      </div>
+    </div>
+  </div>
+  <!-- /Sticky set navigation -->
+
+  <!-- Live selection: every card carries a grey Duplicate record tag from load; choosing
+       a record swaps its tag to blue Your preferred record IN PLACE (class + text only,
+       no element inserted or removed, so card height never changes) and gives its underlay
+       and its sticky footer the heavier blue border, so the outline stays continuous
+       through the footer while it floats. Re-selecting moves everything; no state persists.
+       Every field row is always visible, so there is no View all rows machinery
+       on this page. A single renderer owns the whole selection state (tags, borders, status
+       text, Clear choice visibility, the Skip to next duplicate/Review next duplicate action button), with null meaning no
+       choice; the radio change handler and the Clear choice link both go through it, so
+       the pieces can never disagree. -->
+  <script>
+    const renderChoice = (value) => {
+      for (const cell of document.querySelectorAll("[data-record-tag]")) {
+        const tag = cell.querySelector(".nhsuk-tag")
+        const chosen = cell.dataset.recordTag === value
+        tag.classList.toggle("nhsuk-tag--blue", chosen)
+        tag.classList.toggle("nhsuk-tag--grey", !chosen)
+        tag.textContent = chosen ? "Your preferred record" : "Duplicate record"
+      }
+      for (const box of document.querySelectorAll("[data-record-box]")) {
+        box.style.border = box.dataset.recordBox === value ? "2px solid #005eb8" : "1px solid #d8dde0"
+      }
+      for (const footer of document.querySelectorAll("[data-record-footer]")) {
+        const chosen = footer.dataset.recordFooter === value
+        footer.style.border = chosen ? "2px solid #005eb8" : "1px solid #d8dde0"
+        footer.style.borderTop = "0"
+        footer.querySelector("[data-roll-panel]").style.top = chosen ? "calc(100% + 2px)" : "calc(100% + 1px)"
+      }
+      document.querySelector("[data-set-status]").textContent = value ? "Preferred record chosen" : "Choose your preferred record"
+      document.querySelector("[data-clear-choice]").classList.toggle("nhsuk-u-display-none", !value)
+      const action = document.querySelector("[data-set-action]")
+      action.textContent = value ? "Review next duplicate" : "Skip to next duplicate"
+      action.classList.toggle("nhsuk-button--secondary", !value)
+    }
+
+    for (const grid of document.querySelectorAll("[data-record-grid]")) {
+      const rollPanels = grid.querySelectorAll("[data-roll-panel]")
+      new IntersectionObserver(([entry]) => {
+        for (const panel of rollPanels) panel.style.display = entry.isIntersecting ? "none" : ""
+      }, { rootMargin: "0px 0px -96px 0px" }).observe(grid.querySelector("[data-rest-sentinel]"))
+
+      const stickyFooters = grid.querySelectorAll("[data-record-footer]")
+      const footerClearance = 96 + stickyFooters[0].offsetHeight
+      new IntersectionObserver(([entry]) => {
+        const room = entry.isIntersecting || entry.boundingClientRect.top < 0
+        for (const footer of stickyFooters) footer.style.visibility = room ? "" : "hidden"
+      }, { rootMargin: `0px 0px -${footerClearance}px 0px` }).observe(grid.querySelector("[data-fit-sentinel]"))
+    }
+
+    for (const radio of document.querySelectorAll('input[name="preferred-record"]')) {
+      radio.addEventListener("change", () => renderChoice(radio.value))
+    }
+
+    document.querySelector("[data-clear-choice]").addEventListener("click", (event) => {
+      event.preventDefault()
+      for (const radio of document.querySelectorAll('input[name="preferred-record"]')) radio.checked = false
+      renderChoice(null)
+    })
+
+    const highlightToggle = document.querySelector("[data-highlight-toggle]")
+    const renderHighlights = () => {
+      for (const grid of document.querySelectorAll("[data-record-grid]")) {
+        grid.toggleAttribute("data-highlights-off", !highlightToggle.checked)
+      }
+    }
+    highlightToggle.addEventListener("change", renderHighlights)
+    renderHighlights()
+  </script>
+{% endblock %}
