@@ -161,12 +161,6 @@ export const uploadController = {
         data.wizard
       )
 
-      // Editing an upload means retrying an upload with a new file
-      // This means the existing failed or invalid status should be replaced
-      if (type === 'edit') {
-        upload.status = UploadStatus.Processing
-      }
-
       upload = Upload.create(upload, data)
 
       // Clean up session data
@@ -293,6 +287,7 @@ export const uploadController = {
       {
         updatedAt: new Date(),
         updatedBy_uid: account.uid,
+        isApproved: true,
         status: UploadStatus.Approved
       },
       data
