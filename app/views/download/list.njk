@@ -1,22 +1,17 @@
 {% extends "_layouts/form.njk" %}
-
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set title = __("download.list.title") %}
-
 {% block form %}
   {{ super() }}
-
   {{ heading({
     text: title,
     size: "l"
   }) }}
-
   {{ actionLink({
     text: __("download.new.label"),
     href: "/downloads/new"
   }) }}
-
   <div class="nhsuk-grid-row">
     <app-auto-submit class="app-grid-column-filters">
       {% call card({
@@ -27,7 +22,7 @@
           level: 2
         }
       }) %}
-        {{ radios({
+      {{ radios({
           fieldset: {
             legend: {
               text: __("download.type.label"),
@@ -38,8 +33,7 @@
           items: radioFilterItems(DownloadType),
           decorate: "type"
         }) }}
-
-        {{ appButtonGroup({
+      {{ appButtonGroup({
           buttons: [
             {
               text: __("search.confirm"),
@@ -61,14 +55,12 @@
         }) }}
       {% endcall %}
     </app-auto-submit>
-
     <div class="app-grid-column-results">
       {% if data.type and data.type != "none" %}
         {% set title = data.type | replace("records", "record downloads") %}
       {% else %}
         {% set title = __("download.list.results") %}
       {% endif %}
-
       {{ heading({
         caption: {
           html: __mf("download.results", {
@@ -82,7 +74,6 @@
         level: 2,
         size: "m"
       }) }}
-
       {% for download in results.page %}
         {{ summaryList({
           card: {
@@ -91,7 +82,7 @@
               text: download.name,
               level: 3,
               size: "s"
-            }
+            },
             href: download.uri + "/download" if download.status == DownloadStatus.Ready,
             clickable: true if download.status == DownloadStatus.Ready
           },
@@ -109,7 +100,6 @@
           })
         }) }}
       {% endfor %}
-
       {{ pagination(pages) }}
     </div>
   </div>
