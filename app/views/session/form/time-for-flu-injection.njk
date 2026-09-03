@@ -1,0 +1,26 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.vaccinationDuration.fluInjection.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: title,
+        size: "l",
+        isPageHeading: true
+      }
+    },
+    items: [
+    {
+      text: __("session.vaccinationDuration.fluInjection.yes", { doubleSlotLength: session.slotLength * 2 }),
+      value: 2
+    },
+    {
+      text: __("session.vaccinationDuration.fluInjection.no", { singleSlotLength: session.slotLength }),
+      value: 1
+    }
+    ],
+    decorate: "session.slotCountForLongAppointment"
+  }) }}
+{% endblock %}

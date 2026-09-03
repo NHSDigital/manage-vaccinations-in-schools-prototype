@@ -3092,13 +3092,7 @@ export const en = {
           label: 'Percentage of slots booked'
         },
         available: {
-          label: 'Available slots',
-          nasal: {
-            label: 'Available capacity if nasal sprays'
-          },
-          injection: {
-            label: 'Available capacity if injections'
-          }
+          label: 'Available slots'
         },
         programmeRequests: {
           label: '%s appointments'
@@ -3196,29 +3190,39 @@ export const en = {
       }
     },
     vaccinationDuration: {
-      nasal: {
-        title: 'How long will a nasal spray appointment take, in minutes?',
-        hint: 'This will be used in appointments that have flu as an additional vaccination.',
-        label: 'Time for nasal spray'
+      fluNasal: {
+        title: 'How long will a nasal spray appointment take, in minutes?'
       },
-      injections: {
-        title: 'How long will an injection appointment take, in minutes?',
-        hint: 'It’s best if the time for one injection uses a multiple of the time allowed for the nasal spray. For example, if the time for the nasal spray is 3 minutes, use 9 minutes for the time for one injection.',
-        label: {
-          first: 'Time for one injection',
-          additional: 'Time for each additional injection'
-        }
+      fluInjection: {
+        title: 'Do you want to use two slots for injected flu vaccinations?',
+        yes: 'Yes, double the appointment length to {{doubleSlotLength}} minutes',
+        no: 'No, keep the appointment length at {{singleSlotLength}} minutes'
+      },
+      vaccinationSingle: {
+        title: 'How long are your appointments, in minutes?'
+      },
+      vaccinationMultiple: {
+        title:
+          'Do you want to use two slots for appointments with multiple vaccinations?',
+        yes: 'Yes, double the appointment length to {{doubleSlotLength}} minutes',
+        no: 'No, keep the appointment length at {{singleSlotLength}} minutes'
       },
       suffix: 'minutes'
     },
-    timeForNasalSpray: {
+    timeForFluNasal: {
       label: 'Time for nasal spray'
     },
-    timeForInjections: {
-      label: 'Time for injections'
+    timeForFluInjection: {
+      label: 'Time for injection'
     },
-    totalAppointments: {
-      label: 'Number of appointments'
+    timeForVaccinationsSingle: {
+      label: 'Time for single vaccination'
+    },
+    timeForVaccinationsMultiple: {
+      label: 'Time for multiple vaccinations'
+    },
+    totalSlots: {
+      label: 'Number of slots'
     },
     appointments: {
       label: 'Appointments'

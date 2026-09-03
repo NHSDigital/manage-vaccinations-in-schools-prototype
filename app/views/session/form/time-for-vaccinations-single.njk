@@ -1,0 +1,18 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.vaccinationDuration.vaccinationSingle.title") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      text: title,
+      size: "l",
+      isPageHeading: true
+    },
+    suffix: __("session.vaccinationDuration.suffix"),
+    width: 2,
+    inputmode: "numeric",
+    spellcheck: false,
+    decorate: "session.slotLength"
+  }) }}
+{% endblock %}

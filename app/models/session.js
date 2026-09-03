@@ -75,9 +75,8 @@ import { BaseModel } from './base.js'
  *
  *   Clinics only
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
- * @property {number} [nasalSprayLength] - Time allocated for a nasal spray, in minutes
- * @property {number} [firstInjectionLength] - Time allocated for the first injection in an appointment, in minutes
- * @property {number} [additionalInjectionLength] - Time allocated for 2nd and subsequent injections in an appointment, in minutes
+ * @property {number} [slotLength] - the default length of an appointment, in minutes; for flu-only clinics, this is the nasal spray length
+ * @property {number} [slotCountForLongAppointment] - the default number of slots covered by a longer appointment i.e. injected flu or multiple injections
  * @property {string} [venueInformation] - Venue information e.g. entrance to use, room to find, etc.
  *
  *   Schools only
@@ -143,9 +142,8 @@ export class Session extends BaseModel {
             (period) => new ClinicVaccinationPeriod(period)
           )
         : []
-      this.nasalSprayLength = options?.nasalSprayLength
-      this.firstInjectionLength = options?.firstInjectionLength
-      this.additionalInjectionLength = options?.additionalInjectionLength
+      this.slotLength = options?.slotLength
+      this.slotCountForLongAppointment = options?.slotCountForLongAppointment
       this.venueInformation = options?.venueInformation
     }
 
@@ -457,35 +455,23 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Is this session a flu-only clinic?
+   *
+   * @returns {boolean} - true if the only programme is flu, or false otherwise
+   */
+  get isFluOnlyClinic() {
+    const programme_ids = this.programme_ids
+    return programme_ids.length === 1 && programme_ids[0] === 'flu'
+  }
+
+  /**
    * Calculate the default length of the given appointment using this session's setup, in minutes
    *
    * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
    * @returns {number} - the number of minutes to allocate for the given appointment
    */
   calculateAppointmentLength(appointmentProperties) {
-    let injectionCount = 0
-    let nasalCount = 0
-
-    const programme_ids = appointmentProperties.selected_programme_ids
-    if (programme_ids.includes('flu')) {
-      if (
-        appointmentProperties.fluDecision ===
-        ReplyDecision.OnlyAlternativeInjection
-      ) {
-        injectionCount++
-      } else {
-        nasalCount = 1
-      }
-    }
-    injectionCount += programme_ids.filter((id) => id !== 'flu').length
-
-    let appointmentLength = this.nasalSprayLength * nasalCount
-    if (injectionCount > 0) {
-      appointmentLength += this.firstInjectionLength
-      appointmentLength += this.additionalInjectionLength * (injectionCount - 1)
-    }
-
-    return appointmentLength
+    return this.slotLength * this.calculateSlotCount(appointmentProperties)
   }
 
   /**
@@ -495,23 +481,30 @@ export class Session extends BaseModel {
    * @returns {number} - the number of slots consumed by the appointment
    */
   calculateSlotCount(appointmentProperties) {
-    const minutes = this.calculateAppointmentLength(appointmentProperties)
-    return Math.ceil(minutes / this.slotLength)
-  }
+    const programme_ids = appointmentProperties.selected_programme_ids
+    const isFluNasal =
+      appointmentProperties.fluDecision !==
+      ReplyDecision.OnlyAlternativeInjection
 
-  /**
-   * Get the slot length for this clinic session
-   *
-   * @returns {number} - the slot length for this session
-   */
-  get slotLength() {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error('Session must be a clinic to have booking slots')
+    // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
+    if (this.isFluOnlyClinic) {
+      if (!programme_ids.includes('flu')) {
+        throw new Error(
+          'An appointment without flu has been made in a flu-only clinic'
+        )
+      }
+
+      return isFluNasal ? 1 : this.slotCountForLongAppointment
     }
 
-    return this.nasalSprayLength
-      ? Math.min(this.nasalSprayLength, this.firstInjectionLength)
-      : this.firstInjectionLength
+    // For all other clinics setups, count the injections to know how long we need to allocate
+    let injectionCount = 0
+    if (programme_ids.includes('flu') && !isFluNasal) {
+      injectionCount++
+    }
+    injectionCount += programme_ids.filter((id) => id !== 'flu').length
+
+    return injectionCount === 1 ? 1 : this.slotCountForLongAppointment
   }
 
   /**
@@ -1083,88 +1076,6 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get the number of appointments of a given vaccination method that we have capacity for,
-   * before any bookings are made
-   *
-   * @param {VaccineMethod} vaccineMethod - the method of vaccination used in the appointment
-   * @returns {number} The number of appointments of the given type that we have capacity for
-   */
-  maximumCapacity(vaccineMethod) {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error('Session must be a clinic to have capacity statistics')
-    }
-
-    let capacity = 0
-    const appointmentLength =
-      vaccineMethod === VaccineMethod.Intranasal
-        ? this.nasalSprayLength
-        : this.firstInjectionLength
-    const slotsForAppointment = Math.ceil(appointmentLength / this.slotLength)
-
-    // NOTE: by treating the vaccination periods as completely separate, we may underestimate
-    // the capacity if the periods are perfectly back to back
-    this.vaccinationPeriods.forEach((vaccinationPeriod) => {
-      const slotsInThisPeriod = vaccinationPeriod.slotCount(this.slotLength)
-      capacity += Math.floor(slotsInThisPeriod / slotsForAppointment)
-    })
-
-    return capacity
-  }
-
-  /**
-   * Get the number of appointments of a given vaccination method that we have capacity for,
-   * taking into account existing bookings
-   *
-   * @param {VaccineMethod} vaccineMethod - the method of vaccination used in the appointment
-   * @returns {number} The number of appointments of the given type that we have capacity for
-   */
-  availableCapacity(vaccineMethod) {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error('Session must be a clinic to have capacity statistics')
-    }
-
-    const appointmentLength =
-      vaccineMethod === VaccineMethod.Intranasal
-        ? this.nasalSprayLength
-        : this.firstInjectionLength
-    const slotsForAppointment = Math.ceil(appointmentLength / this.slotLength)
-    const freeSlotCounts = this.#freeSlotCountsByStartTime()
-
-    let capacity = 0
-
-    // NOTE: as with maximumCapacity, treating vaccination periods as completely separate may
-    // underestimate capacity if the periods are perfectly back to back
-    this.vaccinationPeriods.forEach((vaccinationPeriod) => {
-      const slotStartTimes = this.#slotStartTimesForPeriod(vaccinationPeriod)
-
-      // Remaining free capacity at each slot, discounted as appointments are packed in
-      const remainingCapacity = slotStartTimes.map(
-        (time) => freeSlotCounts.get(time) || 0
-      )
-
-      // For each slot start time, put an appointment (starting at that time) in as many
-      // columns as we can
-      for (
-        let startIndex = 0;
-        startIndex <= remainingCapacity.length - slotsForAppointment;
-        startIndex++
-      ) {
-        const coveredIndexes = _.range(
-          startIndex,
-          startIndex + slotsForAppointment
-        )
-
-        while (coveredIndexes.every((index) => remainingCapacity[index] > 0)) {
-          coveredIndexes.forEach((index) => remainingCapacity[index]--)
-          capacity++
-        }
-      }
-    })
-
-    return capacity
-  }
-
-  /**
    * Get the start times at which the given appointment could be booked, taking into account
    * existing bookings
    *
@@ -1403,12 +1314,24 @@ export class Session extends BaseModel {
               return getVaccinationPeriodData().startAndEndTimes
             case 'vaccinators':
               return getVaccinationPeriodData().vaccinatorCounts
-            case 'timeForNasalSpray':
-              return `${this.nasalSprayLength} minutes`
-            case 'timeForInjections':
-              return `${this.firstInjectionLength} minutes, plus ${this.additionalInjectionLength} minutes per additional injection`
-            case 'totalAppointments': {
-              return `Up to ${this.maximumCapacity(VaccineMethod.Intranasal)} for nasal sprays or ${this.maximumCapacity(VaccineMethod.Injection)} for injections`
+            case 'timeForFluNasal':
+              return this.isFluOnlyClinic
+                ? `${this.slotLength} minutes`
+                : undefined
+            case 'timeForFluInjection':
+              return this.isFluOnlyClinic
+                ? `${this.slotLength * this.slotCountForLongAppointment} minutes`
+                : undefined
+            case 'timeForVaccinationsSingle':
+              return this.isFluOnlyClinic
+                ? undefined
+                : `${this.slotLength} minutes`
+            case 'timeForVaccinationsMultiple':
+              return this.isFluOnlyClinic
+                ? undefined
+                : `${this.slotLength * this.slotCountForLongAppointment} minutes`
+            case 'totalSlots': {
+              return `${this.totalSlotCount}`
             }
             default:
               return undefined
