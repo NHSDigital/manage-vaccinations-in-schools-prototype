@@ -845,7 +845,8 @@ export const UploadStatus = {
   Invalid: 'Invalid',
   Devoid: 'No new records',
   Review: 'Review and approve',
-  Approved: 'Approved'
+  Approved: 'Approved',
+  Rejected: 'Rejected'
 }
 
 /**

@@ -11,7 +11,8 @@ import {
   formatTag,
   formatWithSecondaryText,
   formatYearGroup,
-  stringToArray
+  stringToArray,
+  stringToBoolean
 } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -23,6 +24,8 @@ import { BaseModel } from './base.js'
  * @property {UploadType} [type] - Upload type
  * @property {string} [fileName] - Original file name
  * @property {object} [validations] - File validations
+ * @property {boolean} [hasFailed] - Records failed data integrity checks
+ * @property {boolean} [isApproved] - Upload approved
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  */
@@ -50,10 +53,11 @@ export class Upload extends BaseModel {
 
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
-    this.status = options?.status || UploadStatus.Processing
     this.type = options?.type || UploadType.Cohort
     this.fileName = options?.fileName
     this.validations = options?.validations || []
+    this.hasFailed = stringToBoolean(options?.hasFailed)
+    this.isApproved = stringToBoolean(options?.isApproved)
     this.patient_uuids = options?.patient_uuids || []
 
     if (this.type === UploadType.School) {
@@ -72,6 +76,32 @@ export class Upload extends BaseModel {
     const seconds = (today().getTime() - new Date(date).getTime()) / 1000
 
     return Math.min(Math.floor(seconds), 100)
+  }
+
+  /**
+   * Get status
+   *
+   * @returns {UploadStatus} Status
+   */
+  get status() {
+    if (this.progress < 100) {
+      return UploadStatus.Processing
+    }
+
+    switch (true) {
+      case this.validations:
+        return UploadStatus.Invalid
+      case this.patient_uuids.length === 0:
+        return UploadStatus.Devoid
+      case this.hasFailed === true:
+        return UploadStatus.Failed
+      case this.isApproved === true:
+        return UploadStatus.Approved
+      case this.isApproved === false:
+        return UploadStatus.Rejected
+      default:
+        return UploadStatus.Review
+    }
   }
 
   /**

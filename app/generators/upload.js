@@ -24,39 +24,40 @@ export function generateUpload(
   const fileName = `${prototypeFilters.slugify(type)}-${faker.number.int(5)}.csv`
 
   const status = faker.helpers.weightedArrayElement([
-    { value: UploadStatus.Processing, weight: 1 },
-    { value: UploadStatus.Devoid, weight: 1 },
     { value: UploadStatus.Invalid, weight: 1 },
     { value: UploadStatus.Failed, weight: 1 },
+    { value: UploadStatus.Devoid, weight: 1 },
     { value: UploadStatus.Review, weight: 10 },
     { value: UploadStatus.Approved, weight: 8 }
   ])
 
-  // Processing upload
-  let progress
-  if (status === UploadStatus.Processing) {
-    progress = faker.number.int({ min: 1, max: 100 })
-  }
-
-  // Devoid upload
-  if (status === UploadStatus.Devoid) {
-    patient_uuids = []
-  }
-
-  // Invalid upload
+  let hasFailed
   let validations
-  if (status === UploadStatus.Invalid) {
-    validations = {
-      3: {
-        CHILD_FIRST_NAME: 'is required but missing',
-        CHILD_POSTCODE: '‘24 High Street’ should be a postcode, like SW1A 1AA',
-        CHILD_NHS_NUMBER:
-          '‘QQ 12 34 56 A’ should be a valid NHS number, like 485 777 3456'
-      },
-      8: {
-        CHILD_DOB: '‘Simon’ should be formatted as YYYY-MM-DD'
+  let isApproved
+  switch (status) {
+    case UploadStatus.Invalid:
+      validations = {
+        3: {
+          CHILD_FIRST_NAME: 'is required but missing',
+          CHILD_POSTCODE:
+            '‘24 High Street’ should be a postcode, like SW1A 1AA',
+          CHILD_NHS_NUMBER:
+            '‘QQ 12 34 56 A’ should be a valid NHS number, like 485 777 3456'
+        },
+        8: {
+          CHILD_DOB: '‘Simon’ should be formatted as YYYY-MM-DD'
+        }
       }
-    }
+      break
+    case UploadStatus.Failed:
+      hasFailed = true
+      break
+    case UploadStatus.Devoid:
+      patient_uuids = []
+      break
+    case UploadStatus.Approved:
+      isApproved = true
+      break
   }
 
   // Approved upload
@@ -73,9 +74,9 @@ export function generateUpload(
     updatedAt,
     updatedBy_uid,
     fileName,
-    status,
     type,
-    progress,
+    hasFailed,
+    isApproved,
     validations,
     patient_uuids,
     ...(school && {
