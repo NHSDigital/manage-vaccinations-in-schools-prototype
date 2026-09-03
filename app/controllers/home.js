@@ -7,7 +7,12 @@ export const homeController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   redirect(request, response) {
-    return saveAndRedirect(request, response, '/dashboard')
+    const { account } = response.locals
+
+    // School users only have access to uploads section (for now)
+    const homepage = account.isSchoolUser ? '/uploads' : '/dashboard'
+
+    return saveAndRedirect(request, response, homepage)
   },
 
   /**
