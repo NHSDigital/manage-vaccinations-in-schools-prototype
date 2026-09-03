@@ -1,6 +1,6 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
-import { UploadStatus, UploadType } from '../enums.js'
+import { UploadType } from '../enums.js'
 import { Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -122,7 +122,6 @@ export const uploadController = {
         createdBy_uid: account.uid,
         programme_id,
         type,
-        status: UploadStatus.Processing,
         fileName: 'example.csv',
         ...(type === UploadType.School && school_id && { school_id })
       },
@@ -159,12 +158,6 @@ export const uploadController = {
         data.wizard.uploads[upload_id],
         data.wizard
       )
-
-      // Editing an upload means retrying an upload with a new file
-      // This means the existing failed or invalid status should be replaced
-      if (type === 'edit') {
-        upload.status = UploadStatus.Processing
-      }
 
       upload = Upload.create(upload, data)
 
@@ -292,7 +285,7 @@ export const uploadController = {
       {
         updatedAt: new Date(),
         updatedBy_uid: account.uid,
-        status: UploadStatus.Approved
+        isApproved: true
       },
       data
     )
