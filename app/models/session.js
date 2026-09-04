@@ -19,7 +19,6 @@ import {
   SessionType,
   TeamDefaults,
   VaccineCriteria,
-  VaccineMethod,
   VaccinationProtocol
 } from '../enums.js'
 import {
@@ -96,6 +95,12 @@ import { BaseModel } from './base.js'
  * and so which slots it could be booked into.
  *
  * @typedef {Pick<ClinicAppointment, 'selected_programme_ids' | 'fluDecision'>} AppointmentLengthFactors
+ */
+
+/**
+ * The vaccination choices decided for a clinic appointment
+ *
+ * @typedef {AppointmentLengthFactors & {fluAlternative: (boolean|undefined), mmrAlternative: (boolean|undefined)}} ClinicVaccinationChoices
  */
 
 /**
@@ -1121,6 +1126,34 @@ export class Session extends BaseModel {
     })
 
     return bookableStartTimes
+  }
+
+  /**
+   * Can this clinic serve a given set of vaccination choices?
+   *
+   * @param {ClinicVaccinationChoices} vaccinationChoices - The vaccination choices for an appointment
+   * @returns {boolean} True if this session can serve the given vaccination choices, false otherwise
+   */
+  canCoverVaccinationChoices(vaccinationChoices) {
+    const selected_programme_ids = vaccinationChoices.selected_programme_ids
+
+    // FUTURE: also consider IM vs. nasal for specific flu clinics, or lack of gelatine content for
+    // specific communities
+
+    // At least one of the session's programmes needs to be selected
+    if (!selected_programme_ids.some((id) => this.programme_ids.includes(id))) {
+      return false
+    }
+
+    // Due to attendance volumes, flu clinics can't cater for additional vaccinations
+    if (this.isFluOnlyClinic) {
+      return (
+        selected_programme_ids.length === 1 &&
+        selected_programme_ids[0] === 'flu'
+      )
+    }
+
+    return true
   }
 
   /**
