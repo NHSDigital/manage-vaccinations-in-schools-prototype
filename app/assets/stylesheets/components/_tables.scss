@@ -42,6 +42,8 @@
     // stylelint-disable-next-line declaration-no-important
     width: nhsuk-spacing(8) !important;
     @include nhsuk-responsive-padding(2, ("top", "bottom"));
+    vertical-align: middle;
+    background-color: nhsuk-tint(nhsuk-colour("black"), 95%);
     white-space: nowrap;
   }
 
