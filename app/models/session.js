@@ -503,7 +503,9 @@ export class Session extends BaseModel {
       return isFluNasal ? 1 : this.slotCountForLongAppointment
     }
 
-    // For all other clinics setups, count the injections to know how long we need to allocate
+    // For all other clinics setups, count the injections to know how long we need to allocate; in
+    // this case, we'd expressly don't count a nasal flu vaccination, as teams can usually squeeze
+    // it in.
     let injectionCount = 0
     if (programme_ids.includes('flu') && !isFluNasal) {
       injectionCount++
