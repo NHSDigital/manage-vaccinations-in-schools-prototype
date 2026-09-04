@@ -11,16 +11,23 @@ import { Child, ClinicAppointment } from '../models.js'
 import { generateContact } from './contact.js'
 
 /**
- * Decide which programmes and vaccine choices a patient's clinic appointment will cover
+ * Choose programmes and vaccine choices for a child's clinic appointment
  *
- * Split out from generateClinicAppointment so the resulting appointment length is known before
- * a session (and slot within it) is chosen for the appointment
- *
- * @param {Patient} patient - The patient being invited to a clinic appointment
+ * @param {Array<string>} invitedProgramme_ids - All programmes the child's been invited for
  * @returns {ClinicVaccinationChoices} The selected programmes and vaccine choices for the appointment
  */
-export function decideClinicVaccinationChoices(patient) {
-  const selected_programme_ids = patient.clinicProgramme_ids
+export function decideClinicVaccinationChoices(invitedProgramme_ids) {
+  // When invited for more than one programme, a parent doesn't always want their child
+  // vaccinated for all of them in one go — sometimes leave one unselected
+  let selected_programme_ids = invitedProgramme_ids
+  if (invitedProgramme_ids.length > 1 && faker.datatype.boolean(0.3)) {
+    const unwanted_programme_id =
+      faker.helpers.arrayElement(invitedProgramme_ids)
+    selected_programme_ids = invitedProgramme_ids.filter(
+      (id) => id !== unwanted_programme_id
+    )
+  }
+
   let fluDecision, fluAlternative, mmrAlternative
 
   if (selected_programme_ids.includes('flu')) {
@@ -186,9 +193,5 @@ export function generateClinicAppointment(
 }
 
 /**
- * @typedef {AppointmentLengthFactors & {fluAlternative: (boolean|undefined), mmrAlternative: (boolean|undefined)}} ClinicVaccinationChoices
- */
-
-/**
- * @import { AppointmentLengthFactors, ClinicBooking, Patient, Session } from '../models.js'
+ * @import { ClinicBooking, ClinicVaccinationChoices, Patient, Session } from '../models.js'
  */
