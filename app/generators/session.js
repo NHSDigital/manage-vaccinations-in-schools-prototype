@@ -73,7 +73,7 @@ export function generateSession(preset, user, options) {
   if (clinic_id) {
     if (preset.name === SessionPresetName.Flu) {
       slotLength = faker.datatype.boolean(0.75) ? 5 : 3
-      slotCountForLongAppointment = faker.datatype.boolean(0.9) ? 1 : 2
+      slotCountForLongAppointment = faker.datatype.boolean(0.9) ? 2 : 1
     } else {
       slotLength = faker.datatype.boolean(0.75) ? 10 : 8
       slotCountForLongAppointment = faker.datatype.boolean(0.9) ? 2 : 1
