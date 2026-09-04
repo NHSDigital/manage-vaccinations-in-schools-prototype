@@ -139,7 +139,7 @@
           <div class="nhsuk-grid-column-one-third">
             <p class="nhsuk-body nhsuk-u-margin-bottom-0">
               <span class="nhsuk-u-font-weight-bold">Date of birth</span><br>
-              21 May 2017
+              21 May 2017 (aged 9)
             </p>
           </div>
           <div class="nhsuk-grid-column-one-third">
@@ -206,10 +206,10 @@
     <!-- Duplicate record grid -->
     <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
     <!-- Records 1 to 2: one shared grid; each field is a grid row spanning the label column and all cards -->
-    <div data-record-grid style="display: grid; grid-template-columns: 10rem repeat(4, 1fr); grid-template-rows: repeat(20, auto) 88px; column-gap: 24px; min-width: 1216px;">
+    <div data-record-grid style="display: grid; grid-template-columns: 10rem repeat(4, 1fr); grid-template-rows: repeat(21, auto) 88px; column-gap: 24px; min-width: 1216px;">
         <!-- Card boundaries: one bordered underlay per record column (border swapped by the selection script) -->
-        <div data-record-box="record-1" style="grid-column: 2; grid-row: 1 / 22; border: 1px solid #d8dde0; background: #ffffff;"></div>
-        <div data-record-box="record-2" style="grid-column: 3; grid-row: 1 / 22; border: 1px solid #d8dde0; background: #ffffff;"></div>
+        <div data-record-box="record-1" style="grid-column: 2; grid-row: 1 / 23; border: 1px solid #d8dde0; background: #ffffff;"></div>
+        <div data-record-box="record-2" style="grid-column: 3; grid-row: 1 / 23; border: 1px solid #d8dde0; background: #ffffff;"></div>
 
         <!-- Headings -->
         <h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 1;">Record 1</h2>
@@ -232,102 +232,108 @@
              room below the header. -->
         <div data-fit-sentinel style="grid-column: 1; grid-row: 3; align-self: start; height: 1px;"></div>
 
+        <!-- Date row: each record's own reported date; the date in the summary
+             sentence above is the nominal date for the whole set -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 3; border-bottom: 1px solid #d8dde0;">Date</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 3; border-bottom: 1px solid #d8dde0;">5 June 2018</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 3; border-bottom: 1px solid #d8dde0;">5 June 2018</p>
+
         <!-- Product row: values verbatim from duplicate-sets/set data -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 3; border-bottom: 1px solid #d8dde0;">Product</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 3; border-bottom: 1px solid #d8dde0;">Not provided</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 3; border-bottom: 1px solid #d8dde0;">Not provided</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 4; border-bottom: 1px solid #d8dde0;">Product</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 4; border-bottom: 1px solid #d8dde0;">Not provided</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 4; border-bottom: 1px solid #d8dde0;">Not provided</p>
 
         <!-- Source row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 4; border-bottom: 1px solid #d8dde0;">Source</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 4; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 4; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Uploaded as a historical vaccination</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 5; border-bottom: 1px solid #d8dde0;">Source</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 5; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 5; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Uploaded as a historical vaccination</mark></p>
 
         <!-- Location row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 5; border-bottom: 1px solid #d8dde0;">Location</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 5; border-bottom: 1px solid #d8dde0;">Unknown</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 5; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 6; border-bottom: 1px solid #d8dde0;">Location</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 6; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 6; border-bottom: 1px solid #d8dde0;">Unknown</p>
 
         <!-- Time row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 6; border-bottom: 1px solid #d8dde0;">Time</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 6; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1:00am</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 6; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 7; border-bottom: 1px solid #d8dde0;">Time</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 7; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1:00am</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 7; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
 
         <!-- Vaccinator row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 7; border-bottom: 1px solid #d8dde0;">Vaccinator</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 7; border-bottom: 1px solid #d8dde0;">Unknown</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 7; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 8; border-bottom: 1px solid #d8dde0;">Vaccinator</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 8; border-bottom: 1px solid #d8dde0;">Unknown</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 8; border-bottom: 1px solid #d8dde0;">Unknown</p>
 
         <!-- Dose number row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 8; border-bottom: 1px solid #d8dde0;">Dose number</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1st</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 8; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 9; border-bottom: 1px solid #d8dde0;">Dose number</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">1st</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 9; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Unknown</mark></p>
 
         <!-- Batch row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 9; border-bottom: 1px solid #d8dde0;">Batch</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 9; border-bottom: 1px solid #d8dde0;">Not provided</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 9; border-bottom: 1px solid #d8dde0;">Not provided</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 10; border-bottom: 1px solid #d8dde0;">Batch</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 10; border-bottom: 1px solid #d8dde0;">Not provided</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 10; border-bottom: 1px solid #d8dde0;">Not provided</p>
 
         <!-- Reported by row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 10; border-bottom: 1px solid #d8dde0;">Reported by</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 10; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 10; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 11; border-bottom: 1px solid #d8dde0;">Reported by</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 11; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 11; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
         <!-- Reported on row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 11; border-bottom: 1px solid #d8dde0;">Reported on</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 11; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">16 August 2026 at 7:58pm</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 12; border-bottom: 1px solid #d8dde0;">Reported on</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 12; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 12; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">16 August 2026 at 7:58pm</mark></p>
 
         <!-- Child identified by row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 12; border-bottom: 1px solid #d8dde0;">Child identified by</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 12; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 12; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 13; border-bottom: 1px solid #d8dde0;">Child identified by</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 13; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 13; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
         <!-- SNOMED procedure row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 13; border-bottom: 1px solid #d8dde0;">SNOMED procedure</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">308081000000105 – Measles mumps and rubella vaccination - first dose (procedure)</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 13; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 14; border-bottom: 1px solid #d8dde0;">SNOMED procedure</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 14; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">308081000000105 – Measles mumps and rubella vaccination - first dose (procedure)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 14; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
 
         <!-- Notes row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 14; border-bottom: 1px solid #d8dde0;">Notes</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 14; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 14; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 15; border-bottom: 1px solid #d8dde0;">Notes</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 15; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 15; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
         <!-- Method row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 15; border-bottom: 1px solid #d8dde0;">Method</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 15; border-bottom: 1px solid #d8dde0;">Not provided</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 15; border-bottom: 1px solid #d8dde0;">Not provided</p>
-
-        <!-- Site row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 16; border-bottom: 1px solid #d8dde0;">Site</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 16; border-bottom: 1px solid #d8dde0;">Method</p>
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 16; border-bottom: 1px solid #d8dde0;">Not provided</p>
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 16; border-bottom: 1px solid #d8dde0;">Not provided</p>
 
-        <!-- Dose volume row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 17; border-bottom: 1px solid #d8dde0;">Dose volume</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 17; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 17; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <!-- Site row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 17; border-bottom: 1px solid #d8dde0;">Site</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 17; border-bottom: 1px solid #d8dde0;">Not provided</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 17; border-bottom: 1px solid #d8dde0;">Not provided</p>
 
-        <!-- Supplier row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 18; border-bottom: 1px solid #d8dde0;">Supplier</p>
+        <!-- Dose volume row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 18; border-bottom: 1px solid #d8dde0;">Dose volume</p>
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 18; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
 
+        <!-- Supplier row -->
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 19; border-bottom: 1px solid #d8dde0;">Supplier</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 19; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 19; border-bottom: 1px solid #d8dde0;">&nbsp;</p>
+
         <!-- Protocol row -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 19; border-bottom: 1px solid #d8dde0;">Protocol</p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 19; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 19; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Patient group direction (PGD)</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold" style="grid-column: 1; grid-row: 20; border-bottom: 1px solid #d8dde0;">Protocol</p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 2; grid-row: 20; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5" style="grid-column: 3; grid-row: 20; border-bottom: 1px solid #d8dde0;"><mark class="app-highlight">Patient group direction (PGD)</mark></p>
 
         <!-- View this record: static link row at the card bottom, in normal flow
              outside the sticky footer, so only the choose control floats -->
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
-        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 3; grid-row: 20;"><a class="nhsuk-link" href="#">View this record</a></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 2; grid-row: 21;"><a class="nhsuk-link" href="#">View this record</a></p>
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" style="grid-column: 3; grid-row: 21;"><a class="nhsuk-link" href="#">View this record</a></p>
 
         <!-- Rest sentinel: 1px marker sitting on the card bottom line; the
              observer below uses it to tell pinned from at-rest -->
-        <div data-rest-sentinel style="grid-column: 1; grid-row: 21; align-self: end; height: 1px;"></div>
+        <div data-rest-sentinel style="grid-column: 1; grid-row: 22; align-self: end; height: 1px;"></div>
 
         <!-- Choose this record: sticky card footer. Each block spans the full
-             field area (grid rows 3-21) and aligns to the card bottom; position:
+             field area (grid rows 3-22) and aligns to the card bottom; position:
              sticky with a bottom offset clearing the fixed set-navigation bar
              keeps it on screen while the card is taller than the viewport,
              floating over the field rows and settling into the reserved 88px
@@ -347,7 +353,7 @@
              clicks. An IntersectionObserver on the rest sentinel hides the
              panels once the blocks settle at the card bottom, so nothing hangs
              below the card at rest. -->
-        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-1" style="grid-column: 2; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
+        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-1" style="grid-column: 2; grid-row: 3 / 23; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
           <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
             <div class="nhsuk-radios__item">
               <input class="nhsuk-radios__input" id="record-1" name="preferred-record" type="radio" value="record-1">
@@ -358,7 +364,7 @@
           </div>
           <div data-roll-panel aria-hidden="true" style="position: absolute; top: calc(100% + 1px); left: -2px; right: -2px; height: 96px; background: #f0f4f5; pointer-events: none;"></div>
         </div>
-        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-2" style="grid-column: 3; grid-row: 3 / 22; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
+        <div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5" data-record-footer="record-2" style="grid-column: 3; grid-row: 3 / 23; align-self: end; position: sticky; bottom: 96px; z-index: 10; background: #ffffff; border: 1px solid #d8dde0; border-top: 0;">
           <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
             <div class="nhsuk-radios__item">
               <input class="nhsuk-radios__input" id="record-2" name="preferred-record" type="radio" value="record-2">
