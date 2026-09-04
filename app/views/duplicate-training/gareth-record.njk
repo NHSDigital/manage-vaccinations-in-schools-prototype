@@ -1,0 +1,179 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Gareth Greene - MMR" %}
+{% block header %}
+  <!-- Mavis site chrome: environment banner and site header exactly as rendered
+       on a child record, with the Children item current. Static copy for
+       presentation only; these demo pages do not live under /patients. -->
+  <div class="app-environment nhsuk-tag--grey">
+    <div class="nhsuk-width-container">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Prototype</strong>
+      This is a prototype used for research.
+    </div>
+  </div>
+  <header class="nhsuk-header" data-module="nhsuk-header" role="banner">
+    <div class="nhsuk-header__container nhsuk-width-container">
+      <div class="nhsuk-header__service">
+        <a class="nhsuk-header__service-logo" href="/home" aria-label="NHS Manage vaccinations in schools homepage">
+          <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+            <title>NHS</title>
+            <path fill="currentcolor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+          </svg>
+          <span class="nhsuk-header__service-name">Manage vaccinations in schools</span>
+        </a>
+      </div>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            JOY, Jane (Nurse)
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/change-role">Change role</a>
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/sign-out">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/schools">Schools</a>
+          </li>
+          <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--current">
+            <a class="nhsuk-header__navigation-link" href="/patients" aria-current="true"><strong class="nhsuk-header__navigation-item-current-fallback">Children</strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/sessions">Sessions</a>
+          </li>
+          <li class="nhsuk-header__navigation-item app-header__navigation-item--with-badge">
+            <a class="nhsuk-header__navigation-link" href="/reviews">Review<strong class="app-badge">124</strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/reports">Reports</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/uploads">Uploads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/downloads">Downloads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/vaccines">Vaccines</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/teams/001">Your team</a>
+          </li>
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse </span>More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <!-- Static replica of Gareth Greene's MMR programme page from the
+       vaccination-record-valid-ignored-doses branch (patient/programme.njk
+       with patient/_vaccination-record.njk). This branch has no Gareth seed
+       data, so the page is hand-rendered. The way in to the duplicate view is
+       the 3 duplicates link under the date. The date itself is not a link:
+       there is no canonical record yet to link to, so the count names the
+       whole set rather than +2 on top of a main record. -->
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" href="/home">Home</a></li>
+      <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" href="/patients">Children</a></li>
+    </ol>
+  </nav>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Gareth Greene</h1>
+      <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+        <strong>Date of birth:</strong> 12 May 2011 (aged 15)
+      </p>
+
+      <nav class="app-section-navigation" data-module="app-section-navigation" aria-label="Section navigation">
+        <ul class="app-section-navigation__list">
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="#">Child record</a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="#">Contacts</a>
+          </li>
+          <li class="app-section-navigation__item app-section-navigation__item--current">
+            <a class="app-section-navigation__link" href="#" aria-current="page"><strong class="app-section-navigation__current">MMR</strong></a>
+          </li>
+        </ul>
+      </nav>
+      <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">MMR</h2>
+
+      <!-- Vaccination record card -->
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading nhsuk-heading-m">Vaccination record</h3>
+          <p class="nhsuk-body"><strong class="nhsuk-tag nhsuk-tag--blue">Due</strong></p>
+          <p class="nhsuk-body">1 of 2 doses complete.</p>
+          <table class="nhsuk-table-responsive" id="vaccination-record">
+            <thead class="nhsuk-table__head">
+              <tr>
+                <th class="nhsuk-table__header" scope="col">Dose</th>
+                <th class="nhsuk-table__header" scope="col">Date</th>
+                <th class="nhsuk-table__header" scope="col">Age at dose</th>
+                <th class="nhsuk-table__header" scope="col">Source</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body">
+              <tr class="nhsuk-table__row">
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Dose </span>Dose 1<br><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">MMR</span></td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Date </span>26 May 2012<br><a class="nhsuk-u-font-size-16" href="/duplicate-training/gareth-duplicates">3 duplicates</a></td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Age at dose </span>1 year</td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Source </span>External source such as GP practice</td>
+              </tr>
+              <tr class="nhsuk-table__row">
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Dose </span>Dose 2</td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Date </span>Eligible from 12 August 2012</td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Age at dose </span>—</td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Source </span>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Encounters card -->
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading nhsuk-heading-m">Encounters</h3>
+          <table class="nhsuk-table-responsive" id="encounters">
+            <thead class="nhsuk-table__head">
+              <tr>
+                <th class="nhsuk-table__header" scope="col">Encounter date</th>
+                <th class="nhsuk-table__header" scope="col">Age at dose</th>
+                <th class="nhsuk-table__header" scope="col">Outcome</th>
+                <th class="nhsuk-table__header" scope="col">Source</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body">
+              <tr class="nhsuk-table__row">
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Encounter date </span>26 May 2012<br><a class="nhsuk-u-font-size-16" href="/duplicate-training/gareth-duplicates">3 duplicates</a></td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Age at dose </span>1 year</td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Outcome </span>Vaccinated</td>
+                <td class="nhsuk-table__cell"><span class="nhsuk-table-responsive__heading">Source </span>External source such as GP practice</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
