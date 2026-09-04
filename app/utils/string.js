@@ -401,6 +401,18 @@ export function formatProgress(number) {
 }
 
 /**
+ * Format the perentage booked for a clinic session
+ *
+ * @param {number} number - Percentage booked (for a clinic session)
+ * @returns {string|undefined} Formatted percentage booked HTML
+ */
+export function formatPercentBooked(number) {
+  if (!number) return
+
+  return `<progress class="app-progress" value="${number}" max="100"></progress><br><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">${number}% of slots booked</span>`
+}
+
+/**
  * Format identifier
  *
  * @param {object} identifiedBy - Identifier

@@ -52,6 +52,7 @@ import {
   formatLink,
   formatList,
   formatMarkdown,
+  formatPercentBooked,
   formatWithSecondaryText,
   formatYearGroups,
   sentenceCaseProgrammeName,
@@ -1329,6 +1330,10 @@ export class Session extends BaseModel {
               return getConsentWindowData().consentWindow
             case 'consentWindowSentence':
               return getConsentWindowData().consentWindowSentence
+            case 'percentageBooked':
+              return this.type === SessionType.Clinic
+                ? formatPercentBooked(this.percentBooked)
+                : undefined
             case 'location':
               return Object.values(this.location).filter(Boolean).join(', ')
             case 'clinic':
