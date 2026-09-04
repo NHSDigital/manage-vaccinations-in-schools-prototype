@@ -76,8 +76,23 @@ export const bookIntoClinicController = {
     if (patient_uuid) {
       // Starting the booking process from a child record
       programme_ids = getClinicBookableProgrammeIDs(patient_uuid, data)
-      nextPath = getBookableClinicSessions(data, programme_ids, null, false)
-        .length
+
+      // We don't know anything yet about specifc vaccine choices, but we can at least
+      // check that there are clinics serving the right programmes
+      const vaccinationChoices = {
+        selected_programme_ids: programme_ids,
+        fluDecision: undefined,
+        fluAlternative: undefined,
+        mmrAlternative: undefined
+      }
+
+      // Do we need to tell the user that there are no suitable clinics at all?
+      nextPath = getBookableClinicSessions(
+        data,
+        vaccinationChoices,
+        null,
+        false
+      ).length
         ? 'new'
         : 'availability'
     } else if (session_id) {
@@ -95,10 +110,21 @@ export const bookIntoClinicController = {
       const { programme_id } = /** @type {{ programme_id?: string }} */ (
         request.query
       )
+
+      // We don't know anything yet about specifc vaccine choices, but we can at least
+      // check that there are clinics serving the right programmes
       programme_ids = Array.isArray(programme_id)
         ? programme_id
         : [programme_id]
-      nextPath = getBookableClinicSessions(data, programme_ids, null, true)
+      const vaccinationChoices = {
+        selected_programme_ids: programme_ids,
+        fluDecision: undefined,
+        fluAlternative: undefined,
+        mmrAlternative: undefined
+      }
+
+      // Do we need to tell the user that there are no suitable clinics at all?
+      nextPath = getBookableClinicSessions(data, vaccinationChoices, null, true)
         .length
         ? 'start'
         : 'availability'

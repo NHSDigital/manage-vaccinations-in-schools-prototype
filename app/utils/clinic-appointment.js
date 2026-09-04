@@ -123,10 +123,11 @@ export const getAllAppointmentPaths = (
           const programme_ids = stringToArray(
             sessionData.appointment?.selected_programme_ids
           )
+          programme_ids
           return (
             getBookableClinicSessions(
               sessionData,
-              programme_ids,
+              appointment.vaccinationChoices,
               appointment,
               isParentJourney
             ).length === 0
@@ -195,7 +196,7 @@ export const getAllAppointmentPaths = (
                 return (
                   getBookableClinicSessions(
                     sessionData,
-                    appointment.selected_programme_ids,
+                    appointment.vaccinationChoices,
                     appointment,
                     isParentJourney
                   ).length === 0
@@ -207,7 +208,7 @@ export const getAllAppointmentPaths = (
                 return (
                   getBookableClinicSessions(
                     sessionData,
-                    appointment.selected_programme_ids,
+                    appointment.vaccinationChoices,
                     appointment,
                     isParentJourney
                   ).length === 0
@@ -228,7 +229,7 @@ export const getAllAppointmentPaths = (
                     return (
                       getBookableClinicSessions(
                         sessionData,
-                        appointment.selected_programme_ids,
+                        appointment.vaccinationChoices,
                         appointment,
                         isParentJourney
                       ).length === 0
@@ -240,7 +241,7 @@ export const getAllAppointmentPaths = (
                 return (
                   getBookableClinicSessions(
                     sessionData,
-                    appointment.selected_programme_ids,
+                    appointment.vaccinationChoices,
                     appointment,
                     isParentJourney
                   ).length === 0

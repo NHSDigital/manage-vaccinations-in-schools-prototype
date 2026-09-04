@@ -45,14 +45,14 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  * right programmes are being served, not checking for enough space for a specific appointment.
  *
  * @param {object} context - the data context for the models to check
- * @param {Array<string>} programme_ids - the programmes that must be served at the clinics
- * @param {ClinicAppointment} appointment - the appointment that we want to book
+ * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
+ * @param {ClinicAppointment} appointment - the appointment that we want to book (can be null if not created yet)
  * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
-  programme_ids,
+  vaccinationChoices,
   appointment,
   requiresStockingPeriod
 ) => {
@@ -60,7 +60,7 @@ export const getBookableClinicSessions = (
     (session) =>
       session.type === SessionType.Clinic &&
       session.status === SessionStatus.Planned &&
-      session.programme_ids.some((id) => programme_ids.includes(id)) &&
+      session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
       (!appointment ||
         session.bookableSlotStartTimesFor(appointment).length > 0)
@@ -86,7 +86,7 @@ export const getBookableClinicLocationItems = (
 ) => {
   const scheduledClinics = getBookableClinicSessions(
     context,
-    appointment.selected_programme_ids,
+    appointment.vaccinationChoices,
     appointment,
     requiresStockingPeriod
   )
@@ -131,7 +131,7 @@ export const getBookableClinicDateItems = (
   const bookableSessions = _.sortBy(
     getBookableClinicSessions(
       context,
-      appointment.selected_programme_ids,
+      appointment.vaccinationChoices,
       appointment,
       requiresStockingPeriod
     ).filter((session) => session.clinic_id === clinic_id),
@@ -161,3 +161,7 @@ export const getBookableClinicDateItems = (
 
   return clinicDateItems
 }
+
+/**
+ * @import { ClinicVaccinationChoices } from '../models.js'
+ */
