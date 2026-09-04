@@ -126,14 +126,14 @@ export const getAllAppointmentPaths = (
       // Vaccinations wanted
       [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/availability`]: () => {
-          const programme_ids = stringToArray(
+          const vaccinationChoices = appointment.vaccinationChoices
+          vaccinationChoices.selected_programme_ids = stringToArray(
             sessionData.appointment?.selected_programme_ids
           )
-          programme_ids
           return (
             getBookableClinicSessions(
               sessionData,
-              appointment.vaccinationChoices,
+              vaccinationChoices,
               appointment,
               isParentJourney
             ).length === 0

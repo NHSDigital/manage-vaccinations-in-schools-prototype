@@ -63,7 +63,7 @@ export const getBookableClinicSessions = (
       session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
       (!appointment ||
-        session.bookableSlotStartTimesFor(appointment).length > 0)
+        session.bookableSlotStartTimesFor(vaccinationChoices).length > 0)
   )
 
   return scheduledClinics
