@@ -3197,18 +3197,19 @@ export const en = {
         title: 'How long will a nasal spray appointment take, in minutes?'
       },
       fluInjection: {
-        title: 'Do you want to use two slots for injected flu vaccinations?',
-        yes: 'Yes, double the appointment length to {{doubleSlotLength}} minutes',
-        no: 'No, keep the appointment length at {{singleSlotLength}} minutes'
+        title:
+          'For injections, do you want to double the standard appointment length?',
+        yes: 'Yes',
+        no: 'No'
       },
       vaccinationSingle: {
         title: 'How long are your appointments, in minutes?'
       },
       vaccinationMultiple: {
         title:
-          'Do you want to use two slots for appointments with multiple vaccinations?',
-        yes: 'Yes, double the appointment length to {{doubleSlotLength}} minutes',
-        no: 'No, keep the appointment length at {{singleSlotLength}} minutes'
+          'For appointments with multiple vaccinations, do you want to double the standard appointment length?',
+        yes: 'Yes',
+        no: 'No'
       },
       suffix: 'minutes'
     },
