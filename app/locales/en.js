@@ -3024,6 +3024,9 @@ export const en = {
     consentWindow: {
       label: 'Consent period'
     },
+    percentageBooked: {
+      label: 'Percentage booked'
+    },
     mmrConsent: {
       title:
         'What type of MMR(V) consent request do you want to send to parents?',
