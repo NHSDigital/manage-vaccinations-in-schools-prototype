@@ -329,6 +329,20 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get the vaccination choices for this appointment
+   *
+   * @returns {import('./session.js').ClinicVaccinationChoices} - all relevant programme and vaccine choices
+   */
+  get vaccinationChoices() {
+    return {
+      selected_programme_ids: this.selected_programme_ids,
+      fluDecision: this.fluDecision,
+      fluAlternative: this.fluAlternative,
+      mmrAlternative: this.mmrAlternative
+    }
+  }
+
+  /**
    * Get the programmes selected for this appointment
    *
    * @param {object} programmeContext - the context in which we'll find the programmes
