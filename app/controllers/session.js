@@ -666,7 +666,7 @@ export const sessionController = {
         'Time',
         ...Array(vaccinationPeriod.vaccinatorCount)
           .keys()
-          .map((index) => `Vaccinator ${index + 1}`)
+          .map((index) => `Slot ${index + 1}`)
       ]
 
       // Track which column index is free at which row, to avoid overlap
@@ -675,6 +675,7 @@ export const sessionController = {
       const rows = allSlotTimes.map((time, rowIndex) => {
         const rowValues = []
         rowValues.push({
+          header: headers[0],
           timeSlot: formatTime(time, false)
         })
 
@@ -698,7 +699,10 @@ export const sessionController = {
           if (freeColumnIndex >= 0) {
             columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
           }
-          rowValues.push({ appointment, slotSpan })
+          rowValues.push({
+            appointment,
+            slotSpan
+          })
         }
 
         // Only need "Book" cells where a column's not already covered by an appointment
