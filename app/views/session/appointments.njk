@@ -48,6 +48,14 @@
 
   {# Full calendar-like view of the vaccination periods' appointments and empty slots #}
   {% for vaccinationPeriodTable in vaccinationPeriodTables %}
+    {# Create the column headers #}
+    {% set tableHeaders = [] %}
+    {% for header in vaccinationPeriodTable.headers %}
+      {% set tableHeaders = tableHeaders | push({
+        text: header
+      }) %}
+    {% endfor %}
+
     {# Create the rows of appointments and empty slots #}
     {% set tableRows = [] %}
     {% for row in vaccinationPeriodTable.rows %}
@@ -55,10 +63,12 @@
       {% for rowValue in row.rowValues %}
         {% set rowValues = rowValues | push(
           {
+            header: rowValue.header,
             text: rowValue.timeSlot
           }
           if rowValue.timeSlot else
           {
+            header: rowValue.header,
             html: buildSlotHtml(rowValue.appointment, row.bookingQueryString),
             rowspan: rowValue.slotSpan,
             classes: "app-table__cell--appointment" if rowValue.appointment else "app-table__cell--book"
@@ -87,6 +97,7 @@
           })
         }
       },
+      head: tableHeaders,
       rows: tableRows
     }) }}
   {% endfor %}

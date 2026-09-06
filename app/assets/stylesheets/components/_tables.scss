@@ -36,15 +36,46 @@
     border-bottom: 0;
   }
 
-  // Doubled class to match the specificity of nhsuk-table--responsive's own
-  // `width: auto !important`, which would otherwise always win
-  .nhsuk-table__header.nhsuk-table__header {
-    // stylelint-disable-next-line declaration-no-important
-    width: nhsuk-spacing(8) !important;
-    @include nhsuk-responsive-padding(2, ("top", "bottom"));
-    vertical-align: middle;
-    background-color: nhsuk-tint(nhsuk-colour("black"), 95%);
-    white-space: nowrap;
+  // Below this, the table is rendered as an actual grid (nhsuk-table--responsive switches
+  // to a stacked, flexed layout on narrower viewports, where a fixed column width and
+  // table-cell styling like vertical-align don't apply/make sense)
+  @include nhsuk-media-query($from: desktop) {
+    // table-layout: fixed sizes every column from its first row alone. With column headers
+    // now in play, that first row is the <thead> one, so the time column's width must be set
+    // on whichever header cell is first — the <thead> cell when there is one, otherwise the
+    // per-row <th> in the body — not on every nhsuk-table__header regardless of column.
+    // Doubled class to match the specificity of nhsuk-table--responsive's own
+    // `width: auto !important`, which would otherwise always win
+    .nhsuk-table__header.nhsuk-table__header:first-child {
+      // stylelint-disable-next-line declaration-no-important
+      width: nhsuk-spacing(8) !important;
+      white-space: nowrap;
+    }
+
+    // Styling specific to the row headers (the time column), not the new column headers
+    .nhsuk-table__body .nhsuk-table__header {
+      @include nhsuk-responsive-padding(2, ("top", "bottom"));
+      background-color: nhsuk-tint(nhsuk-colour("black"), 95%);
+      vertical-align: middle;
+    }
+
+    .app-table__cell--book {
+      vertical-align: middle;
+    }
+  }
+
+  // Below desktop, each cell in a row stacks as its own flexed label/value line rather than
+  // sitting in a grid, so give them breathing room from each other (the grid gets this from
+  // border-spacing instead, so this is only needed while stacked)
+  @include nhsuk-media-query($until: desktop) {
+    .nhsuk-table__header,
+    .nhsuk-table__cell {
+      margin-bottom: nhsuk-spacing(2);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 
   .app-table__cell--appointment {
@@ -55,9 +86,8 @@
 
   .app-table__cell--book {
     border: 1px solid nhsuk-colour("grey-5");
-    text-align: center;
-    vertical-align: middle;
     background-color: nhsuk-tint(nhsuk-colour("black"), 95%);
+    text-align: center;
   }
 }
 
