@@ -1,7 +1,8 @@
+import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadStatus, UploadType } from '../enums.js'
-import { Upload } from '../models.js'
+import { Patient, Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -127,6 +128,9 @@ export const uploadController = {
         status: UploadStatus.Processing,
         progress: 1,
         fileName: 'example.csv',
+        patient_uuids: Patient.findAll(data)
+          .map((patient) => patient.uuid)
+          .slice(faker.number.int({ min: 30, max: 100 })),
         ...(type === UploadType.School && school_id && { school_id })
       },
       data.wizard
