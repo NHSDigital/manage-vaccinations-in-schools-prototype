@@ -157,7 +157,7 @@ export const uploadController = {
   update(type) {
     return (request, response) => {
       const { upload_id } = request.params
-      const { data, referrer } = request.session
+      const { data } = request.session
       const { __ } = response.locals
 
       // Update session data
@@ -175,7 +175,12 @@ export const uploadController = {
 
       request.flash('success', __(`upload.${type}.success`))
 
-      saveAndRedirect(request, response, referrer || upload.uri)
+      let nextPage = '/uploads'
+      if ([UploadStatus.Failed, UploadStatus.Invalid].includes(upload.status)) {
+        nextPage = upload.uri
+      }
+
+      saveAndRedirect(request, response, nextPage)
     }
   },
 
