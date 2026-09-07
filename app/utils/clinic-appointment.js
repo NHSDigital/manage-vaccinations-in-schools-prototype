@@ -7,13 +7,7 @@ import {
   ReplyDecision,
   ClinicBookingJourneyType
 } from '../enums.js'
-import {
-  ClinicAppointment,
-  ClinicBooking,
-  Patient,
-  Programme,
-  Session
-} from '../models.js'
+import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getLocationSearchType } from './geolocation.js'

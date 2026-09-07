@@ -369,8 +369,10 @@ export class ClinicAppointment {
    * @returns {Array} Health questions
    */
   getHealthQuestionsForSelectedProgrammes(programmeContext) {
+    const selectedProgrammes = this.#getSelectedProgrammes(programmeContext)
+
     const vaccinesForSelectedProgrammes = []
-    for (const programme of this.#getSelectedProgrammes(programmeContext)) {
+    for (const programme of selectedProgrammes) {
       let agreedProgrammeVaccines = Object.values(
         programmeContext.vaccines
       ).filter((vaccine) => vaccine.type === programme.type)
@@ -405,6 +407,21 @@ export class ClinicAppointment {
     for (const vaccine of vaccinesForSelectedProgrammes) {
       for (const [key, value] of Object.entries(vaccine.healthQuestions)) {
         questions.set(key, value)
+      }
+    }
+
+    const patient = this.patient
+    if (patient) {
+      for (const programme of selectedProgrammes) {
+        const patientProgramme = patient.programmes[programme.id]
+        const consentHealthAnswers =
+          patientProgramme?.consentHealthAnswers ?? {}
+
+        for (const [key, answers] of Object.entries(consentHealthAnswers)) {
+          if (answers.length > 0) {
+            questions.delete(key)
+          }
+        }
       }
     }
 
