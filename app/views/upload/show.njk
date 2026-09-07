@@ -5,6 +5,12 @@
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set programme = data.programmes[upload.programme_id] %}
+{% set reviewType = "submit" if account.isSchoolUser else "approve" %}
+{% if account.isSchoolUser %}
+  {% set needsReview = upload.status == UploadStatus.Review %}
+{% else %}
+  {% set needsReview = upload.status in [UploadStatus.Submitted, UploadStatus.Review] %}
+{% endif %}
 {% if upload.requiresReview %}
   {% set title = __("upload.show.requiresReviewTitle", upload.formatted.createdAt) %}
 {% else %}
@@ -81,7 +87,7 @@
     {% if upload.type != UploadType.Report and upload.moves.length %}
       {% include "upload/_school-moves.njk" %}
     {% endif %}
-  {% elif upload.status == UploadStatus.Approved %}
+  {% elif upload.status in [UploadStatus.Submitted, UploadStatus.Approved] %}
     {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
     {% if pendingRecords.length %}
       {% include "upload/_pending-records.njk" %}
@@ -151,22 +157,22 @@
     {% include "upload/_failed-records.njk" %}
   {% endif %}
 
-  {% if upload.patients.length > 0 and upload.status == UploadStatus.Review %}
+  {% if upload.patients.length > 0 and needsReview %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
       buttons: [
         {
-          text: __("upload.approve.confirm"),
+          text: __("upload." + reviewType + ".confirm"),
           attributes: {
-            formaction: upload.uri + "/approve"
+            formaction: upload.uri + "/" + reviewType
           }
         },
         {
           text: __("upload.reject.confirm"),
           href: upload.uri + "/reject",
           variant: "warning"
-        } if not upload.createdBy.isSchoolUser,
+        } if not account.isSchoolUser,
         {
           text: __("upload.delete.confirm"),
           variant: "secondary",
