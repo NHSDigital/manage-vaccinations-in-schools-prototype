@@ -26,7 +26,6 @@ export function generateUpload(
   const status = faker.helpers.weightedArrayElement([
     { value: UploadStatus.Invalid, weight: 1 },
     { value: UploadStatus.Failed, weight: 1 },
-    { value: UploadStatus.Devoid, weight: 1 },
     { value: UploadStatus.Review, weight: 10 },
     { value: UploadStatus.Approved, weight: 8 }
   ])
@@ -53,9 +52,6 @@ export function generateUpload(
       break
     case UploadStatus.Failed:
       hasFailed = true
-      break
-    case UploadStatus.Devoid:
-      patient_uuids = []
       break
     case UploadStatus.Approved:
       updatedAt = new Date(createdAt.getTime() + 72 * 60000)
