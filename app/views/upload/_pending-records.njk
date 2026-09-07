@@ -79,10 +79,9 @@
     },
     {
       html: archiveRadios if upload.status == UploadStatus.Review else archiveDecision
-    } if loop.first,
-    {
+    } if loop.first else {
       html: duplicateRadios if upload.status == UploadStatus.Review else duplicateDecision
-    } if not loop.first
+    }
   ]) %}
 {% endfor %}
 
