@@ -3664,10 +3664,6 @@ export const en = {
     invalid: {
       title: 'Records could not be uploaded'
     },
-    devoid: {
-      title: 'No new records',
-      description: 'All records in this file have already been uploaded'
-    },
     failed: {
       title: 'Too many records could not be matched',
       description:

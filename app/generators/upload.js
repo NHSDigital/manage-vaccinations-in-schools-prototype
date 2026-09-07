@@ -24,17 +24,11 @@ export function generateUpload(
   const fileName = `${prototypeFilters.slugify(type)}-${faker.number.int(5)}.csv`
 
   const status = faker.helpers.weightedArrayElement([
-    { value: UploadStatus.Devoid, weight: 1 },
     { value: UploadStatus.Invalid, weight: 1 },
     { value: UploadStatus.Failed, weight: 1 },
     { value: UploadStatus.Review, weight: 10 },
     { value: UploadStatus.Approved, weight: 8 }
   ])
-
-  // Devoid upload
-  if (status === UploadStatus.Devoid) {
-    patient_uuids = []
-  }
 
   let hasFailed
   let validations
@@ -58,9 +52,6 @@ export function generateUpload(
       break
     case UploadStatus.Failed:
       hasFailed = true
-      break
-    case UploadStatus.Devoid:
-      patient_uuids = []
       break
     case UploadStatus.Approved:
       updatedAt = new Date(createdAt.getTime() + 72 * 60000)

@@ -97,17 +97,6 @@
     }) }}
   {% endif %}
 
-  {{ card({
-    feature: true,
-    heading: {
-      text: __("upload.devoid.title"),
-      classes: "app-card__heading--grey",
-      level: 2,
-      size: "m"
-    },
-    description: __("upload.devoid.description")
-  }) if upload.status == UploadStatus.Devoid }}
-
   {% if upload.status == UploadStatus.Invalid %}
     {% call card({
       feature: true,

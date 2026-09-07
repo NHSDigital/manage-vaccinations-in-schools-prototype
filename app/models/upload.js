@@ -96,8 +96,6 @@ export class Upload extends BaseModel {
     switch (true) {
       case Object.keys(this.validations).length > 0:
         return UploadStatus.Invalid
-      case this.patient_uuids.length === 0:
-        return UploadStatus.Devoid
       case this.hasFailed === true:
         return UploadStatus.Failed
       case this.isApproved === true:

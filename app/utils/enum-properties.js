@@ -76,7 +76,6 @@ const SCREEN_STATUS_COLOURS = {
 const UPLOAD_STATUS_COLOURS = {
   [UploadStatus.Approved]: 'green',
   [UploadStatus.Review]: 'blue',
-  [UploadStatus.Devoid]: 'grey',
   [UploadStatus.Failed]: 'red',
   [UploadStatus.Invalid]: 'red'
 }
