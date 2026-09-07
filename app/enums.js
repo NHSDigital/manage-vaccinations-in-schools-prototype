@@ -843,7 +843,8 @@ export const UploadStatus = {
   Processing: 'Processing',
   Failed: 'Failed',
   Invalid: 'Invalid',
-  Review: 'Review and approve',
+  Review: 'Needs review',
+  Submitted: 'Submitted for approval',
   Approved: 'Approved',
   Rejected: 'Rejected'
 }

@@ -3533,6 +3533,10 @@ export const en = {
       confirm: 'Approve and upload records',
       success: 'Upload approved'
     },
+    submit: {
+      confirm: 'Submit records',
+      success: 'Records submitted'
+    },
     reject: {
       title: 'Reject uploaded class list',
       description: 'Confirm you would like to reject this class list',
@@ -3570,12 +3574,14 @@ export const en = {
         label: {
           [UploadStatus.Review]: 'Changes to review',
           [UploadStatus.Rejected]: 'Changes reviewed',
+          [UploadStatus.Submitted]: 'Changes reviewed',
           [UploadStatus.Approved]: 'Changes reviewed'
         },
         title: {
           [UploadStatus.Review]:
             'Close matches to existing records – need review',
           [UploadStatus.Rejected]: 'Close matches to existing records',
+          [UploadStatus.Submitted]: 'Issues resolved for this upload',
           [UploadStatus.Approved]: 'Issues resolved for this upload'
         },
         count: {
@@ -3583,6 +3589,8 @@ export const en = {
             '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
           [UploadStatus.Rejected]:
             '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
+          [UploadStatus.Submitted]:
+            '{count, plural, =0 {No upload issues} one {1 upload issue} other {# upload issues}}',
           [UploadStatus.Approved]:
             '{count, plural, =0 {No upload issues} one {1 upload issue} other {# upload issues}}'
         },
@@ -3591,6 +3599,8 @@ export const en = {
             'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
           [UploadStatus.Rejected]:
             'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
+          [UploadStatus.Submitted]:
+            '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed',
           [UploadStatus.Approved]:
             '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed'
         },
@@ -3632,6 +3642,7 @@ export const en = {
       moves: {
         title: {
           [UploadStatus.Review]: 'School moves – need review',
+          [UploadStatus.Submitted]: 'School moves submitted for this upload',
           [UploadStatus.Approved]: 'School moves resolved for this upload'
         },
         count:

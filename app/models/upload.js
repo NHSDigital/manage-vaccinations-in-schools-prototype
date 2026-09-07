@@ -68,13 +68,28 @@ export class Upload extends BaseModel {
   }
 
   /**
+   * Upload is processed
+   * An upload is processed if approved/reject or was recently submitted by a
+   * school administrator
+   *
+   * @returns {boolean} Upload is processed
+   */
+  get isProcessed() {
+    return (
+      Object.keys(this.validations).length > 0 ||
+      this.isApproved !== undefined ||
+      this.updatedBy?.isSchoolUser
+    )
+  }
+
+  /**
    * Get upload progress
    * Fake this by getting number of seconds since upload created
    *
    * @returns {number} Progress
    */
   get progress() {
-    if (this.isApproved !== undefined) {
+    if (this.isProcessed) {
       return 100
     }
 
@@ -100,6 +115,8 @@ export class Upload extends BaseModel {
         return UploadStatus.Invalid
       case this.hasFailed === true:
         return UploadStatus.Failed
+      case this.updatedBy?.isSchoolUser:
+        return UploadStatus.Submitted
       case this.isApproved === true:
         return UploadStatus.Approved
       case this.isApproved === false:

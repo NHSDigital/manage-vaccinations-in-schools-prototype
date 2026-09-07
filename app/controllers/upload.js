@@ -26,9 +26,24 @@ export const uploadController = {
     const { data } = request.session
     const { account } = response.locals
 
-    let uploads = Upload.findAll(data).filter(
-      (upload) => upload.createdBy.team_id === account.team_id
-    )
+    let uploads = Upload.findAll(data).filter((upload) => {
+      // School admins can only see uploads from other users in their team
+      if (account.isSchoolUser) {
+        return upload.createdBy.team_id === account.team_id
+      }
+
+      // SAIS teams can only see uploads from other users in their team
+      // and uploads from other teams that have been submitted for approval
+      // and approved or rejected
+      return (
+        upload.createdBy.team_id === account.team_id ||
+        [
+          UploadStatus.Submitted,
+          UploadStatus.Approved,
+          UploadStatus.Rejected
+        ].includes(upload.status)
+      )
+    })
 
     if (account.isSchoolUser) {
       uploads = uploads.filter((upload) => upload.type === UploadType.School)
@@ -284,26 +299,29 @@ export const uploadController = {
   },
 
   /**
-   * @type {RequestHandler<Record<string, string>>}
+   * @param {string} type - Form type
+   * @returns {RequestHandler<Record<string, string>>} Request handler
    */
-  approve(request, response) {
-    const { upload_id } = request.params
-    const { data } = request.session
-    const { __, account } = response.locals
+  review(type) {
+    return (request, response) => {
+      const { upload_id } = request.params
+      const { data } = request.session
+      const { __, account } = response.locals
 
-    Upload.update(
-      upload_id,
-      {
-        updatedAt: new Date(),
-        updatedBy_uid: account.uid,
-        isApproved: true
-      },
-      data
-    )
+      Upload.update(
+        upload_id,
+        {
+          updatedAt: new Date(),
+          updatedBy_uid: account.uid,
+          ...(type === 'approve' && { isApproved: true })
+        },
+        data
+      )
 
-    request.flash('success', __('upload.approve.success'))
+      request.flash('success', __(`upload.${type}.success`))
 
-    return saveAndRedirect(request, response, '/uploads')
+      return saveAndRedirect(request, response, '/uploads')
+    }
   },
 
   /**
