@@ -491,19 +491,12 @@ export class Session extends BaseModel {
    * @returns {number} - the number of slots consumed by the appointment
    */
   calculateSlotCount(appointmentProperties) {
-    const programme_ids = appointmentProperties.selected_programme_ids
     const isFluNasal =
       appointmentProperties.fluDecision !==
       ReplyDecision.OnlyAlternativeInjection
 
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
     if (this.isFluOnlyClinic) {
-      if (!programme_ids.includes('flu')) {
-        throw new Error(
-          'An appointment without flu has been made in a flu-only clinic'
-        )
-      }
-
       return isFluNasal ? 1 : this.slotCountForLongAppointment
     }
 
@@ -511,6 +504,7 @@ export class Session extends BaseModel {
     // this case, we'd expressly don't count a nasal flu vaccination, as teams can usually squeeze
     // it in.
     let injectionCount = 0
+    const programme_ids = appointmentProperties.selected_programme_ids
     if (programme_ids.includes('flu') && !isFluNasal) {
       injectionCount++
     }

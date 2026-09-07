@@ -46,14 +46,12 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  *
  * @param {object} context - the data context for the models to check
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
- * @param {ClinicAppointment} appointment - the appointment that we want to book (can be null if not created yet)
  * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
   vaccinationChoices,
-  appointment,
   requiresStockingPeriod
 ) => {
   const scheduledClinics = Session.findAll(context).filter(
@@ -62,8 +60,7 @@ export const getBookableClinicSessions = (
       session.status === SessionStatus.Planned &&
       session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
-      (!appointment ||
-        session.bookableSlotStartTimesFor(vaccinationChoices).length > 0)
+      session.bookableSlotStartTimesFor(vaccinationChoices).length > 0
   )
 
   return scheduledClinics
@@ -87,7 +84,6 @@ export const getBookableClinicLocationItems = (
   const scheduledClinics = getBookableClinicSessions(
     context,
     appointment.vaccinationChoices,
-    appointment,
     requiresStockingPeriod
   )
   const sessionsByLocation = _.groupBy(
@@ -132,7 +128,6 @@ export const getBookableClinicDateItems = (
     getBookableClinicSessions(
       context,
       appointment.vaccinationChoices,
-      appointment,
       requiresStockingPeriod
     ).filter((session) => session.clinic_id === clinic_id),
     'date'

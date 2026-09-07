@@ -128,7 +128,6 @@ export const getAllAppointmentPaths = (
             getBookableClinicSessions(
               sessionData,
               vaccinationChoices,
-              appointment,
               isParentJourney
             ).length === 0
           )
@@ -197,7 +196,6 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    appointment,
                     isParentJourney
                   ).length === 0
                 )
@@ -209,7 +207,6 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    appointment,
                     isParentJourney
                   ).length === 0
                 )
@@ -230,7 +227,6 @@ export const getAllAppointmentPaths = (
                       getBookableClinicSessions(
                         sessionData,
                         appointment.vaccinationChoices,
-                        appointment,
                         isParentJourney
                       ).length === 0
                     )
@@ -242,7 +238,6 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    appointment,
                     isParentJourney
                   ).length === 0
                 )
