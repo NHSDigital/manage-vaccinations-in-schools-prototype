@@ -419,41 +419,6 @@ const getHealthQuestionPathsForAppointment = (
 }
 
 /**
- * Get health question paths for given vaccines
- *
- * @param {string} pathPrefix - Path prefix
- * @param {string} booking_uuid - clinic booking identifier, for access to all appointments
- * @param {object} bookingContext - the data context holding the booking and appointments
- * @param {object} programmeContext - the data context holding the programme and vaccine info
- * @returns {object} Health question paths
- */
-const getHealthQuestionPathsForBooking = (
-  pathPrefix,
-  booking_uuid,
-  bookingContext,
-  programmeContext
-) => {
-  const paths = {}
-
-  const booking = ClinicBooking.findOne(booking_uuid, bookingContext)
-  if (!booking) {
-    return paths
-  }
-
-  for (const appointment of booking.appointments) {
-    const appointmentPaths = getHealthQuestionPathsForAppointment(
-      pathPrefix,
-      appointment,
-      programmeContext
-    )
-
-    Object.assign(paths, appointmentPaths)
-  }
-
-  return paths
-}
-
-/**
  * Get a set of radio items to offer the user when entering address details of
  * the 2nd and subsequent children
  *
