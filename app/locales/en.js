@@ -3262,6 +3262,13 @@ export const en = {
       label: 'Programmes',
       title: 'Which programmes will you run in this session?'
     },
+    catchUps: {
+      label: 'Allow catch-ups?',
+      title:
+        'Do you want to allow catch-up vaccinations as well as the targeted {count, plural, one {programme} other {programmes}}?',
+      yes: 'Yes',
+      no: 'No, this clinic is only for {{selectedProgrammeNames}}'
+    },
     status: {
       label: 'Status'
     },

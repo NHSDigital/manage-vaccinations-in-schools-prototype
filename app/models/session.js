@@ -74,6 +74,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasRegistration] - Session has registration?
  *
  *   Clinics only
+ * @property {boolean} [canVaccinateForOtherProgrammes] - allow programmes beyond those targeted to be administered?
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [slotLength] - the default length of an appointment, in minutes; for flu-only clinics, this is the nasal spray length
  * @property {number} [slotCountForLongAppointment] - the default number of slots covered by a longer appointment i.e. injected flu or multiple injections
@@ -143,6 +144,9 @@ export class Session extends BaseModel {
     this.register = options?.register || {}
 
     if (this.type === SessionType.Clinic) {
+      this.canVaccinateForOtherProgrammes = stringToBoolean(
+        options?.canVaccinateForOtherProgrammes
+      )
       this.vaccinationPeriods = options?.vaccinationPeriods
         ? options.vaccinationPeriods.map(
             (period) => new ClinicVaccinationPeriod(period)
@@ -1143,20 +1147,9 @@ export class Session extends BaseModel {
     // FUTURE: also consider IM vs. nasal for specific flu clinics, or lack of gelatine content for
     // specific communities
 
-    // At least one of the session's programmes needs to be selected
-    if (!selected_programme_ids.some((id) => this.programme_ids.includes(id))) {
-      return false
-    }
-
-    // Due to attendance volumes, flu clinics can't cater for additional vaccinations
-    if (this.isFluOnlyClinic) {
-      return (
-        selected_programme_ids.length === 1 &&
-        selected_programme_ids[0] === 'flu'
-      )
-    }
-
-    return true
+    return this.canVaccinateForOtherProgrammes
+      ? selected_programme_ids.some((id) => this.programme_ids.includes(id))
+      : selected_programme_ids.every((id) => this.programme_ids.includes(id))
   }
 
   /**
@@ -1319,6 +1312,8 @@ export class Session extends BaseModel {
                 : undefined
             case 'programmes':
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
+            case 'catchUps':
+              return this.canVaccinateForOtherProgrammes
             case 'consentUrl':
               return (
                 this.consentUrl &&

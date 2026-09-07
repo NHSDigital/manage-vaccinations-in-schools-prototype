@@ -69,6 +69,7 @@ export function generateSession(preset, user, options) {
     consentOpenAt = removeDays(date, TeamDefaults.SessionOpenWeeks * 7)
   }
 
+  const canVaccinateForOtherProgrammes = preset.name !== SessionPresetName.Flu
   let slotLength, slotCountForLongAppointment
   if (clinic_id) {
     if (preset.name === SessionPresetName.Flu) {
@@ -95,6 +96,7 @@ export function generateSession(preset, user, options) {
     presetNames: [preset.name],
     ...(clinic_id && {
       type: SessionType.Clinic,
+      canVaccinateForOtherProgrammes,
       clinic_id,
       slotLength,
       slotCountForLongAppointment

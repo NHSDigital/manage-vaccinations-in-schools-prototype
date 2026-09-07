@@ -860,6 +860,7 @@ export const sessionController = {
               [`/${session_id}/${type}/date`]: {}
             }
           : {
+              [`/${session_id}/${type}/catch-ups`]: {},
               [`/${session_id}/${type}/clinic`]: {},
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
