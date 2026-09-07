@@ -292,6 +292,14 @@ export const getAllAppointmentPaths = (
             [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
           }
         : {}),
+      // For each child being booked in, and their selected vaccinations, ask the
+      // relevant health questions and impairments/adjustments questions
+      ...getHealthQuestionPaths(
+        `/${booking_uuid}/new/`,
+        booking_uuid,
+        sessionData.wizard,
+        sessionData
+      ),
 
       // Parent contact details
       ...(!isParentJourney
