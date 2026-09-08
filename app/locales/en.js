@@ -2461,6 +2461,12 @@ export const en = {
       label: 'Local authorities',
       title: 'Local authorities'
     },
+    'consent-terms': {
+      title: 'Terms used in consent report'
+    },
+    'vaccinations-terms': {
+      title: 'Terms used in vaccinations report'
+    },
     search: {
       label: 'Filter data'
     },
