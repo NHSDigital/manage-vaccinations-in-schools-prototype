@@ -20,13 +20,13 @@
   }) if not account.isSchoolUser }}
 
   <div class="nhsuk-grid-row">
-    <app-auto-submit class="app-grid-column-filters">
+    <div class="app-grid-column-filters">
       {{ appPatientSearch({
         clear: "/patients",
         hideClinicStatuses: account.isSchoolUser,
         hideProgrammeStatuses: account.isSchoolUser
       }) }}
-    </app-auto-submit>
+    </div>
 
     <div class="app-grid-column-results">
       {% if initial %}

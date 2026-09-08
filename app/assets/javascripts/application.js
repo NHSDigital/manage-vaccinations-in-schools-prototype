@@ -17,11 +17,9 @@ import {
 import { Autocomplete } from './components/autocomplete.js'
 import { Sticky } from './components/sticky.js'
 import { AddAnotherComponent } from './custom-elements/add-another.js'
-import { AutoSubmitComponent } from './custom-elements/auto-submit.js'
 
 // Register custom elements
 customElements.define('app-add-another', AddAnotherComponent)
-customElements.define('app-auto-submit', AutoSubmitComponent)
 
 // Initiate NHS.UK frontend components on page load
 document.addEventListener('DOMContentLoaded', () => {

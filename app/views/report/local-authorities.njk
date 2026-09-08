@@ -15,11 +15,11 @@
   }) }}
 
   <div class="nhsuk-grid-row">
-    <app-auto-submit class="nhsuk-grid-column-one-quarter">
+    <div class="nhsuk-grid-column-one-quarter">
       {{ appReportSearch({
         clear: "/reports/local-authorities"
       }) }}
-    </app-auto-submit>
+    </div>
 
     <div class="nhsuk-grid-column-three-quarters">
       {{ __("report.list.updated", today) | nhsukMarkdown }}
