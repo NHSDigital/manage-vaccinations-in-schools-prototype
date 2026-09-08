@@ -20,7 +20,7 @@
   }) if not account.isSchoolUser }}
 
   <div class="nhsuk-grid-row">
-    <div class="app-grid-column-filters">
+    <div class="nhsuk-grid-column-one-third">
       {{ appPatientSearch({
         clear: "/patients",
         hideClinicStatuses: account.isSchoolUser,
@@ -28,7 +28,7 @@
       }) }}
     </div>
 
-    <div class="app-grid-column-results">
+    <div class="nhsuk-grid-column-two-thirds">
       {% if initial %}
         {{ heading({
           caption: {
