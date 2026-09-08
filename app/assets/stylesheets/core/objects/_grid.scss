@@ -1,15 +1,12 @@
 @use "../../vendor/nhsuk-frontend" as *;
 
 // Sticky columns
-.nhsuk-grid-column-one-third {
+[class^="app-grid-column"],
+[class^="nhsuk-grid-column"] {
   @include nhsuk-media-query($from: desktop) {
     &[data-app-sticky-init] {
       position: sticky;
       top: 0;
-    }
-
-    .nhsuk-card--feature {
-      margin-top: nhsuk-spacing(3);
     }
   }
 }
@@ -28,4 +25,11 @@
       top: #{nhsuk-spacing(9) + nhsuk-spacing(5)};
     }
   }
+}
+
+// Adjust margin for feature cards that are immediate siblings of a grid column
+[class^="nhsuk-grid-column"] .nhsuk-card--feature.app-filters,
+[class^="nhsuk-grid-column"] > .nhsuk-card--feature,
+[class^="nhsuk-grid-column"] > .nhsuk-card--warning {
+  margin-top: nhsuk-spacing(3);
 }
