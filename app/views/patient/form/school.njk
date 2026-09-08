@@ -5,11 +5,9 @@
 {% block form %}
   {{ select({
     label: {
-      html: heading({
-        caption: patient.fullName,
-        text: title,
-        size: "l"
-      })
+      caption: patient.fullName,
+      heading: title,
+      size: "l"
     },
     items: locationItems(data.schools, patient.school_id),
     decorate: "patient.school_id",

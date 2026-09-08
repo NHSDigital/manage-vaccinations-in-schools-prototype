@@ -5,11 +5,9 @@
 {% block form %}
   {{ input({
     label: {
-      html: heading({
-        caption: vaccination.patient.fullName,
-        text: title,
-        size: "l"
-      })
+      caption: vaccination.patient.fullName,
+      heading: title,
+      size: "l"
     },
     suffix: "ml",
     width: 5,
@@ -17,11 +15,9 @@
   }) if vaccination.vaccine.criteria != VaccineCriteria.Intranasal else radios({
     fieldset: {
       legend: {
-        html: heading({
-          caption: vaccination.patient.fullName,
-          text: __("vaccination.dosage.title"),
-          size: "l"
-        })
+        caption: vaccination.patient.fullName,
+        heading: __("vaccination.dosage.title"),
+        size: "l"
       }
     },
     items: [

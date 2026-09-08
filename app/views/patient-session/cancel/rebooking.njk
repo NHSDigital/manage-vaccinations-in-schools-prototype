@@ -6,11 +6,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: heading({
-          caption: appointmentSummary,
-          text: title,
-          size: "l"
-        })
+        caption: appointmentSummary,
+        heading: title,
+        size: "l"
       }
     },
     hint: __mf("patientSession.clinicAppointment.cancel.rebooking.hint", {

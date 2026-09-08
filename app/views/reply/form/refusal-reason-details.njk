@@ -5,11 +5,9 @@
 {% block form %}
   {{ textarea({
     label: {
-      html: heading({
-        caption: reply.patient.fullName,
-        text: title,
-        size: "l"
-      })
+      caption: reply.patient.fullName,
+      heading: title,
+      size: "l"
     },
     decorate: "reply.refusalReasonDetails"
   }) }}

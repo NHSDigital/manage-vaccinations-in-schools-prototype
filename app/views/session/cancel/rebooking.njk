@@ -6,11 +6,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: heading({
-          caption: session.shortName,
-          text: title,
-          size: "l"
-        })
+        caption: session.shortName,
+        heading: title,
+        size: "l"
       }
     },
     hint: __mf("session.cancel.rebooking.hint", { count: 0 }),

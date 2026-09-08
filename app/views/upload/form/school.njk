@@ -5,8 +5,7 @@
 {% block form %}
   {{ select({
     label: {
-      isPageHeading: true,
-      text: title,
+      heading: title,
       size: "l"
     },
     items: locationItems(data.schools, upload.school_id),

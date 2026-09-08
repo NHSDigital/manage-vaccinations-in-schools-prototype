@@ -46,8 +46,7 @@
   {{ radios({
     fieldset: {
       legend: {
-        isPageHeading: true,
-        text: __("consent.child.ethnicBackground.title", consent.child.ethnicGroup) | replace("Mixed", "mixed") | replace(EthnicGroup.Other, ""),
+        heading: __("consent.child.ethnicBackground.title", consent.child.ethnicGroup) | replace("Mixed", "mixed") | replace(EthnicGroup.Other, ""),
         size: "l"
       }
     },
