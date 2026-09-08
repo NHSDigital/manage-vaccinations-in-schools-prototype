@@ -16,14 +16,12 @@
         text: __("vaccine.show.summary"),
         size: "m"
       },
-      actions: {
-        items: [
-          {
-            text: __("vaccine.show.delete"),
-            href: vaccine.uri + "/delete"
-          }
-        ]
-      }
+      actions: [
+        {
+          text: __("vaccine.show.delete"),
+          href: vaccine.uri + "/delete"
+        }
+      ]
     },
     lastRowBorder: false,
     rows: summaryRows(vaccine, {

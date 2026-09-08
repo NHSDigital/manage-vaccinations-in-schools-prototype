@@ -40,14 +40,12 @@
         text: __("upload.show.summary"),
         size: "m"
       },
-      actions: {
-        items: [
-          {
-            text: __("upload.removeRelationships.label"),
-            href: upload.uri + "/bulk-remove-relationships"
-          }
-        ]
-      } if upload.status == UploadStatus.Approved and upload.type != UploadType.Report
+      actions: [
+        {
+          text: __("upload.removeRelationships.label"),
+          href: upload.uri + "/bulk-remove-relationships"
+        }
+      ] if upload.status == UploadStatus.Approved and upload.type != UploadType.Report
     },
     lastRowBorder: false,
     rows: summaryRows(upload, {
