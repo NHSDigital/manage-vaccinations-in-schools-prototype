@@ -1659,7 +1659,11 @@ export const en = {
   healthAnswers: {
     label: 'Answers to health questions',
     count:
-      'Answers to health questions{count, plural, =0 {} one {, including 1 Yes response} other {, including # Yes responses}}'
+      'Answers to health questions{count, plural, =0 {} one {, including 1 Yes response} other {, including # Yes responses}}',
+    unanswered: {
+      title: 'Unanswered health questions',
+      intro: 'The following health questions must be asked before vaccination:'
+    }
   },
   healthQuestions,
   home: {

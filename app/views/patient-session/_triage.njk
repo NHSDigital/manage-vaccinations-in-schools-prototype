@@ -16,6 +16,19 @@
   rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
 }) if patientProgramme.consentHealthAnswers }}
 
+{# Unanswered health questions #}
+{% if options.needsTriage and not patientProgramme.consentHealthAnswers %}
+  {% set warningHtml %}
+    {{ __("healthAnswers.unanswered.intro") | nhsukMarkdown }}
+
+    {{ patientProgramme.vaccine.formatted.healthQuestions | nhsukMarkdown }}
+  {% endset %}
+  {{ warningCallout({
+    heading: __("healthAnswers.unanswered.title"),
+    html: warningHtml
+  }) }}
+{% endif %}
+
 {# Triage #}
 {% call card({
   heading: {
@@ -25,16 +38,6 @@
 }) %}
   {# Description #}
   {{ patientProgramme.screenDescription | nhsukMarkdown }}
-
-  {% if options.needsTriage and not patientProgramme.consentHealthAnswers %}
-    {{ heading({
-      text: __("vaccine.healthQuestions.label"),
-      level: 3,
-      size: "s"
-    }) }}
-
-    {{ patientProgramme.vaccine.formatted.healthQuestions | nhsukMarkdown }}
-  {% endif %}
 
   {# Actions #}
   {{ actionLink({
