@@ -40,14 +40,12 @@
           text: __("vaccination.show.summary"),
           size: "m"
         },
-        actions: {
-          items: [
-            {
-              text: __("vaccination.edit.title"),
-              href: vaccination.uri + "/edit"
-            }
-          ]
-        }
+        actions: [
+          {
+            text: __("vaccination.edit.title"),
+            href: vaccination.uri + "/edit"
+          }
+        ]
       },
       lastRowBorder: false,
       rows: summaryRows(vaccination, {

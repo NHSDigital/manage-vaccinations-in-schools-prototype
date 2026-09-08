@@ -339,18 +339,16 @@ export default () => {
 
       summaryRows.push({
         border: undefined,
-        key: { text: keyText },
+        key: keyText,
         value: { html },
         ...(edit && {
-          actions: {
-            items: [
-              {
-                href: edit.replace(`{{key}}`, camelToKebabCase(key)),
-                text: 'Change',
-                visuallyHiddenText: healthQuestions[key].label
-              }
-            ]
-          }
+          actions: [
+            {
+              href: edit.replace(`{{key}}`, camelToKebabCase(key)),
+              text: 'Change',
+              visuallyHiddenText: healthQuestions[key].label
+            }
+          ]
         })
       })
     }
@@ -617,23 +615,19 @@ export default () => {
 
         summaryRows.push({
           border: true,
-          key: {
-            text: label
-          },
+          key: label,
           value: {
             classes: rows[key]?.classes,
             html: value ? String(value) : fallbackValue
           },
           actions: href &&
-            value && {
-              items: [
-                {
-                  href,
-                  text: changeText,
-                  visuallyHiddenText: changeLabel
-                }
-              ]
-            }
+            value && [
+              {
+                href,
+                text: changeText,
+                visuallyHiddenText: changeLabel
+              }
+            ]
         })
       }
     }

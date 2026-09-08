@@ -39,12 +39,8 @@
         {% set summaryRows = [] %}
         {% for field in item.updatedFields %}
           {% set summaryRows = summaryRows | push({
-            key: {
-              text: __(field.key)
-            },
-            value: {
-              text: appChange(field.before | safe, field.after | safe)
-            }
+            key: __(field.key),
+            value: appChange(field.before | safe, field.after | safe)
           }) %}
         {% endfor %}
         {{ details({
