@@ -15,10 +15,10 @@
     },
     items: [
       {
-        label: LocationType.Home
+        text: LocationType.Home
       },
       {
-        label: LocationType.Clinic,
+        text: LocationType.Clinic,
         conditional: {
           html: select({
             label: __("vaccination.clinic_id.title"),
@@ -31,7 +31,7 @@
         }
       },
       {
-        label: LocationType.School,
+        text: LocationType.School,
         conditional: {
           html: select({
             label: __("vaccination.school_id.title"),
@@ -47,7 +47,7 @@
         divider: "or"
       },
       {
-        label: LocationType.Other,
+        text: LocationType.Other,
         hint: __("vaccination.locationOther.hint")
       }
     ],
