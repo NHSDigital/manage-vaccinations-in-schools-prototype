@@ -127,32 +127,6 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Get status
-   *
-   * @returns {UploadStatus} Status
-   */
-  get status() {
-    if (this.progress < 100) {
-      return UploadStatus.Processing
-    }
-
-    switch (true) {
-      case this.validations:
-        return UploadStatus.Invalid
-      case this.patient_uuids.length === 0:
-        return UploadStatus.Devoid
-      case this.hasFailed === true:
-        return UploadStatus.Failed
-      case this.isApproved === true:
-        return UploadStatus.Approved
-      case this.isApproved === false:
-        return UploadStatus.Rejected
-      default:
-        return UploadStatus.Review
-    }
-  }
-
-  /**
    * Get uploaded patient records
    *
    * @returns {Array<Patient>} Records
