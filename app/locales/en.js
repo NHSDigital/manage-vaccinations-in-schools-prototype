@@ -865,6 +865,11 @@ export const en = {
       yes: 'Yes, answer the health questions now',
       no: 'No, I’ll do it later'
     },
+    teamHealthQuestions: {
+      title: 'Are you able to answer the health questions now?',
+      yes: 'Yes, answer the health questions now',
+      no: 'No, I’ll ask the parent later'
+    },
     healthAnswers: {
       label: 'Answers to health questions',
       yes: 'Yes',

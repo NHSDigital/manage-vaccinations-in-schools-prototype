@@ -7,13 +7,7 @@ import {
   ReplyDecision,
   ClinicBookingJourneyType
 } from '../enums.js'
-import {
-  ClinicAppointment,
-  ClinicBooking,
-  Patient,
-  Programme,
-  Session
-} from '../models.js'
+import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getLocationSearchType } from './geolocation.js'
@@ -154,14 +148,6 @@ export const getAllAppointmentPaths = (
           }
         : {}),
 
-      // Ask for additional support needs early during SAIS journey, as it can affect appointment length
-      ...(!isParentJourney
-        ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
-          }
-        : {}),
-
       // Clinic location preference
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
@@ -255,19 +241,10 @@ export const getAllAppointmentPaths = (
                   ).length === 0
                 )
               },
-              [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
-                () => {
-                  const patient = appointment.patient
-                  if (!patient) return false
-
-                  return patient.contacts?.length > 0
-                },
-              [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-                const patient = appointment.patient
-                if (!patient) return false
-
-                return patient.contacts?.length === 0
-              }
+              [`/${booking_uuid}/new/${appointment_uuid}/child`]: () =>
+                isParentJourney,
+              [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
+                () => !isParentJourney
             }
           }
         : {}),
@@ -287,11 +264,40 @@ export const getAllAppointmentPaths = (
                     }
                 }
               : {}),
-            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {}
           }
-        : {}),
+        : {
+            [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
+              {
+                [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
+                  () => {
+                    if (
+                      sessionData.journeyData.optedIntoHealthQuestions ===
+                      'true'
+                    ) {
+                      return false
+                    }
+
+                    return appointment.patient.contacts?.length > 0
+                  },
+                [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
+                  if (
+                    sessionData.journeyData.optedIntoHealthQuestions === 'true'
+                  ) {
+                    return false
+                  }
+
+                  return appointment.patient.contacts?.length === 0
+                }
+              }
+          }),
+      ...getHealthQuestionPathsForAppointment(
+        `/${booking_uuid}/new/`,
+        appointment,
+        sessionData
+      ),
+      [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {},
 
       // Parent contact details
       ...(!isParentJourney
@@ -353,70 +359,61 @@ const getHealthQuestionPath = (key, appointment, pathPrefix) => {
 }
 
 /**
- * Get health question paths for given vaccines
+ * Get health question paths for the given appointment
  *
  * @param {string} pathPrefix - Path prefix
- * @param {string} booking_uuid - clinic booking identifier, for access to all appointments
- * @param {object} bookingContext - the data context holding the booking and appointments
+ * @param {ClinicAppointment} appointment - the appointment whose questions we're after
  * @param {object} programmeContext - the data context holding the programme and vaccine info
  * @returns {object} Health question paths
  */
-export const getHealthQuestionPaths = (
+const getHealthQuestionPathsForAppointment = (
   pathPrefix,
-  booking_uuid,
-  bookingContext,
+  appointment,
   programmeContext
 ) => {
   const paths = {}
 
-  const booking = ClinicBooking.findOne(booking_uuid, bookingContext)
-  if (!booking) {
-    return paths
-  }
+  const healthQuestions = Object.entries(
+    appointment.getHealthQuestionsForSelectedProgrammes(programmeContext)
+  )
 
-  for (const appointment of booking.appointments) {
-    const healthQuestions = Object.entries(
-      appointment.getHealthQuestionsForSelectedProgrammes(programmeContext)
-    )
+  healthQuestions.forEach(([key, question], index) => {
+    const questionPath = getHealthQuestionPath(key, appointment, pathPrefix)
 
-    healthQuestions.forEach(([key, question], index) => {
-      const questionPath = getHealthQuestionPath(key, appointment, pathPrefix)
+    if (question.conditional) {
+      const nextQuestion = healthQuestions[index + 1]
+      if (nextQuestion) {
+        const forkPath = getHealthQuestionPath(
+          nextQuestion[0],
+          appointment,
+          pathPrefix
+        )
 
-      if (question.conditional) {
-        const nextQuestion = healthQuestions[index + 1]
-        if (nextQuestion) {
-          const forkPath = getHealthQuestionPath(
-            nextQuestion[0],
-            appointment,
-            pathPrefix
-          )
-
-          paths[questionPath] = {
-            [forkPath]: {
-              data: `appointment.healthAnswers.${key}.answer`,
-              value: 'No'
-            }
+        paths[questionPath] = {
+          [forkPath]: {
+            data: `appointment.healthAnswers.${key}.answer`,
+            value: 'No'
           }
-        } else {
-          paths[questionPath] = {}
-        }
-
-        // Add paths for conditional sub-questions
-        for (const subKey of Object.keys(question.conditional)) {
-          const subQuestionPath = getHealthQuestionPath(
-            subKey,
-            appointment,
-            pathPrefix
-          )
-          paths[subQuestionPath] = {}
         }
       } else {
         paths[questionPath] = {}
       }
-    })
-    paths[`${pathPrefix}${appointment.uuid}/impairments`] = {}
-    paths[`${pathPrefix}${appointment.uuid}/adjustments`] = {}
-  }
+
+      // Add paths for conditional sub-questions
+      for (const subKey of Object.keys(question.conditional)) {
+        const subQuestionPath = getHealthQuestionPath(
+          subKey,
+          appointment,
+          pathPrefix
+        )
+        paths[subQuestionPath] = {}
+      }
+    } else {
+      paths[questionPath] = {}
+    }
+  })
+  paths[`${pathPrefix}${appointment.uuid}/impairments`] = {}
+  paths[`${pathPrefix}${appointment.uuid}/adjustments`] = {}
 
   return paths
 }
