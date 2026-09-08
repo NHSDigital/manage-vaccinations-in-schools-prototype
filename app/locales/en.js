@@ -3996,7 +3996,7 @@ export const en = {
       hint: 'For example, if the child had a reaction to the vaccine',
       hintAlreadyVaccinated:
         'For example, details given by the parent about the vaccination',
-      title: 'Notes'
+      title: 'Vaccination notes'
     },
     dose: {
       label: 'Dose volume',
