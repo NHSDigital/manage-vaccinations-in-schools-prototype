@@ -1,0 +1,25 @@
+@use "sass:math";
+@use "../vendor/nhsuk-frontend" as *;
+
+$_small-icon-size: nhsuk-px-to-rem($nhsuk-icon-size);
+$_small-icon-spacing: math.div($_small-icon-size, 10);
+
+$_large-icon-size: nhsuk-px-to-rem(36px);
+$_large-icon-spacing: math.div($_large-icon-size, 10);
+
+.app-action-link-with-description {
+  @include nhsuk-responsive-margin(6, "bottom");
+
+  .nhsuk-action-link {
+    margin-bottom: nhsuk-spacing(1);
+  }
+
+  .nhsuk-body {
+    padding-left: $_small-icon-size + $_small-icon-spacing;
+    color: $nhsuk-secondary-text-colour;
+
+    @media #{nhsuk-from-breakpoint(tablet)} {
+      padding-left: $_large-icon-size + $_large-icon-spacing;
+    }
+  }
+}

@@ -2491,6 +2491,8 @@ export const en = {
     },
     new: {
       title: 'Record a new consent response',
+      description:
+        'Recording a new consent from the same parent will override the previous one',
       'check-answers': {
         title: 'Check and confirm'
       },
