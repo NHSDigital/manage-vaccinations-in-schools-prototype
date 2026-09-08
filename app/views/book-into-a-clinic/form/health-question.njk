@@ -39,6 +39,7 @@
       items: [
         {
           label: __("clinicBooking.healthAnswers.yes"),
+          value: __("clinicBooking.healthAnswers.yes"),
           conditional: {
             html: textarea({
               label: __("clinicBooking.healthAnswers.details"),
@@ -48,7 +49,8 @@
           } if not hasSubQuestions
         },
         {
-          label: __("clinicBooking.healthAnswers.no")
+          label: __("clinicBooking.healthAnswers.no"),
+          value: __("clinicBooking.healthAnswers.no")
         }
       ],
       decorate: ["appointment", "healthAnswers", key, "answer"]

@@ -23,6 +23,7 @@ import {
 } from '../enums.js'
 import {
   AuditEvent,
+  ClinicAppointment,
   Instruction,
   Patient,
   Programme,
@@ -693,6 +694,21 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get all clinic appointments for this patient, for this programme
+   *
+   * @returns {Array<ClinicAppointment>} the clinic appointments this patient has/had for this programme
+   */
+  get appointments() {
+    const appointments = ClinicAppointment.findAll(this.context).filter(
+      (appointment) =>
+        appointment.patient_uuid === this.patient_uuid &&
+        appointment.selected_programme_ids.includes(this.programme_id)
+    )
+
+    return appointments
+  }
+
+  /**
    * Get valid replies
    *
    * @returns {Array<Reply>|undefined} Valid replies
@@ -730,7 +746,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(this.replies)
+    return getConsentHealthAnswers(this.replies, this.appointments)
   }
 
   /**
