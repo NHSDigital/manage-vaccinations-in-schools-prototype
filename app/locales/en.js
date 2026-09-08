@@ -2514,7 +2514,8 @@ export const en = {
       label: 'Mark as invalid',
       caption: 'Consent response from {{reply.fullName}}',
       title: 'Mark response as invalid',
-      description: 'This cannot be undone.',
+      description:
+        'Only mark a consent response as invalid if the person who responded does not have parental responsibility. This operation cannot be undone.',
       confirm: 'Mark response as invalid',
       success: 'Consent response from {{reply.fullName}} marked as invalid'
     },
