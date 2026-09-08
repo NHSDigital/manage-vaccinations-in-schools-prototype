@@ -29,12 +29,3 @@
     }
   }
 }
-
-// Search filters and results
-.app-grid-column-filters {
-  @include nhsuk-grid-column(one-third, $at: desktop);
-}
-
-.app-grid-column-results {
-  @include nhsuk-grid-column(two-thirds, $at: desktop);
-}
