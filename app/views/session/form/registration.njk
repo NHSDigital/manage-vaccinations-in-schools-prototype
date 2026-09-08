@@ -6,11 +6,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: heading({
-          caption: session.location.name if type == "edit",
-          text: title,
-          size: "l"
-        })
+        caption: session.location.name if type == "edit",
+        heading: title,
+        size: "l"
       }
     },
     items: getBooleanItems(),

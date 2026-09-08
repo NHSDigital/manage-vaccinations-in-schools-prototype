@@ -45,11 +45,9 @@
   {% else %}
     {% call fieldset({
       legend: {
-        html: heading({
-          caption: patient.fullName,
-          text: title,
-          size: "l"
-        })
+        caption: patient.fullName,
+        heading: title,
+        size: "l"
       }
     }) %}
       <p class="nhsuk-hint">{{ __("patientProgramme.activeClinics.hint", {

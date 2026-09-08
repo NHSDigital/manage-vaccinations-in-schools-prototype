@@ -6,11 +6,9 @@
   {{ dateInput({
     fieldset: {
       legend: {
-        html: heading({
-          caption: patient.fullName,
-          text: title,
-          size: "l"
-        })
+        caption: patient.fullName,
+        heading: title,
+        size: "l"
       }
     },
     hint: __("patient.dob.hint"),

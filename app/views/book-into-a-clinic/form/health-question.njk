@@ -19,11 +19,9 @@
 {% block form %}
   {% call fieldset({
     legend: {
-      html: heading({
-        caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1,
-        text: title | replace("the child", "your child") if isParentFacing else title,
-        size: "l"
-      })
+      caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1,
+      heading: title | replace("the child", "your child") if isParentFacing else title,
+      size: "l"
     }
   }) %}
     {% if __("healthQuestions." + key + ".options") %}

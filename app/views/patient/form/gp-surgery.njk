@@ -5,11 +5,9 @@
 {% block form %}
   {{ input({
     label: {
-      html: heading({
-        caption: patient.fullName,
-        text: title,
-        size: "l"
-      })
+      caption: patient.fullName,
+      heading: title,
+      size: "l"
     },
     decorate: "patient.gpSurgery"
   }) }}

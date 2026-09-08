@@ -6,11 +6,9 @@
 {% block form %}
   {{ textarea({
     label: {
-      html: heading({
-        caption: __("reply.show.title", reply.fullName),
-        text: title,
-        size: "l"
-      })
+      caption: __("reply.show.title", reply.fullName),
+      heading: title,
+      size: "l"
     },
     decorate: "reply.note"
   }) }}

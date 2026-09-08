@@ -6,8 +6,7 @@
 {% block form %}
   {% call fieldset({
     legend: {
-      isPageHeading: true,
-      text: title | replace("the child", "your child"),
+      heading: title | replace("the child", "your child"),
       size: "l"
     }
   }) %}

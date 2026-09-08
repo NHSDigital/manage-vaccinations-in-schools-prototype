@@ -11,11 +11,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: heading({
-          caption: data.team.name,
-          text: title,
-          size: "l"
-        })
+        caption: team.name,
+        heading: title,
+        size: "l"
       }
     },
     items: enumItems(UserRole),

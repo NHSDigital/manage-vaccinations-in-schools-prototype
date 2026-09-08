@@ -19,11 +19,9 @@
   {{ radios({
     fieldset: {
       legend: {
-        html: heading({
-          caption: patient.fullName,
-          text: title,
-          size: "l"
-        })
+        caption: patient.fullName,
+        heading: title,
+        size: "l"
       }
     },
     items: injectConditionalHtml(injectConditionalHtml(archiveRecordReasonItems, ArchiveRecordReason.Other, otherHtml), ArchiveRecordReason.Duplicate, duplicateHtml),
