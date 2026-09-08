@@ -21,7 +21,7 @@
     legend: {
       html: heading({
         caption: __("clinicBooking.healthAnswers.caption", fullName) if childCount > 1,
-        text: title | replace("the child", "your child"),
+        text: title | replace("the child", "your child") if isParentFacing else title,
         size: "l"
       })
     }
