@@ -148,14 +148,6 @@ export const getAllAppointmentPaths = (
           }
         : {}),
 
-      // Ask for additional support needs early during SAIS journey, as it can affect appointment length
-      ...(!isParentJourney
-        ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
-          }
-        : {}),
-
       // Clinic location preference
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
@@ -249,19 +241,10 @@ export const getAllAppointmentPaths = (
                   ).length === 0
                 )
               },
-              [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
-                () => {
-                  const patient = appointment.patient
-                  if (!patient) return false
-
-                  return patient.contacts?.length > 0
-                },
-              [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-                const patient = appointment.patient
-                if (!patient) return false
-
-                return patient.contacts?.length === 0
-              }
+              [`/${booking_uuid}/new/${appointment_uuid}/child`]: () =>
+                isParentJourney,
+              [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
+                () => !isParentJourney
             }
           }
         : {}),
@@ -281,17 +264,40 @@ export const getAllAppointmentPaths = (
                     }
                 }
               : {}),
-            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {}
           }
-        : {}),
-      // Ask the relevant health questions and impairments/adjustments questions
+        : {
+            [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
+              {
+                [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
+                  () => {
+                    if (
+                      sessionData.journeyData.optedIntoHealthQuestions ===
+                      'true'
+                    ) {
+                      return false
+                    }
+
+                    return appointment.patient.contacts?.length > 0
+                  },
+                [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
+                  if (
+                    sessionData.journeyData.optedIntoHealthQuestions === 'true'
+                  ) {
+                    return false
+                  }
+
+                  return appointment.patient.contacts?.length === 0
+                }
+              }
+          }),
       ...getHealthQuestionPathsForAppointment(
         `/${booking_uuid}/new/`,
         appointment,
         sessionData
       ),
+      [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {},
 
       // Parent contact details
       ...(!isParentJourney
