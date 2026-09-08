@@ -444,7 +444,9 @@
        a record swaps its tag to blue Your preferred record IN PLACE (class + text only,
        no element inserted or removed, so card height never changes) and gives its underlay
        and its sticky footer the heavier blue border, so the outline stays continuous
-       through the footer while it floats. Re-selecting moves everything; no state persists.
+       through the footer while it floats. Re-selecting moves everything. The same renderer
+       runs at load and on pageshow, so a page that starts with a radio checked, or one revisited
+       via browser back with the choice restored, shows the chosen state; nothing is saved anywhere.
        Every field row is always visible, so there is no View all rows machinery
        on this page. A single renderer owns the whole selection state (tags, borders, status
        text, Clear choice visibility, the Skip to next duplicate/Review next duplicate action button), with null meaning no
@@ -489,15 +491,29 @@
       }, { rootMargin: `0px 0px -${footerClearance}px 0px` }).observe(grid.querySelector("[data-fit-sentinel]"))
     }
 
+    // The selection state is whatever radio is checked right now. One sync function
+    // reads that and hands it to the renderer, and every path goes through it: the
+    // radio change handler, the Clear choice link, first paint (covers a page that
+    // starts with a radio pre-checked), and pageshow (covers returning to the page by
+    // browser back, when the browser restores the form controls or the whole page
+    // from its cache after scripts have already run).
+    const syncChoice = () => {
+      const checked = document.querySelector('input[name="preferred-record"]:checked')
+      renderChoice(checked ? checked.value : null)
+    }
+
     for (const radio of document.querySelectorAll('input[name="preferred-record"]')) {
-      radio.addEventListener("change", () => renderChoice(radio.value))
+      radio.addEventListener("change", syncChoice)
     }
 
     document.querySelector("[data-clear-choice]").addEventListener("click", (event) => {
       event.preventDefault()
       for (const radio of document.querySelectorAll('input[name="preferred-record"]')) radio.checked = false
-      renderChoice(null)
+      syncChoice()
     })
+
+    syncChoice()
+    window.addEventListener("pageshow", syncChoice)
 
     const highlightToggle = document.querySelector("[data-highlight-toggle]")
     const renderHighlights = () => {
