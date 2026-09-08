@@ -40,11 +40,11 @@
   }) if school.isOpen }}
 
   <div class="nhsuk-grid-row">
-    <app-auto-submit class="app-grid-column-filters">
+    <div class="app-grid-column-filters">
       {{ appPatientSearch({
         clear: school.uri
       }) }}
-    </app-auto-submit>
+    </div>
 
     <div class="app-grid-column-results">
       {{ warningCallout({

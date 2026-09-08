@@ -21,7 +21,7 @@
     }) }}
   {% else %}
     <div class="nhsuk-grid-row">
-      <app-auto-submit class="app-grid-column-filters">
+      <div class="app-grid-column-filters">
         {{ appPatientSearch({
           clear: session.uri + "/" + view,
           checkboxFilters: checkboxFilters,
@@ -32,7 +32,7 @@
           showAdditionalProgrammes: session.type === SessionType.Clinic and (session.isPlanned or session.isActive) and view === 'patients',
           view: view
         }) }}
-      </app-auto-submit>
+      </div>
 
       <div class="app-grid-column-results">
         {{ details({

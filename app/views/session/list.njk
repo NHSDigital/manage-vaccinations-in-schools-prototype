@@ -29,11 +29,11 @@
   {% endif %}
 
   <div class="nhsuk-grid-row">
-    <app-auto-submit class="app-grid-column-filters">
+    <div class="app-grid-column-filters">
       {{ appSessionSearch({
         clear: "/sessions"
       }) }}
-    </app-auto-submit>
+    </div>
 
     <div class="app-grid-column-results">
       {% if data.type and data.type != "none" %}

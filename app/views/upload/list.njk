@@ -21,7 +21,7 @@
   }) }}
 
   <div class="nhsuk-grid-row">
-    <app-auto-submit class="app-grid-column-filters">
+    <div class="app-grid-column-filters">
       {% call card({
         classes: "app-filters",
         feature: true,
@@ -75,7 +75,7 @@
           ]
         }) }}
       {% endcall %}
-    </app-auto-submit>
+    </div>
 
     <div class="app-grid-column-results">
       {% if data.type and data.type != "none" %}
