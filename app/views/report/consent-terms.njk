@@ -1,0 +1,73 @@
+{% from "_macros/report-search.njk" import appReportSearch with context %}
+{% from "report/_navigation.njk" import reportNavigation with context %}
+
+{% extends "_layouts/default.njk" %}
+
+{% set back = "/reports/consent" %}
+{% set title = __("report.list.title") + " – " + __("report.consent-terms.title") %}
+
+{% block content %}
+  {{ heading({
+    text: __("report.consent-terms.title")
+  }) }}
+
+  <div class="nhsuk-u-reading-width">
+{% filter nhsukMarkdown %}
+This report provides a view of consent status for children in the selected cohort and for the selected vaccine programme, taking into account any other dashboard filters that have been selected.
+
+## Cohort
+
+The number of children eligible for a vaccine programme based on their academic year group, irrespective of their vaccination status. This includes children who have moved into a cohort in the academic year and excludes those who have moved out during the academic year.
+
+This number comes from the data uploaded into Mavis by SAIS teams from CHIS and from school class lists.
+
+Children whose school is unknown are not included in this number, as they are likely to have moved to a team outside Mavis or to have left the country.
+
+Any children who were added to the cohort but subsequently died are not included in this number.
+
+Where we refer to "selected cohort" in these definitions, we mean the cohort but also considering any additional filters, such as to gender or year group, that the user has applied.
+
+## No consent recorded
+
+**Also called “No Consent” in the CSV download.**
+
+The number of children in the selected cohort where consent has not been given, whether this is because:
+
+- a consent request has not been sent
+- a consent response has not been received
+- consent has been refused
+
+This number is broken down in more detail in separate statistics for: “No consent response or not yet invited”, “Consent refused” and “Conflicting consent”
+
+## Consent given
+
+The number of children in the selected cohort for whom consent has been given for the vaccine programme, after taking into account all consent responses received. Where one parent or guardian has given consent and another has refused, the child will not be counted here, unless the child has given self-consent.
+
+## No consent response or not yet invited
+
+Also called “Consent No Response” in the CSV download.
+
+The number of children in the selected cohort whose parents or guardians have not yet been sent a consent request or for whom no consent response has been received yet.
+
+## Consent refused
+
+The number of children in the selected cohort where consent has been refused in all of the consent responses received.
+
+## Conflicting consent
+
+Also called “Consent Conflicts" in the CSV download.
+
+The number of children in the selected cohort where conflicting consent responses have been received. For example, where one response has given consent and another has refused it.
+
+## Reasons consent refused
+
+Number of consent responses where consent was refused, broken down by each possible reason as a percentage. Note that this is a count of consent responses received by a team or into Mavis, not a count of children. Where a child has received two consent refusals with two different reasons, these will be both be counted.
+
+Consent responses for children who have left the cohort or are deceased will be counted here. Consent responses for children who have moved into the cohort but where the response was originally processed by a different team will not be counted here.
+
+## Consent responses by method
+
+Number of consent responses broken down by how the response was received, as a percentage. Note that this is a count of consent responses received by a team or into Mavis, not a count of children. Where a child has received two consent refusals with two different reasons, these will be both be counted.
+{% endfilter %}
+  </div>
+{% endblock %}

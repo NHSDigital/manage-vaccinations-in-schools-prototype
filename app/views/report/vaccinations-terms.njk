@@ -1,0 +1,62 @@
+{% from "_macros/report-search.njk" import appReportSearch with context %}
+{% from "report/_navigation.njk" import reportNavigation with context %}
+
+{% extends "_layouts/default.njk" %}
+
+{% set back = "/reports/vaccinations" %}
+{% set title = __("report.list.title") + " – " + __("report.vaccinations-terms.title") %}
+
+{% block content %}
+  {{ heading({
+    text: __("report.vaccinations-terms.title")
+  }) }}
+
+  <div class="nhsuk-u-reading-width">
+{% filter nhsukMarkdown %}
+This report shows vaccine coverage for a cohort and for the selected vaccine programme, taking into account any other dashboard filters that have been selected. The cards at the top of the page focus on coverage and vaccination status for children in the cohort; the table at the bottom gives a view of vaccination activity for a team by month.
+
+## Cohort
+
+The number of children eligible for a vaccine programme based on their academic year group, irrespective of their vaccination status. This includes children who have moved into a cohort in the academic year and excludes those who have moved out during the academic year.
+
+This number comes from the data uploaded into Mavis by SAIS teams from CHIS and from school class lists.
+
+Children whose school is unknown are not included in this number, as they are likely to have moved to a team outside Mavis or to have left the country.
+
+Any children who were added to the cohort but subsequently died are not included in this number.
+
+Where we refer to "selected cohort" in these definitions, we mean the cohort but also considering any additional filters, such as to gender or year group, that the user has applied.
+
+## Not vaccinated
+
+The number of children in the selected cohort who have not been vaccinated for the vaccine programme selected by the user.
+
+## Vaccinated
+
+The number of children in the selected cohort who have been vaccinated for the selected vaccine programme.
+
+## Vaccinated by <SAIS team> in Mavis
+
+Also called “Vaccinated by SAIS” in the CSV download.
+
+The number of children in the selected cohort vaccinated in the current academic year, where the vaccination was recorded in Mavis by their SAIS team.
+
+## Vaccinated elsewhere
+
+The number of children in the selected cohort vaccinated in the current academic year, where the vaccination was recorded either:
+
+- in Mavis by a different SAIS team
+- outside Mavis and either uploaded into Mavis or automatically imported from – other data sources
+
+## Vaccinated before this academic year (in all settings)
+
+Also called “Vaccinated Previously” in the CSV download.
+
+The number of children in the selected cohort vaccinated in any academic year before the current one, no matter where that vaccination was given or recorded. This statistic is not shown for flu as it’s a seasonal programme.
+
+## Monthly vaccinations by {{ team.code }}
+
+A breakdown by month and by setting (school or community clinic) of vaccinations delivered by the SAIS team that the user viewing the dashboard belongs to. As this is a view of vaccination activity, this includes vaccinations given to children who have subsequently left the team's cohort or who have died.
+{% endfilter %}
+  </div>
+{% endblock %}
