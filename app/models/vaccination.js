@@ -150,9 +150,8 @@ export class Vaccination extends BaseModel {
 
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.administeredAt = options?.administeredAt
-      ? new Date(options.administeredAt)
-      : today()
+    this.administeredAt =
+      options?.administeredAt && new Date(options.administeredAt)
     this.administeredAt_ = options?.administeredAt_
     this.nhseSyncedAt = options?.nhseSyncedAt
       ? new Date(options.nhseSyncedAt)
@@ -184,6 +183,10 @@ export class Vaccination extends BaseModel {
     this.isVariant = options?.isVariant
       ? stringToBoolean(options.isVariant)
       : undefined
+
+    if (this.outcome !== VaccinationOutcome.AlreadyVaccinated) {
+      this.administeredAt = today()
+    }
 
     if (this.outcome === VaccinationOutcome.AlreadyVaccinated) {
       this.addressLine1 = options?.addressLine1
