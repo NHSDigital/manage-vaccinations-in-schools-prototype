@@ -335,23 +335,9 @@ export class Child extends BaseModel {
               if (this.hasAgedOutOfProgrammes) return undefined
               return this?.school && this.school.name
             case 'adjustments':
-              return (
-                this.adjustments &&
-                formatList(
-                  this.adjustments.filter(
-                    (adjustment) => adjustment !== Adjustment.None
-                  )
-                )
-              )
+              return this.adjustments && formatList(this.adjustments)
             case 'impairments':
-              return (
-                this.impairments &&
-                formatList(
-                  this.impairments.filter(
-                    (impairment) => impairment !== Impairment.None
-                  )
-                )
-              )
+              return this.impairments && formatList(this.impairments)
             default:
               return undefined
           }
