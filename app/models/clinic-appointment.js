@@ -361,14 +361,14 @@ export class ClinicAppointment {
   }
 
   /**
-   * Get health questions to show based on the selected programme(s)
+   * Get unanswered health questions to show based on the selected programme(s)
    *
    * Note: this method requires this instance to have a full context
    *
    * @param {object} programmeContext - the context in which we'll find the programmes
    * @returns {Array} Health questions
    */
-  getHealthQuestionsForSelectedProgrammes(programmeContext) {
+  getUnansweredHealthQuestions(programmeContext) {
     const selectedProgrammes = this.#getSelectedProgrammes(programmeContext)
 
     const vaccinesForSelectedProgrammes = []
@@ -623,6 +623,13 @@ export class ClinicAppointment {
                   ({ name }) => name
                 )
               )
+
+            case 'hasAllHealthAnswers':
+              return Object.entries(
+                this.getUnansweredHealthQuestions(this.context)
+              ).length
+                ? ''
+                : 'Answered'
 
             case 'adjustmentsCount':
               if (!this.requiresAdjustments) return undefined

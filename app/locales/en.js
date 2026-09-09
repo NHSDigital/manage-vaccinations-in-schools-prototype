@@ -387,6 +387,9 @@ export const en = {
     programmeTags: {
       label: 'Programmes'
     },
+    hasAllHealthAnswers: {
+      label: 'Health questions'
+    },
     offerRebooking: {
       label: 'Offer rebooking?'
     },

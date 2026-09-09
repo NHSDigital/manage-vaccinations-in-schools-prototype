@@ -594,7 +594,11 @@ export default () => {
         value = 'None selected'
       }
 
-      if (typeof value !== 'undefined' && value !== 0 && value?.length !== 0) {
+      if (
+        typeof value !== 'undefined' &&
+        value !== 0 &&
+        (typeof value === 'string' || value?.length !== 0)
+      ) {
         // Handle falsy values
         if (value === false) {
           value = 'No'
