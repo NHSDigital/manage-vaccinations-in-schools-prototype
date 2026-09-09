@@ -59,7 +59,7 @@ export function getConsentHealthAnswers(replies, appointments) {
 
   // Get clinic appointments with health answers given as part of booking
   const appointmentsWithHealthAnswers = appointments.filter(
-    (appointment) => Object.keys(appointment.healthAnswers).length
+    (appointment) => appointment.healthAnswers
   )
 
   // Both replies and appointments expose compatible `healthAnswers` and

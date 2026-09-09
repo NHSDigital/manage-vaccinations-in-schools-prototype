@@ -109,4 +109,20 @@
       }
     })
   }) }}
+
+  {{ summaryList({
+    classes: "app-summary-list--full-width",
+    card: {
+      heading: {
+        text: __("clinicBooking.check-answers.summary.healthAnswers"),
+        size: "m"
+      }
+    },
+    rows: healthAnswerRows(
+      appointment.healthAnswers,
+      "health-question-{{key}}",
+      isParentFacing
+    )
+  }) if appointment.healthAnswers }}
+
 {% endblock %}

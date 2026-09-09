@@ -102,7 +102,7 @@ export class ClinicAppointment {
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
     this.fluAlternative = stringToBoolean(options?.fluAlternative)
     this.mmrAlternative = stringToBoolean(options?.mmrAlternative)
-    this.healthAnswers = options?.healthAnswers || {}
+    this.healthAnswers = options?.healthAnswers
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
     this.note = options?.note

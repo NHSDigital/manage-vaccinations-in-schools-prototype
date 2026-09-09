@@ -769,7 +769,8 @@ export const en = {
       summary: {
         child: 'Child details',
         appointment: 'Appointment details',
-        contact: 'Contact details'
+        contact: 'Contact details',
+        healthAnswers: 'Answers to health questions'
       },
       confirm: {
         parent: 'Confirm',

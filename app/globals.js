@@ -308,10 +308,10 @@ export default () => {
    *
    * @param {object} healthAnswers - Health answers
    * @param {string} edit - Edit link
-   * @param {string} [publicFacing] - Use public-facing questions (‘your child’)
+   * @param {boolean} [isPublicFacing] - Use public-facing questions (‘your child’)
    * @returns {Array|undefined} Parameters for summary list component
    */
-  globals.healthAnswerRows = function (healthAnswers, edit, publicFacing) {
+  globals.healthAnswerRows = function (healthAnswers, edit, isPublicFacing) {
     if (healthAnswers.length === 0) {
       return
     }
@@ -333,7 +333,7 @@ export default () => {
       let keyText =
         healthQuestions[key].labelWithOptions || healthQuestions[key].label
 
-      keyText = publicFacing
+      keyText = isPublicFacing
         ? keyText.replace('the child', 'your child')
         : keyText
 
