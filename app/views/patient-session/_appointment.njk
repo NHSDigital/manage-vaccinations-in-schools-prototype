@@ -51,8 +51,18 @@
   {% else %}
     {# Drop-in #}
     {% set programmeTagsHtml = '' %}
+    {% set hasHealthAnswersForAllProgrammes = true %}
+    {% set healthAnswersHtml = 'Answered' %}
     {% for siblingPatientSession in patientSession.siblingPatientSessions %}
       {% set programmeTagsHtml = programmeTagsHtml + siblingPatientSession.programme.nameTag + " " %}
+      {% if hasHealthAnswersForAllProgrammes %}
+        {% if (siblingPatientSession.patientProgramme.consentHealthAnswers | length) === 0 %}
+          {% set hasHealthAnswersForAllProgrammes = false %}
+          {% set healthAnswersHtml %}
+            <a href="health-questions">Add answers</a>
+          {% endset %}
+        {% endif %}
+      {% endif %}
     {% endfor %}
 
     {{ summaryList({
@@ -77,6 +87,10 @@
         programmeTags: {
           label: __("clinicAppointment.programmeTags.label"),
           value: programmeTagsHtml
+        },
+        hasAllHealthAnswers: {
+          label: __("clinicAppointment.hasAllHealthAnswers.label"),
+          value: healthAnswersHtml
         },
         impairments: {},
         adjustments: {}

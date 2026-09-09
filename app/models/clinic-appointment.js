@@ -410,6 +410,7 @@ export class ClinicAppointment {
       }
     }
 
+    // Remove any questions for which we already have an answer
     const patient = this.patient
     if (patient) {
       for (const programme of selectedProgrammes) {
