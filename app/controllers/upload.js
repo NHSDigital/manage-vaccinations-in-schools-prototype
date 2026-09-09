@@ -130,9 +130,13 @@ export const uploadController = {
    */
   new(request, response) {
     const { programme_id } = request.params
-    const { type, school_id } = request.query
+    const { hasValidations, type, school_id } = request.query
     const { data } = request.session
     const { account } = response.locals
+
+    const patients = Patient.findAll(data).slice(
+      faker.number.int({ min: 30, max: 90 })
+    )
 
     const upload = Upload.create(
       {
@@ -141,13 +145,24 @@ export const uploadController = {
         programme_id,
         type,
         fileName: 'example.csv',
-        patient_uuids: Patient.findAll(data)
-          .map((patient) => patient.uuid)
-          .slice(faker.number.int({ min: 30, max: 100 })),
+        patient_uuids: patients.map((patient) => patient.uuid),
         ...(type === UploadType.School && school_id && { school_id })
       },
       data.wizard
     )
+
+    // Add validations to invalid file upload
+    if (hasValidations) {
+      upload.validations = {}
+
+      for (const [i, patient] of patients.entries()) {
+        upload.validations[i + 1] = {
+          CHILD_FIRST_NAME: 'is required but missing',
+          CHILD_DOB: `‘${patient.firstName}’ should be formatted as YYYY-MM-DD`,
+          CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
+        }
+      }
+    }
 
     // If type provided in query string, start journey at upload question
     data.startPath = type
@@ -180,13 +195,20 @@ export const uploadController = {
         data.wizard
       )
 
+      if (type === 'edit') {
+        // Delete any previous validation errors
+        delete upload.validations
+      }
+
       upload = Upload.create(upload, data)
 
       // Clean up session data
       delete data.upload
       delete data.wizard
 
-      request.flash('success', __(`upload.${type}.success`))
+      if (upload.status === UploadStatus.Processing) {
+        request.flash('success', __(`upload.${type}.success`))
+      }
 
       let nextPage = '/uploads'
       if ([UploadStatus.Failed, UploadStatus.Invalid].includes(upload.status)) {
