@@ -2830,7 +2830,7 @@ export const en = {
       clinicBooking: 'Search for a child to book into this clinic session'
     },
     results: 'Search results',
-    confirm: 'Update results',
+    confirm: 'Apply filters',
     clear: 'Clear filters'
   },
   session: {
@@ -3555,54 +3555,63 @@ export const en = {
       description: 'Upload cohort, class list and vaccination records'
     },
     search: {
-      label: 'Find upload'
+      label: 'Filter uploads'
     },
     results:
-      '{count, plural, =0 {No uploads matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
+      '{count, plural, =0 {There are no uploads to display} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
     show: {
       title: 'Upload (%s)',
-      requiresReviewTitle: 'Review and approve upload (%s)',
+      approve: {
+        title: 'Review and approve upload (%s)',
+        description:
+          'Records in Mavis will only be updated when the upload is approved.'
+      },
+      submit: {
+        title: 'Review upload (%s)',
+        description:
+          'Review the records in this upload before submitting it to the immunisation team for approval. Records in Mavis will only be updated when the upload is approved.'
+      },
       summary: 'Details',
       new: {
         title: 'New records',
         count:
           '{count, plural, =0 {No new records} one {1 new record} other {# new records}}',
         summary:
-          'This upload includes {count, plural, =0 {no new records that are} one {1 new record this is} other {# new records  that are}} not currently in Mavis. If you approve the upload, these records will be added to Mavis.'
+          'These records are for children who are not currently in Mavis. They will be added when the upload is approved.'
       },
       partial: {
         label: {
           [UploadStatus.Review]: 'Changes to review',
-          [UploadStatus.Rejected]: 'Changes reviewed',
-          [UploadStatus.Submitted]: 'Changes reviewed',
-          [UploadStatus.Approved]: 'Changes reviewed'
+          [UploadStatus.Submitted]: 'Changes submitted',
+          [UploadStatus.Approved]: 'Changes approved',
+          [UploadStatus.Rejected]: 'Changes rejected'
         },
         title: {
           [UploadStatus.Review]:
             'Close matches to existing records – need review',
           [UploadStatus.Rejected]: 'Close matches to existing records',
-          [UploadStatus.Submitted]: 'Issues resolved for this upload',
-          [UploadStatus.Approved]: 'Issues resolved for this upload'
+          [UploadStatus.Submitted]: 'Close matches to existing records',
+          [UploadStatus.Approved]: 'Close matches to existing records'
         },
         count: {
           [UploadStatus.Review]:
             '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
-          [UploadStatus.Rejected]:
-            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
           [UploadStatus.Submitted]:
-            '{count, plural, =0 {No upload issues} one {1 upload issue} other {# upload issues}}',
+            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
           [UploadStatus.Approved]:
-            '{count, plural, =0 {No upload issues} one {1 upload issue} other {# upload issues}}'
+            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
+          [UploadStatus.Rejected]:
+            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records'
         },
         summary: {
           [UploadStatus.Review]:
-            'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
-          [UploadStatus.Rejected]:
-            'This upload includes {count, plural, =0 {no records} one {1 record} other {# records}} that are close matches to existing records in Mavis. You need to review these records before you can approve this upload.',
+            'These records closely match children who are already in Mavis. Review each one and choose which record to keep in Mavis.',
           [UploadStatus.Submitted]:
-            '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed',
+            'These records closely matched children already in Mavis.',
           [UploadStatus.Approved]:
-            '{count, plural, =0 {No records} one {1 upload issue} other {# upload issues}} reviewed'
+            'These records closely matched children already in Mavis.',
+          [UploadStatus.Rejected]:
+            'These records closely matched children already in Mavis.'
         },
         decision: {
           label: 'Decision',
@@ -3632,7 +3641,7 @@ export const en = {
         count:
           '{count, plural, =0 {No records} one {1 record} other {# records}} already in Mavis',
         summary:
-          'This upload includes {count, plural, =0 {no records that already exist} one {1 record that already exists} other {# records that already exist}} in Mavis. You do not need to remove these from your CSV file. If you approve the upload, any additional information will be added to the existing records.'
+          'These records match children who are already in Mavis. If the upload contains new information for these children, their records will be updated when the upload is approved.'
       },
       imported: {
         title: 'Uploaded records',
@@ -3643,7 +3652,8 @@ export const en = {
         title: {
           [UploadStatus.Review]: 'School moves – need review',
           [UploadStatus.Submitted]: 'School moves submitted for this upload',
-          [UploadStatus.Approved]: 'School moves resolved for this upload'
+          [UploadStatus.Approved]: 'School moves approved for this upload',
+          [UploadStatus.Rejected]: 'School moves rejected for this upload'
         },
         count:
           '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}}',
@@ -3659,19 +3669,23 @@ export const en = {
         },
         summary: {
           [UploadStatus.Review]:
-            'This upload includes {count, plural, =0 {No children} one {1 child} other {# children}} with a different school to the one in their Mavis record. You need to review these records before you can approve this upload.',
+            'The upload shows a different school for these children from the one recorded in Mavis. Review each one and choose whether to update their school.',
+          [UploadStatus.Submitted]:
+            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} submitted.',
           [UploadStatus.Approved]:
-            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} reviewed'
+            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} approved.',
+          [UploadStatus.Rejected]:
+            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} rejected.'
         }
       }
     },
     new: {
       label: 'Upload records',
-      success: 'Records uploaded for processing'
+      success: 'Records uploaded. Mavis is processing the file.'
     },
     edit: {
       label: 'Upload corrected %s',
-      success: 'Corrected records uploaded for processing'
+      success: 'Corrected records uploaded. Mavis is processing the file.'
     },
     file: {
       title: 'Upload {{type}}',
@@ -3680,9 +3694,8 @@ export const en = {
         report:
           'You can add vaccination records by uploading:\n\n- a Mavis CSV file\n- a SystmOne file',
         schools:
-          'If you use BromCom, SIMS or Arbor, you can upload a CSV file directly without further formatting.',
-        other:
-          'The file you upload should use the Mavis CSV format for {{type}}'
+          'If you use Bromcom, SIMS or Arbor, you can upload the CSV file without changing its format.',
+        other: 'Your file must use the Mavis CSV format.'
       },
       format: 'How to format your Mavis CSV file for {{type}}',
       errors: {
@@ -3707,7 +3720,7 @@ export const en = {
     },
     yearGroups: {
       label: 'Year groups',
-      title: 'Which year groups do you want to upload class list records for?'
+      title: 'Which year groups are included in this class list?'
     },
     invalid: {
       title: 'Records could not be uploaded'

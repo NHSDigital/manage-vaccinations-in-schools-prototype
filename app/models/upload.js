@@ -148,15 +148,6 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Upload needs review
-   *
-   * @returns {boolean} Upload needs review
-   */
-  get requiresReview() {
-    return this.status === UploadStatus.Review
-  }
-
-  /**
    * Get duplicate patient records in upload that need review
    *
    * @returns {Array<Patient>|undefined} Patient records with pending changes
