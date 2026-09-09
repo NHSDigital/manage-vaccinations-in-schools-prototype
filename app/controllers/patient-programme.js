@@ -82,7 +82,7 @@ export const patientProgrammeController = {
     const { data } = request.session
     const { __, account, patient, patientProgramme } = response.locals
 
-    if (patientProgramme.scheduledClinicsCount === 0) {
+    if (patientProgramme.activeClinicsCount === 0) {
       return saveAndRedirect(request, response, `/sessions/new`)
     }
 
