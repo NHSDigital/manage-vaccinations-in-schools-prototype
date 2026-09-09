@@ -4012,7 +4012,7 @@ export const en = {
       half: 'No, they got half a dose'
     },
     sequence: {
-      label: 'Dose sequence',
+      label: 'Dose number',
       title: 'Which dose of the %s vaccination was this?'
     },
     vaccine: {
