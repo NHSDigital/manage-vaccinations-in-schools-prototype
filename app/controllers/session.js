@@ -10,6 +10,7 @@ import {
   RegistrationStatus,
   SchoolPhase,
   SessionPresetName,
+  SessionPresets,
   SessionStatus,
   SessionType
 } from '../enums.js'
@@ -852,7 +853,21 @@ export const sessionController = {
       const journey = {
         [`/`]: {},
         [`/${session_id}/${type}/type`]: {},
-        [`/${session_id}/${type}/programmes`]: {},
+        [`/${session_id}/${type}/programmes`]: {
+          [`/${session_id}/${type}/clinic`]: () => {
+            // If every programme was selected for a clinic, skip past the catch-ups question
+            if (session.type !== SessionType.Clinic) {
+              return false
+            }
+
+            const maxProgrammeCount = SessionPresets.filter(
+              ({ clinicOnly }) => !clinicOnly
+            ).length
+            const selectedProgrammeCount = data.session?.['presetNames']?.length
+
+            return selectedProgrammeCount === maxProgrammeCount
+          }
+        },
         ...(session.type === SessionType.School
           ? {
               [`/${session_id}/${type}/school`]: {},
