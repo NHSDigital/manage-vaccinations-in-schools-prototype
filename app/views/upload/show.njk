@@ -11,8 +11,8 @@
 {% else %}
   {% set needsReview = upload.status in [UploadStatus.Submitted, UploadStatus.Review] %}
 {% endif %}
-{% if upload.requiresReview %}
-  {% set title = __("upload.show.requiresReviewTitle", upload.formatted.createdAt) %}
+{% if needsReview %}
+  {% set title = __("upload.show." + reviewType + ".title", upload.formatted.createdAt) %}
 {% else %}
   {% set title = __("upload.show.title", upload.formatted.createdAt) %}
 {% endif %}
@@ -39,6 +39,12 @@
     text: title,
     size: "l"
   }) }}
+
+  {% if needsReview %}
+  <div class="nhsuk-u-reading-width">
+    {{ __("upload.show." + reviewType + ".description") | nhsukMarkdown }}
+  </div>
+  {% endif %}
 
   {{ summaryList({
     card: {
