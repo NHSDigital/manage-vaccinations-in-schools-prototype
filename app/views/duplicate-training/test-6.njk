@@ -470,7 +470,17 @@
     <div class="nhsuk-width-container-fluid nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
       <div style="max-width: 1720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
         <p class="nhsuk-body-s nhsuk-u-margin-bottom-0"><span data-set-status>Choose your preferred record</span> <a class="nhsuk-link nhsuk-u-margin-left-2 nhsuk-u-display-none" href="#" data-clear-choice>Clear choice</a></p>
-        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" data-set-action href="/duplicate-training" role="button" draggable="false">Skip to next duplicate</a>
+        <div style="display: flex; align-items: center; column-gap: 24px; flex-wrap: wrap; row-gap: 8px; justify-content: flex-end;">
+          <!-- Optional comment step: enabled once a record is chosen; when ticked the
+               action button becomes Add comment and leads to the interstitial page -->
+          <div class="nhsuk-checkboxes nhsuk-checkboxes--small nhsuk-u-margin-bottom-0">
+          <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" id="tell-us" name="tell-us" type="checkbox" value="yes" disabled data-comment-toggle>
+          <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="tell-us">Tell us about this decision</label>
+          </div>
+          </div>
+          <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" data-set-action data-next-href="/duplicate-training" data-comment-href="/duplicate-training/test-6-comment" href="/duplicate-training" role="button" draggable="false">Skip to next duplicate</a>
+        </div>
       </div>
     </div>
   </div>
@@ -508,8 +518,13 @@
       }
       document.querySelector("[data-set-status]").textContent = value ? "Preferred record chosen" : "Choose your preferred record"
       document.querySelector("[data-clear-choice]").classList.toggle("nhsuk-u-display-none", !value)
+      const commentToggle = document.querySelector("[data-comment-toggle]")
+      commentToggle.disabled = !value
+      if (!value) commentToggle.checked = false
+      const wantsComment = Boolean(value) && commentToggle.checked
       const action = document.querySelector("[data-set-action]")
-      action.textContent = value ? "Review next duplicate" : "Skip to next duplicate"
+      action.textContent = wantsComment ? "Add comment" : (value ? "Review next duplicate" : "Skip to next duplicate")
+      action.href = wantsComment ? action.dataset.commentHref : action.dataset.nextHref
       action.classList.toggle("nhsuk-button--secondary", !value)
     }
 
@@ -547,6 +562,8 @@
       for (const radio of document.querySelectorAll('input[name="preferred-record"]')) radio.checked = false
       syncChoice()
     })
+
+    document.querySelector("[data-comment-toggle]").addEventListener("change", syncChoice)
 
     syncChoice()
     window.addEventListener("pageshow", syncChoice)
