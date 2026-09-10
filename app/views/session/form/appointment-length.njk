@@ -11,7 +11,10 @@
     }
   }) %}
     {{ input({
-      label: __("session.appointmentLengths." + clinicType + ".short.label"),
+      label: {
+        text: __("session.appointmentLengths." + clinicType + ".short.label"),
+        size: "m"
+      },
       suffix: __("session.appointmentLengths.suffix"),
       width: 2,
       inputmode: "numeric",
@@ -22,7 +25,8 @@
     {{ radios({
       fieldset: {
         legend: {
-          text: __("session.appointmentLengths." + clinicType + ".long.label")
+          text: __("session.appointmentLengths." + clinicType + ".long.label"),
+          size: "m"
         }
       },
       items: [
