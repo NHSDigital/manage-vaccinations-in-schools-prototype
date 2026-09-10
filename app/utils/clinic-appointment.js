@@ -374,7 +374,7 @@ const getHealthQuestionPathsForAppointment = (
   const paths = {}
 
   const healthQuestions = Object.entries(
-    appointment.getHealthQuestionsForSelectedProgrammes(programmeContext)
+    appointment.getUnansweredHealthQuestions(programmeContext)
   )
 
   healthQuestions.forEach(([key, question], index) => {

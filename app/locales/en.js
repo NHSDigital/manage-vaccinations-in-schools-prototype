@@ -387,6 +387,9 @@ export const en = {
     programmeTags: {
       label: 'Programmes'
     },
+    hasAllHealthAnswers: {
+      label: 'Health questions'
+    },
     offerRebooking: {
       label: 'Offer rebooking?'
     },
@@ -766,7 +769,8 @@ export const en = {
       summary: {
         child: 'Child details',
         appointment: 'Appointment details',
-        contact: 'Contact details'
+        contact: 'Contact details',
+        healthAnswers: 'Answers to health questions'
       },
       confirm: {
         parent: 'Confirm',
@@ -866,9 +870,10 @@ export const en = {
       no: 'No, I’ll do it later'
     },
     teamHealthQuestions: {
-      title: 'Are you able to answer the health questions now?',
-      yes: 'Yes, answer the health questions now',
-      no: 'No, I’ll ask the parent later'
+      title:
+        'When do you want to submit the parent’s answers to the health questions?',
+      now: 'Now',
+      later: 'Later'
     },
     healthAnswers: {
       label: 'Answers to health questions',

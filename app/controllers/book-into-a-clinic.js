@@ -659,8 +659,7 @@ export const bookIntoClinicController = {
 
     // Only ask for details if question does not have sub-questions
     const hasSubQuestions =
-      appointment?.getHealthQuestionsForSelectedProgrammes(data)[key]
-        ?.conditional
+      appointment?.getUnansweredHealthQuestions(data)[key]?.conditional
 
     return response.render(`book-into-a-clinic/form/${view}`, {
       key,
