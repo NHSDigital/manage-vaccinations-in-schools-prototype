@@ -110,6 +110,15 @@
   </div>
 
   <script>
+    // Record this set as moved past, for the Duplicate records tab count; a set is
+    // only ever recorded once, so revisiting and advancing again changes nothing
+    const markProgressed = () => {
+      let progressed = []
+      try { progressed = JSON.parse(sessionStorage.getItem("duplicate-training:progressed") || "[]") } catch (error) {}
+      if (!progressed.includes("test-5")) progressed.push("test-5")
+      try { sessionStorage.setItem("duplicate-training:progressed", JSON.stringify(progressed)) } catch (error) {}
+    }
+
     let decision = "unknown"
     try { decision = sessionStorage.getItem("duplicate-training:decision:test-5") || "unknown" } catch (error) {}
     const question = document.querySelector("[data-comment-question]")
@@ -122,6 +131,7 @@
       const entry = { decision, comment }
       try { sessionStorage.setItem("duplicate-training:comment:test-5", JSON.stringify(entry)) } catch (error) {}
       console.log("[duplicate-training] test-5:", JSON.stringify(entry))
+      markProgressed()
       window.location.assign(event.target.action)
     })
 

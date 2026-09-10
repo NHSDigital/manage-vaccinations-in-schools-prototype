@@ -89,8 +89,8 @@
        fluid containers side margins at narrower viewports. -->
   <div class="nhsuk-width-container" style="margin: 0 auto">
     <!-- Review section chrome: page heading and section navigation as on /notices,
-         plus a Duplicates tab shown as current. Presentation only: the tab href is
-         a placeholder and these pages do not actually live under /notices yet. -->
+         plus a Duplicates tab shown as current and linking to the start page. The other
+         tabs are presentation only, and these pages do not actually live under /notices yet. -->
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <h1 class="nhsuk-heading-l">Review</h1>
@@ -109,13 +109,28 @@
               <a class="app-section-navigation__link" href="/moves">School moves<span class="app-section-navigation__suffix"><strong class="app-badge">90</strong></span></a>
             </li>
             <li class="app-section-navigation__item app-section-navigation__item--current">
-              <a class="app-section-navigation__link" href="#" aria-current="page"><strong class="app-section-navigation__current">Duplicate records<span class="app-section-navigation__suffix"><strong class="app-badge">7</strong></span></strong></a>
+              <a class="app-section-navigation__link" href="/duplicate-training/start" aria-current="page"><strong class="app-section-navigation__current">Duplicate records<span class="app-section-navigation__suffix"><strong class="app-badge" data-duplicates-badge>6</strong></span></strong></a>
             </li>
           </ul>
         </nav>
       </div>
     </div>
     <!-- /Review section chrome -->
+  <!-- Live count on the Duplicate records tab: the six user testing sets minus those
+       moved past in this browser session. The test pages record an advance when the
+       action button goes on to the next set, and the comment pages record one on
+       Submit; nothing else changes the number, so demo pages only display it. -->
+  <script>
+    (() => {
+      const render = () => {
+        let progressed = []
+        try { progressed = JSON.parse(sessionStorage.getItem("duplicate-training:progressed") || "[]") } catch (error) {}
+        for (const badge of document.querySelectorAll("[data-duplicates-badge]")) badge.textContent = String(Math.max(0, 6 - progressed.length))
+      }
+      render()
+      window.addEventListener("pageshow", render)
+    })()
+  </script>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
@@ -530,9 +545,18 @@
 
     // Going to the comment page: record what the decision was (a record id, or skip)
     // so that page can ask the matching question and store it with the comment
+    // Record this set as moved past, for the Duplicate records tab count; a set is
+    // only ever recorded once, so revisiting and advancing again changes nothing
+    const markProgressed = () => {
+      let progressed = []
+      try { progressed = JSON.parse(sessionStorage.getItem("duplicate-training:progressed") || "[]") } catch (error) {}
+      if (!progressed.includes("test-3")) progressed.push("test-3")
+      try { sessionStorage.setItem("duplicate-training:progressed", JSON.stringify(progressed)) } catch (error) {}
+    }
+
     document.querySelector("[data-set-action]").addEventListener("click", () => {
       const action = document.querySelector("[data-set-action]")
-      if (action.getAttribute("href") !== action.dataset.commentHref) return
+      if (action.getAttribute("href") !== action.dataset.commentHref) { markProgressed(); return }
       const checked = document.querySelector('input[name="preferred-record"]:checked')
       try { sessionStorage.setItem("duplicate-training:decision:test-3", checked ? checked.value : "skip") } catch (error) {}
     })
