@@ -1180,23 +1180,6 @@ export const sessionController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  fakeAddChild(request, response) {
-    const { session_id } = request.params
-    const { data } = request.session
-
-    const session = Session.findOne(session_id, data)
-
-    request.flash(
-      'success',
-      'Created a clinic appointment for Alison Hargreaves at Edgwick Medical Centre, with a booking reference of CLN-1234-5678'
-    )
-
-    return response.redirect(`${session.uri}/patients`)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
   startCancel(request, response) {
     const { data } = request.session
     const { session } = response.locals
