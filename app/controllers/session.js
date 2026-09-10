@@ -880,16 +880,7 @@ export const sessionController = {
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
               [`/${session_id}/${type}/vaccinators`]: {},
-              ...(session.isFluOnlyClinic
-                ? {
-                    [`/${session_id}/${type}/time-for-flu-nasal`]: {},
-                    [`/${session_id}/${type}/time-for-flu-injection`]: {}
-                  }
-                : {
-                    [`/${session_id}/${type}/time-for-vaccinations-single`]: {},
-                    [`/${session_id}/${type}/time-for-vaccinations-multiple`]:
-                      {}
-                  })
+              [`/${session_id}/${type}/appointment-length`]: {}
             }),
         ...(session.presetNames?.includes(SessionPresetName.MMR) &&
         session.type === SessionType.School

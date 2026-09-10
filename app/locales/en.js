@@ -3215,26 +3215,6 @@ export const en = {
         label: 'The number will not vary'
       }
     },
-    vaccinationDuration: {
-      fluNasal: {
-        title: 'How long will a nasal spray appointment take, in minutes?'
-      },
-      fluInjection: {
-        title: 'For injections, do you want to double the appointment length?',
-        yes: 'Yes',
-        no: 'No'
-      },
-      vaccinationSingle: {
-        title: 'How long are your appointments, in minutes?'
-      },
-      vaccinationMultiple: {
-        title:
-          'For appointments with multiple vaccinations, do you want to double the appointment length?',
-        yes: 'Yes',
-        no: 'No'
-      },
-      suffix: 'minutes'
-    },
     timeForFluNasal: {
       label: 'Time for nasal spray'
     },
@@ -3242,13 +3222,37 @@ export const en = {
       label: 'Time for injection'
     },
     timeForVaccinationsSingle: {
-      label: 'Time for single vaccination'
+      label: 'Time for a single vaccination'
     },
     timeForVaccinationsMultiple: {
       label: 'Time for multiple vaccinations'
     },
     appointmentLengths: {
-      label: 'Appointment length'
+      label: 'Appointment length',
+      title: 'How long are your appointments?',
+      flu: {
+        short: {
+          label: 'Time for a nasal spray, in minutes'
+        },
+        long: {
+          label:
+            'For injections, do you want to double the appointment length?',
+          yes: 'Yes',
+          no: 'No'
+        }
+      },
+      other: {
+        short: {
+          label: 'Time for a single vaccination, in minutes'
+        },
+        long: {
+          label:
+            'For appointments with multiple vaccinations, do you want to double the appointment length?',
+          yes: 'Yes',
+          no: 'No'
+        }
+      },
+      suffix: 'minutes'
     },
     totalSlots: {
       label: 'Number of slots'
