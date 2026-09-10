@@ -914,6 +914,21 @@ export const en = {
       referenceNumber: 'Your booking reference number is: %s'
     }
   },
+  consentRequest: {
+    label: 'Consent request',
+    createdAt: {
+      label: 'Request sent'
+    },
+    email: {
+      label: 'Email address'
+    },
+    tel: {
+      label: 'Phone number'
+    },
+    status: {
+      label: 'Status'
+    }
+  },
   consent: {
     label: 'Consent response',
     title: 'Review consent responses',
@@ -1784,7 +1799,8 @@ export const en = {
       description: 'Find children and view their vaccination history'
     },
     show: {
-      title: 'Child record'
+      label: 'Overview',
+      title: 'Overview'
     },
     edit: {
       label: 'Edit record',
@@ -2080,7 +2096,22 @@ export const en = {
         '{count, plural, =0 {No vaccination record} one {Vaccination record} other {# vaccination records}}'
     },
     consent: {
-      label: 'Consent status'
+      label: 'Consent',
+      title: 'Consent for %s vaccination'
+    },
+    consentRequests: {
+      label: 'Consent requests'
+    },
+    replies: {
+      label: 'Consent responses',
+      title: 'Manage consent responses'
+    },
+    expiredReplies: {
+      label: 'Expired consent responses'
+    },
+    screen: {
+      label: 'Triage',
+      title: 'Manage triage'
     },
     status: {
       label: 'Status'
@@ -2139,10 +2170,6 @@ export const en = {
     },
     patientProgramme: {
       label: 'View child’s %s record'
-    },
-    consent: {
-      label: 'Consent status',
-      title: 'Consent for %s vaccination'
     },
     screen: {
       label: 'Triage status',
@@ -2246,12 +2273,6 @@ export const en = {
     invite: {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
-    },
-    consentRequests: {
-      label: 'Consent requests'
-    },
-    replies: {
-      label: 'Consent responses'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',
@@ -2501,6 +2522,9 @@ export const en = {
   },
   reply: {
     label: 'Response',
+    list: {
+      title: 'Consent for %s vaccination'
+    },
     show: {
       title: 'Consent response from %s'
     },
@@ -2547,10 +2571,13 @@ export const en = {
       success: 'Consent response from {{reply.fullName}} withdrawn'
     },
     createdAt: {
-      label: 'Date'
+      label: 'Date received'
     },
     createdBy: {
       label: 'Recorded by'
+    },
+    expiredAt: {
+      label: 'Expired'
     },
     respondent: {
       title: 'Who are you trying to get consent from?',

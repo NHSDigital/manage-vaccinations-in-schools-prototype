@@ -18,8 +18,9 @@
 
   {% if triageNoteRows | length %}
     {{ table({
+      card: params.card,
       id: "triage-notes",
-      caption: __("triage.note.label"),
+      caption: __("triage.note.label") if not params.card.heading,
       responsive: true,
       head: [
         {

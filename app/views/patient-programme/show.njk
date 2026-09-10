@@ -45,53 +45,86 @@
     }) }}
   {% endif %}
 
-  {% call card({
-    heading: {
-      text: __mf("patientProgramme.vaccinationsGiven.count", {
+  <p class="nhsuk-body nhsuk-u-margin-bottom-7">
+    {{ patientProgramme.formatted.statusWithNotes | safe }}
+  </p>
+
+  {% if patientProgramme.canRecordVaccination %}
+    <ul class="nhsuk-grid-row nhsuk-card-group">
+      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        {{ card({
+          heading: __("patientProgramme.consent.label"),
+          headingLevel: 3,
+          headingSize: "m",
+          href: patientProgramme.uri + "/replies",
+          clickable: true,
+          variant: "primary",
+          description: patientProgramme.consentDescription
+        }) }}
+      </li>
+      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        {{ card({
+          heading: __("patientProgramme.screen.label"),
+          headingLevel: 3,
+          headingSize: "m",
+          href: patientProgramme.uri + "/screen",
+          clickable: true,
+          variant: "primary",
+          description: patientProgramme.screenDescription
+        }) }}
+      </li>
+    </ul>
+  {% endif %}
+
+  {% if patientProgramme.canRecordVaccination or patientProgramme.isVaccinated %}
+    {% call card({
+      heading: __mf("patientProgramme.vaccinationsGiven.count", {
         count: patientProgramme.vaccinationsGiven.length
       }),
-      level: 3
-    }
-  }) %}
-    {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
+      headingLevel: 3
+    }) %}
+      {% if patientProgramme.isVaccinated %}
+        {% set vaccinationRows = [] %}
+        {% for vaccination in patientProgramme.vaccinationsGiven %}
+          {% set vaccinationRows = vaccinationRows | push([
+            {
+              header: __("vaccination.administeredAt.label"),
+              html: vaccination.link.administeredAt
+            },
+            {
+              header: __("vaccination.age.label"),
+              text: patient.dob | age(at=vaccination.administeredAt)
+            },
+            {
+              header: __("vaccination.programme.label"),
+              html: vaccination.formatted.programmeWithSequence
+            },
+            {
+              header: __("vaccination.source.label"),
+              text: vaccination.source
+            }
+          ]) %}
+        {% endfor %}
 
-    {% if patientProgramme.vaccinationsGiven.length %}
-      {% set vaccinationRows = [] %}
-      {% for vaccination in patientProgramme.vaccinationsGiven %}
-        {% set vaccinationRows = vaccinationRows | push([
-          {
-            html: vaccination.link.administeredAt
-          },
-          {
-            text: patient.dob | age(at=vaccination.administeredAt)
-          },
-          {
-            html: vaccination.formatted.programmeWithSequence
-          },
-          {
-            text: vaccination.source
-          }
-        ]) %}
-      {% endfor %}
+        {{ table({
+          id: "vaccinations",
+          responsive: true,
+          head: [
+            { text: __("vaccination.administeredAt.label") },
+            { text: __("vaccination.age.label") },
+            { text: __("vaccination.programme.label") },
+            { text: __("vaccination.source.label") }
+          ],
+          rows: vaccinationRows
+        }) }}
+      {% endif %}
 
-      {{ table({
-        id: "vaccinations",
-        responsive: true,
-        head: [
-          { text: __("vaccination.administeredAt.label") },
-          { text: __("vaccination.age.label") },
-          { text: __("vaccination.programme.label") },
-          { text: __("vaccination.source.label") }
-        ],
-        rows: vaccinationRows
-      }) }}
-    {% endif %}
-
-    {{ actionLink({
-      text: __("vaccination.new.alreadyVaccinated.title"),
-      href: patientProgramme.uri + "/new/vaccination"
-    }) if patientProgramme.canRecordVaccination }}
-  {% endcall %}
+      {{ actionLink({
+        text: __("vaccination.new.alreadyVaccinated.title"),
+        href: patientProgramme.uri + "/new/vaccination"
+      }) if patientProgramme.canRecordVaccination }}
+    {% endcall %}
+  {% endif %}
 
   {% if patientProgramme.tetanusVaccinations %}
     {% call card({
@@ -137,7 +170,7 @@
     {% endcall %}
   {% endif %}
 
-  {% if patientProgramme.patientSessions.length %}
+  {% if patientProgramme.patientSessions.length and patientProgramme.canRecordVaccination %}
     {% call card({
       heading: {
         text: __("patientProgramme.patientSessions.label"),
