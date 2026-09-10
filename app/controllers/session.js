@@ -10,6 +10,7 @@ import {
   RegistrationStatus,
   SchoolPhase,
   SessionPresetName,
+  SessionPresets,
   SessionStatus,
   SessionType
 } from '../enums.js'
@@ -29,7 +30,6 @@ import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
   convertIsoDateToObject,
   getDateValueDifference,
-  getExtendableAppointmentTimes,
   today
 } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -652,22 +652,13 @@ export const sessionController = {
     const { session } = response.locals
     const allAppointments = session.appointments
 
-    // Figure out which of the current appointments can be extended
-    const bookedSlotTimes = session.bookedAppointmentTimes
-    const availableSlotTimes = session.availableAppointmentTimes
-    const extendableAppointmentTimes = getExtendableAppointmentTimes(
-      availableSlotTimes,
-      bookedSlotTimes,
-      session.appointmentLength
-    )
-
     // Feed the view all of the information (incl. headers) it needs to present in the day view
     const vaccinationPeriodTables = []
     for (const vaccinationPeriod of session.vaccinationPeriods) {
       const allSlotTimes = [
         ...new Set(
           vaccinationPeriod
-            .allAppointmentTimes(session.appointmentLength)
+            .allSlotStartTimes(session.slotLength)
             .map((time) => time.getTime())
         )
       ].map((time) => new Date(time))
@@ -676,32 +667,55 @@ export const sessionController = {
         'Time',
         ...Array(vaccinationPeriod.vaccinatorCount)
           .keys()
-          .map((index) => `Vaccinator ${index + 1}`)
+          .map((index) => `Slot ${index + 1}`)
       ]
 
-      const rows = allSlotTimes.map((time) => {
+      // Track which column index is free at which row, to avoid overlap
+      const columnFreeFromRow = Array(vaccinationPeriod.vaccinatorCount).fill(0)
+
+      const rows = allSlotTimes.map((time, rowIndex) => {
         const rowValues = []
         rowValues.push({
+          header: headers[0],
           timeSlot: formatTime(time, false)
         })
-        rowValues.push(
-          ...allAppointments
-            .filter((appointment) => appointment.coversSlot(time))
-            .map((appointment) => ({
-              appointment,
-              spaceToExtend: extendableAppointmentTimes.some(
-                (extendableTime) =>
-                  extendableTime.getTime() === appointment.startAt.getTime()
-              )
-            }))
+
+        const appointmentsStartingNow = allAppointments.filter(
+          (appointment) => appointment.startAt.getTime() === time.getTime()
         )
+
+        for (const appointment of appointmentsStartingNow) {
+          // Find the first free column
+          const freeColumnIndex = columnFreeFromRow.findIndex(
+            (nextFreeRow) => nextFreeRow <= rowIndex
+          )
+          if (freeColumnIndex === -1) {
+            // Overbooked! Every column is occupied by an earlier appointment
+            console.log(
+              `No free vaccinator column at ${time.toISOString()} — session may be overbooked`
+            )
+          }
+
+          const slotSpan = session.calculateSlotCount(appointment)
+          if (freeColumnIndex >= 0) {
+            columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
+          }
+          rowValues.push({
+            appointment,
+            slotSpan
+          })
+        }
+
+        // Only need "Book" cells where a column's not already covered by an appointment
+        const freeSlotCount = columnFreeFromRow.filter(
+          (nextFreeRow) => nextFreeRow <= rowIndex
+        ).length
+
         rowValues.push(
-          ...Array(vaccinationPeriod.vaccinatorCount - rowValues.length + 1)
-            .keys()
-            .map(() => ({
-              appointment: null,
-              spaceToExtend: false
-            }))
+          ...Array.from({ length: freeSlotCount }, () => ({
+            appointment: null,
+            slotSpan: 1
+          }))
         )
 
         const params = new URLSearchParams()
@@ -839,7 +853,21 @@ export const sessionController = {
       const journey = {
         [`/`]: {},
         [`/${session_id}/${type}/type`]: {},
-        [`/${session_id}/${type}/programmes`]: {},
+        [`/${session_id}/${type}/programmes`]: {
+          [`/${session_id}/${type}/clinic`]: () => {
+            // If every programme was selected for a clinic, skip past the catch-ups question
+            if (session.type !== SessionType.Clinic) {
+              return false
+            }
+
+            const maxProgrammeCount = SessionPresets.filter(
+              ({ clinicOnly }) => !clinicOnly
+            ).length
+            const selectedProgrammeCount = data.session?.['presetNames']?.length
+
+            return selectedProgrammeCount === maxProgrammeCount
+          }
+        },
         ...(session.type === SessionType.School
           ? {
               [`/${session_id}/${type}/school`]: {},
@@ -847,13 +875,13 @@ export const sessionController = {
               [`/${session_id}/${type}/date`]: {}
             }
           : {
+              [`/${session_id}/${type}/catch-ups`]: {},
               [`/${session_id}/${type}/clinic`]: {},
               [`/${session_id}/${type}/date`]: {},
               [`/${session_id}/${type}/vaccination-periods`]: {},
               [`/${session_id}/${type}/vaccinators`]: {},
               [`/${session_id}/${type}/appointment-length`]: {}
             }),
-        //[`/${session_id}/${type}/date-check`]: {},
         ...(session.presetNames?.includes(SessionPresetName.MMR) &&
         session.type === SessionType.School
           ? {

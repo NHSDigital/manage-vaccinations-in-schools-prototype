@@ -369,6 +369,9 @@ export const en = {
     timeSlot: {
       label: 'Time'
     },
+    appointmentLength: {
+      label: 'Appointment length'
+    },
     vaccinations: {
       label: 'Vaccinations'
     },
@@ -703,8 +706,8 @@ export const en = {
         label: 'Available time ranges'
       },
       range: {
-        appointmentsAvailable:
-          '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
+        timesAvailable:
+          '{count, plural, =0 {No times available} one {1 time available} other {{count} times available}}'
       }
     },
     time: {
@@ -714,9 +717,7 @@ export const en = {
       },
       times: {
         label: 'Available appointment times'
-      },
-      appointmentsAvailable:
-        '{count, plural, =0 {No appointments available} one {1 appointment available} other {{count} appointments available}}'
+      }
     },
     abandon: {
       label: 'I cannot find a convenient appointment'
@@ -912,6 +913,14 @@ export const en = {
         }
       },
       referenceNumber: 'Your booking reference number is: %s'
+    }
+  },
+  clinicVaccinationPeriod: {
+    startAndEndTimes: {
+      label: 'Start and end times'
+    },
+    vaccinators: {
+      label: 'Vaccinators'
     }
   },
   consent: {
@@ -3015,6 +3024,9 @@ export const en = {
     consentWindow: {
       label: 'Consent period'
     },
+    percentageBooked: {
+      label: 'Percentage booked'
+    },
     mmrConsent: {
       title:
         'What type of MMR(V) consent request do you want to send to parents?',
@@ -3102,8 +3114,8 @@ export const en = {
       },
       appointments: {
         label: 'Clinic details',
-        total: {
-          label: 'Total slots'
+        percentBooked: {
+          label: 'Percentage of slots booked'
         },
         available: {
           label: 'Available slots'
@@ -3203,12 +3215,46 @@ export const en = {
         label: 'The number will not vary'
       }
     },
-    appointmentLength: {
+    timeForFluNasal: {
+      label: 'Time for nasal spray'
+    },
+    timeForFluInjection: {
+      label: 'Time for injection'
+    },
+    timeForVaccinationsSingle: {
+      label: 'Time for a single vaccination'
+    },
+    timeForVaccinationsMultiple: {
+      label: 'Time for multiple vaccinations'
+    },
+    appointmentLengths: {
       label: 'Appointment length',
       title: 'How long are your appointments?',
+      flu: {
+        short: {
+          label: 'Time for a nasal spray, in minutes'
+        },
+        long: {
+          label:
+            'For injections, do you want to double the appointment length?',
+          yes: 'Yes',
+          no: 'No'
+        }
+      },
+      other: {
+        short: {
+          label: 'Time for a single vaccination, in minutes'
+        },
+        long: {
+          label:
+            'For appointments with multiple vaccinations, do you want to double the appointment length?',
+          yes: 'Yes',
+          no: 'No'
+        }
+      },
       suffix: 'minutes'
     },
-    totalAppointments: {
+    totalSlots: {
       label: 'Number of slots'
     },
     appointments: {
@@ -3221,6 +3267,13 @@ export const en = {
     programmes: {
       label: 'Programmes',
       title: 'Which programmes will you run in this session?'
+    },
+    catchUps: {
+      label: 'Allow catch-ups?',
+      title:
+        'Do you want to allow catch-up vaccinations as well as the targeted {count, plural, one {programme} other {programmes}}?',
+      yes: 'Yes',
+      no: 'No, this clinic is only for {{selectedProgrammeNames}}'
     },
     status: {
       label: 'Status'

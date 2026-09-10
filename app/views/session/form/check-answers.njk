@@ -71,6 +71,9 @@
         programmes: {
           href: session.uri + "/new/programmes"
         },
+        catchUps: {
+          href: session.uri + "/new/catch-ups"
+        },
         location: {
           href: session.uri + "/new/clinic"
         },
@@ -89,10 +92,19 @@
         vaccinators: {
           href: session.uri + "/new/vaccinators"
         },
-        appointmentLength: {
+        timeForFluNasal: {
           href: session.uri + "/new/appointment-length"
-        },
-        totalAppointments: {}
+        } if session.isFluOnlyClinic,
+        timeForFluInjection: {
+          href: session.uri + "/new/appointment-length"
+        } if session.isFluOnlyClinic,
+        timeForVaccinationsSingle: {
+          href: session.uri + "/new/appointment-length"
+        } if not session.isFluOnlyClinic,
+        timeForVaccinationsMultiple: {
+          href: session.uri + "/new/appointment-length"
+        } if not session.isFluOnlyClinic,
+        totalSlots: {}
       })
     }) }}
   {% endif %}

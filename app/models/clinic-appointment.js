@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { formatDuration, intervalToDuration } from 'date-fns'
+import { addMinutes, formatDuration, intervalToDuration } from 'date-fns'
 
 import activity from '../datasets/activity.js'
 import {
@@ -54,7 +54,7 @@ import {
  * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
- * @property {Date} [endAt] - Slot end time
+ * @property {number} [appointmentLength] - Length of the appointment, in minutes
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
@@ -96,7 +96,7 @@ export class ClinicAppointment {
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
-    this.endAt = options?.endAt ? new Date(options.endAt) : undefined
+    this.appointmentLength = options?.appointmentLength
 
     this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
@@ -329,6 +329,20 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get the vaccination choices for this appointment
+   *
+   * @returns {import('./session.js').ClinicVaccinationChoices} - all relevant programme and vaccine choices
+   */
+  get vaccinationChoices() {
+    return {
+      selected_programme_ids: this.selected_programme_ids,
+      fluDecision: this.fluDecision,
+      fluAlternative: this.fluAlternative,
+      mmrAlternative: this.mmrAlternative
+    }
+  }
+
+  /**
    * Get the programmes selected for this appointment
    *
    * @param {object} programmeContext - the context in which we'll find the programmes
@@ -430,13 +444,37 @@ export class ClinicAppointment {
   }
 
   /**
-   * Does this appointment cover the slot whose start time is given?
+   * What is the end time of this appointment, precisely (ignoring slot boundaries)
    *
-   * @param {Date} slotStartTime - the time of the slot we're comparing to
-   * @returns {boolean} True if this appointment covers the slot, or false otherwise
+   * @returns {Date} - the end time of the appointment
    */
-  coversSlot(slotStartTime) {
-    return slotStartTime >= this.startAt && slotStartTime < this.endAt
+  get endAt() {
+    return addMinutes(this.startAt, this.appointmentLength)
+  }
+
+  /**
+   * Does this appointment overlap the slot whose start and end times are given?
+   *
+   * @param {Date} slotStartTime - the start time of the slot we're comparing to
+   * @param {Date} slotEndTime - the end time of the slot we're comparing to
+   * @returns {boolean} True if this appointment overlaps the slot, or false otherwise
+   */
+  coversSlot(slotStartTime, slotEndTime) {
+    return slotEndTime > this.startAt && slotStartTime < this.endAt
+  }
+
+  /**
+   * Get the start times of slots that this appointment occupies
+   *
+   * @param {number} slotLength - the length of a slot, in minutes
+   * @yields {Date} - the start times of the slots that this appointment occupies
+   */
+  *coveredSlotStartTimes(slotLength) {
+    let slotStartTime = this.startAt
+    while (slotStartTime < this.endAt) {
+      yield slotStartTime
+      slotStartTime = addMinutes(slotStartTime, slotLength)
+    }
   }
 
   /**

@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { addMinutes, addYears } from 'date-fns'
+import { addYears } from 'date-fns'
 
 import {
   ClinicAppointmentStatus,
@@ -11,14 +11,63 @@ import { Child, ClinicAppointment } from '../models.js'
 import { generateContact } from './contact.js'
 
 /**
+ * Choose programmes and vaccine choices for a child's clinic appointment
+ *
+ * @param {Array<string>} invitedProgramme_ids - All programmes the child's been invited for
+ * @returns {ClinicVaccinationChoices} The selected programmes and vaccine choices for the appointment
+ */
+export function decideClinicVaccinationChoices(invitedProgramme_ids) {
+  // When invited for more than one programme, a parent doesn't always want their child
+  // vaccinated for all of them in one go — sometimes leave one unselected
+  let selected_programme_ids = invitedProgramme_ids
+  if (invitedProgramme_ids.length > 1 && faker.datatype.boolean(0.3)) {
+    const unwanted_programme_id =
+      faker.helpers.arrayElement(invitedProgramme_ids)
+    selected_programme_ids = invitedProgramme_ids.filter(
+      (id) => id !== unwanted_programme_id
+    )
+  }
+
+  let fluDecision, fluAlternative, mmrAlternative
+
+  if (selected_programme_ids.includes('flu')) {
+    fluDecision = faker.helpers.weightedArrayElement([
+      { value: ReplyDecision.Given, weight: 95 },
+      { value: ReplyDecision.OnlyAlternativeInjection, weight: 5 }
+    ])
+    if (fluDecision === ReplyDecision.Given) {
+      fluAlternative = faker.datatype.boolean(0.5)
+    }
+  }
+  if (selected_programme_ids.includes('mmr')) {
+    mmrAlternative = faker.datatype.boolean(0.15)
+  }
+
+  return {
+    selected_programme_ids,
+    fluDecision,
+    fluAlternative,
+    mmrAlternative
+  }
+}
+
+/**
  * Generate fake clinic appointment
  *
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices, from decideClinicVaccinationChoices
+ * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
-export function generateClinicAppointment(patient, session, booking) {
+export function generateClinicAppointment(
+  patient,
+  session,
+  booking,
+  vaccinationChoices,
+  startAt
+) {
   const uuid = faker.string.uuid()
   const booking_uuid = booking.uuid
   const session_id = session.id
@@ -113,30 +162,16 @@ export function generateClinicAppointment(patient, session, booking) {
     }
   }
 
-  // Appointment time
-  const startAt = faker.helpers.arrayElement(session.availableAppointmentTimes)
-  const slotsCovered = 1 // TODO: take into account health answers
-  const endAt = addMinutes(startAt, session.appointmentLength * slotsCovered)
-
-  // Have the child signed up for whatever they were invited for
-  const selected_programme_ids = patient.clinicProgramme_ids
-  let fluDecision, fluAlternative, mmrAlternative
-  if (selected_programme_ids.includes('flu')) {
-    fluDecision = faker.helpers.weightedArrayElement([
-      { value: ReplyDecision.Given, weight: 95 },
-      { value: ReplyDecision.OnlyAlternativeInjection, weight: 5 }
-    ])
-    if (fluDecision === ReplyDecision.Given) {
-      fluAlternative = faker.datatype.boolean(0.5)
-    }
-  }
-  if (selected_programme_ids.includes('mmr')) {
-    mmrAlternative = faker.datatype.boolean(0.15)
-  }
+  const {
+    selected_programme_ids,
+    fluDecision,
+    fluAlternative,
+    mmrAlternative
+  } = vaccinationChoices
 
   const status = ClinicAppointmentStatus.Booked
 
-  return booking.addAppointment({
+  const appointment = booking.addAppointment({
     uuid,
     booking_uuid,
     patient_uuid,
@@ -146,15 +181,17 @@ export function generateClinicAppointment(patient, session, booking) {
     parentHasParentalResponsibility,
     session_id,
     startAt,
-    endAt,
+    appointmentLength: session.calculateAppointmentLength(vaccinationChoices),
     selected_programme_ids,
     fluDecision,
     fluAlternative,
     mmrAlternative,
     status
   })
+
+  return appointment
 }
 
 /**
- * @import { ClinicBooking, Patient, Session } from '../models.js'
+ * @import { ClinicBooking, ClinicVaccinationChoices, Patient, Session } from '../models.js'
  */

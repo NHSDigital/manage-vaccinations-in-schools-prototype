@@ -4,7 +4,7 @@
     rows: [
       {
         key: { text: __('session.location.label') },
-        value: { text: clinicSummary.location }
+        value: { text: clinicSummary.location | safe }
       },
       {
         key: { text: __('session.date.label') },

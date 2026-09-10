@@ -120,13 +120,14 @@ export const getAllAppointmentPaths = (
       // Vaccinations wanted
       [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
         [`/${booking_uuid}/new/${appointment_uuid}/availability`]: () => {
-          const programme_ids = stringToArray(
+          const vaccinationChoices = appointment.vaccinationChoices
+          vaccinationChoices.selected_programme_ids = stringToArray(
             sessionData.appointment?.selected_programme_ids
           )
           return (
             getBookableClinicSessions(
               sessionData,
-              programme_ids,
+              vaccinationChoices,
               isParentJourney
             ).length === 0
           )
@@ -194,7 +195,7 @@ export const getAllAppointmentPaths = (
                 return (
                   getBookableClinicSessions(
                     sessionData,
-                    appointment.selected_programme_ids,
+                    appointment.vaccinationChoices,
                     isParentJourney
                   ).length === 0
                 )
@@ -205,7 +206,7 @@ export const getAllAppointmentPaths = (
                 return (
                   getBookableClinicSessions(
                     sessionData,
-                    appointment.selected_programme_ids,
+                    appointment.vaccinationChoices,
                     isParentJourney
                   ).length === 0
                 )
@@ -225,7 +226,7 @@ export const getAllAppointmentPaths = (
                     return (
                       getBookableClinicSessions(
                         sessionData,
-                        appointment.selected_programme_ids,
+                        appointment.vaccinationChoices,
                         isParentJourney
                       ).length === 0
                     )
@@ -236,7 +237,7 @@ export const getAllAppointmentPaths = (
                 return (
                   getBookableClinicSessions(
                     sessionData,
-                    appointment.selected_programme_ids,
+                    appointment.vaccinationChoices,
                     isParentJourney
                   ).length === 0
                 )
