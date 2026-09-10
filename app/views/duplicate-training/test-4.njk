@@ -491,8 +491,19 @@
     // starts with a radio pre-checked), and pageshow (covers returning to the page by
     // browser back, when the browser restores the form controls or the whole page
     // from its cache after scripts have already run).
+    // The chosen record is also saved for this set in sessionStorage, so a fresh
+    // navigation back to the page (via Start, the tab, or a typed URL, where the
+    // browser does not restore form controls) shows the same choice as before
+    const CHOICE_KEY = "duplicate-training:choice:test-4"
     const syncChoice = () => {
-      const checked = document.querySelector('input[name="preferred-record"]:checked')
+      let checked = document.querySelector('input[name="preferred-record"]:checked')
+      if (!checked) {
+        let saved = null
+        try { saved = sessionStorage.getItem(CHOICE_KEY) } catch (error) {}
+        const radio = saved && document.querySelector('input[name="preferred-record"][value="' + saved + '"]')
+        if (radio) { radio.checked = true; checked = radio }
+      }
+      if (checked) { try { sessionStorage.setItem(CHOICE_KEY, checked.value) } catch (error) {} }
       renderChoice(checked ? checked.value : null)
     }
 
@@ -503,6 +514,7 @@
     document.querySelector("[data-clear-choice]").addEventListener("click", (event) => {
       event.preventDefault()
       for (const radio of document.querySelectorAll('input[name="preferred-record"]')) radio.checked = false
+      try { sessionStorage.removeItem(CHOICE_KEY) } catch (error) {}
       syncChoice()
     })
 
