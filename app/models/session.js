@@ -1359,6 +1359,24 @@ export class Session extends BaseModel {
               return this.isFluOnlyClinic
                 ? undefined
                 : `${this.slotLength * this.slotCountForLongAppointment} minutes`
+            case 'appointmentLengths': {
+              if (this.slotCountForLongAppointment > 1) {
+                const singleSlotSuffix = this.isFluOnlyClinic
+                  ? 'for nasal spray'
+                  : 'for single vaccination'
+                const doubleSlotSuffix = this.isFluOnlyClinic
+                  ? 'for injection'
+                  : 'for multiple vaccinations'
+                const singleSlotAppointment = `${this.slotLength} minutes ${singleSlotSuffix}`
+                const doubleSlotAppointment = `${this.slotLength * this.slotCountForLongAppointment} minutes ${doubleSlotSuffix}`
+
+                return [singleSlotAppointment, doubleSlotAppointment].join(
+                  '<br>'
+                )
+              }
+
+              return `${this.slotLength} minutes`
+            }
             case 'totalSlots': {
               return `${this.totalSlotCount}`
             }

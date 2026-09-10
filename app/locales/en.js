@@ -3248,6 +3248,9 @@ export const en = {
     timeForVaccinationsMultiple: {
       label: 'Time for multiple vaccinations'
     },
+    appointmentLengths: {
+      label: 'Appointment length'
+    },
     totalSlots: {
       label: 'Number of slots'
     },
