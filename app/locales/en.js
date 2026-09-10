@@ -870,7 +870,8 @@ export const en = {
       no: 'No, I’ll do it later'
     },
     teamHealthQuestions: {
-      title: 'Do you want to complete health questions now or later?',
+      title:
+        'When do you want to submit the parent’s answers to the health questions?',
       now: 'Now',
       later: 'Later'
     },
