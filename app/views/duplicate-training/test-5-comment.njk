@@ -81,11 +81,14 @@
 {% endblock %}
 
 {% block content %}
-  <!-- Optional comment step for user testing set 5. Reached from the sticky bar's
-       Add comment button once a record is chosen and Tell us about this decision is
-       ticked. Submit stores the text in sessionStorage under
-       duplicate-training:comment:test-5 and logs it to the console, then moves on
-       to the next set exactly as the bar would have; nothing is sent anywhere.
+  <!-- Optional comment step for user testing set 5, for a choice or a skip. Reached
+       from the sticky bar when Tell us about this decision is ticked: the button reads
+       Add comment with a record chosen, or Skip to next duplicate with none. The
+       comparison page leaves the decision (a record id, or skip) in sessionStorage under
+       duplicate-training:decision:test-5; this page uses it to ask the matching question.
+       Submit stores decision and text together under duplicate-training:comment:test-5
+       and logs them to the console, then moves on to the next set exactly as the bar
+       would have; nothing is sent anywhere.
        Cancel goes back in history so the comparison page comes back with its choice
        and checkbox as they were. -->
   <div class="nhsuk-grid-row">
@@ -94,7 +97,7 @@
       <h1 class="nhsuk-heading-l">Tell us about this decision</h1>
       <form action="/duplicate-training/test-6" method="get" data-comment-form>
         <div class="nhsuk-form-group">
-          <label class="nhsuk-label nhsuk-label--m" for="comment">Why did you choose this record?</label>
+          <label class="nhsuk-label nhsuk-label--m" for="comment" data-comment-question>Tell us why</label>
           <div class="nhsuk-hint" id="comment-hint">Optional. This is for the Mavis team and does not change the child’s vaccination history.</div>
           <textarea class="nhsuk-textarea" id="comment" name="comment" rows="5" aria-describedby="comment-hint"></textarea>
         </div>
@@ -107,11 +110,18 @@
   </div>
 
   <script>
+    let decision = "unknown"
+    try { decision = sessionStorage.getItem("duplicate-training:decision:test-5") || "unknown" } catch (error) {}
+    const question = document.querySelector("[data-comment-question]")
+    if (decision === "skip") question.textContent = "Why did you skip this set?"
+    else if (decision.startsWith("record")) question.textContent = "Why did you choose this record?"
+
     document.querySelector("[data-comment-form]").addEventListener("submit", (event) => {
       event.preventDefault()
       const comment = document.getElementById("comment").value
-      try { sessionStorage.setItem("duplicate-training:comment:test-5", comment) } catch (error) {}
-      console.log("[duplicate-training] comment for test-5:", JSON.stringify(comment))
+      const entry = { decision, comment }
+      try { sessionStorage.setItem("duplicate-training:comment:test-5", JSON.stringify(entry)) } catch (error) {}
+      console.log("[duplicate-training] test-5:", JSON.stringify(entry))
       window.location.assign(event.target.action)
     })
 
