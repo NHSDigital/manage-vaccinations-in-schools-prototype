@@ -3220,8 +3220,7 @@ export const en = {
         title: 'How long will a nasal spray appointment take, in minutes?'
       },
       fluInjection: {
-        title:
-          'For injections, do you want to double the standard appointment length?',
+        title: 'For injections, do you want to double the appointment length?',
         yes: 'Yes',
         no: 'No'
       },
@@ -3230,7 +3229,7 @@ export const en = {
       },
       vaccinationMultiple: {
         title:
-          'For appointments with multiple vaccinations, do you want to double the standard appointment length?',
+          'For appointments with multiple vaccinations, do you want to double the appointment length?',
         yes: 'Yes',
         no: 'No'
       },
