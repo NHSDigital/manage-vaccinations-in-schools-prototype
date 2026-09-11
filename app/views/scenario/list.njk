@@ -1,6 +1,6 @@
 {% extends "_layouts/default.njk" %}
 
-{% set title = "Scenarios" %}
+{% set title = "Pre-canned scenarios" %}
 
 {% block main %}
   <div class="nhsuk-width-container">
@@ -10,31 +10,41 @@
         size: "l"
       }) }}
 
-      <p>Pre-built scenarios for planning demos and usability testing. Each one is regenerated
-      every time <code>npm run create-data</code> runs, so they’re always there in a known
-      state.</p>
+      <p>The following are pre-built scenarios for use in demos and usability testing.</p>
+      
+      <p>Unlike the randomised data, these will remain available each time we deploy.</p>
 
-      {% for scenario in scenarios %}
-        {% call card({
-          href: scenario.startUrl,
-          heading: {
-            text: scenario.name,
-            level: 2,
-            size: "s"
-          },
-          classes: "nhsuk-u-margin-bottom-4"
-        }) %}
-          <p>{{ scenario.description }}</p>
+      {{ heading({
+        text: "Scenarios available",
+        size: "m",
+        headingLevel: 2
+      }) }}
 
-          {% if scenario.links.length %}
-            <ul class="nhsuk-list">
-              {% for link in scenario.links %}
-                <li><a href="{{ link.href }}">{{ link.label }}</a></li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endcall %}
-      {% endfor %}
+      {% if scenarios.length > 0 %}
+        {% for scenario in scenarios %}
+          {% call card({
+            href: scenario.startUrl,
+            heading: {
+              text: scenario.name,
+              level: 2,
+              size: "s"
+            },
+            classes: "nhsuk-u-margin-bottom-4"
+          }) %}
+            <p>{{ scenario.description }}</p>
+
+            {% if scenario.links.length %}
+              <ul class="nhsuk-list">
+                {% for link in scenario.links %}
+                  <li><a href="{{ link.href }}">{{ link.label }}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endcall %}
+        {% endfor %}
+      {% else %}
+        <p>No scenarios found.</p>
+      {% endif %}
     </main>
   </div>
 {% endblock %}
