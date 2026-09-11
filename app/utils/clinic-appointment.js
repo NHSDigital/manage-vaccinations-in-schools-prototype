@@ -149,6 +149,15 @@ export const getAllAppointmentPaths = (
           }
         : {}),
 
+      // Interrupt if the appointment is too long for the slot selected on Appointments page
+      ...(isDataMigrationJourney &&
+      sessionData.journeyData[booking_uuid]?.preselectedSlot &&
+      !canAppointmentFitInSchedule(appointment, sessionData)
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/unsuitable-slot`]: {}
+          }
+        : {}),
+
       // Clinic location preference
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
@@ -345,6 +354,24 @@ export const getAllAppointmentPaths = (
 
   // Merge all the appointments' paths into a single sequence, preserving order
   return Object.assign({}, ...pathsPerAppointment)
+}
+
+/**
+ * Are there enough consecutive slots free at the appointment's start time to fit it in?
+ *
+ * @param {ClinicAppointment} appointment - the appointment we're booking
+ * @param {object} sessionData - the global data context
+ * @returns {boolean} - true if the appointment will fit in the schedule, or false otherwise
+ */
+const canAppointmentFitInSchedule = (appointment, sessionData) => {
+  const session = Session.findOne(appointment.session_id, sessionData)
+  const startTimesWithEnoughSpace =
+    session.bookableSlotStartTimesFor(appointment)
+
+  const appointmentTime = appointment.startAt.getTime()
+  return startTimesWithEnoughSpace.some(
+    (slotTime) => slotTime.getTime() == appointmentTime
+  )
 }
 
 /**
