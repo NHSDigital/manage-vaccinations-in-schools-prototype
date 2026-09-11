@@ -28,6 +28,21 @@ export default [
     team_ids: ['001'],
     presetNames
   },
+  // Reserved for scenario data (see lib/scenarios/) - a recurring school used across multiple
+  // scenarios. Kept in this dataset (rather than created ad hoc) so it gets exactly the same
+  // random session/patient generation as every other school in create-data.js
+  {
+    id: '777777',
+    urn: '777777',
+    name: 'Grange Hill secondary school',
+    phase: SchoolPhase.Secondary,
+    yearGroups: [7, 8, 9, 10, 11],
+    addressLine1: 'Grange Road',
+    addressLevel1: 'Northam',
+    postalCode: 'CV1 1AA',
+    team_ids: ['001'],
+    presetNames
+  },
   {
     id: '135335',
     urn: '135335',
