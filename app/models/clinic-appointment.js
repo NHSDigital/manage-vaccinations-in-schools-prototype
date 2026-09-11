@@ -478,6 +478,17 @@ export class ClinicAppointment {
   }
 
   /**
+   * Has this appointment been made shorter than its default length?
+   *
+   * @returns {boolean} - true if it's been shortened, or false otherwise
+   */
+  get hasBeenShortened() {
+    return (
+      this.session.calculateAppointmentLength(this) > this.appointmentLength
+    )
+  }
+
+  /**
    * Get the registration status for this appointment's child i.e. have they turned up?
    *
    * @returns {RegistrationStatus|undefined} the registration status if a matched child, or undefined if not yet matched

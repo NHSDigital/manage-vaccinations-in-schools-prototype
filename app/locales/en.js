@@ -855,6 +855,13 @@ export const en = {
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
+    unsuitableSlot: {
+      title: 'There is not enough time for the appointment',
+      description:
+        'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you will need to find another start time on the Appointments page',
+      confirm: 'Continue',
+      cancel: 'Cancel and return to the Appointments page'
+    },
     appointmentLost: {
       title: 'Your appointment time is no longer available',
       instruction:

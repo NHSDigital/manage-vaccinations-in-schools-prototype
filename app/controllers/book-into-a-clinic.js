@@ -604,6 +604,18 @@ export const bookIntoClinicController = {
         location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
+    } else if (view === 'unsuitable-slot') {
+      // TODO: make this smarter when appointments get longer than 2 slots
+      const session = Session.findOne(appointment.session_id, data)
+      const requiredSlots = 2 // session.calculateSlotCount(appointment)
+      const availableSlots = 1
+
+      response.locals.requiredSlots = requiredSlots
+      response.locals.requiredMinutes = requiredSlots * session.slotLength
+      response.locals.availableSlots = availableSlots
+      response.locals.availableMinutes = availableSlots * session.slotLength
+
+      response.locals.slotStartTime = formatTime(appointment.startAt, true)
     } else if (view === 'fully-booked') {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
@@ -708,6 +720,15 @@ export const bookIntoClinicController = {
 
         ClinicBooking.update(booking_uuid, booking, data.wizard)
       }
+    } else if (view === 'unsuitable-slot') {
+      // Must've decided to shorten and continue
+      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+      const appointment = booking.findAppointment(appointment_uuid)
+
+      const session = Session.findOne(appointment.session_id, data)
+      appointment.appointmentLength = session.slotLength
+
+      ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'child-count') {
       // We've just set the child count, so create the appointments we'll need
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
