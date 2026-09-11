@@ -5,8 +5,14 @@ export const scenarioController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   list(request, response) {
-    response.locals.scenarios = Scenario.findAll(request.session.data)
+    const { data } = request.session
+
+    response.locals.scenarios = Scenario.findAll(data)
 
     return response.render('scenario/list')
   }
 }
+
+/**
+ * @import { RequestHandler } from 'express'
+ */
