@@ -1,0 +1,40 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = "Scenarios" %}
+
+{% block main %}
+  <div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+      {{ heading({
+        text: title,
+        size: "l"
+      }) }}
+
+      <p>Pre-built scenarios for planning demos and usability testing. Each one is regenerated
+      every time <code>npm run create-data</code> runs, so they’re always there in a known
+      state.</p>
+
+      {% for scenario in scenarios %}
+        {% call card({
+          href: scenario.startUrl,
+          heading: {
+            text: scenario.name,
+            level: 2,
+            size: "s"
+          },
+          classes: "nhsuk-u-margin-bottom-4"
+        }) %}
+          <p>{{ scenario.description }}</p>
+
+          {% if scenario.links.length %}
+            <ul class="nhsuk-list">
+              {% for link in scenario.links %}
+                <li><a href="{{ link.href }}">{{ link.label }}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endcall %}
+      {% endfor %}
+    </main>
+  </div>
+{% endblock %}
