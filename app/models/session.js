@@ -475,6 +475,25 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Can this session's targeted programmes result in conditions for longer appointments?
+   *
+   * @returns {boolean} - true if we can differentiate short and long appointments, or false otherwise
+   */
+  get canBeSetUpForLongerAppointments() {
+    // Appointments in flu-only clinics can be nasal or IM (short or long)
+    if (this.isFluOnlyClinic) {
+      return true
+    }
+
+    // Where appointments could be multiple injections, appointments could be short or long
+    if (this.programme_ids.length > 1 || this.canVaccinateForOtherProgrammes) {
+      return true
+    }
+
+    return false
+  }
+
+  /**
    * Calculate the default length of the given appointment using this session's setup, in minutes
    *
    * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
@@ -1357,7 +1376,8 @@ export class Session extends BaseModel {
                 ? undefined
                 : `${this.slotLength} minutes`
             case 'timeForVaccinationsMultiple':
-              return this.isFluOnlyClinic
+              return this.isFluOnlyClinic ||
+                !this.canBeSetUpForLongerAppointments
                 ? undefined
                 : `${this.slotLength * this.slotCountForLongAppointment} minutes`
             case 'appointmentLengths': {

@@ -94,16 +94,16 @@
         },
         timeForFluNasal: {
           href: session.uri + "/new/appointment-length"
-        } if session.isFluOnlyClinic,
+        },
         timeForFluInjection: {
           href: session.uri + "/new/appointment-length"
-        } if session.isFluOnlyClinic,
+        },
         timeForVaccinationsSingle: {
           href: session.uri + "/new/appointment-length"
-        } if not session.isFluOnlyClinic,
+        },
         timeForVaccinationsMultiple: {
           href: session.uri + "/new/appointment-length"
-        } if not session.isFluOnlyClinic,
+        },
         totalSlots: {}
       })
     }) }}

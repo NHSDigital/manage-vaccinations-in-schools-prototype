@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("session.appointmentLengths.title") %}
-{% set clinicType = "flu" if session.isFluOnlyClinic else "other" %}
+{% set clinicTypeKey = "flu" if session.isFluOnlyClinic else "other" %}
 
 {% block form %}
   {% call fieldset({
@@ -10,9 +10,10 @@
       size: "l"
     }
   }) %}
+    {# Ask about the length of the shortest appointment possible, and use as the slot length #}
     {{ input({
       label: {
-        text: __("session.appointmentLengths." + clinicType + ".short.label"),
+        text: __("session.appointmentLengths." + clinicTypeKey + ".short.label"),
         size: "m"
       },
       suffix: __("session.appointmentLengths.suffix"),
@@ -22,24 +23,34 @@
       decorate: "session.slotLength"
     }) }}
     
-    {{ radios({
-      fieldset: {
-        legend: {
-          text: __("session.appointmentLengths." + clinicType + ".long.label"),
-          size: "m"
+    {% if session.canBeSetUpForLongerAppointments %}
+      {# Ask about making IM flu or multiple vaccinations longer #}
+      {{ radios({
+        fieldset: {
+          legend: {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.label"),
+            size: "m"
+          }
+        },
+        items: [
+        {
+          text: __("session.appointmentLengths." + clinicTypeKey + ".long.yes"),
+          value: 2
+        },
+        {
+          text: __("session.appointmentLengths." + clinicTypeKey + ".long.no"),
+          value: 1
         }
-      },
-      items: [
-      {
-        text: __("session.appointmentLengths." + clinicType + ".long.yes"),
-        value: 2
-      },
-      {
-        text: __("session.appointmentLengths." + clinicType + ".long.no"),
-        value: 1
-      }
-      ],
-      decorate: "session.slotCountForLongAppointment"
-    }) }}
+        ],
+        decorate: "session.slotCountForLongAppointment"
+      }) }}
+    {% else %}
+      {# Can't have longer appointments, so just record a neutral value for slotCountForLongAppointment #}
+      {{ input({
+        type: "hidden",
+        value: 1,
+        decorate: "session.slotCountForLongAppointment"
+      }) }}
+    {% endif %}
   {% endcall %}
 {% endblock %}
