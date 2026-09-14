@@ -496,12 +496,13 @@ export class Session extends BaseModel {
       ReplyDecision.OnlyAlternativeInjection
 
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
+    // and will not have any other catch-up vaccinations
     if (this.isFluOnlyClinic) {
       return isFluNasal ? 1 : this.slotCountForLongAppointment
     }
 
-    // For all other clinics setups, count the injections to know how long we need to allocate; in
-    // this case, we'd expressly don't count a nasal flu vaccination, as teams can usually squeeze
+    // For all other clinics setups, count only the injections to know how long we need to allocate.
+    // In this case, we expressly don't count a nasal flu vaccination, as teams can usually squeeze
     // it in.
     let injectionCount = 0
     const programme_ids = appointmentProperties.selected_programme_ids
@@ -510,7 +511,7 @@ export class Session extends BaseModel {
     }
     injectionCount += programme_ids.filter((id) => id !== 'flu').length
 
-    return injectionCount === 1 ? 1 : this.slotCountForLongAppointment
+    return injectionCount > 1 ? this.slotCountForLongAppointment : 1
   }
 
   /**
