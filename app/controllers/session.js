@@ -855,17 +855,29 @@ export const sessionController = {
         [`/${session_id}/${type}/type`]: {},
         [`/${session_id}/${type}/programmes`]: {
           [`/${session_id}/${type}/clinic`]: () => {
-            // If every programme was selected for a clinic, skip past the catch-ups question
             if (session.type !== SessionType.Clinic) {
               return false
             }
 
+            // If only flu was selected for a clinic, skip past the catch-ups question (enforce no catch-ups)
+            const presetNames = data.session?.['presetNames']
+            const selectedProgrammeCount = presetNames?.length
+            if (
+              selectedProgrammeCount === 1 &&
+              presetNames?.includes(SessionPresetName.Flu)
+            ) {
+              return true
+            }
+
+            // If every programme was selected for a clinic, skip past the catch-ups question (as it's not relevant)
             const maxProgrammeCount = SessionPresets.filter(
               ({ clinicOnly }) => !clinicOnly
             ).length
-            const selectedProgrammeCount = data.session?.['presetNames']?.length
+            if (selectedProgrammeCount === maxProgrammeCount) {
+              return true
+            }
 
-            return selectedProgrammeCount === maxProgrammeCount
+            return false
           }
         },
         ...(session.type === SessionType.School
@@ -1000,7 +1012,15 @@ export const sessionController = {
       // Add the first vaccination period, if not already there
       if (!session.vaccinationPeriods?.length) {
         session.addVaccinationPeriod()
-        Session.update(session_id, session, data.wizard)
+        session = Session.update(session_id, session, data.wizard)
+      }
+
+      // Automatically prevent catch-ups in flu-only clinics
+      if (view === 'programmes') {
+        if (session.isFluOnlyClinic) {
+          session.canVaccinateForOtherProgrammes = false
+          session = Session.update(session_id, session, data.wizard)
+        }
       }
 
       // Copy the default venue information from the clinic location

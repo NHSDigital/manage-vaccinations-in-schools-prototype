@@ -475,6 +475,25 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Can this session's targeted programmes result in conditions for longer appointments?
+   *
+   * @returns {boolean} - true if we can differentiate short and long appointments, or false otherwise
+   */
+  get canBeSetUpForLongerAppointments() {
+    // Appointments in flu-only clinics can be nasal or IM (short or long)
+    if (this.isFluOnlyClinic) {
+      return true
+    }
+
+    // Where appointments could be multiple injections, appointments could be short or long
+    if (this.programme_ids.length > 1 || this.canVaccinateForOtherProgrammes) {
+      return true
+    }
+
+    return false
+  }
+
+  /**
    * Calculate the default length of the given appointment using this session's setup, in minutes
    *
    * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
@@ -496,12 +515,13 @@ export class Session extends BaseModel {
       ReplyDecision.OnlyAlternativeInjection
 
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
+    // and will not have any other catch-up vaccinations
     if (this.isFluOnlyClinic) {
       return isFluNasal ? 1 : this.slotCountForLongAppointment
     }
 
-    // For all other clinics setups, count the injections to know how long we need to allocate; in
-    // this case, we'd expressly don't count a nasal flu vaccination, as teams can usually squeeze
+    // For all other clinics setups, count only the injections to know how long we need to allocate.
+    // In this case, we expressly don't count a nasal flu vaccination, as teams can usually squeeze
     // it in.
     let injectionCount = 0
     const programme_ids = appointmentProperties.selected_programme_ids
@@ -510,7 +530,7 @@ export class Session extends BaseModel {
     }
     injectionCount += programme_ids.filter((id) => id !== 'flu').length
 
-    return injectionCount === 1 ? 1 : this.slotCountForLongAppointment
+    return injectionCount > 1 ? this.slotCountForLongAppointment : 1
   }
 
   /**
@@ -1356,7 +1376,8 @@ export class Session extends BaseModel {
                 ? undefined
                 : `${this.slotLength} minutes`
             case 'timeForVaccinationsMultiple':
-              return this.isFluOnlyClinic
+              return this.isFluOnlyClinic ||
+                !this.canBeSetUpForLongerAppointments
                 ? undefined
                 : `${this.slotLength * this.slotCountForLongAppointment} minutes`
             case 'appointmentLengths': {
