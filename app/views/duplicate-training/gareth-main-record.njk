@@ -1,6 +1,6 @@
 {% extends "_layouts/default.njk" %}
 
-{% set pageName = "Exploration - main record chosen from a duplicate set" %}
+{% set pageName = "Exploration - preferred record chosen from a duplicate set" %}
 {% block header %}
   <!-- Mavis site chrome: environment banner and site header exactly as rendered
        on a child record, with the Children item current. Static copy for
@@ -85,12 +85,12 @@
        Lives at /duplicate-training/gareth-main-record alongside the other Gareth pages.
        Linked only from the scenario index under Design explorations: nothing in the
        testing flow links here, and nothing here links back into it. A rendered end state showing Gareth Greene's MMR duplicate
-       set after one record has been chosen as the main record.
+       set after one record has been chosen as the preferred record.
 
        Layout: a static copy of vaccination/duplicates.njk on the
        vaccination-record-valid-ignored-doses branch (heading and date-of-birth caption,
-       a Main record table card, an N duplicate records table card, a report-a-problem
-       link), with two additions for this exploration: a Change main record call to
+       a Preferred record table card, an N duplicate records table card, a report-a-problem
+       link), with two additions for this exploration: a Change preferred record call to
        action, and an Activity log card using the app-timeline markup shared by the
        prototype's _macros/timeline.njk and Mavis's AppTimelineItemComponent. The
        event follows Mavis's activity log conventions: a past-tense noun phrase title
@@ -111,10 +111,11 @@
     <strong>Date of birth:</strong> 12 May 2011 (aged 15)
   </p>
 
-  <!-- Main record card: the record chosen from the set, in the branch's table form -->
+  <!-- Preferred record card: the record chosen from the set, in the branch's table form.
+       The branch calls this the Main record; this exploration says preferred throughout -->
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
-      <h3 class="nhsuk-card__heading nhsuk-heading-m">Main record</h3>
+      <h3 class="nhsuk-card__heading nhsuk-heading-m">Preferred record</h3>
       <table class="nhsuk-table-responsive" id="primary-record">
         <thead class="nhsuk-table__head">
           <tr>
@@ -166,7 +167,7 @@
       </table>
 
       <!-- Call to action for this exploration: revisit the choice -->
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" href="#" role="button" draggable="false">Change main record</a>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" href="#" role="button" draggable="false">Change preferred record</a>
     </div>
   </div>
 
@@ -184,9 +185,9 @@
             <circle cx="14" cy="14" r="13" fill="#005EB8"/>
           </svg>
           <div class="app-timeline__content">
-            <h4 class="app-timeline__header">Main record chosen</h4>
+            <h4 class="app-timeline__header">Preferred record chosen</h4>
             <p class="app-timeline__description"><strong class="nhsuk-tag nhsuk-tag--white">MMR</strong> 27 August 2026 at 10:22 am · Jane Joy</p>
-            <blockquote><p>The record from Woodside Medical Practice, reported on 27 May 2012, was chosen as the main record for the MMR vaccination given on 26 May 2012. The other 2 records in the set are kept as duplicates.</p></blockquote>
+            <blockquote><p>The record from Woodside Medical Practice, reported on 27 May 2012, was chosen as the preferred record for the MMR vaccination given on 26 May 2012. The other 2 records in the set are kept as duplicates.</p></blockquote>
           </div>
         </li>
       </ol>
