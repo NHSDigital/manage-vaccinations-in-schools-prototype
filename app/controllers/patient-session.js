@@ -18,6 +18,7 @@ import {
 } from '../models.js'
 import { getAccountVaccineMethods } from '../utils/account.js'
 import { today } from '../utils/date.js'
+import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { stringToBoolean } from '../utils/string.js'
 
@@ -166,6 +167,8 @@ export const patientSessionController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
+
+    response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
 
     return response.render(`patient-session/${view}`)
   },

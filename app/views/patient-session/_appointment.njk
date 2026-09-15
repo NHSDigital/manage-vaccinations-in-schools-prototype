@@ -1,3 +1,5 @@
+{% set structuredNeeds = (additionalNeedsFeatureFlag === AdditionalNeeds.Structured) %}
+
 {% call card({
   heading: {
     text: __("patientSession.clinicAppointment.title"),
@@ -41,10 +43,11 @@
         },
         impairmentsUnlessNone: {
           label: __("patient.impairments.label")
-        },
+        } if structuredNeeds else none,
         adjustmentsUnlessNone: {
           label: __("patient.adjustments.label")
-        },
+        } if structuredNeeds else none,
+        additionalSupport: {} if not structuredNeeds else none,
         contactDetails: {}
       })
     }) }}
