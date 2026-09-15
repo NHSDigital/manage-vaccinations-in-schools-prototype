@@ -22,6 +22,15 @@ export const AcademicYear = {
  * @readonly
  * @enum {string}
  */
+export const AdditionalNeeds = {
+  Basic: 'Basic freeform text',
+  Structured: 'Impairments and adjusstments flags'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const Adjustment = {
   AssistanceAnimal: 'Has an assistance animal',
   Distraction: 'Needs a distraction while having the vaccination',
