@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.hasRequestedConsultation.title") %}
+{% set title = __("consent.hasRequestedConsultation.title." + consent.refusalReason) %}
 
 {% block form %}
   {{ radios({

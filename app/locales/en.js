@@ -12,6 +12,11 @@ import {
 
 const thisAcademicYear = Object.values(AcademicYear).at(-1)
 
+const hasRequestedConsultationTitle =
+  'Would you like to talk to the vaccination team about alternative options?'
+const hasRequestedConsultationHint =
+  'Your answer helps the vaccination team understand whether you would like more information. They may still contact you about your child’s vaccination if they need to.'
+
 /**
  * @returns {LocaleCatalog}
  */
@@ -1271,22 +1276,31 @@ export const en = {
       }
     },
     hasRequestedConsultation: {
-      title:
-        'Would you like a member of the team to contact you to discuss alternative options?',
-      hint: {
-        [ReplyRefusal.AlreadyVaccinated]: false,
-        [ReplyRefusal.AlreadyVaccinatedMMR]: false,
+      title: {
+        [ReplyRefusal.AlreadyVaccinated]: hasRequestedConsultationTitle,
+        [ReplyRefusal.AlreadyVaccinatedMMR]: hasRequestedConsultationTitle,
         [ReplyRefusal.Gelatine]:
-          'For example, it may be possible to use a vaccine that does not contain gelatine.',
+          'Would you like to talk to the vaccination team about a vaccine that does not contain gelatine?',
         [ReplyRefusal.GelatineMMR]:
-          'For example, it may be possible to use a vaccine that does not contain gelatine.',
-        [ReplyRefusal.GettingElsewhere]: false,
-        [ReplyRefusal.Medical]:
-          'We understand alternatives might not be suitable in some cases.',
-        [ReplyRefusal.Other]: false,
+          'Would you like to talk to the vaccination team about a vaccine that does not contain gelatine?',
+        [ReplyRefusal.GettingElsewhere]: hasRequestedConsultationTitle,
+        [ReplyRefusal.Medical]: hasRequestedConsultationTitle,
+        [ReplyRefusal.Other]: hasRequestedConsultationTitle,
         [ReplyRefusal.OutsideSchool]:
-          'For example, it may be possible to vaccinate your child in a community clinic.',
-        [ReplyRefusal.Personal]: false
+          'Would you like to talk to the vaccination team about alternative options, such as vaccination in a clinic?',
+        [ReplyRefusal.Personal]: hasRequestedConsultationTitle
+      },
+      hint: {
+        [ReplyRefusal.AlreadyVaccinated]: hasRequestedConsultationHint,
+        [ReplyRefusal.AlreadyVaccinatedMMR]: hasRequestedConsultationHint,
+        [ReplyRefusal.Gelatine]: hasRequestedConsultationHint,
+        [ReplyRefusal.GelatineMMR]: hasRequestedConsultationHint,
+        [ReplyRefusal.GettingElsewhere]: hasRequestedConsultationHint,
+        [ReplyRefusal.Medical]:
+          'We understand alternatives might not be suitable in some cases. Your answer helps the vaccination team understand whether you would like more information. They may still contact you about your child’s vaccination if they need to.',
+        [ReplyRefusal.Other]: hasRequestedConsultationHint,
+        [ReplyRefusal.OutsideSchool]: hasRequestedConsultationHint,
+        [ReplyRefusal.Personal]: hasRequestedConsultationHint
       },
       label: 'Discuss options',
       yes: 'Yes, I would like someone to contact me',
