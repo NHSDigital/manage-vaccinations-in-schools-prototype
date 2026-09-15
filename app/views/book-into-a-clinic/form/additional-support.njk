@@ -1,0 +1,29 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.additionalSupport.title", firstName) %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    hint: __("clinicBooking.additionalSupport.hint"),
+    items: [{
+      text: __("clinicBooking.additionalSupport.yes"),
+      value: true,
+      conditional: {
+        html: textarea({
+          label: __("clinicBooking.additionalSupport.details.label"),
+          decorate: "appointment.additionalSupportNeedsDetails"
+        })
+      }
+    }, {
+      text: __("clinicBooking.additionalSupport.no"),
+      value: false
+    }],
+    decorate: "appointment.hasAdditionalSupportNeeds"
+  }) }}
+{% endblock %}
