@@ -2,7 +2,9 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addYears } from 'date-fns'
 
 import {
+  Adjustment,
   ClinicAppointmentStatus,
+  Impairment,
   ParentalRelationship,
   ReplyDecision
 } from '../enums.js'
@@ -113,6 +115,19 @@ export function generateClinicAppointment(
     })
   }
 
+  // Copy the first impairment to the basic additional needs, if present
+  let hasAdditionalSupportNeeds = false
+  let additionalSupportNeedsDetails = ''
+  if (child.impairments.at(0) !== Impairment.None) {
+    hasAdditionalSupportNeeds = true
+    const impairment = child.impairments[0]
+    additionalSupportNeedsDetails = `Impairment: ${impairment === Impairment.Other ? child.impairmentsOther : impairment}`
+  } else if (child.adjustments.at(0) !== Adjustment.None) {
+    hasAdditionalSupportNeeds = true
+    const adjustment = child.adjustments[0]
+    additionalSupportNeedsDetails = `Adjustment: ${adjustment === Adjustment.Other ? child.adjustmentsOther : adjustment}`
+  }
+
   // Set up the relationship to the child for this appointment. If the booking
   // doesn’t already have a contact set up, we’ll create the booking and
   // appointment’s contact based on the first appointment’s child details
@@ -186,6 +201,8 @@ export function generateClinicAppointment(
     fluDecision,
     fluAlternative,
     mmrAlternative,
+    hasAdditionalSupportNeeds,
+    additionalSupportNeedsDetails,
     status
   })
 
