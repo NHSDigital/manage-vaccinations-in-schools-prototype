@@ -1,15 +1,17 @@
 import _ from 'lodash'
 
 import {
-  LocationSearchType,
+  AdditionalNeeds,
   AppointmentAbandonmentReason,
+  ClinicBookingJourneyType,
+  LocationSearchType,
   PatientClinicStatus,
-  ReplyDecision,
-  ClinicBookingJourneyType
+  ReplyDecision
 } from '../enums.js'
 import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
+import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
 import { camelToKebabCase, stringToArray } from './string.js'
 
@@ -306,8 +308,14 @@ export const getAllAppointmentPaths = (
         appointment,
         sessionData
       ),
-      [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {},
+      ...(getAdditionalNeeds() === AdditionalNeeds.Basic
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]: {}
+          }
+        : {
+            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+          }),
 
       // Parent contact details
       ...(!isParentJourney
@@ -440,8 +448,6 @@ const getHealthQuestionPathsForAppointment = (
       paths[questionPath] = {}
     }
   })
-  paths[`${pathPrefix}${appointment.uuid}/impairments`] = {}
-  paths[`${pathPrefix}${appointment.uuid}/adjustments`] = {}
 
   return paths
 }

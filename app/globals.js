@@ -578,6 +578,12 @@ export default () => {
     const summaryRows = []
 
     for (const key in rows) {
+      // Support conditional rows via `if condition else none` in Nunjucks (as well as
+      // undefined in the formattedValue look-up)
+      if (rows[key] === null) {
+        continue
+      }
+
       // Formatted value may be an empty string, so only check for `undefined`
       let formattedValue
       if (data?.formatted?.[key] !== undefined) {

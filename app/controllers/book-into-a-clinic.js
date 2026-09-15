@@ -30,6 +30,7 @@ import {
   getBookableClinicDateItems,
   getBookableClinicLocationItems
 } from '../utils/clinic-booking.js'
+import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -638,6 +639,8 @@ export const bookIntoClinicController = {
 
       response.locals.reasonItems = reasonItems
     }
+
+    response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
 
     // All health questions use the same view
     let key

@@ -401,6 +401,9 @@ export const en = {
     offerRebooking: {
       label: 'Offer rebooking?'
     },
+    additionalSupport: {
+      label: 'Extra support needed'
+    },
     impairments: {
       label: 'Impairments'
     },
@@ -542,6 +545,15 @@ export const en = {
     addressSelection: {
       title: 'What is %s’s home address?',
       hint: 'Select the child’s primary address. We use this to confirm their identity.'
+    },
+    additionalSupport: {
+      title: 'Does %s need extra support during vaccination sessions?',
+      hint: 'For example, they’re autistic, or extremely anxious',
+      yes: 'Yes',
+      no: 'No',
+      details: {
+        label: 'Give details'
+      }
     },
     impairments: {
       title: 'Does %s have any of the following impairments?',

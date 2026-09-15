@@ -59,6 +59,8 @@ import {
  * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
  * @property {boolean} [mmrAlternative] - Wants vaccine that doesn’t contain gelatine?
+ * @property {boolean} [hasAdditionalSupportNeeds] - Does the child have additional support needs?
+ * @property {string} [additionalSupportNeedsDetails] - Details of the child's additional support needs
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
@@ -102,6 +104,10 @@ export class ClinicAppointment {
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
     this.fluAlternative = stringToBoolean(options?.fluAlternative)
     this.mmrAlternative = stringToBoolean(options?.mmrAlternative)
+    this.hasAdditionalSupportNeeds = stringToBoolean(
+      options?.hasAdditionalSupportNeeds
+    )
+    this.additionalSupportNeedsDetails = options?.additionalSupportNeedsDetails
     this.healthAnswers = options?.healthAnswers
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
@@ -680,6 +686,16 @@ export class ClinicAppointment {
               ).length
                 ? ''
                 : 'Answered'
+
+            case 'needsAdditionalSupport':
+              return this.hasAdditionalSupportNeeds
+                ? formatSecondaryText('Has support needs')
+                : undefined
+
+            case 'additionalSupport':
+              return this.hasAdditionalSupportNeeds
+                ? this.additionalSupportNeedsDetails
+                : 'None'
 
             case 'adjustmentsCount':
               if (!this.requiresAdjustments) return undefined
