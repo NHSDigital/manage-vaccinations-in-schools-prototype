@@ -87,10 +87,23 @@
       }) }}
     {% endif %}
 
-    {{ actionLink({
-      text: __("vaccination.new.alreadyVaccinated.title"),
-      href: patientProgramme.uri + "/new/vaccination"
-    }) if patientProgramme.canRecordVaccination }}
+    {% if patientProgramme.canRecordVaccination %}
+      <p class="nhsuk-body">
+        {{ actionLink({
+          classes: "nhsuk-u-margin-0",
+          text: __("vaccination.new.alreadyVaccinated.title"),
+          href: patientProgramme.uri + "/new/previous-vaccination"
+        }) }}
+      </p>
+
+      <p class="nhsuk-body">
+        {{ actionLink({
+          classes: "nhsuk-u-margin-0",
+          text: __("vaccination.new.alreadyVaccinated.home"),
+          href: patientProgramme.uri + "/new/home-vaccination"
+        }) }}
+      </p>
+    {% endif %}
   {% endcall %}
 
   {% if patientProgramme.tetanusVaccinations %}

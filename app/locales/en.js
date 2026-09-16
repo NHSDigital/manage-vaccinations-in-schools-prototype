@@ -36,7 +36,7 @@ export const en = {
   },
   location: {
     name: {
-      label: 'Name',
+      label: 'Location name',
       hint: 'The site name must be unique. It is shown to parents on the consent form and related emails. Existing sites for this school are: %s.'
     },
     addressLine1: {
@@ -3989,7 +3989,8 @@ export const en = {
       },
       alreadyVaccinated: {
         title: 'Record as already vaccinated',
-        tetanus: 'Record a previous vaccination'
+        tetanus: 'Record a previous vaccination',
+        home: 'Record a home visit'
       },
       notGiven: {
         title: 'Vaccination was not given'
@@ -4035,11 +4036,6 @@ export const en = {
     },
     age: {
       label: 'Age'
-    },
-    isVariant: {
-      label: 'Programme variant',
-      title: 'Was {{patient.firstName}} vaccinated with the MMRV vaccine?',
-      hint: '{{patient.firstName}} is eligible for the new MMRV vaccine, but may have got the  MMR vaccine instead.'
     },
     syncStatus: {
       label: 'Synced with NHS England?'
@@ -4127,10 +4123,11 @@ export const en = {
     },
     programme: {
       label: 'Programme',
-      title: 'Which programme was this vaccination given for?'
+      title: 'Which programme was the vaccination given for?'
     },
     protocol: {
-      label: 'Protocol'
+      label: 'Protocol',
+      title: 'Which protocol was the vaccination given under?'
     },
     batch: {
       label: 'Batch number',
@@ -4138,7 +4135,7 @@ export const en = {
     },
     batch_id: {
       title:
-        'Which batch did you use for the {{vaccination.programme.name}} vaccination?',
+        'Which batch did you use for the {{vaccination.programmeOrVariantNameSentenceCase}} vaccination?',
       label: 'Batch number'
     },
     note: {

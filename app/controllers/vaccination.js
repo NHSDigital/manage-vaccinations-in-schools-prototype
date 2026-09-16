@@ -1,17 +1,17 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import {
-  ProgrammeType,
   VaccinationMethod,
   VaccinationOutcome,
   VaccinationSite,
   VaccinationProtocol,
-  VaccineCriteria
+  VaccineCriteria,
+  LocationType,
+  ProgrammeType
 } from '../enums.js'
 import {
   Batch,
   DefaultBatch,
-  Patient,
   PatientSession,
   Programme,
   User,
@@ -151,8 +151,8 @@ export const vaccinationController = {
       {
         hasSelfIdentified,
         identifiedBy,
+        locationType: session.locationType,
         location: session.formatted.location,
-        school_id: session.school_id,
         patient_uuid: patient.uuid,
         programme_id: programme.id,
         session_id: session.id,
@@ -163,6 +163,12 @@ export const vaccinationController = {
         administeredBy_uid,
         ...(session.hasVgdProtocol && {
           assessedBy_uid
+        }),
+        ...(session.clinic_id && {
+          clinic_id: session.clinic_id
+        }),
+        ...(session.school_id && {
+          school_id: session.school_id
         }),
         ...(injectionSite && {
           dose: patientProgramme.vaccine.dose,
@@ -285,61 +291,86 @@ export const vaccinationController = {
         data.patientSession_uuid,
         data
       )
-      const patient = Patient.findOne(vaccination.patient_uuid, data)
-      const patientProgramme = patient.programmes[vaccination.programme_id]
 
       response.locals.patientSession = patientSession
       response.locals.session = patientSession?.session
 
+      const declinedJourney = {
+        [`/${vaccination_uuid}/${type}/decline`]: {},
+        [`/${vaccination_uuid}/${type}/check-answers`]: {}
+      }
+
+      const homeVaccinationJourney = {
+        [`/${vaccination_uuid}/${type}/vaccine`]: {},
+        [`/${vaccination_uuid}/${type}/batch-id`]: {},
+        ...(vaccination?.programme?.sequence?.length > 1
+          ? {
+              [`/${vaccination_uuid}/${type}/sequence`]: {}
+            }
+          : {}),
+        [`/${vaccination_uuid}/${type}/administered-at`]: {},
+        ...(vaccination?.programme?.type === ProgrammeType.Flu
+          ? {
+              [`/${vaccination_uuid}/${type}/protocol`]: {}
+            }
+          : {}),
+        [`/${vaccination_uuid}/${type}/administered-at`]: {},
+        [`/${vaccination_uuid}/${type}/check-answers`]: {}
+      }
+
+      const previousVaccinationJourney = {
+        ...(!vaccination.programme
+          ? {
+              [`/${vaccination_uuid}/${type}/programme`]: {
+                [`/${vaccination_uuid}/${type}/sequence`]: {
+                  data: 'vaccination.programme_id',
+                  value: '4in1'
+                }
+              }
+            }
+          : {}),
+        ...(vaccination?.programme?.vaccine_snomeds
+          ? {
+              [`/${vaccination_uuid}/${type}/vaccine`]: {}
+            }
+          : {}),
+        ...(vaccination?.programme?.sequence?.length > 1
+          ? {
+              [`/${vaccination_uuid}/${type}/sequence`]: {}
+            }
+          : {}),
+        [`/${vaccination_uuid}/${type}/administered-at`]: {},
+        [`/${vaccination_uuid}/${type}/location`]: {
+          [`/${vaccination_uuid}/${type}/address`]: {
+            data: 'vaccination.locationType',
+            value: LocationType.Other
+          },
+          [`/${vaccination_uuid}/${type}/check-answers`]: true
+        },
+        [`/${vaccination_uuid}/${type}/address`]: {},
+        [`/${vaccination_uuid}/${type}/check-answers`]: {}
+      }
+
+      const newVaccinationJourney = {
+        [`/${vaccination_uuid}/${type}/administer`]: {},
+        [`/${vaccination_uuid}/${type}/batch-id`]: () => {
+          return !data.defaultBatchId
+        },
+        [`/${vaccination_uuid}/${type}/check-answers`]: {}
+      }
+
+      let givenJourney
+      if (vaccination.locationType === LocationType.Home) {
+        givenJourney = homeVaccinationJourney
+      } else if (vaccination.outcome === VaccinationOutcome.AlreadyVaccinated) {
+        givenJourney = previousVaccinationJourney
+      } else {
+        givenJourney = newVaccinationJourney
+      }
+
       const journey = {
         [`/`]: {},
-        ...(data.startPath === 'decline'
-          ? {
-              [`/${vaccination_uuid}/${type}/decline`]: {},
-              [`/${vaccination_uuid}/${type}/check-answers`]: {}
-            }
-          : {
-              [`/${vaccination_uuid}/${type}/administer`]: {},
-              [`/${vaccination_uuid}/${type}/batch-id`]: () => {
-                return !data.defaultBatchId
-              },
-              ...(!vaccination.programme
-                ? {
-                    [`/${vaccination_uuid}/${type}/programme`]: {
-                      [`/${vaccination_uuid}/${type}/sequence`]: {
-                        data: 'vaccination.programme_id',
-                        value: '4in1'
-                      }
-                    }
-                  }
-                : {}),
-              ...(vaccination?.outcome === VaccinationOutcome.AlreadyVaccinated
-                ? {
-                    ...(vaccination?.programme?.type === ProgrammeType.MMR
-                      ? {
-                          [`/${vaccination_uuid}/${type}/variant`]: {}
-                        }
-                      : {}),
-                    ...(vaccination?.programme?.sequence?.length > 1
-                      ? {
-                          [`/${vaccination_uuid}/${type}/sequence`]: {}
-                        }
-                      : {}),
-                    [`/${vaccination_uuid}/${type}/administered-at`]: {}
-                  }
-                : {}),
-              ...(!vaccination.location && {
-                [`/${vaccination_uuid}/${type}/location`]: {
-                  [`/${vaccination_uuid}/${type}/address`]: {
-                    data: 'vaccination.locationType',
-                    value: 'Another location'
-                  },
-                  [`/${vaccination_uuid}/${type}/check-answers`]: true
-                },
-                [`/${vaccination_uuid}/${type}/address`]: {}
-              }),
-              [`/${vaccination_uuid}/${type}/check-answers`]: {}
-            }),
+        ...(data.startPath === 'decline' ? declinedJourney : givenJourney),
         [`/${vaccination_uuid}`]: {}
       }
 
@@ -358,10 +389,10 @@ export const vaccinationController = {
       }
 
       // When recording a previous vaccination, we don’t know the vaccine
-      if (patientProgramme?.vaccine) {
+      if (vaccination?.vaccine) {
         response.locals.batchItems = Batch.findAll(data)
           .filter(
-            (batch) => batch.vaccine.snomed === patientProgramme?.vaccine.snomed
+            (batch) => batch.vaccine.snomed === vaccination?.vaccine.snomed
           )
           .filter((batch) => !batch.archivedAt)
       }
@@ -404,6 +435,7 @@ export const vaccinationController = {
           text: vaccine.brandWithType,
           value: vaccine.snomed
         }))
+        .sort((a, b) => a.text.localeCompare(b.text))
 
       next()
     }
