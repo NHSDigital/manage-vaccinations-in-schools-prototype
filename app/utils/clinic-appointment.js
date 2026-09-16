@@ -13,7 +13,7 @@ import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
-import { camelToKebabCase, stringToArray } from './string.js'
+import { camelToKebabCase, stringToArray, stringToBoolean } from './string.js'
 
 /**
  * Get the MMRV-aware list of programme IDs for which the given patient can be booked into clinic
@@ -150,6 +150,14 @@ export const getAllAppointmentPaths = (
             [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
           }
         : {}),
+      ...(getAdditionalNeeds() === AdditionalNeeds.Basic
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]: {}
+          }
+        : {
+            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+          }),
 
       // Interrupt if the appointment is too long for the slot selected on Appointments page
       ...(isDataMigrationJourney &&
@@ -281,7 +289,7 @@ export const getAllAppointmentPaths = (
         : {
             [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
               {
-                [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]:
+                [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
                   () => {
                     if (
                       sessionData.journeyData.optedIntoHealthQuestions ===
@@ -290,19 +298,17 @@ export const getAllAppointmentPaths = (
                       return false
                     }
 
-                    return getAdditionalNeeds() === AdditionalNeeds.Basic
+                    return appointment.patient.contacts?.length > 0
                   },
-                [`/${booking_uuid}/new/${appointment_uuid}/impairments`]:
-                  () => {
-                    if (
-                      sessionData.journeyData.optedIntoHealthQuestions ===
-                      'true'
-                    ) {
-                      return false
-                    }
-
-                    return getAdditionalNeeds() === AdditionalNeeds.Structured
+                [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
+                  if (
+                    sessionData.journeyData.optedIntoHealthQuestions === 'true'
+                  ) {
+                    return false
                   }
+
+                  return appointment.patient.contacts?.length === 0
+                }
               }
           }),
       ...getHealthQuestionPathsForAppointment(
@@ -310,14 +316,6 @@ export const getAllAppointmentPaths = (
         appointment,
         sessionData
       ),
-      ...(getAdditionalNeeds() === AdditionalNeeds.Basic
-        ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]: {}
-          }
-        : {
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
-          }),
 
       // Parent contact details
       ...(!isParentJourney
@@ -374,6 +372,10 @@ export const getAllAppointmentPaths = (
  * @returns {boolean} - true if the appointment will fit in the schedule, or false otherwise
  */
 const canAppointmentFitInSchedule = (appointment, sessionData) => {
+  // Make sure the appointment's up to date with any extension for support needs
+  appointment.extendForAdditionalSupportNeeds = stringToBoolean(
+    sessionData.appointment?.extendForAdditionalSupportNeeds
+  )
   const session = Session.findOne(appointment.session_id, sessionData)
   const startTimesWithEnoughSpace =
     session.bookableSlotStartTimesFor(appointment)
