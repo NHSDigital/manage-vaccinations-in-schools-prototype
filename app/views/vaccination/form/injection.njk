@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("vaccination.injection.title") %}
+{% set title = __("vaccination.injection.title", vaccination.programmeOrVariantNameSentenceCase) %}
 
 {% block form %}
   {{ heading({

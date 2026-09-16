@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("vaccination.method.title") %}
+{% set title = __("vaccination.method.title", vaccination.programmeOrVariantNameSentenceCase) %}
 
 {% block form %}
   {{ radios({

@@ -46,6 +46,7 @@ import {
   stringToBoolean,
   formatWithSecondaryText
 } from '../utils/string.js'
+import { isMmrvVaccine } from '../utils/vaccine.js'
 
 import { BaseModel } from './base.js'
 
@@ -76,7 +77,6 @@ import { BaseModel } from './base.js'
  * @property {boolean} [isScheduled] - Vaccination date was on schedule
  * @property {string} [note] - Note
  * @property {string} [programmeOther] - Non-NHS programme name
- * @property {boolean} [isVariant] - Is programme variant?
  */
 
 /**
@@ -180,11 +180,9 @@ export class Vaccination extends BaseModel {
     this.isScheduled = stringToBoolean(options.isScheduled)
     this.note = options?.note || ''
     this.programmeOther = options?.programmeOther
-    this.isVariant = options?.isVariant
-      ? stringToBoolean(options.isVariant)
-      : undefined
 
-    if (this.outcome !== VaccinationOutcome.AlreadyVaccinated) {
+    // Vaccinations recorded in sessions are always recorded on the same day
+    if (this.session_id) {
       this.administeredAt = today()
     }
 
@@ -247,7 +245,7 @@ export class Vaccination extends BaseModel {
       this.addressLevel1
     ) {
       return {
-        name: this.locationName || this.locationType,
+        name: this.locationName,
         addressLine1: this.addressLine1,
         addressLine2: this.addressLine2,
         addressLevel1: this.addressLevel1,
@@ -262,7 +260,7 @@ export class Vaccination extends BaseModel {
    * @returns {object|string} `dateInput` object
    */
   get batch_expiry_() {
-    return convertIsoDateToObject(this.batch.expiry)
+    return convertIsoDateToObject(this.batch?.expiry)
   }
 
   /**
@@ -396,6 +394,15 @@ export class Vaccination extends BaseModel {
   }
 
   /**
+   * Is programme variant?
+   *
+   * @returns {boolean} Is programme variant
+   */
+  get isVariant() {
+    return isMmrvVaccine(this.vaccine_snomed)
+  }
+
+  /**
    * Get programme or programme variant name
    *
    * @returns {string} Programme or programme variant name
@@ -406,6 +413,19 @@ export class Vaccination extends BaseModel {
     }
 
     return this.programme.name
+  }
+
+  /**
+   * Get programme or programme variant name (sentence case)
+   *
+   * @returns {string} Programme or programme variant name (sentence case)
+   */
+  get programmeOrVariantNameSentenceCase() {
+    if (this.isVariant && this.programme.type === ProgrammeType.MMR) {
+      return 'MMRV'
+    }
+
+    return this.programme.nameSentenceCase
   }
 
   /**

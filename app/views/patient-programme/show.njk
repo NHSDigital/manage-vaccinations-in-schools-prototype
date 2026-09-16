@@ -88,9 +88,10 @@
     {% endif %}
 
     {{ actionLink({
+      classes: "nhsuk-u-margin-0",
       text: __("vaccination.new.alreadyVaccinated.title"),
-      href: patientProgramme.uri + "/new/vaccination"
-    }) if patientProgramme.canRecordVaccination }}
+      href: patientProgramme.uri + "/new/previous-vaccination"
+    }) if patientProgramme.canRecordVaccination  }}
   {% endcall %}
 
   {% if patientProgramme.tetanusVaccinations %}

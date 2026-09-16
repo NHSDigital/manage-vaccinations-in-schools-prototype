@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("vaccination.batch_id.title", { vaccination: vaccination }) if type == "new" else __("vaccination.batch_id.label") %}
+{% set title = __("vaccination.batch_id.title", vaccination.programmeOrVariantNameSentenceCase) if type == "new" else __("vaccination.batch_id.label") %}
 
 {% block form %}
   {% set batches = [] %}
@@ -19,7 +19,7 @@
           ],
           decorate: "defaultBatchId"
         })
-      } if type == "new"
+      } if type == "new" and vaccination.session_id
     }) %}
   {% endfor %}
 

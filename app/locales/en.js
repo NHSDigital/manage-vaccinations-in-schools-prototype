@@ -36,7 +36,7 @@ export const en = {
   },
   location: {
     name: {
-      label: 'Name',
+      label: 'Location name',
       hint: 'The site name must be unique. It is shown to parents on the consent form and related emails. Existing sites for this school are: %s.'
     },
     addressLine1: {
@@ -3971,10 +3971,10 @@ export const en = {
     count:
       '{count, plural, =0 {No vaccination records} one {1 vaccination record} other {# vaccination records}}',
     administer: {
-      title: 'How was the {{programme.nameSentenceCase}} vaccination given?'
+      title: 'How was the %s vaccination given?'
     },
     decline: {
-      title: 'Why was the {{programme.nameSentenceCase}} vaccination not given?'
+      title: 'Why was the %s vaccination not given?'
     },
     new: {
       'check-answers': {
@@ -3995,8 +3995,7 @@ export const en = {
         title: 'Vaccination was not given'
       },
       confirm: 'Save',
-      success:
-        'Vaccination outcome recorded for {{vaccination.programme.nameSentenceCase}}'
+      success: 'Vaccination outcome recorded for %s'
     },
     edit: {
       title: 'Edit vaccination record',
@@ -4009,8 +4008,7 @@ export const en = {
     },
     administeredAt: {
       label: 'Vaccination date',
-      title:
-        'When was the {{session.programmeNames.sentenceCase}} vaccination given?'
+      title: 'When was the %s vaccination given?'
     },
     administeredAt_date: {
       label: 'Date',
@@ -4036,11 +4034,6 @@ export const en = {
     age: {
       label: 'Age'
     },
-    isVariant: {
-      label: 'Programme variant',
-      title: 'Was {{patient.firstName}} vaccinated with the MMRV vaccine?',
-      hint: '{{patient.firstName}} is eligible for the new MMRV vaccine, but may have got the  MMR vaccine instead.'
-    },
     syncStatus: {
       label: 'Synced with NHS England?'
     },
@@ -4052,8 +4045,7 @@ export const en = {
     },
     locationType: {
       label: 'Location',
-      title:
-        'Where was the {{session.programmeNames.sentenceCase}} vaccination given?'
+      title: 'Where was the %s vaccination given?'
     },
     clinic_id: {
       label: 'Community clinic',
@@ -4107,13 +4099,11 @@ export const en = {
       }
     },
     injection: {
-      title:
-        'How was the {{session.programmeNames.sentenceCase}} vaccination given?'
+      title: 'How was the %s vaccination given?'
     },
     method: {
       label: 'Method',
-      title:
-        'How was the {{session.programmeNames.sentenceCase}} vaccination given?'
+      title: 'How was the %s vaccination given?'
     },
     site: {
       label: 'Site',
@@ -4127,19 +4117,19 @@ export const en = {
     },
     programme: {
       label: 'Programme',
-      title: 'Which programme was this vaccination given for?'
+      title: 'Which programme was the vaccination given for?'
     },
     protocol: {
-      label: 'Protocol'
+      label: 'Protocol',
+      title: 'Which protocol was the %s vaccination given under?'
     },
     batch: {
       label: 'Batch number',
       title: 'Batch number'
     },
     batch_id: {
-      title:
-        'Which batch did you use for the {{vaccination.programme.name}} vaccination?',
-      label: 'Batch number'
+      label: 'Batch number',
+      title: 'Which batch did you use for the %s vaccination?'
     },
     note: {
       label: 'Notes',
@@ -4162,8 +4152,8 @@ export const en = {
       title: 'Which dose of the %s vaccination was this?'
     },
     vaccine: {
-      title: 'Which vaccine was given?',
-      label: 'Vaccine'
+      label: 'Vaccine',
+      title: 'Which vaccine was given?'
     },
     review: {
       title: 'Review duplicate vaccination record',

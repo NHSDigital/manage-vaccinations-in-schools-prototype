@@ -3,6 +3,15 @@
 {% set title = __("vaccination.vaccine.title") %}
 
 {% block form %}
+  {% if vaccination.outcome == VaccinationOutcome.AlreadyVaccinated %}
+    {% set vaccineItems = vaccineItems | push({
+      divider: "or"
+    }) | push({
+      text: "Unknown",
+      value: "Unknown"
+    }) %}
+  {% endif %}
+
   {{ radios({
     fieldset: {
       legend: {
