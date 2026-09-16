@@ -16,9 +16,13 @@ import { generateContact } from './contact.js'
  * Choose programmes and vaccine choices for a child's clinic appointment
  *
  * @param {Array<string>} invitedProgramme_ids - All programmes the child's been invited for
+ * @param {boolean} extendForAdditionalSupportNeeds - Should we extend the appointment for additional needs?
  * @returns {ClinicVaccinationChoices} The selected programmes and vaccine choices for the appointment
  */
-export function decideClinicVaccinationChoices(invitedProgramme_ids) {
+export function decideClinicVaccinationChoices(
+  invitedProgramme_ids,
+  extendForAdditionalSupportNeeds
+) {
   // When invited for more than one programme, a parent doesn't always want their child
   // vaccinated for all of them in one go — sometimes leave one unselected
   let selected_programme_ids = invitedProgramme_ids
@@ -49,7 +53,8 @@ export function decideClinicVaccinationChoices(invitedProgramme_ids) {
     selected_programme_ids,
     fluDecision,
     fluAlternative,
-    mmrAlternative
+    mmrAlternative,
+    extendForAdditionalSupportNeeds
   }
 }
 
@@ -59,7 +64,7 @@ export function decideClinicVaccinationChoices(invitedProgramme_ids) {
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
- * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices, from decideClinicVaccinationChoices
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmesm vaccine choices and support needs, from decideClinicVaccinationChoices
  * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
@@ -181,7 +186,8 @@ export function generateClinicAppointment(
     selected_programme_ids,
     fluDecision,
     fluAlternative,
-    mmrAlternative
+    mmrAlternative,
+    extendForAdditionalSupportNeeds
   } = vaccinationChoices
 
   const status = ClinicAppointmentStatus.Booked
@@ -203,6 +209,7 @@ export function generateClinicAppointment(
     mmrAlternative,
     hasAdditionalSupportNeeds,
     additionalSupportNeedsDetails,
+    extendForAdditionalSupportNeeds,
     status
   })
 
