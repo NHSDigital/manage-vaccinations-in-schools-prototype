@@ -61,6 +61,7 @@ import {
  * @property {boolean} [mmrAlternative] - Wants vaccine that doesn’t contain gelatine?
  * @property {boolean} [hasAdditionalSupportNeeds] - Does the child have additional support needs?
  * @property {string} [additionalSupportNeedsDetails] - Details of the child's additional support needs
+ * @property {boolean} [extendForAdditionalSupportNeeds] - should we add an extra slot by default, in light of support needs?
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
@@ -108,6 +109,9 @@ export class ClinicAppointment {
       options?.hasAdditionalSupportNeeds
     )
     this.additionalSupportNeedsDetails = options?.additionalSupportNeedsDetails
+    this.extendForAdditionalSupportNeeds = stringToBoolean(
+      options?.extendForAdditionalSupportNeeds
+    )
     this.healthAnswers = options?.healthAnswers
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
@@ -344,7 +348,8 @@ export class ClinicAppointment {
       selected_programme_ids: this.selected_programme_ids,
       fluDecision: this.fluDecision,
       fluAlternative: this.fluAlternative,
-      mmrAlternative: this.mmrAlternative
+      mmrAlternative: this.mmrAlternative,
+      extendForAdditionalSupportNeeds: this.extendForAdditionalSupportNeeds
     }
   }
 
@@ -732,6 +737,9 @@ export class ClinicAppointment {
                 )
               )
             }
+
+            case 'appointmentLength':
+              return `${this.appointmentLength} minutes`
 
             case 'summary': {
               const teamFacingStartTime = formatTime(this.startAt, false)

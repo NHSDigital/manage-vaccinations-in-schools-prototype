@@ -84,7 +84,8 @@ export const bookIntoClinicController = {
         selected_programme_ids: programme_ids,
         fluDecision: undefined,
         fluAlternative: undefined,
-        mmrAlternative: undefined
+        mmrAlternative: undefined,
+        extendForAdditionalSupportNeeds: undefined
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
@@ -117,7 +118,8 @@ export const bookIntoClinicController = {
         selected_programme_ids: programme_ids,
         fluDecision: undefined,
         fluAlternative: undefined,
-        mmrAlternative: undefined
+        mmrAlternative: undefined,
+        extendForAdditionalSupportNeeds: undefined
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
@@ -608,7 +610,7 @@ export const bookIntoClinicController = {
     } else if (view === 'unsuitable-slot') {
       // TODO: make this smarter when appointments get longer than 2 slots
       const session = Session.findOne(appointment.session_id, data)
-      const requiredSlots = 2 // session.calculateSlotCount(appointment)
+      const requiredSlots = session.calculateSlotCount(appointment)
       const availableSlots = 1
 
       response.locals.requiredSlots = requiredSlots
@@ -710,7 +712,8 @@ export const bookIntoClinicController = {
         'programmes',
         'flu-choice',
         'flu-alternative',
-        'mmr-alternative'
+        'mmr-alternative',
+        'additional-support'
       ].includes(view)
     ) {
       // If we already know the session, we can update the default appointment length now

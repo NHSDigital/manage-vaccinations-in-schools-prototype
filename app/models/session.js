@@ -98,7 +98,7 @@ import { BaseModel } from './base.js'
  * The minimal shape of appointment data needed to work out how long an appointment will take,
  * and so which slots it could be booked into.
  *
- * @typedef {Pick<ClinicAppointment, 'selected_programme_ids' | 'fluDecision'>} AppointmentLengthFactors
+ * @typedef {Pick<ClinicAppointment, 'selected_programme_ids' | 'fluDecision' | 'extendForAdditionalSupportNeeds'>} AppointmentLengthFactors
  */
 
 /**
@@ -513,6 +513,9 @@ export class Session extends BaseModel {
    * @returns {number} - the number of slots consumed by the appointment
    */
   calculateSlotCount(appointmentProperties) {
+    const slotsForSupportNeeds =
+      appointmentProperties.extendForAdditionalSupportNeeds ? 1 : 0
+
     const isFluNasal =
       appointmentProperties.fluDecision !==
       ReplyDecision.OnlyAlternativeInjection
@@ -520,7 +523,10 @@ export class Session extends BaseModel {
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
     // and will not have any other catch-up vaccinations
     if (this.isFluOnlyClinic) {
-      return isFluNasal ? 1 : this.slotCountForLongAppointment
+      return (
+        (isFluNasal ? 1 : this.slotCountForLongAppointment) +
+        slotsForSupportNeeds
+      )
     }
 
     // For all other clinics setups, count only the injections to know how long we need to allocate.
@@ -533,7 +539,10 @@ export class Session extends BaseModel {
     }
     injectionCount += programme_ids.filter((id) => id !== 'flu').length
 
-    return injectionCount > 1 ? this.slotCountForLongAppointment : 1
+    return (
+      (injectionCount > 1 ? this.slotCountForLongAppointment : 1) +
+      slotsForSupportNeeds
+    )
   }
 
   /**
