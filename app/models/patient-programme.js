@@ -512,10 +512,17 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<Vaccination>|undefined} Vaccinations
    */
   get vaccinationOutcomes() {
-    return this.patient?.vaccinations.filter(
-      ({ academicYear, programme_id }) =>
-        programme_id === this.programme_id && academicYear === this.academicYear
+    const vaccinationOutcomes = this.patient?.vaccinations.filter(
+      ({ programme_id }) => programme_id === this.programme_id
     )
+
+    if (this.programme.isSeasonal) {
+      vaccinationOutcomes.filter(
+        ({ academicYear }) => academicYear === this.academicYear
+      )
+    }
+
+    return vaccinationOutcomes
   }
 
   /**
