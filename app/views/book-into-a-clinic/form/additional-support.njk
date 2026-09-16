@@ -3,6 +3,26 @@
 {% set title = __("clinicBooking.additionalSupport.title", firstName) %}
 
 {% block form %}
+  {% set additionalSupportDetailsHtml %}
+    {{ textarea({
+        label: __("clinicBooking.additionalSupport.details.label"),
+        decorate: "appointment.additionalSupportNeedsDetails"
+    }) }}
+
+    {% if not isParentFacing %}
+      {{ checkboxes({
+        items: [
+          {
+            label: "Extend the appointment to take this into account",
+            hint: "This will add an extra slot by default, but can be edited later",
+            value: true
+          }
+        ],
+        decorate: "appointment.extendForAdditionalSupportNeeds"
+      }) }}
+    {% endif %}
+  {% endset %}
+
   {{ radios({
     fieldset: {
       legend: {
@@ -15,10 +35,7 @@
       text: __("clinicBooking.additionalSupport.yes"),
       value: true,
       conditional: {
-        html: textarea({
-          label: __("clinicBooking.additionalSupport.details.label"),
-          decorate: "appointment.additionalSupportNeedsDetails"
-        })
+        html: additionalSupportDetailsHtml
       }
     }, {
       text: __("clinicBooking.additionalSupport.no"),

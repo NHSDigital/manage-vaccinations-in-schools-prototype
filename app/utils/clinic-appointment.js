@@ -281,7 +281,7 @@ export const getAllAppointmentPaths = (
         : {
             [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
               {
-                [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
+                [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]:
                   () => {
                     if (
                       sessionData.journeyData.optedIntoHealthQuestions ===
@@ -290,17 +290,19 @@ export const getAllAppointmentPaths = (
                       return false
                     }
 
-                    return appointment.patient.contacts?.length > 0
+                    return getAdditionalNeeds() === AdditionalNeeds.Basic
                   },
-                [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-                  if (
-                    sessionData.journeyData.optedIntoHealthQuestions === 'true'
-                  ) {
-                    return false
-                  }
+                [`/${booking_uuid}/new/${appointment_uuid}/impairments`]:
+                  () => {
+                    if (
+                      sessionData.journeyData.optedIntoHealthQuestions ===
+                      'true'
+                    ) {
+                      return false
+                    }
 
-                  return appointment.patient.contacts?.length === 0
-                }
+                    return getAdditionalNeeds() === AdditionalNeeds.Structured
+                  }
               }
           }),
       ...getHealthQuestionPathsForAppointment(
