@@ -9,6 +9,7 @@ import {
   ConsentStatus,
   ConsentWindow,
   InstructionStatus,
+  LocationType,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -1023,6 +1024,17 @@ export class Session extends BaseModel {
     const type = this.type === SessionType.School ? 'school' : 'clinic'
 
     return this[type]?.location
+  }
+
+  /**
+   * Get location type
+   *
+   * @returns {LocationType} Location type
+   */
+  get locationType() {
+    return this.type === SessionType.School
+      ? LocationType.School
+      : LocationType.Clinic
   }
 
   /**
