@@ -153,7 +153,7 @@
   </div>
 
   <!-- Card canvas: duplicate details panel and record comparison grid, centred and
-       capped at 1720px. The NHS design system has no wide-container token
+       capped at 1720px, the only part of the page wider than the standard width. The NHS design system has no wide-container token
        (standard page width is 1100px in this prototype), so the cap is set
        directly. Below 1280px viewports each grid stops compressing (min-width
        1216px = 1280px minus the 2 x 32px page margins) and the page gains a
@@ -326,7 +326,13 @@
     </div>
     </div>
     <!-- /Duplicate record grid -->
+  </div>
+  <!-- /Card canvas -->
 
+  <!-- Standard-width band: only the card canvas above breaks the page width. The
+       Change preferred record button and the activity log return to the standard
+       page width, matching the child record header. -->
+  <div class="nhsuk-width-container" style="margin: 0 auto">
     <!-- Call to action for this exploration: placeholder for switching to the live choosing view -->
     <p class="nhsuk-u-margin-top-5">
       <a class="nhsuk-button nhsuk-button--secondary" data-module="nhsuk-button" href="#" role="button" draggable="false">Change preferred record</a>
