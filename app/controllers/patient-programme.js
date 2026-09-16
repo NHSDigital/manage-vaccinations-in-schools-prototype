@@ -1,4 +1,4 @@
-import { ProgrammeType, VaccinationOutcome } from '../enums.js'
+import { VaccinationOutcome } from '../enums.js'
 import {
   PatientProgramme,
   Patient,
@@ -161,23 +161,24 @@ export const patientProgrammeController = {
       )
 
       // Vaccination
-      const vaccination = Vaccination.create(
-        {
-          outcome: VaccinationOutcome.AlreadyVaccinated,
-          patient_uuid: patient.uuid,
-          createdBy_uid: account.uid,
-          administeredBy_uid: account.uid,
-          ...(type === 'new' && { programme_id })
-        },
-        data.wizard
-      )
-
-      let startPage = 'administered-at'
-      if (!vaccination.programme_id) {
-        startPage = 'programme'
-      } else if (patientProgramme.programme.type === ProgrammeType.MMR) {
-        startPage = 'variant'
+      let vaccinationData = {
+        patient_uuid: patient.uuid,
+        createdBy_uid: account.uid
       }
+
+      // Record as already vaccinated already provides a programme
+      if (type === 'previous') {
+        vaccinationData.programme_id = programme_id
+      }
+
+      // Record as already vaccinated
+      if (['previous', 'tetanus'].includes(type)) {
+        vaccinationData.outcome = VaccinationOutcome.AlreadyVaccinated
+      }
+
+      const vaccination = Vaccination.create(vaccinationData, data.wizard)
+
+      const startPage = !vaccination.programme_id ? 'programme' : 'vaccine'
 
       saveAndRedirect(
         request,
