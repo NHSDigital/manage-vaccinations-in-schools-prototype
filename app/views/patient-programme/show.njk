@@ -194,6 +194,13 @@
             text: __("patientProgramme.activeClinics.label") | safe,
             variant: "secondary",
             href: patientProgramme.uri + "/clinics"
+          },
+          {
+            text: __("patientProgramme.homeVisit.label") | safe,
+            variant: "secondary",
+            attributes: {
+              formaction: patientProgramme.uri + "/visit?referrer=" + patientProgramme.uri
+            }
           }
         ]
       }) if patientProgramme.status != PatientStatus.Vaccinated and not patientProgramme.isIneligible and patientProgramme.isActive }}

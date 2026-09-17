@@ -151,7 +151,7 @@ export const vaccinationController = {
         hasSelfIdentified,
         identifiedBy,
         locationType: session.locationType,
-        location: session.formatted.location,
+        location: session.location,
         patient_uuid: patient.uuid,
         programme_id: programme.id,
         session_id: session.id,

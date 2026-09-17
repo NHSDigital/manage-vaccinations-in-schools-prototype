@@ -19,6 +19,7 @@ router.use((request, response, next) =>
 router.param('programme_id', patientProgramme.read)
 
 router.post('/:programme_id/clinics', patientProgramme.addToSession)
+router.post('/:programme_id/visit', patientProgramme.newSession)
 
 router.get(
   '/:programme_id/new/previous-vaccination',

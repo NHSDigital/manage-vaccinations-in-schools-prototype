@@ -71,6 +71,7 @@ import { BaseModel } from './base.js'
  * @property {object} [date_] - Dates (from `dateInput`s)
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
+ * @property {string} [programme_id] - Programme ID (no preset)
  * @property {SessionMMRConsent} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {boolean} [hasRegistration] - Session has registration?
  *
@@ -140,6 +141,7 @@ export class Session extends BaseModel {
     this.date_ = options?.date_
     this.academicYear = options?.academicYear || getCurrentAcademicYear()
     this.presetNames = stringToArray(options?.presetNames)
+    this.programme_id = options?.programme_id
     this.cancelledAt = options?.cancelledAt && new Date(options.cancelledAt)
     this.hasRegistration = stringToBoolean(options?.hasRegistration)
     this.register = options?.register || {}
@@ -804,10 +806,15 @@ export class Session extends BaseModel {
    */
   get programme_ids() {
     const programme_ids = new Set()
-    for (const preset of this.presets) {
-      for (const programmeType of preset.programmeTypes) {
-        const programme = programmesData[programmeType]
-        programme_ids.add(programme.id)
+
+    if (this.programme_id) {
+      programme_ids.add(this.programme_id)
+    } else {
+      for (const preset of this.presets) {
+        for (const programmeType of preset.programmeTypes) {
+          const programme = programmesData[programmeType]
+          programme_ids.add(programme.id)
+        }
       }
     }
 
@@ -978,11 +985,15 @@ export class Session extends BaseModel {
    * @returns {string|undefined} Name
    */
   get name() {
-    if (this.clinic) {
+    if (this.type === SessionType.Clinic) {
       return `${this.programmeNames.titleCase} clinic at ${this.location.name} on ${this.formatted.dateShort}`
     }
 
-    if (this.location) {
+    if (this.type === SessionType.Home) {
+      return `${this.programmeNames.titleCase} home visit on ${this.formatted.dateShort}`
+    }
+
+    if (this.type === SessionType.School) {
       return `${this.programmeNames.titleCase} session at ${this.location.name} on ${this.formatted.dateShort}`
     }
   }
@@ -1021,6 +1032,12 @@ export class Session extends BaseModel {
    * @returns {object} Location
    */
   get location() {
+    if (this.type === SessionType.Home) {
+      return {
+        name: 'child’s home'
+      }
+    }
+
     const type = this.type === SessionType.School ? 'school' : 'clinic'
 
     return this[type]?.location
@@ -1032,9 +1049,13 @@ export class Session extends BaseModel {
    * @returns {LocationType} Location type
    */
   get locationType() {
-    return this.type === SessionType.School
-      ? LocationType.School
-      : LocationType.Clinic
+    if (this.type === SessionType.Clinic) {
+      return LocationType.Clinic
+    } else if (this.type === SessionType.Home) {
+      return LocationType.Home
+    }
+
+    return LocationType.School
   }
 
   /**

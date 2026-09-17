@@ -1,4 +1,4 @@
-import { VaccinationOutcome } from '../enums.js'
+import { LocationType, SessionType, VaccinationOutcome } from '../enums.js'
 import {
   PatientProgramme,
   Patient,
@@ -6,6 +6,7 @@ import {
   PatientSession,
   Session
 } from '../models.js'
+import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const patientProgrammeController = {
@@ -113,6 +114,50 @@ export const patientProgrammeController = {
 
     const returnUri = PatientSession.findOne(patientSession.uuid, data).uri
     saveAndRedirect(request, response, returnUri)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  newSession(request, response) {
+    const { programme_id } = request.params
+    const { data } = request.session
+    const { __, account, patient } = response.locals
+
+    // Get session
+    const session = Session.create(
+      {
+        date: today(),
+        locationType: LocationType.Home,
+        type: SessionType.Home,
+        hasRegistration: false,
+        programme_id
+      },
+      data
+    )
+
+    // Create and add patient session
+    const patientSession = PatientSession.create(
+      {
+        createdBy_uid: account.uid,
+        patient_uuid: patient.uuid,
+        programme_id,
+        session_id: session.id
+      },
+      data
+    )
+
+    // Add to session
+    patient.addToSession(patientSession)
+
+    // Update session data
+    Patient.update(patient.uuid, patient, data)
+
+    request.flash('success', __(`session.new.success`, { patient, session }))
+
+    const returnUri = PatientSession.findOne(patientSession.uuid, data).uri
+
+    return saveAndRedirect(request, response, returnUri)
   },
 
   /**

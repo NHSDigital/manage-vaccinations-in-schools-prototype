@@ -2137,6 +2137,9 @@ export const en = {
     },
     inviteToClinic: {
       label: 'Invite to upcoming clinic session'
+    },
+    homeVisit: {
+      label: 'Add home visit'
     }
   },
   patientSession: {
