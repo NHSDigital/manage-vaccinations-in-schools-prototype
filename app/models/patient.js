@@ -435,13 +435,24 @@ export class Patient extends Child {
   }
 
   /**
-   * Get the IDs of programmes for which this patient can be invited to clinic
+   * Get IDs of programmes for which this child can be invited to clinic
    *
-   * @returns {Array<string>} the IDs of programmes for which this patient is clinic-ready
+   * @returns {Array<string>} Programme IDs for which child is clinic ready
    */
   get clinicReadyProgramme_ids() {
     return Object.values(this.programmes)
       .filter(({ clinicStatus }) => clinicStatus === PatientClinicStatus.Ready)
+      .map(({ programme_id }) => programme_id)
+  }
+
+  /**
+   * Get IDs of programmes for which this child can be added to a home visit
+   *
+   * @returns {Array<string>} Programme IDs for which child is home visit ready
+   */
+  get homeVisitReadyProgramme_ids() {
+    return Object.values(this.programmes)
+      .filter(({ canVaccinateAtClinic }) => canVaccinateAtClinic)
       .map(({ programme_id }) => programme_id)
   }
 

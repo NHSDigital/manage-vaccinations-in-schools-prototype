@@ -7,7 +7,8 @@ import {
   SessionStatus,
   SessionType
 } from '../enums.js'
-import { Patient, Programme, Session, Team } from '../models.js'
+import { Patient, PatientSession, Programme, Session, Team } from '../models.js'
+import { today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -462,6 +463,50 @@ export const patientController = {
     Patient.update(patient_uuid, request.body.patient, data.wizard)
 
     return saveAndRedirect(request, response, paths.next)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  newSession(request, response) {
+    const { data } = request.session
+    const { __, account, patient } = response.locals
+
+    // Get session
+    const session = Session.create(
+      {
+        date: today(),
+        type: SessionType.Home,
+        hasRegistration: false,
+        presetOverrideProgramme_ids: patient.homeVisitReadyProgramme_ids
+      },
+      data
+    )
+
+    // Create and add patient sessions
+    let patientSession_uuid
+    for (const programme_id of patient.homeVisitReadyProgramme_ids) {
+      const patientSession = PatientSession.create(
+        {
+          createdBy_uid: account.uid,
+          patient_uuid: patient.uuid,
+          programme_id,
+          session_id: session.id
+        },
+        data
+      )
+
+      // Add to session
+      patient.addToSession(patientSession)
+
+      patientSession_uuid = patientSession.uuid
+    }
+
+    request.flash('success', __(`session.new.success`, { patient, session }))
+
+    const returnUri = PatientSession.findOne(patientSession_uuid, data).uri
+
+    return saveAndRedirect(request, response, returnUri)
   },
 
   /**

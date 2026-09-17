@@ -167,7 +167,7 @@
   }) %}
 {% endif %}
 
-{% set programmesToAdminister = session.programmes if session.type === SessionType.School else session.bookedProgrammes %}
+{% set programmesToAdminister = session.bookedProgrammes if session.type === SessionType.Clinic else session.programmes %}
 {% for programme in programmesToAdminister %}
   {% set tabItems = tabItems | push({
     label: programme.name,

@@ -133,7 +133,14 @@
         {
           text: "Book into a clinic",
           href: patient.uri + "/book-into-a-clinic/"
-        } if not patient.isArchived and canBookIntoClinic
+        } if not patient.isArchived and canBookIntoClinic,
+        {
+          text: __("patient.homeVisit.label"),
+          attributes: {
+            formaction: patient.uri + "/home-visit",
+            formmethod: "post"
+          }
+        } if not patient.isArchived
       ]
     } if not account.isSchoolUser
   }) %}

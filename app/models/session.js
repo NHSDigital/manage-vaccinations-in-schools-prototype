@@ -71,6 +71,7 @@ import { BaseModel } from './base.js'
  * @property {object} [date_] - Dates (from `dateInput`s)
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
+ * @property {string} [presetOverrideProgramme_ids] - Programme IDs (no preset)
  * @property {SessionMMRConsent} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {boolean} [hasRegistration] - Session has registration?
  *
@@ -140,6 +141,7 @@ export class Session extends BaseModel {
     this.date_ = options?.date_
     this.academicYear = options?.academicYear || getCurrentAcademicYear()
     this.presetNames = stringToArray(options?.presetNames)
+    this.presetOverrideProgramme_ids = options?.presetOverrideProgramme_ids
     this.cancelledAt = options?.cancelledAt && new Date(options.cancelledAt)
     this.hasRegistration = stringToBoolean(options?.hasRegistration)
     this.register = options?.register || {}
@@ -669,9 +671,7 @@ export class Session extends BaseModel {
    */
   get hasAppointments() {
     if (this.type !== SessionType.Clinic) {
-      throw new Error(
-        'Clinic appointments are only relevant to clinic sessions'
-      )
+      return false
     }
 
     // Same logic as in this.appointments but quicker to return
@@ -690,12 +690,6 @@ export class Session extends BaseModel {
    * @returns {Array<ClinicAppointment>} Appointments made for this session
    */
   get appointments() {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error(
-        'Clinic appointments are only relevant to clinic sessions'
-      )
-    }
-
     // Same logic as in this.hasAppointments but gets the full list
     const appointments = ClinicBooking.findAll(this.context)
       ?.flatMap(({ appointments }) => appointments)
@@ -804,10 +798,17 @@ export class Session extends BaseModel {
    */
   get programme_ids() {
     const programme_ids = new Set()
-    for (const preset of this.presets) {
-      for (const programmeType of preset.programmeTypes) {
-        const programme = programmesData[programmeType]
-        programme_ids.add(programme.id)
+
+    if (this.presetOverrideProgramme_ids) {
+      for (const programme_id of this.presetOverrideProgramme_ids) {
+        programme_ids.add(programme_id)
+      }
+    } else {
+      for (const preset of this.presets) {
+        for (const programmeType of preset.programmeTypes) {
+          const programme = programmesData[programmeType]
+          programme_ids.add(programme.id)
+        }
       }
     }
 
@@ -831,10 +832,6 @@ export class Session extends BaseModel {
    * @returns {Array<Programme>} Programmes
    */
   get bookedProgrammes() {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error('Session must be a clinic to get booked programmes')
-    }
-
     return [
       ...new Set(
         this.appointments.flatMap(
@@ -973,33 +970,31 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get name
-   *
-   * @returns {string|undefined} Name
-   */
-  get name() {
-    if (this.clinic) {
-      return `${this.programmeNames.titleCase} clinic at ${this.location.name} on ${this.formatted.dateShort}`
-    }
-
-    if (this.location) {
-      return `${this.programmeNames.titleCase} session at ${this.location.name} on ${this.formatted.dateShort}`
-    }
-  }
-
-  /**
-   * Get short name (without dates)
+   * Get short name (programmes, type and location)
    *
    * @returns {string|undefined} Short name
    */
   get shortName() {
-    if (this.clinic) {
+    if (this.type === SessionType.Clinic) {
       return `${this.programmeNames.titleCase} clinic at ${this.location.name}`
     }
 
-    if (this.location) {
+    if (this.type === SessionType.Home) {
+      return `${this.programmeNames.titleCase} home visit`
+    }
+
+    if (this.type === SessionType.School) {
       return `${this.programmeNames.titleCase} session at ${this.location.name}`
     }
+  }
+
+  /**
+   * Get name (programmes, type, location and date)
+   *
+   * @returns {string} Name
+   */
+  get name() {
+    return `${this.shortName} on ${this.formatted.dateShort}`
   }
 
   /**
@@ -1021,6 +1016,12 @@ export class Session extends BaseModel {
    * @returns {object} Location
    */
   get location() {
+    if (this.type === SessionType.Home) {
+      return {
+        name: 'The child’s home'
+      }
+    }
+
     const type = this.type === SessionType.School ? 'school' : 'clinic'
 
     return this[type]?.location
@@ -1032,9 +1033,13 @@ export class Session extends BaseModel {
    * @returns {LocationType} Location type
    */
   get locationType() {
-    return this.type === SessionType.School
-      ? LocationType.School
-      : LocationType.Clinic
+    if (this.type === SessionType.Clinic) {
+      return LocationType.Clinic
+    } else if (this.type === SessionType.Home) {
+      return LocationType.Home
+    }
+
+    return LocationType.School
   }
 
   /**
