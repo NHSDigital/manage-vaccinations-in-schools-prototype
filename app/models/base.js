@@ -120,7 +120,7 @@ export class BaseModel {
   }
 
   static create(options, context) {
-    const createdItem = new this(options)
+    const createdItem = new this(options, context)
 
     // Update context
     context[this.contextKey] = context[this.contextKey] || {}
