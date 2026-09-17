@@ -1833,6 +1833,9 @@ export const en = {
         hint: 'This will merge the duplicate records into a single record'
       }
     },
+    homeVisit: {
+      label: 'Record vaccination at home'
+    },
     inviteToClinic: {
       title: {
         multiple:
@@ -2137,6 +2140,9 @@ export const en = {
     },
     inviteToClinic: {
       label: 'Invite to upcoming clinic session'
+    },
+    homeVisit: {
+      label: 'Record vaccination at home'
     }
   },
   patientSession: {

@@ -808,8 +808,9 @@ export const SessionStatus = {
  * @enum {string}
  */
 export const SessionType = {
+  Clinic: 'Community clinic',
   School: 'School session',
-  Clinic: 'Community clinic'
+  Home: 'Home visit'
 }
 
 /**
