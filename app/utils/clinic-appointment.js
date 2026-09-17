@@ -162,9 +162,17 @@ export const getAllAppointmentPaths = (
       // Interrupt if the appointment is too long for the slot selected on Appointments page
       ...(isDataMigrationJourney &&
       sessionData.journeyData[booking_uuid]?.preselectedSlot &&
-      !canAppointmentFitInSchedule(appointment, sessionData)
+      !canAppointmentFitInSchedule(appointment, true, sessionData)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/unsuitable-slot`]: {}
+            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
+          }
+        : {}),
+      // Interrupt if the appointment is too long for anywhere in the session
+      ...(isDataMigrationJourney &&
+      !sessionData.journeyData[booking_uuid]?.preselectedSlot &&
+      !canAppointmentFitInSchedule(appointment, false, sessionData)
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
           }
         : {}),
 
@@ -365,13 +373,18 @@ export const getAllAppointmentPaths = (
 }
 
 /**
- * Are there enough consecutive slots free at the appointment's start time to fit it in?
+ * Are there enough consecutive slots free to fit this appointment in?
  *
  * @param {ClinicAppointment} appointment - the appointment we're booking
+ * @param {boolean} useAppointmentTime - do we care about the appointment time or can we look anywhere?
  * @param {object} sessionData - the global data context
  * @returns {boolean} - true if the appointment will fit in the schedule, or false otherwise
  */
-const canAppointmentFitInSchedule = (appointment, sessionData) => {
+const canAppointmentFitInSchedule = (
+  appointment,
+  useAppointmentTime,
+  sessionData
+) => {
   // Make sure the appointment's up to date with any extension for support needs
   appointment.extendForAdditionalSupportNeeds = stringToBoolean(
     sessionData.appointment?.extendForAdditionalSupportNeeds
@@ -380,10 +393,14 @@ const canAppointmentFitInSchedule = (appointment, sessionData) => {
   const startTimesWithEnoughSpace =
     session.bookableSlotStartTimesFor(appointment)
 
-  const appointmentTime = appointment.startAt.getTime()
-  return startTimesWithEnoughSpace.some(
-    (slotTime) => slotTime.getTime() == appointmentTime
-  )
+  if (useAppointmentTime) {
+    const appointmentTime = appointment.startAt.getTime()
+    return startTimesWithEnoughSpace.some(
+      (slotTime) => slotTime.getTime() == appointmentTime
+    )
+  }
+
+  return startTimesWithEnoughSpace.length > 0
 }
 
 /**

@@ -1,11 +1,12 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("clinicBooking.unsuitableSlot.title") %}
+{% set title = __("clinicBooking.shortenAppointment.title") %}
 {% set hideConfirmButton = true %}
 
 {% block form %}
+{% set scenarioKey = "specificSlot" if slotStartTime else "anySlot" %}
   {% set panelHtml %}
-    {{ __mf("clinicBooking.unsuitableSlot.description", {
+    {{ __mf("clinicBooking.shortenAppointment.description." + scenarioKey, {
       requiredMinutes: requiredMinutes,
       requiredSlots: requiredSlots,
       availableMinutes: availableMinutes,
@@ -15,10 +16,10 @@
 
     <div class="nhsuk-button-group">
       {{ button({
-        text: __("clinicBooking.unsuitableSlot.confirm"),
+        text: __("clinicBooking.shortenAppointment.confirm"),
         variant: "reverse"
       }) }}
-      {{ link(session.uri + "/appointments", __("clinicBooking.unsuitableSlot.cancel")) | nhsukMarkdown }}
+      {{ link(session.uri + "/appointments", __("clinicBooking.shortenAppointment.cancel")) | nhsukMarkdown }}
     </div>
   {% endset %}
 
