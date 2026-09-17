@@ -261,5 +261,74 @@ export default {
       PreScreenQuestion.IsHappy,
       PreScreenQuestion.IsNotContraindicated
     ]
+  },
+  // MMRV vaccines
+  '45480711000001107': {
+    snomed: '45480711000001107',
+    type: ProgrammeType.MMR,
+    brand: 'ProQuad',
+    manufacturer: 'Merck Sharp & Dohme (UK) Ltd',
+    leaflet: {
+      url: 'https://www.medicines.org.uk/emc/files/pil.101444.pdf',
+      size: '112KB'
+    },
+    criteria: VaccineCriteria.Injection,
+    method: VaccineMethod.Injection,
+    dose: 0.5,
+    sideEffects: [
+      VaccineSideEffect.Bruising,
+      VaccineSideEffect.TemperatureShiver,
+      VaccineSideEffect.SickFeeling,
+      VaccineSideEffect.PainArms
+    ],
+    healthQuestions: {
+      'bleeding': {},
+      'bloodThinning': {},
+      'bloodTransfusion': {},
+      'previousReactionMmr': {},
+      'previousReactionNeomycinGelatine': {},
+      'immuneSystem': {},
+      'immunisations': {}
+    },
+    preScreenQuestions: [
+      PreScreenQuestion.IsWell,
+      PreScreenQuestion.IsPregnant,
+      PreScreenQuestion.IsHappy,
+      PreScreenQuestion.IsNotContraindicated
+    ]
+  },
+  '45525711000001102': {
+    snomed: '45525711000001102',
+    type: ProgrammeType.MMR,
+    brand: 'Priorix-Tetra',
+    manufacturer: 'GlaxoSmithKline UK Ltd',
+    leaflet: {
+      url: 'https://www.medicines.org.uk/emc/files/pil.101321.pdf',
+      size: '227KB'
+    },
+    criteria: VaccineCriteria.AlternativeInjection,
+    method: VaccineMethod.Injection,
+    dose: 0.5,
+    sideEffects: [
+      VaccineSideEffect.Bruising,
+      VaccineSideEffect.TemperatureShiver,
+      VaccineSideEffect.SickFeeling,
+      VaccineSideEffect.PainArms
+    ],
+    healthQuestions: {
+      'bleeding': {},
+      'bloodThinning': {},
+      'bloodTransfusion': {},
+      'previousReactionMmr': {},
+      'previousReactionNeomycinGelatine': {},
+      'immuneSystem': {},
+      'immunisations': {}
+    },
+    preScreenQuestions: [
+      PreScreenQuestion.IsWell,
+      PreScreenQuestion.IsPregnant,
+      PreScreenQuestion.IsHappy,
+      PreScreenQuestion.IsNotContraindicated
+    ]
   }
 }

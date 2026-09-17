@@ -20,7 +20,14 @@ router.param('programme_id', patientProgramme.read)
 
 router.post('/:programme_id/clinics', patientProgramme.addToSession)
 
-router.get('/:programme_id/new/vaccination', patientProgramme.vaccinate('new'))
+router.get(
+  '/:programme_id/new/home-vaccination',
+  patientProgramme.vaccinate('home')
+)
+router.get(
+  '/:programme_id/new/previous-vaccination',
+  patientProgramme.vaccinate('previous')
+)
 router.get('/:programme_id/new/tetanus', patientProgramme.vaccinate('tetanus'))
 router.post('/:programme_id/new/triage', patientProgramme.triage)
 

@@ -1,0 +1,26 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("vaccination.protocol.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        caption: vaccination.patient.fullName,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: [
+      {
+        label: VaccinationProtocol.PGD,
+        value: VaccinationProtocol.PGD
+      },
+      {
+        label: VaccinationProtocol.VGD,
+        value: VaccinationProtocol.VGD
+      }
+    ],
+    decorate: "vaccination.protocol"
+  }) }}
+{% endblock %}

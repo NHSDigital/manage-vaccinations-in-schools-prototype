@@ -19,7 +19,7 @@
       programme: {},
       outcome: {},
       vaccine: {
-        href: vaccination.uri + "/new/vaccine" if programme.alternativeVaccine
+        href: vaccination.uri + "/new/vaccine" if programme.alternativeVaccine or vaccination.outcome == VaccinationOutcome.AlreadyVaccinated
       },
       method: {
         href: vaccination.uri + "/new/method" if vaccination.method != VaccinationMethod.Intranasal

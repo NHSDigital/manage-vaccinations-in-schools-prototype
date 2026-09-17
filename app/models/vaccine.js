@@ -1,5 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
+import { ProgrammeType } from '../enums.js'
 import { Batch } from '../models.js'
 import { getDateValueDifference } from '../utils/date.js'
 import {
@@ -11,10 +12,12 @@ import {
 
 import { BaseModel } from './base.js'
 
+const MMRV_SNOMEDS = ['45480711000001107', '45525711000001102']
+
 /**
  * @typedef {BaseModelOptions & object} VaccineOptions
  * @property {string} [snomed] - SNOMED code
- * @property {string} [type] - Type
+ * @property {ProgrammeType} [type] - Type
  * @property {string} [brand] - Brand
  * @property {string} [manufacturer] - Manufacturer
  * @property {object} [leaflet] - Leaflet
@@ -60,7 +63,12 @@ export class Vaccine extends BaseModel {
    * @returns {string} Brand with vaccine type
    */
   get brandWithType() {
-    return `${this.brand} (${this.type})`
+    const type =
+      ProgrammeType.MMR && MMRV_SNOMEDS.includes(this.snomed)
+        ? 'MMRV'
+        : this.type
+
+    return `${this.brand} (${type})`
   }
 
   /**
