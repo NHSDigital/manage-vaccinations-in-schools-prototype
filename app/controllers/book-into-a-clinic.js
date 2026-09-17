@@ -607,7 +607,7 @@ export const bookIntoClinicController = {
         location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
-    } else if (view === 'unsuitable-slot') {
+    } else if (view === 'shorten-appointment') {
       // TODO: make this smarter when appointments get longer than 2 slots
       const session = Session.findOne(appointment.session_id, data)
       const requiredSlots = session.calculateSlotCount(appointment)
@@ -618,7 +618,9 @@ export const bookIntoClinicController = {
       response.locals.availableSlots = availableSlots
       response.locals.availableMinutes = availableSlots * session.slotLength
 
-      response.locals.slotStartTime = formatTime(appointment.startAt, true)
+      if (data.journeyData[booking_uuid].preselectedSlot) {
+        response.locals.slotStartTime = formatTime(appointment.startAt, true)
+      }
     } else if (view === 'fully-booked') {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
@@ -726,7 +728,7 @@ export const bookIntoClinicController = {
 
         ClinicBooking.update(booking_uuid, booking, data.wizard)
       }
-    } else if (view === 'unsuitable-slot') {
+    } else if (view === 'shorten-appointment') {
       // Must've decided to shorten and continue
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking.findAppointment(appointment_uuid)
