@@ -97,7 +97,7 @@ import { BaseModel } from './base.js'
  * The minimal shape of appointment data needed to work out how long an appointment will take,
  * and so which slots it could be booked into.
  *
- * @typedef {Pick<ClinicAppointment, 'selected_programme_ids' | 'fluDecision' | 'extendForAdditionalSupportNeeds'>} AppointmentLengthFactors
+ * @typedef {Pick<ClinicAppointment, 'selected_programme_ids' | 'fluDecision'>} AppointmentLengthFactors
  */
 
 /**
@@ -495,52 +495,32 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Calculate the default length of the given appointment using this session's setup, in minutes
+   * Calculate the default number of slots covered by the given appointment
    *
-   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
-   * @returns {number} - the number of minutes to allocate for the given appointment
+   * @param {AppointmentLengthFactors} vaccinationChoices - the appointment's vaccination info
+   * @returns {number} - the default number of slots consumed by the appointment
    */
-  calculateAppointmentLength(appointmentProperties) {
-    return this.slotLength * this.calculateSlotCount(appointmentProperties)
-  }
-
-  /**
-   * Calculate the number of slots covered by the given appointment
-   *
-   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
-   * @returns {number} - the number of slots consumed by the appointment
-   */
-  calculateSlotCount(appointmentProperties) {
-    const slotsForSupportNeeds =
-      appointmentProperties.extendForAdditionalSupportNeeds ? 1 : 0
-
+  calculateSlotCount(vaccinationChoices) {
     const isFluNasal =
-      appointmentProperties.fluDecision !==
-      ReplyDecision.OnlyAlternativeInjection
+      vaccinationChoices.fluDecision !== ReplyDecision.OnlyAlternativeInjection
 
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
     // and will not have any other catch-up vaccinations
     if (this.isFluOnlyClinic) {
-      return (
-        (isFluNasal ? 1 : this.slotCountForLongAppointment) +
-        slotsForSupportNeeds
-      )
+      return isFluNasal ? 1 : this.slotCountForLongAppointment
     }
 
     // For all other clinics setups, count only the injections to know how long we need to allocate.
     // In this case, we expressly don't count a nasal flu vaccination, as teams can usually squeeze
     // it in.
     let injectionCount = 0
-    const programme_ids = appointmentProperties.selected_programme_ids
+    const programme_ids = vaccinationChoices.selected_programme_ids
     if (programme_ids.includes('flu') && !isFluNasal) {
       injectionCount++
     }
     injectionCount += programme_ids.filter((id) => id !== 'flu').length
 
-    return (
-      (injectionCount > 1 ? this.slotCountForLongAppointment : 1) +
-      slotsForSupportNeeds
-    )
+    return injectionCount > 1 ? this.slotCountForLongAppointment : 1
   }
 
   /**
@@ -1123,22 +1103,13 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get the start times at which the given appointment could be booked, taking into account
-   * existing bookings
+   * Get the start times from which the given number of consecutive slots could be booked,
+   * taking into account existing bookings
    *
-   * Used to work out which start times to offer when booking an appointment — proactively,
-   * to only offer a parent start times that have room, and reactively, to check a start time a
-   * staff member has already picked on the schedule
-   *
-   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
-   * @returns {Array<Date>} Start times with enough contiguous free capacity for the appointment
+   * @param {number} requiredSlotCount - the number of consecutive slots that must be available
+   * @returns {Array<Date>} - Start times with enough free capacity
    */
-  bookableSlotStartTimesFor(appointmentProperties) {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error('Session must be a clinic to have booking slots')
-    }
-
-    const slotsForAppointment = this.calculateSlotCount(appointmentProperties)
+  #bookableStartTimesForSlotCount(requiredSlotCount) {
     const freeSlotCounts = this.#freeSlotCountsByStartTime()
 
     const bookableStartTimes = []
@@ -1149,12 +1120,12 @@ export class Session extends BaseModel {
 
       for (
         let startIndex = 0;
-        startIndex <= slotStartTimes.length - slotsForAppointment;
+        startIndex <= slotStartTimes.length - requiredSlotCount;
         startIndex++
       ) {
         const coveredIndexes = _.range(
           startIndex,
-          startIndex + slotsForAppointment
+          startIndex + requiredSlotCount
         )
 
         const hasCapacity = coveredIndexes.every(
@@ -1168,6 +1139,48 @@ export class Session extends BaseModel {
     })
 
     return bookableStartTimes
+  }
+
+  /**
+   * Get the start times at which the given appointment could be booked, taking into account
+   * existing bookings
+   *
+   * This function takes only vaccination choices into account, not extension or shortening
+   *
+   * @param {AppointmentLengthFactors} vaccinationChoices - the appointment's vaccination info
+   * @param {boolean} extendForSupportNeeds - should we add a slot to account for support needs?
+   * @returns {Array<Date>} Start times with enough free capacity for the vaccinations
+   */
+  bookableStartTimesForVaccinationChoices(
+    vaccinationChoices,
+    extendForSupportNeeds = false
+  ) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const slotsForAppointment =
+      this.calculateSlotCount(vaccinationChoices) +
+      (extendForSupportNeeds ? 1 : 0)
+    return this.#bookableStartTimesForSlotCount(slotsForAppointment)
+  }
+
+  /**
+   * Get the start times at which the given appointment could be booked, taking into account
+   * existing bookings
+   *
+   * This function takes into account any shortening or extending of the appointment by the team
+   *
+   * @param {ClinicAppointment} appointment - the appointment being booked (possibly with edited length)
+   * @returns {Array<Date>} Start times with enough free capacity for the appointment
+   */
+  bookableStartTimesForAppointment(appointment) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const slotsForAppointment = appointment.slotCount
+    return this.#bookableStartTimesForSlotCount(slotsForAppointment)
   }
 
   /**

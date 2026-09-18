@@ -130,6 +130,7 @@ export const getAllAppointmentPaths = (
             getBookableClinicSessions(
               sessionData,
               vaccinationChoices,
+              sessionData.journeyData.extendForSupportNeeds,
               isParentJourney
             ).length === 0
           )
@@ -223,6 +224,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
+                    sessionData.journeyData.extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -234,6 +236,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
+                    sessionData.journeyData.extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -254,6 +257,7 @@ export const getAllAppointmentPaths = (
                       getBookableClinicSessions(
                         sessionData,
                         appointment.vaccinationChoices,
+                        sessionData.journeyData.extendForSupportNeeds,
                         isParentJourney
                       ).length === 0
                     )
@@ -265,6 +269,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
+                    sessionData.journeyData.extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -385,13 +390,15 @@ const canAppointmentFitInSchedule = (
   useAppointmentTime,
   sessionData
 ) => {
-  // Make sure the appointment's up to date with any extension for support needs
-  appointment.extendForAdditionalSupportNeeds = stringToBoolean(
-    sessionData.appointment?.extendForAdditionalSupportNeeds
+  const extendForSupportNeeds = stringToBoolean(
+    sessionData.journeyData.extendForSupportNeeds
   )
   const session = Session.findOne(appointment.session_id, sessionData)
   const startTimesWithEnoughSpace =
-    session.bookableSlotStartTimesFor(appointment)
+    session.bookableStartTimesForVaccinationChoices(
+      appointment,
+      extendForSupportNeeds
+    )
 
   if (useAppointmentTime) {
     const appointmentTime = appointment.startAt.getTime()

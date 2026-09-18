@@ -54,14 +54,13 @@ import {
  * @property {boolean} [parentHasParentalResponsibility] - Does the contact have legal parental responsibility for the child?
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
- * @property {number} [appointmentLength] - Length of the appointment, in minutes
+ * @property {number} [editedSlotCount] - Override of the default appointment length
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
  * @property {boolean} [mmrAlternative] - Wants vaccine that doesn’t contain gelatine?
  * @property {boolean} [hasAdditionalSupportNeeds] - Does the child have additional support needs?
  * @property {string} [additionalSupportNeedsDetails] - Details of the child's additional support needs
- * @property {boolean} [extendForAdditionalSupportNeeds] - should we add an extra slot by default, in light of support needs?
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
  * @property {string} [note] - Note about this clinic appointment
@@ -99,7 +98,7 @@ export class ClinicAppointment {
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
-    this.appointmentLength = options?.appointmentLength
+    this.editedSlotCount = options?.editedSlotCount
 
     this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
@@ -109,9 +108,6 @@ export class ClinicAppointment {
       options?.hasAdditionalSupportNeeds
     )
     this.additionalSupportNeedsDetails = options?.additionalSupportNeedsDetails
-    this.extendForAdditionalSupportNeeds = stringToBoolean(
-      options?.extendForAdditionalSupportNeeds
-    )
     this.healthAnswers = options?.healthAnswers
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
@@ -348,8 +344,7 @@ export class ClinicAppointment {
       selected_programme_ids: this.selected_programme_ids,
       fluDecision: this.fluDecision,
       fluAlternative: this.fluAlternative,
-      mmrAlternative: this.mmrAlternative,
-      extendForAdditionalSupportNeeds: this.extendForAdditionalSupportNeeds
+      mmrAlternative: this.mmrAlternative
     }
   }
 
@@ -464,6 +459,26 @@ export class ClinicAppointment {
   }
 
   /**
+   * Get the number of slots that this appointment occupies
+   *
+   * @returns {number} - the length of the appointment, in slots
+   */
+  get slotCount() {
+    // Favour an edited count but fall back to default length
+    return this.editedSlotCount || this.session.calculateSlotCount(this)
+  }
+
+  /**
+   * Get the length of the appointment, in minutes
+   *
+   * @returns {number} - the length of the appointment, in minutes
+   */
+  get appointmentLength() {
+    const session = this.session
+    return session ? session.slotLength * this.slotCount : 0
+  }
+
+  /**
    * Does this appointment overlap the slot whose start and end times are given?
    *
    * @param {Date} slotStartTime - the start time of the slot we're comparing to
@@ -494,9 +509,20 @@ export class ClinicAppointment {
    * @returns {boolean} - true if it's been shortened, or false otherwise
    */
   get hasBeenShortened() {
-    return (
-      this.session.calculateAppointmentLength(this) > this.appointmentLength
-    )
+    return this.editedSlotCount
+      ? this.session.calculateSlotCount(this) > this.editedSlotCount
+      : false
+  }
+
+  /**
+   * Has this appointment been made longer than its default length?
+   *
+   * @returns {boolean} - true if it's been extended, or false otherwise
+   */
+  get hasBeenExtended() {
+    return this.editedSlotCount
+      ? this.session.calculateSlotCount(this) < this.editedSlotCount
+      : false
   }
 
   /**
