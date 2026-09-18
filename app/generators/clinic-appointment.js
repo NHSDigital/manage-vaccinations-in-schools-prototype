@@ -16,13 +16,9 @@ import { generateContact } from './contact.js'
  * Choose programmes and vaccine choices for a child's clinic appointment
  *
  * @param {Array<string>} invitedProgramme_ids - All programmes the child's been invited for
- * @param {boolean} extendForAdditionalSupportNeeds - Should we extend the appointment for additional needs?
  * @returns {ClinicVaccinationChoices} The selected programmes and vaccine choices for the appointment
  */
-export function decideClinicVaccinationChoices(
-  invitedProgramme_ids,
-  extendForAdditionalSupportNeeds
-) {
+export function decideClinicVaccinationChoices(invitedProgramme_ids) {
   // When invited for more than one programme, a parent doesn't always want their child
   // vaccinated for all of them in one go — sometimes leave one unselected
   let selected_programme_ids = invitedProgramme_ids
@@ -53,8 +49,7 @@ export function decideClinicVaccinationChoices(
     selected_programme_ids,
     fluDecision,
     fluAlternative,
-    mmrAlternative,
-    extendForAdditionalSupportNeeds
+    mmrAlternative
   }
 }
 
@@ -118,6 +113,18 @@ export function generateClinicAppointment(
       impairments: [...patient.impairments],
       impairmentsOther: patient.impairmentsOther
     })
+  }
+
+  // Decide whether we'll try to extend the appointment, based on support needs
+  let editedSlotCount
+  const extendForSupportNeeds =
+    patient.adjustments.includes(Adjustment.ExtendedAppointment) ||
+    patient.impairments.includes(Impairment.MentalHealth)
+      ? faker.datatype.boolean(0.5)
+      : false
+  if (extendForSupportNeeds) {
+    // TODO: actually check whether there's space
+    editedSlotCount = session.calculateSlotCount(vaccinationChoices) + 1
   }
 
   // Copy the first impairment to the basic additional needs, if present
@@ -186,8 +193,7 @@ export function generateClinicAppointment(
     selected_programme_ids,
     fluDecision,
     fluAlternative,
-    mmrAlternative,
-    extendForAdditionalSupportNeeds
+    mmrAlternative
   } = vaccinationChoices
 
   const status = ClinicAppointmentStatus.Booked
@@ -202,14 +208,13 @@ export function generateClinicAppointment(
     parentHasParentalResponsibility,
     session_id,
     startAt,
-    appointmentLength: session.calculateAppointmentLength(vaccinationChoices),
+    editedSlotCount,
     selected_programme_ids,
     fluDecision,
     fluAlternative,
     mmrAlternative,
     hasAdditionalSupportNeeds,
     additionalSupportNeedsDetails,
-    extendForAdditionalSupportNeeds,
     status
   })
 
