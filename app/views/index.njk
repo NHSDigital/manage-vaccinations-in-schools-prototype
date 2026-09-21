@@ -70,6 +70,15 @@
         size: "m"
       }) }}
 
+      <div class="app-action-link-with-description">
+        {{ actionLink({
+          classes: "nhsuk-u-margin-bottom-2",
+          text: "Start page for parents",
+          href: "/give-or-refuse-consent/start"
+        }) }}
+        {{ "Page shown if no session ID provided in URL" | nhsukMarkdown }}
+      </div>
+
       {% for preset in SessionPresets %}
         {% if preset.active and not preset.clinicOnly %}
           {{ actionLink({
