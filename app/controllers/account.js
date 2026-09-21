@@ -3,6 +3,29 @@ import { User } from '../models.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { isSafeRedirect } from '../utils/url.js'
 
+/**
+ * Regenerate the session, keeping the session ID unguessable to anyone who
+ * held a reference to the pre-sign-in session (session fixation), while
+ * preserving session data (which holds the prototype’s in-session dataset,
+ * not just user preferences)
+ *
+ * @param {Request} request - Request
+ * @param {() => void} callback - Called once the session has regenerated
+ */
+function regenerateSession(request, callback) {
+  const { data } = request.session
+
+  request.session.regenerate((error) => {
+    if (error) {
+      console.error('Session regeneration failed: ', error)
+    }
+
+    request.session.data = data
+
+    callback()
+  })
+}
+
 export const accountController = {
   /**
    * Change (to pre-assigned user with) role
@@ -38,34 +61,37 @@ export const accountController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   cis2(request, response) {
-    return saveAndRedirect(request, response, '/account/change-role')
+    return regenerateSession(request, () => {
+      saveAndRedirect(request, response, '/account/change-role')
+    })
   },
 
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
   dfeSignIn(request, response) {
-    const { data } = request.session
+    return regenerateSession(request, () => {
+      // Update session token (get pre-defined user with school secretary role)
+      request.session.data.token = User.findAll(request.session.data).find(
+        (user) => user.role === UserRole.SchoolSecretary
+      )
 
-    // Update session token (get pre-defined user with school secretary role)
-    request.session.data.token = User.findAll(data).find(
-      (user) => user.role === UserRole.SchoolSecretary
-    )
-
-    return saveAndRedirect(request, response, '/home')
+      saveAndRedirect(request, response, '/home')
+    })
   },
 
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
   login(request, response) {
-    const { data } = request.session
     const { uid } = /** @type {{ uid?: string }} */ (request.query)
 
-    // Update session token (get pre-defined user with UID)
-    request.session.data.token = User.findOne(uid, data)
+    return regenerateSession(request, () => {
+      // Update session token (get pre-defined user with UID)
+      request.session.data.token = User.findOne(uid, request.session.data)
 
-    return saveAndRedirect(request, response, '/home')
+      saveAndRedirect(request, response, '/home')
+    })
   },
 
   /**
@@ -83,5 +109,5 @@ export const accountController = {
 }
 
 /**
- * @import { RequestHandler } from 'express'
+ * @import { Request, RequestHandler } from 'express'
  */

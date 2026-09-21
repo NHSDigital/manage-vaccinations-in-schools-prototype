@@ -11,7 +11,13 @@ import filters from './app/filters.js'
 import globals from './app/globals.js'
 import routes from './app/routes.js'
 
-const { DATABASE_URL, NODE_ENV } = process.env
+const { DATABASE_URL, NODE_ENV, SESSION_SECRET } = process.env
+
+if (DATABASE_URL && !SESSION_SECRET) {
+  throw new Error(
+    'SESSION_SECRET environment variable must be set when DATABASE_URL is set'
+  )
+}
 
 const processor = postcss([
   autoprefixer({
@@ -52,11 +58,12 @@ const prototype = await NHSPrototypeKit.init({
     session: session({
       cookie: {
         maxAge: 1000 * 60 * 60 * 4, // 4 hours
+        sameSite: 'lax',
         secure: NODE_ENV === 'production'
       },
       resave: false,
       saveUninitialized: false,
-      secret: 'manage-vaccinations-in-schools-prototype',
+      secret: SESSION_SECRET,
       store: new (sessionInDatabase(session))({
         pool: new Pool({
           connectionString: DATABASE_URL,
