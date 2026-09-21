@@ -57,7 +57,7 @@
 
 {% block pageTitle -%}
   {%- if errors === true or (errors | length) %}Error: {% endif -%}
-  {%- if pageName %}{{ pageName }} – {% endif -%}
+  {%- if title %}{{ title }} – {% endif -%}
   {{ serviceName }} – NHS
 {%- endblock %}
 
