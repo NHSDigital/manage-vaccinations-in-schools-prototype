@@ -2,7 +2,7 @@
   card: {
     classes: "app-card--compact",
     heading: {
-      text: session.formatted.date | highlightQuery(data.q) | safe,
+      text: session.formatted.date | highlightQuery(data.q),
       size: "s",
       level: 4
     },
@@ -22,7 +22,7 @@
   card: {
     classes: "app-card--compact",
     heading: {
-      text: session.location.name | highlightQuery(data.q) | safe,
+      text: session.location.name | highlightQuery(data.q),
       level: 3,
       size: "s"
     },

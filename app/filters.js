@@ -42,14 +42,20 @@ export default (env) => {
    */
   filters.highlightDifference = (a, b) => {
     if (a !== b) {
-      return env.filters.safe(formatHighlight(a))
+      // Escape any HTML already present in the value before wrapping it, so
+      // it can’t be used to inject markup
+      return env.filters.safe(formatHighlight(String(env.filters.escape(a))))
     }
 
     return a
   }
 
   filters.highlightQuery = (string, query) => {
-    if (!string || !query) return string
+    if (!string || !query) return env.filters.escape(string)
+
+    // Escape any HTML already present in the string before highlighting, so
+    // it can’t be used to inject markup
+    string = String(env.filters.escape(string))
 
     // Escape special regex characters in the query
     const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -59,13 +65,15 @@ export default (env) => {
     const regex = /(?<=>|^)([^<]*)(?=<|$)|(?<=>)([^<]*)(?=<)/g
 
     // Replace only text content inside tags
-    return string.replace(regex, (textContent) => {
+    const highlighted = string.replace(regex, (textContent) => {
       if (!textContent) return textContent
       return textContent.replace(
         new RegExp(`(${escapedQuery})`, 'gi'),
         (match) => formatHighlight(match)
       )
     })
+
+    return env.filters.safe(highlighted)
   }
 
   /**

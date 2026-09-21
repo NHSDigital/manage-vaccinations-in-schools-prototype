@@ -87,7 +87,7 @@
             card: {
               classes: "app-card--compact",
               heading: {
-                text: patient.fullName | highlightQuery(data.q) | safe,
+                text: patient.fullName | highlightQuery(data.q),
                 level: 3,
                 size: "s"
               },

@@ -119,7 +119,7 @@
           {% call card({
             classes: "app-card--compact",
             heading: {
-              text: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
+              text: patientSession.patient.fullAndPreferredNames | highlightQuery(data.q),
               level: 3,
               size: "s"
             },
