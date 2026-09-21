@@ -17,6 +17,7 @@ import {
   formatLink,
   formatMarkdown
 } from './utils/string.js'
+import { isSafeRedirect } from './utils/url.js'
 
 /**
  * Prototype specific global functions for use in Nunjucks templates.
@@ -27,6 +28,8 @@ export default () => {
   const globals = {}
 
   globals.decorate = decorate
+
+  globals.isSafeRedirect = isSafeRedirect
 
   /**
    * Get boolean form field items

@@ -1,6 +1,7 @@
 import { UserRole } from '../enums.js'
 import { User } from '../models.js'
 import { saveAndRedirect } from '../utils/redirect.js'
+import { isSafeRedirect } from '../utils/url.js'
 
 export const accountController = {
   /**
@@ -10,7 +11,7 @@ export const accountController = {
    */
   changeRole(request, response) {
     const { role } = request.body.account
-    const { referrer } = /** @type {{ referrer?: string }} */ (request.query)
+    let { referrer } = /** @type {{ referrer?: string }} */ (request.query)
     const { data } = request.session
 
     const accountWithRole = User.findAll(data).find(
@@ -25,7 +26,12 @@ export const accountController = {
     const { context, ...token } = response.locals.account
     request.session.data.token = token
 
-    return saveAndRedirect(request, response, referrer || '/home')
+    // Make sure the referrer's safe and use fallback if necessary
+    if (!referrer || !isSafeRedirect(referrer)) {
+      referrer = '/home'
+    }
+
+    return saveAndRedirect(request, response, referrer)
   },
 
   /**

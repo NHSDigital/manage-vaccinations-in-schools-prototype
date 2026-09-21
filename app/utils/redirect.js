@@ -1,3 +1,5 @@
+import { isSafeRedirect } from './url.js'
+
 /**
  * Fully save session before carrying out redirect
  *
@@ -11,7 +13,9 @@ export function saveAndRedirect(request, response, nextPath) {
     if (error) {
       console.error('Session save failed: ', error)
     }
-    return response.redirect(nextPath)
+    return response.redirect(
+      isSafeRedirect(nextPath, { allowRelative: true }) ? nextPath : '/home'
+    )
   })
 }
 

@@ -1,6 +1,9 @@
+import { isSafeRedirect } from '../utils/url.js'
+
 export const referrer = (request, response, next) => {
-  if (request.session && request.query.referrer) {
-    request.session.referrer = request.query.referrer
+  const { referrer } = request.query
+  if (request.session && isSafeRedirect(referrer)) {
+    request.session.referrer = referrer
   }
 
   next()

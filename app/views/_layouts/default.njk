@@ -153,7 +153,8 @@
 {% endblock %}
 
 {% block beforeContent %}
-  {{ backLink({ href: paths.back or back }) if paths.back or back }}
+  {% set returnUrl = paths.back or back %}
+  {{ backLink({ href: returnUrl }) if returnUrl and isSafeRedirect(returnUrl) }}
 {% endblock %}
 
 {% block content %}
