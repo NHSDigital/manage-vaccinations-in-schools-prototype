@@ -43,6 +43,11 @@ export const giveOrRefuseConsentController = {
   redirect(request, response) {
     const { session } = response.locals
 
+    // Show fallback start page giving information about the service
+    if (!session) {
+      return response.render('give-or-refuse-consent/start')
+    }
+
     return saveAndRedirect(request, response, `${session.consentUrl}/start`)
   },
 
@@ -53,6 +58,9 @@ export const giveOrRefuseConsentController = {
     const view = request.params.view || 'show'
     const { data } = request.session
     const { session } = response.locals
+
+    console.log('session', session)
+    console.log('view', view)
 
     // Text and email messages
     if (view === 'emails' || view === 'texts') {
@@ -131,6 +139,10 @@ export const giveOrRefuseConsentController = {
     const { session_id, consent_uuid } = request.params
     const { data, referrer } = request.session
     const { __, session } = response.locals
+
+    if (!session_id) {
+      console.log('hi')
+    }
 
     const consent = new Consent(
       Consent.findOne(consent_uuid, data?.wizard),

@@ -5,34 +5,53 @@
 {% block content %}
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
-      {{ heading({
-        text: __("consent.start.title." + session.presetNames[0])
-      }) }}
+      {% if session %}
+        {{ heading({
+          text: __("consent.start.title." + session.presetNames[0])
+        }) }}
 
-      {% for programme in session.programmes %}
-        {% if session.programmes.length != 1 %}
-          <h2 class="nhsuk-heading-m">{{ programme.title }}</h2>
-        {% endif %}
+        {% for programme in session.programmes %}
+          {% if session.programmes.length != 1 %}
+            <h2 class="nhsuk-heading-m">{{ programme.title }}</h2>
+          {% endif %}
 
-        {{ programme.information.startPage | nhsukMarkdown }}
+          {{ programme.information.startPage | nhsukMarkdown }}
 
-        {{ link(programme.information.url, __("consent.start.more", { programme: programme })) | nhsukMarkdown }}
-      {% endfor %}
+          {{ link(programme.information.url, __("consent.start.more", { programme: programme })) | nhsukMarkdown }}
+        {% endfor %}
 
-      <h2 class="nhsuk-heading-m">
-        {{ __("consent.start.confirm.title") }}
-      </h2>
+        <h2 class="nhsuk-heading-m">
+          {{ __("consent.start.confirm.title") }}
+        </h2>
 
-      {{ button({
-        text: __("consent.start.confirm.buttonText"),
-        href: session.consentUrl + "/new"
-      }) }}
+        {{ button({
+          text: __("consent.start.confirm.buttonText"),
+          href: session.consentUrl + "/new"
+        }) }}
 
-      <h3 class="nhsuk-heading-s">
-        {{ __("consent.start.otherMethods.title") }}
-      </h3>
+        <h3 class="nhsuk-heading-s">
+          {{ __("consent.start.otherMethods.title") }}
+        </h3>
 
-      {{ __("consent.start.otherMethods.description") | nhsukMarkdown }}
+        {{ __("consent.start.otherMethods.description") | nhsukMarkdown }}
+      {% else %}
+        {{ heading({
+          text: serviceName
+        }) }}
+
+        {% filter nhsukMarkdown %}
+Instead of relying on paper forms sent home in school bags, we’re contacting parents and carers directly via email or text message.
+
+If your local NHS vaccination team uses this service, you’ll get an email or text message with a link to an online consent form when your child is due their next vaccination.
+
+You can use the online form to:
+- give consent for your child to be vaccinated at school
+- say you do not want your child to be vaccinated at school, or on the date proposed
+- ask for more information
+
+Find out more about the [school age vaccination schedule on the NHS website](https://www.nhs.uk/vaccinations/nhs-vaccinations-and-when-to-have-them/).
+        {% endfilter %}
+      {% endif %}
     </div>
   </div>
 {% endblock %}
