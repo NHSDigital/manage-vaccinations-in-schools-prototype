@@ -114,6 +114,10 @@ router.get('/lena/mmr/dose-1', (request, response) => {
   response.render('parent-test/lena/mmr/dose-1')
 })
 
+router.get('/harriet', (request, response) => {
+  response.render('parent-test/harriet')
+})
+
 router.get('/understanding-records', (request, response) => {
   response.render('parent-test/understanding-records')
 })
