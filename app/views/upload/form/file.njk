@@ -7,7 +7,15 @@
   {% if upload.type == UploadType.Cohort %}
     {% include "upload/_template-format-cohort.njk" %}
   {% elif upload.type == UploadType.School %}
-    {% include "upload/_template-format-school.njk" %}
+    {% if upload.format == UploadFormat.Arbor %}
+      {% include "upload/_template-format-school-arbor.njk" %}
+    {% elif upload.format == UploadFormat.Bromcom %}
+      {% include "upload/_template-format-school-bromcom.njk" %}
+    {% elif upload.format == UploadFormat.SIMS %}
+      {% include "upload/_template-format-school-sims.njk" %}
+    {% else %}
+      {% include "upload/_template-format-school-csv.njk" %}
+    {% endif %}
   {% elif upload.type == UploadType.Report %}
     {% include "upload/_template-format-report.njk" %}
   {% endif %}
@@ -27,17 +35,16 @@
   {% if upload.type == UploadType.Report %}
     {{ __("upload.file.description.report") | nhsukMarkdown }}
   {% else %}
-    {{ __("upload.file.description.other", { type: upload.type | lower }) | nhsukMarkdown }}
+    {{ __("upload.file.description.other") | nhsukMarkdown }}
   {% endif %}
 
   {{ details({
-    summary: __("upload.file.format", { type: upload.type | lower }),
+    summary: __("upload.file.format", {
+      format: upload.format,
+      type: upload.type | lower
+    }),
     html: templateFormat
   }) }}
-
-  {{ insetText({
-    text: __("upload.file.description.schools")
-  }) if account.isSchoolUser }}
 
   {{ fileUpload({
     id: "upload",

@@ -1,17 +1,41 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("upload.school.title") %}
+{% set information = __("upload.school.information." + upload.format) %}
 
 {% block form %}
-  {{ select({
-    label: {
-      heading: title,
+  {% if account.isSchoolUser %}
+    {{ heading({
+      text: title,
       size: "l"
-    },
-    items: locationItems(data.schools, upload.school_id),
-    decorate: "upload.school_id",
-    attributes: {
-      "data-module": "app-autocomplete"
-    }
-  }) }}
+    }) }}
+
+    {{ insetText({
+      html: information | nhsukMarkdown
+    }) if information }}
+
+    {{ select({
+      label: {
+        text: __("upload.school.label"),
+        size: "m"
+      },
+      items: locationItems(data.schools, upload.school_id),
+      decorate: "upload.school_id",
+      attributes: {
+        "data-module": "app-autocomplete"
+      }
+    }) }}
+  {% else %}
+    {{ select({
+      label: {
+        heading: title,
+        size: "l"
+      },
+      items: locationItems(data.schools, upload.school_id),
+      decorate: "upload.school_id",
+      attributes: {
+        "data-module": "app-autocomplete"
+      }
+    }) }}
+  {% endif %}
 {% endblock %}

@@ -13,7 +13,7 @@
   }) }}
 
   {{ actionLink({
-    href: "/uploads/new?type=" + UploadType.School + "&hasValidations=true",
+    href: "/uploads/new?hasValidations=true",
     text: __("session.upload-class-list.title")
   }) if account.isSchoolUser else actionLink({
     href: "/uploads/new",

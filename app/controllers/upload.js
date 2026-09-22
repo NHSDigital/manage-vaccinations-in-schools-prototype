@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
-import { UploadStatus, UploadType } from '../enums.js'
+import { UploadFormat, UploadStatus, UploadType } from '../enums.js'
 import { Patient, Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -143,7 +143,7 @@ export const uploadController = {
         createdAt: today(),
         createdBy_uid: account.uid,
         programme_id,
-        type,
+        type: account.isSchoolUser ? UploadType.School : type,
         fileName: 'example.csv',
         patient_uuids: patients.map((patient) => patient.uuid),
         ...(type === UploadType.School && school_id && { school_id })
@@ -164,12 +164,16 @@ export const uploadController = {
       }
     }
 
-    // If type provided in query string, start journey at upload question
-    data.startPath = type
-      ? type === UploadType.School
-        ? 'school'
-        : 'file'
-      : 'type'
+    data.startPath = 'type'
+    if (account.isSchoolUser) {
+      // If school user, show start page
+      data.startPath = 'start'
+    } else if (type) {
+      // If type provided in query string:
+      // - if type is class list, start journey at school question
+      // - else, start journey at upload file question
+      data.startPath = type === UploadType.School ? 'school' : 'file'
+    }
 
     return saveAndRedirect(
       request,
@@ -227,7 +231,7 @@ export const uploadController = {
     return (request, response, next) => {
       const { upload_id } = request.params
       const { data } = request.session
-      const { __ } = response.locals
+      const { __, account } = response.locals
 
       // Setup wizard if not already setup
       let upload = Upload.findOne(upload_id, data.wizard)
@@ -235,7 +239,8 @@ export const uploadController = {
         upload = Upload.create(response.locals.upload, data.wizard)
       }
 
-      const journey = {
+      // Journey for SAIS teams
+      const saisJourney = {
         [`/`]: {},
         ...(data.startPath === 'type'
           ? {
@@ -257,10 +262,46 @@ export const uploadController = {
         [`/${upload_id}`]: {}
       }
 
+      // Journey for school teams
+      const schoolJourney = {
+        [`/`]: {},
+        [`/${upload_id}/${type}/start`]: {},
+        [`/${upload_id}/${type}/format`]: {
+          [`/${upload_id}/${type}/school`]: () =>
+            request.body?.upload?.format === UploadFormat.Mavis
+        },
+        [`/${upload_id}/${type}/export`]: {},
+        [`/${upload_id}/${type}/school`]: {},
+        [`/${upload_id}/${type}/year-groups`]: {},
+        [`/${upload_id}/${type}/file`]: {},
+        [`/${upload_id}`]: {}
+      }
+
+      const journey = account.isSchoolUser ? schoolJourney : saisJourney
+
       upload = new Upload(upload, data)
       response.locals.upload = upload
 
       response.locals.paths = wizard(journey, request)
+
+      response.locals.formatItems = [
+        {
+          text: UploadFormat.Arbor
+        },
+        {
+          text: UploadFormat.Bromcom
+        },
+        {
+          text: UploadFormat.SIMS
+        },
+        {
+          divider: 'or'
+        },
+        {
+          text: __(`upload.format.${UploadFormat.Mavis}.label`),
+          value: UploadFormat.Mavis
+        }
+      ]
 
       response.locals.typeItems = Object.entries(UploadType).map(
         ([key, value]) => ({

@@ -1,0 +1,16 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("upload.format.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    items: formatItems,
+    decorate: "upload.format"
+  }) }}
+{% endblock %}

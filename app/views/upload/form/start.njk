@@ -1,0 +1,12 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("upload.start.title") %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __("upload.start.description") | nhsukMarkdown }}
+{% endblock %}
