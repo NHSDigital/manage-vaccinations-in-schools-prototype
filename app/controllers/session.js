@@ -700,7 +700,7 @@ export const sessionController = {
             )
           }
 
-          const slotSpan = session.calculateSlotCount(appointment)
+          const slotSpan = appointment.slotCount
           if (freeColumnIndex >= 0) {
             columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
           }
