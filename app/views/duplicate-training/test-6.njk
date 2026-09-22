@@ -186,9 +186,9 @@
     <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
       <div class="nhsuk-card__content">
         <!-- Highlight differences toggle: small checkbox, on by default, sits on
-             the right of the panel. Unticking flips data-highlights-off on the
-             grid wrapper; the style block below then neutralises every
-             app-highlight mark without touching the markup -->
+             the right of the panel. No script: the style block below keys off the
+             checkbox's own checked state with :has(), so unticking neutralises
+             every app-highlight mark without touching the markup -->
         <div style="display: flex; align-items: flex-start; justify-content: space-between; column-gap: 24px;">
           <div>
             <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">4 duplicate MMR records</h2>
@@ -197,7 +197,7 @@
           <div class="nhsuk-form-group nhsuk-u-margin-bottom-0" style="flex-shrink: 0;">
             <div class="nhsuk-checkboxes nhsuk-checkboxes--small" data-module="nhsuk-checkboxes">
               <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input" id="highlight-differences" name="highlight-differences" type="checkbox" value="yes" checked data-highlight-toggle>
+                <input class="nhsuk-checkboxes__input" id="highlight-differences" name="highlight-differences" type="checkbox" value="yes" checked>
                 <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="highlight-differences">
                   Highlight differences
                 </label>
@@ -208,12 +208,12 @@
       </div>
     </div>
     <style>
-      [data-highlights-off] .app-highlight {
+      body:has(#highlight-differences:not(:checked)) .app-highlight {
         border-bottom-color: transparent;
         background-color: transparent;
       }
-      [data-highlights-off] .app-highlight::before,
-      [data-highlights-off] .app-highlight::after {
+      body:has(#highlight-differences:not(:checked)) .app-highlight::before,
+      body:has(#highlight-differences:not(:checked)) .app-highlight::after {
         content: none;
       }
     </style>
@@ -705,14 +705,5 @@
     applyBarClearance()
     if (document.fonts) document.fonts.ready.then(applyBarClearance)
     window.addEventListener("pageshow", syncChoice)
-
-    const highlightToggle = document.querySelector("[data-highlight-toggle]")
-    const renderHighlights = () => {
-      for (const grid of document.querySelectorAll("[data-record-grid]")) {
-        grid.toggleAttribute("data-highlights-off", !highlightToggle.checked)
-      }
-    }
-    highlightToggle.addEventListener("change", renderHighlights)
-    renderHighlights()
   </script>
 {% endblock %}
