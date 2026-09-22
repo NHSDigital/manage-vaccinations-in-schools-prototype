@@ -21,8 +21,8 @@ import { today } from './date.js'
 export const getConsentWindow = (session) => {
   const nowAt = today()
 
-  // There are no consent windows for clinic sessions
-  if (session.clinic_id) {
+  // There are no consent windows for clinic sessions and home visits
+  if ([SessionType.Clinic, SessionType.Home].includes(session.type)) {
     return ConsentWindow.None
   }
 
