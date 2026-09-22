@@ -130,11 +130,13 @@ export const getBookableClinicDateItems = (
   appointment,
   requiresStockingPeriod
 ) => {
+  const vaccinationChoices = appointment.vaccinationChoices
+  const extendForSupportNeeds = context.journeyData.extendForSupportNeeds
   const bookableSessions = _.sortBy(
     getBookableClinicSessions(
       context,
-      appointment.vaccinationChoices,
-      context.journeyData.extendForSupportNeeds,
+      vaccinationChoices,
+      extendForSupportNeeds,
       requiresStockingPeriod
     ).filter((session) => session.clinic_id === clinic_id),
     'date'
@@ -144,7 +146,10 @@ export const getBookableClinicDateItems = (
   bookableSessions.forEach((session) => {
     const midday = new Date(session.date)
 
-    const availableTimes = session.bookableStartTimesForAppointment(appointment)
+    const availableTimes = session.bookableStartTimesForVaccinationChoices(
+      vaccinationChoices,
+      extendForSupportNeeds
+    )
     const morningAvailable = availableTimes.some((time) => time < midday)
     const afternoonAvailable = availableTimes.some((time) => time >= midday)
     const availability =
