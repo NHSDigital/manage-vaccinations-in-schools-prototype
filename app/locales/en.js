@@ -1834,7 +1834,18 @@ export const en = {
       }
     },
     homeVisit: {
-      label: 'Record vaccination at home'
+      label: 'Record vaccination at home',
+      title: 'When will the home vaccination take place?',
+      today: {
+        label: 'Today'
+      },
+      future: {
+        label: 'A future date'
+      },
+      date: {
+        label: 'Vaccination date',
+        hint: 'For example, 27 3 2027'
+      }
     },
     inviteToClinic: {
       title: {
@@ -2142,7 +2153,18 @@ export const en = {
       label: 'Invite to upcoming clinic session'
     },
     homeVisit: {
-      label: 'Record vaccination at home'
+      label: 'Record vaccination at home',
+      title: 'When will the home vaccination take place?',
+      today: {
+        label: 'Today'
+      },
+      future: {
+        label: 'A future date'
+      },
+      date: {
+        label: 'Vaccination date',
+        hint: 'For example, 27 3 2027'
+      }
     }
   },
   patientSession: {

@@ -120,6 +120,7 @@ export const patientProgrammeController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   newSession(request, response) {
+    const { homeVisit, date_ } = request.body
     const { programme_id } = request.params
     const { data } = request.session
     const { __, account, patient } = response.locals
@@ -127,10 +128,10 @@ export const patientProgrammeController = {
     // Get session
     const session = Session.create(
       {
-        date: today(),
         type: SessionType.Home,
         hasRegistration: false,
-        presetOverrideProgramme_ids: [programme_id]
+        presetOverrideProgramme_ids: [programme_id],
+        ...(homeVisit === 'today' ? { date: today() } : { date_ })
       },
       data
     )
