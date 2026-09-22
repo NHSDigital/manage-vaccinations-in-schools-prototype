@@ -1,0 +1,55 @@
+{%- set markdown -%}
+{%- filter nhsukMarkdown -%}
+The columns can be in any order, but the column headings must match the headings shown below.
+
+Information must be in the format shown in the Notes column. If it is not, Mavis will reject the spreadsheet.
+
+## Information Mavis needs
+
+| Column name | Notes |
+| ----------- | ----- |
+| `CHILD_FIRST_NAME` | Must use alphabetical characters. You can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D’Arcy, but no other special characters. |
+| `CHILD_LAST_NAME` | Must use alphabetical characters. You can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D’Arcy, but no other special characters. |
+| `CHILD_DATE_OF_BIRTH` | Must use the format <i>DD/MM/YYYY</i> or <i>YYYY-MM-DD</i>. |
+
+## Important information for the vaccination team
+
+Include details for at least one parent wherever possible.
+
+The vaccination team needs parent contact details to request consent for a child’s vaccinations.
+
+The word ‘parent’ refers to anyone who has the legal right to consent to a child’s vaccination.
+
+Mavis needs the child’s postcode to help match them to their NHS record.
+
+| Column name | Notes |
+| ----------- | ----- |
+| `PARENT_1_NAME` | Must use alphabetical characters. You can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D’Arcy, but no other special characters. |
+| `PARENT_1_RELATIONSHIP` | Optional, must be <i>Mum</i>, <i>Dad</i> or <i>Guardian</i>. |
+| `PARENT_1_PHONE` | Must be a valid email address. |
+| `PARENT_1_EMAIL` | Must be a valid phone number. |
+| `CHILD_POSTCODE` | Must be a full postcode, for example <i>SW1A 1AA</i>. |
+
+## Other information you can include
+
+Including this information helps provide a more complete record for each pupil and can help you organise pupils for vaccination sessions.
+
+| Column name | Notes |
+| ----------- | ----- |
+| `CHILD_PREFERRED_FIRST_NAME` | Must use alphabetical characters. You can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D’Arcy, but no other special characters. |
+| `CHILD_PREFERRED_LAST_NAME` | Must use alphabetical characters. You can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D’Arcy, but no other special characters. |
+| `CHILD_YEAR_GROUP` | Enter 0 for reception, 1 to 13 for school years, or -1 for a mixed year group. |
+| `CHILD_REGISTRATION` | You can use any registration group, for example <i>BTS</i>. |
+| `CHILD_NHS_NUMBER` | Enter a valid NHS number if available. |
+| `CHILD_GENDER` | Must be one of: <i>Female</i>, <i>Male</i>, <i>Not known</i> or <i>Not specified</i>. |
+| `CHILD_ADDRESS_LINE_1` | No specific format required. |
+| `CHILD_ADDRESS_LINE_2` | No specific format required. |
+| `CHILD_TOWN` | No specific format required.|
+| `PARENT_2_NAME` | Must use alphabetical characters. You can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D’Arcy, but no other special characters. |
+| `PARENT_2_RELATIONSHIP` | Optional, must be <i>Mum</i>, <i>Dad</i> or <i>Guardian</i>. |
+| `PARENT_2_PHONE` | Must be a valid email address. |
+| `PARENT_2_EMAIL` | Must be a valid phone number. |
+{%- endfilter -%}
+{%- endset -%}
+
+{{- markdown | replace("nhsuk-table", "nhsuk-table app-table--csv") | safe }}

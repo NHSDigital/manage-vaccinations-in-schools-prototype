@@ -20,6 +20,7 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} UploadOptions
  * @property {string} [id] - Upload ID
+ * @property {UploadFormat} [format] - Upload format
  * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
  * @property {string} [fileName] - Original file name
@@ -54,6 +55,7 @@ export class Upload extends BaseModel {
 
     this.context = context
     this.id = options?.id || faker.string.hexadecimal({ length: 8, prefix: '' })
+    this.format = options?.format
     this.type = options?.type || UploadType.Cohort
     this.fileName = options?.fileName
     this.rejectionReason = options?.rejectionReason
@@ -294,5 +296,6 @@ export class Upload extends BaseModel {
 Upload.relate('school_id', () => School, 'school')
 
 /**
+ * @import { UploadFormat } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

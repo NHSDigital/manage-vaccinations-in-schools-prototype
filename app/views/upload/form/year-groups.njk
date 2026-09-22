@@ -1,16 +1,39 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("upload.yearGroups.title") %}
+{% set information = __("upload.yearGroups.information." + upload.format) %}
 
 {% block form %}
-  {{ checkboxes({
-    fieldset: {
-      legend: {
-        heading: title,
-        size: "l"
-      }
-    },
-    items: yearGroupItems,
-    decorate: "upload.yearGroups"
-  }) | replace("govuk-", "nhsuk-") }}
+  {% if account.isSchoolUser %}
+    {{ heading({
+      text: title,
+      size: "l"
+    }) }}
+
+    {{ insetText({
+      html: information | nhsukMarkdown
+    }) if information }}
+
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          text: __("upload.yearGroups.label"),
+          size: "m"
+        }
+      },
+      items: yearGroupItems,
+      decorate: "upload.yearGroups"
+    }) }}
+  {% else %}
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          heading: title,
+          size: "l"
+        }
+      },
+      items: yearGroupItems,
+      decorate: "upload.yearGroups"
+    }) }}
+  {% endif %}
 {% endblock %}

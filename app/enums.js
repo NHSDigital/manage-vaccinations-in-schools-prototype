@@ -839,6 +839,17 @@ export const TeamDefaults = {
  * @readonly
  * @enum {string}
  */
+export const UploadFormat = {
+  Arbor: 'Arbor',
+  Bromcom: 'Bromcom',
+  Mavis: 'Mavis CSV',
+  SIMS: 'SIMS'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const UploadType = {
   Cohort: 'Cohort records',
   School: 'Class list records',

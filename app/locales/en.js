@@ -7,6 +7,7 @@ import {
   ReplyRefusal,
   ScreenStatus,
   SessionPresetName,
+  UploadFormat,
   UploadStatus
 } from '../enums.js'
 
@@ -3818,17 +3819,67 @@ export const en = {
       label: 'Upload corrected %s',
       success: 'Corrected records uploaded. Mavis is processing the file.'
     },
+    start: {
+      title: 'Send pupil information to your vaccination team',
+      description:
+        'You’ll need a spreadsheet containing information about pupils, including contact details for their parents or carers.\n\nWe’ll tell you what information to include and how to prepare it.\n\nIf you use Arbor, Bromcom or SIMS, you can upload the file you export without making any changes.\n\nYou do not need to have all the information for every pupil.'
+    },
+    format: {
+      label: 'System',
+      title: 'Which management information system does your school use?',
+      [UploadFormat.Mavis]: {
+        label: 'None of the above'
+      }
+    },
+    export: {
+      title: 'Exporting pupil data from %s',
+      information: {
+        [UploadFormat.Arbor]:
+          'You will need the **General Admin: Export Data** permission, plus permission to view the data you want to export.',
+        [UploadFormat.Bromcom]: false,
+        [UploadFormat.SIMS]: false
+      },
+      description: {
+        [UploadFormat.Arbor]:
+          'To export pupil data:\n\n1. Go to **School** → **Custom Report Writer** → **Create New Report**.\n2. Choose **Students** as the report focus.\n3. Add a name then select **Skip setup wizard**.\n4. Filter by the school you’re providing information for.\n5. Filter by the year groups you’re providing information for.\n6. Select **Save & View Report**, then **Download**. \n7. Select CSV.',
+        [UploadFormat.Bromcom]:
+          'To export pupil data:\n\n1. Go to **Modules** → **Reporting** → **Reports** → **Create New Report** → **Quick Report**.\n2. Choose **Student** as the data source.\n3. Add a name, then drag the data items you need into the Report Layout.\n4. Filter by the school you’re providing information for.\n5. Filter by the year groups you’re providing information for.\n6. Select **Save**, then **Run Report**.\n7. Go to **Actions** → **Export** and select CSV.',
+        [UploadFormat.SIMS]:
+          'To export pupil data:\n\n1. Go to **Reports** → **Design Report**.\n2. Select **Create a new report**, then choose **Student** as the data area.\n3. Select the data fields you need, then select **Next**.\n4. Filter by the school you’re providing information for.\n5. Filter by the year groups you’re providing information for.\n6. Set the report destination to **Export as CSV**.\n7. Save the report, then select **Run**.'
+      }
+    },
+    school: {
+      label: 'School',
+      title: 'Which school is this class list for?',
+      information: {
+        [UploadFormat.Arbor]:
+          '## Selecting a school in Arbor\n\n1. Go to **Filters**, select **Institution** then select **Add filter**.\n2. Select the school you’re providing information for.\n3. Select the current academic year, then select **Save**.',
+        [UploadFormat.Bromcom]:
+          '## Selecting a school in Bromcom\n\nUse the school selector at the top of the page to switch to the school you’re providing information for. Alternatively:\n\n1. Go to **Filters**, select **School**\n2. Select the school you’re providing information for.\n3. Select **Apply**.',
+        [UploadFormat.SIMS]: false
+      }
+    },
+    yearGroups: {
+      label: 'Year groups',
+      title: 'Which year groups are included in this class list?',
+      information: {
+        [UploadFormat.Arbor]:
+          '## Selecting year groups in Arbor\n\n1. Go to **Filters**, select **Year groups(s)** then select **Add filter**.\n2. Select the year groups you’re providing information for.\n3. Select the current academic year, then select **Save**.',
+        [UploadFormat.Bromcom]:
+          '## Selecting year groups in Bromcom\n\n1. Go to **Filters**, select **Year Group**, then select **Add filter**.\n2. Select the year groups you’re providing information for.\n3. Check that **Status** is set to **On Roll**, then select **Apply**.',
+        [UploadFormat.SIMS]:
+          '## Selecting year groups in SIMS\n\n1. On the filter step, select **Year Group** from the field list.\n2. Select the year groups you’re providing information for.\n3. Add a second filter for **Student Status** and set it to **On Roll**, then select **Next**.'
+      }
+    },
     file: {
       title: 'Upload {{type}}',
       label: 'Upload file',
       description: {
         report:
           'You can add vaccination records by uploading:\n\n- a Mavis CSV file\n- a SystmOne file',
-        schools:
-          'If you use Bromcom, SIMS or Arbor, you can upload the CSV file without changing its format.',
-        other: 'Your file must use the Mavis CSV format.'
+        other: 'Mavis can only upload spreadsheets saved as CSV files.'
       },
-      format: 'How to format your Mavis CSV file for {{type}}',
+      format: 'What information to include and how to format it',
       errors: {
         invalid: 'The selected file must be a CSV'
       }
@@ -3844,14 +3895,6 @@ export const en = {
       confirm: 'Continue',
       cancel: 'Cancel',
       success: 'Relationships removed'
-    },
-    school: {
-      label: 'School',
-      title: 'Which school is this class list for?'
-    },
-    yearGroups: {
-      label: 'Year groups',
-      title: 'Which year groups are included in this class list?'
     },
     invalid: {
       title: 'Records could not be uploaded'
