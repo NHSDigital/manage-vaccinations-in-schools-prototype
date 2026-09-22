@@ -19,6 +19,7 @@ declare module 'express-serve-static-core' {
 declare module 'express-session' {
   interface SessionData {
     data: Record<string, unknown> & ApplicationData
+    establishedAt?: number
     referrer: string
   }
 }

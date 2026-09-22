@@ -11,6 +11,7 @@ import { notification } from './middleware/notification.js'
 import { performance } from './middleware/performance.js'
 import { referrer } from './middleware/referrer.js'
 import { rollover } from './middleware/rollover.js'
+import { sessionExpiry } from './middleware/session-expiry.js'
 import { accountRoutes } from './routes/account.js'
 import { activityRoutes } from './routes/activity.js'
 import { bookIntoClinicRoutes } from './routes/book-into-a-clinic.js'
@@ -59,6 +60,7 @@ router.use(environment)
 router.use(internationalisation)
 router.use(authentication, navigation, notification, rollover)
 router.use(referrer)
+router.use(sessionExpiry)
 
 router.use('/', homeRoutes)
 router.use('/account', accountRoutes)
