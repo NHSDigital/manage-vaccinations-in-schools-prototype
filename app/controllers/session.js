@@ -121,7 +121,8 @@ export const sessionController = {
     const sessions = Session.findAll(data).filter(
       (session) =>
         team.schools.some((school) => session.school_id === school.id) ||
-        team.clinics.some((clinic) => session.clinic_id === clinic.id)
+        team.clinics.some((clinic) => session.clinic_id === clinic.id) ||
+        session.type === SessionType.Home
     )
 
     const scheduledClinics = sessions.filter(
