@@ -1,0 +1,35 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("patientProgramme.homeVisit.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        caption: patient.fullName,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: [
+      {
+        text: __("patientProgramme.homeVisit.today.label"),
+        value: "today"
+      },
+      {
+        text: __("patientProgramme.homeVisit.future.label"),
+        value: "future",
+        conditional: {
+          html: dateInput({
+            fieldset: {
+              legend: __("patientProgramme.homeVisit.date.label")
+            },
+            hint: __("patientProgramme.homeVisit.date.hint"),
+            decorate: "date_"
+          })
+        }
+      }
+    ],
+    decorate: "homeVisit"
+  }) }}
+{% endblock %}

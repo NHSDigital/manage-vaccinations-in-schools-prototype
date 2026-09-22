@@ -136,10 +136,7 @@
         } if not patient.isArchived and canBookIntoClinic,
         {
           text: __("patient.homeVisit.label"),
-          attributes: {
-            formaction: patient.uri + "/home-visit",
-            formmethod: "post"
-          }
+          href: patient.uri + "/home-visit"
         } if not patient.isArchived
       ]
     } if not account.isSchoolUser
