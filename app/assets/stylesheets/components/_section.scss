@@ -1,0 +1,14 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+.app-section {
+  @include nhsuk-responsive-padding(7, "bottom");
+  @include nhsuk-responsive-padding(7, "top");
+}
+
+.app-section--white {
+  background-color: nhsuk-colour("white");
+
+  .nhsuk-body:last-child {
+    margin-bottom: 0;
+  }
+}
