@@ -1,0 +1,42 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+$_marker-size: nhsuk-spacing(7);
+
+.app-numbered-steps {
+  counter-reset: --steps;
+  padding: 0;
+
+  @include nhsuk-responsive-margin(3, "top");
+
+  li {
+    position: relative;
+    padding-left: $_marker-size + nhsuk-spacing(3);
+    list-style: none;
+    counter-increment: --steps;
+
+    @include nhsuk-responsive-margin(7, "bottom");
+  }
+
+  li::before {
+    content: counter(--steps);
+
+    display: flex;
+
+    position: absolute;
+    top: nhsuk-spacing(-2);
+    left: 0;
+
+    width: $_marker-size;
+    height: $_marker-size;
+
+    border-radius: 50%;
+
+    color: $nhsuk-reverse-text-colour;
+    background-color: nhsuk-colour("blue");
+
+    place-content: center;
+    place-items: center;
+
+    @include nhsuk-font(26, $weight: bold);
+  }
+}

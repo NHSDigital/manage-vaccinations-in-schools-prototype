@@ -8,28 +8,110 @@
   }
 } %}
 
-{% block content %}
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-two-thirds">
-      {{ heading({
-        text: title
-      }) }}
+{% block main %}
+  <main id="maincontent" role="main">
+    {% call hero({
+      heading: "Share pupil information securely with your vaccination team"
+    }) %}
+      <div class="nhsuk-u-reading-width">
+        <p class="nhsuk-body-l">
+          Use Manage vaccinations in schools (Mavis) to send pupil information and prepare for vaccination sessions at your school.
+        </p>
 
-      {% filter nhsukMarkdown %}
-This service is for school staff.
+        {{ button({
+          classes: "nhsuk-u-margin-bottom-0",
+          text: __("account.dfeSignIn.title"),
+          href: "/account/dfe-sign-in",
+          variant: "reverse"
+        }) }}
+      </div>
+    {% endcall %}
 
-Use it to:
-- upload class lists for vaccination programmes
-- check which pupils are in vaccination sessions
-- view pupils’ consent status
+    <section class="app-section app-section--white">
+      <div class="nhsuk-width-container">
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-third">
+            {{ heading({
+              classes: "nhsuk-u-margin-bottom-2",
+              text: "Free to use",
+              level: 2,
+              size: "s"
+            }) }}
+            {{ "Created and owned by the NHS." | nhsukMarkdown }}
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            {{ heading({
+              classes: "nhsuk-u-margin-bottom-2",
+              text: "Integrated",
+              level: 2,
+              size: "s"
+            }) }}
+            {{ "Accepts exports from Arbor, Bromcom and SIMS." | nhsukMarkdown }}
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            {{ heading({
+              classes: "nhsuk-u-margin-bottom-2",
+              text: "Secure",
+              level: 2,
+              size: "s"
+            }) }}
+            {{ "Send information securely without using email." | nhsukMarkdown }}
+          </div>
+        </div>
+      </section>
 
-Your school age immunisation service will use this information to plan and deliver vaccination sessions.
-      {% endfilter %}
+      <section class="app-section">
+        <div class="nhsuk-width-container">
+          {{ heading({
+            text: "How this service works",
+            level: 2,
+            size: "l"
+          }) }}
 
-      {{ button({
-        html: __("account.dfeSignIn.title"),
-        href: "/account/dfe-sign-in"
-      }) }}
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-two-thirds">
+              <ol class="app-numbered-steps">
+                <li>
+                  {{ heading({
+                    classes: "nhsuk-u-margin-bottom-2",
+                    text: "Sign in",
+                    level: 3,
+                    size: "m"
+                  }) }}
+                  {{ "Sign in with your DfE Sign-in account." | nhsukMarkdown }}
+                </li>
+                <li>
+                  {{ heading({
+                    classes: "nhsuk-u-margin-bottom-2",
+                    text: "Get ready",
+                    level: 3,
+                    size: "m"
+                  }) }}
+                  {{ "Export pupil data from your management information system." | nhsukMarkdown }}
+                </li>
+                <li>
+                  {{ heading({
+                    classes: "nhsuk-u-margin-bottom-2",
+                    text: "Upload pupil information",
+                    level: 3,
+                    size: "m"
+                  }) }}
+                  {{ "Securely upload the information to Mavis to share with your school’s vaccination team." | nhsukMarkdown }}
+                </li>
+                <li>
+                  {{ heading({
+                    classes: "nhsuk-u-margin-bottom-2",
+                    text: "Track vaccination sessions",
+                    level: 3,
+                    size: "m"
+                  }) }}
+                  {{ "View pupils’ consent status and check which pupils need to attend upcoming vaccination sessions at your school." | nhsukMarkdown }}
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  </div>
+  </main>
 {% endblock %}
