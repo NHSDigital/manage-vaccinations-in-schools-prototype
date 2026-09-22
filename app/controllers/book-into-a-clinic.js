@@ -611,10 +611,11 @@ export const bookIntoClinicController = {
         date: session.formatted.date
       }
     } else if (view === 'shorten-appointment') {
-      // TODO: make this smarter when appointments get longer than 2 slots
       const session = Session.findOne(appointment.session_id, data)
-      const requiredSlots = session.calculateSlotCount(appointment)
-      const availableSlots = 1
+      const requiredSlots = appointment.slotCount
+      const availableSlots = session.longestAvailableAppointment(
+        appointment.startAt
+      )
 
       response.locals.requiredSlots = requiredSlots
       response.locals.requiredMinutes = requiredSlots * session.slotLength
@@ -716,9 +717,11 @@ export const bookIntoClinicController = {
       // Must've decided to shorten and continue
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking.findAppointment(appointment_uuid)
+      const session = Session.findOne(appointment.session_id, data)
 
-      // TODO: work this out instead of pulling back to one slot
-      appointment.editedSlotCount = 1
+      appointment.editedSlotCount = session.longestAvailableAppointment(
+        appointment.startAt
+      )
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'child-count') {
@@ -789,6 +792,30 @@ export const bookIntoClinicController = {
 
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
+    } else if (
+      (view === 'additional-support' &&
+        data.journeyData[booking_uuid].journeyType ===
+          ClinicBookingJourneyType.DataMigration) ||
+      view === 'clinic-date'
+    ) {
+      // Now that we have all appointment length determiners nailed down, finalise
+      // the appointment length
+      const booking = new ClinicBooking(
+        ClinicBooking.findOne(booking_uuid, data.wizard),
+        data
+      )
+      const appointment = booking.findAppointment(appointment_uuid)
+      if (
+        stringToBoolean(data.journeyData[booking_uuid].extendForSupportNeeds)
+      ) {
+        const defaultSlotCount =
+          appointment.session.calculateSlotCount(appointment)
+        appointment.editedSlotCount = defaultSlotCount + 1
+      } else {
+        appointment.editedSlotCount = undefined
+      }
+
+      ClinicBooking.update(booking.uuid, booking, data.wizard)
     } else if (view === 'appointment-time') {
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking.findAppointment(appointment_uuid)

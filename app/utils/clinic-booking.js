@@ -5,6 +5,7 @@ import { SessionPresets, SessionStatus, SessionType } from '../enums.js'
 import { ClinicAppointment, Session } from '../models.js'
 
 import i18n from './i18n.js'
+import { stringToBoolean } from './string.js'
 
 /**
  * Generate a URL to book into a clinic for vaccination in the given presets' programmes
@@ -86,10 +87,13 @@ export const getBookableClinicLocationItems = (
   requiresStockingPeriod,
   isFakeOutOfArea
 ) => {
+  const extendForSupportNeeds = stringToBoolean(
+    context.journeyData.extendForSupportNeeds
+  )
   const scheduledClinics = getBookableClinicSessions(
     context,
     appointment.vaccinationChoices,
-    context.journeyData.extendForSupportNeeds,
+    extendForSupportNeeds,
     requiresStockingPeriod
   )
   const sessionsByLocation = _.groupBy(

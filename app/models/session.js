@@ -156,7 +156,9 @@ export class Session extends BaseModel {
           )
         : []
       this.slotLength = options?.slotLength
-      this.slotCountForLongAppointment = options?.slotCountForLongAppointment
+      this.slotCountForLongAppointment = Number(
+        options?.slotCountForLongAppointment
+      )
       this.venueInformation = options?.venueInformation
     }
 
@@ -1186,6 +1188,48 @@ export class Session extends BaseModel {
 
     const slotsForAppointment = appointment.slotCount
     return this.#bookableStartTimesForSlotCount(slotsForAppointment)
+  }
+
+  /**
+   * Get the length of the longest possible appointment — either overall or for a given start time — in slots
+   *
+   * @param {Date|undefined} startTime - the start time for the appointment, if known
+   * @returns {number} - the number of slots covered by the longest available appointment
+   */
+  longestAvailableAppointment(startTime = undefined) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const freeSlotCounts = this.#freeSlotCountsByStartTime()
+    const isSlotFree = (time) => (freeSlotCounts.get(time) || 0) > 0
+
+    let longestSlotCount = 0
+    for (const vaccinationPeriod of this.vaccinationPeriods) {
+      const slotStartTimes = this.#slotStartTimesForPeriod(vaccinationPeriod)
+
+      if (startTime) {
+        const startIndex = slotStartTimes.indexOf(startTime.getTime())
+        if (startIndex === -1) {
+          continue
+        }
+
+        let slotCount = 0
+        while (isSlotFree(slotStartTimes[startIndex + slotCount])) {
+          slotCount++
+        }
+
+        return slotCount
+      }
+
+      let currentRun = 0
+      for (const time of slotStartTimes) {
+        currentRun = isSlotFree(time) ? currentRun + 1 : 0
+        longestSlotCount = Math.max(longestSlotCount, currentRun)
+      }
+    }
+
+    return longestSlotCount
   }
 
   /**

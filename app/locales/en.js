@@ -878,7 +878,7 @@ export const en = {
         specificSlot:
           'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you will need to find another start time on the Appointments page',
         anySlot:
-          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But in this session, there is only space for appointments of {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you can extend the session to make space'
+          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But the longest appointment available in this session is {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you can extend the session or find another with more space'
       },
       confirm: 'Continue',
       cancel: 'Cancel and return to the Appointments page'

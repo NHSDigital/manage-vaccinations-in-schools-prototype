@@ -100,6 +100,9 @@ export const getAllAppointmentPaths = (
   const abandonmentReasons = stringToArray(
     sessionData.appointment?.abandonmentReasons
   )
+  const extendForSupportNeeds = stringToBoolean(
+    sessionData?.journeyData?.extendForSupportNeeds
+  )
 
   // Note: the journey data will be unavailable on the confirmation page (which is parent-facing only)
   const journeyType =
@@ -130,7 +133,7 @@ export const getAllAppointmentPaths = (
             getBookableClinicSessions(
               sessionData,
               vaccinationChoices,
-              sessionData.journeyData.extendForSupportNeeds,
+              extendForSupportNeeds,
               isParentJourney
             ).length === 0
           )
@@ -224,7 +227,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    sessionData.journeyData.extendForSupportNeeds,
+                    extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -236,7 +239,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    sessionData.journeyData.extendForSupportNeeds,
+                    extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -257,7 +260,7 @@ export const getAllAppointmentPaths = (
                       getBookableClinicSessions(
                         sessionData,
                         appointment.vaccinationChoices,
-                        sessionData.journeyData.extendForSupportNeeds,
+                        extendForSupportNeeds,
                         isParentJourney
                       ).length === 0
                     )
@@ -269,7 +272,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    sessionData.journeyData.extendForSupportNeeds,
+                    extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
