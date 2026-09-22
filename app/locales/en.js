@@ -471,14 +471,14 @@ export const en = {
       problem:
         'There are no clinics scheduled for {{ programmes }} vaccinations at this time.',
       guidance:
-        'Contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+        'Contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },
     fullyBooked: {
       title: 'All clinics are now fully booked',
       problem:
         'All clinics scheduled for {{ programmes }} vaccinations are now fully booked.',
       guidance:
-        'Contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+        'Contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },
     childCount: {
       title: 'How many children do you need to book appointments for?',
@@ -671,7 +671,7 @@ export const en = {
       title: 'All available clinics are more than 100 miles away',
       description: {
         parent:
-          'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccinations team on {{team.tel}} or email {{team.email}}.',
+          'All available clinics are more than 100 miles from your preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location\n\nIf you need more help finding a clinic, call the vaccination team on {{team.tel}} or email {{team.email}}.',
         team: 'All available clinics are more than 100 miles from the preferred location of {{postcode}}.\n\nYou can:\n\n- continue if you are sure you have entered the correct location\n- try another location'
       },
       confirm: 'Continue anyway',
@@ -761,14 +761,14 @@ export const en = {
     removeLocation: {
       title: 'Are you sure you want to remove the preferred location?',
       intro:
-        'Knowing your preferred location helps the vaccinations team plan clinics that are more convenient for you and others. The information will not be used for any other purpose.',
+        'Knowing your preferred location helps the vaccination team plan clinics that are more convenient for you and others. The information will not be used for any other purpose.',
       confirm: 'Remove my preferred location',
       cancel: 'Return to my feedback'
     },
     thankYou: {
       title: 'Thank you for your feedback',
       advice:
-        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },
     'check-answers': {
       title: 'Check and confirm %s’s appointment details',
@@ -828,7 +828,7 @@ export const en = {
       },
       tel: {
         label: 'Phone number',
-        hint: 'Someone from the vaccinations team might call you if they have questions'
+        hint: 'Someone from the vaccination team might call you if they have questions'
       },
       canSms: {
         label: 'Confirm if %s want appointment updates by text message'
@@ -1187,7 +1187,7 @@ export const en = {
       },
       tel: {
         label: 'Phone number',
-        hint: 'Someone from the vaccinations team might call you if they have questions'
+        hint: 'Someone from the vaccination team might call you if they have questions'
       },
       canSms: {
         label: "Tick this box if you'd like to get updates by text message"
