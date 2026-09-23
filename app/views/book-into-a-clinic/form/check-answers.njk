@@ -3,6 +3,7 @@
 {% set audience = "parent" if isParentFacing else "team" %}
 {% set confirmButtonText = __("clinicBooking.check-answers.confirm." + audience) %}
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
+{% set structuredNeeds = (additionalNeedsFeatureFlag === AdditionalNeeds.Structured) %}
 
 {% block form %}
   {{ heading({
@@ -36,12 +37,17 @@
       address: {
         href: "address" if isParentFacing
       },
+      additionalSupport: {
+        label: __("clinicAppointment.additionalSupport.label"),
+        value: appointment.formatted.additionalSupport,
+        href: "additional-support"
+      } if not structuredNeeds else none,
       impairments: {
-        href: "impairments" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
-      },
+        href: "impairments"
+      } if structuredNeeds else none,
       adjustments: {
-        href: "adjustments" if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
-      }
+        href: "adjustments"
+      } if structuredNeeds else none
     })
   }) }}
 
@@ -72,9 +78,7 @@
       timeSlot: {
         href: "appointment-time-range" if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
       },
-      appointmentLength: {
-        value: appointment.session.calculate
-      }
+      appointmentLength: {}
     })
   }) }}
 

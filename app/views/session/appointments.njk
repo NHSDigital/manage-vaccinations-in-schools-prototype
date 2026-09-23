@@ -36,16 +36,26 @@
         <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">(might overrun)</span>
       {% endif %}
 
-      {# Adjustments and impairments #}
-      {% if appointment.requiresAdjustments %}
-        <br>
-        {{ appointment.formatted.adjustmentsCount | safe }}
-      {% endif %}
-      {% if appointment.hasImpairments %}
-        <br>
-        {{ appointment.formatted.impairmentsCount | safe }}
+      {# Additional support needs #}
+      {% if additionalNeedsFeatureFlag === AdditionalNeeds.Basic %}
+        {# Freeform text describing needs #}
+        {% if appointment.hasAdditionalSupportNeeds %}
+          <br>
+          {{ appointment.formatted.needsAdditionalSupport | safe }}
+        {% endif %}
+      {% else %}
+        {# Adjustments and impairments #}
+        {% if appointment.requiresAdjustments %}
+          <br>
+          {{ appointment.formatted.adjustmentsCount | safe }}
+        {% endif %}
+        {% if appointment.hasImpairments %}
+          <br>
+          {{ appointment.formatted.impairmentsCount | safe }}
+        {% endif %}
       {% endif %}
     {% else %}
+      {# Booking link for empty slot #}
       {{ link(session.uri + "/add-appointment/?" + bookingQueryString, "Book") | safe }}
     {% endif %}
   {% endmacro %}

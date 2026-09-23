@@ -156,7 +156,9 @@ export class Session extends BaseModel {
           )
         : []
       this.slotLength = options?.slotLength
-      this.slotCountForLongAppointment = options?.slotCountForLongAppointment
+      this.slotCountForLongAppointment = Number(
+        options?.slotCountForLongAppointment
+      )
       this.venueInformation = options?.venueInformation
     }
 
@@ -497,25 +499,14 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Calculate the default length of the given appointment using this session's setup, in minutes
+   * Calculate the default number of slots covered by the given appointment
    *
-   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
-   * @returns {number} - the number of minutes to allocate for the given appointment
+   * @param {AppointmentLengthFactors} vaccinationChoices - the appointment's vaccination info
+   * @returns {number} - the default number of slots consumed by the appointment
    */
-  calculateAppointmentLength(appointmentProperties) {
-    return this.slotLength * this.calculateSlotCount(appointmentProperties)
-  }
-
-  /**
-   * Calculate the number of slots covered by the given appointment
-   *
-   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
-   * @returns {number} - the number of slots consumed by the appointment
-   */
-  calculateSlotCount(appointmentProperties) {
+  calculateSlotCount(vaccinationChoices) {
     const isFluNasal =
-      appointmentProperties.fluDecision !==
-      ReplyDecision.OnlyAlternativeInjection
+      vaccinationChoices.fluDecision !== ReplyDecision.OnlyAlternativeInjection
 
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
     // and will not have any other catch-up vaccinations
@@ -527,7 +518,7 @@ export class Session extends BaseModel {
     // In this case, we expressly don't count a nasal flu vaccination, as teams can usually squeeze
     // it in.
     let injectionCount = 0
-    const programme_ids = appointmentProperties.selected_programme_ids
+    const programme_ids = vaccinationChoices.selected_programme_ids
     if (programme_ids.includes('flu') && !isFluNasal) {
       injectionCount++
     }
@@ -1119,22 +1110,13 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get the start times at which the given appointment could be booked, taking into account
-   * existing bookings
+   * Get the start times from which the given number of consecutive slots could be booked,
+   * taking into account existing bookings
    *
-   * Used to work out which start times to offer when booking an appointment — proactively,
-   * to only offer a parent start times that have room, and reactively, to check a start time a
-   * staff member has already picked on the schedule
-   *
-   * @param {AppointmentLengthFactors} appointmentProperties - the appointment's vaccination info
-   * @returns {Array<Date>} Start times with enough contiguous free capacity for the appointment
+   * @param {number} requiredSlotCount - the number of consecutive slots that must be available
+   * @returns {Array<Date>} - Start times with enough free capacity
    */
-  bookableSlotStartTimesFor(appointmentProperties) {
-    if (this.type !== SessionType.Clinic) {
-      throw new Error('Session must be a clinic to have booking slots')
-    }
-
-    const slotsForAppointment = this.calculateSlotCount(appointmentProperties)
+  #bookableStartTimesForSlotCount(requiredSlotCount) {
     const freeSlotCounts = this.#freeSlotCountsByStartTime()
 
     const bookableStartTimes = []
@@ -1145,12 +1127,12 @@ export class Session extends BaseModel {
 
       for (
         let startIndex = 0;
-        startIndex <= slotStartTimes.length - slotsForAppointment;
+        startIndex <= slotStartTimes.length - requiredSlotCount;
         startIndex++
       ) {
         const coveredIndexes = _.range(
           startIndex,
-          startIndex + slotsForAppointment
+          startIndex + requiredSlotCount
         )
 
         const hasCapacity = coveredIndexes.every(
@@ -1164,6 +1146,90 @@ export class Session extends BaseModel {
     })
 
     return bookableStartTimes
+  }
+
+  /**
+   * Get the start times at which the given appointment could be booked, taking into account
+   * existing bookings
+   *
+   * This function takes only vaccination choices into account, not extension or shortening
+   *
+   * @param {AppointmentLengthFactors} vaccinationChoices - the appointment's vaccination info
+   * @param {boolean} extendForSupportNeeds - should we add a slot to account for support needs?
+   * @returns {Array<Date>} Start times with enough free capacity for the vaccinations
+   */
+  bookableStartTimesForVaccinationChoices(
+    vaccinationChoices,
+    extendForSupportNeeds = false
+  ) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const slotsForAppointment =
+      this.calculateSlotCount(vaccinationChoices) +
+      (extendForSupportNeeds ? 1 : 0)
+    return this.#bookableStartTimesForSlotCount(slotsForAppointment)
+  }
+
+  /**
+   * Get the start times at which the given appointment could be booked, taking into account
+   * existing bookings
+   *
+   * This function takes into account any shortening or extending of the appointment by the team
+   *
+   * @param {ClinicAppointment} appointment - the appointment being booked (possibly with edited length)
+   * @returns {Array<Date>} Start times with enough free capacity for the appointment
+   */
+  bookableStartTimesForAppointment(appointment) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const slotsForAppointment = appointment.slotCount
+    return this.#bookableStartTimesForSlotCount(slotsForAppointment)
+  }
+
+  /**
+   * Get the length of the longest possible appointment — either overall or for a given start time — in slots
+   *
+   * @param {Date|undefined} startTime - the start time for the appointment, if known
+   * @returns {number} - the number of slots covered by the longest available appointment
+   */
+  longestAvailableAppointment(startTime = undefined) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const freeSlotCounts = this.#freeSlotCountsByStartTime()
+    const isSlotFree = (time) => (freeSlotCounts.get(time) || 0) > 0
+
+    let longestSlotCount = 0
+    for (const vaccinationPeriod of this.vaccinationPeriods) {
+      const slotStartTimes = this.#slotStartTimesForPeriod(vaccinationPeriod)
+
+      if (startTime) {
+        const startIndex = slotStartTimes.indexOf(startTime.getTime())
+        if (startIndex === -1) {
+          continue
+        }
+
+        let slotCount = 0
+        while (isSlotFree(slotStartTimes[startIndex + slotCount])) {
+          slotCount++
+        }
+
+        return slotCount
+      }
+
+      let currentRun = 0
+      for (const time of slotStartTimes) {
+        currentRun = isSlotFree(time) ? currentRun + 1 : 0
+        longestSlotCount = Math.max(longestSlotCount, currentRun)
+      }
+    }
+
+    return longestSlotCount
   }
 
   /**

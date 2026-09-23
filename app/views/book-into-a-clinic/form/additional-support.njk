@@ -1,0 +1,46 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.additionalSupport.title", firstName) %}
+
+{% block form %}
+  {% set additionalSupportDetailsHtml %}
+    {{ textarea({
+        label: __("clinicBooking.additionalSupport.details.label"),
+        decorate: "appointment.additionalSupportNeedsDetails"
+    }) }}
+
+    {% if not isParentFacing %}
+      {{ checkboxes({
+        items: [
+          {
+            label: "Extend the appointment to take this into account",
+            hint: "This will add an extra slot by default, but can be edited later",
+            value: true
+          }
+        ],
+        decorate: "journeyData.extendForSupportNeeds"
+      }) }}
+    {% endif %}
+  {% endset %}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    hint: __("clinicBooking.additionalSupport.hint"),
+    items: [{
+      text: __("clinicBooking.additionalSupport.yes"),
+      value: true,
+      conditional: {
+        html: additionalSupportDetailsHtml
+      }
+    }, {
+      text: __("clinicBooking.additionalSupport.no"),
+      value: false
+    }],
+    decorate: "appointment.hasAdditionalSupportNeeds"
+  }) }}
+{% endblock %}

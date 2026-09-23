@@ -5,6 +5,7 @@ import { SessionPresets, SessionStatus, SessionType } from '../enums.js'
 import { ClinicAppointment, Session } from '../models.js'
 
 import i18n from './i18n.js'
+import { stringToBoolean } from './string.js'
 
 /**
  * Generate a URL to book into a clinic for vaccination in the given presets' programmes
@@ -46,12 +47,14 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  *
  * @param {object} context - the data context for the models to check
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
+ * @param {boolean} extendForSupportNeeds - should we look for space for an extended appointment?
  * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
   vaccinationChoices,
+  extendForSupportNeeds,
   requiresStockingPeriod
 ) => {
   const scheduledClinics = Session.findAll(context).filter(
@@ -60,7 +63,10 @@ export const getBookableClinicSessions = (
       session.status === SessionStatus.Planned &&
       session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
-      session.bookableSlotStartTimesFor(vaccinationChoices).length > 0
+      session.bookableStartTimesForVaccinationChoices(
+        vaccinationChoices,
+        extendForSupportNeeds
+      ).length > 0
   )
 
   return scheduledClinics
@@ -81,9 +87,13 @@ export const getBookableClinicLocationItems = (
   requiresStockingPeriod,
   isFakeOutOfArea
 ) => {
+  const extendForSupportNeeds = stringToBoolean(
+    context.journeyData.extendForSupportNeeds
+  )
   const scheduledClinics = getBookableClinicSessions(
     context,
     appointment.vaccinationChoices,
+    extendForSupportNeeds,
     requiresStockingPeriod
   )
   const sessionsByLocation = _.groupBy(
@@ -124,10 +134,13 @@ export const getBookableClinicDateItems = (
   appointment,
   requiresStockingPeriod
 ) => {
+  const vaccinationChoices = appointment.vaccinationChoices
+  const extendForSupportNeeds = context.journeyData.extendForSupportNeeds
   const bookableSessions = _.sortBy(
     getBookableClinicSessions(
       context,
-      appointment.vaccinationChoices,
+      vaccinationChoices,
+      extendForSupportNeeds,
       requiresStockingPeriod
     ).filter((session) => session.clinic_id === clinic_id),
     'date'
@@ -137,7 +150,10 @@ export const getBookableClinicDateItems = (
   bookableSessions.forEach((session) => {
     const midday = new Date(session.date)
 
-    const availableTimes = session.bookableSlotStartTimesFor(appointment)
+    const availableTimes = session.bookableStartTimesForVaccinationChoices(
+      vaccinationChoices,
+      extendForSupportNeeds
+    )
     const morningAvailable = availableTimes.some((time) => time < midday)
     const afternoonAvailable = availableTimes.some((time) => time >= midday)
     const availability =

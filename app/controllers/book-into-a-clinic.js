@@ -30,6 +30,7 @@ import {
   getBookableClinicDateItems,
   getBookableClinicLocationItems
 } from '../utils/clinic-booking.js'
+import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -87,8 +88,12 @@ export const bookIntoClinicController = {
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
-      nextPath = getBookableClinicSessions(data, vaccinationChoices, false)
-        .length
+      nextPath = getBookableClinicSessions(
+        data,
+        vaccinationChoices,
+        false,
+        false
+      ).length
         ? 'new'
         : 'availability'
     } else if (session_id) {
@@ -120,8 +125,12 @@ export const bookIntoClinicController = {
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
-      nextPath = getBookableClinicSessions(data, vaccinationChoices, true)
-        .length
+      nextPath = getBookableClinicSessions(
+        data,
+        vaccinationChoices,
+        false,
+        true
+      ).length
         ? 'start'
         : 'availability'
     }
@@ -170,10 +179,7 @@ export const bookIntoClinicController = {
       // Already selected a specific time slot?
       const { slot } = /** @type {{ slot?: string }} */ (request.query)
       if (slot) {
-        const session = Session.findOne(session_id, data)
         appointment.startAt = new Date(slot)
-        appointment.appointmentLength =
-          session.calculateAppointmentLength(appointment)
 
         data.journeyData[booking.uuid].preselectedSlot = appointment.startAt
       }
@@ -541,7 +547,7 @@ export const bookIntoClinicController = {
     } else if (view === 'appointment-time-range') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
-        session.bookableSlotStartTimesFor(appointment),
+        session.bookableStartTimesForAppointment(appointment),
         (time) => time.getHours()
       )
 
@@ -570,7 +576,7 @@ export const bookIntoClinicController = {
     } else if (view === 'appointment-time') {
       const session = Session.findOne(appointment.session_id, data)
       const availableTimesByHour = _.groupBy(
-        session.bookableSlotStartTimesFor(appointment),
+        session.bookableStartTimesForAppointment(appointment),
         (time) => time.getHours()
       )
 
@@ -604,18 +610,21 @@ export const bookIntoClinicController = {
         location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
-    } else if (view === 'unsuitable-slot') {
-      // TODO: make this smarter when appointments get longer than 2 slots
+    } else if (view === 'shorten-appointment') {
       const session = Session.findOne(appointment.session_id, data)
-      const requiredSlots = 2 // session.calculateSlotCount(appointment)
-      const availableSlots = 1
+      const requiredSlots = appointment.slotCount
+      const availableSlots = session.longestAvailableAppointment(
+        appointment.startAt
+      )
 
       response.locals.requiredSlots = requiredSlots
       response.locals.requiredMinutes = requiredSlots * session.slotLength
       response.locals.availableSlots = availableSlots
       response.locals.availableMinutes = availableSlots * session.slotLength
 
-      response.locals.slotStartTime = formatTime(appointment.startAt, true)
+      if (data.journeyData[booking_uuid].preselectedSlot) {
+        response.locals.slotStartTime = formatTime(appointment.startAt, true)
+      }
     } else if (view === 'fully-booked') {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
@@ -638,6 +647,8 @@ export const bookIntoClinicController = {
 
       response.locals.reasonItems = reasonItems
     }
+
+    response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
 
     // All health questions use the same view
     let key
@@ -702,31 +713,15 @@ export const bookIntoClinicController = {
       _.merge(data.journeyData[booking_uuid], request.body.journeyData)
     }
 
-    if (
-      [
-        'programmes',
-        'flu-choice',
-        'flu-alternative',
-        'mmr-alternative'
-      ].includes(view)
-    ) {
-      // If we already know the session, we can update the default appointment length now
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      const appointment = booking.findAppointment(appointment_uuid)
-      if (appointment.session_id) {
-        const session = Session.findOne(appointment.session_id, data)
-        appointment.appointmentLength =
-          session.calculateAppointmentLength(appointment)
-
-        ClinicBooking.update(booking_uuid, booking, data.wizard)
-      }
-    } else if (view === 'unsuitable-slot') {
+    if (view === 'shorten-appointment') {
       // Must've decided to shorten and continue
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
       const appointment = booking.findAppointment(appointment_uuid)
-
       const session = Session.findOne(appointment.session_id, data)
-      appointment.appointmentLength = session.slotLength
+
+      appointment.editedSlotCount = session.longestAvailableAppointment(
+        appointment.startAt
+      )
 
       ClinicBooking.update(booking_uuid, booking, data.wizard)
     } else if (view === 'child-count') {
@@ -772,7 +767,8 @@ export const bookIntoClinicController = {
       // that detail to the child record
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
 
-      const previous_appointment_uuid = request.body.journeyData.addressChoice
+      const previous_appointment_uuid =
+        data.journeyData[booking_uuid].addressChoice
       const previousAppointment = booking?.findAppointment(
         previous_appointment_uuid
       )
@@ -794,19 +790,30 @@ export const bookIntoClinicController = {
         currentAppointment.session_id =
           data.journeyData[booking_uuid].sessionChoice
 
-        const session = Session.findOne(currentAppointment.session_id, data)
-        currentAppointment.appointmentLength =
-          session.calculateAppointmentLength(currentAppointment)
-
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       }
-    } else if (view === 'clinic-date') {
-      // We now know the session and so can calculate the appointment length
-      const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    } else if (
+      (view === 'additional-support' &&
+        data.journeyData[booking_uuid].journeyType ===
+          ClinicBookingJourneyType.DataMigration) ||
+      view === 'clinic-date'
+    ) {
+      // Now that we have all appointment length determiners nailed down, finalise
+      // the appointment length
+      const booking = new ClinicBooking(
+        ClinicBooking.findOne(booking_uuid, data.wizard),
+        data
+      )
       const appointment = booking.findAppointment(appointment_uuid)
-      const session = Session.findOne(appointment.session_id, data)
-      appointment.appointmentLength =
-        session.calculateAppointmentLength(appointment)
+      if (
+        stringToBoolean(data.journeyData[booking_uuid].extendForSupportNeeds)
+      ) {
+        const defaultSlotCount =
+          appointment.session.calculateSlotCount(appointment)
+        appointment.editedSlotCount = defaultSlotCount + 1
+      } else {
+        appointment.editedSlotCount = undefined
+      }
 
       ClinicBooking.update(booking.uuid, booking, data.wizard)
     } else if (view === 'appointment-time') {

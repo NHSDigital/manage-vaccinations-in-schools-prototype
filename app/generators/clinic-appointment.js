@@ -2,7 +2,9 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addYears } from 'date-fns'
 
 import {
+  Adjustment,
   ClinicAppointmentStatus,
+  Impairment,
   ParentalRelationship,
   ReplyDecision
 } from '../enums.js'
@@ -57,7 +59,7 @@ export function decideClinicVaccinationChoices(invitedProgramme_ids) {
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
- * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices, from decideClinicVaccinationChoices
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmesm vaccine choices and support needs, from decideClinicVaccinationChoices
  * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
@@ -111,6 +113,37 @@ export function generateClinicAppointment(
       impairments: [...patient.impairments],
       impairmentsOther: patient.impairmentsOther
     })
+  }
+
+  // Decide whether we'll try to extend the appointment, based on support needs
+  let editedSlotCount
+  const extendForSupportNeeds =
+    patient.adjustments.includes(Adjustment.ExtendedAppointment) ||
+    patient.impairments.includes(Impairment.MentalHealth)
+      ? faker.datatype.boolean(0.5)
+      : false
+  if (extendForSupportNeeds) {
+    // Attempt to extend the appointment
+    editedSlotCount = session.calculateSlotCount(vaccinationChoices) + 1
+
+    // Now actually check whether there's space and squash if necessary
+    const longestAvailable = session.longestAvailableAppointment(startAt)
+    if (longestAvailable < editedSlotCount) {
+      editedSlotCount = longestAvailable
+    }
+  }
+
+  // Copy the first impairment to the basic additional needs, if present
+  let hasAdditionalSupportNeeds = false
+  let additionalSupportNeedsDetails = ''
+  if (child.impairments.at(0) !== Impairment.None) {
+    hasAdditionalSupportNeeds = true
+    const impairment = child.impairments[0]
+    additionalSupportNeedsDetails = `Impairment: ${impairment === Impairment.Other ? child.impairmentsOther : impairment}`
+  } else if (child.adjustments.at(0) !== Adjustment.None) {
+    hasAdditionalSupportNeeds = true
+    const adjustment = child.adjustments[0]
+    additionalSupportNeedsDetails = `Adjustment: ${adjustment === Adjustment.Other ? child.adjustmentsOther : adjustment}`
   }
 
   // Set up the relationship to the child for this appointment. If the booking
@@ -181,11 +214,13 @@ export function generateClinicAppointment(
     parentHasParentalResponsibility,
     session_id,
     startAt,
-    appointmentLength: session.calculateAppointmentLength(vaccinationChoices),
+    editedSlotCount,
     selected_programme_ids,
     fluDecision,
     fluAlternative,
     mmrAlternative,
+    hasAdditionalSupportNeeds,
+    additionalSupportNeedsDetails,
     status
   })
 

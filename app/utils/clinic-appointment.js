@@ -1,17 +1,19 @@
 import _ from 'lodash'
 
 import {
-  LocationSearchType,
+  AdditionalNeeds,
   AppointmentAbandonmentReason,
+  ClinicBookingJourneyType,
+  LocationSearchType,
   PatientClinicStatus,
-  ReplyDecision,
-  ClinicBookingJourneyType
+  ReplyDecision
 } from '../enums.js'
 import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
+import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
-import { camelToKebabCase, stringToArray } from './string.js'
+import { camelToKebabCase, stringToArray, stringToBoolean } from './string.js'
 
 /**
  * Get the MMRV-aware list of programme IDs for which the given patient can be booked into clinic
@@ -98,6 +100,9 @@ export const getAllAppointmentPaths = (
   const abandonmentReasons = stringToArray(
     sessionData.appointment?.abandonmentReasons
   )
+  const extendForSupportNeeds = stringToBoolean(
+    sessionData?.journeyData?.extendForSupportNeeds
+  )
 
   // Note: the journey data will be unavailable on the confirmation page (which is parent-facing only)
   const journeyType =
@@ -128,6 +133,7 @@ export const getAllAppointmentPaths = (
             getBookableClinicSessions(
               sessionData,
               vaccinationChoices,
+              extendForSupportNeeds,
               isParentJourney
             ).length === 0
           )
@@ -148,13 +154,29 @@ export const getAllAppointmentPaths = (
             [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
           }
         : {}),
+      ...(getAdditionalNeeds() === AdditionalNeeds.Basic
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]: {}
+          }
+        : {
+            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
+            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+          }),
 
       // Interrupt if the appointment is too long for the slot selected on Appointments page
       ...(isDataMigrationJourney &&
       sessionData.journeyData[booking_uuid]?.preselectedSlot &&
-      !canAppointmentFitInSchedule(appointment, sessionData)
+      !canAppointmentFitInSchedule(appointment, true, sessionData)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/unsuitable-slot`]: {}
+            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
+          }
+        : {}),
+      // Interrupt if the appointment is too long for anywhere in the session
+      ...(isDataMigrationJourney &&
+      !sessionData.journeyData[booking_uuid]?.preselectedSlot &&
+      !canAppointmentFitInSchedule(appointment, false, sessionData)
+        ? {
+            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
           }
         : {}),
 
@@ -205,6 +227,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
+                    extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -216,6 +239,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
+                    extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -236,6 +260,7 @@ export const getAllAppointmentPaths = (
                       getBookableClinicSessions(
                         sessionData,
                         appointment.vaccinationChoices,
+                        extendForSupportNeeds,
                         isParentJourney
                       ).length === 0
                     )
@@ -247,6 +272,7 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
+                    extendForSupportNeeds,
                     isParentJourney
                   ).length === 0
                 )
@@ -306,8 +332,6 @@ export const getAllAppointmentPaths = (
         appointment,
         sessionData
       ),
-      [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {},
 
       // Parent contact details
       ...(!isParentJourney
@@ -357,21 +381,36 @@ export const getAllAppointmentPaths = (
 }
 
 /**
- * Are there enough consecutive slots free at the appointment's start time to fit it in?
+ * Are there enough consecutive slots free to fit this appointment in?
  *
  * @param {ClinicAppointment} appointment - the appointment we're booking
+ * @param {boolean} useAppointmentTime - do we care about the appointment time or can we look anywhere?
  * @param {object} sessionData - the global data context
  * @returns {boolean} - true if the appointment will fit in the schedule, or false otherwise
  */
-const canAppointmentFitInSchedule = (appointment, sessionData) => {
+const canAppointmentFitInSchedule = (
+  appointment,
+  useAppointmentTime,
+  sessionData
+) => {
+  const extendForSupportNeeds = stringToBoolean(
+    sessionData.journeyData.extendForSupportNeeds
+  )
   const session = Session.findOne(appointment.session_id, sessionData)
   const startTimesWithEnoughSpace =
-    session.bookableSlotStartTimesFor(appointment)
+    session.bookableStartTimesForVaccinationChoices(
+      appointment,
+      extendForSupportNeeds
+    )
 
-  const appointmentTime = appointment.startAt.getTime()
-  return startTimesWithEnoughSpace.some(
-    (slotTime) => slotTime.getTime() == appointmentTime
-  )
+  if (useAppointmentTime) {
+    const appointmentTime = appointment.startAt.getTime()
+    return startTimesWithEnoughSpace.some(
+      (slotTime) => slotTime.getTime() == appointmentTime
+    )
+  }
+
+  return startTimesWithEnoughSpace.length > 0
 }
 
 /**
@@ -440,8 +479,6 @@ const getHealthQuestionPathsForAppointment = (
       paths[questionPath] = {}
     }
   })
-  paths[`${pathPrefix}${appointment.uuid}/impairments`] = {}
-  paths[`${pathPrefix}${appointment.uuid}/adjustments`] = {}
 
   return paths
 }

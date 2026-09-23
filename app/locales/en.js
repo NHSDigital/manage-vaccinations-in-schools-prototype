@@ -401,6 +401,9 @@ export const en = {
     offerRebooking: {
       label: 'Offer rebooking?'
     },
+    additionalSupport: {
+      label: 'Extra support needed'
+    },
     impairments: {
       label: 'Impairments'
     },
@@ -542,6 +545,15 @@ export const en = {
     addressSelection: {
       title: 'What is %s’s home address?',
       hint: 'Select the child’s primary address. We use this to confirm their identity.'
+    },
+    additionalSupport: {
+      title: 'Does %s need extra support during vaccination sessions?',
+      hint: 'For example, they’re autistic, or extremely anxious',
+      yes: 'Yes',
+      no: 'No',
+      details: {
+        label: 'Give details'
+      }
     },
     impairments: {
       title: 'Does %s have any of the following impairments?',
@@ -860,10 +872,14 @@ export const en = {
         hint: 'This means you have legal rights and duties relating to the child'
       }
     },
-    unsuitableSlot: {
+    shortenAppointment: {
       title: 'There is not enough time for the appointment',
-      description:
-        'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you will need to find another start time on the Appointments page',
+      description: {
+        specificSlot:
+          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you will need to find another start time on the Appointments page',
+        anySlot:
+          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But the longest appointment available in this session is {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you can extend the session or find another with more space'
+      },
       confirm: 'Continue',
       cancel: 'Cancel and return to the Appointments page'
     },

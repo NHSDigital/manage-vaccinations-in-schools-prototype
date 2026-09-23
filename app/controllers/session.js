@@ -32,6 +32,7 @@ import {
   getDateValueDifference,
   today
 } from '../utils/date.js'
+import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -148,6 +149,8 @@ export const sessionController = {
     } else if (!view) {
       view = 'show'
     }
+
+    response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
 
     return response.render(`session/${view}`)
   },
@@ -697,7 +700,7 @@ export const sessionController = {
             )
           }
 
-          const slotSpan = session.calculateSlotCount(appointment)
+          const slotSpan = appointment.slotCount
           if (freeColumnIndex >= 0) {
             columnFreeFromRow[freeColumnIndex] = rowIndex + slotSpan
           }
