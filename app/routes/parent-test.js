@@ -118,6 +118,10 @@ router.get('/harriet', (request, response) => {
   response.render('parent-test/harriet')
 })
 
+router.get('/nadia', (request, response) => {
+  response.render('parent-test/nadia')
+})
+
 router.get('/understanding-records', (request, response) => {
   response.render('parent-test/understanding-records')
 })
