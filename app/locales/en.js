@@ -1696,8 +1696,8 @@ export const en = {
     },
     schools: {
       'request-class-lists': {
-        label: 'Request for class lists',
-        name: 'Providing pupil information for vaccinations'
+        label: 'Request to provide pupil information',
+        name: 'Send us pupil information for school vaccinations'
       }
     }
   },
