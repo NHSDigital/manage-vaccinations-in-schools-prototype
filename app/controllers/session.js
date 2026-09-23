@@ -681,7 +681,7 @@ export const sessionController = {
         const rowValues = []
         rowValues.push({
           header: headers[0],
-          timeSlot: formatTime(time, false)
+          timeSlot: formatTime(time, { isHour12: false })
         })
 
         const appointmentsStartingNow = allAppointments.filter(

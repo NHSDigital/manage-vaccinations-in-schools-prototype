@@ -620,10 +620,15 @@ export function formatHour(hour) {
  * Format the time in a date using the 12-hour clock and an am/pm suffix
  *
  * @param {Date} date - the date containing the time we want to format
- * @param {boolean} isHour12 - use the 12 hour clock and am/pm?
+ * @param {object} [options] - Options
+ * @param {boolean} [options.isHour12] - use the 12 hour clock and am/pm?
+ * @param {boolean} [options.padZeroMinutes] - replace 9pm with 9:00pm? (used where neighbouring values have non-zero minutes)
  * @returns {string} the time formatted according to the hour12 parameter
  */
-export function formatTime(date, isHour12 = true) {
+export function formatTime(
+  date,
+  { isHour12 = true, padZeroMinutes = false } = {}
+) {
   const locale = i18n.getLocale()
 
   if (!isHour12) {
@@ -639,16 +644,17 @@ export function formatTime(date, isHour12 = true) {
   const hours = date.getHours()
   const minutes = date.getMinutes()
 
+  let disambiguator = ''
   if (minutes === 0) {
-    if (hours === 0) return 'midnight'
-    if (hours === 12) return 'midday'
+    if (hours === 0) disambiguator = ' (midnight)'
+    else if (hours === 12) disambiguator = ' (midday)'
   }
 
   const period = hours < 12 ? 'am' : 'pm'
   const hours12 = hours % 12 || 12
-  return minutes === 0
+  return minutes === 0 && !padZeroMinutes
     ? `${hours12}${period}`
-    : `${hours12}.${minutes.toString().padStart(2, '0')}${period}`
+    : `${hours12}:${minutes.toString().padStart(2, '0')}${period}${disambiguator}`
 }
 
 /**

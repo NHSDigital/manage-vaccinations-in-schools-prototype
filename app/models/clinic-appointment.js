@@ -618,8 +618,8 @@ export class ClinicAppointment {
         get: (_target, prop) => {
           // Shared dynamic helpers (evaluated lazily inside the property checks)
           const getParentFacingTimes = () => ({
-            start: formatTime(this.startAt),
-            end: formatTime(this.endAt)
+            start: formatTime(this.startAt, { padZeroMinutes: true }),
+            end: formatTime(this.endAt, { padZeroMinutes: true })
           })
 
           const getSession = () =>
@@ -768,7 +768,9 @@ export class ClinicAppointment {
               return `${this.appointmentLength} minutes`
 
             case 'summary': {
-              const teamFacingStartTime = formatTime(this.startAt, false)
+              const teamFacingStartTime = formatTime(this.startAt, {
+                isHour12: false
+              })
               return `${teamFacingStartTime} ${this.fullName} (${getProgrammeNames()})`
             }
 

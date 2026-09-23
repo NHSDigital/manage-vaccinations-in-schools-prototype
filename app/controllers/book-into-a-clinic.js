@@ -584,7 +584,7 @@ export const bookIntoClinicController = {
       for (const date of availableTimesByHour[
         data.journeyData[booking_uuid].timeRange
       ]) {
-        const key = formatTime(date, true)
+        const key = formatTime(date, { isHour12: true })
 
         if (!availabilityForChosenHour[key]) {
           availabilityForChosenHour[key] = {
@@ -623,7 +623,9 @@ export const bookIntoClinicController = {
       response.locals.availableMinutes = availableSlots * session.slotLength
 
       if (data.journeyData[booking_uuid].preselectedSlot) {
-        response.locals.slotStartTime = formatTime(appointment.startAt, true)
+        response.locals.slotStartTime = formatTime(appointment.startAt, {
+          isHour12: true
+        })
       }
     } else if (view === 'fully-booked') {
       // Note: replace usual MMR content with MMRV as necessary
