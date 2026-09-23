@@ -1,0 +1,711 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Review duplicate vaccination records (6 records, table)" %}
+{% set containerClasses = "nhsuk-width-container-fluid" %}
+{% set recordCount = 6 %}
+{% block header %}
+  <!-- Mavis site chrome: environment banner and site header exactly as rendered
+       on /notices, with the Review item current. Static copy for presentation
+       only; these demo pages do not actually live under /notices yet. -->
+  <div class="app-environment nhsuk-tag--grey">
+    <div class="nhsuk-width-container">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Prototype</strong>
+      This is a prototype used for research.
+    </div>
+  </div>
+  <header class="nhsuk-header" data-module="nhsuk-header" role="banner">
+    <div class="nhsuk-header__container nhsuk-width-container">
+      <div class="nhsuk-header__service">
+        <a class="nhsuk-header__service-logo" href="/home" aria-label="NHS Manage vaccinations in schools homepage">
+          <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+            <title>NHS</title>
+            <path fill="currentcolor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+          </svg>
+          <span class="nhsuk-header__service-name">Manage vaccinations in schools</span>
+        </a>
+      </div>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            JOY, Jane (Nurse)
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/change-role">Change role</a>
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/sign-out">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/schools">Schools</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/patients">Children</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/sessions">Sessions</a>
+          </li>
+          <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--current app-header__navigation-item--with-badge">
+            <a class="nhsuk-header__navigation-link" href="/reviews" aria-current="true"><strong class="nhsuk-header__navigation-item-current-fallback">Review<strong class="app-badge">124</strong></strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/reports">Reports</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/uploads">Uploads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/downloads">Downloads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/vaccines">Vaccines</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/teams/001">Your team</a>
+          </li>
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse </span>More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <!-- Standard-width band: the Review chrome and the patient tier of the page
+       header stay the standard page width (1100px here), matching the site
+       header. The duplicate details panel and record grid below share the wider
+       card canvas. margin: 0 auto stops the nested width container doubling the
+       fluid containers side margins at narrower viewports. -->
+  <div class="nhsuk-width-container" style="margin: 0 auto">
+    <!-- Review section chrome: page heading and section navigation as on /notices,
+         plus a Duplicates tab shown as current and linking to the start page. The other
+         tabs are presentation only, and these pages do not actually live under /notices yet. -->
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-l">Review</h1>
+        <nav class="app-section-navigation" data-module="app-section-navigation" aria-label="Section navigation">
+          <ul class="app-section-navigation__list">
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/notices">Important notices<span class="app-section-navigation__suffix"><strong class="app-badge">4</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/consents">Consent responses<span class="app-section-navigation__suffix"><strong class="app-badge">0</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/unmatched-appointments">Clinic appointments<span class="app-section-navigation__suffix"><strong class="app-badge">23</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/moves">School moves<span class="app-section-navigation__suffix"><strong class="app-badge">90</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item app-section-navigation__item--current">
+              <a class="app-section-navigation__link" href="/duplicate-training/start" aria-current="page"><strong class="app-section-navigation__current">Duplicate records<span class="app-section-navigation__suffix"><strong class="app-badge" data-duplicates-badge>6</strong></span></strong></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- /Review section chrome -->
+  <!-- Live count on the Duplicate records tab: the six user testing sets minus those
+       moved past in this browser session. The test pages record an advance when the
+       action button goes on to the next set, and the comment pages record one on
+       Submit; nothing else changes the number, so demo pages only display it. -->
+  <script>
+    (() => {
+      const render = () => {
+        let progressed = []
+        try { progressed = JSON.parse(sessionStorage.getItem("duplicate-training:progressed") || "[]") } catch (error) {}
+        for (const badge of document.querySelectorAll("[data-duplicates-badge]")) badge.textContent = String(Math.max(0, 6 - progressed.length))
+      }
+      render()
+      window.addEventListener("pageshow", render)
+    })()
+  </script>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+
+        <!-- Duplicate page header -->
+
+        <!-- Patient name -->
+        <h1 class="nhsuk-heading-l nhsuk-u-display-inline-block nhsuk-u-margin-bottom-3">
+          Freya Sutherland
+        </h1>
+        <a class="nhsuk-link nhsuk-u-margin-left-3" href="#">View full child record</a>
+
+        <!-- Patient details -->
+        <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">NHS Number</span><br>
+              999 555 6677
+            </p>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">Date of birth</span><br>
+              29 November 2010 (aged 15)
+            </p>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">Address</span><br>
+              3 Meadow Rise, Alderton, GL54 8QP
+            </p>
+          </div>
+        </div>
+
+        <!-- /Duplicate page header -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Card canvas: duplicate details panel and record comparison grid, centred and
+       capped at 1720px. The NHS design system has no wide-container token
+       (standard page width is 1100px in this prototype), so the cap is set
+       directly. Below 1280px viewports each grid stops compressing (min-width
+       1216px = 1280px minus the 2 x 32px page margins) and the page gains a
+       horizontal scrollbar instead: there is no overflow-x wrapper, because an
+       overflow container would become the sticky scrollport and stop the
+       table heads sticking to the viewport. -->
+  <div style="max-width: 1720px; margin: 0 auto;">
+    <!-- Duplicate summary: reuses the Mavis listing-page sidebar treatment
+         (app-filters card: translucent grey-4 background, card
+         border, no feature heading tab) -->
+    <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-card__content">
+        <!-- Highlight differences toggle: small checkbox, on by default, sits on
+             the right of the panel. No script: the style block below keys off the
+             checkbox's own checked state with :has(), so unticking neutralises
+             every app-highlight mark without touching the markup -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; column-gap: 24px;">
+          <div>
+            <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">6 duplicate MMR records</h2>
+            <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">We have 6 records for the same vaccination dated 3 February 2026. Help us learn how to manage duplicates by choosing the record you trust most.</p>
+          </div>
+          <div class="nhsuk-form-group nhsuk-u-margin-bottom-0" style="flex-shrink: 0;">
+            <div class="nhsuk-checkboxes nhsuk-checkboxes--small" data-module="nhsuk-checkboxes">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="highlight-differences" name="highlight-differences" type="checkbox" value="yes" checked>
+                <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="highlight-differences">
+                  Highlight differences
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+      body:has(#highlight-differences:not(:checked)) .app-highlight {
+        border-bottom-color: transparent;
+        background-color: transparent;
+      }
+      body:has(#highlight-differences:not(:checked)) .app-highlight::before,
+      body:has(#highlight-differences:not(:checked)) .app-highlight::after {
+        content: none;
+      }
+    </style>
+
+    <!-- Table version of the record comparison. Each table is a real table: the
+         first column holds the field names as row headers, the first head row
+         holds the record headings as column headers, so every cell is associated
+         with its field and its record. The second head row holds the status tag
+         for each record. The Choose this record radios are the table foot, which
+         is position: sticky with a bottom offset clearing the fixed set bar: the
+         foot floats above the bar while the table is taller than the viewport and
+         settles at the card bottom when the end scrolls into view, as the card
+         footers did, with no sentinels or observers. Two details the card
+         footers left to observers are handled in CSS here. The head cells are
+         layered above the foot, so when a table's top is near the bottom of the
+         viewport and the foot clamps against it, the foot sits behind the heading
+         and tag rather than over them, and slides out from under them as the
+         table scrolls up. And the fixed set bar is given a fixed 96px height, the
+         same figure as the foot's sticky offset, so the pinned foot sits flush on
+         the bar with no strip for the field rows to show through.
+
+         Card look, by column: every cell in a record column carries the white
+         background and the card's left and right border, the first head row adds
+         the top edge and the foot the bottom edge, and border-spacing
+         opens the 24px gap between columns. The field column has no card styling
+         and sits on the grey canvas. The base nhsuk cell padding and rules are
+         reset first, so the only lines are the ones set here. A 1px transparent inset on the outer edges
+         becomes part of the border when a record is chosen, so the 2px blue
+         outline never moves the content. The field rows keep the inset bottom
+         rule of the card layouts, painted on the cell as a 1px background line
+         24px in from each edge rather than on the inner paragraph: the cell
+         always fills the row, so the rules of one row sit on one line however
+         tall its tallest value, as the grid cards do. The field names sit in a
+         block span inside their header cell, since the nhsuk-body-s class would
+         otherwise turn the cell itself into a block and shrink it to its text.
+
+         Live selection is CSS, keyed on the checked radio: the table is the anchor
+         (:has() on it reaches every cell of the chosen column), each status cell
+         carries both tags and shows one, and the set bar carries both status
+         strings and both action buttons. Clear choice only has to untick the
+         radios. -->
+    <style>
+      .app-comparison {
+        width: calc(100% + 48px);
+        margin: 0 -24px;
+        border-collapse: separate;
+        border-spacing: 24px 0;
+        table-layout: fixed;
+      }
+      .app-comparison th,
+      .app-comparison td { padding: 0; border: 0; text-align: left; vertical-align: top; }
+      .app-comparison tfoot { position: sticky; bottom: 96px; z-index: 10; }
+      .app-comparison thead [data-record] { position: relative; z-index: 11; }
+      .app-comparison__choose { padding-bottom: 12px; }
+      [data-set-bar] { height: 96px; box-sizing: border-box; display: flex; align-items: center; }
+      [data-set-bar] > .nhsuk-width-container-fluid { flex: 1; }
+      .app-comparison [data-record] {
+        background: #ffffff;
+        border-left: 1px solid #d8dde0;
+        border-right: 1px solid #d8dde0;
+        padding-left: 1px;
+        padding-right: 1px;
+      }
+      .app-comparison thead tr:first-child [data-record] { border-top: 1px solid #d8dde0; padding-top: 1px; }
+      .app-comparison tfoot [data-record] { border-bottom: 1px solid #d8dde0; padding-bottom: 1px; }
+      .app-comparison tbody th > span { display: block; }
+      .app-comparison tbody tr:not(:last-child) th { border-bottom: 1px solid #d8dde0; }
+      .app-comparison tbody tr:not(:last-child) td {
+        background: linear-gradient(#d8dde0, #d8dde0) no-repeat 24px 100% / calc(100% - 48px) 1px border-box, #ffffff;
+      }
+      .app-record-card__tag--selected,
+      .app-set--selected,
+      [data-clear-choice] { display: none; }
+      {% for n in range(1, recordCount + 1) %}
+      .app-comparison:has(#record-{{ n }}:checked) [data-record="{{ n }}"] { border-left: 2px solid #005eb8; border-right: 2px solid #005eb8; padding-left: 0; padding-right: 0; }
+      .app-comparison:has(#record-{{ n }}:checked) thead tr:first-child [data-record="{{ n }}"] { border-top: 2px solid #005eb8; padding-top: 0; }
+      .app-comparison:has(#record-{{ n }}:checked) tfoot [data-record="{{ n }}"] { border-bottom: 2px solid #005eb8; padding-bottom: 0; }
+      .app-comparison:has(#record-{{ n }}:checked) [data-record="{{ n }}"] .app-record-card__tag--unselected { display: none; }
+      .app-comparison:has(#record-{{ n }}:checked) [data-record="{{ n }}"] .app-record-card__tag--selected { display: inline-block; }
+      {% endfor %}
+      body:has(input[name="preferred-record"]:checked) [data-clear-choice] { display: inline; }
+      body:has(input[name="preferred-record"]:checked) .app-set--unselected { display: none; }
+      body:has(input[name="preferred-record"]:checked) span.app-set--selected { display: inline; }
+      body:has(input[name="preferred-record"]:checked) .nhsuk-button.app-set--selected { display: inline-block; }
+    </style>
+
+    <!-- Duplicate record tables -->
+    <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
+    <!-- One radio group across both tables: the fieldset names the choice, the
+         radios share a name, and each takes its accessible name from its own label
+         followed by its record heading, so the visible words are in the name and the
+         record is too -->
+    <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-u-visually-hidden">Choose the record to keep</legend>
+    <!-- Records 1 to 4 -->
+    <table class="app-comparison">
+      <caption class="nhsuk-u-visually-hidden">Records 1 to 4</caption>
+      <colgroup><col style="width: 10rem;"><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th scope="col"><span class="nhsuk-u-visually-hidden">Field</span></th>
+          <th scope="col" id="record-1-heading" data-record="1"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record 1</h2></th>
+          <th scope="col" id="record-2-heading" data-record="2"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record 2</h2></th>
+          <th scope="col" id="record-3-heading" data-record="3"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record 3</h2></th>
+          <th scope="col" id="record-4-heading" data-record="4"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record 4</h2></th>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Status</span></th>
+          <td data-record="1"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+          <td data-record="2"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+          <td data-record="3"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+          <td data-record="4"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Date</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">3 February 2026</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">3 February 2026</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">3 February 2026</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">3 February 2026</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Time</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">12:00 am</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">12:00 am</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">12:00 am</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">12:00 am</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Age</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">15 years 2 months</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">15 years 2 months</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">15 years 2 months</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">15 years 2 months</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Vaccine</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Priorix</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Priorix</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Priorix</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">MMR</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Source</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Uploaded as a historical vaccination</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Location</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Unknown</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Unknown</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">B86045 (Alderton and District Family Health Partnership)</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Unknown</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Vaccinated by</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">Unknown</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">Unknown</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">Unknown</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">Unknown</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Dose sequence</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">1st</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Unknown</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">1st</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Unknown</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Batch number</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight"><span class="nhsuk-u-font-code">GH3456</span><br><span class="nhsuk-u-secondary-text-colour">Expires 31 May 2027</span></mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight"><span class="nhsuk-u-font-code">GH3456</span><br><span class="nhsuk-u-secondary-text-colour">Expires 31 May 2027</span></mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Reported by</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Ellie Marsh</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Reported on</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">4 February 2026 at 10:22 am</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">5 February 2026 at 2:48 pm</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">4 February 2026 at 9:15 am</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">12 August 2026 at 4:03 pm</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Child identified by</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">The child</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">SNOMED procedure</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">170433008 – Measles mumps and rubella vaccination - first dose</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">38598009 – Measles-mumps-rubella vaccination</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">61153008 – Measles, mumps and rubella vaccine</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Notes</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Method</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Intramuscular (IM) injection</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Intramuscular (IM) injection</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Intramuscular (IM) injection</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Site</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Left arm (upper position)</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Left arm (upper position)</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Dose volume</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">0.5 ml</mark></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">0.5 ml</mark></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Supplier</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Protocol</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Full record</span></th>
+          <td data-record="1"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="/duplicate-training/records/5-records-record-1">View this record</a></p></td>
+          <td data-record="2"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="/duplicate-training/records/5-records-record-2">View this record</a></p></td>
+          <td data-record="3"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="/duplicate-training/records/5-records-record-3">View this record</a></p></td>
+          <td data-record="4"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="/duplicate-training/records/5-records-record-4">View this record</a></p></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Choose</span></th>
+          <td data-record="1"><div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-1" name="preferred-record" type="radio" value="record-1" aria-labelledby="record-1-label record-1-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-1-label" for="record-1">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+          <td data-record="2"><div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-2" name="preferred-record" type="radio" value="record-2" aria-labelledby="record-2-label record-2-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-2-label" for="record-2">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+          <td data-record="3"><div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-3" name="preferred-record" type="radio" value="record-3" aria-labelledby="record-3-label record-3-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-3-label" for="record-3">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+          <td data-record="4"><div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-4" name="preferred-record" type="radio" value="record-4" aria-labelledby="record-4-label record-4-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-4-label" for="record-4">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+        </tr>
+      </tfoot>
+    </table>
+    <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+    <!-- Records 5 and 6: same column plan as above, so the two cards line up under records 1 and 2 -->
+    <table class="app-comparison">
+      <caption class="nhsuk-u-visually-hidden">Records 5 and 6</caption>
+      <colgroup><col style="width: 10rem;"><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th scope="col"><span class="nhsuk-u-visually-hidden">Field</span></th>
+          <th scope="col" id="record-5-heading" data-record="5"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record 5</h2></th>
+          <th scope="col" id="record-6-heading" data-record="6"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record 6</h2></th>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Status</span></th>
+          <td data-record="5"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+          <td data-record="6"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Date</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">3 February 2026</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">3 February 2026</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Time</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">12:00 am</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">12:00 am</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Age</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">15 years 2 months</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">15 years 2 months</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Vaccine</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Priorix</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">M-M-RvaxPro</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Source</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Uploaded as a historical vaccination</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">External source such as GP or SAIS outside Mavis</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Location</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">V81998</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Unknown</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Vaccinated by</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">Unknown</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">Unknown</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Dose sequence</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">1st</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">1st</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Batch number</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight"><span class="nhsuk-u-font-code">GH3456</span><br><span class="nhsuk-u-secondary-text-colour">Expires 31 May 2027</span></mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Reported by</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Tom Baker</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Reported on</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">13 August 2026 at 11:37 am</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">6 February 2026 at 8:51 am</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Child identified by</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">SNOMED procedure</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">170433008 – Measles mumps and rubella vaccination - first dose</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Notes</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Method</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Intramuscular (IM) injection</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Site</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Not provided</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">Right arm (upper position)</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Dose volume</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5"><mark class="app-highlight">0.5 ml</mark></p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Supplier</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">Protocol</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">&nbsp;</p></td>
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Full record</span></th>
+          <td data-record="5"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="/duplicate-training/records/5-records-record-5">View this record</a></p></td>
+          <td data-record="6"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="#">View this record</a></p></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Choose</span></th>
+          <td data-record="5"><div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-5" name="preferred-record" type="radio" value="record-5" aria-labelledby="record-5-label record-5-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-5-label" for="record-5">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+          <td data-record="6"><div class="nhsuk-form-group nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-6" name="preferred-record" type="radio" value="record-6" aria-labelledby="record-6-label record-6-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-6-label" for="record-6">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+        </tr>
+      </tfoot>
+    </table>
+    </fieldset>
+    </div>
+    <!-- /Duplicate record tables -->
+  </div>
+  <!-- Sticky set navigation: game-mode queue bar. Both status strings are
+       placeholder wording. Two action buttons share one link: Skip to next duplicate
+       (white secondary style) shows until a record is chosen, then Review next duplicate
+       (green primary), swapped by the style block on the checked radio. Same link either way, to the next demo scenario as a
+       placeholder for advancing the queue (no real queue or saved state yet);
+       the last set returns to the index. Clear choice sits next to the status
+       text, hidden until a record is chosen; it unticks the radios and
+       the style block returns everything, button included, to the initial state. The spacer
+       below keeps the fixed bar from covering the last grid row when scrolled
+       to the bottom. -->
+  <!-- Clearance for the fixed bar: padding at the very end of the document
+       (below the footer) rather than a spacer above it, so scrolling to the
+       bottom brings the footer fully above the bar -->
+  <style>
+    body { padding-bottom: 96px; }
+  </style>
+  <div data-set-bar style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #ffffff; border-top: 1px solid #d8dde0; padding-bottom: env(safe-area-inset-bottom);">
+    <div class="nhsuk-width-container-fluid nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
+      <div style="max-width: 1720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0"><span class="app-set--unselected" data-set-status>Choose your preferred record</span><span class="app-set--selected" data-set-status>Preferred record chosen</span> <a class="nhsuk-link nhsuk-u-margin-left-2" href="#" data-clear-choice>Clear choice</a></p>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0 app-set--unselected" data-module="nhsuk-button" data-set-action href="/duplicate-training" role="button" draggable="false">Skip to next duplicate</a>
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 app-set--selected" data-module="nhsuk-button" data-set-action href="/duplicate-training" role="button" draggable="false">Review next duplicate</a>
+      </div>
+    </div>
+  </div>
+  <!-- /Sticky set navigation -->
+
+  <!-- Clear choice: the one piece of selection behaviour CSS cannot do. It
+       unticks the radios; the style block keyed on the checked radio then
+       returns everything, tags, borders, status and button, to the initial state. -->
+  <script>
+    document.querySelector("[data-clear-choice]").addEventListener("click", (event) => {
+      event.preventDefault()
+      for (const radio of document.querySelectorAll('input[name="preferred-record"]')) radio.checked = false
+    })
+  </script>
+{% endblock %}
