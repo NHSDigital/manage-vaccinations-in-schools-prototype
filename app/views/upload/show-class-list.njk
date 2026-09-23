@@ -1,13 +1,13 @@
-{% from "upload/_patient-records.njk" import patientRecords with context %}
+{% from "upload/_class-list-records.njk" import classListRecords with context %}
 
 {% extends "_layouts/form.njk" %}
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set programme = data.programmes[upload.programme_id] %}
-{% set needsReview = upload.status in [UploadStatus.Submitted, UploadStatus.Review] %}
+{% set needsReview = upload.status == UploadStatus.Review %}
 {% if needsReview %}
-  {% set title = __("upload.show.approve.title", upload.formatted.createdAt) %}
+  {% set title = __("upload.show.submit.title", upload.formatted.createdAt) %}
 {% else %}
   {% set title = __("upload.show.title", upload.formatted.createdAt) %}
 {% endif %}
@@ -37,7 +37,7 @@
 
   {% if needsReview %}
   <div class="nhsuk-u-reading-width">
-    {{ __("upload.show.approve.description") | nhsukMarkdown }}
+    {{ __("upload.show.submit.description") | nhsukMarkdown }}
   </div>
   {% endif %}
 
@@ -46,19 +46,12 @@
       heading: {
         text: __("upload.show.summary"),
         size: "m"
-      },
-      actions: [
-        {
-          text: __("upload.removeRelationships.label"),
-          href: upload.uri + "/bulk-remove-relationships"
-        }
-      ] if upload.status == UploadStatus.Approved and upload.type != UploadType.Report
+      }
     },
     lastRowBorder: false,
     rows: summaryRows(upload, {
       createdBy: {},
       fileName: {},
-      type: {},
       format: {},
       school: {},
       yearGroups: {},
@@ -69,41 +62,6 @@
       rejectionReason: {}
     })
   }) }}
-
-  {% if upload.status in [UploadStatus.Review, UploadStatus.Rejected] %}
-    {{ patientRecords({
-      key: "new",
-      patients: upload.patients | selectattr("isNewUpload")
-    }) }}
-
-    {{ patientRecords({
-      key: "matched",
-      patients: upload.patients | selectattr("hasMatchingUpload")
-    }) }}
-
-    {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
-    {% if pendingRecords.length %}
-      {% include "upload/_pending-records.njk" %}
-    {% endif %}
-
-    {% if upload.type != UploadType.Report and upload.moves.length %}
-      {% include "upload/_school-moves.njk" %}
-    {% endif %}
-  {% elif upload.status in [UploadStatus.Submitted, UploadStatus.Approved] %}
-    {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
-    {% if pendingRecords.length %}
-      {% include "upload/_pending-records.njk" %}
-    {% endif %}
-
-    {% if upload.type != UploadType.Report and upload.moves.length %}
-      {% include "upload/_school-moves.njk" %}
-    {% endif %}
-
-    {{ patientRecords({
-      key: "imported",
-      patients: upload.patients
-    }) }}
-  {% endif %}
 
   {% if upload.status == UploadStatus.Invalid %}
     {% call card({
@@ -157,6 +115,34 @@
     {% endcall %}
 
     {% include "upload/_failed-records.njk" %}
+  {% else %}
+    {{ heading({
+      caption: {
+        text: "These pupils are in the spreadsheet but are not currently recorded as attending your school in Mavis.",
+        placement: "after"
+      } if params.key != "imported",
+      text: "Pupils who have joined the school",
+      level: 2,
+      size: "m"
+    }) }}
+
+    {% for academicYearGroup, patients in upload.patientsByYearGroup %}
+      {{ classListRecords({ patients: patients }) if academicYearGroup != "undefined" }}
+    {% endfor %}
+
+    {{ heading({
+      caption: {
+        text: "These pupils are recorded as attending your school in Mavis but are not in the spreadsheet.",
+        placement: "after"
+      } if params.key != "imported",
+      text: "Pupils who have left the school",
+      level: 2,
+      size: "m"
+    }) }}
+
+    {% for academicYearGroup, patients in upload.patientsByYearGroup %}
+      {{ classListRecords({ patients: patients }) if academicYearGroup != "undefined" }}
+    {% endfor %}
   {% endif %}
 
   {% if upload.patients.length > 0 and needsReview %}
@@ -165,15 +151,10 @@
     {{ appButtonGroup({
       buttons: [
         {
-          text: __("upload.approve.confirm"),
+          text: __("upload.submit.confirm"),
           attributes: {
-            formaction: upload.uri + "/approve"
+            formaction: upload.uri + "/submit"
           }
-        },
-        {
-          text: __("upload.reject.confirm"),
-          href: upload.uri + "/reject",
-          variant: "warning"
         },
         {
           text: __("upload.delete.confirm"),

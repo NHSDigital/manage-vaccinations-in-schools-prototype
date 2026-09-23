@@ -1,0 +1,34 @@
+{%- from "nhsuk/components/details/macro.njk" import details %}
+{%- from "nhsuk/components/heading/macro.njk" import heading %}
+{%- from "nhsuk/components/tables/macro.njk" import table %}
+
+{% macro classListRecords(params) %}
+  {% if params.patients.length %}
+    {% set patientRows = [] %}
+    {% for patient in params.patients %}
+      {% set patientRows = patientRows | push([
+        { html: patient.formatted.fullNameAndNhsn },
+        { html: patient.formatted.dob },
+        { text: patient.postalCode }
+      ]) %}
+    {% endfor %}
+
+    {{ details({
+      classes: "nhsuk-expander",
+      summary: __mf("upload.show.pupil.count", {
+        yearGroup: params.patients[0].formatted.yearGroup,
+        count: patientRows.length
+      }),
+      html: table({
+        id: "pupils",
+        responsive: true,
+        head: [
+          __("patient.fullNameAndNhsn.label"),
+          __("patient.dob.label"),
+          __("patient.postalCode.label")
+        ],
+        rows: patientRows
+      })
+    }) | replace('class="nhsuk-details__summary"', 'class="nhsuk-details__summary" data-module="app-sticky"') }}
+  {% endif %}
+{% endmacro %}

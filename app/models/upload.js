@@ -150,6 +150,15 @@ export class Upload extends BaseModel {
   }
 
   /**
+   * Get uploaded patient records grouped by year group
+   *
+   * @returns {{[key: string]: Array<Patient>}} Records keyed by year group
+   */
+  get patientsByYearGroup() {
+    return Object.groupBy(this.patients, (patient) => patient.academicYearGroup)
+  }
+
+  /**
    * Get duplicate patient records in upload that need review
    *
    * @returns {Array<Patient>|undefined} Patient records with pending changes
