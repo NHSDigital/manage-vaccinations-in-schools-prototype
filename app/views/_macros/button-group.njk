@@ -1,8 +1,13 @@
 {%- from "x-nhsuk/decorated/button/macro.njk" import button with context %}
 
+{%- set classNames = "nhsuk-button-group" -%}
+
 {% macro appButtonGroup(params) -%}
+{%- if params.classes %}
+  {%- set classNames = classNames ~ " " ~ params.classes -%}
+{%- endif -%}
 {% if params.buttons | removeEmpty | length %}
-<div class="nhsuk-button-group">
+<div class="{{ classNames }}">
 {% for item in params.buttons -%}
 {{- button(item) if item -}}
 {%- endfor -%}
