@@ -123,8 +123,14 @@ export function generateClinicAppointment(
       ? faker.datatype.boolean(0.5)
       : false
   if (extendForSupportNeeds) {
-    // TODO: actually check whether there's space
+    // Attempt to extend the appointment
     editedSlotCount = session.calculateSlotCount(vaccinationChoices) + 1
+
+    // Now actually check whether there's space and squash if necessary
+    const longestAvailable = session.longestAvailableAppointment(startAt)
+    if (longestAvailable < editedSlotCount) {
+      editedSlotCount = longestAvailable
+    }
   }
 
   // Copy the first impairment to the basic additional needs, if present
