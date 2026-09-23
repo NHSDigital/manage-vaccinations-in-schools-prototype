@@ -3666,8 +3666,8 @@ export const en = {
       success: 'Upload approved'
     },
     submit: {
-      confirm: 'Submit records',
-      success: 'Records submitted'
+      confirm: 'Send to vaccination team',
+      success: 'Records sent to vaccination team'
     },
     reject: {
       title: 'Reject uploaded class list',
@@ -3699,11 +3699,18 @@ export const en = {
           'Records in Mavis will only be updated when the upload is approved.'
       },
       submit: {
-        title: 'Review upload (%s)',
+        title: 'Check before sending',
         description:
-          'Review the records in this upload before submitting it to the immunisation team for approval. Records in Mavis will only be updated when the upload is approved.'
+          'Mavis has compared the spreadsheet with the pupil information already in the service.\n\nCheck the changes below before sending your spreadsheet to the vaccination team.'
       },
       summary: 'Details',
+      pupil: {
+        title: 'New records',
+        count:
+          '{yearGroup} ({count, plural, =0 {no pupils} one {1 pupil} other {# pupils}})',
+        summary:
+          'These records are for children who are not currently in Mavis. They will be added when the upload is approved.'
+      },
       new: {
         title: 'New records',
         count:

@@ -59,6 +59,11 @@ export const uploadController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
+    const { account } = response.locals
+
+    if (view === 'show' && account.isSchoolUser) {
+      return response.render(`upload/show-class-list`)
+    }
 
     return response.render(`upload/${view}`)
   },
