@@ -39,10 +39,7 @@
   {% endif %}
 
   {{ details({
-    summary: __("upload.file.format", {
-      format: upload.format,
-      type: upload.type | lower
-    }),
+    summary: __("upload.file.format"),
     html: templateFormat
   }) }}
 

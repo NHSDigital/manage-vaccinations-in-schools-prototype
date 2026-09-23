@@ -3060,7 +3060,7 @@ export const en = {
       }
     },
     'upload-class-list': {
-      title: 'Upload class list'
+      title: 'Upload a spreadsheet'
     },
     list: {
       label: 'Sessions',
@@ -3683,7 +3683,7 @@ export const en = {
     list: {
       label: 'Uploads',
       title: 'Uploads',
-      results: 'All uploads',
+      results: 'View uploads',
       description: 'Upload cohort, class list and vaccination records'
     },
     search: {
@@ -3693,6 +3693,9 @@ export const en = {
       '{count, plural, =0 {There are no uploads to display} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
     show: {
       title: 'Upload (%s)',
+      'class-list': {
+        title: 'Spreadsheet upload (%s)'
+      },
       approve: {
         title: 'Review and approve upload (%s)',
         description:
@@ -3823,8 +3826,8 @@ export const en = {
       success: 'Records uploaded. Mavis is processing the file.'
     },
     edit: {
-      label: 'Upload corrected %s',
-      success: 'Corrected records uploaded. Mavis is processing the file.'
+      label: 'Upload spreadsheet',
+      success: 'Corrected spreadsheet uploaded. Mavis is processing the file.'
     },
     start: {
       title: 'Send pupil information to your vaccination team',
@@ -3863,7 +3866,8 @@ export const en = {
           '## Selecting a school in Arbor\n\n1. Go to **Filters**, select **Institution** then select **Add filter**.\n2. Select the school you’re providing information for.\n3. Select the current academic year, then select **Save**.',
         [UploadFormat.Bromcom]:
           '## Selecting a school in Bromcom\n\nUse the school selector at the top of the page to switch to the school you’re providing information for. Alternatively:\n\n1. Go to **Filters**, select **School**\n2. Select the school you’re providing information for.\n3. Select **Apply**.',
-        [UploadFormat.SIMS]: false
+        [UploadFormat.SIMS]: false,
+        [UploadFormat.Mavis]: false
       }
     },
     yearGroups: {
@@ -3875,7 +3879,8 @@ export const en = {
         [UploadFormat.Bromcom]:
           '## Selecting year groups in Bromcom\n\n1. Go to **Filters**, select **Year Group**, then select **Add filter**.\n2. Select the year groups you’re providing information for.\n3. Check that **Status** is set to **On Roll**, then select **Apply**.',
         [UploadFormat.SIMS]:
-          '## Selecting year groups in SIMS\n\n1. On the filter step, select **Year Group** from the field list.\n2. Select the year groups you’re providing information for.\n3. Add a second filter for **Student Status** and set it to **On Roll**, then select **Next**.'
+          '## Selecting year groups in SIMS\n\n1. On the filter step, select **Year Group** from the field list.\n2. Select the year groups you’re providing information for.\n3. Add a second filter for **Student Status** and set it to **On Roll**, then select **Next**.',
+        [UploadFormat.Mavis]: false
       }
     },
     file: {
@@ -3904,7 +3909,9 @@ export const en = {
       success: 'Relationships removed'
     },
     invalid: {
-      title: 'Records could not be uploaded'
+      title: 'There are problems with your spreadsheet',
+      description:
+        'We could not upload the spreadsheet because some information is missing or in the wrong format.\n\nFix the problems listed below in your spreadsheet, then upload it again.'
     },
     failed: {
       title: 'Too many records could not be matched',
