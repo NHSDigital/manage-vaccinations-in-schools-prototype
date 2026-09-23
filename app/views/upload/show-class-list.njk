@@ -9,7 +9,7 @@
 {% if needsReview %}
   {% set title = __("upload.show.submit.title", upload.formatted.createdAt) %}
 {% else %}
-  {% set title = __("upload.show.title", upload.formatted.createdAt) %}
+  {% set title = __("upload.show.class-list.title", upload.formatted.createdAt) %}
 {% endif %}
 
 {% block beforeContent %}
@@ -74,6 +74,8 @@
       }
     }) %}
       <div class="nhsuk-u-reading-width">
+        {{ __("upload.invalid.description") | nhsukMarkdown }}
+
         {{ actionLink({
           text: __("upload.edit.label", upload.type | lower),
           href: upload.uri + "/edit/file?type=" + upload.type
