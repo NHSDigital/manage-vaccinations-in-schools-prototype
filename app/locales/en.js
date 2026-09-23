@@ -53,7 +53,7 @@ export const en = {
     },
     venueInformation: {
       label: 'Clinic information',
-      hint: 'How to access the clinic — for example, parking or entrance information (this displays in the parent’s booking confirmation)'
+      hint: 'How to access the clinic – for example, parking or entrance information (this displays in the parent’s booking confirmation)'
     }
   },
   defaultBatch: {
@@ -673,7 +673,7 @@ export const en = {
       hits: {
         label: 'Choose one of the following:'
       },
-      tryAgain: 'None of these — try another town, city, or postcode'
+      tryAgain: 'None of these – try another town, city, or postcode'
     },
     sessionSelection: {
       title: 'Choose a clinic for %s’s appointment',
@@ -876,9 +876,9 @@ export const en = {
       title: 'There is not enough time for the appointment',
       description: {
         specificSlot:
-          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you will need to find another start time on the Appointments page',
+          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.\n\nYou can:\n- continue – this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel – you will need to find another start time on the Appointments page',
         anySlot:
-          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But the longest appointment available in this session is {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue — this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel — you can extend the session or find another with more space'
+          'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But the longest appointment available in this session is {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue – this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel – you can extend the session or find another with more space'
       },
       confirm: 'Continue',
       cancel: 'Cancel and return to the Appointments page'
@@ -3246,7 +3246,7 @@ export const en = {
     venueInformation: {
       label: 'Clinic information',
       title: 'Edit clinic information',
-      hint: 'How to access the clinic — for example, parking or entrance information (this displays in the parent’s booking confirmation)'
+      hint: 'How to access the clinic – for example, parking or entrance information (this displays in the parent’s booking confirmation)'
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
