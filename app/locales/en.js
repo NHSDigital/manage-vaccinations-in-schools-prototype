@@ -3289,18 +3289,6 @@ export const en = {
         label: 'The number will not vary'
       }
     },
-    timeForFluNasal: {
-      label: 'Time for nasal spray'
-    },
-    timeForFluInjection: {
-      label: 'Time for injection'
-    },
-    timeForVaccinationsSingle: {
-      label: 'Time for a single vaccination'
-    },
-    timeForVaccinationsMultiple: {
-      label: 'Time for multiple vaccinations'
-    },
     appointmentLengths: {
       label: 'Appointment length',
       title: 'How long are your appointments?',
@@ -3322,6 +3310,9 @@ export const en = {
         long: {
           label:
             'For appointments with multiple vaccinations, do you want to double the appointment length?',
+          twoplus: 'Yes, for 2 or more vaccinations',
+          three: 'Yes, for 3 vaccinations',
+          threeplus: 'Yes, for 3 or more vaccinations',
           yes: 'Yes',
           no: 'No'
         }

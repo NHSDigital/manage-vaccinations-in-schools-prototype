@@ -20,7 +20,8 @@ import {
   SessionType,
   TeamDefaults,
   VaccineCriteria,
-  VaccinationProtocol
+  VaccinationProtocol,
+  VaccineMethod
 } from '../enums.js'
 import {
   Clinic,
@@ -79,7 +80,8 @@ import { BaseModel } from './base.js'
  * @property {boolean} [canVaccinateForOtherProgrammes] - allow programmes beyond those targeted to be administered?
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [slotLength] - the default length of an appointment, in minutes; for flu-only clinics, this is the nasal spray length
- * @property {number} [slotCountForLongAppointment] - the default number of slots covered by a longer appointment i.e. injected flu or multiple injections
+ * @property {boolean} [useTwoSlotsForInjectedFlu] - should we use two slots for IM flu in a flu-only clinics?
+ * @property {number} [vaccinationCountForLongAppointment] - the number of vaccinations that trigger a longer appointment (not used for flu-only clinics)
  * @property {string} [venueInformation] - Venue information e.g. entrance to use, room to find, etc.
  *
  *   Schools only
@@ -156,8 +158,11 @@ export class Session extends BaseModel {
           )
         : []
       this.slotLength = options?.slotLength
-      this.slotCountForLongAppointment = Number(
-        options?.slotCountForLongAppointment
+      this.useTwoSlotsForInjectedFlu = stringToBoolean(
+        options?.useTwoSlotsForInjectedFlu
+      )
+      this.vaccinationCountForLongAppointment = Number(
+        options?.vaccinationCountForLongAppointment
       )
       this.venueInformation = options?.venueInformation
     }
@@ -499,6 +504,47 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Is the session set up to use double-length appointments for some vaccination choices?
+   *
+   * @returns {boolean} - true if we can have long appointments, or false otherwise
+   */
+  get isSetUpForLongerAppointments() {
+    if (this.isFluOnlyClinic) {
+      return this.useTwoSlotsForInjectedFlu
+    }
+
+    return this.vaccinationCountForLongAppointment > 1
+  }
+
+  /**
+   * Get the maximum number of injections that can be booked in this session
+   *
+   * @returns {number} - the maximum number of injections possible
+   */
+  get maximumNumberOfBookableInjections() {
+    if (this.isFluOnlyClinic) {
+      // Shouldn't really need this getter if flu only, but at least this isn't a lie
+      return 1
+    }
+
+    const injectableProgrammes = Programme.findAll(this.context).filter(
+      (programme) =>
+        !programme.isHidden &&
+        programme.vaccines.some(
+          (vaccine) => vaccine.method === VaccineMethod.Injection
+        )
+    )
+
+    if (this.canVaccinateForOtherProgrammes) {
+      return injectableProgrammes.length
+    }
+
+    return injectableProgrammes.filter(({ id }) =>
+      this.programme_ids.includes(id)
+    ).length
+  }
+
+  /**
    * Calculate the default number of slots covered by the given appointment
    *
    * @param {AppointmentLengthFactors} vaccinationChoices - the appointment's vaccination info
@@ -511,7 +557,7 @@ export class Session extends BaseModel {
     // Flu-only sessions will be either a nasal or IM length, the former defining the slot length
     // and will not have any other catch-up vaccinations
     if (this.isFluOnlyClinic) {
-      return isFluNasal ? 1 : this.slotCountForLongAppointment
+      return !isFluNasal && this.useTwoSlotsForInjectedFlu ? 2 : 1
     }
 
     // For all other clinics setups, count only the injections to know how long we need to allocate.
@@ -524,7 +570,7 @@ export class Session extends BaseModel {
     }
     injectionCount += programme_ids.filter((id) => id !== 'flu').length
 
-    return injectionCount > 1 ? this.slotCountForLongAppointment : 1
+    return injectionCount >= this.vaccinationCountForLongAppointment ? 2 : 1
   }
 
   /**
@@ -1446,40 +1492,27 @@ export class Session extends BaseModel {
               return getVaccinationPeriodData().startAndEndTimes
             case 'vaccinators':
               return getVaccinationPeriodData().vaccinatorCounts
-            case 'timeForFluNasal':
-              return this.isFluOnlyClinic
-                ? `${this.slotLength} minutes`
-                : undefined
-            case 'timeForFluInjection':
-              return this.isFluOnlyClinic
-                ? `${this.slotLength * this.slotCountForLongAppointment} minutes`
-                : undefined
-            case 'timeForVaccinationsSingle':
-              return this.isFluOnlyClinic
-                ? undefined
-                : `${this.slotLength} minutes`
-            case 'timeForVaccinationsMultiple':
-              return this.isFluOnlyClinic ||
-                !this.canBeSetUpForLongerAppointments
-                ? undefined
-                : `${this.slotLength * this.slotCountForLongAppointment} minutes`
             case 'appointmentLengths': {
-              if (this.slotCountForLongAppointment > 1) {
-                const singleSlotSuffix = this.isFluOnlyClinic
-                  ? 'for nasal spray'
-                  : 'for single vaccination'
-                const doubleSlotSuffix = this.isFluOnlyClinic
-                  ? 'for injection'
-                  : 'for multiple vaccinations'
-                const singleSlotAppointment = `${this.slotLength} minutes ${singleSlotSuffix}`
-                const doubleSlotAppointment = `${this.slotLength * this.slotCountForLongAppointment} minutes ${doubleSlotSuffix}`
-
-                return [singleSlotAppointment, doubleSlotAppointment].join(
-                  '<br>'
-                )
+              if (!this.isSetUpForLongerAppointments) {
+                return `${this.slotLength} minutes`
               }
 
-              return `${this.slotLength} minutes`
+              let singleSlotSuffix, doubleSlotSuffix
+              if (this.isFluOnlyClinic) {
+                singleSlotSuffix = 'nasal spray'
+                doubleSlotSuffix = 'injection'
+              } else if (this.vaccinationCountForLongAppointment === 2) {
+                singleSlotSuffix = 'a single vaccination'
+                doubleSlotSuffix = '2 or more vaccinations'
+              } else {
+                // This won't be sufficient if we ever offer beyond 3 vaccinations
+                singleSlotSuffix = '1 or 2 vaccinations'
+                doubleSlotSuffix = '3 or more vaccinations'
+              }
+
+              const singleSlotAppointment = `${this.slotLength} minutes for ${singleSlotSuffix}`
+              const doubleSlotAppointment = `${this.slotLength * 2} minutes for ${doubleSlotSuffix}`
+              return [singleSlotAppointment, doubleSlotAppointment].join('<br>')
             }
             case 'totalSlots': {
               return `${this.totalSlotCount}`

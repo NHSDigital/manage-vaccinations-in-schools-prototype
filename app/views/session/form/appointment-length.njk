@@ -24,32 +24,67 @@
     }) }}
     
     {% if session.canBeSetUpForLongerAppointments %}
-      {# Ask about making IM flu or multiple vaccinations longer #}
-      {{ radios({
-        fieldset: {
-          legend: {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.label"),
-            size: "m"
+      {% if session.isFluOnlyClinic %}
+        {# Ask about making IM flu vaccinations longer in flu-only clinics #}
+        {{ radios({
+          fieldset: {
+            legend: {
+              text: __("session.appointmentLengths." + clinicTypeKey + ".long.label"),
+              size: "m"
+            }
+          },
+          items: [
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.yes"),
+            value: true
+          },
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.no"),
+            value: false
           }
-        },
-        items: [
-        {
-          text: __("session.appointmentLengths." + clinicTypeKey + ".long.yes"),
-          value: 2
-        },
-        {
-          text: __("session.appointmentLengths." + clinicTypeKey + ".long.no"),
-          value: 1
-        }
-        ],
-        decorate: "session.slotCountForLongAppointment"
-      }) }}
+          ],
+          decorate: "session.useTwoSlotsForInjectedFlu"
+        }) }}
+      {% else %}
+        {# Ask whether multiple injections should trigger a longer appointment (and how many) #}
+        {{ radios({
+          fieldset: {
+            legend: {
+              text: __("session.appointmentLengths." + clinicTypeKey + ".long.label"),
+              size: "m"
+            }
+          },
+          items: [
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.threeplus"),
+            value: 3
+          } if session.maximumNumberOfBookableInjections > 3,
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.three"),
+            value: 3
+          } if session.maximumNumberOfBookableInjections === 3,
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.twoplus"),
+            value: 2
+          } if session.maximumNumberOfBookableInjections > 2,
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.yes"),
+            value: 2
+          } if session.maximumNumberOfBookableInjections === 2,
+          {
+            text: __("session.appointmentLengths." + clinicTypeKey + ".long.no"),
+            value: 0
+          }
+          ],
+          decorate: "session.vaccinationCountForLongAppointment"
+        }) }}
+      {% endif %}
     {% else %}
-      {# Can't have longer appointments, so just record a neutral value for slotCountForLongAppointment #}
+      {# Can't have longer appointments, so just record neutral value for longer appointments #}
       {{ input({
         type: "hidden",
-        value: 1,
-        decorate: "session.slotCountForLongAppointment"
+        value: 0,
+        decorate: "session.vaccinationCountForLongAppointment"
       }) }}
     {% endif %}
   {% endcall %}

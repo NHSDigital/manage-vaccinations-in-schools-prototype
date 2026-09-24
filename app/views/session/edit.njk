@@ -94,17 +94,8 @@
         vaccinators: {
           href: session.uri + "/edit/vaccinators"
         },
-        timeForFluNasal: {
-          href: session.uri + "/edit/appointment-length" if not session.hasAppointments
-        },
-        timeForFluInjection: {
-          href: session.uri + "/edit/appointment-length" if not session.hasAppointments
-        },
-        timeForVaccinationsSingle: {
-          href: session.uri + "/edit/appointment-length" if not session.hasAppointments
-        },
-        timeForVaccinationsMultiple: {
-          href: session.uri + "/edit/appointment-length" if not session.hasAppointments
+        appointmentLengths: {
+          href: session.uri + "/new/appointment-length" if not session.hasAppointments
         },
         totalSlots: {}
       })

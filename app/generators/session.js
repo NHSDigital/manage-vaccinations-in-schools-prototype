@@ -70,14 +70,28 @@ export function generateSession(preset, user, options) {
   }
 
   const canVaccinateForOtherProgrammes = preset.name !== SessionPresetName.Flu
-  let slotLength, slotCountForLongAppointment
+  let slotLength, useTwoSlotsForInjectedFlu, vaccinationCountForLongAppointment
   if (clinic_id) {
     if (preset.name === SessionPresetName.Flu) {
+      // For flu, make it likely that injections will be double the nasal spray length
       slotLength = faker.datatype.boolean(0.75) ? 5 : 3
-      slotCountForLongAppointment = faker.datatype.boolean(0.9) ? 2 : 1
+      useTwoSlotsForInjectedFlu = faker.datatype.boolean(0.9)
     } else {
       slotLength = faker.datatype.boolean(0.75) ? 10 : 8
-      slotCountForLongAppointment = faker.datatype.boolean(0.9) ? 2 : 1
+      if (preset.name === SessionPresetName.Doubles) {
+        // For doubles, make it unlikely that appointments will be doubled for both vaccinations
+        vaccinationCountForLongAppointment = faker.datatype.boolean(0.95)
+          ? 0
+          : 2
+      } else if (preset.name === SessionPresetName.SummerCatchup) {
+        // For clinics with lots of programmes, make it possible that we'll double the length for 3+ vaccinations
+        vaccinationCountForLongAppointment = faker.datatype.boolean(0.75)
+          ? 2
+          : 3
+      } else {
+        // For all other non-flu clinics, make it likely we'll double the length for 2+ vaccinations
+        vaccinationCountForLongAppointment = faker.datatype.boolean(0.9) ? 2 : 0
+      }
     }
   }
 
@@ -99,7 +113,8 @@ export function generateSession(preset, user, options) {
       canVaccinateForOtherProgrammes,
       clinic_id,
       slotLength,
-      slotCountForLongAppointment
+      useTwoSlotsForInjectedFlu,
+      vaccinationCountForLongAppointment
     }),
     ...(school_id && { type: SessionType.School, school_id, yearGroups })
   })
