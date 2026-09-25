@@ -1,0 +1,499 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Review duplicate vaccination records (user testing set 1)" %}
+{% set containerClasses = "nhsuk-width-container-fluid" %}
+{% set recordCount = 2 %}
+{% set fields = [
+  {"label": "Date", "values": ["5 March 2013", "5 March 2013"]},
+  {"label": "Time", "highlight": true, "values": ["Unknown", "11:00 am"]},
+  {"label": "Age", "values": ["2 years 5 months", "2 years 5 months"]},
+  {"label": "Vaccine", "highlight": true, "values": ["Not provided", "MMR VaxPro"]},
+  {"label": "Source", "highlight": true, "values": ["Uploaded as a historical vaccination", "External source such as GP or SAIS outside Mavis"]},
+  {"label": "Location", "highlight": true, "values": ["The King John School", "Unknown"]},
+  {"label": "Vaccinated by", "values": ["Unknown", "Unknown"]},
+  {"label": "Dose sequence", "values": ["2nd", "2nd"]},
+  {"label": "Batch number", "highlight": true, "values": ["Not provided", {"batch": "a69cd059a", "expires": "31 October 2013"}]},
+  {"label": "Reported by", "values": ["", ""]},
+  {"label": "Reported on", "highlight": true, "values": ["22 April 2026 at 9:54 am", ""]},
+  {"label": "Child identified by", "values": ["", ""]},
+  {"label": "SNOMED procedure", "highlight": true, "values": ["", "170433008 – Administration of second dose of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)"]},
+  {"label": "Notes", "values": ["", ""]},
+  {"label": "Method", "values": ["Not provided", "Not provided"]},
+  {"label": "Site", "highlight": true, "values": ["Not provided", "Right arm (upper position)"]},
+  {"label": "Dose volume", "highlight": true, "values": ["", "0.5 ml"]},
+  {"label": "Supplier", "values": ["", ""]},
+  {"label": "Protocol", "highlight": true, "values": ["Patient group direction (PGD)", ""]}
+] %}
+{% block header %}
+  <!-- Mavis site chrome: environment banner and site header exactly as rendered
+       on /notices, with the Review item current. Static copy for presentation
+       only; these demo pages do not actually live under /notices yet. -->
+  <div class="app-environment nhsuk-tag--grey">
+    <div class="nhsuk-width-container">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Prototype</strong>
+      This is a prototype used for research.
+    </div>
+  </div>
+  <header class="nhsuk-header" data-module="nhsuk-header" role="banner">
+    <div class="nhsuk-header__container nhsuk-width-container">
+      <div class="nhsuk-header__service">
+        <a class="nhsuk-header__service-logo" href="/home" aria-label="NHS Manage vaccinations in schools homepage">
+          <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+            <title>NHS</title>
+            <path fill="currentcolor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+          </svg>
+          <span class="nhsuk-header__service-name">Manage vaccinations in schools</span>
+        </a>
+      </div>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            JOY, Jane (Nurse)
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/change-role">Change role</a>
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/sign-out">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/schools">Schools</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/patients">Children</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/sessions">Sessions</a>
+          </li>
+          <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--current app-header__navigation-item--with-badge">
+            <a class="nhsuk-header__navigation-link" href="/reviews" aria-current="true"><strong class="nhsuk-header__navigation-item-current-fallback">Review<strong class="app-badge">124</strong></strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/reports">Reports</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/uploads">Uploads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/downloads">Downloads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/vaccines">Vaccines</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/teams/001">Your team</a>
+          </li>
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse </span>More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <!-- Standard-width band: the Review chrome and the patient tier of the page
+       header stay the standard page width (1100px here), matching the site
+       header. The duplicate details panel and record grid below share the wider
+       card canvas. margin: 0 auto stops the nested width container doubling the
+       fluid containers side margins at narrower viewports. -->
+  <div class="nhsuk-width-container" style="margin: 0 auto">
+    <!-- Error summary, pre-rendered and hidden. In Rails the controller renders it
+         when the form is submitted with no record chosen (server-side validation on
+         the form); here the scaffolding script shows it and moves focus to it. The
+         nhsukErrorSummary module is what focuses it on a real page load. -->
+    <div class="nhsuk-error-summary" data-module="nhsuk-error-summary" data-choose-error-summary tabindex="-1" hidden>
+      <div role="alert">
+        <h2 class="nhsuk-error-summary__title">There is a problem</h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            <li><a href="#record-1">Choose a record to continue</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Review section chrome: page heading and section navigation as on /notices,
+         plus a Duplicates tab shown as current and linking to the start page. The other
+         tabs are presentation only, and these pages do not actually live under /notices yet. -->
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-l">Review</h1>
+        <nav class="app-section-navigation" data-module="app-section-navigation" aria-label="Section navigation">
+          <ul class="app-section-navigation__list">
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/notices">Important notices<span class="app-section-navigation__suffix"><strong class="app-badge">4</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/consents">Consent responses<span class="app-section-navigation__suffix"><strong class="app-badge">0</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/unmatched-appointments">Clinic appointments<span class="app-section-navigation__suffix"><strong class="app-badge">23</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item">
+              <a class="app-section-navigation__link" href="/moves">School moves<span class="app-section-navigation__suffix"><strong class="app-badge">90</strong></span></a>
+            </li>
+            <li class="app-section-navigation__item app-section-navigation__item--current">
+              <a class="app-section-navigation__link" href="/duplicate-training/start" aria-current="page"><strong class="app-section-navigation__current">Duplicate records<span class="app-section-navigation__suffix"><strong class="app-badge" data-duplicates-badge>6</strong></span></strong></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- /Review section chrome -->
+  <!-- Live count on the Duplicate records tab: the six user testing sets minus those
+       moved past in this browser session. The test pages record an advance when the
+       action button goes on to the next set, or the in-page comment panel records one
+       on Submit; nothing else changes the number, so demo pages only display it. -->
+  <script>
+    (() => {
+      const render = () => {
+        let progressed = []
+        try { progressed = JSON.parse(sessionStorage.getItem("duplicate-training:progressed") || "[]") } catch (error) {}
+        for (const badge of document.querySelectorAll("[data-duplicates-badge]")) badge.textContent = String(Math.max(0, 6 - progressed.length))
+      }
+      render()
+      window.addEventListener("pageshow", render)
+    })()
+  </script>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+
+        <!-- Duplicate page header -->
+
+        <!-- Patient name -->
+        <h1 class="nhsuk-heading-l nhsuk-u-display-inline-block nhsuk-u-margin-bottom-3">
+          Alfie Doherty
+        </h1>
+        <a class="nhsuk-link nhsuk-u-margin-left-3" href="/duplicate-training/test-1-child">View full child record</a>
+
+        <!-- Patient details -->
+        <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">NHS Number</span><br>
+              999 512 3401
+            </p>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">Date of birth</span><br>
+              14 September 2010 (aged 15)
+            </p>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <p class="nhsuk-body nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-u-font-weight-bold">Address</span><br>
+              8 Chalkwell Avenue, Benfleet, SS7 1AY
+            </p>
+          </div>
+        </div>
+
+        <!-- /Duplicate page header -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Card canvas: duplicate details panel and record comparison grid, centred and
+       capped at 1720px. The NHS design system has no wide-container token
+       (standard page width is 1100px in this prototype), so the cap is set
+       directly. Below 1280px viewports each grid stops compressing (min-width
+       1216px = 1280px minus the 2 x 32px page margins) and the page gains a
+       horizontal scrollbar instead: there is no overflow-x wrapper, because an
+       overflow container would become the sticky scrollport and stop the
+       Choose this record table feet sticking to the viewport. -->
+  <div style="max-width: 1720px; margin: 0 auto;">
+    <!-- Duplicate summary: reuses the Mavis listing-page sidebar treatment
+         (app-filters card: translucent grey-4 background, card
+         border, no feature heading tab) -->
+    <div class="nhsuk-card app-filters nhsuk-u-margin-bottom-0 nhsuk-u-padding-left-0 nhsuk-u-padding-right-0 nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-card__content">
+        <!-- Highlight differences toggle: small checkbox, on by default, sits on
+             the right of the panel. No script: the style block below keys off the
+             checkbox's own checked state with :has(), so unticking neutralises
+             every app-highlight mark without touching the markup -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; column-gap: 24px;">
+          <div>
+            <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">2 duplicate MMR records</h2>
+            <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-margin-bottom-0">We have 2 records for the same vaccination dated 5 March 2013. Help us learn how to manage duplicates by choosing the record you trust most.</p>
+          </div>
+          <div class="nhsuk-form-group nhsuk-u-margin-bottom-0" style="flex-shrink: 0;">
+            <div class="nhsuk-checkboxes nhsuk-checkboxes--small" data-module="nhsuk-checkboxes">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="highlight-differences" name="highlight-differences" type="checkbox" value="yes" checked>
+                <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="highlight-differences">
+                  Highlight differences
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+      body:has(#highlight-differences:not(:checked)) .app-highlight {
+        border-bottom-color: transparent;
+        background-color: transparent;
+      }
+      body:has(#highlight-differences:not(:checked)) .app-highlight::before,
+      body:has(#highlight-differences:not(:checked)) .app-highlight::after {
+        content: none;
+      }
+    </style>
+
+    <!-- Table version of the record comparison. Each table is a real table: the
+         first column holds the field names as row headers, the first head row
+         holds the record headings as column headers, so every cell is associated
+         with its field and its record. The second head row holds the status tag
+         for each record. The Choose this record radios are the table foot, which
+         is position: sticky with a bottom offset clearing the fixed set bar: the
+         foot floats above the bar while the table is taller than the viewport and
+         settles at the card bottom when the end scrolls into view, as the card
+         footers did, with no sentinels or observers. Two details the card
+         footers left to observers are handled in CSS here. The head cells are
+         layered above the foot, so when a table's top is near the bottom of the
+         viewport and the foot clamps against it, the foot sits behind the heading
+         and tag rather than over them, and slides out from under them as the
+         table scrolls up. And the set bar has a 96px minimum height, the same
+         figure as the foot's default sticky offset, so the pinned foot sits flush
+         on the bar with no strip for the field rows to show through. On this
+         page the bar grows when the comment panel opens, so the foot offset and
+         the page's bottom spacer both read --app-set-bar-height, one value the
+         scaffolding script measures from the bar when the panel opens or closes.
+
+         Card look, by column: every cell in a record column carries the white
+         background and the card's left and right border, the first head row adds
+         the top edge and the foot the bottom edge, and border-spacing
+         opens the 24px gap between columns. The field column has no card styling
+         and sits on the grey canvas. The base nhsuk cell padding and rules are
+         reset first, so the only lines are the ones set here. A 1px transparent inset on the outer edges
+         becomes part of the border when a record is chosen, so the 2px blue
+         outline never moves the content. The field rows keep the inset bottom
+         rule of the card layouts, painted on the cell as a 1px background line
+         24px in from each edge rather than on the inner paragraph: the cell
+         always fills the row, so the rules of one row sit on one line however
+         tall its tallest value, as the grid cards do. The field names sit in a
+         block span inside their header cell, since the nhsuk-body-s class would
+         otherwise turn the cell itself into a block and shrink it to its text.
+
+         Live selection is CSS, keyed on the checked radio: the table is the anchor
+         (:has() on it reaches every cell of the chosen column), each status cell
+         carries both tags and shows one, and the set bar carries both status
+         strings. The bar's buttons do not change with the selection. -->
+    <style>
+      .app-comparison {
+        width: calc(100% + 48px);
+        margin: 0 -24px;
+        border-collapse: separate;
+        border-spacing: 24px 0;
+        table-layout: fixed;
+      }
+      .app-comparison th,
+      .app-comparison td { padding: 0; border: 0; text-align: left; vertical-align: top; }
+      .app-comparison tfoot { position: sticky; bottom: var(--app-set-bar-height, 96px); z-index: 10; }
+      body { padding-bottom: var(--app-set-bar-height, 96px); }
+      .app-comparison thead [data-record] { position: relative; z-index: 11; }
+      .app-comparison__choose { padding-bottom: 12px; }
+      [data-set-bar] { min-height: 96px; box-sizing: border-box; display: flex; align-items: center; }
+      [data-set-bar] > .nhsuk-width-container-fluid { flex: 1; }
+      .app-comparison [data-record] {
+        background: #ffffff;
+        border-left: 1px solid #d8dde0;
+        border-right: 1px solid #d8dde0;
+        padding-left: 1px;
+        padding-right: 1px;
+      }
+      .app-comparison thead tr:first-child [data-record] { border-top: 1px solid #d8dde0; padding-top: 1px; }
+      .app-comparison tfoot [data-record] { border-bottom: 1px solid #d8dde0; padding-bottom: 1px; }
+      .app-comparison tbody th > span { display: block; }
+      .app-comparison tbody tr:not(:last-child) th { border-bottom: 1px solid #d8dde0; }
+      .app-comparison tbody tr:not(:last-child) td {
+        background: linear-gradient(#d8dde0, #d8dde0) no-repeat 24px 100% / calc(100% - 48px) 1px border-box, #ffffff;
+      }
+      .app-record-card__tag--selected,
+      .app-set--selected { display: none; }
+      /* Prototype only: the pre-rendered errors stay hidden until the scaffolding shows
+         them; nhsuk-error-message sets display: block, which beats the hidden attribute */
+      .nhsuk-error-message[hidden],
+      .nhsuk-error-summary[hidden] { display: none; }
+      {% for n in range(1, recordCount + 1) %}
+      .app-comparison:has(#record-{{ n }}:checked) [data-record="{{ n }}"] { border-left: 2px solid #005eb8; border-right: 2px solid #005eb8; padding-left: 0; padding-right: 0; }
+      .app-comparison:has(#record-{{ n }}:checked) thead tr:first-child [data-record="{{ n }}"] { border-top: 2px solid #005eb8; padding-top: 0; }
+      .app-comparison:has(#record-{{ n }}:checked) tfoot [data-record="{{ n }}"] { border-bottom: 2px solid #005eb8; padding-bottom: 0; }
+      .app-comparison:has(#record-{{ n }}:checked) [data-record="{{ n }}"] .app-record-card__tag--unselected { display: none; }
+      .app-comparison:has(#record-{{ n }}:checked) [data-record="{{ n }}"] .app-record-card__tag--selected { display: inline-block; }
+      {% endfor %}
+      body:has(input[name="preferred-record"]:checked) .app-set--unselected { display: none; }
+      body:has(input[name="preferred-record"]:checked) .app-set--selected { display: inline; }
+    </style>
+
+    <!-- Duplicate record tables -->
+    <div class="nhsuk-u-padding-5" style="background: #f0f4f5; box-shadow: inset 0 1px 7px rgba(0,0,0,0.1); border: 1px solid #d8dde0; border-top: 0;">
+    <!-- The choice is a form: the radios below hold the state and Submit in the set
+         bar is this form's submit button (form attribute), so choosing and submitting
+         work with HTML alone. The inline error is pre-rendered and hidden: in Rails
+         the controller renders it, the error class on the form group and the
+         aria-describedby on the fieldset when no record is chosen (server-side
+         validation on the form); here the scaffolding script does the same. -->
+    <form id="choose-record" method="post" action="/duplicate-training/test-2" data-choose-form>
+    <div class="nhsuk-form-group nhsuk-u-margin-bottom-0" data-choose-group>
+    <!-- One radio group across the tables: the fieldset names the choice, the
+         radios share a name, and each takes its accessible name from its own label
+         followed by its record heading, so the visible words are in the name and the
+         record is too. Records wrap after four, each table repeating the field
+         labels; all cells come from the fields data block at the top of the page -->
+    <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-u-visually-hidden">Choose the record to keep</legend>
+    <span class="nhsuk-error-message" id="preferred-record-error" data-choose-error hidden><span class="nhsuk-u-visually-hidden">Error:</span> Choose a record to continue</span>
+    {% for group in range(0, recordCount) | batch(4) %}
+    {% set first = group[0] + 1 %}{% set last = group[group.length - 1] + 1 %}
+    {% if not loop.first %}<hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">{% endif %}
+    <table class="app-comparison">
+      <caption class="nhsuk-u-visually-hidden">{% if first == last %}Record {{ first }}{% elif last - first == 1 %}Records {{ first }} and {{ last }}{% else %}Records {{ first }} to {{ last }}{% endif %}</caption>
+      <colgroup><col style="width: 10rem;"><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th scope="col"><span class="nhsuk-u-visually-hidden">Field</span></th>
+          {% for i in group %}
+          <th scope="col" id="record-{{ i + 1 }}-heading" data-record="{{ i + 1 }}"><h2 class="nhsuk-heading-s nhsuk-u-padding-top-5 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">Record {{ i + 1 }}</h2></th>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Status</span></th>
+          {% for i in group %}
+          <td data-record="{{ i + 1 }}"><div class="nhsuk-u-padding-left-5 nhsuk-u-padding-right-5">
+            <strong class="nhsuk-tag nhsuk-tag--grey nhsuk-u-margin-bottom-2 app-record-card__tag--unselected">Duplicate record</strong>
+            <strong class="nhsuk-tag nhsuk-tag--blue nhsuk-u-margin-bottom-2 app-record-card__tag--selected">Your preferred record</strong>
+          </div></td>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for field in fields %}
+        <tr>
+          <th scope="row"><span class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-font-weight-bold">{{ field.label }}</span></th>
+          {% for i in group %}{% set value = field.values[i] %}
+          <td data-record="{{ i + 1 }}"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-margin-left-5 nhsuk-u-margin-right-5">
+            {%- if value.batch -%}
+              {% if field.highlight %}<mark class="app-highlight">{% endif %}<span class="nhsuk-u-font-code">{{ value.batch }}</span>{% if value.expires %}<br><span class="nhsuk-u-secondary-text-colour">Expires {{ value.expires }}</span>{% endif %}{% if field.highlight %}</mark>{% endif %}
+            {%- elif value == "" -%}
+              {% if field.highlight %}<mark class="app-highlight nhsuk-u-padding-left-2 nhsuk-u-padding-right-2">&nbsp;</mark>{% else %}&nbsp;{% endif %}
+            {%- elif field.highlight -%}
+              <mark class="app-highlight">{{ value }}</mark>
+            {%- else -%}
+              {{ value }}
+            {%- endif -%}
+          </p></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Full record</span></th>
+          {% for i in group %}
+          <td data-record="{{ i + 1 }}"><p class="nhsuk-body-s nhsuk-u-margin-bottom-0 nhsuk-u-padding-top-2 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"><a class="nhsuk-link" href="/duplicate-training/records/test-1-record-{{ i + 1 }}">View this record</a></p></td>
+          {% endfor %}
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row"><span class="nhsuk-u-visually-hidden">Choose</span></th>
+          {% for i in group %}
+          <td data-record="{{ i + 1 }}"><div class="nhsuk-u-padding-top-2 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5 app-comparison__choose">
+            <div class="nhsuk-radios nhsuk-radios--small" data-module="nhsuk-radios">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="record-{{ i + 1 }}" name="preferred-record" type="radio" value="record-{{ i + 1 }}" aria-labelledby="record-{{ i + 1 }}-label record-{{ i + 1 }}-heading">
+                <label class="nhsuk-label nhsuk-radios__label nhsuk-u-font-size-16" id="record-{{ i + 1 }}-label" for="record-{{ i + 1 }}">Choose this record</label>
+              </div>
+            </div>
+          </div></td>
+          {% endfor %}
+        </tr>
+      </tfoot>
+    </table>
+    {% endfor %}
+    </fieldset>
+    </div>
+    </form>
+    </div>
+    <!-- /Duplicate record tables -->
+  </div>
+  <!-- Sticky set navigation: game-mode queue bar. Both status strings are
+       placeholder wording, swapped by the style block on the checked radio. Two
+       buttons, unchanged by the selection: Skip (white secondary style) and Submit
+       (green primary). Submit is the choose-record form's submit button; with no
+       record chosen it produces the validation error above the page. Skip goes to
+       the next set whatever is chosen. With Tell us about this decision ticked the
+       scaffolding script shows Add comment in place of Submit, and either button
+       opens the comment panel instead of leaving the page. Both lead to the next
+       demo scenario as a placeholder for advancing the queue; the last set goes to
+       the completion page. -->
+  <!-- Clearance for the fixed bar is the body's bottom padding, set from
+       --app-set-bar-height in the style block above -->
+  <div data-set-bar data-set="test-1" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: #ffffff; border-top: 1px solid #d8dde0; padding-bottom: env(safe-area-inset-bottom);">
+    <div class="nhsuk-width-container-fluid nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3">
+      <div style="max-width: 1720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; column-gap: 24px;">
+        <p class="nhsuk-body-s nhsuk-u-margin-bottom-0"><span class="app-set--unselected" data-set-status>Choose your preferred record</span><span class="app-set--selected" data-set-status>Preferred record chosen</span></p>
+        <div style="display: flex; align-items: center; column-gap: 24px; flex-wrap: wrap; row-gap: 8px; justify-content: flex-end;">
+          <!-- Optional comment step, for a choice or a skip: when ticked the button pressed
+               opens the comment panel below instead of leaving the page, and the script
+               swaps Submit for the Add comment sibling -->
+          <div class="nhsuk-checkboxes nhsuk-checkboxes--small nhsuk-u-margin-bottom-0">
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="tell-us" name="tell-us" type="checkbox" value="yes" data-comment-toggle>
+              <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="tell-us">Tell us about this decision</label>
+            </div>
+          </div>
+          <!-- Skip: a link here, so it works without scripts and ignores the radios. In
+               Rails it becomes a second submit button on the form, name="action"
+               value="skip", so the server records the skip. -->
+          <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" data-module="nhsuk-button" data-set-action="skip" href="/duplicate-training/test-2" role="button" draggable="false">Skip to next duplicate</a>
+          <button class="nhsuk-button nhsuk-u-margin-bottom-0" data-module="nhsuk-button" type="submit" form="choose-record" data-set-action="submit">Confirm your choice</button>
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-display-none" data-module="nhsuk-button" data-set-action="comment" href="/duplicate-training/test-2" role="button" draggable="false">Add comment</a>
+        </div>
+      </div>
+      <!-- In-situ comment panel: opens inside the bar, under the controls row, so the
+           duplicate records stay on screen above it while the tester writes. Hidden
+           until Skip or Add comment is pressed with Tell us about this decision ticked.
+           The question follows the button pressed: Skip, or a chosen record. Submit stores
+           decision and text together under duplicate-training:comment:test-1 and logs
+           them to the console, then moves on to the next set exactly as the bar would
+           have; nothing is sent anywhere. Cancel, or unticking the checkbox, collapses
+           the panel and clears the text, leaving the choice and checkbox as they were.
+           While open the bar is taller, so the page clearance and the sticky card
+           footers are moved up to match. -->
+      <div data-comment-panel hidden style="max-width: 1720px; margin: 16px auto 0; padding-top: 16px; border-top: 1px solid #d8dde0;">
+        <form action="/duplicate-training/test-2" method="get" data-comment-form>
+          <div class="nhsuk-form-group nhsuk-u-margin-bottom-3">
+            <label class="nhsuk-label nhsuk-label--s nhsuk-u-margin-bottom-1" for="comment" data-comment-question>Tell us why</label>
+            <div class="nhsuk-hint nhsuk-u-font-size-16 nhsuk-u-margin-bottom-2" id="comment-hint">Optional. This is for the Mavis team and does not change the child’s vaccination history.</div>
+            <textarea class="nhsuk-textarea" id="comment" name="comment" rows="3" aria-describedby="comment-hint" style="max-width: 44em;"></textarea>
+          </div>
+          <div class="nhsuk-button-group nhsuk-u-margin-bottom-0">
+            <button class="nhsuk-button nhsuk-u-margin-bottom-0" data-module="nhsuk-button" type="submit">Submit and review next duplicate</button>
+            <a class="nhsuk-link" href="#" data-comment-cancel>Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- /Sticky set navigation -->
+
+  <!-- Research scaffolding, one shared file rather than inline copies: the simulated
+       server-side validation on Submit, then for the test sets only: remember and restore
+       the choice per set, open and close the comment panel and swap in Add comment,
+       measure the bar into --app-set-bar-height, and store the decision on Submit or Skip. -->
+  <script src="/assets/javascripts/duplicate-training.js" type="module"></script>
+{% endblock %}
