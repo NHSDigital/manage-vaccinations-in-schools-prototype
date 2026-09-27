@@ -417,7 +417,7 @@ export const en = {
     arrivalTime: {
       label: 'Arrival time'
     },
-    preferredPostcode: {
+    preferredPostcodeFeedback: {
       label: 'Preferred clinic location'
     },
     abandonmentReasons: {

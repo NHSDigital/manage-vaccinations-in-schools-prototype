@@ -26,3 +26,32 @@ export const getLocationSearchType = (searchTerm) => {
 
   return LocationSearchType.Place
 }
+
+/**
+ * Extract the postcode sector from a full UK postcode
+ *
+ * @param {string} postcode - e.g. "NE1 4DA" or "ne14da"
+ * @returns {string|undefined} - e.g. "NE1 4" or undefined if postcode was invalid
+ */
+export const getPostcodeSector = (postcode) => {
+  if (!postcode || typeof postcode !== 'string') return undefined
+
+  // Normalise string: trim extra whitespace and convert to upper case
+  const clean = postcode.trim().toUpperCase()
+
+  // Standard UK postcode regex to validate and capture parts:
+  // Group 1: Outcode (e.g., SW1A or NE12)
+  // Group 2: Sector digit (e.g., 1 or 7)
+  const postcodeRegex = /^([A-Z]{1,2}\d[A-Z\d]?)\s*(\d)[A-Z]{2}$/
+
+  const match = clean.match(postcodeRegex)
+
+  if (!match) {
+    return undefined // Input was not a valid full UK postcode
+  }
+
+  const outcode = match[1]
+  const sectorDigit = match[2]
+
+  return `${outcode} ${sectorDigit}`
+}

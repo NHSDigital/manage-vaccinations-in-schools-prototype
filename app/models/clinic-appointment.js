@@ -8,6 +8,7 @@ import {
   ClinicAppointmentStatus,
   ConsentVaccineCriteria,
   Impairment,
+  LocationSearchType,
   ParentalRelationship,
   ProgrammeType,
   RegistrationStatus,
@@ -26,6 +27,10 @@ import {
   Session,
   User
 } from '../models.js'
+import {
+  getLocationSearchType,
+  getPostcodeSector
+} from '../utils/geolocation.js'
 import {
   ConjunctionType,
   programmeNamesListForSentence
@@ -776,6 +781,17 @@ export class ClinicAppointment {
 
             case 'register':
               return this.patientSessions.at(0)?.formatted?.register
+
+            case 'preferredPostcodeFeedback': {
+              switch (getLocationSearchType(this.preferredPostcode)) {
+                case LocationSearchType.Postcode:
+                  return getPostcodeSector(this.preferredPostcode)
+                case LocationSearchType.Outcode:
+                  return this.preferredPostcode
+                default:
+                  return undefined
+              }
+            }
 
             case 'abandonmentReasons':
               return formatList(
