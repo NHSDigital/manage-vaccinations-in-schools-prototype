@@ -537,12 +537,15 @@ export const bookIntoClinicController = {
       const { data, referrer } = request.session
       const booking_uuid = response.locals.booking.uuid
 
-      // Make sure the pages are working with the values from the wizard context
-      let booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-      response.locals.booking = new ClinicBooking(booking, data)
+      // Make sure the pages are working with the values from the wizard context,
+      // but with access to the global context e.g. for the appointment's patient
+      const booking = new ClinicBooking(
+        ClinicBooking.findOne(booking_uuid, data.wizard),
+        data
+      )
+      response.locals.booking = booking
       response.locals.appointment =
-        appointment_uuid &&
-        response.locals.booking.findAppointment(appointment_uuid)
+        appointment_uuid && booking.findAppointment(appointment_uuid)
 
       // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
       // that postcode is pushed to the appointment
