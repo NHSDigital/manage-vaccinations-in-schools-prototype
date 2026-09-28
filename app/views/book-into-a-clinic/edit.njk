@@ -8,9 +8,10 @@
 {%- endmacro %}
 
 {% block form %}
-  {{ appHeading({
+  {{ heading({
     caption: appointmentCaption,
-    title: title
+    text: title,
+    size: "l"
   }) }}
 
   {{ summaryList({
