@@ -12,6 +12,7 @@ import {
 } from '../enums.js'
 import {
   Clinic,
+  ClinicAppointment,
   ClinicBooking,
   Contact,
   Patient,
@@ -22,6 +23,7 @@ import {
   getClinicBookableProgrammeIDs,
   getAppointmentProgrammeOptions,
   getAllAppointmentPaths,
+  getJourneyPathBuilder,
   getPreviousAddressItems,
   getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
@@ -274,6 +276,35 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * For routes that identify an appointment without its booking, read both the booking and the appointment
+   *
+   * @type {RequestParamHandler}
+   */
+  readBookingAndAppointment(request, response, next, appointment_uuid) {
+    const { data } = request.session
+
+    const appointment = ClinicAppointment.findOne(appointment_uuid, data)
+    if (!appointment) {
+      return next('route')
+    }
+
+    bookIntoClinicController.readBooking(
+      request,
+      response,
+      () =>
+        bookIntoClinicController.readAppointment(
+          request,
+          response,
+          next,
+          appointment_uuid,
+          'appointment_uuid'
+        ),
+      appointment.booking_uuid,
+      'booking_uuid'
+    )
+  },
+
+  /**
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readChildren(request, response, next) {
@@ -340,9 +371,10 @@ export const bookIntoClinicController = {
     const { patient_uuid } = /** @type {{ patient_uuid?: string }} */ (
       request.query
     )
-    const { appointment_uuid, booking_uuid } = request.params
+    const { appointment_uuid } = request.params
     const { data } = request.session
-    const { appointmentPath } = response.locals
+    const { appointmentPath, booking } = response.locals
+    const booking_uuid = booking.uuid
 
     const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
     const appointment = wizardBooking.findAppointment(appointment_uuid)
@@ -370,9 +402,10 @@ export const bookIntoClinicController = {
    */
   edit(request, response) {
     console.log('edit')
-    const { booking_uuid, appointment_uuid } = request.params
+    const { appointment_uuid } = request.params
     const { data } = request.session
     const { __ } = response.locals
+    const booking_uuid = response.locals.booking.uuid
 
     // Copy the existing booking to the wizard context, if not already there
     let booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -407,7 +440,7 @@ export const bookIntoClinicController = {
     )
 
     // Show back link to patient session page
-    const appointment = booking.findAppointment(appointment_uuid)
+    const appointment = bookingWithFullContext.findAppointment(appointment_uuid)
     if (appointment) {
       response.locals.back = appointment.uri.matched
     }
@@ -421,9 +454,10 @@ export const bookIntoClinicController = {
    */
   update(action) {
     return (request, response) => {
-      const { appointment_uuid, booking_uuid } = request.params
+      const { appointment_uuid } = request.params
       const { data } = request.session
       const { __, booking, paths, patient, session } = response.locals
+      const booking_uuid = booking.uuid
 
       // Save to the global context
       ClinicBooking.update(booking_uuid, booking, data)
@@ -469,9 +503,10 @@ export const bookIntoClinicController = {
   updateFeedback(action) {
     action // unused so far
     return (request, response) => {
-      const { booking_uuid, appointment_uuid } = request.params
+      const { appointment_uuid } = request.params
       const { data } = request.session
       const { booking, paths } = response.locals
+      const booking_uuid = booking.uuid
 
       // Clean up session data
       delete data.booking
@@ -498,8 +533,9 @@ export const bookIntoClinicController = {
     console.log('readForm')
 
     return (request, response, next) => {
-      const { appointment_uuid, booking_uuid, view } = request.params
+      const { appointment_uuid, view } = request.params
       const { data, referrer } = request.session
+      const booking_uuid = response.locals.booking.uuid
 
       // Make sure the pages are working with the values from the wizard context
       let booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -520,23 +556,24 @@ export const bookIntoClinicController = {
         ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
       }
 
-      // Paths are relative to wherever this router is mounted
-      const getPath = (view, appointment_uuid) =>
-        appointment_uuid
-          ? `/${booking_uuid}/${action}/${appointment_uuid}/${view}`
-          : `/${booking_uuid}/${action}/${view}`
+      // When editing, only the appointment being edited is part of the journey
+      const appointments =
+        action === 'edit'
+          ? booking.appointments.filter(({ uuid }) => uuid === appointment_uuid)
+          : booking.appointments
 
+      const getPath = getJourneyPathBuilder(request, action)
       const journey = {
         // Appointment journey; once per child
         ...getAllAppointmentPaths(
           booking_uuid,
           request.session.data,
-          booking.appointments,
+          appointments,
           getPath
         ),
 
         // Confirmation! \o/
-        [`/${booking_uuid}/new/confirmation`]: {}
+        ...(action === 'new' ? { [getPath('confirmation')]: {} } : {})
       }
 
       const paths = wizard(journey, request)
@@ -553,7 +590,8 @@ export const bookIntoClinicController = {
   showForm(request, response) {
     const { __mf, appointment, patient } = response.locals
     const { data } = request.session
-    let { booking_uuid, view } = request.params
+    let { view } = request.params
+    const booking_uuid = response.locals.booking.uuid
 
     // Adapt content in the views for the journey's audience
     const journeyType =
@@ -786,9 +824,10 @@ export const bookIntoClinicController = {
   updateForm(action) {
     action // unused so far
     return (request, response) => {
-      const { booking_uuid, appointment_uuid, view } = request.params
+      const { appointment_uuid, view } = request.params
       const { data } = request.session
       const { paths } = response.locals
+      const booking_uuid = response.locals.booking.uuid
 
       // Store values from the posted form
       if (request.body.booking) {
