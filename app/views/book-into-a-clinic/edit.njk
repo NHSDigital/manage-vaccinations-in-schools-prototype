@@ -4,7 +4,7 @@
 {% set title = __("clinicBooking.edit.title") %}
 
 {% macro changePathWithReferrer(view) -%}
-  {{- appointment.uri.edit }}/{{ view }}?referrer={{ appointment.uri.edit }}/edit
+  {{- appointment.uri.edit }}/{{ view }}?referrer={{ appointment.uri.edit }}
 {%- endmacro %}
 
 {% block form %}

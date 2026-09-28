@@ -90,6 +90,30 @@ export const getAppointmentProgrammeOptions = (programme_ids, context) => {
  */
 
 /**
+ * Get a builder for journey paths, relative to wherever the router handling this request is mounted
+ *
+ * Booking-based routes (e.g. /book-into-a-clinic/:booking_uuid/new/:appointment_uuid/:view) include the booking
+ * UUID in the path, whereas appointment-based routes (e.g. /sessions/:session_id/appointments/:appointment_uuid/edit/:view)
+ * don't, and have no booking-level views.
+ *
+ * @param {Request} request - the request being handled
+ * @param {string} action - action being carried out i.e. create new vs edit existing
+ * @returns {JourneyPathBuilder} Journey path builder
+ */
+export const getJourneyPathBuilder = (request, action) => {
+  const { booking_uuid } = request.params
+
+  if (!booking_uuid) {
+    return (view, appointment_uuid) => `/${appointment_uuid}/${action}/${view}`
+  }
+
+  return (view, appointment_uuid) =>
+    appointment_uuid
+      ? `/${booking_uuid}/${action}/${appointment_uuid}/${view}`
+      : `/${booking_uuid}/${action}/${view}`
+}
+
+/**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
  *
  * @param {string} booking_uuid - the ID of the booking we're creating
@@ -548,3 +572,7 @@ export const getPreviousSessionItems = (appointments, sessionContext) => {
     }
   ]
 }
+
+/**
+ * @import { Request } from 'express'
+ */

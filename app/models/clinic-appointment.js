@@ -902,9 +902,9 @@ export class ClinicAppointment {
       matched: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/appointment`,
       unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
-      edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`,
+      edit: `/sessions/${this.session_id}/appointments/${this.uuid}/edit`,
       cancel: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/cancel`,
-      extend: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}/length`,
+      extend: `/sessions/${this.session_id}/appointments/${this.uuid}/edit/appointment-length`,
       addProgramme: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/add-programme/`
     }
   }
