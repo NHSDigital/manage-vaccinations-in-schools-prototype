@@ -431,16 +431,17 @@ export const bookIntoClinicController = {
 
     // Give access to the data needed for the summaryRows
     const bookingWithFullContext = new ClinicBooking(booking, data)
+    const appointment = bookingWithFullContext.findAppointment(appointment_uuid)
     response.locals.booking = bookingWithFullContext
+    response.locals.appointment = appointment
 
     // Show the child context in the caption
     response.locals.appointmentCaption = __(
       'clinicBooking.appointment.caption',
-      booking.findAppointment(appointment_uuid)?.fullName
+      appointment?.fullName
     )
 
     // Show back link to patient session page
-    const appointment = bookingWithFullContext.findAppointment(appointment_uuid)
     if (appointment) {
       response.locals.back = appointment.uri.matched
     }
@@ -456,16 +457,30 @@ export const bookIntoClinicController = {
     return (request, response) => {
       const { appointment_uuid } = request.params
       const { data } = request.session
-      const { __, booking, paths, patient, session } = response.locals
+      const { __, paths, patient, session } = response.locals
+      let { booking } = response.locals
       const booking_uuid = booking.uuid
+
+      // When editing, it's the copy in the wizard context that holds the changes; discard that copy once saved, so
+      // it isn't picked up by the next edit
+      if (action === 'edit') {
+        booking = new ClinicBooking(
+          ClinicBooking.findOne(booking_uuid, data.wizard),
+          data
+        )
+        ClinicBooking.delete(booking_uuid, data.wizard)
+      }
 
       // Save to the global context
       ClinicBooking.update(booking_uuid, booking, data)
+      const appointment = booking.findAppointment(appointment_uuid)
 
       if (patient) {
         // Create the patient-session records for this appointment
-        const appointment = booking.findAppointment(appointment_uuid)
-        appointment.addToSession()
+        // TODO: when editing, move the patient-session records if the appointment's session has changed
+        if (action === 'new') {
+          appointment.addToSession()
+        }
 
         request.flash(
           'success',
@@ -477,13 +492,16 @@ export const bookIntoClinicController = {
       }
 
       // Get back to where we started, if this isn't the parent journey
-      if (session) {
+      let nextPage = paths?.next
+      if (action === 'edit') {
+        nextPage = appointment.uri.matched
+      } else if (session) {
         const journeyStart = data.journeyData[booking_uuid].preselectedSlot
           ? 'appointments'
           : 'patients'
-        paths.next = `${session.uri}/${journeyStart}`
+        nextPage = `${session.uri}/${journeyStart}`
       } else if (patient) {
-        paths.next = patient.uri
+        nextPage = patient.uri
       }
 
       // Clean up session data
@@ -492,7 +510,7 @@ export const bookIntoClinicController = {
       delete data.journeyData[booking_uuid]
       delete data.programmesToOffer
 
-      return saveAndRedirect(request, response, paths.next)
+      return saveAndRedirect(request, response, nextPage)
     }
   },
 
