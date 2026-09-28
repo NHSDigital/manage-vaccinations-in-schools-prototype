@@ -57,29 +57,7 @@ router.post(
 )
 router.post('/:booking_uuid/new/:view', bookIntoClinic.updateForm('new'))
 
-// Editing an appointment
-router.get('/:booking_uuid/edit/:appointment_uuid', bookIntoClinic.edit)
-router.post(
-  '/:booking_uuid/edit/:appointment_uuid',
-  bookIntoClinic.update('edit')
-)
-
-router.all(
-  '/:booking_uuid/edit/:appointment_uuid/:view',
-  bookIntoClinic.readForm('edit')
-)
-router.all('/:booking_uuid/edit/:view', bookIntoClinic.readForm('edit'))
-
-router.get(
-  '/:booking_uuid/edit/:appointment_uuid/:view',
-  bookIntoClinic.showForm
-)
-router.get('/:booking_uuid/edit/:view', bookIntoClinic.showForm)
-
-router.post(
-  '/:booking_uuid/edit/:appointment_uuid/:view',
-  bookIntoClinic.updateForm
-)
+// Note: the team edits appointments via /sessions/:session_id/appointments (see session-appointment.js)
 
 router.get('{/:view}', bookIntoClinic.show)
 
