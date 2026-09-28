@@ -520,13 +520,19 @@ export const bookIntoClinicController = {
         ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
       }
 
+      // Paths are relative to wherever this router is mounted
+      const getPath = (view, appointment_uuid) =>
+        appointment_uuid
+          ? `/${booking_uuid}/${action}/${appointment_uuid}/${view}`
+          : `/${booking_uuid}/${action}/${view}`
+
       const journey = {
         // Appointment journey; once per child
         ...getAllAppointmentPaths(
           booking_uuid,
           request.session.data,
           booking.appointments,
-          action
+          getPath
         ),
 
         // Confirmation! \o/
