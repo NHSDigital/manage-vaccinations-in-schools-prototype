@@ -23,6 +23,7 @@ import {
   getClinicBookableProgrammeIDs,
   getAppointmentProgrammeOptions,
   getAllAppointmentPaths,
+  getAppointmentChangePaths,
   getJourneyPathBuilder,
   getPreviousAddressItems,
   getPreviousSessionItems
@@ -72,7 +73,6 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readProgrammes(request, response) {
-    console.log('readProgrammes')
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
@@ -153,7 +153,6 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   new(request, response) {
-    console.log('new')
     const { data } = request.session
     const { patient_uuid, session_id } = request.params
 
@@ -200,7 +199,6 @@ export const bookIntoClinicController = {
    * @type {RequestParamHandler}
    */
   readBooking(request, response, next, booking_uuid) {
-    console.log('readBooking')
     const { patient_uuid, session_id } = request.params
     const { data } = request.session
     const { __ } = response.locals
@@ -243,7 +241,6 @@ export const bookIntoClinicController = {
    * @type {RequestParamHandler}
    */
   readAppointment(request, response, next, appointment_uuid) {
-    console.log('readAppointment')
     const { __, booking, isParentFacing } = response.locals
 
     // Give pages access to the appointment and the patient (if one is matched)
@@ -287,6 +284,11 @@ export const bookIntoClinicController = {
     if (!appointment) {
       return next('route')
     }
+
+    // Base the editing paths on the saved appointment, so they stay in the same session
+    // while the appointment's being moved to another one
+    response.locals.editPath = appointment.uri.edit
+    response.locals.matchedPath = appointment.uri.matched
 
     bookIntoClinicController.readBooking(
       request,
@@ -401,7 +403,6 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   edit(request, response) {
-    console.log('edit')
     const { appointment_uuid } = request.params
     const { data } = request.session
     const { __ } = response.locals
@@ -414,26 +415,30 @@ export const bookIntoClinicController = {
       booking = ClinicBooking.create(existingBooking, data.wizard)
     }
 
-    // Track various metadata about the journey that we don't record in the booking itself
-    const journeyType = ClinicBookingJourneyType.TeamEditing
-    if (!data.journeyData) data.journeyData = {}
-    data.journeyData[booking.uuid] = { journeyType }
-
-    // ------------------------- WIP -------------------------
-
-    // TODO: set up the journey data that controls how some values are entered
-    // journeyData.timeRange
-    // journeyData.time
-    // journeyData.preselectedSlot (false)
-    // journeyData.preferredNameChoice
-    // journeyData.clinic_id
-    // journeyData.preferredLocation
-
     // Give access to the data needed for the summaryRows
     const bookingWithFullContext = new ClinicBooking(booking, data)
     const appointment = bookingWithFullContext.findAppointment(appointment_uuid)
     response.locals.booking = bookingWithFullContext
     response.locals.appointment = appointment
+
+    // Track various metadata about the journey that we don't record in the booking itself, including the values
+    // that the change pages need (and show as selected) but that are otherwise only recorded while booking
+    // Note: this is reset each time the edit page is shown, so each change starts afresh
+    const startAt = new Date(appointment.startAt)
+    if (!data.journeyData) data.journeyData = {}
+
+    // Clear any answers auto-stored from previous journeys, which the change pages would otherwise show as selected
+    delete data.appointment
+    delete data.journeyData.clinic_id
+    delete data.journeyData.timeRange
+    delete data.journeyData.time
+
+    data.journeyData[booking.uuid] = {
+      journeyType: ClinicBookingJourneyType.TeamEditing,
+      clinic_id: appointment.session?.clinic_id,
+      timeRange: startAt.getHours(),
+      time: startAt.toISOString()
+    }
 
     // Show the child context in the caption
     response.locals.appointmentCaption = __(
@@ -442,9 +447,7 @@ export const bookIntoClinicController = {
     )
 
     // Show back link to patient session page
-    if (appointment) {
-      response.locals.back = appointment.uri.matched
-    }
+    response.locals.back = response.locals.matchedPath
 
     return response.render('book-into-a-clinic/edit')
   },
@@ -548,8 +551,6 @@ export const bookIntoClinicController = {
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   readForm(action) {
-    console.log('readForm')
-
     return (request, response, next) => {
       const { appointment_uuid, view } = request.params
       const { data, referrer } = request.session
@@ -577,24 +578,45 @@ export const bookIntoClinicController = {
         ClinicBooking.update(booking_uuid, wizardBooking, data.wizard)
       }
 
-      // When editing, only the appointment being edited is part of the journey
-      const appointments =
-        action === 'edit'
-          ? booking.appointments.filter(({ uuid }) => uuid === appointment_uuid)
-          : booking.appointments
-
       const getPath = getJourneyPathBuilder(request, action)
+
+      if (action === 'edit') {
+        // The change links on the edit page carry a referrer back to it, marking the page at which this change started
+        const journeyData = data.journeyData[booking_uuid]
+        const { referrer: changeReferrer } =
+          /** @type {{ referrer?: string }} */ (request.query)
+        if (changeReferrer) {
+          journeyData.firstChangeView = view
+        }
+        delete request.session.referrer
+
+        const journey = getAppointmentChangePaths(
+          appointment_uuid,
+          getPath,
+          journeyData.firstChangeView
+        )
+
+        // Start and finish the change at the edit page, so the user can review the changes before saving them
+        const { editPath } = response.locals
+        const paths = wizard(journey, request)
+        paths.back = paths.back || editPath
+        paths.next = (paths.next || editPath).split('?')[0]
+        response.locals.paths = paths // used later to redirect in updateForm
+
+        return next()
+      }
+
       const journey = {
         // Appointment journey; once per child
         ...getAllAppointmentPaths(
           booking_uuid,
           request.session.data,
-          appointments,
+          booking.appointments,
           getPath
         ),
 
         // Confirmation! \o/
-        ...(action === 'new' ? { [getPath('confirmation')]: {} } : {})
+        [getPath('confirmation')]: {}
       }
 
       const paths = wizard(journey, request)
@@ -843,7 +865,6 @@ export const bookIntoClinicController = {
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   updateForm(action) {
-    action // unused so far
     return (request, response) => {
       const { appointment_uuid, view } = request.params
       const { data } = request.session
@@ -946,13 +967,15 @@ export const bookIntoClinicController = {
           ClinicBooking.update(booking.uuid, booking, data.wizard)
         }
       } else if (
-        (view === 'additional-support' &&
+        action === 'new' &&
+        ((view === 'additional-support' &&
           data.journeyData[booking_uuid].journeyType ===
             ClinicBookingJourneyType.DataMigration) ||
-        view === 'clinic-date'
+          view === 'clinic-date')
       ) {
         // Now that we have all appointment length determiners nailed down, finalise
-        // the appointment length
+        // the appointment length (when editing, keep the existing length, including any
+        // extension or shortening)
         const booking = new ClinicBooking(
           ClinicBooking.findOne(booking_uuid, data.wizard),
           data

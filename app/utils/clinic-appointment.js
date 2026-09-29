@@ -412,6 +412,39 @@ export const getAllAppointmentPaths = (
 }
 
 /**
+ * Pages for changing an appointment's details, in the order they must be completed: changing the clinic location
+ * means choosing a new date, and changing the date means choosing a new time
+ */
+const appointmentChangeViews = [
+  'clinic-location',
+  'clinic-date',
+  'appointment-time-range',
+  'appointment-time'
+]
+
+/**
+ * Get wizard journey paths for changing some of an existing appointment's details
+ *
+ * @param {string} appointment_uuid - the ID of the appointment being edited
+ * @param {JourneyPathBuilder} getPath - builds the (mount-relative) path to a view in the journey
+ * @param {string} [firstView] - the view at which the change started, e.g. 'clinic-date' to change only the date and time
+ * @returns {object} An object containing all relevant pages
+ */
+export const getAppointmentChangePaths = (
+  appointment_uuid,
+  getPath,
+  firstView
+) => {
+  const firstIndex = Math.max(0, appointmentChangeViews.indexOf(firstView))
+
+  return Object.fromEntries(
+    appointmentChangeViews
+      .slice(firstIndex)
+      .map((view) => [getPath(view, appointment_uuid), {}])
+  )
+}
+
+/**
  * Are there enough consecutive slots free to fit this appointment in?
  *
  * @param {ClinicAppointment} appointment - the appointment we're booking
