@@ -58,6 +58,15 @@ export const AppointmentAbandonmentReason = {
  * @readonly
  * @enum {string}
  */
+export const AppointmentLengthType = {
+  Default: 'Calculated from vaccinations and methods',
+  Specific: 'Set by the SAIS team'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ArchiveRecordReason = {
   Deceased: 'The child was reported as deceased',
   Duplicate: 'It’s a duplicate',

@@ -964,6 +964,19 @@ export const en = {
         contact: 'Contact details'
       },
       success: 'Updated {{fullName}} in the {{sessionName}}'
+    },
+    appointmentLength: {
+      title: 'How long will the child’s appointment need?',
+      hint: 'Appointment lengths can be overridden to account for the child’s support needs',
+      label: 'Set the appointment length',
+      default:
+        'Use the default appointment length of {defaultLengthInSlots, plural, one {1 slot} other {{defaultLengthInSlots} slots}} ({defaultLengthInMinutes, plural, one {1 minute} other {{defaultLengthInMinutes} minutes}})',
+      specific: 'Use a specific appointment length',
+      slots: {
+        label: 'Number of slots',
+        hint: 'Each slot is %d minutes long',
+        suffix: 'slots'
+      }
     }
   },
   clinicVaccinationPeriod: {

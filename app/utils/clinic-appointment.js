@@ -418,6 +418,7 @@ export const getAllAppointmentPaths = (
 const appointmentChangeViews = [
   'clinic-location',
   'clinic-date',
+  'appointment-length',
   'appointment-time-range',
   'appointment-time'
 ]

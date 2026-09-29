@@ -44,17 +44,20 @@
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {
+      programmeTags: {},
+      fluVaccineType: {},
+      mmrVaccineType: {},
       location: {
         href: changePathWithReferrer("clinic-location")
       },
       date: {
         href: changePathWithReferrer("clinic-date")
       },
-      timeSlot: {
-        href: changePathWithReferrer("appointment-time-range")
-      },
       appointmentLength: {
         href: changePathWithReferrer("appointment-length")
+      },
+      timeSlot: {
+        href: changePathWithReferrer("appointment-time-range")
       }
     })
   }) }}
