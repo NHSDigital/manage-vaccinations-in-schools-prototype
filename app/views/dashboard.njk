@@ -44,7 +44,7 @@
       }) }}
     </li>
     {% elif account.role == UserRole.SchoolSecretary %}
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
@@ -56,19 +56,7 @@
         description: "Find children and view their consent status"
       }) }}
     </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("session.list.title"),
-          size: "s"
-        },
-        href: "/sessions",
-        description: "View vaccination sessions and the children in them"
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       {{ card({
         classes: "app-card--compact",
         clickable: true,
