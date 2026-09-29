@@ -16,20 +16,66 @@
 
   {{ summaryList({
     card: {
+      heading: {
+        text: __("clinicBooking.edit.summary.child"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(patient, {
+      fullName: {
+        value: appointment.child.fullFriendlyName if isParentFacing
+      },
+      preferredName: {},
+      dob: {},
+      additionalSupport: {
+        label: __("clinicAppointment.additionalSupport.label"),
+        value: appointment.formatted.additionalSupport
+      } if not structuredNeeds else none,
+      impairments: {} if structuredNeeds else none,
+      adjustments: {} if structuredNeeds else none
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
       heading: __("clinicBooking.edit.summary.appointment"),
       headingSize: "m"
     },
     lastRowBorder: false,
     rows: summaryRows(appointment, {
       location: {
-        href: changePathWithReferrer("clinic-location") if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
+        href: changePathWithReferrer("clinic-location")
       },
       date: {
-        href: changePathWithReferrer("clinic-date") if journeyData.journeyType !== ClinicBookingJourneyType.DataMigration
+        href: changePathWithReferrer("clinic-date")
       },
       timeSlot: {
-        href: changePathWithReferrer("appointment-time-range") if (journeyData.journeyType !== ClinicBookingJourneyType.DataMigration) and (not journeyData.preselectedSlot)
+        href: changePathWithReferrer("appointment-time-range")
       }
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("clinicBooking.edit.summary.contact"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(booking.contact, {
+      fullName: {},
+      relationship: {
+        value: appointment.formatted.parentalRelationship
+      },
+      hasParentalResponsibility: {
+        value: appointment.parentHasParentalResponsibility
+      },
+      email: {},
+      tel: {},
+      canSms: {},
+      communicationNeeds: {}
     })
   }) }}
 {% endblock %}
