@@ -121,9 +121,7 @@ export class User extends BaseModel {
       case this.role === UserRole.DataConsumer:
         return ['reports']
       case this.role === UserRole.SchoolSecretary:
-        // School users only have access to uploads section (for now)
-        // return ['patients', 'sessions', 'uploads']
-        return []
+        return ['patients', 'uploads']
       default:
         return [
           'patients',
