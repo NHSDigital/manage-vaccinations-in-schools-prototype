@@ -103,7 +103,7 @@ export class ClinicAppointment {
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
-    this.editedSlotCount = options?.editedSlotCount
+    this.editedSlotCount = Number(options?.editedSlotCount)
 
     this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
@@ -771,6 +771,9 @@ export class ClinicAppointment {
 
             case 'appointmentLength':
               return `${this.appointmentLength} minutes`
+
+            case 'appointmentLengthFactors':
+              return 'TODO'
 
             case 'summary': {
               const teamFacingStartTime = formatTime(this.startAt, {

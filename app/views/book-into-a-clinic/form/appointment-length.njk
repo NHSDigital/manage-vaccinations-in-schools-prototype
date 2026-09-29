@@ -1,0 +1,57 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.appointmentLength.title") %}
+
+{% block form %}
+  {% set slotCountHtml %}
+    {{ input({
+      classes: "nhsuk-input--width-2",
+      label: __("clinicBooking.appointmentLength.slots.label"),
+      hint: __("clinicBooking.appointmentLength.slots.hint", slotLengthInMinutes),
+      suffix: __("clinicBooking.appointmentLength.slots.suffix"),
+      value: appointment.slotCount,
+      decorate: "appointment.editedSlotCount"
+    }) }}
+  {% endset %}
+
+  {{ heading({
+    text: title,
+    caption: appointmentCaption,
+    size: "l"
+  }) }}
+
+  {{ summaryList({
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      programmeTags: {},
+      fluVaccineType: {},
+      mmrVaccineType: {},
+      additionalSupport: {} if not structuredNeeds else none,
+      impairmentsUnlessNone: {} if structuredNeeds else none,
+      adjustmentsUnlessNone: {} if structuredNeeds else none
+    })
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.appointmentLength.label"),
+        size: "m"
+      }
+    },
+    items: [{
+      text: __mf("clinicBooking.appointmentLength.default", {
+        defaultLengthInSlots: defaultLengthInSlots,
+        defaultLengthInMinutes: defaultLengthInMinutes
+      }),
+      value: AppointmentLengthType.Default
+    }, {
+      text: __("clinicBooking.appointmentLength.specific"),
+      value: AppointmentLengthType.Specific,
+      conditional: {
+        html: slotCountHtml
+      }
+    }],
+    decorate: "journeyData.appointmentLengthType"
+  }) }}
+{% endblock %}

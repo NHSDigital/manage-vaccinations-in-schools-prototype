@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import {
   AppointmentAbandonmentReason,
+  AppointmentLengthType,
   ClinicAppointmentStatus,
   ClinicBookingJourneyType,
   ProgrammeType,
@@ -778,6 +779,23 @@ export const bookIntoClinicController = {
         location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
+    } else if (view === 'appointment-length') {
+      const session = Session.findOne(appointment.session_id, data)
+      response.locals.clinicSummary = {
+        location: session.clinic.formatted.nameAndAddress,
+        date: session.formatted.date
+      }
+
+      response.locals.defaultLengthInSlots =
+        session.calculateSlotCount(appointment)
+      response.locals.defaultLengthInMinutes =
+        response.locals.defaultLengthInSlots * session.slotLength
+      response.locals.slotLengthInMinutes = session.slotLength
+
+      data.journeyData.useSpecificAppointmentLength =
+        appointment.editedSlotCount
+          ? AppointmentLengthType.Specific
+          : AppointmentLengthType.Default
     } else if (view === 'shorten-appointment') {
       const session = Session.findOne(appointment.session_id, data)
       const requiredSlots = appointment.slotCount
@@ -992,6 +1010,17 @@ export const bookIntoClinicController = {
         }
 
         ClinicBooking.update(booking.uuid, booking, data.wizard)
+      } else if (view === 'appointment-length') {
+        if (
+          data.journeyData[booking_uuid].appointmentLengthType ===
+          AppointmentLengthType.Default
+        ) {
+          // Clear out any previous team-defined length
+          const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+          const appointment = booking.findAppointment(appointment_uuid)
+          appointment.editedSlotCount = 0
+          ClinicBooking.update(booking_uuid, booking, data.wizard)
+        }
       } else if (view === 'appointment-time') {
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
         const appointment = booking.findAppointment(appointment_uuid)
