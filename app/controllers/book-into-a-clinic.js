@@ -147,7 +147,8 @@ export const bookIntoClinicController = {
       )
     }
 
-    return saveAndRedirect(request, response, nextPath)
+    // Redirect relative to where this router's mounted, so it works whether or not the URL has a trailing slash
+    return saveAndRedirect(request, response, `${request.baseUrl}/${nextPath}`)
   },
 
   /**
