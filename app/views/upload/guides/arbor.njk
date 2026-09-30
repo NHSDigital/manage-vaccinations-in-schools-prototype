@@ -1,0 +1,62 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("upload.guides." + view + ".title") %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("upload.listSchoolUser.title"),
+        href: "/uploads"
+      },
+      {
+        text: __("upload.guides.index.title"),
+        href: "/uploads/guides"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-u-reading-width">
+    {{ heading({
+      text: title
+    }) }}
+
+    {% filter nhsukMarkdown %}
+Use this guide to create a spreadsheet of pupil data for the vaccination team.
+
+This guide is for school office staff and MIS managers who use Arbor.
+
+> You need the **School: General Admin: Export Data** permission in Arbor. If you do not have it, ask your MIS manager.
+
+## Export pupil data
+
+1. Go to **School**, then **Custom Report Writer**, then **Create New Report**.
+2. Choose **Students** as the report focus.
+3. Add a name, then select **Skip setup wizard**.
+4. Filter by the school you’re providing information for.
+5. Filter by the year groups you’re providing information for.
+6. Select **Save &amp; View Report**, then **Download**.
+7. Select **CSV**.
+
+## Select the school
+
+1. Go to **Filters**, select **Institution**, then select **Add filter**.
+2. Select the school you’re providing information for.
+3. Select the current academic year, then select **Save**.
+
+## Select the year groups
+
+1. Go to Filters, select **Year group(s)**, then select **Add filter**.
+2. Select the year groups you’re providing information for.
+3. Select the current academic year, then select **Save**.
+
+{% include "upload/_template-format-school-arbor.njk" %}
+    {% endfilter %}
+  </div>
+{% endblock %}

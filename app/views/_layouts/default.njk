@@ -108,7 +108,7 @@
         } if "reports" in account.views,
         {
           href: "/uploads",
-          text: __("upload.list.label"),
+          text: __("upload.listSchoolUser.label") if account.isSchoolUser else __("upload.list.label"),
           active: navigation.activeSection == "uploads"
         } if "uploads" in account.views,
         {
