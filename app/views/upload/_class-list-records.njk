@@ -9,6 +9,7 @@
       {% set patientRows = patientRows | push([
         { html: patient.formatted.fullNameAndNhsn },
         { html: patient.formatted.dob },
+        { html: patient.formatted.yearGroup },
         { text: patient.postalCode }
       ]) %}
     {% endfor %}
@@ -16,7 +17,6 @@
     {{ details({
       classes: "nhsuk-expander",
       summary: __mf("upload.show.pupil.count", {
-        yearGroup: params.patients[0].formatted.yearGroup,
         count: patientRows.length
       }),
       html: table({
@@ -25,6 +25,7 @@
         head: [
           __("patient.fullNameAndNhsn.label"),
           __("patient.dob.label"),
+          __("patient.yearGroup.label"),
           __("patient.postalCode.label")
         ],
         rows: patientRows

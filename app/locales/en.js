@@ -3726,13 +3726,12 @@ export const en = {
       submit: {
         title: 'Check before sending',
         description:
-          'Mavis has compared the spreadsheet with the pupil information already in the service.\n\nCheck the changes below before sending your spreadsheet to the vaccination team.'
+          'Mavis has compared your spreadsheet with the pupil information already in the service.\n\nCheck the changes below before sending your spreadsheet to the vaccination team.'
       },
       summary: 'Details',
       pupil: {
         title: 'New records',
-        count:
-          '{yearGroup} ({count, plural, =0 {no pupils} one {1 pupil} other {# pupils}})',
+        count: '{count, plural, =0 {no pupils} one {1 pupil} other {# pupils}}',
         summary:
           'These records are for children who are not currently in Mavis. They will be added when the upload is approved.'
       },
@@ -3848,7 +3847,7 @@ export const en = {
       success: 'Records uploaded. Mavis is processing the file.'
     },
     edit: {
-      label: 'Upload spreadsheet',
+      label: 'Upload corrected spreadsheet',
       success: 'Corrected spreadsheet uploaded. Mavis is processing the file.'
     },
     format: {

@@ -1,4 +1,3 @@
-import { fakerEN_GB as faker } from '@faker-js/faker'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadFormat, UploadStatus, UploadType } from '../enums.js'
@@ -154,10 +153,6 @@ export const uploadController = {
     const { data } = request.session
     const { account } = response.locals
 
-    const patients = Patient.findAll(data).slice(
-      faker.number.int({ min: 30, max: 90 })
-    )
-
     const upload = Upload.create(
       {
         createdAt: today(),
@@ -165,24 +160,13 @@ export const uploadController = {
         programme_id,
         type: account.isSchoolUser ? UploadType.School : type,
         fileName: 'example.csv',
-        patient_uuids: patients.map((patient) => patient.uuid),
         ...(type === UploadType.School && school_id && { school_id })
       },
       data.wizard
     )
 
-    // Add validations to invalid file upload
-    if (hasValidations) {
-      upload.validations = {}
-
-      for (const [i, patient] of patients.entries()) {
-        upload.validations[i + 1] = {
-          CHILD_FIRST_NAME: 'is required but missing',
-          CHILD_DOB: `‘${patient.firstName}’ should be formatted as YYYY-MM-DD`,
-          CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
-        }
-      }
-    }
+    // Add `hasValidations` flag
+    request.app.locals.hasValidations = hasValidations
 
     data.startPath = 'type'
     if (account.isSchoolUser) {
@@ -208,6 +192,7 @@ export const uploadController = {
    */
   update(type) {
     return (request, response) => {
+      const { hasValidations } = request.app.locals
       const { upload_id } = request.params
       const { data } = request.session
       const { __ } = response.locals
@@ -219,9 +204,29 @@ export const uploadController = {
         data.wizard
       )
 
+      // Add patient records
+      let patients = Patient.findAll(data).filter(
+        (patient) =>
+          upload.school_id === patient.school_id &&
+          upload.yearGroups.map(Number).includes(patient.yearGroup)
+      )
+
+      upload.patient_uuids = patients.map((patient) => patient.uuid)
+
       if (type === 'edit') {
         // Delete any previous validation errors
         delete upload.validations
+      } else if (hasValidations) {
+        // Add validation errors
+        upload.validations = {}
+
+        for (const [i, patient] of patients.entries()) {
+          upload.validations[i + 1] = {
+            CHILD_FIRST_NAME: 'is required but missing',
+            CHILD_DOB: `‘${patient.firstName}’ should be formatted as YYYY-MM-DD`,
+            CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
+          }
+        }
       }
 
       upload = Upload.create(upload, data)
