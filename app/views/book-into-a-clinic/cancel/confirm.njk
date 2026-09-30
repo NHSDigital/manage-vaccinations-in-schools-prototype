@@ -17,9 +17,9 @@
       }
     },
     lastRowBorder: false,
-    rows: summaryRows(patientSession.clinicAppointment, {
+    rows: summaryRows(appointment, {
       nameAndAge: {
-        value: patientSession.patient.fullName
+        value: appointment.patient.fullName
       },
       dob: {},
       programmeTags: {},
@@ -44,7 +44,7 @@
     links: [
       {
         text: __("patientSession.clinicAppointment.cancel.confirm.cancel"),
-        href: patientSession.uri
+        href: matchedPath
       }
     ]
   }) }}

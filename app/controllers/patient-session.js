@@ -9,18 +9,11 @@ import {
   VaccinationOutcome,
   VaccineCriteria
 } from '../enums.js'
-import {
-  ClinicBooking,
-  PatientSession,
-  Programme,
-  User,
-  Vaccination
-} from '../models.js'
+import { PatientSession, Programme, User, Vaccination } from '../models.js'
 import { getAccountVaccineMethods } from '../utils/account.js'
 import { today } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { saveAndRedirect } from '../utils/redirect.js'
-import { stringToBoolean } from '../utils/string.js'
 
 export const patientSessionController = {
   /**
@@ -378,81 +371,6 @@ export const patientSessionController = {
     )
 
     return saveAndRedirect(request, response, back)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  startCancel(request, response) {
-    const { patientSession } = response.locals
-
-    request.session.data.cancellation = {}
-
-    return saveAndRedirect(
-      request,
-      response,
-      `${patientSession.uri}/cancel/rebooking`
-    )
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showCancel(request, response) {
-    const { view } = request.params
-    const { patientSession } = response.locals
-
-    response.locals.appointmentSummary = `${patientSession.clinicAppointment.formatted.programmeNames} clinic appointment for ${patientSession.patient.fullName}`
-
-    response.locals.back =
-      view === 'rebooking'
-        ? patientSession.uri
-        : `${patientSession.uri}/cancel/rebooking`
-
-    return response.render(`patient-session/cancel/${view}`)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  updateCancel(request, response) {
-    const { data } = request.session
-    const { view } = request.params
-    const { __, account, patientSession, session } = response.locals
-
-    // Where next?
-    const nextPage =
-      view === 'rebooking'
-        ? `${patientSession.uri}/cancel/confirm`
-        : session.uri
-
-    if (view === 'rebooking') {
-      // Sanitise the boolean from the radio
-      data.cancellation.offerRebooking = stringToBoolean(
-        data.cancellation.offerRebooking
-      )
-    } else if (view === 'confirm') {
-      // Carry out the cancellation
-      let appointment = patientSession.clinicAppointment
-      const booking = appointment.booking
-      appointment = booking.findAppointment(appointment.uuid)
-      appointment.cancelAppointment(account, data.cancellation.offerRebooking)
-      ClinicBooking.update(booking.uuid, booking, data)
-
-      // Tidy up
-      delete data.cancellation
-
-      const { patient } = response.locals
-      request.flash(
-        'success',
-        __('patientSession.clinicAppointment.cancel.confirm.success', {
-          patientName: patient.fullName,
-          clinicName: session.formatted.clinic
-        })
-      )
-    }
-
-    return saveAndRedirect(request, response, nextPage)
   }
 }
 
