@@ -13,6 +13,7 @@ router.get('/:appointment_uuid', bookIntoClinic.showAppointment)
 // Editing an appointment
 router.get('/:appointment_uuid/edit', bookIntoClinic.edit)
 router.post('/:appointment_uuid/edit', bookIntoClinic.update('edit'))
+router.get('/:appointment_uuid/edit/discard', bookIntoClinic.discardEdit)
 
 router.all('/:appointment_uuid/edit/:view', bookIntoClinic.readForm('edit'))
 router.get('/:appointment_uuid/edit/:view', bookIntoClinic.showForm)

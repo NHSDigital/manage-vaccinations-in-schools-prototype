@@ -3,6 +3,7 @@ import _ from 'lodash'
 import {
   AdditionalNeeds,
   AppointmentAbandonmentReason,
+  AppointmentLengthType,
   ClinicBookingJourneyType,
   LocationSearchType,
   PatientClinicStatus,
@@ -419,17 +420,29 @@ export const getAllAppointmentPaths = (
  * `sessionData.journeyData.appointmentLengthType`) rather than the appointment itself.
  *
  * @param {ClinicAppointment} appointment - the appointment being edited
+ * @param {object} sessionData - the request.session.data object
  * @param {JourneyPathBuilder} getPath - builds the (mount-relative) path to a view in the journey
  * @param {string} [firstView] - the view at which the change started
  * @returns {object} The journey object
  */
-export const getAppointmentChangePaths = (appointment, getPath, firstView) => {
+export const getAppointmentChangePaths = (
+  appointment,
+  sessionData,
+  getPath,
+  firstView
+) => {
   const appointmentPath = (view) => getPath(view, appointment.uuid)
 
   const journey = {
     [appointmentPath('clinic-location')]: {},
     [appointmentPath('clinic-date')]: {},
     [appointmentPath('appointment-length')]: {},
+
+    // Interrupt if the chosen length can't fit anywhere in the session
+    ...(!canChosenLengthFitInSession(appointment, sessionData)
+      ? { [appointmentPath('shorten-appointment')]: {} }
+      : {}),
+
     [appointmentPath('appointment-time-range')]: {},
     [appointmentPath('appointment-time')]: {}
   }
@@ -441,6 +454,37 @@ export const getAppointmentChangePaths = (appointment, getPath, firstView) => {
   )
 
   return Object.fromEntries(Object.entries(journey).slice(firstIndex))
+}
+
+/**
+ * Can the length chosen for an appointment being edited fit anywhere in its (possibly newly chosen) session?
+ *
+ * Note: when the appointment-length page is submitted, the chosen length is in the auto-stored answers but not yet
+ * the appointment, so we use those answers when present
+ *
+ * @param {ClinicAppointment} appointment - the appointment being edited
+ * @param {object} sessionData - the request.session.data object
+ * @returns {boolean} - true if the chosen length will fit somewhere in the session, or false otherwise
+ */
+const canChosenLengthFitInSession = (appointment, sessionData) => {
+  const session = Session.findOne(appointment.session_id, sessionData)
+
+  let chosenSlotCount
+  switch (sessionData.journeyData?.appointmentLengthType) {
+    case AppointmentLengthType.Default:
+      chosenSlotCount = session.calculateSlotCount(appointment)
+      break
+    case AppointmentLengthType.Specific:
+      chosenSlotCount = Number(sessionData.appointment?.editedSlotCount)
+      break
+    default:
+      chosenSlotCount = appointment.slotCount
+  }
+
+  return (
+    chosenSlotCount <=
+    session.longestAvailableAppointment(undefined, appointment.uuid)
+  )
 }
 
 /**

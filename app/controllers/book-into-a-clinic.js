@@ -544,6 +544,21 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * Abandon any changes made while editing an appointment, and return to the appointment's page
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  discardEdit(request, response) {
+    const { data } = request.session
+    const { booking, matchedPath } = response.locals
+
+    ClinicBooking.delete(booking.uuid, data.wizard)
+    delete data.journeyData?.[booking.uuid]
+
+    return saveAndRedirect(request, response, matchedPath)
+  },
+
+  /**
    * @param {string} action - action being carried out i.e. create new vs edit existing
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
@@ -698,6 +713,7 @@ export const bookIntoClinicController = {
 
         const journey = getAppointmentChangePaths(
           response.locals.appointment,
+          data,
           getPath,
           journeyData.firstChangeView
         )
@@ -903,8 +919,12 @@ export const bookIntoClinicController = {
     } else if (view === 'shorten-appointment') {
       const session = Session.findOne(appointment.session_id, data)
       const requiredSlots = appointment.slotCount
+
+      // Look for space at the appointment's time only if it's been preselected; otherwise (including when editing,
+      // where the time is chosen after the length) look anywhere in the session
+      const { preselectedSlot } = data.journeyData[booking_uuid]
       const availableSlots = session.longestAvailableAppointment(
-        appointment.startAt,
+        preselectedSlot ? appointment.startAt : undefined,
         appointment.uuid
       )
 
@@ -1015,12 +1035,24 @@ export const bookIntoClinicController = {
         const appointment = booking.findAppointment(appointment_uuid)
         const session = Session.findOne(appointment.session_id, data)
 
+        const { preselectedSlot } = data.journeyData[booking_uuid]
         appointment.editedSlotCount = session.longestAvailableAppointment(
-          appointment.startAt,
+          preselectedSlot ? appointment.startAt : undefined,
           appointment.uuid
         )
 
         ClinicBooking.update(booking_uuid, booking, data.wizard)
+
+        // When editing, update the answers auto-stored from the appointment-length page to match, so that this page
+        // drops out of the journey and the length page shows the shortened length
+        if (action === 'edit') {
+          data.journeyData.appointmentLengthType =
+            AppointmentLengthType.Specific
+          data.appointment = {
+            ...data.appointment,
+            editedSlotCount: appointment.editedSlotCount
+          }
+        }
       } else if (view === 'child-count') {
         // We've just set the child count, so create the appointments we'll need
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
