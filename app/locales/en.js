@@ -893,7 +893,8 @@ export const en = {
           'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But the longest appointment available in this session is {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue – this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel – you can extend the session or find another with more space'
       },
       confirm: 'Continue',
-      cancel: 'Cancel and return to the Appointments page'
+      cancel: 'Cancel and return to the Appointments page',
+      cancelEdit: 'Cancel and return to the appointment'
     },
     appointmentLost: {
       title: 'Your appointment time is no longer available',
