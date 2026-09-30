@@ -1,0 +1,66 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("upload.guides." + view + ".title") %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("upload.listSchoolUser.title"),
+        href: "/uploads"
+      },
+      {
+        text: __("upload.guides.index.title"),
+        href: "/uploads/guides"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-u-reading-width">
+    {{ heading({
+      text: title
+    }) }}
+
+    {% filter nhsukMarkdown %}
+Use this guide to create a spreadsheet of pupil data for the vaccination team.
+
+This guide is for school office staff and MIS managers who use Bromcom.
+
+> You need reporting permissions. These are set in **Config**, then **Setup**, then **Roles &amp; Permissions**. If you do not have them, ask your MIS manager.
+
+## Export pupil data
+
+1. Go to **Modules**, then **Reporting**, then **Reports**, then **Create New Report**, then **Quick Report**.
+2. Choose **Student** as the data source.
+3. Add a name, then drag the data items you need into the **Report Layout**.
+4. Filter by the school you’re providing information for.
+5. Filter by the year groups you’re providing information for.
+6. Select **Save**, then **Run Report**.
+7. Go to **Actions**, then **Export**, then select **CSV**.
+
+## Select the school
+
+If you use Bromcom for one school, skip this step. Your report will only include pupils at that school.
+
+If you use a trust-wide or federated view:
+
+1. Use the school selector at the top of the page to switch to the school you’re providing information for.
+2. Or go to **Filters**, select **School**, then select the school you’re providing information for.
+3. Select **Apply**.
+
+## Select the year groups
+
+1. Go to **Filters**, select **Year Group**, then select **Add filter**.
+2. Select the year groups you’re providing information for.
+3. Check that **Status** is set to **On Roll**, then select **Apply**.
+
+{% include "upload/_template-format-school-bromcom.njk" %}
+    {% endfilter %}
+  </div>
+{% endblock %}

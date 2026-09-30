@@ -49,6 +49,10 @@ export const uploadController = {
       uploads = uploads.filter((upload) => upload.type === UploadType.School)
     }
 
+    if (account.isSchoolUser && uploads.length === 0) {
+      return response.redirect('/uploads/guides')
+    }
+
     response.locals.uploads = uploads
 
     return next()
@@ -66,6 +70,17 @@ export const uploadController = {
     }
 
     return response.render(`upload/${view}`)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  showGuide(request, response) {
+    const view = request.params.view || 'index'
+
+    response.locals.view = view
+
+    return response.render(`upload/guides/${view}`)
   },
 
   /**
@@ -171,8 +186,8 @@ export const uploadController = {
 
     data.startPath = 'type'
     if (account.isSchoolUser) {
-      // If school user, show start page
-      data.startPath = 'start'
+      // If school user, show format page
+      data.startPath = 'format'
     } else if (type) {
       // If type provided in query string:
       // - if type is class list, start journey at school question
@@ -270,12 +285,10 @@ export const uploadController = {
       // Journey for school teams
       const schoolJourney = {
         [`/`]: {},
-        [`/${upload_id}/${type}/start`]: {},
         [`/${upload_id}/${type}/format`]: {
           [`/${upload_id}/${type}/school`]: () =>
             request.body?.upload?.format === UploadFormat.Mavis
         },
-        [`/${upload_id}/${type}/export`]: {},
         [`/${upload_id}/${type}/school`]: {},
         [`/${upload_id}/${type}/year-groups`]: {},
         [`/${upload_id}/${type}/file`]: {},

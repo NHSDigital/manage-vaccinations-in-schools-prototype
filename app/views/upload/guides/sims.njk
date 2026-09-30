@@ -1,0 +1,64 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("upload.guides." + view + ".title") %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("upload.listSchoolUser.title"),
+        href: "/uploads"
+      },
+      {
+        text: __("upload.guides.index.title"),
+        href: "/uploads/guides"
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-u-reading-width">
+    {{ heading({
+      text: title
+    }) }}
+
+    {% filter nhsukMarkdown %}
+Use this guide to create a spreadsheet of pupil data for the vaccination team.
+
+This guide is for school office staff and MIS managers who use SIMS.
+
+> You need permission to design and run reports in SIMS. If you do not have it, ask your MIS manager.
+
+## Export pupil data
+
+Check you are logged in to the SIMS instance for the school you’re providing information for.
+
+1. Go to **Reports**, then **Design Report**.
+2. Select **Create a new report**, then choose **Student** as the data area.
+3. Select the data fields you need, then select **Next**.
+4. Filter by the school you’re providing information for.
+5. Filter by the year groups you’re providing information for.
+6. Set the report destination to **Export as CSV**.
+7. Save the report, then select **Run**.
+
+## Select the school
+
+SIMS holds data for one school, so there is no school filter.
+
+Check you are logged in to the SIMS instance for the school you’re providing information for. If your trust uses a shared SIMS environment, use the school selector when you log in.
+
+## Select the year groups
+
+1. On the filter step, select **Year Group** from the field list.
+2. Select the year groups you’re providing information for.
+3. Add a second filter for **Student Status** and set it to **On Roll**, then select **Next**.
+
+{% include "upload/_template-format-school-sims.njk" %}
+    {% endfilter %}
+  </div>
+{% endblock %}

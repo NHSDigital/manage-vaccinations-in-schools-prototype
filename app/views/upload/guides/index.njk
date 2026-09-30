@@ -1,0 +1,61 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("upload.guides." + view + ".title") %}
+
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("upload.listSchoolUser.title"),
+        href: "/uploads"
+      }
+    ]
+  })}}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-u-reading-width">
+    {{ heading({
+      text: title
+    }) }}
+
+    {% filter nhsukMarkdown %}
+Your vaccination team will tell you which year groups to provide information for. You’ll need to provide information about the pupils, including:
+
+- first and last name
+- date of birth
+- postcode
+- a name and contact details for at least one parent, wherever possible
+
+{{ insetText({
+  text: "The parent must have the legal right to consent to the child’s vaccinations."
+}) }}
+
+You can include other information, such as preferred name, year group and registration form. This helps provide a more complete record and can help you organise pupils for vaccination sessions.
+
+You do not need to have all the information for every pupil.
+
+## Preparing your spreadsheet
+
+You can export pupil information from your school's management information system:
+
+- [{{ __("upload.guides.arbor.title") }}](/uploads/guides/arbor)
+- [{{ __("upload.guides.bromcom.title") }}](/uploads/guides/bromcom)
+- [{{ __("upload.guides.sims.title") }}](/uploads/guides/sims)
+
+If you use another system, you can use the Mavis spreadsheet template:
+
+- [Download the Mavis spreadsheet template](#)
+    {% endfilter %}
+
+    {{ button({
+      text: __("form.continue"),
+      href: "/uploads/new?hasValidations=true"
+    }) }}
+  </div>
+{% endblock %}

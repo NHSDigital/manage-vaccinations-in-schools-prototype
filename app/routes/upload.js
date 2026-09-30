@@ -7,6 +7,8 @@ const router = express.Router({ strict: true, mergeParams: true })
 router.get('/', upload.readAll, upload.list)
 router.post('/', upload.filterList)
 
+router.get('/guides{/:view}', upload.showGuide)
+
 router.get('/new', upload.new)
 
 router.param('upload_id', upload.read)

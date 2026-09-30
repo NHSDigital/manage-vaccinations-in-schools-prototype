@@ -2,7 +2,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set title = __("upload.list.title") %}
+{% set title = __("upload.listSchoolUser.title") if account.isSchoolUser else __("upload.list.title") %}
 
 {% block form %}
   {{ super() }}
@@ -12,13 +12,20 @@
     size: "l"
   }) }}
 
-  {{ actionLink({
-    href: "/uploads/new?hasValidations=true",
-    text: __("session.upload-class-list.title")
-  }) if account.isSchoolUser else actionLink({
-    href: "/uploads/new",
-    text: __("upload.new.label")
-  }) }}
+  {% if account.isSchoolUser %}
+    <div class="app-action-link-with-description">
+      {{ actionLink({
+        href: "/uploads/new",
+        text: __("session.upload-class-list.title")
+      }) }}
+      {{ link("/uploads/guides", __("upload.guides.index.title")) | nhsukMarkdown if account.isSchoolUser }}
+    </div>
+  {% else %}
+    {{ actionLink({
+      href: "/uploads/new",
+      text: __("upload.new.label")
+    }) }}
+  {% endif %}
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-third">
