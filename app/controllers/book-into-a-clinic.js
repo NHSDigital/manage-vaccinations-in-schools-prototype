@@ -430,9 +430,9 @@ export const bookIntoClinicController = {
 
     // Clear any answers auto-stored from previous journeys, which the change pages would otherwise show as selected
     delete data.appointment
-    delete data.journeyData.clinic_id
-    delete data.journeyData.timeRange
-    delete data.journeyData.time
+    delete data.journeyData['clinic_id']
+    delete data.journeyData['timeRange']
+    delete data.journeyData['time']
 
     data.journeyData[booking.uuid] = {
       journeyType: ClinicBookingJourneyType.TeamEditing,
@@ -792,7 +792,7 @@ export const bookIntoClinicController = {
         response.locals.defaultLengthInSlots * session.slotLength
       response.locals.slotLengthInMinutes = session.slotLength
 
-      data.journeyData.useSpecificAppointmentLength =
+      data.journeyData['useSpecificAppointmentLength'] =
         appointment.editedSlotCount
           ? AppointmentLengthType.Specific
           : AppointmentLengthType.Default
