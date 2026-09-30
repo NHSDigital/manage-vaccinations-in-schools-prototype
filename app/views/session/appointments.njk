@@ -56,7 +56,7 @@
       {% endif %}
     {% else %}
       {# Booking link for empty slot #}
-      {{ link(session.uri + "/add-appointment/?" + bookingQueryString, "Book") | safe }}
+      {{ link(session.uri + "/book-into-a-clinic/?" + bookingQueryString, "Book") | safe }}
     {% endif %}
   {% endmacro %}
 
