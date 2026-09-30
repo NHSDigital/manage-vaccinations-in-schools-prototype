@@ -412,37 +412,35 @@ export const getAllAppointmentPaths = (
 }
 
 /**
- * Pages for changing an appointment's details, in the order they must be completed: changing the clinic location
- * means choosing a new date, and changing the date means choosing a new time
- */
-const appointmentChangeViews = [
-  'clinic-location',
-  'clinic-date',
-  'appointment-length',
-  'appointment-time-range',
-  'appointment-time'
-]
-
-/**
- * Get wizard journey paths for changing some of an existing appointment's details
+ * Get wizard journey for editing an existing appointment
  *
- * @param {string} appointment_uuid - the ID of the appointment being edited
+ * Note: the wizard evaluates forks before the posted form is saved to the appointment, so any conditions that
+ * depend on the page being posted should use the auto-stored answers in the session data (e.g.
+ * `sessionData.journeyData.appointmentLengthType`) rather than the appointment itself.
+ *
+ * @param {ClinicAppointment} appointment - the appointment being edited
  * @param {JourneyPathBuilder} getPath - builds the (mount-relative) path to a view in the journey
- * @param {string} [firstView] - the view at which the change started, e.g. 'clinic-date' to change only the date and time
- * @returns {object} An object containing all relevant pages
+ * @param {string} [firstView] - the view at which the change started
+ * @returns {object} The journey object
  */
-export const getAppointmentChangePaths = (
-  appointment_uuid,
-  getPath,
-  firstView
-) => {
-  const firstIndex = Math.max(0, appointmentChangeViews.indexOf(firstView))
+export const getAppointmentChangePaths = (appointment, getPath, firstView) => {
+  const appointmentPath = (view) => getPath(view, appointment.uuid)
 
-  return Object.fromEntries(
-    appointmentChangeViews
-      .slice(firstIndex)
-      .map((view) => [getPath(view, appointment_uuid), {}])
+  const journey = {
+    [appointmentPath('clinic-location')]: {},
+    [appointmentPath('clinic-date')]: {},
+    [appointmentPath('appointment-length')]: {},
+    [appointmentPath('appointment-time-range')]: {},
+    [appointmentPath('appointment-time')]: {}
+  }
+
+  // Start the journey at the page at which the change started
+  const firstIndex = Math.max(
+    0,
+    Object.keys(journey).indexOf(appointmentPath(firstView))
   )
+
+  return Object.fromEntries(Object.entries(journey).slice(firstIndex))
 }
 
 /**

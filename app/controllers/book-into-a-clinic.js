@@ -697,7 +697,7 @@ export const bookIntoClinicController = {
         delete request.session.referrer
 
         const journey = getAppointmentChangePaths(
-          appointment_uuid,
+          response.locals.appointment,
           getPath,
           journeyData.firstChangeView
         )
