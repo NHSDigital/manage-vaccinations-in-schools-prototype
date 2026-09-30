@@ -807,10 +807,9 @@ export const bookIntoClinicController = {
         response.locals.defaultLengthInSlots * session.slotLength
       response.locals.slotLengthInMinutes = session.slotLength
 
-      data.journeyData['useSpecificAppointmentLength'] =
-        appointment.editedSlotCount
-          ? AppointmentLengthType.Specific
-          : AppointmentLengthType.Default
+      data.journeyData['appointmentLengthType'] = appointment.editedSlotCount
+        ? AppointmentLengthType.Specific
+        : AppointmentLengthType.Default
     } else if (view === 'shorten-appointment') {
       const session = Session.findOne(appointment.session_id, data)
       const requiredSlots = appointment.slotCount
