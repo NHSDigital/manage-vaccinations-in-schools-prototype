@@ -26,6 +26,7 @@ import {
   PatientSession,
   Reply,
   School,
+  Session,
   Vaccination
 } from '../models.js'
 import { getUpdatedFields } from '../utils/audit-event.js'
@@ -804,6 +805,32 @@ export class Patient extends Child {
         programme_ids: patientSession.session.programme_ids
       })
     }
+  }
+
+  /**
+   * Move the patient from one session to another (used when changing clinic appointments)
+   *
+   * @param {string} oldSession_id - the ID of the session we're moving the patientSession from
+   * @param {string} newSession_id - the ID of the session we're moving the patientSession to
+   */
+  moveToSession(oldSession_id, newSession_id) {
+    const patientSessions = this.patientSessions.filter(
+      ({ session_id }) => session_id === oldSession_id
+    )
+    const updates = { session_id: newSession_id }
+    patientSessions.forEach((patientSession) => {
+      PatientSession.update(patientSession.uuid, updates, this.context)
+    })
+
+    const oldSession = Session.findOne(oldSession_id, this.context)
+    const newSession = Session.findOne(newSession_id, this.context)
+    this.addEvent({
+      name: activity.session.moved(oldSession, newSession),
+      type: AuditEventType.ProgrammeNote,
+      createdAt: today(),
+      createdBy_uid: newSession.createdBy_uid,
+      programme_ids: patientSessions.map(({ programme_id }) => programme_id)
+    })
   }
 
   /**

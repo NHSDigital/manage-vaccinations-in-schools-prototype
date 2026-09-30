@@ -236,6 +236,19 @@ export class ClinicAppointment {
   }
 
   /**
+   * Move this appointment's patient sessions from one session (oldSession_id) to another (this.session_id)
+   *
+   * Note that this will move *all* patient sessions for this appointment's patient, incl. those
+   * that were aren't part of the appointment but were added to the current clinic session.
+   *
+   * @param {string} oldSession_id - the ID of the session we used to be booked into
+   */
+  moveBetweenSessions(oldSession_id) {
+    const newSession_id = this.session_id
+    this.patient?.moveToSession(oldSession_id, newSession_id)
+  }
+
+  /**
    * Cancel the appointment, logging the event and removing associated patient sessions
    *
    * @param {User} account - the user carrying out the removal
