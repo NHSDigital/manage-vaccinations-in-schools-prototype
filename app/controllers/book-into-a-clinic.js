@@ -465,30 +465,45 @@ export const bookIntoClinicController = {
       let { booking } = response.locals
       const booking_uuid = booking.uuid
 
+      let successMessageKey = 'success'
       // When editing, it's the copy in the wizard context that holds the changes; discard that copy once saved, so
       // it isn't picked up by the next edit
       if (action === 'edit') {
+        // Keep a copy of the updated appointment/booking, but clean up the wizard context
         booking = new ClinicBooking(
           ClinicBooking.findOne(booking_uuid, data.wizard),
           data
         )
         ClinicBooking.delete(booking_uuid, data.wizard)
+
+        // Move patient sessions, if the user has selected a different session
+        const originalAppointment = ClinicAppointment.findOne(
+          appointment_uuid,
+          data
+        )
+        const updatedAppointment = booking.findAppointment(appointment_uuid)
+        if (originalAppointment.session_id !== updatedAppointment.session_id) {
+          updatedAppointment.moveBetweenSessions(originalAppointment.session_id)
+          successMessageKey = 'success.moved'
+        } else {
+          successMessageKey = 'success.updated'
+        }
       }
 
       // Save to the global context
       ClinicBooking.update(booking_uuid, booking, data)
       const appointment = booking.findAppointment(appointment_uuid)
 
+      // Finalise things for SAIS team journeys
       if (patient) {
-        // Create the patient-session records for this appointment
-        // TODO: when editing, move the patient-session records if the appointment's session has changed
+        // Create the patient-session records for a new appointment
         if (action === 'new') {
           appointment.addToSession()
         }
 
         request.flash(
           'success',
-          __(`clinicBooking.${action}.success`, {
+          __(`clinicBooking.${action}.${successMessageKey}`, {
             fullName: patient.fullName,
             sessionName: appointment.session.name
           })

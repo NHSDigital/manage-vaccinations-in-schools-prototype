@@ -963,7 +963,10 @@ export const en = {
         appointment: 'Appointment details',
         contact: 'Contact details'
       },
-      success: 'Updated {{fullName}} in the {{sessionName}}'
+      success: {
+        updated: 'Updated {{fullName}} in the {{sessionName}}',
+        moved: 'Moved {{fullName}} to the {{sessionName}}'
+      }
     },
     appointmentLength: {
       title: 'How long will the child’s appointment need?',
