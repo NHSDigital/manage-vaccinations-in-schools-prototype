@@ -259,10 +259,15 @@ export const bookIntoClinicController = {
       )
     }
 
-    // Track the (possibly session- or child-record-based) appointment path
-    let appointmentPath = appointment.uri.new.replace('/book-into-a-clinic', '')
-    appointmentPath = `${request.baseUrl}${appointmentPath}`
-    response.locals.appointmentPath = appointmentPath
+    // Track the (possibly session- or child-record-based) path to the new appointment's pages, but only on the
+    // booking-based routes used for new bookings, as it's meaningless anywhere else
+    if (request.params.booking_uuid) {
+      const newAppointmentPath = appointment.uri.new.replace(
+        '/book-into-a-clinic',
+        ''
+      )
+      response.locals.newAppointmentPath = `${request.baseUrl}${newAppointmentPath}`
+    }
 
     // For multi-child bookings
     response.locals.childNumber = booking.appointments.indexOf(appointment) + 1
@@ -377,10 +382,10 @@ export const bookIntoClinicController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   filterChildren(request, response) {
-    const { appointmentPath } = response.locals
+    const { newAppointmentPath } = response.locals
 
     const params = getFilterParams(request, ['q'], ['option'])
-    const resultsUri = `${appointmentPath}/find-child?${params}`
+    const resultsUri = `${newAppointmentPath}/find-child?${params}`
     return saveAndRedirect(request, response, resultsUri)
   },
 
@@ -393,7 +398,7 @@ export const bookIntoClinicController = {
     )
     const { appointment_uuid } = request.params
     const { data } = request.session
-    const { appointmentPath, booking } = response.locals
+    const { newAppointmentPath, booking } = response.locals
     const booking_uuid = booking.uuid
 
     const wizardBooking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -409,9 +414,9 @@ export const bookIntoClinicController = {
         programme_ids,
         data
       )
-      nextPage = `${appointmentPath}/programmes`
+      nextPage = `${newAppointmentPath}/programmes`
     } else {
-      nextPage = `${appointmentPath}/not-eligible`
+      nextPage = `${newAppointmentPath}/not-eligible`
     }
 
     return saveAndRedirect(request, response, nextPage)
