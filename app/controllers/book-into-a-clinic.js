@@ -26,6 +26,7 @@ import {
   getAllAppointmentPaths,
   getAppointmentChangePaths,
   getJourneyPathBuilder,
+  getNewAppointmentSlotCount,
   getPreviousAddressItems,
   getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
@@ -1036,6 +1037,7 @@ export const bookIntoClinicController = {
         const session = Session.findOne(appointment.session_id, data)
 
         const { preselectedSlot } = data.journeyData[booking_uuid]
+        const fromSlotCount = appointment.slotCount
         appointment.editedSlotCount = session.longestAvailableAppointment(
           preselectedSlot ? appointment.startAt : undefined,
           appointment.uuid
@@ -1043,15 +1045,23 @@ export const bookIntoClinicController = {
 
         ClinicBooking.update(booking_uuid, booking, data.wizard)
 
+        // When booking, record the shortening the team has accepted, so it's kept (and this page drops out of the
+        // journey) for as long as the length it shortened is still the one required
+        if (action === 'new') {
+          data.journeyData[booking_uuid].shortening = {
+            fromSlotCount,
+            toSlotCount: appointment.editedSlotCount
+          }
+        }
+
         // When editing, update the answers auto-stored from the appointment-length page to match, so that this page
         // drops out of the journey and the length page shows the shortened length
         if (action === 'edit') {
-          data.journeyData.appointmentLengthType =
+          data.journeyData['appointmentLengthType'] =
             AppointmentLengthType.Specific
-          data.appointment = {
-            ...data.appointment,
+          data.appointment = Object.assign({}, data.appointment, {
             editedSlotCount: appointment.editedSlotCount
-          }
+          })
         }
       } else if (view === 'child-count') {
         // We've just set the child count, so create the appointments we'll need
@@ -1137,15 +1147,15 @@ export const bookIntoClinicController = {
           data
         )
         const appointment = booking.findAppointment(appointment_uuid)
-        if (
-          stringToBoolean(data.journeyData[booking_uuid].extendForSupportNeeds)
-        ) {
-          const defaultSlotCount =
-            appointment.session.calculateSlotCount(appointment)
-          appointment.editedSlotCount = defaultSlotCount + 1
-        } else {
-          appointment.editedSlotCount = undefined
-        }
+        const slotCount = getNewAppointmentSlotCount(
+          appointment,
+          stringToBoolean(data.journeyData[booking_uuid].extendForSupportNeeds),
+          data.journeyData[booking_uuid]
+        )
+        const defaultSlotCount =
+          appointment.session.calculateSlotCount(appointment)
+        appointment.editedSlotCount =
+          slotCount === defaultSlotCount ? undefined : slotCount
 
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       } else if (view === 'appointment-length') {
