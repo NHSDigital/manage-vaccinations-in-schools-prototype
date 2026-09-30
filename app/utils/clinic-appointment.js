@@ -204,7 +204,7 @@ export const getAllAppointmentPaths = (
       // Interrupt if the appointment is too long for the slot selected on Appointments page
       ...(isDataMigrationJourney &&
       sessionData.journeyData[booking_uuid]?.preselectedSlot &&
-      !canAppointmentFitInSchedule(appointment, true, sessionData)
+      !canNewAppointmentLengthFitInSession(appointment, true, sessionData)
         ? {
             [appointmentPath('shorten-appointment')]: {}
           }
@@ -212,7 +212,7 @@ export const getAllAppointmentPaths = (
       // Interrupt if the appointment is too long for anywhere in the session
       ...(isDataMigrationJourney &&
       !sessionData.journeyData[booking_uuid]?.preselectedSlot &&
-      !canAppointmentFitInSchedule(appointment, false, sessionData)
+      !canNewAppointmentLengthFitInSession(appointment, false, sessionData)
         ? {
             [appointmentPath('shorten-appointment')]: {}
           }
@@ -439,7 +439,7 @@ export const getAppointmentChangePaths = (
     [appointmentPath('appointment-length')]: {},
 
     // Interrupt if the chosen length can't fit anywhere in the session
-    ...(!canChosenLengthFitInSession(appointment, sessionData)
+    ...(!canEditedAppointmentLengthFitInSession(appointment, sessionData)
       ? { [appointmentPath('shorten-appointment')]: {} }
       : {}),
 
@@ -466,7 +466,7 @@ export const getAppointmentChangePaths = (
  * @param {object} sessionData - the request.session.data object
  * @returns {boolean} - true if the chosen length will fit somewhere in the session, or false otherwise
  */
-const canChosenLengthFitInSession = (appointment, sessionData) => {
+const canEditedAppointmentLengthFitInSession = (appointment, sessionData) => {
   const session = Session.findOne(appointment.session_id, sessionData)
 
   let chosenSlotCount
@@ -481,10 +481,34 @@ const canChosenLengthFitInSession = (appointment, sessionData) => {
       chosenSlotCount = appointment.slotCount
   }
 
-  return (
-    chosenSlotCount <=
-    session.longestAvailableAppointment(undefined, appointment.uuid)
-  )
+  return session.canFitSlotCount(chosenSlotCount, undefined, appointment.uuid)
+}
+
+/**
+ * Get the length (in slots) of an appointment being newly booked: the length needed for its vaccinations, plus a
+ * slot if extending for support needs, unless the team has already accepted shortening that length on the
+ * shorten-appointment page
+ *
+ * @param {ClinicAppointment} appointment - the appointment we're booking
+ * @param {boolean} extendForSupportNeeds - should the appointment have an extra slot for support needs?
+ * @param {{ shortening?: { fromSlotCount: number, toSlotCount: number } }} [bookingJourneyData] - the journey data
+ *   for the appointment's booking, including any shortening the team has accepted
+ * @returns {number} - the length of the appointment, in slots
+ */
+export const getNewAppointmentSlotCount = (
+  appointment,
+  extendForSupportNeeds,
+  bookingJourneyData
+) => {
+  const requiredSlotCount =
+    appointment.session.calculateSlotCount(appointment) +
+    (extendForSupportNeeds ? 1 : 0)
+
+  // A shortening applies only while the length it shortened is still the one required
+  const shortening = bookingJourneyData?.shortening
+  return shortening?.fromSlotCount === requiredSlotCount
+    ? shortening.toSlotCount
+    : requiredSlotCount
 }
 
 /**
@@ -495,7 +519,7 @@ const canChosenLengthFitInSession = (appointment, sessionData) => {
  * @param {object} sessionData - the global data context
  * @returns {boolean} - true if the appointment will fit in the schedule, or false otherwise
  */
-const canAppointmentFitInSchedule = (
+const canNewAppointmentLengthFitInSession = (
   appointment,
   useAppointmentTime,
   sessionData
@@ -503,22 +527,18 @@ const canAppointmentFitInSchedule = (
   const extendForSupportNeeds = stringToBoolean(
     sessionData.journeyData.extendForSupportNeeds
   )
+  const slotCount = getNewAppointmentSlotCount(
+    appointment,
+    extendForSupportNeeds,
+    sessionData.journeyData[appointment.booking_uuid]
+  )
+
   const session = Session.findOne(appointment.session_id, sessionData)
-  const startTimesWithEnoughSpace =
-    session.bookableStartTimesForVaccinationChoices(
-      appointment,
-      extendForSupportNeeds,
-      appointment.uuid
-    )
-
-  if (useAppointmentTime) {
-    const appointmentTime = appointment.startAt.getTime()
-    return startTimesWithEnoughSpace.some(
-      (slotTime) => slotTime.getTime() == appointmentTime
-    )
-  }
-
-  return startTimesWithEnoughSpace.length > 0
+  return session.canFitSlotCount(
+    slotCount,
+    useAppointmentTime ? appointment.startAt : undefined,
+    appointment.uuid
+  )
 }
 
 /**

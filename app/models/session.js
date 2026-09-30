@@ -1260,6 +1260,36 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Is there enough free capacity for an appointment of the given length, either at a given start time or anywhere
+   * in this clinic session?
+   *
+   * @param {number} slotCount - the length of the appointment, in slots
+   * @param {Date} [startTime] - the start time for the appointment, if it matters
+   * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
+   * @returns {boolean} - true if the appointment will fit, or false otherwise
+   */
+  canFitSlotCount(
+    slotCount,
+    startTime = undefined,
+    ignoredAppointment_uuid = undefined
+  ) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const bookableStartTimes = this.#bookableStartTimesForSlotCount(
+      slotCount,
+      ignoredAppointment_uuid
+    )
+
+    return startTime
+      ? bookableStartTimes.some(
+          (time) => time.getTime() === startTime.getTime()
+        )
+      : bookableStartTimes.length > 0
+  }
+
+  /**
    * Get the length of the longest possible appointment — either overall or for a given start time — in slots
    *
    * @param {Date|undefined} startTime - the start time for the appointment, if known
