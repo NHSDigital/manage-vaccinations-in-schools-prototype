@@ -49,13 +49,15 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
  * @param {boolean} extendForSupportNeeds - should we look for space for an extended appointment?
  * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
+ * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
   vaccinationChoices,
   extendForSupportNeeds,
-  requiresStockingPeriod
+  requiresStockingPeriod,
+  ignoredAppointment_uuid = undefined
 ) => {
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
@@ -65,7 +67,8 @@ export const getBookableClinicSessions = (
       session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
       session.bookableStartTimesForVaccinationChoices(
         vaccinationChoices,
-        extendForSupportNeeds
+        extendForSupportNeeds,
+        ignoredAppointment_uuid
       ).length > 0
   )
 
@@ -94,7 +97,8 @@ export const getBookableClinicLocationItems = (
     context,
     appointment.vaccinationChoices,
     extendForSupportNeeds,
-    requiresStockingPeriod
+    requiresStockingPeriod,
+    appointment.uuid
   )
   const sessionsByLocation = _.groupBy(
     scheduledClinics,
@@ -141,7 +145,8 @@ export const getBookableClinicDateItems = (
       context,
       vaccinationChoices,
       extendForSupportNeeds,
-      requiresStockingPeriod
+      requiresStockingPeriod,
+      appointment.uuid
     ).filter((session) => session.clinic_id === clinic_id),
     'date'
   )
@@ -152,7 +157,8 @@ export const getBookableClinicDateItems = (
 
     const availableTimes = session.bookableStartTimesForVaccinationChoices(
       vaccinationChoices,
-      extendForSupportNeeds
+      extendForSupportNeeds,
+      appointment.uuid
     )
     const morningAvailable = availableTimes.some((time) => time < midday)
     const afternoonAvailable = availableTimes.some((time) => time >= midday)
