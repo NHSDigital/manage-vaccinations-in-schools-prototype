@@ -485,31 +485,19 @@ const canEditedAppointmentLengthFitInSession = (appointment, sessionData) => {
 }
 
 /**
- * Get the length (in slots) of an appointment being newly booked: the length needed for its vaccinations, plus a
- * slot if extending for support needs, unless the team has already accepted shortening that length on the
- * shorten-appointment page
+ * Get the length (in slots) needed by an appointment being newly booked: the length needed for its vaccinations,
+ * plus a slot if extending for support needs
+ *
+ * Note: if the team has accepted shortening the appointment to fit, that shortening applies only while this is
+ * still the length it was shortened from, i.e. the appointment's `preferredSlotCount`
  *
  * @param {ClinicAppointment} appointment - the appointment we're booking
  * @param {boolean} extendForSupportNeeds - should the appointment have an extra slot for support needs?
- * @param {{ shortening?: { fromSlotCount: number, toSlotCount: number } }} [bookingJourneyData] - the journey data
- *   for the appointment's booking, including any shortening the team has accepted
- * @returns {number} - the length of the appointment, in slots
+ * @returns {number} - the length needed by the appointment, in slots
  */
-export const getNewAppointmentSlotCount = (
-  appointment,
-  extendForSupportNeeds,
-  bookingJourneyData
-) => {
-  const requiredSlotCount =
-    appointment.session.calculateSlotCount(appointment) +
-    (extendForSupportNeeds ? 1 : 0)
-
-  // A shortening applies only while the length it shortened is still the one required
-  const shortening = bookingJourneyData?.shortening
-  return shortening?.fromSlotCount === requiredSlotCount
-    ? shortening.toSlotCount
-    : requiredSlotCount
-}
+export const getRequiredSlotCount = (appointment, extendForSupportNeeds) =>
+  appointment.session.calculateSlotCount(appointment) +
+  (extendForSupportNeeds ? 1 : 0)
 
 /**
  * Are there enough consecutive slots free to fit this appointment in?
@@ -527,11 +515,16 @@ const canNewAppointmentLengthFitInSession = (
   const extendForSupportNeeds = stringToBoolean(
     sessionData.journeyData.extendForSupportNeeds
   )
-  const slotCount = getNewAppointmentSlotCount(
+  const requiredSlotCount = getRequiredSlotCount(
     appointment,
-    extendForSupportNeeds,
-    sessionData.journeyData[appointment.booking_uuid]
+    extendForSupportNeeds
   )
+
+  // Use any shortening to fit that the team has already accepted for this length
+  const slotCount =
+    appointment.preferredSlotCount === requiredSlotCount
+      ? appointment.editedSlotCount
+      : requiredSlotCount
 
   const session = Session.findOne(appointment.session_id, sessionData)
   return session.canFitSlotCount(
