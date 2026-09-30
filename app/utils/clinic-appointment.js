@@ -465,7 +465,8 @@ const canAppointmentFitInSchedule = (
   const startTimesWithEnoughSpace =
     session.bookableStartTimesForVaccinationChoices(
       appointment,
-      extendForSupportNeeds
+      extendForSupportNeeds,
+      appointment.uuid
     )
 
   if (useAppointmentTime) {

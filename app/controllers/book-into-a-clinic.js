@@ -815,7 +815,8 @@ export const bookIntoClinicController = {
       const session = Session.findOne(appointment.session_id, data)
       const requiredSlots = appointment.slotCount
       const availableSlots = session.longestAvailableAppointment(
-        appointment.startAt
+        appointment.startAt,
+        appointment.uuid
       )
 
       response.locals.requiredSlots = requiredSlots
@@ -926,7 +927,8 @@ export const bookIntoClinicController = {
         const session = Session.findOne(appointment.session_id, data)
 
         appointment.editedSlotCount = session.longestAvailableAppointment(
-          appointment.startAt
+          appointment.startAt,
+          appointment.uuid
         )
 
         ClinicBooking.update(booking_uuid, booking, data.wizard)
