@@ -308,6 +308,21 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * Show an appointment, which lives on the patient session page if it's been matched to a patient
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  showAppointment(request, response) {
+    const { appointment } = response.locals
+
+    const appointmentPath = appointment.patient_uuid
+      ? appointment.uri.matched
+      : `/sessions/${appointment.session_id}${appointment.uri.unmatched}`
+
+    return saveAndRedirect(request, response, appointmentPath)
+  },
+
+  /**
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readChildren(request, response, next) {
