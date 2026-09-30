@@ -26,7 +26,7 @@ import {
   getAllAppointmentPaths,
   getAppointmentChangePaths,
   getJourneyPathBuilder,
-  getNewAppointmentSlotCount,
+  getRequiredSlotCount,
   getPreviousAddressItems,
   getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
@@ -1036,23 +1036,16 @@ export const bookIntoClinicController = {
         const appointment = booking.findAppointment(appointment_uuid)
         const session = Session.findOne(appointment.session_id, data)
 
+        // Remember the length the appointment should have been, so it shows as 'might overrun' (and, when
+        // booking, so the shortening's kept for as long as that's still the length required)
         const { preselectedSlot } = data.journeyData[booking_uuid]
-        const fromSlotCount = appointment.slotCount
+        appointment.preferredSlotCount = appointment.slotCount
         appointment.editedSlotCount = session.longestAvailableAppointment(
           preselectedSlot ? appointment.startAt : undefined,
           appointment.uuid
         )
 
         ClinicBooking.update(booking_uuid, booking, data.wizard)
-
-        // When booking, record the shortening the team has accepted, so it's kept (and this page drops out of the
-        // journey) for as long as the length it shortened is still the one required
-        if (action === 'new') {
-          data.journeyData[booking_uuid].shortening = {
-            fromSlotCount,
-            toSlotCount: appointment.editedSlotCount
-          }
-        }
 
         // When editing, update the answers auto-stored from the appointment-length page to match, so that this page
         // drops out of the journey and the length page shows the shortened length
@@ -1147,28 +1140,40 @@ export const bookIntoClinicController = {
           data
         )
         const appointment = booking.findAppointment(appointment_uuid)
-        const slotCount = getNewAppointmentSlotCount(
+        const requiredSlotCount = getRequiredSlotCount(
           appointment,
-          stringToBoolean(data.journeyData[booking_uuid].extendForSupportNeeds),
-          data.journeyData[booking_uuid]
+          stringToBoolean(data.journeyData[booking_uuid].extendForSupportNeeds)
         )
-        const defaultSlotCount =
-          appointment.session.calculateSlotCount(appointment)
-        appointment.editedSlotCount =
-          slotCount === defaultSlotCount ? undefined : slotCount
+
+        // Keep any shortening to fit that the team has already accepted for this length, but otherwise use the
+        // length required
+        if (appointment.preferredSlotCount !== requiredSlotCount) {
+          const defaultSlotCount =
+            appointment.session.calculateSlotCount(appointment)
+          appointment.preferredSlotCount = undefined
+          appointment.editedSlotCount =
+            requiredSlotCount === defaultSlotCount
+              ? undefined
+              : requiredSlotCount
+        }
 
         ClinicBooking.update(booking.uuid, booking, data.wizard)
       } else if (view === 'appointment-length') {
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const appointment = booking.findAppointment(appointment_uuid)
+
+        // A newly chosen length replaces any earlier shortening to fit
+        appointment.preferredSlotCount = undefined
+
         if (
           data.journeyData[booking_uuid].appointmentLengthType ===
           AppointmentLengthType.Default
         ) {
           // Clear out any previous team-defined length
-          const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-          const appointment = booking.findAppointment(appointment_uuid)
           appointment.editedSlotCount = 0
-          ClinicBooking.update(booking_uuid, booking, data.wizard)
         }
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
       } else if (view === 'appointment-time') {
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
         const appointment = booking.findAppointment(appointment_uuid)

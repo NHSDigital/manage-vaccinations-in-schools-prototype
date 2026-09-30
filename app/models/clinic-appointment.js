@@ -60,6 +60,7 @@ import {
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {number} [editedSlotCount] - Override of the default appointment length
+ * @property {number} [preferredSlotCount] - The length the appointment should have been, if shortened to fit
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
@@ -104,6 +105,9 @@ export class ClinicAppointment {
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
     this.editedSlotCount = Number(options?.editedSlotCount)
+    this.preferredSlotCount = options?.preferredSlotCount
+      ? Number(options.preferredSlotCount)
+      : undefined
 
     this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
@@ -522,14 +526,15 @@ export class ClinicAppointment {
   }
 
   /**
-   * Has this appointment been made shorter than its default length?
+   * Has this appointment been made shorter than it should be, i.e. shorter than the length it had before being
+   * shortened to fit, or otherwise shorter than its default length?
    *
    * @returns {boolean} - true if it's been shortened, or false otherwise
    */
   get hasBeenShortened() {
-    return this.editedSlotCount
-      ? this.session.calculateSlotCount(this) > this.editedSlotCount
-      : false
+    const wantedSlotCount =
+      this.preferredSlotCount || this.session.calculateSlotCount(this)
+    return this.slotCount < wantedSlotCount
   }
 
   /**
