@@ -919,7 +919,7 @@ export class ClinicAppointment {
       unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
       edit: `/sessions/${this.session_id}/appointments/${this.uuid}/edit`,
-      cancel: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/cancel`,
+      cancel: `/sessions/${this.session_id}/appointments/${this.uuid}/cancel`,
       extend: `/sessions/${this.session_id}/appointments/${this.uuid}/edit/appointment-length`,
       addProgramme: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/add-programme/`
     }

@@ -469,6 +469,78 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  startCancel(request, response) {
+    const { appointment_uuid } = request.params
+
+    request.session.data.cancellation = {}
+
+    return saveAndRedirect(
+      request,
+      response,
+      `${request.baseUrl}/${appointment_uuid}/cancel/rebooking`
+    )
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  showCancel(request, response) {
+    const { appointment_uuid, view } = request.params
+    const { appointment, matchedPath } = response.locals
+
+    response.locals.appointmentSummary = `${appointment.formatted.programmeNames} clinic appointment for ${appointment.patient.fullName}`
+
+    response.locals.back =
+      view === 'rebooking'
+        ? matchedPath
+        : `${request.baseUrl}/${appointment_uuid}/cancel/rebooking`
+
+    return response.render(`book-into-a-clinic/cancel/${view}`)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  updateCancel(request, response) {
+    const { data } = request.session
+    const { appointment_uuid, view } = request.params
+    const { __, account, booking, session } = response.locals
+
+    // Where next?
+    const nextPage =
+      view === 'rebooking'
+        ? `${request.baseUrl}/${appointment_uuid}/cancel/confirm`
+        : session.uri
+
+    if (view === 'rebooking') {
+      // Sanitise the boolean from the radio
+      data.cancellation.offerRebooking = stringToBoolean(
+        data.cancellation.offerRebooking
+      )
+    } else if (view === 'confirm') {
+      // Carry out the cancellation
+      const appointment = booking.findAppointment(appointment_uuid)
+      appointment.cancelAppointment(account, data.cancellation.offerRebooking)
+      ClinicBooking.update(booking.uuid, booking, data)
+
+      // Tidy up
+      delete data.cancellation
+
+      request.flash(
+        'success',
+        __('patientSession.clinicAppointment.cancel.confirm.success', {
+          patientName: appointment.patient.fullName,
+          clinicName: appointment.session.formatted.clinic
+        })
+      )
+    }
+
+    return saveAndRedirect(request, response, nextPage)
+  },
+
+  /**
    * @param {string} action - action being carried out i.e. create new vs edit existing
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */

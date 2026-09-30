@@ -18,4 +18,9 @@ router.all('/:appointment_uuid/edit/:view', bookIntoClinic.readForm('edit'))
 router.get('/:appointment_uuid/edit/:view', bookIntoClinic.showForm)
 router.post('/:appointment_uuid/edit/:view', bookIntoClinic.updateForm('edit'))
 
+// Cancelling an appointment
+router.get('/:appointment_uuid/cancel', bookIntoClinic.startCancel)
+router.get('/:appointment_uuid/cancel/:view', bookIntoClinic.showCancel)
+router.post('/:appointment_uuid/cancel/:view', bookIntoClinic.updateCancel)
+
 export const sessionAppointmentRoutes = router
