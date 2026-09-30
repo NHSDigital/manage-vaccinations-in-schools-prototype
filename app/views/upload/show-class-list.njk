@@ -20,7 +20,7 @@
         href: "/"
       },
       {
-        text: __("upload.list.title"),
+        text: __("upload.listSchoolUser.title"),
         href: "/uploads"
       }
     ]
@@ -117,34 +117,32 @@
     {% endcall %}
 
     {% include "upload/_failed-records.njk" %}
-  {% else %}
+  {% elif upload.status != UploadStatus.Processing %}
     {{ heading({
       caption: {
         text: "These pupils are in the spreadsheet but are not currently recorded as attending your school in Mavis.",
         placement: "after"
       } if params.key != "imported",
-      text: "Pupils who have joined the school",
+      text: "Pupils listed in your spreadsheet as joining the school",
       level: 2,
       size: "m"
     }) }}
 
-    {% for academicYearGroup, patients in upload.patientsByYearGroup %}
-      {{ classListRecords({ patients: patients }) if academicYearGroup != "undefined" }}
-    {% endfor %}
+    {% set patientsMovedIn = upload.patients | slice(3) %}
+    {{ classListRecords({ patients: patientsMovedIn }) }}
 
     {{ heading({
       caption: {
         text: "These pupils are recorded as attending your school in Mavis but are not in the spreadsheet.",
         placement: "after"
       } if params.key != "imported",
-      text: "Pupils who have left the school",
+      text: "Pupils listed in your spreadsheet as no longer at the school",
       level: 2,
       size: "m"
     }) }}
 
-    {% for academicYearGroup, patients in upload.patientsByYearGroup %}
-      {{ classListRecords({ patients: patients }) if academicYearGroup != "undefined" }}
-    {% endfor %}
+    {% set patientsMovedOut = upload.patients | reverse | slice(7) %}
+    {{ classListRecords({ patients: patientsMovedOut }) }}
   {% endif %}
 
   {% if upload.patients.length > 0 and needsReview %}
