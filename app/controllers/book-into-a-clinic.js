@@ -444,11 +444,13 @@ export const bookIntoClinicController = {
     const startAt = new Date(appointment.startAt)
     if (!data.journeyData) data.journeyData = {}
 
-    // Clear any answers auto-stored from previous journeys, which the change pages would otherwise show as selected
+    // Clear auto-stored answers from previous journeys, but keep any live booking-specific journey data
     delete data.appointment
-    delete data.journeyData['clinic_id']
-    delete data.journeyData['timeRange']
-    delete data.journeyData['time']
+    for (const key of Object.keys(data.journeyData)) {
+      if (!ClinicBooking.findOne(key, data.wizard)) {
+        delete data.journeyData[key]
+      }
+    }
 
     data.journeyData[booking.uuid] = {
       journeyType: ClinicBookingJourneyType.TeamEditing,
