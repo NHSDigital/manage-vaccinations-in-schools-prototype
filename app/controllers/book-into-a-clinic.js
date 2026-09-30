@@ -471,8 +471,8 @@ export const bookIntoClinicController = {
       appointment?.fullName
     )
 
-    // Show back link to patient session page
-    response.locals.back = response.locals.matchedPath
+    // Show back link to patient session page, discarding any unsaved changes on the way
+    response.locals.back = `${response.locals.editPath}/discard`
 
     return response.render('book-into-a-clinic/edit')
   },
