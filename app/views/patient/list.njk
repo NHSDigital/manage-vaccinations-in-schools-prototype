@@ -113,9 +113,7 @@
                 text: patient.fullAndPreferredNames | highlightQuery(data.q) | safe,
                 size: "s",
                 level: 3
-              },
-              href: patient.uri,
-              clickable: true
+              }
             },
             lastRowBorder: false,
             rows: summaryRows(patient, {
