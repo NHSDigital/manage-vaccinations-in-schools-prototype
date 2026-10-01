@@ -118,7 +118,7 @@ export const patientController = {
 
     // Filter defaults
     const filters = {
-      consent: request.query.consent || 'none',
+      consentRequest: request.query.consentRequest || 'none',
       status: request.query.status || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
@@ -163,11 +163,14 @@ export const patientController = {
     }
 
     // Filter by consent status (school teams only)
-    if (filters.consent && filters.consent !== 'none') {
+    if (filters.consentRequest && filters.consentRequest !== 'none') {
       const ids = programme_ids || programmes.map((programme) => programme.id)
 
       results = results.filter((patient) =>
-        ids.some((id) => patient.programmes[id].consent === filters.consent)
+        ids.some(
+          (id) =>
+            patient.programmes[id].consentRequest === filters.consentRequest
+        )
       )
     }
 
@@ -264,7 +267,7 @@ export const patientController = {
 
     // Clean up session data
     delete data.clinicStatus
-    delete data.consent
+    delete data.consentRequest
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
@@ -331,7 +334,7 @@ export const patientController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'consent', 'q', 'status'],
+      ['clinicStatus', 'consentRequest', 'q', 'status'],
       [
         'option',
         'patientConsent',
