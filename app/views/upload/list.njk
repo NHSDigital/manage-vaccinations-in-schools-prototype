@@ -83,7 +83,7 @@
     </div>
 
     <div class="nhsuk-grid-column-two-thirds">
-      {% if data.type and data.type != "none" %}
+      {% if data.type and data.type != "none" and not account.isSchoolUser %}
         {% set title = data.type | replace("records", "record uploads") %}
       {% else %}
         {% set title = __("upload.list.results") %}
