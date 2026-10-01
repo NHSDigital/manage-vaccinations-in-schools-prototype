@@ -114,8 +114,8 @@
                 size: "s",
                 level: 3
               },
-              href: patient.uri,
-              clickable: true
+              href: patient.uri if not account.isSchoolUser,
+              clickable: true if not account.isSchoolUser
             },
             lastRowBorder: false,
             rows: summaryRows(patient, {
