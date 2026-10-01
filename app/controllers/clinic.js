@@ -53,8 +53,6 @@ export const clinicController = {
       data
     )
 
-    clinic = Clinic.findOne(clinic.id, data)
-
     request.flash('success', __(`clinic.new.success`, { clinic }))
 
     return saveAndRedirect(request, response, `${clinic.team.uri}/clinics`)

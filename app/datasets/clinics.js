@@ -16,6 +16,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV7 8FD',
     tel: '01676 540395',
+    odsCode: 'RYG1A',
+    carePlusCode: 'CP-RYG-HS01',
     team_id: '001',
     presetNames
   },
@@ -27,6 +29,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV8 3HG',
     tel: '024 76542192',
+    odsCode: 'RYG3B',
+    carePlusCode: 'CP-RYG-MS04',
     team_id: '001',
     presetNames
   },
@@ -38,6 +42,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 6DR',
     tel: '024 76646720',
+    odsCode: 'RYG07',
+    carePlusCode: 'CP-RYG-SJ12',
     team_id: '001',
     presetNames
   },
@@ -49,6 +55,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV3 6EA',
     tel: '024 76224640',
+    odsCode: 'RYG4C',
+    carePlusCode: 'CP-RYG-RI02',
     team_id: '001',
     presetNames
   },
@@ -60,6 +68,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV5 9JE',
     tel: '024 76674123',
+    odsCode: 'RYG2X',
+    carePlusCode: 'CP-RYG-OW88',
     team_id: '001',
     presetNames
   },
@@ -71,6 +81,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV1 4FS',
     tel: '024 76961373',
+    odsCode: 'RYG88',
+    carePlusCode: 'CP-RYG-WF15',
     team_id: '001',
     presetNames
   },
@@ -82,6 +94,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV4 8FT',
     tel: '024 76672277',
+    odsCode: 'RYG14',
+    carePlusCode: 'CP-RYG-PV09',
     team_id: '001',
     presetNames
   },
@@ -93,6 +107,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV1 4FS',
     tel: '024 76961370',
+    odsCode: 'RYG9D',
+    carePlusCode: 'CP-RYG-MR03',
     team_id: '001',
     presetNames
   },
@@ -104,6 +120,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV2 5EP',
     tel: '024 76266370',
+    odsCode: 'RYG5E',
+    carePlusCode: 'CP-RYG-EW21',
     team_id: '001',
     presetNames
   },
@@ -115,6 +133,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV3 1JB',
     tel: '024 76457551',
+    odsCode: 'RYG27',
+    carePlusCode: 'CP-RYG-MC06',
     team_id: '001',
     presetNames
   },
@@ -126,6 +146,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 1HS',
     tel: '0247 6592201',
+    odsCode: 'RYG6F',
+    carePlusCode: 'CP-RYG-PR19',
     team_id: '001',
     presetNames
   },
@@ -139,6 +161,8 @@ export default [
     venueInformation:
       'Please use the car park on Rotary Way and enter via the rear of the building',
     tel: '024 76466106',
+    odsCode: 'RYG33',
+    carePlusCode: 'CP-RYG-GL11',
     team_id: '001',
     presetNames
   },
@@ -150,6 +174,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV2 1XA',
     tel: '024 76612929',
+    odsCode: 'RYG8G',
+    carePlusCode: 'CP-RYG-BH42',
     team_id: '001',
     presetNames
   },
@@ -161,6 +187,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 5DF',
     tel: '024 76681231',
+    odsCode: 'RYG42',
+    carePlusCode: 'CP-RYG-WT08',
     team_id: '001',
     presetNames
   },
@@ -172,6 +200,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV1 3HQ',
     tel: '024 76228606',
+    odsCode: 'RYG7H',
+    carePlusCode: 'CP-RYG-AC27',
     team_id: '001',
     presetNames
   },
@@ -183,6 +213,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV4 9PL',
     tel: '024 76694001',
+    odsCode: 'RYG19',
+    carePlusCode: 'CP-RYG-CS31',
     team_id: '001',
     presetNames
   },
@@ -194,6 +226,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV2 1AB',
     tel: '024 76614255',
+    odsCode: 'RYG9K',
+    carePlusCode: 'CP-RYG-VV14',
     team_id: '001',
     presetNames
   },
@@ -205,6 +239,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV3 5PZ',
     tel: '024 76503485',
+    odsCode: 'RYG55',
+    carePlusCode: 'CP-RYG-SR05',
     team_id: '001',
     presetNames
   },
@@ -218,6 +254,8 @@ export default [
     venueInformation:
       'If attending by car, please use the free car park opposite the Civic Centre, not the staff car park',
     tel: '024 76458777',
+    odsCode: 'RYG2M',
+    carePlusCode: 'CP-RYG-WB90',
     team_id: '001',
     presetNames
   },
@@ -229,6 +267,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV2 4LJ',
     tel: '024 76437087',
+    odsCode: 'RYG63',
+    carePlusCode: 'CP-RYG-OC18',
     team_id: '001',
     presetNames
   },
@@ -240,6 +280,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 5BG',
     tel: '024 76689343',
+    odsCode: 'RYG8P',
+    carePlusCode: 'CP-RYG-K78',
     team_id: '001',
     presetNames
   },
@@ -251,6 +293,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV2 5NB',
     tel: '024 76457497',
+    odsCode: 'RYG1Q',
+    carePlusCode: 'CP-RYG-M02',
     team_id: '001',
     presetNames
   },
@@ -262,6 +306,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 6DR',
     tel: '024 76646750',
+    odsCode: 'RYG9R',
+    carePlusCode: 'CP-RYG-X41',
     team_id: '001',
     presetNames
   },
@@ -273,6 +319,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV4 9PN',
     tel: '024 76460800',
+    odsCode: 'RYG2S',
+    carePlusCode: 'CP-RYG-B95',
     team_id: '001',
     presetNames
   },
@@ -284,6 +332,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV1 2DL',
     tel: '024 76552531',
+    odsCode: 'RYG7T',
+    carePlusCode: 'CP-RYG-L13',
     team_id: '001',
     presetNames
   },
@@ -295,6 +345,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV5 6EU',
     tel: '024 76675016',
+    odsCode: 'RYG3U',
+    carePlusCode: 'CP-RYG-V64',
     team_id: '001',
     presetNames
   },
@@ -306,6 +358,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 3FA',
     tel: '024 76596060',
+    odsCode: 'RYG0V',
+    carePlusCode: 'CP-RYG-P82',
     team_id: '001',
     presetNames
   },
@@ -317,6 +371,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV3 1EG',
     tel: '024 76636972',
+    odsCode: 'RYG5W',
+    carePlusCode: 'CP-RYG-T09',
     team_id: '001',
     presetNames
   },
@@ -328,6 +384,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV6 5LL',
     tel: '024 76685918',
+    odsCode: 'RYG4X',
+    carePlusCode: 'CP-RYG-W37',
     team_id: '001',
     presetNames
   },
@@ -339,6 +397,8 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV1 5FX',
     tel: '024 76527040',
+    odsCode: 'RYG6Y',
+    carePlusCode: 'CP-RYG-H51',
     team_id: '001',
     presetNames
   },
@@ -352,6 +412,8 @@ export default [
     venueInformation:
       'Please note that the bus stop on Upper Stanton Road is currently out of use',
     tel: '024 75263599',
+    odsCode: 'RYG8Z',
+    carePlusCode: 'CP-RYG-J88',
     team_id: '001',
     presetNames
   },
@@ -363,7 +425,22 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV2 3NF',
     tel: '024 76455943',
+    odsCode: 'RYG1M',
+    carePlusCode: 'CP-RYG-N26',
     team_id: '001',
+    presetNames
+  },
+  {
+    id: 'Q00255',
+    name: 'The Kenilworth Centre',
+    addressLine1: 'Abbey End',
+    addressLine2: 'Kenilworth',
+    addressLevel1: 'Coventry',
+    postalCode: 'CV8 1QJ',
+    tel: '01926 855205',
+    odsCode: 'QWU9N',
+    carePlusCode: 'CP-QWU-F70',
+    team_id: '002',
     presetNames
   }
 ]

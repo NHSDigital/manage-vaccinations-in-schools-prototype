@@ -40,6 +40,9 @@ export const en = {
       label: 'Location name',
       hint: 'The site name must be unique. It is shown to parents on the consent form and related emails. Existing sites for this school are: %s.'
     },
+    address: {
+      label: 'Address'
+    },
     addressLine1: {
       label: 'Address line 1'
     },
@@ -52,10 +55,18 @@ export const en = {
     postalCode: {
       label: 'Postcode'
     },
+    odsCode: {
+      label: 'ODS code'
+    },
+    carePlusCode: {
+      label: 'CarePlus code'
+    },
     venueInformation: {
       label: 'Clinic information',
       hint: 'How to access the clinic – for example, parking or entrance information (this displays in the parent’s booking confirmation)'
-    }
+    },
+    shared:
+      'This clinic is shared with other teams. Any changes made here will affect all teams that use it.'
   },
   defaultBatch: {
     label: 'Default batch',

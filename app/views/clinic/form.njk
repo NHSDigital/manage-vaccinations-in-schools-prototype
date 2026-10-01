@@ -5,17 +5,27 @@
 {% set optionalSuffix = " (optional)" %}
 
 {% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+  {% if type === "edit" and clinic.id === "M86633" %}
+    {{ insetText({
+      text: __("location.shared")
+    }) }}
+  {% endif %}
+
+  {{ input({
+    label: __("location.name.label"),
+    decorate: "clinic.name"
+  }) }}
+
   {% call fieldset({
     legend: {
-      heading: title,
-      size: "l"
+      heading: __("location.address.label"),
+      classes: "nhsuk-u-visually-hidden"
     }
   }) %}
-    {{ input({
-      label: __("location.name.label"),
-      decorate: "clinic.name"
-    }) }}
-
     {{ input({
       label: __("location.addressLine1.label"),
       autocomplete: "address-line1",
@@ -41,11 +51,23 @@
       width: 10,
       decorate: "clinic.postalCode"
     }) }}
-
-    {{ textarea({
-      label: __("location.venueInformation.label") + optionalSuffix,
-      hint: __("location.venueInformation.hint"),
-      decorate: "clinic.venueInformation"
-    }) }}
   {% endcall %}
+
+  {{ input({
+    label: __("location.odsCode.label") + optionalSuffix,
+    width: 10,
+    decorate: "clinic.odsCode"
+  }) }}
+
+  {{ input({
+    label: __("location.carePlusCode.label") + optionalSuffix,
+    width: 10,
+    decorate: "clinic.carePlusCode"
+  }) }}
+
+  {{ textarea({
+    label: __("location.venueInformation.label") + optionalSuffix,
+    hint: __("location.venueInformation.hint"),
+    decorate: "clinic.venueInformation"
+  }) }}
 {% endblock %}
