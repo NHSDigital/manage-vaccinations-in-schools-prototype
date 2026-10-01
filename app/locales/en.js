@@ -970,7 +970,7 @@ export const en = {
       }
     },
     appointmentLength: {
-      title: 'How long will the child’s appointment need?',
+      title: 'How long should this appointment be?',
       hint: 'Appointment lengths can be overridden to account for the child’s support needs',
       label: 'Set the appointment length',
       default:
