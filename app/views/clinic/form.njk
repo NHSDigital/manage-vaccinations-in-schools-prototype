@@ -9,6 +9,11 @@
     text: title,
     size: "l"
   }) }}
+  {% if type === "edit" and clinic.id === "M86633" %}
+    {{ insetText({
+      text: __("location.shared")
+    }) }}
+  {% endif %}
 
   {{ input({
     label: __("location.name.label"),

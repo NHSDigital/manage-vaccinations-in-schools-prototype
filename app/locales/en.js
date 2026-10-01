@@ -64,7 +64,9 @@ export const en = {
     venueInformation: {
       label: 'Clinic information',
       hint: 'How to access the clinic – for example, parking or entrance information (this displays in the parent’s booking confirmation)'
-    }
+    },
+    shared:
+      'This clinic is shared with other teams. Any changes made here will affect all teams that use it.'
   },
   defaultBatch: {
     label: 'Default batch',
