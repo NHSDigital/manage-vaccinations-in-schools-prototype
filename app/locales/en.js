@@ -40,6 +40,9 @@ export const en = {
       label: 'Location name',
       hint: 'The site name must be unique. It is shown to parents on the consent form and related emails. Existing sites for this school are: %s.'
     },
+    address: {
+      label: 'Address'
+    },
     addressLine1: {
       label: 'Address line 1'
     },
@@ -51,6 +54,12 @@ export const en = {
     },
     postalCode: {
       label: 'Postcode'
+    },
+    odsCode: {
+      label: 'ODS code'
+    },
+    carePlusCode: {
+      label: 'CarePlus code'
     },
     venueInformation: {
       label: 'Clinic information',
