@@ -19,7 +19,11 @@
         text: __("clinicBooking.shortenAppointment.confirm"),
         variant: "reverse"
       }) }}
-      {{ link(session.uri + "/appointments", __("clinicBooking.shortenAppointment.cancel")) | nhsukMarkdown }}
+      {% if journeyData.journeyType === ClinicBookingJourneyType.TeamEditing %}
+        {{ link(editPath + "/discard", __("clinicBooking.shortenAppointment.cancelEdit")) | nhsukMarkdown }}
+      {% else %}
+        {{ link(session.uri + "/appointments", __("clinicBooking.shortenAppointment.cancel")) | nhsukMarkdown }}
+      {% endif %}
     </div>
   {% endset %}
 

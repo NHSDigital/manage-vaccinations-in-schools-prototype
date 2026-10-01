@@ -1,0 +1,87 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("form.confirm") %}
+{% set title = __("clinicBooking.edit.title") %}
+
+{% macro changePathWithReferrer(view) -%}
+  {{- editPath }}/{{ view }}?referrer={{ editPath }}
+{%- endmacro %}
+
+{% block form %}
+  {{ heading({
+    caption: appointmentCaption,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("clinicBooking.edit.summary.child"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(patient, {
+      fullName: {
+        value: appointment.child.fullFriendlyName if isParentFacing
+      },
+      preferredName: {},
+      dob: {},
+      additionalSupport: {
+        label: __("clinicAppointment.additionalSupport.label"),
+        value: appointment.formatted.additionalSupport
+      } if not structuredNeeds else none,
+      impairments: {} if structuredNeeds else none,
+      adjustments: {} if structuredNeeds else none
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: __("clinicBooking.edit.summary.appointment"),
+      headingSize: "m"
+    },
+    lastRowBorder: false,
+    rows: summaryRows(appointment, {
+      programmeTags: {},
+      fluVaccineType: {},
+      mmrVaccineType: {},
+      location: {
+        href: changePathWithReferrer("clinic-location")
+      },
+      date: {
+        href: changePathWithReferrer("clinic-date")
+      },
+      appointmentLength: {
+        href: changePathWithReferrer("appointment-length")
+      },
+      timeSlot: {
+        href: changePathWithReferrer("appointment-time-range")
+      }
+    })
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("clinicBooking.edit.summary.contact"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(booking.contact, {
+      fullName: {},
+      relationship: {
+        value: appointment.formatted.parentalRelationship
+      },
+      hasParentalResponsibility: {
+        value: appointment.parentHasParentalResponsibility
+      },
+      email: {},
+      tel: {},
+      canSms: {},
+      communicationNeeds: {}
+    })
+  }) }}
+{% endblock %}

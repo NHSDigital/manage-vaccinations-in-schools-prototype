@@ -893,7 +893,8 @@ export const en = {
           'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But the longest appointment available in this session is {availableMinutes, plural, one {1 minute} other {# minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}).\n\nYou can:\n- continue – this will automatically shorten the appointment time and display it as ‘might overrun’\n- cancel – you can extend the session or find another with more space'
       },
       confirm: 'Continue',
-      cancel: 'Cancel and return to the Appointments page'
+      cancel: 'Cancel and return to the Appointments page',
+      cancelEdit: 'Cancel and return to the appointment'
     },
     appointmentLost: {
       title: 'Your appointment time is no longer available',
@@ -932,7 +933,9 @@ export const en = {
         description: 'You’ll get a booking confirmation email or text message.'
       }
     },
-    success: 'Added {{fullName}} to the {{sessionName}}',
+    new: {
+      success: 'Added {{fullName}} to the {{sessionName}}'
+    },
     show: {
       title: 'Manage your booking',
       introduction:
@@ -953,6 +956,31 @@ export const en = {
         }
       },
       referenceNumber: 'Your booking reference number is: %s'
+    },
+    edit: {
+      title: 'Edit appointment',
+      summary: {
+        child: 'Child details',
+        appointment: 'Appointment details',
+        contact: 'Contact details'
+      },
+      success: {
+        updated: 'Updated {{fullName}} in the {{sessionName}}',
+        moved: 'Moved {{fullName}} to the {{sessionName}}'
+      }
+    },
+    appointmentLength: {
+      title: 'How long should this appointment be?',
+      hint: 'Appointment lengths can be overridden to account for the child’s support needs',
+      label: 'Set the appointment length',
+      default:
+        'Use the default appointment length of {defaultLengthInSlots, plural, one {1 slot} other {{defaultLengthInSlots} slots}} ({defaultLengthInMinutes, plural, one {1 minute} other {{defaultLengthInMinutes} minutes}})',
+      specific: 'Use a specific appointment length',
+      slots: {
+        label: 'Number of slots',
+        hint: 'Each slot is %d minutes long',
+        suffix: 'slots'
+      }
     }
   },
   clinicVaccinationPeriod: {

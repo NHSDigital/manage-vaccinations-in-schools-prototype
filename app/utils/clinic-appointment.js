@@ -3,6 +3,7 @@ import _ from 'lodash'
 import {
   AdditionalNeeds,
   AppointmentAbandonmentReason,
+  AppointmentLengthType,
   ClinicBookingJourneyType,
   LocationSearchType,
   PatientClinicStatus,
@@ -81,17 +82,52 @@ export const getAppointmentProgrammeOptions = (programme_ids, context) => {
 }
 
 /**
+ * Builds the path to a view in a clinic booking journey, relative to where the journey's router is mounted
+ *
+ * @callback JourneyPathBuilder
+ * @param {string} view - the view to link to e.g. 'programmes'
+ * @param {string} [appointment_uuid] - the appointment the view is for; not required for booking-level views
+ * @returns {string} the path to the view
+ */
+
+/**
+ * Get a builder for journey paths, relative to wherever the router handling this request is mounted
+ *
+ * Booking-based routes (e.g. /book-into-a-clinic/:booking_uuid/new/:appointment_uuid/:view) include the booking
+ * UUID in the path, whereas appointment-based routes (e.g. /sessions/:session_id/appointments/:appointment_uuid/edit/:view)
+ * don't, and have no booking-level views.
+ *
+ * @param {Request} request - the request being handled
+ * @param {string} action - action being carried out i.e. create new vs edit existing
+ * @returns {JourneyPathBuilder} Journey path builder
+ */
+export const getJourneyPathBuilder = (request, action) => {
+  const { booking_uuid } = request.params
+
+  if (!booking_uuid) {
+    return (view, appointment_uuid) => `/${appointment_uuid}/${action}/${view}`
+  }
+
+  return (view, appointment_uuid) =>
+    appointment_uuid
+      ? `/${booking_uuid}/${action}/${appointment_uuid}/${view}`
+      : `/${booking_uuid}/${action}/${view}`
+}
+
+/**
  * Get wizard journey paths and forking details for all appointments in the given clinic booking
  *
  * @param {string} booking_uuid - the ID of the booking we're creating
  * @param {object} sessionData - the request.session.data object
  * @param {Array<ClinicAppointment>} appointments - the appointments whose journeys we're mapping
+ * @param {JourneyPathBuilder} getPath - builds the (mount-relative) path to a view in the journey
  * @returns {object} An object containing all relevant pages and forks
  */
 export const getAllAppointmentPaths = (
   booking_uuid,
   sessionData,
-  appointments
+  appointments,
+  getPath
 ) => {
   if (!appointments?.length) {
     return {}
@@ -114,17 +150,19 @@ export const getAllAppointmentPaths = (
 
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
+    const appointmentPath = (view) => getPath(view, appointment_uuid)
+
     return {
       // Find the child (data migration journey only)
       ...(isDataMigrationJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/find-child`]: {}
+            [appointmentPath('find-child')]: {}
           }
         : {}),
 
       // Vaccinations wanted
-      [`/${booking_uuid}/new/${appointment_uuid}/programmes`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/availability`]: () => {
+      [appointmentPath('programmes')]: {
+        [appointmentPath('availability')]: () => {
           const vaccinationChoices = appointment.vaccinationChoices
           vaccinationChoices.selected_programme_ids = stringToArray(
             sessionData.appointment?.selected_programme_ids
@@ -141,42 +179,42 @@ export const getAllAppointmentPaths = (
       },
       ...(sessionData.appointment?.selected_programme_ids?.includes('flu')
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/flu-choice`]: {}
+            [appointmentPath('flu-choice')]: {}
           }
         : {}),
       ...(sessionData.appointment?.fluDecision === ReplyDecision.Given
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/flu-alternative`]: {}
+            [appointmentPath('flu-alternative')]: {}
           }
         : {}),
       ...(sessionData.appointment?.selected_programme_ids?.includes('mmr')
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/mmr-alternative`]: {}
+            [appointmentPath('mmr-alternative')]: {}
           }
         : {}),
       ...(getAdditionalNeeds() === AdditionalNeeds.Basic
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/additional-support`]: {}
+            [appointmentPath('additional-support')]: {}
           }
         : {
-            [`/${booking_uuid}/new/${appointment_uuid}/impairments`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/adjustments`]: {}
+            [appointmentPath('impairments')]: {},
+            [appointmentPath('adjustments')]: {}
           }),
 
       // Interrupt if the appointment is too long for the slot selected on Appointments page
       ...(isDataMigrationJourney &&
       sessionData.journeyData[booking_uuid]?.preselectedSlot &&
-      !canAppointmentFitInSchedule(appointment, true, sessionData)
+      !canNewAppointmentLengthFitInSession(appointment, true, sessionData)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
+            [appointmentPath('shorten-appointment')]: {}
           }
         : {}),
       // Interrupt if the appointment is too long for anywhere in the session
       ...(isDataMigrationJourney &&
       !sessionData.journeyData[booking_uuid]?.preselectedSlot &&
-      !canAppointmentFitInSchedule(appointment, false, sessionData)
+      !canNewAppointmentLengthFitInSession(appointment, false, sessionData)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/shorten-appointment`]: {}
+            [appointmentPath('shorten-appointment')]: {}
           }
         : {}),
 
@@ -184,45 +222,42 @@ export const getAllAppointmentPaths = (
       ...(appointments[0].uuid !== appointment_uuid &&
       getPreviousSessionItems(appointments, sessionData).length > 2
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/session-selection`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
-                () => sessionData.journeyData.addressChoice !== 'new'
+            [appointmentPath('session-selection')]: {
+              [appointmentPath('appointment-time-range')]: () =>
+                sessionData.journeyData.addressChoice !== 'new'
             }
           }
         : {}),
       ...(!isDataMigrationJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]:
-                () => {
-                  const searchTerm = sessionData.journeyData.preferredLocation
-                  const searchType = getLocationSearchType(searchTerm)
-                  switch (searchType) {
-                    case LocationSearchType.Postcode:
-                    case LocationSearchType.Outcode:
-                      sessionData.appointment.preferredPostcode = searchTerm
-                      sessionData.journeyData.outOfArea = false
-                      return true
-                    case LocationSearchType.Place:
-                    default:
-                      sessionData.journeyData.outOfArea = true
-                      return false
-                  }
+            [appointmentPath('preferred-location')]: {
+              [appointmentPath('clinic-location')]: () => {
+                const searchTerm = sessionData.journeyData.preferredLocation
+                const searchType = getLocationSearchType(searchTerm)
+                switch (searchType) {
+                  case LocationSearchType.Postcode:
+                  case LocationSearchType.Outcode:
+                    sessionData.appointment.preferredPostcode = searchTerm
+                    sessionData.journeyData.outOfArea = false
+                    return true
+                  case LocationSearchType.Place:
+                  default:
+                    sessionData.journeyData.outOfArea = true
+                    return false
                 }
+              }
             },
-            [`/${booking_uuid}/new/${appointment_uuid}/preferred-location-matches`]:
-              {
-                [`/${booking_uuid}/new/${appointment_uuid}/preferred-location`]:
-                  {
-                    data: 'appointment.preferredPostcode',
-                    value: 'retry'
-                  }
-              },
-            [`/${booking_uuid}/new/${appointment_uuid}/clinic-distance`]: {}, // only used for place matching path (for demo/test purposes)
+            [appointmentPath('preferred-location-matches')]: {
+              [appointmentPath('preferred-location')]: {
+                data: 'appointment.preferredPostcode',
+                value: 'retry'
+              }
+            },
+            [appointmentPath('clinic-distance')]: {}, // only used for place matching path (for demo/test purposes)
 
             // Session and slot selection
-            [`/${booking_uuid}/new/${appointment_uuid}/clinic-location`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+            [appointmentPath('clinic-location')]: {
+              [appointmentPath('fully-booked')]: () => {
                 return (
                   getBookableClinicSessions(
                     sessionData,
@@ -233,8 +268,8 @@ export const getAllAppointmentPaths = (
                 )
               }
             },
-            [`/${booking_uuid}/new/${appointment_uuid}/clinic-date`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+            [appointmentPath('clinic-date')]: {
+              [appointmentPath('fully-booked')]: () => {
                 return (
                   getBookableClinicSessions(
                     sessionData,
@@ -252,22 +287,20 @@ export const getAllAppointmentPaths = (
         sessionData.journeyData[booking_uuid]?.preselectedSlot
       )
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/appointment-time-range`]:
-              {
-                [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]:
-                  () => {
-                    return (
-                      getBookableClinicSessions(
-                        sessionData,
-                        appointment.vaccinationChoices,
-                        extendForSupportNeeds,
-                        isParentJourney
-                      ).length === 0
-                    )
-                  }
-              },
-            [`/${booking_uuid}/new/${appointment_uuid}/appointment-time`]: {
-              [`/${booking_uuid}/new/${appointment_uuid}/fully-booked`]: () => {
+            [appointmentPath('appointment-time-range')]: {
+              [appointmentPath('fully-booked')]: () => {
+                return (
+                  getBookableClinicSessions(
+                    sessionData,
+                    appointment.vaccinationChoices,
+                    extendForSupportNeeds,
+                    isParentJourney
+                  ).length === 0
+                )
+              }
+            },
+            [appointmentPath('appointment-time')]: {
+              [appointmentPath('fully-booked')]: () => {
                 return (
                   getBookableClinicSessions(
                     sessionData,
@@ -277,10 +310,8 @@ export const getAllAppointmentPaths = (
                   ).length === 0
                 )
               },
-              [`/${booking_uuid}/new/${appointment_uuid}/child`]: () =>
-                isParentJourney,
-              [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
-                () => !isParentJourney
+              [appointmentPath('child')]: () => isParentJourney,
+              [appointmentPath('team-health-questions')]: () => !isParentJourney
             }
           }
         : {}),
@@ -288,47 +319,43 @@ export const getAllAppointmentPaths = (
       // Child details
       ...(isParentJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/child`]: {},
-            [`/${booking_uuid}/new/${appointment_uuid}/dob`]: {},
+            [appointmentPath('child')]: {},
+            [appointmentPath('dob')]: {},
             ...(appointments[0].uuid !== appointment_uuid &&
             getPreviousAddressItems(appointments).length > 2
               ? {
-                  [`/${booking_uuid}/new/${appointment_uuid}/address-selection`]:
-                    {
-                      [`/${booking_uuid}/new/${appointment_uuid}/contact`]:
-                        () => sessionData.journeyData.addressChoice !== 'new'
-                    }
+                  [appointmentPath('address-selection')]: {
+                    [appointmentPath('contact')]: () =>
+                      sessionData.journeyData.addressChoice !== 'new'
+                  }
                 }
               : {}),
-            [`/${booking_uuid}/new/${appointment_uuid}/address`]: {}
+            [appointmentPath('address')]: {}
           }
         : {
-            [`/${booking_uuid}/new/${appointment_uuid}/team-health-questions`]:
-              {
-                [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]:
-                  () => {
-                    if (
-                      sessionData.journeyData.optedIntoHealthQuestions ===
-                      'true'
-                    ) {
-                      return false
-                    }
-
-                    return appointment.patient.contacts?.length > 0
-                  },
-                [`/${booking_uuid}/new/${appointment_uuid}/contact`]: () => {
-                  if (
-                    sessionData.journeyData.optedIntoHealthQuestions === 'true'
-                  ) {
-                    return false
-                  }
-
-                  return appointment.patient.contacts?.length === 0
+            [appointmentPath('team-health-questions')]: {
+              [appointmentPath('contact-selection')]: () => {
+                if (
+                  sessionData.journeyData.optedIntoHealthQuestions === 'true'
+                ) {
+                  return false
                 }
+
+                return appointment.patient.contacts?.length > 0
+              },
+              [appointmentPath('contact')]: () => {
+                if (
+                  sessionData.journeyData.optedIntoHealthQuestions === 'true'
+                ) {
+                  return false
+                }
+
+                return appointment.patient.contacts?.length === 0
               }
+            }
           }),
       ...getHealthQuestionPathsForAppointment(
-        `/${booking_uuid}/new/`,
+        appointmentPath,
         appointment,
         sessionData
       ),
@@ -336,49 +363,141 @@ export const getAllAppointmentPaths = (
       // Parent contact details
       ...(!isParentJourney
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/contact-selection`]: {}
+            [appointmentPath('contact-selection')]: {}
           }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/contact`]: {
-        [`/${booking_uuid}/new/${appointment_uuid}/parental-responsibility`]: {
+      [appointmentPath('contact')]: {
+        [appointmentPath('parental-responsibility')]: {
           data: 'appointment.parentHasParentalResponsibility',
           value: 'false'
         }
       },
-      [`/${booking_uuid}/new/${appointment_uuid}/communication-needs`]: {},
+      [appointmentPath('communication-needs')]: {},
 
       // Check and confirm
-      [`/${booking_uuid}/new/${appointment_uuid}/check-answers`]: {
-        [`/${booking_uuid}/new/confirmation`]: () =>
+      [appointmentPath('check-answers')]: {
+        [getPath('confirmation')]: () =>
           !appointment.isAbandoned && !appointment.patient_uuid,
-        [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: () =>
-          appointment.isAbandoned
+        [appointmentPath('thank-you')]: () => appointment.isAbandoned
       },
 
       // Reporting the lack of a convenient option
-      [`/${booking_uuid}/new/${appointment_uuid}/not-convenient`]: {},
+      [appointmentPath('not-convenient')]: {},
       ...(abandonmentReasons?.length > 1
-        ? { [`/${booking_uuid}/new/${appointment_uuid}/least-convenient`]: {} }
+        ? {
+            [appointmentPath('least-convenient')]: {}
+          }
         : {}),
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.Distance)
         ? {
-            [`/${booking_uuid}/new/${appointment_uuid}/convenient-distance`]: {}
+            [appointmentPath('convenient-distance')]: {}
           }
         : {}),
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.DayOfWeek)
-        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-days`]: {} }
+        ? {
+            [appointmentPath('convenient-days')]: {}
+          }
         : {}),
       ...(abandonmentReasons.includes(AppointmentAbandonmentReason.TimeOfDay)
-        ? { [`/${booking_uuid}/new/${appointment_uuid}/convenient-times`]: {} }
+        ? {
+            [appointmentPath('convenient-times')]: {}
+          }
         : {}),
-      [`/${booking_uuid}/new/${appointment_uuid}/check-feedback`]: {},
-      [`/${booking_uuid}/new/${appointment_uuid}/thank-you`]: {}
+      [appointmentPath('check-feedback')]: {},
+      [appointmentPath('thank-you')]: {}
     }
   })
 
   // Merge all the appointments' paths into a single sequence, preserving order
   return Object.assign({}, ...pathsPerAppointment)
 }
+
+/**
+ * Get wizard journey for editing an existing appointment
+ *
+ * Note: the wizard evaluates forks before the posted form is saved to the appointment, so any conditions that
+ * depend on the page being posted should use the auto-stored answers in the session data (e.g.
+ * `sessionData.journeyData.appointmentLengthType`) rather than the appointment itself.
+ *
+ * @param {ClinicAppointment} appointment - the appointment being edited
+ * @param {object} sessionData - the request.session.data object
+ * @param {JourneyPathBuilder} getPath - builds the (mount-relative) path to a view in the journey
+ * @param {string} [firstView] - the view at which the change started
+ * @returns {object} The journey object
+ */
+export const getAppointmentChangePaths = (
+  appointment,
+  sessionData,
+  getPath,
+  firstView
+) => {
+  const appointmentPath = (view) => getPath(view, appointment.uuid)
+
+  const journey = {
+    [appointmentPath('clinic-location')]: {},
+    [appointmentPath('clinic-date')]: {},
+    [appointmentPath('appointment-length')]: {},
+
+    // Interrupt if the chosen length can't fit anywhere in the session
+    ...(!canEditedAppointmentLengthFitInSession(appointment, sessionData)
+      ? { [appointmentPath('shorten-appointment')]: {} }
+      : {}),
+
+    [appointmentPath('appointment-time-range')]: {},
+    [appointmentPath('appointment-time')]: {}
+  }
+
+  // Start the journey at the page at which the change started
+  const firstIndex = Math.max(
+    0,
+    Object.keys(journey).indexOf(appointmentPath(firstView))
+  )
+
+  return Object.fromEntries(Object.entries(journey).slice(firstIndex))
+}
+
+/**
+ * Can the length chosen for an appointment being edited fit anywhere in its (possibly newly chosen) session?
+ *
+ * Note: when the appointment-length page is submitted, the chosen length is in the auto-stored answers but not yet
+ * the appointment, so we use those answers when present
+ *
+ * @param {ClinicAppointment} appointment - the appointment being edited
+ * @param {object} sessionData - the request.session.data object
+ * @returns {boolean} - true if the chosen length will fit somewhere in the session, or false otherwise
+ */
+const canEditedAppointmentLengthFitInSession = (appointment, sessionData) => {
+  const session = Session.findOne(appointment.session_id, sessionData)
+
+  let chosenSlotCount
+  switch (sessionData.journeyData?.appointmentLengthType) {
+    case AppointmentLengthType.Default:
+      chosenSlotCount = session.calculateSlotCount(appointment)
+      break
+    case AppointmentLengthType.Specific:
+      chosenSlotCount = Number(sessionData.appointment?.editedSlotCount)
+      break
+    default:
+      chosenSlotCount = appointment.slotCount
+  }
+
+  return session.canFitSlotCount(chosenSlotCount, undefined, appointment.uuid)
+}
+
+/**
+ * Get the length (in slots) needed by an appointment being newly booked: the length needed for its vaccinations,
+ * plus a slot if extending for support needs
+ *
+ * Note: if the team has accepted shortening the appointment to fit, that shortening applies only while this is
+ * still the length it was shortened from, i.e. the appointment's `preferredSlotCount`
+ *
+ * @param {ClinicAppointment} appointment - the appointment we're booking
+ * @param {boolean} extendForSupportNeeds - should the appointment have an extra slot for support needs?
+ * @returns {number} - the length needed by the appointment, in slots
+ */
+export const getRequiredSlotCount = (appointment, extendForSupportNeeds) =>
+  appointment.session.calculateSlotCount(appointment) +
+  (extendForSupportNeeds ? 1 : 0)
 
 /**
  * Are there enough consecutive slots free to fit this appointment in?
@@ -388,7 +507,7 @@ export const getAllAppointmentPaths = (
  * @param {object} sessionData - the global data context
  * @returns {boolean} - true if the appointment will fit in the schedule, or false otherwise
  */
-const canAppointmentFitInSchedule = (
+const canNewAppointmentLengthFitInSession = (
   appointment,
   useAppointmentTime,
   sessionData
@@ -396,45 +515,46 @@ const canAppointmentFitInSchedule = (
   const extendForSupportNeeds = stringToBoolean(
     sessionData.journeyData.extendForSupportNeeds
   )
+  const requiredSlotCount = getRequiredSlotCount(
+    appointment,
+    extendForSupportNeeds
+  )
+
+  // Use any shortening to fit that the team has already accepted for this length
+  const slotCount =
+    appointment.preferredSlotCount === requiredSlotCount
+      ? appointment.editedSlotCount
+      : requiredSlotCount
+
   const session = Session.findOne(appointment.session_id, sessionData)
-  const startTimesWithEnoughSpace =
-    session.bookableStartTimesForVaccinationChoices(
-      appointment,
-      extendForSupportNeeds
-    )
-
-  if (useAppointmentTime) {
-    const appointmentTime = appointment.startAt.getTime()
-    return startTimesWithEnoughSpace.some(
-      (slotTime) => slotTime.getTime() == appointmentTime
-    )
-  }
-
-  return startTimesWithEnoughSpace.length > 0
+  return session.canFitSlotCount(
+    slotCount,
+    useAppointmentTime ? appointment.startAt : undefined,
+    appointment.uuid
+  )
 }
 
 /**
  * Get the path for a single health question
  *
  * @param {string} key
- * @param {ClinicAppointment} appointment
- * @param {string} pathPrefix
+ * @param {(view: string) => string} path - builds the path to a view in the appointment's journey
  * @returns {string} The full path to the given health question
  */
-const getHealthQuestionPath = (key, appointment, pathPrefix) => {
-  return `${pathPrefix}${appointment.uuid}/health-question-${camelToKebabCase(key)}`
+const getHealthQuestionPath = (key, path) => {
+  return path(`health-question-${camelToKebabCase(key)}`)
 }
 
 /**
  * Get health question paths for the given appointment
  *
- * @param {string} pathPrefix - Path prefix
+ * @param {(view: string) => string} path - builds the path to a view in the appointment's journey
  * @param {ClinicAppointment} appointment - the appointment whose questions we're after
  * @param {object} programmeContext - the data context holding the programme and vaccine info
  * @returns {object} Health question paths
  */
 const getHealthQuestionPathsForAppointment = (
-  pathPrefix,
+  path,
   appointment,
   programmeContext
 ) => {
@@ -445,16 +565,12 @@ const getHealthQuestionPathsForAppointment = (
   )
 
   healthQuestions.forEach(([key, question], index) => {
-    const questionPath = getHealthQuestionPath(key, appointment, pathPrefix)
+    const questionPath = getHealthQuestionPath(key, path)
 
     if (question.conditional) {
       const nextQuestion = healthQuestions[index + 1]
       if (nextQuestion) {
-        const forkPath = getHealthQuestionPath(
-          nextQuestion[0],
-          appointment,
-          pathPrefix
-        )
+        const forkPath = getHealthQuestionPath(nextQuestion[0], path)
 
         paths[questionPath] = {
           [forkPath]: {
@@ -468,11 +584,7 @@ const getHealthQuestionPathsForAppointment = (
 
       // Add paths for conditional sub-questions
       for (const subKey of Object.keys(question.conditional)) {
-        const subQuestionPath = getHealthQuestionPath(
-          subKey,
-          appointment,
-          pathPrefix
-        )
+        const subQuestionPath = getHealthQuestionPath(subKey, path)
         paths[subQuestionPath] = {}
       }
     } else {
@@ -550,3 +662,7 @@ export const getPreviousSessionItems = (appointments, sessionContext) => {
     }
   ]
 }
+
+/**
+ * @import { Request } from 'express'
+ */

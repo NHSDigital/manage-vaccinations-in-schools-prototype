@@ -8,8 +8,10 @@ router.use(bookIntoClinic.setupServiceHeader)
 
 router.get('/', bookIntoClinic.readProgrammes)
 
+// Create a new booking and appointment for the booking journey
 router.get('/new', bookIntoClinic.new)
 
+// Read and expose properties of the booking and appointment
 router.param('booking_uuid', bookIntoClinic.readBooking)
 router.param('appointment_uuid', bookIntoClinic.readAppointment)
 
@@ -27,12 +29,12 @@ router.get(
   bookIntoClinic.linkChild
 )
 
-// General booking journey routes
+// Creating a new appointment
 router.all(
   '/:booking_uuid/new/:appointment_uuid/:view',
-  bookIntoClinic.readForm
+  bookIntoClinic.readForm('new')
 )
-router.all('/:booking_uuid/new/:view', bookIntoClinic.readForm)
+router.all('/:booking_uuid/new/:view', bookIntoClinic.readForm('new'))
 
 router.get(
   '/:booking_uuid/new/:appointment_uuid/:view',
@@ -42,19 +44,20 @@ router.get('/:booking_uuid/new/:view', bookIntoClinic.showForm)
 
 router.post(
   '/:booking_uuid/new/:appointment_uuid/check-answers',
-  bookIntoClinic.update
+  bookIntoClinic.update('new')
 )
-
 router.post(
   '/:booking_uuid/new/:appointment_uuid/check-feedback',
-  bookIntoClinic.updateFeedback
+  bookIntoClinic.updateFeedback('new')
 )
 
 router.post(
   '/:booking_uuid/new/:appointment_uuid/:view',
-  bookIntoClinic.updateForm
+  bookIntoClinic.updateForm('new')
 )
-router.post('/:booking_uuid/new/:view', bookIntoClinic.updateForm)
+router.post('/:booking_uuid/new/:view', bookIntoClinic.updateForm('new'))
+
+// Note: the team edits appointments via /sessions/:session_id/appointments (see session-appointment.js)
 
 router.get('{/:view}', bookIntoClinic.show)
 
