@@ -1,5 +1,6 @@
 import {
   ConsentStatus,
+  ConsentRequestStatus,
   DownloadStatus,
   InstructionStatus,
   PatientClinicStatus,
@@ -23,6 +24,12 @@ const CONSENT_STATUS_COLOURS = {
   [ConsentStatus.Declined]: 'yellow',
   [ConsentStatus.Refused]: 'red',
   [ConsentStatus.FinalRefusal]: 'red'
+}
+
+const CONSENT_REQUEST_STATUS_COLOURS = {
+  [ConsentRequestStatus.NotNeeded]: 'grey',
+  [ConsentRequestStatus.NoResponse]: 'red',
+  [ConsentRequestStatus.Response]: 'green'
 }
 
 const DOWNLOAD_STATUS_COLOURS = {
@@ -119,6 +126,16 @@ export function getPatientClinicStatusProperties(status) {
  */
 export function getConsentStatusProperties(status) {
   return { colour: CONSENT_STATUS_COLOURS[status], text: status }
+}
+
+/**
+ * Get consent request status properties
+ *
+ * @param {ConsentRequestStatus} status - Consent request status
+ * @returns {object} Status properties
+ */
+export function getConsentRequestStatusProperties(status) {
+  return { colour: CONSENT_REQUEST_STATUS_COLOURS[status], text: status }
 }
 
 /**

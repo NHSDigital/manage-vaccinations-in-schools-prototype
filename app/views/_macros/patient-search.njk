@@ -127,7 +127,7 @@
       }) if enums }}
     {% endfor %}
 
-    {{ checkboxes({
+    {{ radios({
       small: true,
       fieldset: {
         legend: {
@@ -135,8 +135,8 @@
           size: "s"
         }
       },
-      items: enumItems(ConsentStatus),
-      decorate: "consent"
+      items: radioFilterItems(ConsentRequestStatus, data["consentRequest"], false),
+      decorate: "consentRequest"
     }) if account.isSchoolUser }}
 
     {{ radios({

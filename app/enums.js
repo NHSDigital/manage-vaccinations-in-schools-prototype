@@ -129,6 +129,16 @@ export const ConsentStatus = {
  * @readonly
  * @enum {string}
  */
+export const ConsentRequestStatus = {
+  NotNeeded: 'Not needed',
+  NoResponse: 'Not responded yet',
+  Response: 'Responded'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentVaccineCriteria = {
   AlternativeFluInjectionOnly: 'Injection only',
   AlternativeMMRInjectionOnly: 'Gelatine-free injection only',
