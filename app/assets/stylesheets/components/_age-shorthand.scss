@@ -1,0 +1,3 @@
+.app-age-shorthand::before {
+  content: attr(data-shorthand);
+}

@@ -1,0 +1,425 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "How we display ages and intervals" %}
+{% set headerOptions = {
+  service: {
+    text: serviceName
+  }
+} %}
+
+{% block content %}
+  <!-- Discussion artefact, not a product page. All values are hard-coded and were checked with a throwaway script. -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">
+        <span class="nhsuk-caption-xl">For internal discussion</span>
+        How we display ages and intervals
+      </h1>
+
+      <p class="nhsuk-lede-text">A displayed age such as &ldquo;11 months&rdquo; can mean several different things. This page sets out the problem, works through examples and lists ways we could display ages and intervals.</p>
+
+      <h2 class="nhsuk-heading-l" id="the-problem">The problem</h2>
+
+      <p>When we show an age or an interval, we usually show fewer units than we know. &ldquo;11 months&rdquo; leaves out the days.</p>
+
+      <p>That means the displayed value is often a range. The reader cannot tell which of these it is:</p>
+
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li><strong>truncated</strong>: the extra days were dropped, so &ldquo;11 months&rdquo; is anything from 11 months 0 days up to the day before 12 months</li>
+        <li><strong>exact</strong>: the child was exactly 11 months old, with 0 days left over</li>
+      </ul>
+
+      <p>Both give the same label. An exact age with a zero left out looks the same as an age with days dropped. &ldquo;11 months&rdquo; and &ldquo;11 months 0 days&rdquo; can describe the same child on the same day, but only the second one tells the reader that days were counted.</p>
+
+      <p>To read the first one correctly, the reader has to know how precise the system is. Nothing on the screen tells them.</p>
+
+      <p>For most reading this does not matter. It does matter when a clinician uses the age to decide whether a dose was valid.</p>
+
+      <h3 class="nhsuk-heading-m">An example from this prototype</h3>
+
+      <p>The prototype&rsquo;s age at vaccination text leaves out zero units, and drops days entirely from 1 year upwards. For a child born on 15 March 2025, it shows:</p>
+    </div>
+  </div>
+
+  <table class="nhsuk-table-responsive" role="table">
+    <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">Age at vaccination as shown by the prototype</caption>
+    <thead class="nhsuk-table__head" role="rowgroup">
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Vaccination date</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Exact age</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Shown</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">What the label means</th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">15 February 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>0 years 11 months 0 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown </span><span>11 months</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">What the label means </span><span>Exact, zero days left out</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">28 February 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>0 years 11 months 13 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown </span><span>11 months and 13 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">What the label means </span><span>Exact</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">15 March 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>1 year 0 months 0 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown </span><span>1 year</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">What the label means </span><span>Exact, zero months and days left out</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">4 April 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>1 year 0 months 20 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown </span><span>1 year</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">What the label means </span><span>Truncated, 20 days dropped</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">24 May 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>1 year 2 months 9 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown </span><span>1 year and 2 months</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">What the label means </span><span>Truncated, 9 days dropped</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <p>&ldquo;11 months&rdquo; is exact. &ldquo;1 year&rdquo; is exact on 15 March and 20 days short on 4 April. Both labels come from the same code, and they look the same.</p>
+    </div>
+  </div>
+
+  <h2 class="nhsuk-heading-l" id="same-label">Same label, different meanings</h2>
+
+  <table class="nhsuk-table-responsive" role="table">
+    <caption class="nhsuk-table__caption">
+      What each label could mean under each rule
+      <span class="nhsuk-body-s nhsuk-u-display-block nhsuk-u-margin-top-2 nhsuk-u-font-weight-normal">Truncated: any units that are not shown are dropped. Ages are never rounded. Precision the reader can see: the smallest unit the label proves was counted.</span>
+    </caption>
+    <thead class="nhsuk-table__head" role="rowgroup">
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Displayed</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Could mean (truncated)</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Exact meaning</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Precision the reader can see</th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">11 months</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Could mean (truncated) </span><span>11 months 0 days up to the day before 12 months (11 months 27 to 30 days, depending on month lengths)</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact meaning </span><span>11 months 0 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Precision the reader can see </span><span>None. The days might have been dropped, or might have been 0 and left out.</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">3 years 4 months</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Could mean (truncated) </span><span>3 years 4 months 0 days up to the day before 3 years 5 months</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact meaning </span><span>3 years 4 months 0 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Precision the reader can see </span><span>None. The days might have been dropped, or might have been 0 and left out.</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">3 years 4 months 0 days</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Could mean (truncated) </span><span>3 years 4 months 0 days only, because days are shown</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact meaning </span><span>3 years 4 months 0 days, although which day counts as &ldquo;4 months&rdquo; can still depend on month-end rules</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Precision the reader can see </span><span>Days. The &ldquo;0 days&rdquo; shows days were counted.</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">3 years 0 months 0 days</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Could mean (truncated) </span><span>The third birthday only</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact meaning </span><span>The third birthday</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Precision the reader can see </span><span>Days. The zeros show months and days were counted.</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">1 year</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Could mean (truncated) </span><span>1 year 0 months 0 days up to the day before 1 year 1 month. If only the largest unit is shown, anything up to the day before the second birthday.</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact meaning </span><span>The first birthday</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Precision the reader can see </span><span>None. Months and days might have been dropped, or might both have been 0 and left out.</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <p>Once every unit is shown, zeros included, nothing can have been dropped, so the label is exact and the reader can see that it is. The longer labels remove the ambiguity, at the cost of being longer to read.</p>
+
+      <h2 class="nhsuk-heading-l" id="mmr-dose-1">Where it matters: MMR dose 1</h2>
+
+      <p>MMR dose 1 counts as valid only if it is given on or after the first birthday (to confirm against the Green Book).</p>
+
+      <p>All the examples below use a child born on 15 March 2025. Their first birthday is 15 March 2026.</p>
+    </div>
+  </div>
+
+  <table class="nhsuk-table-responsive" role="table">
+    <caption class="nhsuk-table__caption">
+      MMR dose 1 for a child born on 15 March 2025
+    </caption>
+    <thead class="nhsuk-table__head" role="rowgroup">
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Vaccination date</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Exact age</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Shown truncated</th>
+        <th scope="col" class="nhsuk-table__header" role="columnheader">Valid dose 1?</th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">14 March 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>0 years 11 months 27 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown truncated </span><span>11 months</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Valid dose 1? </span><span>No, 1 day before the first birthday</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">15 March 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>1 year 0 months 0 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown truncated </span><span>1 year</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Valid dose 1? </span><span>Yes, on the first birthday</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">5 March 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>0 years 11 months 18 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown truncated </span><span>11 months</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Valid dose 1? </span><span>No, 10 days before the first birthday</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">25 February 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>0 years 11 months 10 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown truncated </span><span>11 months</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Valid dose 1? </span><span>No, 18 days before the first birthday</span></td>
+      </tr>
+      <tr class="nhsuk-table__row" role="row">
+        <th scope="row" class="nhsuk-table__header" role="rowheader">20 April 2026</th>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Exact age </span><span>1 year 1 month 5 days</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Shown truncated </span><span>1 year 1 month</span></td>
+        <td class="nhsuk-table__cell" role="cell"><span class="nhsuk-table-responsive__heading" aria-hidden="true">Valid dose 1? </span><span>Yes, 36 days after the first birthday</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <p>What the examples show:</p>
+
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>Truncation hides how close each dose was. The doses on 25 February, 5 March and 14 March all show as &ldquo;11 months&rdquo;, although they were 18, 10 and 1 day early.</li>
+        <li>Truncation also hides closeness on the valid side. &ldquo;1 year&rdquo; for 15 March does not tell the reader the dose was given on the birthday itself.</li>
+      </ul>
+
+      <h2 class="nhsuk-heading-l" id="calendar-edge-cases">Calendar edge cases</h2>
+
+      <p>Months have different lengths, so adding or counting months is not always well defined.</p>
+
+      <h3 class="nhsuk-heading-m">Born 31 January 2025, date 28 February 2025</h3>
+
+      <p>Is the child 0 months 28 days old, or 1 month 0 days old?</p>
+
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>If a month is complete only when the same day number is reached, there is no 31 February, so the child is 0 months 28 days.</li>
+        <li>If the anniversary moves to the last day of a short month, 28 February counts as the 1-month anniversary, so the child is 1 month 0 days.</li>
+      </ul>
+
+      <h3 class="nhsuk-heading-m">Born 29 February 2024, date 28 February 2025</h3>
+
+      <p>Is the child 0 years 11 months 30 days old, or 1 year 0 months 0 days old?</p>
+
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>If the birthday must fall on the same day number, there is no 29 February in 2025, so the child is 0 years 11 months 30 days.</li>
+        <li>If the birthday moves to the last day of February, the child turned 1 on 28 February, so they are 1 year 0 months 0 days.</li>
+      </ul>
+
+      <p>Systems and libraries answer these questions differently. In a quick check, date-fns (the date library used in this prototype) gave 1 month 0 days for the first example and &ldquo;0 years 12 months 0 days&rdquo; for the second. Ruby&rsquo;s month addition moves both anniversaries to 28 February.</p>
+
+      <div class="nhsuk-inset-text">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        <p>Formatting alone does not resolve this. Choosing how to display an age does not decide how the age is calculated. The calculation rule has to be agreed separately.</p>
+      </div>
+
+      <h2 class="nhsuk-heading-l" id="options">Options</h2>
+
+      <p>Each option shows how the MMR example would look for the invalid dose on 14 March 2026 and the valid dose on 15 March 2026. The options are listed in no order of preference.</p>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">1. Largest unit only, truncated</h3>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour">Current common practice.</p>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>11 months</strong></li>
+            <li>15 March 2026: <strong>1 year</strong></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>short enough to fit narrow table cells and scan quickly down a column</li>
+            <li>familiar, and matches how people talk about a child&rsquo;s age</li>
+            <li>reads naturally with a screen reader</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>does not answer &ldquo;is this dose valid?&rdquo; near a threshold without opening the dates</li>
+            <li>&ldquo;11 months&rdquo; for a dose 1 day early looks the same as one 27 days earlier</li>
+            <li>&ldquo;1 year&rdquo; can span a whole year of ages, so comparing across records says little</li>
+            <li>the reader cannot tell whether the value is exact or has days dropped, because a zero left out looks the same as days dropped</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">2. Always full years, months and days</h3>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>0 years 11 months 27 days</strong></li>
+            <li>15 March 2026: <strong>1 year 0 months 0 days</strong></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>no hidden range, because nothing is dropped</li>
+            <li>zeros are shown, so the reader can see the precision: &ldquo;11 months 0 days&rdquo; says days were counted</li>
+            <li>the 1 day gap between a valid and invalid dose is visible</li>
+            <li>same shape on every record, so values line up when compared</li>
+            <li>reads clearly with a screen reader</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>long, around 25 characters, which wraps in table cells</li>
+            <li>slower to scan, and the important part can be lost among zeros</li>
+            <li>precision that most readers do not need most of the time</li>
+            <li>still depends on an agreed month-end rule</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">3. Compact full form</h3>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>0y 11m 27d</strong></li>
+            <li>15 March 2026: <strong>1y 0m 0d</strong></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>full precision in about 10 characters, so it fits table cells</li>
+            <li>zeros are shown, so &ldquo;11m 0d&rdquo; cannot be mistaken for an age with days dropped</li>
+            <li>fixed shape makes values easy to compare down a column</li>
+            <li>answers &ldquo;is this dose valid?&rdquo; at a glance for readers who know the format</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>screen readers may read &ldquo;11m&rdquo; as &ldquo;11 metres&rdquo; or &ldquo;11 minutes&rdquo;, or spell out letters</li>
+            <li>abbreviations are harder for less frequent users and may go against NHS style</li>
+            <li>&ldquo;m&rdquo; could be misread as minutes in contexts that also show times</li>
+            <li>still depends on an agreed month-end rule</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">4. Precision that changes with age</h3>
+          <p class="nhsuk-body-s nhsuk-u-secondary-text-colour">Based on the archived NHS Common User Interface patient banner guidance (ISB 1505). To confirm against the archived CUI source.</p>
+          <p>Weeks and days under 1 year, months and days under 2 years, years and months under 18, and years only after that.</p>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>52 weeks 0 days</strong></li>
+            <li>15 March 2026: <strong>12 months 0 days</strong></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>has an NHS precedent, so may be familiar to some clinicians</li>
+            <li>gives day-level precision in the age ranges where schedules are densest</li>
+            <li>stays short for older children and adults</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>the unit changes at the threshold, so the invalid and valid doses look like different kinds of value</li>
+            <li>&ldquo;52 weeks&rdquo; has to be converted mentally before it answers &ldquo;is this dose valid?&rdquo;</li>
+            <li>a column of mixed units is hard to compare across records</li>
+            <li>from 2 to 18 years it drops days, so the range problem returns for school-age thresholds</li>
+            <li>the reader has to know which precision applies at each age to know what was dropped, and nothing on screen tells them</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">5. Extra precision only near a clinical threshold</h3>
+          <p>Show the short form normally, and add days when the value falls within a set window of a threshold, for example within 1 month.</p>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>11 months 27 days</strong></li>
+            <li>15 March 2026: <strong>1 year 0 months 0 days</strong></li>
+            <li>20 April 2026 (outside the window): <strong>1 year 1 month</strong></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>short where precision does not matter, precise where it does</li>
+            <li>the extra length itself signals &ldquo;look closely&rdquo;</li>
+            <li>answers &ldquo;is this dose valid?&rdquo; in the cases that are close</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>needs every threshold, for every programme and dose, encoded in the display logic</li>
+            <li>the window size is arbitrary, and a value just outside it is still a hidden range</li>
+            <li>outside the window, &ldquo;11 months&rdquo; could be exact or have days dropped, and the reader cannot tell whether the value was inside the window</li>
+            <li>inconsistent formats in one column make comparison harder</li>
+            <li>readers may not know why some values have days and others do not</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">6. Relative to the threshold</h3>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>Given 1 day before first birthday</strong></li>
+            <li>15 March 2026: <strong>Given on first birthday</strong></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>answers &ldquo;is this dose valid?&rdquo; directly, with no arithmetic</li>
+            <li>plain language that reads well with a screen reader</li>
+            <li>avoids most month-end questions, because it counts days to a single date</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>only works where there is one clear threshold for that dose</li>
+            <li>does not tell the reader the child&rsquo;s actual age</li>
+            <li>long sentences in table cells, and harder to scan down a column</li>
+            <li>moves a clinical rule into display text, so the rule itself must be agreed and kept up to date</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h3 class="nhsuk-card__heading">7. Dates first</h3>
+          <p>Show the date of birth and the vaccination date, with the derived age as secondary text.</p>
+          <ul class="nhsuk-list">
+            <li>14 March 2026: <strong>Born 15 March 2025, given 14 March 2026</strong> <span class="nhsuk-u-secondary-text-colour">(age 11 months 27 days)</span></li>
+            <li>15 March 2026: <strong>Born 15 March 2025, given 15 March 2026</strong> <span class="nhsuk-u-secondary-text-colour">(age 1 year 0 months 0 days)</span></li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Helps</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>the source facts are always visible, so nothing is hidden by the display rule</li>
+            <li>clinicians can check validity themselves when the derived age is in doubt</li>
+            <li>the derived age can change convention without changing the facts shown</li>
+          </ul>
+          <h4 class="nhsuk-heading-s">Risks</h4>
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>comparing 2 dates is slower than reading one age, especially across many rows</li>
+            <li>widest option, and hard to fit in table cells</li>
+            <li>screen readers read 2 full dates before the age</li>
+            <li>the secondary age still needs a convention of its own</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="nhsuk-heading-l" id="open-questions">Open questions</h2>
+
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>Mavis truncates ages. Which library or calculation does it use, and does it truncate the same way everywhere an age is shown?</li>
+        <li>How is month-end arithmetic resolved, for example a child born on 31 January or 29 February?</li>
+        <li>Do age at vaccination and current age need different conventions?</li>
+        <li>Do screen readers read &ldquo;0y 11m 27d&rdquo; sensibly?</li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}

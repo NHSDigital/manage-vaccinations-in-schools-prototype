@@ -1,0 +1,289 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "MMR dose schedule, precise age format" %}
+
+{% block beforeContent %}
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  <ol class="nhsuk-breadcrumb__list">
+    <li class="nhsuk-breadcrumb__list-item">
+      <a class="nhsuk-breadcrumb__link" href="/">Home</a>
+    </li>
+    <li class="nhsuk-breadcrumb__list-item">
+      <a class="nhsuk-breadcrumb__link" href="/patients">Children</a>
+    </li>
+  </ol>
+  <a class="nhsuk-back-link" href="/patients">
+    <span class="nhsuk-u-visually-hidden">Back to</span> Children
+  </a>
+  
+</nav>
+{% endblock %}
+
+{% block content %}
+  <!-- Research scenario: MMR dose schedule, precise age format. Static copy of the MMR programme page for Dmitri Dixit (date of birth 5 July 2012). All values are hard-coded. Age at vaccination is shown as years, months and days. -->
+
+
+
+  <form class="nhsuk-grid-row" action="/patients/mmr00004-0000-4000-8000-000000000004/programmes/mmr/record?referrer=undefined" method="post" novalidate data-validate>
+    <div class="nhsuk-grid-column-full">
+
+
+    <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">DIXIT, Dmitri
+</h1>
+
+  <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+    <strong>Date of birth:</strong> 5 July 2012 (aged 14)
+  </p>
+
+
+
+  <nav class="app-section-navigation"  data-module="app-section-navigation" aria-label="Section navigation">
+  <ul class="app-section-navigation__list">
+
+    <li class="app-section-navigation__item">
+      <a class="app-section-navigation__link" href="/patients/mmr00004-0000-4000-8000-000000000004">Child record</a>
+    </li>
+
+    <li class="app-section-navigation__item">
+      <a class="app-section-navigation__link" href="/patients/mmr00004-0000-4000-8000-000000000004/contacts">Contacts</a>
+    </li>
+
+    <li class="app-section-navigation__item">
+      <a class="app-section-navigation__link" href="/patients/mmr00004-0000-4000-8000-000000000004/programmes/flu">Flu</a>
+    </li>
+
+    <li class="app-section-navigation__item">
+      <a class="app-section-navigation__link" href="/patients/mmr00004-0000-4000-8000-000000000004/programmes/hpv">HPV</a>
+    </li>
+
+    <li class="app-section-navigation__item">
+      <a class="app-section-navigation__link" href="/patients/mmr00004-0000-4000-8000-000000000004/programmes/menacwy">MenACWY</a>
+    </li>
+
+    <li class="app-section-navigation__item app-section-navigation__item--current">
+      <a class="app-section-navigation__link" href="/mmr-dose-schedule-precise-age" aria-current="page"><strong class="app-section-navigation__current">MMR</strong></a>
+    </li>
+
+    <li class="app-section-navigation__item">
+      <a class="app-section-navigation__link" href="/patients/mmr00004-0000-4000-8000-000000000004/programmes/td-ipv">Td/IPV</a>
+    </li>
+  </ul>
+</nav>
+
+  <h2 class="nhsuk-heading-m nhsuk-u-visually-hidden">
+    patient.undefined.title
+  </h2>
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-card__heading">
+      Vaccination record
+    </h3>
+      <p class="nhsuk-body"><span><strong class="nhsuk-tag nhsuk-tag--orange">Has a refusal</strong><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">Consent refused</span></span></p>
+
+  <p class="nhsuk-body">
+    1 of 2 doses complete.
+  </p>
+
+  <table class="nhsuk-table-responsive" id="vaccination-record" role="table">
+  <thead class="nhsuk-table__head" role="rowgroup">
+    <tr class="nhsuk-table__row" role="row">
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Dose
+      </th>
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Vaccination date
+      </th>
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Age
+      </th>
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Source
+      </th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+    <tr class="nhsuk-table__row" role="row">
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Dose </span><span>        <span><strong class="nhsuk-tag nhsuk-tag--grey">
+          Out of schedule
+        </strong>
+        <br>
+                  <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">Given before age 12 months</span>
+                </span>
+        </span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Vaccination date </span><span><a class="nhsuk-link" href="/reports/mmr/vaccinations/mmr00004-v001-4000-8000-000000000001">4 July 2013 at 1:00 am</a></span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Age </span><span class="app-age-shorthand" aria-hidden="true" data-shorthand="11m 29d"></span><span class="nhsuk-u-visually-hidden">11 months, 29 days</span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Source </span><span>External source such as GP practice</span>
+      </td>
+    </tr>
+    <tr class="nhsuk-table__row" role="row">
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Dose </span><span>        Dose 1
+                  <br>
+                  <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">MMR</span>
+        </span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Vaccination date </span><span><a class="nhsuk-link" href="/reports/mmr/vaccinations/mmr00004-v002-4000-8000-000000000002">5 July 2016 at 1:00 am</a></span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Age </span><span class="app-age-shorthand" aria-hidden="true" data-shorthand="4y 0m 0d"></span><span class="nhsuk-u-visually-hidden">4 years, 0 months, 0 days</span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Source </span><span>External source such as GP practice</span>
+      </td>
+    </tr>
+    <tr class="nhsuk-table__row" role="row">
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Dose </span>Dose 2
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Vaccination date </span>Eligible from 2 August 2016
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Age </span>&mdash;
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Source </span>&mdash;
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  </div>
+</div>
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-card__heading">
+      2 encounters
+    </h3>
+
+      <table class="nhsuk-table-responsive" id="encounters" role="table">
+  <thead class="nhsuk-table__head" role="rowgroup">
+    <tr class="nhsuk-table__row" role="row">
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Encounter date
+      </th>
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Age
+      </th>
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Outcome
+      </th>
+      <th scope="col" class="nhsuk-table__header" role="columnheader">
+        Source
+      </th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+    <tr class="nhsuk-table__row" role="row">
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Encounter date </span><span><a class="nhsuk-link" href="/reports/mmr/vaccinations/mmr00004-v001-4000-8000-000000000001">4 July 2013 at 1:00 am</a></span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Age </span><span class="app-age-shorthand" aria-hidden="true" data-shorthand="11m 29d"></span><span class="nhsuk-u-visually-hidden">11 months, 29 days</span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Outcome </span><span><strong class="nhsuk-tag nhsuk-tag--white">Vaccinated</strong></span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Source </span><span>External source such as GP practice</span>
+      </td>
+    </tr>
+    <tr class="nhsuk-table__row" role="row">
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Encounter date </span><span><a class="nhsuk-link" href="/reports/mmr/vaccinations/mmr00004-v002-4000-8000-000000000002">5 July 2016 at 1:00 am</a></span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Age </span><span class="app-age-shorthand" aria-hidden="true" data-shorthand="4y 0m 0d"></span><span class="nhsuk-u-visually-hidden">4 years, 0 months, 0 days</span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Outcome </span><span><strong class="nhsuk-tag nhsuk-tag--white">Vaccinated</strong></span>
+      </td>
+      <td class="nhsuk-table__cell" role="cell">
+        <span class="nhsuk-table-responsive__heading" aria-hidden="true">Source </span><span>External source such as GP practice</span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    <div class="nhsuk-button-group">
+<button class="nhsuk-button nhsuk-button--secondary" data-module="nhsuk-button" type="submit" formaction="/patients/mmr00004-0000-4000-8000-000000000004/programmes/mmr/record?referrer=undefined">
+  Record a new MMR vaccination
+</button>
+<a class="nhsuk-button nhsuk-button--secondary" data-module="nhsuk-button" href="/patients/mmr00004-0000-4000-8000-000000000004/programmes/mmr/new/vaccination" role="button" draggable="false">
+  Record as already vaccinated
+</a>
+</div>
+
+  </div>
+</div>
+
+    <div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-card__heading">
+      Sessions
+    </h3>
+    <table class="nhsuk-table-responsive" id="patient-sessions" role="table">
+      <thead class="nhsuk-table__head" role="rowgroup">
+        <tr class="nhsuk-table__row" role="row">
+          <th scope="col" class="nhsuk-table__header" role="columnheader" style="width: 33%">
+            Location
+          </th>
+          <th scope="col" class="nhsuk-table__header" role="columnheader">
+            Session date
+          </th>
+          <th scope="col" class="nhsuk-table__header" role="columnheader">
+            Session outcome
+          </th>
+        </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+        <tr class="nhsuk-table__row" role="row">
+          <td class="nhsuk-table__cell" role="cell">
+            <span class="nhsuk-table-responsive__heading" aria-hidden="true">Location </span><span><a class="nhsuk-link" href="/sessions/mmr-catchup-y9y10-current/patients/9990000045/mmr">Grace Academy Coventry</a></span>
+          </td>
+          <td class="nhsuk-table__cell" role="cell">
+            <span class="nhsuk-table-responsive__heading" aria-hidden="true">Session date </span><span>Thursday, 10 September 2026</span>
+          </td>
+          <td class="nhsuk-table__cell" role="cell">
+            <span class="nhsuk-table-responsive__heading" aria-hidden="true">Session outcome </span><span><strong class="nhsuk-tag nhsuk-tag--orange">Consent refused</strong></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-card__heading">
+      Programme activity
+    </h3>
+    <ol class="app-timeline">
+
+      <li class="app-timeline__item app-timeline__item--past ">
+          <svg class="app-timeline__badge" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <circle cx="14" cy="14" r="13" fill="#005EB8"/>
+          </svg>
+        <div class="app-timeline__content">
+          <h3 class="app-timeline__header ">Consent refused by Alexandria Dixit (mum)</h3>
+            <p class="app-timeline__description"><strong class="nhsuk-tag app-tag--transparent">MMR</strong>24 August 2026 at 11:31 am · KERLUKE-LARKIN, Alicia</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</div>
+
+
+    </div>
+  </div>
+{% endblock %}
