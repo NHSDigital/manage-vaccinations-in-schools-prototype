@@ -3867,28 +3867,11 @@ export const en = {
     },
     school: {
       label: 'School',
-      title: 'Which school is this class list for?',
-      information: {
-        [UploadFormat.Arbor]:
-          '## Selecting a school in Arbor\n\n1. Go to **Filters**, select **Institution** then select **Add filter**.\n2. Select the school you’re providing information for.\n3. Select the current academic year, then select **Save**.',
-        [UploadFormat.Bromcom]:
-          '## Selecting a school in Bromcom\n\nUse the school selector at the top of the page to switch to the school you’re providing information for. Alternatively:\n\n1. Go to **Filters**, select **School**\n2. Select the school you’re providing information for.\n3. Select **Apply**.',
-        [UploadFormat.SIMS]: false,
-        [UploadFormat.Mavis]: false
-      }
+      title: 'Which school is this class list for?'
     },
     yearGroups: {
       label: 'Year groups',
-      title: 'Which year groups are included in this class list?',
-      information: {
-        [UploadFormat.Arbor]:
-          '## Selecting year groups in Arbor\n\n1. Go to **Filters**, select **Year groups(s)** then select **Add filter**.\n2. Select the year groups you’re providing information for.\n3. Select the current academic year, then select **Save**.',
-        [UploadFormat.Bromcom]:
-          '## Selecting year groups in Bromcom\n\n1. Go to **Filters**, select **Year Group**, then select **Add filter**.\n2. Select the year groups you’re providing information for.\n3. Check that **Status** is set to **On Roll**, then select **Apply**.',
-        [UploadFormat.SIMS]:
-          '## Selecting year groups in SIMS\n\n1. On the filter step, select **Year Group** from the field list.\n2. Select the year groups you’re providing information for.\n3. Add a second filter for **Student Status** and set it to **On Roll**, then select **Next**.',
-        [UploadFormat.Mavis]: false
-      }
+      title: 'Which year groups are included in this class list?'
     },
     file: {
       title: 'Upload {{type}}',
