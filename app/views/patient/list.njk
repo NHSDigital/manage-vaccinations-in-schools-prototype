@@ -4,7 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set title = __("patient.list.title") %}
+{% set title = __("patient.listSchoolUser.title") if account.isSchoolUser else __("patient.list.title") %}
 
 {% block form %}
   {{ super() }}
