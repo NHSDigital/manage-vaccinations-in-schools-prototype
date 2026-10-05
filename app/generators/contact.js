@@ -2,8 +2,8 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
   NotifyEmailStatus,
-  ParentalRelationship,
-  NotifySmsStatus
+  NotifySmsStatus,
+  RelationshipType
 } from '../enums.js'
 import { Contact } from '../models.js'
 
@@ -17,23 +17,23 @@ import { Contact } from '../models.js'
 export function generateContact(patient, isMum) {
   // Relationship
   const relationship = isMum
-    ? ParentalRelationship.Mum
+    ? RelationshipType.Mum
     : faker.helpers.weightedArrayElement([
-        { value: ParentalRelationship.Dad, weight: 4 },
-        { value: ParentalRelationship.Guardian, weight: 1 },
-        { value: ParentalRelationship.Fosterer, weight: 1 },
-        { value: ParentalRelationship.Other, weight: 1 }
+        { value: RelationshipType.Dad, weight: 4 },
+        { value: RelationshipType.Guardian, weight: 1 },
+        { value: RelationshipType.Fosterer, weight: 1 },
+        { value: RelationshipType.Other, weight: 1 }
       ])
 
   // Name
   let firstName
   let lastName
   switch (relationship) {
-    case ParentalRelationship.Mum:
+    case RelationshipType.Mum:
       firstName = faker.person.firstName('female').replace(`'`, '’')
       lastName = patient.lastName
       break
-    case ParentalRelationship.Dad:
+    case RelationshipType.Dad:
       firstName = faker.person.firstName('male').replace(`'`, '’')
       lastName = patient.lastName
       break
@@ -78,7 +78,7 @@ export function generateContact(patient, isMum) {
   return new Contact({
     fullName: `${firstName} ${lastName}`,
     relationship,
-    ...(relationship === ParentalRelationship.Other && {
+    ...(relationship === RelationshipType.Other && {
       relationshipOther: 'Grandparent'
     }),
     ...(email && {

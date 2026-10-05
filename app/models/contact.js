@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { ParentalRelationship } from '../enums.js'
+import { RelationshipType } from '../enums.js'
 import { Patient } from '../models.js'
 import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 
@@ -10,7 +10,7 @@ import { BaseModel } from './base.js'
  * @typedef {BaseModelOptions & object} ContactOptions
  * @property {string} [uuid] - Contact UUID
  * @property {string} [fullName] - Full name
- * @property {ParentalRelationship} [relationship] - Relationship to child
+ * @property {RelationshipType} [relationship] - Type of relationship to child
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
  * @property {boolean} [canNotify] - Notify about consent and vaccinations
@@ -47,14 +47,13 @@ export class Contact extends BaseModel {
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
     this.fullName = options?.fullName || ''
-    this.relationship = options?.relationship || ParentalRelationship.Unknown
+    this.relationship = options?.relationship || RelationshipType.Unknown
     this.relationshipOther =
-      this?.relationship === ParentalRelationship.Other
+      this?.relationship === RelationshipType.Other
         ? options?.relationshipOther
         : undefined
     this.hasParentalResponsibility =
-      this.relationship === ParentalRelationship.Other ||
-      ParentalRelationship.Fosterer
+      this.relationship === RelationshipType.Other || RelationshipType.Fosterer
         ? stringToBoolean(options.hasParentalResponsibility)
         : undefined
     this.canNotify = stringToBoolean(options?.canNotify)

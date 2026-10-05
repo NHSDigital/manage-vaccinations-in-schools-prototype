@@ -2,7 +2,7 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import {
   GillickCompetent,
-  ParentalRelationship,
+  RelationshipType,
   ReplyDecision,
   ReplyMethod,
   ReplyRefusal,
@@ -325,10 +325,8 @@ export const replyController = {
     const { view } = request.params
 
     // Prepare the radio options for the parental relationship page
-    response.locals.parentalRelationshipItems = Object.values(
-      ParentalRelationship
-    )
-      .filter((relationship) => relationship !== ParentalRelationship.Unknown)
+    response.locals.parentalRelationshipItems = Object.values(RelationshipType)
+      .filter((relationship) => relationship !== RelationshipType.Unknown)
       .map((relationship) => ({
         text: relationship,
         value: relationship

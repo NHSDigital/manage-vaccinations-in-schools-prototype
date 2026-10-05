@@ -1,8 +1,8 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import {
-  ParentalRelationship,
   ProgrammeType,
+  RelationshipType,
   ReplyDecision,
   ReplyRefusal,
   SessionPresetName,
@@ -244,10 +244,8 @@ export const giveOrRefuseConsentController = {
     paths.back = referrer || paths.back
     response.locals.paths = paths
 
-    response.locals.parentalRelationshipItems = Object.values(
-      ParentalRelationship
-    )
-      .filter((relationship) => relationship !== ParentalRelationship.Unknown)
+    response.locals.parentalRelationshipItems = Object.values(RelationshipType)
+      .filter((relationship) => relationship !== RelationshipType.Unknown)
       .map((relationship) => ({
         text: relationship,
         value: relationship

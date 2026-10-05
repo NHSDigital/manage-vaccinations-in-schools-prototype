@@ -6,8 +6,8 @@ import {
   AppointmentAbandonmentReason,
   ClinicAppointmentStatus,
   ClinicBookingJourneyType,
-  ParentalRelationship,
   ProgrammeType,
+  RelationshipType,
   ReplyDecision
 } from '../enums.js'
 import {
@@ -494,9 +494,9 @@ export const bookIntoClinicController = {
     } else if (view === 'parental-relationship' || view === 'contact') {
       // Prepare the radio options for the parental relationship
       response.locals.parentalRelationshipItems = Object.values(
-        ParentalRelationship
+        RelationshipType
       )
-        .filter((relationship) => relationship !== ParentalRelationship.Unknown)
+        .filter((relationship) => relationship !== RelationshipType.Unknown)
         .map((relationship) => ({
           text: relationship,
           value: relationship

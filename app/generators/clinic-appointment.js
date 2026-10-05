@@ -5,7 +5,7 @@ import {
   Adjustment,
   ClinicAppointmentStatus,
   Impairment,
-  ParentalRelationship,
+  RelationshipType,
   ReplyDecision
 } from '../enums.js'
 import { Child, ClinicAppointment } from '../models.js'
@@ -165,10 +165,9 @@ export function generateClinicAppointment(
   } else {
     // This isn’t the first appointment, so set up contact details similar to the first one
     const contact = booking.contact
-    const mumOrDad = [
-      ParentalRelationship.Mum,
-      ParentalRelationship.Dad
-    ].includes(contact.relationship)
+    const mumOrDad = [RelationshipType.Mum, RelationshipType.Dad].includes(
+      contact.relationship
+    )
     if (mumOrDad) {
       // Mum or Dad initially, and most likely to stay that way
       if (faker.datatype.boolean(0.9)) {
@@ -177,12 +176,12 @@ export function generateClinicAppointment(
         parentHasParentalResponsibility = contact.hasParentalResponsibility
       } else {
         parentalRelationship = faker.helpers.arrayElement([
-          ParentalRelationship.Fosterer,
-          ParentalRelationship.Guardian,
-          ParentalRelationship.Other
+          RelationshipType.Fosterer,
+          RelationshipType.Guardian,
+          RelationshipType.Other
         ])
         parentalRelationshipOther =
-          parentalRelationship === ParentalRelationship.Other
+          parentalRelationship === RelationshipType.Other
             ? 'Grandparent'
             : undefined
         parentHasParentalResponsibility = true

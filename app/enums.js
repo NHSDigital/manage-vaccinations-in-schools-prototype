@@ -396,7 +396,7 @@ export const NotifySmsStatus = {
  * @readonly
  * @enum {string}
  */
-export const ParentalRelationship = {
+export const RelationshipType = {
   Mum: 'Mum',
   Dad: 'Dad',
   Fosterer: 'Foster carer',
