@@ -149,7 +149,7 @@ export const uploadController = {
    */
   new(request, response) {
     const { programme_id } = request.params
-    const { hasValidations, type, school_id } = request.query
+    const { type, school_id } = request.query
     const { data } = request.session
     const { account } = response.locals
 
@@ -164,9 +164,6 @@ export const uploadController = {
       },
       data.wizard
     )
-
-    // Add `hasValidations` flag
-    request.app.locals.hasValidations = hasValidations
 
     data.startPath = 'type'
     if (account.isSchoolUser) {
@@ -192,7 +189,6 @@ export const uploadController = {
    */
   update(type) {
     return (request, response) => {
-      const { hasValidations } = request.app.locals
       const { upload_id } = request.params
       const { data } = request.session
       const { __ } = response.locals
@@ -216,7 +212,7 @@ export const uploadController = {
       if (type === 'edit') {
         // Delete any previous validation errors
         delete upload.validations
-      } else if (hasValidations) {
+      } else if (type === 'new' && upload.format === UploadFormat.Mavis) {
         // Add validation errors
         upload.validations = {}
 
