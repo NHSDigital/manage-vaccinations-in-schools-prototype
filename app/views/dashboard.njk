@@ -49,11 +49,11 @@
         classes: "app-card--compact",
         clickable: true,
         heading: {
-          text: __("patient.list.title"),
+          text: __("upload.listSchoolUser.label"),
           size: "s"
         },
-        href: "/patients",
-        description: "Find children and view their consent status"
+        href: "/uploads",
+        description: __("upload.listSchoolUser.description")
       }) }}
     </li>
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
@@ -61,11 +61,11 @@
         classes: "app-card--compact",
         clickable: true,
         heading: {
-          text: __("upload.listSchoolUser.label"),
+          text: __("patient.listSchoolUser.title"),
           size: "s"
         },
-        href: "/uploads",
-        description: __("upload.listSchoolUser.description")
+        href: "/patients",
+        description: __("patient.listSchoolUser.description")
       }) }}
     </li>
     {% else %}
