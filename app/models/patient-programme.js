@@ -39,8 +39,6 @@ import {
   today
 } from '../utils/date.js'
 import {
-  getConsentStatusProperties,
-  getConsentRequestStatusProperties,
   getPatientClinicStatusProperties,
   getPatientStatusProperties
 } from '../utils/enum-properties.js'
@@ -48,7 +46,6 @@ import { ordinal } from '../utils/number.js'
 import {
   getConsentStatus,
   getConsentStatusDescription,
-  getConsentRequestStatus,
   getInstructionStatus,
   getScreenStatus,
   getScreenStatusDescription,
@@ -851,6 +848,25 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get date of last consent given response
+   *
+   * @returns {Date|undefined} Date of last consent given response
+   */
+  get consentGivenDate() {
+    // Replies are sorted newest first, so take the first reply giving consent
+    const reply = this.replies?.find(({ decision }) =>
+      [
+        ReplyDecision.Given,
+        ReplyDecision.OnlyAlternativeInjection,
+        ReplyDecision.OnlyMenACWY,
+        ReplyDecision.OnlyTdIPV
+      ].includes(decision)
+    )
+
+    return reply && new Date(reply.createdAt)
+  }
+
+  /**
    * Get screen statuses for vaccination method(s) consented to
    *
    * @returns {Array<ScreenStatus>} Screen statuses
@@ -986,15 +1002,6 @@ export class PatientProgramme extends BaseModel {
    */
   get consent() {
     return getConsentStatus(this)
-  }
-
-  /**
-   * Get consent request status
-   *
-   * @returns {ConsentRequestStatus|undefined} Consent request status
-   */
-  get consentRequest() {
-    return getConsentRequestStatus(this)
   }
 
   /**
@@ -1248,20 +1255,14 @@ export class PatientProgramme extends BaseModel {
                 this.statusNotes,
                 false
               )
-            case 'consentStatus':
-              return this.consent
-                ? formatProgrammeStatus(
-                    this.programme,
-                    getConsentStatusProperties(this.consent)
-                  )
-                : formatProgrammeStatus(
-                    this.programme,
-                    getPatientStatusProperties(this.status)
-                  )
-            case 'consentRequestStatus':
-              return formatProgrammeStatus(
-                this.programme,
-                getConsentRequestStatusProperties(this.consentRequest)
+            case 'consentGivenDate':
+              return (
+                this.consentGivenDate &&
+                formatProgrammeStatus(
+                  this.programme,
+                  false,
+                  formatDate(this.consentGivenDate, { dateStyle: 'long' })
+                )
               )
             case 'programmeStatus':
               return formatProgrammeStatus(
@@ -1361,7 +1362,7 @@ PatientProgramme.relate('patient_uuid', () => Patient, 'patient')
 PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
- * @import { ConsentRequestStatus, PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
+ * @import { PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
  * @import { PatientSession, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

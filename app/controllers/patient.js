@@ -87,7 +87,7 @@ export const patientController = {
       .filter((programme) => !programme.isHidden)
       .sort((a, b) => a.name.localeCompare(b.name))
 
-    const patients = Patient.findAll(data).filter((patient) =>
+    let patients = Patient.findAll(data).filter((patient) =>
       team.schools.some((school) => patient.school_id === school.id)
     )
 
@@ -116,9 +116,21 @@ export const patientController = {
         : [programme_id]
     }
 
+    const ids = programme_ids || programmes.map((programme) => programme.id)
+
+    // Show only eligible children with consent (for school users only)
+    if (account.isSchoolUser) {
+      patients = patients.filter((patient) =>
+        ids.some(
+          (id) =>
+            patient.programmes[id]?.consentGiven &&
+            !patient.programmes[id].isIneligible
+        )
+      )
+    }
+
     // Filter defaults
     const filters = {
-      consentRequest: request.query.consentRequest || 'none',
       status: request.query.status || 'none',
       clinicStatus: request.query.clinicStatus || 'none',
       patientConsent: request.query.patientConsent || 'none',
@@ -162,22 +174,8 @@ export const patientController = {
       }
     }
 
-    // Filter by consent status (school teams only)
-    if (filters.consentRequest && filters.consentRequest !== 'none') {
-      const ids = programme_ids || programmes.map((programme) => programme.id)
-
-      results = results.filter((patient) =>
-        ids.some(
-          (id) =>
-            patient.programmes[id].consentRequest === filters.consentRequest
-        )
-      )
-    }
-
     // Filter by status
     if (filters.status && filters.status !== 'none') {
-      const ids = programme_ids || programmes.map((programme) => programme.id)
-
       results = results.filter((patient) =>
         ids.some((id) => patient.programmes[id].status === filters.status)
       )
@@ -193,7 +191,6 @@ export const patientController = {
       [PatientStatus.Vaccinated]: 'patientVaccinated'
     })) {
       if (filters.status === patientStatus && filters[status] !== 'none') {
-        const ids = programme_ids || programmes.map((programme) => programme.id)
         let statuses = filters[status]
         statuses = Array.isArray(statuses) ? statuses : [statuses]
         results = results.filter((patient) =>
@@ -207,7 +204,6 @@ export const patientController = {
       filters.status === PatientStatus.Ineligible &&
       filters.patientIneligible !== 'none'
     ) {
-      const ids = programme_ids || programmes.map((programme) => programme.id)
       results = results.filter((patient) =>
         ids.some(
           (id) =>
@@ -267,7 +263,6 @@ export const patientController = {
 
     // Clean up session data
     delete data.clinicStatus
-    delete data.consentRequest
     delete data.option
     delete data.patientConsent
     delete data.patientDeferred
@@ -334,7 +329,7 @@ export const patientController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'consentRequest', 'q', 'status'],
+      ['clinicStatus', 'q', 'status'],
       [
         'option',
         'patientConsent',
