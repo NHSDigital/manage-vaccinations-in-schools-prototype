@@ -6,6 +6,19 @@ import { getSessionConsentUrl } from '../utils/session.js'
 
 export const navigation = (request, response, next) => {
   const { data } = request.session
+  const { __, account } = response.locals
+
+  const primaryNavigation = new Map([
+    ['school', 'schools'],
+    ['patient', 'patients'],
+    ['session', 'sessions'],
+    ['review', 'reviews'],
+    ['report', 'reports'],
+    ['upload', 'uploads'],
+    ['download', 'downloads'],
+    ['vaccine', 'vaccines'],
+    ['team', account.team.uri]
+  ])
 
   // Get currently active section
   let activeSection = request.path.split('/')[1]
@@ -16,11 +29,25 @@ export const navigation = (request, response, next) => {
     activeSection = 'reviews'
   }
 
+  // Construct primary navigation
+  let primary = []
+  for (const view of account.views) {
+    const itemLabel = account.isSchoolUser
+      ? __(`${view}.listSchoolUser.label`)
+      : __(`${view}.list.label`)
+
+    primary.push({
+      href: `/${primaryNavigation.get(view)}`,
+      text: view === 'team' ? __(`team.show.label`) : itemLabel,
+      active: activeSection == primaryNavigation.get(view)
+    })
+  }
+
   // Get programme sessions
   const sessions = Session.findAll(data)
 
   response.locals.navigation = {
-    activeSection,
+    primary,
     consentUrl: {
       Flu: getSessionConsentUrl(sessions, SessionPresetName.Flu),
       HPV: getSessionConsentUrl(sessions, SessionPresetName.HPV),

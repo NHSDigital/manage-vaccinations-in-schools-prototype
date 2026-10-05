@@ -1841,6 +1841,11 @@ export const en = {
       title: 'Children',
       description: 'Find children and view their vaccination history'
     },
+    listSchoolUser: {
+      label: 'Pupils with consent',
+      title: 'Pupils with consent',
+      description: 'Find pupils and view their consent status'
+    },
     show: {
       title: 'Child record'
     },

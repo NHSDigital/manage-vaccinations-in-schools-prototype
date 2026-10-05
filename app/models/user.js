@@ -119,20 +119,20 @@ export class User extends BaseModel {
   get views() {
     switch (true) {
       case this.role === UserRole.DataConsumer:
-        return ['reports']
+        return ['report']
       case this.role === UserRole.SchoolSecretary:
-        return ['patients', 'uploads']
+        return ['upload', 'patient']
       default:
         return [
-          'patients',
-          'schools',
-          'sessions',
-          'reviews',
-          'reports',
-          'uploads',
-          'downloads',
-          'vaccines',
-          'teams'
+          'patient',
+          'school',
+          'session',
+          'review',
+          'report',
+          'upload',
+          'download',
+          'vaccine',
+          'team'
         ]
     }
   }
