@@ -131,18 +131,6 @@
       small: true,
       fieldset: {
         legend: {
-          text: __("patientSession.consent.label"),
-          size: "s"
-        }
-      },
-      items: radioFilterItems(ConsentRequestStatus, data["consentRequest"], false),
-      decorate: "consentRequest"
-    }) if account.isSchoolUser }}
-
-    {{ radios({
-      small: true,
-      fieldset: {
-        legend: {
           text: __("patientSession.status.label"),
           size: "s"
         }

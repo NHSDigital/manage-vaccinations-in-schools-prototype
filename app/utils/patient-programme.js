@@ -2,7 +2,6 @@ import filters from '@x-govuk/govuk-prototype-filters'
 import { isToday } from 'date-fns'
 
 import {
-  ConsentRequestStatus,
   ConsentStatus,
   ConsentVaccineCriteria,
   ConsentWindow,
@@ -189,31 +188,6 @@ export function getConsentStatus(patientProgramme) {
   }
 
   return ConsentStatus.NoResponse
-}
-
-/**
- * Get consent request status
- *
- * @param {PatientProgramme} patientProgramme - Patient programme
- * @returns {ConsentRequestStatus} Consent request status
- */
-export function getConsentRequestStatus(patientProgramme) {
-  if (
-    [
-      PatientConsentStatus.NotScheduled,
-      PatientConsentStatus.Scheduled
-    ].includes(patientProgramme.patientConsent)
-  ) {
-    return ConsentRequestStatus.NotNeeded
-  }
-
-  switch (patientProgramme.consent) {
-    case ConsentStatus.NoResponse:
-    case ConsentStatus.NotDelivered:
-      return ConsentRequestStatus.NoResponse
-    default:
-      return ConsentRequestStatus.Response
-  }
 }
 
 /**

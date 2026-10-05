@@ -92,16 +92,16 @@
             {% endif %}
           {%- endset %}
 
-          {% set consentRequestStatusHtml -%}
+          {% set consentGivenDateHtml -%}
             {%- if data.programme_id %}
               {%- for id, patientProgramme in patient.activeProgrammes -%}
                 {%- if data.programme_id | includes(id) -%}
-                  {{ patientProgramme.formatted.consentRequestStatus | nhsukMarkdown }}
+                  {{ patientProgramme.formatted.consentGivenDate | nhsukMarkdown }}
                 {%- endif -%}
               {%- endfor %}
             {% else %}
               {%- for id, patientProgramme in patient.activeProgrammes -%}
-                {{ patientProgramme.formatted.consentRequestStatus | nhsukMarkdown }}
+                {{ patientProgramme.formatted.consentGivenDate | nhsukMarkdown }}
               {%- endfor %}
             {% endif %}
           {%- endset %}
@@ -125,8 +125,8 @@
               },
               yearGroup: {},
               status: {
-                label: __("patientSession.consent.label"),
-                value: consentRequestStatusHtml
+                label: __("patientSession.consentGivenDate.label"),
+                value: consentGivenDateHtml
               }
             }) if account.isSchoolUser else summaryRows(patient, {
               nhsn: {

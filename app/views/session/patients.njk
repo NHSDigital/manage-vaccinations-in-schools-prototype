@@ -106,10 +106,10 @@
             {% endfor %}
           {% endset %}
 
-          {% set consentStatusHtml -%}
+          {% set consentGivenDateHtml -%}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
-                {{ patientSession.patientProgramme.formatted.consentStatus | nhsukMarkdown }}
+                {{ patientSession.patientProgramme.formatted.consentGivenDate | nhsukMarkdown }}
               {%- endif -%}
             {%- endfor %}
           {%- endset %}
@@ -149,8 +149,8 @@
                   href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "patients" and patientSession.register != RegistrationStatus.Pending
                 } if showRegistration,
                 status: {
-                  label: __("patientSession.consent.label") if account.isSchoolUser else __("patientSession.status.label"),
-                  value: consentStatusHtml if account.isSchoolUser else statusHtml
+                  label: __("patientSession.consentGivenDate.label") if account.isSchoolUser else __("patientSession.status.label"),
+                  value: consentGivenDateHtml if account.isSchoolUser else statusHtml
                 } if view != "instructions",
                 additionalProgrammes: {
                   label: __("patientSession.additionalProgrammes.label"),
