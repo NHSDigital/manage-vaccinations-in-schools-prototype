@@ -8,6 +8,7 @@ import patientSessions from '../.data/patient-sessions.json' with { type: 'json'
 import patients from '../.data/patients.json' with { type: 'json' }
 import pdsRecords from '../.data/pds-records.json' with { type: 'json' }
 import programmes from '../.data/programmes.json' with { type: 'json' }
+import relationships from '../.data/relationships.json' with { type: 'json' }
 import replies from '../.data/replies.json' with { type: 'json' }
 import schools from '../.data/schools.json' with { type: 'json' }
 import sessions from '../.data/sessions.json' with { type: 'json' }
@@ -40,6 +41,7 @@ const data = {
   patientSessions,
   pdsRecords,
   programmes,
+  relationships,
   replies,
   schools,
   sessions,

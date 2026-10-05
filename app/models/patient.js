@@ -8,7 +8,7 @@ import {
   ClinicAppointmentStatus,
   Impairment,
   NoticeType,
-  NotifyEmailStatus,
+  NotifyStatus,
   PatientClinicStatus,
   SessionStatus,
   SessionType,
@@ -24,6 +24,7 @@ import {
   Move,
   PatientProgramme,
   PatientSession,
+  Relationship,
   Reply,
   School,
   Vaccination
@@ -66,6 +67,7 @@ import {
  * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
  * @property {Array<string>} [contact_uuids] - Contact UUIDs
+ * @property {Array<string>} [relationship_uuids] - Relationship UUIDs
  * @property {Array<string>} [patientSession_uuids] - Patient session UUIDs
  * @property {Array<string>} [reply_uuids] - Reply UUIDs
  * @property {Array<string>} [vaccination_uuids] - Vaccination UUIDs
@@ -103,6 +105,7 @@ export class Patient extends Child {
     this.instructions = options?.instructions || []
     this.clinicProgramme_ids = stringToArray(options?.clinicProgramme_ids)
     this.contact_uuids = stringToArray(options?.contact_uuids)
+    this.relationship_uuids = stringToArray(options?.relationship_uuids)
     this.patientSession_uuids = stringToArray(options?.patientSession_uuids)
     this.reply_uuids = stringToArray(options?.reply_uuids)
     this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
@@ -140,7 +143,7 @@ export class Patient extends Child {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return this.contacts.some((contact) => contact.hasContactDetails)
+    return this.relationships.some((contact) => contact.hasContactDetails)
   }
 
   /**
@@ -251,6 +254,19 @@ export class Patient extends Child {
       )
 
     return [...contacts.values()]
+  }
+
+  /**
+   * Get relationships
+   *
+   * @returns {Array<Relationship>|undefined} Relationships
+   */
+  get relationships() {
+    if (!this.isSensitive) {
+      return this.relationship_uuids.map((uuid) =>
+        Relationship.findOne(uuid, this.context)
+      )
+    }
   }
 
   /**
@@ -633,7 +649,9 @@ export class Patient extends Child {
                 .join(' ')
             case 'contacts':
               return formatList(
-                this.contacts.map((contact) => contact.fullNameAndRelationship)
+                this.relationships.map(
+                  (relationship) => relationship.fullNameAndRelationship
+                )
               )
             case 'upcomingAppointments': {
               const appointmentDetails = this.appointments
@@ -754,15 +772,15 @@ export class Patient extends Child {
   }
 
   /**
-   * Add contact to patient
+   * Add relationship to patient
    *
-   * @param {Contact} contact - Contact
+   * @param {Relationship} relationship - Relationship
    */
-  addContact(contact) {
-    this.contact_uuids.push(contact.uuid)
+  addRelationship(relationship) {
+    this.relationship_uuids.push(relationship.uuid)
 
     this.addEvent({
-      name: activity.patient.contact(contact),
+      name: activity.patient.relationship(relationship),
       type: AuditEventType.Record
     })
   }
@@ -820,7 +838,7 @@ export class Patient extends Child {
       this.addEvent({
         name: activity.notify['invite-clinic'](contact),
         type: AuditEventType.ProgrammeNote,
-        messageRecipient: contact,
+        messageContact: contact,
         messageTemplate: 'invite-clinic',
         patient_uuid: this.uuid,
         programme_ids: programme_ids
@@ -834,21 +852,20 @@ export class Patient extends Child {
    * @param {PatientSession} patientSession - Patient session
    */
   requestConsent(patientSession) {
-    for (const contact of this.contacts) {
-      if (
-        contact.email &&
-        contact.emailStatus === NotifyEmailStatus.Delivered
-      ) {
-        this.addEvent({
-          name: activity.notify.invite(contact),
-          type: AuditEventType.ProgrammeNote,
-          messageRecipient: contact,
-          messageTemplate: 'invite',
-          createdAt: patientSession.session.consentOpenAt,
-          patient_uuid: this.uuid,
-          programme_ids: patientSession.session.programme_ids,
-          session_id: patientSession.session.id
-        })
+    for (const relationship of this.relationships) {
+      for (const contact of relationship.contacts) {
+        if (contact.identifier && contact.status === NotifyStatus.Delivered) {
+          this.addEvent({
+            name: activity.notify.invite(contact),
+            type: AuditEventType.ProgrammeNote,
+            messageContact: contact,
+            messageTemplate: 'invite',
+            createdAt: patientSession.session.consentOpenAt,
+            patient_uuid: this.uuid,
+            programme_ids: patientSession.session.programme_ids,
+            session_id: patientSession.session.id
+          })
+        }
       }
     }
   }
@@ -931,7 +948,7 @@ export class Patient extends Child {
       if (vaccination.outcome !== VaccinationOutcome.AlreadyVaccinated) {
         this.addEvent({
           name: activity.notify['vaccination-reminder'](contact),
-          messageRecipient: contact,
+          messageContact: contact,
           messageTemplate: 'vaccination-reminder',
           createdAt: removeDays(vaccination.createdAt, 7),
           patient_uuid: this.uuid,
@@ -942,7 +959,7 @@ export class Patient extends Child {
 
       this.addEvent({
         name: activity.notify[messageTemplate](contact),
-        messageRecipient: contact,
+        messageContact: contact,
         messageTemplate,
         createdAt: vaccination.updatedAt || vaccination.createdAt,
         patient_uuid: this.uuid,
@@ -980,9 +997,10 @@ export class Patient extends Child {
         this.dod = removeDays(today(), 5)
         name = `Record updated with child’s date of death`
         break
-      case notice.type === NoticeType.NoNotify && this.contacts[0]?.canNotify:
+      case notice.type === NoticeType.NoNotify &&
+        this.relationships[0]?.canNotify:
         // Notify request to not share vaccination with GP
-        this.contacts[0].canNotify = false
+        this.relationships[0].canNotify = false
         name = `Child gave consent for HPV and flu vaccinations under Gillick competence and does not want their parents to be notified.\n\nThese records are not automatically synced with GP records.\n\nYour team must let the child’s GP know they were vaccinated.`
         break
       case notice.type === NoticeType.Invalid:

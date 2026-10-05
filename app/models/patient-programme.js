@@ -1346,7 +1346,7 @@ export class PatientProgramme extends BaseModel {
       for (const contact of this.patient.contacts) {
         this.patient?.addEvent({
           name: activity.notify[messageTemplate](contact),
-          messageRecipient: contact,
+          messageContact: contact,
           messageTemplate,
           createdAt: event.createdAt,
           patient_uuid: this.patient.uuid,

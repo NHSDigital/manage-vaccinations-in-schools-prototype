@@ -4,6 +4,7 @@ import { decorate } from 'nhsuk-decorated-components'
 import { healthQuestions } from './datasets/health-questions.js'
 import {
   AuditEventType,
+  ContactType,
   InstructionStatus,
   PatientConsentStatus,
   PatientRefusedStatus
@@ -116,7 +117,7 @@ export default () => {
       const details = []
 
       // Show email message content if recipient given with email address
-      if (auditEvent.messageRecipient?.email) {
+      if (auditEvent.messageContact?.type === ContactType.Email) {
         const subject = nunjucksEnv.renderString(
           en.emails.consent[auditEvent.messageTemplate].name,
           auditEvent.messageData
@@ -132,7 +133,7 @@ export default () => {
 
         details.push({
           classes: 'app-details--notify-message',
-          summary: `Email sent to ${auditEvent.messageRecipient?.email}`,
+          summary: `Email sent to ${auditEvent.messageContact?.identifier}`,
           html: formatMarkdown(`### ${subject}\n\n${body}`)
         })
       }
@@ -140,12 +141,12 @@ export default () => {
       // Show email message content if recipient given with telephone number
       // and text message content provided
       if (
-        auditEvent.messageRecipient?.tel &&
+        auditEvent.messageContact?.type === ContactType.Phone &&
         en.texts.consent[auditEvent.messageTemplate]?.text
       ) {
         details.push({
           classes: 'app-details--notify-message',
-          summary: `Message sent to ${auditEvent.messageRecipient?.tel}`,
+          summary: `Message sent to ${auditEvent.messageContact?.identifier}`,
           html: formatMarkdown(
             nunjucksEnv.renderString(
               `${en.texts.consent[auditEvent.messageTemplate].text}`,

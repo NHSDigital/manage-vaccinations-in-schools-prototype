@@ -453,7 +453,7 @@ export class PatientSession extends BaseModel {
   sendReminder(event, contact) {
     this.patient?.addEvent({
       name: activity.notify['vaccination-reminder'](contact),
-      messageRecipient: contact,
+      messageContact: contact,
       messageTemplate: 'vaccination-reminder',
       type: AuditEventType.Reminder,
       createdBy_uid: event.createdBy_uid,

@@ -1,101 +1,30 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import {
-  NotifyEmailStatus,
-  NotifySmsStatus,
-  RelationshipType
-} from '../enums.js'
-import { Contact } from '../models.js'
+import { NotifyStatus } from '../enums.js'
+import { Contact, Relationship } from '../models.js'
 
 /**
  * Generate fake contact
  *
- * @param {Child|Patient} patient - Child
- * @param {boolean} [isMum] - Contact is child’s mother
+ * @param {Relationship} relationship - Relationship
  * @returns {Contact} Contact
  */
-export function generateContact(patient, isMum) {
-  // Relationship
-  const relationship = isMum
-    ? RelationshipType.Mum
-    : faker.helpers.weightedArrayElement([
-        { value: RelationshipType.Dad, weight: 4 },
-        { value: RelationshipType.Guardian, weight: 1 },
-        { value: RelationshipType.Fosterer, weight: 1 },
-        { value: RelationshipType.Other, weight: 1 }
-      ])
-
-  // Name
-  let firstName
-  let lastName
-  switch (relationship) {
-    case RelationshipType.Mum:
-      firstName = faker.person.firstName('female').replace(`'`, '’')
-      lastName = patient.lastName
-      break
-    case RelationshipType.Dad:
-      firstName = faker.person.firstName('male').replace(`'`, '’')
-      lastName = patient.lastName
-      break
-    default:
-      firstName = faker.person.firstName().replace(`'`, '’')
-      lastName = faker.person.lastName().replace(`'`, '’')
-  }
-
-  // Contact details
-  const phoneNumber = '077## 9#####'.replace(/#+/g, (m) =>
+export function generateContact(relationship) {
+  const firstName = relationship.fullName.split(' ')[0]
+  const lastName = relationship.fullName.split(' ').at(-1)
+  const email = faker.internet.email({ firstName, lastName }).toLowerCase()
+  const tel = '077## 9#####'.replace(/#+/g, (m) =>
     faker.string.numeric(m.length)
   )
-  const tel = faker.helpers.maybe(() => phoneNumber, { probability: 0.6 })
-
-  const canSms = faker.datatype.boolean(0.5)
-  const smsStatus = faker.helpers.weightedArrayElement([
-    { value: NotifySmsStatus.Delivered, weight: 100 },
-    { value: NotifySmsStatus.Permanent, weight: 10 },
-    { value: NotifySmsStatus.Temporary, weight: 5 },
-    { value: NotifySmsStatus.Technical, weight: 1 }
-  ])
-
-  const emailAddress = faker.internet
-    .email({ firstName, lastName })
-    .toLowerCase()
-  const email = faker.helpers.maybe(() => emailAddress, { probability: 0.8 })
-  const emailStatus = faker.helpers.weightedArrayElement([
-    { value: NotifyEmailStatus.Delivered, weight: 100 },
-    { value: NotifyEmailStatus.Permanent, weight: 10 },
-    { value: NotifyEmailStatus.Temporary, weight: 5 },
-    { value: NotifyEmailStatus.Technical, weight: 1 }
-  ])
-
-  // If telephone number provided, sometimes add a communication need
-  const hasCommunicationNeeds = faker.datatype.boolean(0.2)
-  let communicationNeeds
-  if (tel && hasCommunicationNeeds) {
-    communicationNeeds =
-      'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
-  }
 
   return new Contact({
-    fullName: `${firstName} ${lastName}`,
-    relationship,
-    ...(relationship === RelationshipType.Other && {
-      relationshipOther: 'Grandparent'
-    }),
-    ...(email && {
-      email,
-      ...(emailStatus && { emailStatus })
-    }),
-    ...(tel && {
-      tel,
-      canSms,
-      ...(smsStatus && { smsStatus })
-    }),
-    hasCommunicationNeeds,
-    communicationNeeds,
-    patient_uuid: patient.uuid
+    identifier: faker.helpers.arrayElement([email, tel]),
+    status: faker.helpers.weightedArrayElement([
+      { value: NotifyStatus.Delivered, weight: 100 },
+      { value: NotifyStatus.Permanent, weight: 10 },
+      { value: NotifyStatus.Temporary, weight: 5 },
+      { value: NotifyStatus.Technical, weight: 1 }
+    ]),
+    relationship_uuid: relationship.uuid
   })
 }
-
-/**
- * @import { Child, Patient } from '../models.js'
- */

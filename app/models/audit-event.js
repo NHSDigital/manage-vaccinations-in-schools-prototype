@@ -29,7 +29,7 @@ import { BaseModel } from './base.js'
  * @property {string} [name] - Name
  * @property {string} [note] - Note
  * @property {AuditEventType} [type] - Audit event type
- * @property {object} [messageRecipient] - Message recipient
+ * @property {object} [messageContact] - Message contact
  * @property {string} [messageTemplate] - Message template
  * @property {Array} [updatedFields] - Updated fields
  * @property {string} [status] - Status for activity type
@@ -79,7 +79,7 @@ export class AuditEvent extends BaseModel {
     this.name = options?.name
     this.note = options?.note
     this.type = options?.type
-    this.messageRecipient = options?.messageRecipient
+    this.messageContact = options?.messageContact
     this.messageTemplate = options?.messageTemplate
     this.updatedFields = options?.updatedFields
     this.status = options?.status

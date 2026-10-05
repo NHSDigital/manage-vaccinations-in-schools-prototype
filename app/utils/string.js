@@ -389,6 +389,22 @@ export function formatContact(contact, shouldIncludeContactDetails = true) {
 }
 
 /**
+ * Format full name and relationship
+ *
+ * @param {Relationship} contact - Contact
+ * @returns {string|undefined} Formatted full name and relationship
+ */
+export function formatRelationship(contact) {
+  if (!contact) return
+
+  if (!contact.fullName) {
+    return contact.relationship
+  }
+
+  return `${contact.fullName} (${lowerCaseFirst(contact.relationship)})`
+}
+
+/**
  * Format progress
  *
  * @param {number} number - Progress
@@ -658,5 +674,5 @@ export function formatTime(
 }
 
 /**
- * @import { Contact } from '../models.js'
+ * @import { Contact, Relationship } from '../models.js'
  */

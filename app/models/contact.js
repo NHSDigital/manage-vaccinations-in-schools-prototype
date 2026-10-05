@@ -1,26 +1,20 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { RelationshipType } from '../enums.js'
-import { Patient } from '../models.js'
-import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
+import {
+  ContactType,
+  NotifyEmailStatus,
+  NotifySmsStatus,
+  NotifyStatus
+} from '../enums.js'
+import { Patient, Relationship } from '../models.js'
 
 import { BaseModel } from './base.js'
 
 /**
  * @typedef {BaseModelOptions & object} ContactOptions
  * @property {string} [uuid] - Contact UUID
- * @property {string} [fullName] - Full name
- * @property {RelationshipType} [relationship] - Type of relationship to child
- * @property {string} [relationshipOther] - Other relationship to child
- * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
- * @property {boolean} [canNotify] - Notify about consent and vaccinations
- * @property {string} [tel] - Phone number
- * @property {string} [email] - Email address
- * @property {boolean} [canSms] - Get updates via SMS
- * @property {NotifyEmailStatus} [emailStatus] - Email status
- * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {boolean} [hasCommunicationNeeds] - Has communication needs
- * @property {string} [communicationNeeds] - Communication or language needs
+ * @property {string} [identifier] - Email address or phone number
+ * @property {NotifyStatus} [status] - Delivery status
  */
 
 /**
@@ -44,47 +38,20 @@ export class Contact extends BaseModel {
     /** @type {Patient|undefined} */
     this.patient
 
+    /** @type {string|undefined} */
+    this.relationship_uuid
+
+    /** @type {Patient|undefined} */
+    this.relationship
+
     this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.fullName = options?.fullName || ''
-    this.relationship = options?.relationship || RelationshipType.Unknown
-    this.relationshipOther =
-      this?.relationship === RelationshipType.Other
-        ? options?.relationshipOther
-        : undefined
-    this.hasParentalResponsibility =
-      this.relationship === RelationshipType.Other || RelationshipType.Fosterer
-        ? stringToBoolean(options.hasParentalResponsibility)
-        : undefined
-    this.canNotify = stringToBoolean(options?.canNotify)
-    this.tel = options?.tel
-    this.email = options?.email
-    this.canSms = stringToBoolean(options.canSms)
-    this.emailStatus = this?.email && options?.emailStatus
-    this.smsStatus = this?.tel && options?.smsStatus
-    this.hasCommunicationNeeds = stringToBoolean(options?.hasCommunicationNeeds)
-
-    if (this.hasCommunicationNeeds) {
-      this.communicationNeeds = options?.communicationNeeds
-    }
+    this.identifier = options?.identifier
+    this.status = options?.status || NotifyStatus.Delivered
   }
 
-  /**
-   * Get full name and relationship to child
-   *
-   * @returns {string} Full name and relationship
-   */
-  get fullNameAndRelationship() {
-    return formatContact(this, false)
-  }
-
-  /**
-   * Has contact details
-   *
-   * @returns {boolean} Has contact details
-   */
-  get hasContactDetails() {
-    return !!this.email || !!this.tel
+  get type() {
+    return this.identifier.includes('@') ? ContactType.Email : ContactType.Phone
   }
 
   /**
@@ -93,17 +60,18 @@ export class Contact extends BaseModel {
    * @returns {object} Formatted values
    */
   get formatted() {
+    const status =
+      this.type === ContactType.Email
+        ? NotifyEmailStatus[this.status]
+        : NotifySmsStatus[this.status]
+
     return new Proxy(
       {},
       {
         get: (_target, prop) => {
           switch (prop) {
-            case 'communicationNeeds':
-              return this.communicationNeeds || this.hasCommunicationNeeds
-            case 'fullName':
-              return this.fullName || 'Name unknown'
-            case 'relationship':
-              return formatOther(this.relationshipOther, this.relationship)
+            case 'status':
+              return status
             default:
               return undefined
           }
@@ -123,8 +91,8 @@ export class Contact extends BaseModel {
 }
 
 Contact.relate('patient_uuid', () => Patient, 'patient')
+Contact.relate('relationship_uuid', () => Relationship, 'relationship')
 
 /**
- * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

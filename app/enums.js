@@ -161,6 +161,15 @@ export const ConsentWindow = {
  * @readonly
  * @enum {string}
  */
+export const ContactType = {
+  Email: 'Email address',
+  Phone: 'Phone number'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const DayOfTheWeek = {
   Monday: 'Monday',
   Tuesday: 'Tuesday',
@@ -368,6 +377,17 @@ export const NoticeType = {
   Invalid: 'Invalid',
   NoNotify: 'Do not notify parents',
   Sensitive: 'Sensitive'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const NotifyStatus = {
+  Delivered: 'Delivered',
+  Permanent: 'Permanent',
+  Temporary: 'Temporary',
+  Technical: 'Technical'
 }
 
 /**

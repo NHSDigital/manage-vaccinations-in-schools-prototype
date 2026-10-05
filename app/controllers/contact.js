@@ -1,4 +1,4 @@
-import { Contact, Patient } from '../models.js'
+import { Contact, Patient, Relationship } from '../models.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactController = {
@@ -37,31 +37,37 @@ export const contactController = {
    */
   update(type) {
     return (request, response) => {
-      const { contact_uuid } = request.params
+      const { relationship_uuid } = request.params
       const { data } = request.session
       const { __, back } = response.locals
 
       // Update session data
-      let contact
+      let relationship
       if (type === 'new') {
-        contact = Contact.create(data.wizard.contacts[contact_uuid], data)
+        relationship = Relationship.create(
+          data.wizard.relationships[relationship_uuid],
+          data
+        )
 
-        // Add contact to patient contacts
-        const patient = Patient.findOne(contact.patient_uuid, data)
-        patient.addContact(contact)
+        // Add relationship to patient relationships
+        const patient = Patient.findOne(relationship.patient_uuid, data)
+        patient.addRelationship(relationship)
       } else {
-        contact = Contact.update(
-          contact_uuid,
-          data.wizard.contacts[contact_uuid],
+        relationship = Relationship.update(
+          relationship_uuid,
+          data.wizard.relationships[relationship_uuid],
           data
         )
       }
 
       // Clean up session data
-      delete data.contact
+      delete data.relationship
       delete data.wizard
 
-      request.flash('success', __(`contact.${type}.success`, { contact }))
+      request.flash(
+        'success',
+        __(`relationship.${type}.success`, { relationship })
+      )
 
       return saveAndRedirect(request, response, back)
     }

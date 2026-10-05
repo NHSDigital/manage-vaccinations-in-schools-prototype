@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Child, Contact } from '../models.js'
+import { Child, Contact, Relationship } from '../models.js'
 import { tokenize } from '../utils/object.js'
 import {
   formatList,
@@ -17,6 +17,7 @@ import {
  * @property {boolean} [isSensitive] - Flagged as sensitive
  * @property {object} [address] - Address
  * @property {Array<string>} [contact_uuids] - Contact UUIDS
+ * @property {Array<string>} [relationship_uuids] - Relationship UUIDS
  */
 
 /**
@@ -47,6 +48,7 @@ export class PDSRecord extends Child {
       !isSensitive && options?.address ? options.address : undefined
     this.school_id = null
     this.contact_uuids = options?.contact_uuids || []
+    this.relationship_uuids = options?.relationship_uuids || []
   }
 
   /**
@@ -55,7 +57,7 @@ export class PDSRecord extends Child {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return this.contacts.every((contact) => contact.hasContactDetails)
+    return this.relationships.every((contact) => contact.hasContactDetails)
   }
 
   /**
@@ -76,6 +78,19 @@ export class PDSRecord extends Child {
     if (!this.isSensitive) {
       return this.contact_uuids.map((uuid) =>
         Contact.findOne(uuid, this.context)
+      )
+    }
+  }
+
+  /**
+   * Get relationships
+   *
+   * @returns {Array<Relationship>|undefined} Relationships
+   */
+  get relationships() {
+    if (!this.isSensitive) {
+      return this.relationship_uuids.map((uuid) =>
+        Relationship.findOne(uuid, this.context)
       )
     }
   }

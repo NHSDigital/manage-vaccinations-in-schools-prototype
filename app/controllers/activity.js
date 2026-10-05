@@ -5,9 +5,10 @@ import {
   ReplyDecision,
   ScreenStatus
 } from '../enums.js'
-import { generateContact } from '../generators/contact.js'
+import { generateRelationship } from '../generators/relationship.js'
 import {
   AuditEvent,
+  Contact,
   Gillick,
   Patient,
   Reply,
@@ -72,11 +73,21 @@ export const activityController = {
     )
 
     // Contact for use in Notify activities; force having both email and phone
-    const contact = generateContact(patient)
-    contact.email =
-      contact.email ||
-      `${contact.fullName.replace(' ', '.').toLowerCase()}@example.com`
-    contact.tel = contact.tel || '07700 900000'
+    const relationship = generateRelationship(patient)
+    Contact.create(
+      {
+        relationship_uuid: relationship.uuid,
+        identifier: `${relationship.fullName.replace(' ', '.').toLowerCase()}@example.com`
+      },
+      data
+    )
+    Contact.create(
+      {
+        relationship_uuid: relationship.uuid,
+        identifier: '07700 900000'
+      },
+      data
+    )
 
     const activityLog = [
       {
@@ -202,16 +213,18 @@ export const activityController = {
           'vaccination-not-given-contraindicated-do-not-vaccinate',
           'vaccination-already-had',
           'vaccination-deleted'
-        ].map((name) =>
-          auditEvent({
-            name: activity.notify[name](contact),
-            messageRecipient: contact,
-            messageTemplate: name,
-            patient_uuid: patient?.uuid,
-            programme_ids: session?.programme_ids,
-            session_id: session?.id
-          })
-        )
+        ].map((name) => {
+          for (const contact of relationship.contacts) {
+            auditEvent({
+              name: activity.notify[name](contact),
+              messageContact: contact,
+              messageTemplate: name,
+              patient_uuid: patient?.uuid,
+              programme_ids: session?.programme_ids,
+              session_id: session?.id
+            })
+          }
+        })
       },
       {
         title: 'Patient',
