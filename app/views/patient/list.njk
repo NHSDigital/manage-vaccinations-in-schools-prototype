@@ -15,9 +15,12 @@
   }) }}
 
   {{ actionLink({
+    text: "Download spreadsheet",
+    href: "#"
+  } if account.isSchoolUser else {
     text: __("pdsRecord.start.label"),
     href: "/pds/new/start"
-  }) if not account.isSchoolUser }}
+  }) }}
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-third">
