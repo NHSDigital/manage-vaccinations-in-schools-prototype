@@ -5,6 +5,7 @@ import _ from 'lodash'
 import {
   AppointmentAbandonmentReason,
   AppointmentLengthType,
+  AppointmentOverrunResolution,
   ClinicAppointmentStatus,
   ClinicBookingJourneyType,
   ProgrammeType,
@@ -944,6 +945,22 @@ export const bookIntoClinicController = {
           isHour12: true
         })
       }
+    } else if (view === 'resolve-overrun') {
+      // The new length won't fit at the appointment's current time, but will at others
+      const session = Session.findOne(appointment.session_id, data)
+      const requiredSlots = appointment.slotCount
+      const availableSlots = session.longestAvailableAppointment(
+        appointment.startAt,
+        appointment.uuid
+      )
+
+      response.locals.requiredSlots = requiredSlots
+      response.locals.requiredMinutes = requiredSlots * session.slotLength
+      response.locals.availableSlots = availableSlots
+      response.locals.availableMinutes = availableSlots * session.slotLength
+      response.locals.slotStartTime = formatTime(appointment.startAt, {
+        isHour12: true
+      })
     } else if (view === 'fully-booked') {
       // Note: replace usual MMR content with MMRV as necessary
       response.locals.programmeNames = programmeNamesListForSentence(
@@ -1061,6 +1078,33 @@ export const bookIntoClinicController = {
             editedSlotCount: appointment.editedSlotCount
           })
         }
+      } else if (
+        view === 'resolve-overrun' &&
+        data.journeyData[booking_uuid].resolveOverrunOption ===
+          AppointmentOverrunResolution.Shorten
+      ) {
+        // Shorten the appointment to fit at its current time, remembering the length it should have been, so it
+        // shows as 'might overrun'
+        const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+        const appointment = booking.findAppointment(appointment_uuid)
+        const session = Session.findOne(appointment.session_id, data)
+
+        appointment.preferredSlotCount = appointment.slotCount
+        appointment.editedSlotCount = session.longestAvailableAppointment(
+          appointment.startAt,
+          appointment.uuid
+        )
+
+        ClinicBooking.update(booking_uuid, booking, data.wizard)
+
+        // Update the answers auto-stored from the appointment-length page to match, so that the length page shows
+        // the shortened length, and go straight back to the edit page, keeping the appointment's time
+        data.journeyData['appointmentLengthType'] =
+          AppointmentLengthType.Specific
+        data.appointment = Object.assign({}, data.appointment, {
+          editedSlotCount: appointment.editedSlotCount
+        })
+        paths.next = response.locals.editPath
       } else if (view === 'child-count') {
         // We've just set the child count, so create the appointments we'll need
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)

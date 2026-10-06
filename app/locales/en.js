@@ -981,6 +981,21 @@ export const en = {
         hint: 'Each slot is %d minutes long',
         suffix: 'slots'
       }
+    },
+    resolveOverrun: {
+      title: 'The appointment will not fit at {slotStartTime}',
+      description:
+        'The appointment will take {requiredMinutes, plural, one {1 minute} other {# minutes}} ({requiredSlots, plural, one {1 appointment slot} other {# appointment slots}}). But at {slotStartTime}, there {availableMinutes, plural, one {is only 1 minute} other {are only # minutes}} ({availableSlots, plural, one {1 slot} other {# slots}}) available.',
+      label: 'What do you want to do?',
+      shorten: {
+        label:
+          'Shorten the appointment to {availableMinutes, plural, one {1 minute} other {# minutes}} and keep the {slotStartTime} start time',
+        hint: 'It will be shown as ‘might overrun’ on the Appointments page'
+      },
+      chooseNewTime: {
+        label: 'Choose a new start time',
+        hint: 'You’ll only be offered times with enough space for a {requiredMinutes, plural, one {1-minute} other {#-minute}} appointment'
+      }
     }
   },
   clinicVaccinationPeriod: {

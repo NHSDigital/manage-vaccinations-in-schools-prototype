@@ -1,0 +1,39 @@
+{% extends "_layouts/form.njk" %}
+
+{% set lengths = {
+  requiredMinutes: requiredMinutes,
+  requiredSlots: requiredSlots,
+  availableMinutes: availableMinutes,
+  availableSlots: availableSlots,
+  slotStartTime: slotStartTime
+} %}
+{% set title = __mf("clinicBooking.resolveOverrun.title", lengths) %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    caption: appointmentCaption,
+    size: "l"
+  }) }}
+
+  {{ __mf("clinicBooking.resolveOverrun.description", lengths) | nhsukMarkdown }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("clinicBooking.resolveOverrun.label"),
+        size: "m"
+      }
+    },
+    items: [{
+      text: __mf("clinicBooking.resolveOverrun.shorten.label", lengths),
+      hint: __("clinicBooking.resolveOverrun.shorten.hint"),
+      value: AppointmentOverrunResolution.Shorten
+    }, {
+      text: __("clinicBooking.resolveOverrun.chooseNewTime.label"),
+      hint: __mf("clinicBooking.resolveOverrun.chooseNewTime.hint", lengths),
+      value: AppointmentOverrunResolution.ChooseNewTime
+    }],
+    decorate: "journeyData.resolveOverrunOption"
+  }) }}
+{% endblock %}

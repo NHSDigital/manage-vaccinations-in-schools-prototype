@@ -433,14 +433,34 @@ export const getAppointmentChangePaths = (
 ) => {
   const appointmentPath = (view) => getPath(view, appointment.uuid)
 
+  // Will the chosen length fit anywhere in the session, and at the appointment's current time?
+  const session = Session.findOne(appointment.session_id, sessionData)
+  const slotCount = getEditedAppointmentSlotCount(appointment, sessionData)
+  const fitsInSession = session.canFitSlotCount(
+    slotCount,
+    undefined,
+    appointment.uuid
+  )
+  const fitsAtCurrentTime = session.canFitSlotCount(
+    slotCount,
+    appointment.startAt,
+    appointment.uuid
+  )
+
+  const isChangingOnlyLength = firstView === 'appointment-length'
+
   const journey = {
     [appointmentPath('clinic-location')]: {},
     [appointmentPath('clinic-date')]: {},
     [appointmentPath('appointment-length')]: {},
 
     // Interrupt if the chosen length can't fit anywhere in the session
-    ...(!canEditedAppointmentLengthFitInSession(appointment, sessionData)
-      ? { [appointmentPath('shorten-appointment')]: {} }
+    ...(!fitsInSession ? { [appointmentPath('shorten-appointment')]: {} } : {}),
+
+    // If only the length is changing and it won't fit at the current time (but will elsewhere), offer to shorten
+    // the appointment to keep its time, or to choose a new time
+    ...(isChangingOnlyLength && fitsInSession && !fitsAtCurrentTime
+      ? { [appointmentPath('resolve-overrun')]: {} }
       : {}),
 
     [appointmentPath('appointment-time-range')]: {},
@@ -457,31 +477,24 @@ export const getAppointmentChangePaths = (
 }
 
 /**
- * Can the length chosen for an appointment being edited fit anywhere in its (possibly newly chosen) session?
+ * Get the length (in slots) chosen for an appointment being edited
  *
  * Note: when the appointment-length page is submitted, the chosen length is in the auto-stored answers but not yet
  * the appointment, so we use those answers when present
  *
  * @param {ClinicAppointment} appointment - the appointment being edited
  * @param {object} sessionData - the request.session.data object
- * @returns {boolean} - true if the chosen length will fit somewhere in the session, or false otherwise
+ * @returns {number} - the chosen length of the appointment, in slots
  */
-const canEditedAppointmentLengthFitInSession = (appointment, sessionData) => {
-  const session = Session.findOne(appointment.session_id, sessionData)
-
-  let chosenSlotCount
+const getEditedAppointmentSlotCount = (appointment, sessionData) => {
   switch (sessionData.journeyData?.appointmentLengthType) {
     case AppointmentLengthType.Default:
-      chosenSlotCount = session.calculateSlotCount(appointment)
-      break
+      return appointment.session.calculateSlotCount(appointment)
     case AppointmentLengthType.Specific:
-      chosenSlotCount = Number(sessionData.appointment?.editedSlotCount)
-      break
+      return Number(sessionData.appointment?.editedSlotCount)
     default:
-      chosenSlotCount = appointment.slotCount
+      return appointment.slotCount
   }
-
-  return session.canFitSlotCount(chosenSlotCount, undefined, appointment.uuid)
 }
 
 /**

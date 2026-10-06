@@ -67,6 +67,15 @@ export const AppointmentLengthType = {
  * @readonly
  * @enum {string}
  */
+export const AppointmentOverrunResolution = {
+  Shorten: 'Shorten the appointment',
+  ChooseNewTime: 'Choose a new start time'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ArchiveRecordReason = {
   Deceased: 'The child was reported as deceased',
   Duplicate: 'It’s a duplicate',
