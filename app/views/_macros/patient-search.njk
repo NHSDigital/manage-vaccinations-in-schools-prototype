@@ -58,6 +58,18 @@
       decorate: "q"
     }) }}
 
+    {{ radios({
+      fieldset: {
+        legend: {
+          text: __("search.sort.label"),
+          size: "s"
+        }
+      },
+      small: true,
+      items: sortItems,
+      decorate: "sort"
+    }) if sortItems }}
+
     {{ checkboxes({
       fieldset: {
         legend: {

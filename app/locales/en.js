@@ -2930,6 +2930,9 @@ export const en = {
       patient: 'Search by name, NHS number or postcode',
       session: 'Search by location name or postcode'
     },
+    sort: {
+      label: 'Sort by'
+    },
     advanced: 'Advanced filters',
     initial: {
       default:
