@@ -60,6 +60,7 @@ import {
  * @property {string} [session_id] - The ID of the clinic session in which the appointment's booked
  * @property {Date} [startAt] - Slot start time
  * @property {number} [editedSlotCount] - Override of the default appointment length
+ * @property {number} [preferredSlotCount] - The length the appointment should have been, if shortened to fit
  * @property {Array<string>} [selected_programme_ids] - IDs of programmes signed up for
  * @property {ReplyDecision} [fluDecision] - Whether to use nasal or injected flu vaccine
  * @property {boolean} [fluAlternative] - Accept alternative flu vaccine if nasal not suitable?
@@ -103,7 +104,10 @@ export class ClinicAppointment {
 
     this.session_id = options?.session_id
     this.startAt = options?.startAt ? new Date(options.startAt) : undefined
-    this.editedSlotCount = options?.editedSlotCount
+    this.editedSlotCount = Number(options?.editedSlotCount)
+    this.preferredSlotCount = options?.preferredSlotCount
+      ? Number(options.preferredSlotCount)
+      : undefined
 
     this.selected_programme_ids = stringToArray(options?.selected_programme_ids)
     this.fluDecision = options?.fluDecision ?? ReplyDecision.NoResponse
@@ -233,6 +237,19 @@ export class ClinicAppointment {
     }
 
     Patient.update(patient.uuid, patient, patient.context)
+  }
+
+  /**
+   * Move this appointment's patient sessions from one session (oldSession_id) to another (this.session_id)
+   *
+   * Note that this will move *all* patient sessions for this appointment's patient, incl. those
+   * that were aren't part of the appointment but were added to the current clinic session.
+   *
+   * @param {string} oldSession_id - the ID of the session we used to be booked into
+   */
+  moveBetweenSessions(oldSession_id) {
+    const newSession_id = this.session_id
+    this.patient?.moveToSession(oldSession_id, newSession_id)
   }
 
   /**
@@ -509,14 +526,15 @@ export class ClinicAppointment {
   }
 
   /**
-   * Has this appointment been made shorter than its default length?
+   * Has this appointment been made shorter than it should be, i.e. shorter than the length it had before being
+   * shortened to fit, or otherwise shorter than its default length?
    *
    * @returns {boolean} - true if it's been shortened, or false otherwise
    */
   get hasBeenShortened() {
-    return this.editedSlotCount
-      ? this.session.calculateSlotCount(this) > this.editedSlotCount
-      : false
+    const wantedSlotCount =
+      this.preferredSlotCount || this.session.calculateSlotCount(this)
+    return this.slotCount < wantedSlotCount
   }
 
   /**
@@ -772,6 +790,9 @@ export class ClinicAppointment {
             case 'appointmentLength':
               return `${this.appointmentLength} minutes`
 
+            case 'appointmentLengthFactors':
+              return 'TODO'
+
             case 'summary': {
               const teamFacingStartTime = formatTime(this.startAt, {
                 isHour12: false
@@ -902,9 +923,9 @@ export class ClinicAppointment {
       matched: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/appointment`,
       unmatched: `/unmatched-appointments/${this.uuid}`,
       new: `/book-into-a-clinic/${this.booking_uuid}/new/${this.uuid}`,
-      edit: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}`,
-      cancel: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/cancel`,
-      extend: `/book-into-a-clinic/${this.booking_uuid}/edit/${this.uuid}/length`,
+      edit: `/sessions/${this.session_id}/appointments/${this.uuid}/edit`,
+      cancel: `/sessions/${this.session_id}/appointments/${this.uuid}/cancel`,
+      extend: `/sessions/${this.session_id}/appointments/${this.uuid}/edit/appointment-length`,
       addProgramme: `/sessions/${this.session_id}/patients/${this.patient?.nhsn}/${this.selected_programme_ids[0]}/add-programme/`
     }
   }

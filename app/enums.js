@@ -58,6 +58,24 @@ export const AppointmentAbandonmentReason = {
  * @readonly
  * @enum {string}
  */
+export const AppointmentLengthType = {
+  Default: 'Calculated from vaccinations and methods',
+  Specific: 'Set by the SAIS team'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const AppointmentOverrunResolution = {
+  Shorten: 'Shorten the appointment',
+  ChooseNewTime: 'Choose a new start time'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ArchiveRecordReason = {
   Deceased: 'The child was reported as deceased',
   Duplicate: 'It’s a duplicate',
@@ -104,9 +122,10 @@ export const ClinicAttendanceType = {
  * @enum {string}
  */
 export const ClinicBookingJourneyType = {
-  ParentOnline: 'From parent’s invite',
-  PhoneBooking: 'From child record',
-  DataMigration: 'From clinic session'
+  ParentOnline: 'New booking from parent’s invite',
+  PhoneBooking: 'New booking from child record',
+  DataMigration: 'New booking from clinic session',
+  TeamEditing: 'SAIS team editing a booking'
 }
 
 /**

@@ -116,7 +116,7 @@ export function generateClinicAppointment(
   }
 
   // Decide whether we'll try to extend the appointment, based on support needs
-  let editedSlotCount
+  let editedSlotCount, preferredSlotCount
   const extendForSupportNeeds =
     patient.adjustments.includes(Adjustment.ExtendedAppointment) ||
     patient.impairments.includes(Impairment.MentalHealth)
@@ -129,6 +129,7 @@ export function generateClinicAppointment(
     // Now actually check whether there's space and squash if necessary
     const longestAvailable = session.longestAvailableAppointment(startAt)
     if (longestAvailable < editedSlotCount) {
+      preferredSlotCount = editedSlotCount
       editedSlotCount = longestAvailable
     }
   }
@@ -194,6 +195,9 @@ export function generateClinicAppointment(
     }
   }
 
+  // Make sure the editing process still makes it look like the parent went through the booking process
+  const preferredPostcode = session.clinic.postalCode
+
   const {
     selected_programme_ids,
     fluDecision,
@@ -211,9 +215,11 @@ export function generateClinicAppointment(
     parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility,
+    preferredPostcode,
     session_id,
     startAt,
     editedSlotCount,
+    preferredSlotCount,
     selected_programme_ids,
     fluDecision,
     fluAlternative,

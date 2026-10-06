@@ -85,7 +85,7 @@
 
         {% if view === "patients" and session.type === SessionType.Clinic and (session.isPlanned or session.isActive) %}
           {{ actionLink({
-            href: session.uri + "/add-appointment/",
+            href: session.uri + "/book-into-a-clinic/",
             text: "Add a child to this clinic"
           }) }}
         {% endif %}

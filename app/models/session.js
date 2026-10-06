@@ -1128,11 +1128,22 @@ export class Session extends BaseModel {
   /**
    * Get how many vaccinator slots are free at each available start time
    *
+   * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
    * @returns {Map<number, number>} Map of start time (in milliseconds) to free slot count
    */
-  #freeSlotCountsByStartTime() {
+  #freeSlotCountsByStartTime(ignoredAppointment_uuid) {
+    const bookedSlotStartTimes = this.appointments
+      .filter(({ uuid }) => uuid !== ignoredAppointment_uuid)
+      .flatMap((appointment) =>
+        appointment.coveredSlotStartTimes(this.slotLength).toArray()
+      )
+    const availableSlotStartTimes = removeSlots(
+      this.allSlotStartTimes,
+      bookedSlotStartTimes
+    )
+
     const freeSlotCounts = new Map()
-    for (const startTime of this.availableSlotStartTimes) {
+    for (const startTime of availableSlotStartTimes) {
       const key = startTime.getTime()
       freeSlotCounts.set(key, (freeSlotCounts.get(key) || 0) + 1)
     }
@@ -1160,10 +1171,13 @@ export class Session extends BaseModel {
    * taking into account existing bookings
    *
    * @param {number} requiredSlotCount - the number of consecutive slots that must be available
+   * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
    * @returns {Array<Date>} - Start times with enough free capacity
    */
-  #bookableStartTimesForSlotCount(requiredSlotCount) {
-    const freeSlotCounts = this.#freeSlotCountsByStartTime()
+  #bookableStartTimesForSlotCount(requiredSlotCount, ignoredAppointment_uuid) {
+    const freeSlotCounts = this.#freeSlotCountsByStartTime(
+      ignoredAppointment_uuid
+    )
 
     const bookableStartTimes = []
 
@@ -1202,11 +1216,13 @@ export class Session extends BaseModel {
    *
    * @param {AppointmentLengthFactors} vaccinationChoices - the appointment's vaccination info
    * @param {boolean} extendForSupportNeeds - should we add a slot to account for support needs?
+   * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
    * @returns {Array<Date>} Start times with enough free capacity for the vaccinations
    */
   bookableStartTimesForVaccinationChoices(
     vaccinationChoices,
-    extendForSupportNeeds = false
+    extendForSupportNeeds = false,
+    ignoredAppointment_uuid = undefined
   ) {
     if (this.type !== SessionType.Clinic) {
       throw new Error('Session must be a clinic to have booking slots')
@@ -1215,14 +1231,18 @@ export class Session extends BaseModel {
     const slotsForAppointment =
       this.calculateSlotCount(vaccinationChoices) +
       (extendForSupportNeeds ? 1 : 0)
-    return this.#bookableStartTimesForSlotCount(slotsForAppointment)
+    return this.#bookableStartTimesForSlotCount(
+      slotsForAppointment,
+      ignoredAppointment_uuid
+    )
   }
 
   /**
    * Get the start times at which the given appointment could be booked, taking into account
    * existing bookings
    *
-   * This function takes into account any shortening or extending of the appointment by the team
+   * This function takes into account any shortening or extending of the appointment by the team, and ignores any
+   * existing booking of the appointment itself (so an appointment being edited can keep, or overlap, its own slots)
    *
    * @param {ClinicAppointment} appointment - the appointment being booked (possibly with edited length)
    * @returns {Array<Date>} Start times with enough free capacity for the appointment
@@ -1233,21 +1253,60 @@ export class Session extends BaseModel {
     }
 
     const slotsForAppointment = appointment.slotCount
-    return this.#bookableStartTimesForSlotCount(slotsForAppointment)
+    return this.#bookableStartTimesForSlotCount(
+      slotsForAppointment,
+      appointment.uuid
+    )
+  }
+
+  /**
+   * Is there enough free capacity for an appointment of the given length, either at a given start time or anywhere
+   * in this clinic session?
+   *
+   * @param {number} slotCount - the length of the appointment, in slots
+   * @param {Date} [startTime] - the start time for the appointment, if it matters
+   * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
+   * @returns {boolean} - true if the appointment will fit, or false otherwise
+   */
+  canFitSlotCount(
+    slotCount,
+    startTime = undefined,
+    ignoredAppointment_uuid = undefined
+  ) {
+    if (this.type !== SessionType.Clinic) {
+      throw new Error('Session must be a clinic to have booking slots')
+    }
+
+    const bookableStartTimes = this.#bookableStartTimesForSlotCount(
+      slotCount,
+      ignoredAppointment_uuid
+    )
+
+    return startTime
+      ? bookableStartTimes.some(
+          (time) => time.getTime() === startTime.getTime()
+        )
+      : bookableStartTimes.length > 0
   }
 
   /**
    * Get the length of the longest possible appointment — either overall or for a given start time — in slots
    *
    * @param {Date|undefined} startTime - the start time for the appointment, if known
+   * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
    * @returns {number} - the number of slots covered by the longest available appointment
    */
-  longestAvailableAppointment(startTime = undefined) {
+  longestAvailableAppointment(
+    startTime = undefined,
+    ignoredAppointment_uuid = undefined
+  ) {
     if (this.type !== SessionType.Clinic) {
       throw new Error('Session must be a clinic to have booking slots')
     }
 
-    const freeSlotCounts = this.#freeSlotCountsByStartTime()
+    const freeSlotCounts = this.#freeSlotCountsByStartTime(
+      ignoredAppointment_uuid
+    )
     const isSlotFree = (time) => (freeSlotCounts.get(time) || 0) > 0
 
     let longestSlotCount = 0
