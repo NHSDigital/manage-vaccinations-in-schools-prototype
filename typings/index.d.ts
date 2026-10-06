@@ -12,6 +12,7 @@ export interface PatientFilterQuery {
   programme_id?: string | string[]
   q?: string
   register?: string
+  sort?: string
   status?: string
   vaccineCriteria?: string
   yearGroup?: string | string[]

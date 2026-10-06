@@ -8,7 +8,7 @@ import {
   SessionType
 } from '../enums.js'
 import { Patient, PatientSession, Programme, Session, Team } from '../models.js'
-import { today } from '../utils/date.js'
+import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
@@ -77,7 +77,7 @@ export const patientController = {
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, PatientFilterQuery>}
    */
   readAll(request, response, next) {
-    const { option, programme_id, q, yearGroup } = request.query
+    const { option, programme_id, q, sort, yearGroup } = request.query
     const { data } = request.session
     const { account } = response.locals
 
@@ -90,16 +90,6 @@ export const patientController = {
     let patients = Patient.findAll(data).filter((patient) =>
       team.schools.some((school) => patient.school_id === school.id)
     )
-
-    // Sort
-    let results = _.sortBy(patients, 'lastName')
-
-    // Query
-    if (q) {
-      results = results.filter((patient) =>
-        patient.tokenized.includes(String(q).toLowerCase())
-      )
-    }
 
     // Convert year groups query into an array of numbers
     let yearGroups
@@ -126,6 +116,36 @@ export const patientController = {
             patient.programmes[id]?.consentGiven &&
             !patient.programmes[id].isIneligible
         )
+      )
+    }
+
+    // Sort
+    let results = _.sortBy(patients, 'lastName')
+
+    if (sort === 'date') {
+      // Most recent consent given date across selected programmes
+      const latestConsentGivenDate = (patient) =>
+        ids
+          .map((id) => patient.programmes[id]?.consentGivenDate)
+          .filter(Boolean)
+          .sort((a, b) => getDateValueDifference(b, a))[0]
+
+      results.sort((a, b) => {
+        const dateA = latestConsentGivenDate(a)
+        const dateB = latestConsentGivenDate(b)
+
+        // Pupils without a date go last
+        if (!dateA) return dateB ? 1 : 0
+        if (!dateB) return -1
+
+        return getDateValueDifference(dateB, dateA)
+      })
+    }
+
+    // Query
+    if (q) {
+      results = results.filter((patient) =>
+        patient.tokenized.includes(String(q).toLowerCase())
       )
     }
 
@@ -247,6 +267,22 @@ export const patientController = {
     response.locals.pages = getPagination(results, request.query)
     response.locals.query = request.query
 
+    // Year group filter options
+    if (account.isSchoolUser) {
+      response.locals.sortItems = [
+        {
+          text: 'Last name',
+          value: 'name',
+          checked: !sort || sort === 'name'
+        },
+        {
+          text: 'Date consent given',
+          value: 'date',
+          checked: sort === 'date'
+        }
+      ]
+    }
+
     // Programme filter options
     response.locals.programmeItems = programmes.map((programme) => ({
       text: programme.name,
@@ -272,6 +308,7 @@ export const patientController = {
     delete data.patientVaccinated
     delete data.programme_id
     delete data.q
+    delete data.sort
     delete data.status
     delete data.vaccineCriteria
     delete data.yearGroup
@@ -329,7 +366,7 @@ export const patientController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'q', 'status'],
+      ['clinicStatus', 'q', 'sort', 'status'],
       [
         'option',
         'patientConsent',
