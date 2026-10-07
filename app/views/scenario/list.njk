@@ -34,7 +34,13 @@
             <p>{{ scenario.description }}</p>
 
             {% if scenario.links.length %}
-              <ul class="nhsuk-list">
+              {{ heading({
+                text: "Records",
+                level: 3,
+                size: "xs",
+                classes: "nhsuk-u-margin-bottom-2"
+              })}}
+              <ul class="nhsuk-list nhsuk-list--bullet">
                 {% for link in scenario.links %}
                   <li><a href="{{ link.href }}">{{ link.label }}</a></li>
                 {% endfor %}
