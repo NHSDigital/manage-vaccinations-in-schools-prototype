@@ -1,11 +1,11 @@
 {% if programme.type == ProgrammeType.Flu %}
-We’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }} to give pupils their annual flu vaccination.
+We’re coming to your child’s school on {{ session.formatted.nextDate }} to give pupils their annual flu vaccination.
 {% elif programme.type == ProgrammeType.MMR %}
-We’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }} to offer the MMR vaccination to children who have not yet had 2 doses of the vaccine.
+We’re coming to your child’s school on {{ session.formatted.nextDate }} to offer the MMR vaccination to children who have not yet had 2 doses of the vaccine.
 {% elif session.programmes.length == 1 %}
-We’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }} to offer the {{ session.programmeNames.sentenceCase }} vaccine to your child.
+We’re coming to your child’s school on {{ session.formatted.nextDate }} to offer the {{ session.programmeNames.sentenceCase }} vaccine to your child.
 {% else %}
-We’re coming to {{ session.location.name }} on {{ session.formatted.nextDate }} to offer the following vaccines to your child:
+We’re coming to your child’s school on {{ session.formatted.nextDate }} to offer the following vaccines to your child:
 
 {% for programme in session.programmes %}
 - {{ programme.title }}
