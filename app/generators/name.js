@@ -73,7 +73,11 @@ export function getNameOrigin(lastName) {
  * @returns {string} First name
  */
 export function generateChildFirstName(gender) {
-  return faker.helpers.arrayElement(firstNamesData[gender])
+  const names = Object.values(firstNamesData).flatMap(
+    (group) => group[gender] ?? []
+  )
+
+  return faker.helpers.arrayElement(names)
 }
 
 /**
