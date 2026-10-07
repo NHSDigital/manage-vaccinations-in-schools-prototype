@@ -1,10 +1,11 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import clinicsData from '../datasets/clinics.js'
-import firstNamesData from '../datasets/first-names.js'
 import { Adjustment, Gender, Impairment } from '../enums.js'
 import { Child } from '../models.js'
 import { getCurrentAcademicYear, getYearGroup } from '../utils/date.js'
+
+import { generateChildFirstName, generateLastName } from './name.js'
 
 /**
  * Generate fake child
@@ -66,8 +67,8 @@ export function generateChild(schools) {
   }
 
   // Name
-  const firstName = faker.helpers.arrayElement(firstNamesData[gender])
-  const lastName = faker.person.lastName().replace(`'`, '’')
+  const firstName = generateChildFirstName(gender)
+  const lastName = generateLastName()
 
   let preferredFirstName
   if (firstName.startsWith('Al')) {

@@ -7,6 +7,22 @@ import {
 } from '../enums.js'
 import { Contact } from '../models.js'
 
+import { generateLastName, generateParentFirstName } from './name.js'
+
+/**
+ * Generate an email address based on a person’s name
+ *
+ * @param {string} firstName - First name
+ * @param {string} lastName - Last name
+ * @returns {string} Email address
+ */
+function generateEmailAddress(firstName, lastName) {
+  // Apostrophes (e.g. O’Brien) would turn into odd characters in the address
+  return faker.internet
+    .email({ firstName, lastName: lastName.replace(/[’']/g, '') })
+    .toLowerCase()
+}
+
 /**
  * Generate fake contact
  *
@@ -30,16 +46,19 @@ export function generateContact(patient, isMum) {
   let lastName
   switch (relationship) {
     case RelationshipType.Mum:
-      firstName = faker.person.firstName('female').replace(`'`, '’')
       lastName = patient.lastName
+      firstName = generateParentFirstName(lastName, 'Female')
       break
     case RelationshipType.Dad:
-      firstName = faker.person.firstName('male').replace(`'`, '’')
       lastName = patient.lastName
+      firstName = generateParentFirstName(lastName, 'Male')
       break
     default:
-      firstName = faker.person.firstName().replace(`'`, '’')
-      lastName = faker.person.lastName().replace(`'`, '’')
+      lastName = generateLastName()
+      firstName = generateParentFirstName(
+        lastName,
+        faker.helpers.arrayElement(['Female', 'Male'])
+      )
   }
 
   // Contact details
@@ -56,9 +75,7 @@ export function generateContact(patient, isMum) {
     { value: NotifySmsStatus.Technical, weight: 1 }
   ])
 
-  const emailAddress = faker.internet
-    .email({ firstName, lastName })
-    .toLowerCase()
+  const emailAddress = generateEmailAddress(firstName, lastName)
   const email = faker.helpers.maybe(() => emailAddress, { probability: 0.8 })
   const emailStatus = faker.helpers.weightedArrayElement([
     { value: NotifyEmailStatus.Delivered, weight: 100 },
@@ -118,14 +135,14 @@ export function generateContactVariation(contact) {
 
   switch (change) {
     case 'surname': {
-      const newLastName = faker.person.lastName().replace(`'`, '’')
+      const newLastName = generateLastName()
       lastName = faker.datatype.boolean(0.3)
         ? `${lastName}-${newLastName}`
         : newLastName
 
       // Email addresses are based on names, so a new surname means a new address
       if (email) {
-        email = faker.internet.email({ firstName, lastName }).toLowerCase()
+        email = generateEmailAddress(firstName, lastName)
         emailStatus = NotifyEmailStatus.Delivered
       }
       break
@@ -135,7 +152,7 @@ export function generateContactVariation(contact) {
       smsStatus = NotifySmsStatus.Delivered
       break
     case 'email':
-      email = faker.internet.email({ firstName, lastName }).toLowerCase()
+      email = generateEmailAddress(firstName, lastName)
       emailStatus = NotifyEmailStatus.Delivered
       break
   }
