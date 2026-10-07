@@ -1860,7 +1860,7 @@ export const en = {
       label: 'Phone number'
     },
     hasCommunicationNeeds: {
-      title: 'Do they have any communication or language needs?',
+      label: 'Do they have any communication or language needs?',
       yes: 'Yes',
       no: 'No'
     },
