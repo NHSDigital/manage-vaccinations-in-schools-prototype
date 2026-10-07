@@ -1,6 +1,6 @@
 {% extends "_layouts/default.njk" %}
 
-{% set title = "Pre-canned scenarios" %}
+{% set title = "Scenarios for research" %}
 
 {% block main %}
   <div class="nhsuk-width-container">
@@ -10,16 +10,8 @@
         size: "l"
       }) }}
 
-      <p>The following are pre-built scenarios for use in demos and usability testing.</p>
+      <p>The following scenarios are available for use in user research:</p>
       
-      <p>Unlike the randomised data, these will remain available each time we deploy.</p>
-
-      {{ heading({
-        text: "Scenarios available",
-        size: "m",
-        headingLevel: 2
-      }) }}
-
       {% if scenarios.length > 0 %}
         {% for scenario in scenarios %}
           {% call card({
@@ -52,10 +44,7 @@
         <p>No scenarios found.</p>
       {% endif %}
 
-      <aside>
-        TODO: add search/filter panel, and maybe have categories for the scenarios (matching the
-        "Component" field in Jira?)
-      </aside>
+      {# TODO: add search/filter panel, and maybe have categories for the scenarios (matching the "Component" field in Jira?) #}
     </main>
   </div>
 {% endblock %}
