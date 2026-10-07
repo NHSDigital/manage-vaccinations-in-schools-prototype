@@ -31,6 +31,7 @@ import { pdsRecordRoutes } from './routes/pds-record.js'
 import { replyRoutes } from './routes/reply.js'
 import { reportRoutes } from './routes/report.js'
 import { reviewRoutes } from './routes/review.js'
+import { scenarioRoutes } from './routes/scenario.js'
 import { schoolRoutes } from './routes/school.js'
 import { sessionAppointmentRoutes } from './routes/session-appointment.js'
 import { sessionRoutes } from './routes/session.js'
@@ -91,6 +92,7 @@ router.use(
   patientRoutes
 )
 router.use('/reviews', reviewRoutes)
+router.use('/scenarios', scenarioRoutes)
 router.use('/schools', schoolRoutes)
 router.use('/sessions/:session_id/book-into-a-clinic', bookIntoClinicRoutes)
 router.use('/sessions/:session_id/appointments', sessionAppointmentRoutes)

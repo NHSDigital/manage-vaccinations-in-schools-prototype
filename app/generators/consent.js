@@ -41,11 +41,14 @@ export function generateConsent(patientSession, contact, lastConsentCreatedAt) {
 
   // Decision
   const decision = faker.helpers.weightedArrayElement([
-    { value: ReplyDecision.Given, weight: 10 },
-    { value: ReplyDecision.Declined, weight: 1 },
-    { value: ReplyDecision.Refused, weight: 1 },
-    ...([ProgrammeType.Flu, ProgrammeType.MMR].includes(programme.type)
-      ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 2 }]
+    { value: ReplyDecision.Given, weight: 80 },
+    { value: ReplyDecision.Declined, weight: 8 },
+    { value: ReplyDecision.Refused, weight: 8 },
+    ...(ProgrammeType.Flu === programme.type
+      ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 4 }]
+      : []),
+    ...(ProgrammeType.MMR === programme.type
+      ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 8 }]
       : [])
   ])
 

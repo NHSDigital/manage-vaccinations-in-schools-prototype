@@ -1,0 +1,50 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = "Scenarios for research" %}
+
+{% block main %}
+  <div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+      {{ heading({
+        text: title,
+        size: "l"
+      }) }}
+
+      <p>The following scenarios are available for use in user research:</p>
+      
+      {% if scenarios.length > 0 %}
+        {% for scenario in scenarios %}
+          {% call card({
+            href: scenario.startUrl,
+            heading: {
+              text: scenario.name,
+              level: 2,
+              size: "s"
+            },
+            classes: "nhsuk-u-margin-bottom-4"
+          }) %}
+            <p>{{ scenario.description }}</p>
+
+            {% if scenario.links.length %}
+              {{ heading({
+                text: "Records",
+                level: 3,
+                size: "xs",
+                classes: "nhsuk-u-margin-bottom-2"
+              })}}
+              <ul class="nhsuk-list nhsuk-list--bullet">
+                {% for link in scenario.links %}
+                  <li><a href="{{ link.href }}">{{ link.label }}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endcall %}
+        {% endfor %}
+      {% else %}
+        <p>No scenarios found.</p>
+      {% endif %}
+
+      {# TODO: add search/filter panel, and maybe have categories for the scenarios (matching the "Component" field in Jira?) #}
+    </main>
+  </div>
+{% endblock %}

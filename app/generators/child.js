@@ -87,7 +87,14 @@ export function generateChild(schools) {
   const secondarySchools = Object.values(schools)
     .filter(({ isOpen }) => isOpen)
     .filter(({ phase }) => phase === 'Secondary')
-  const phase = faker.helpers.arrayElement(['Primary', 'Secondary'])
+
+  // Only pick a phase that the given schools can actually satisfy - `schools` may be scoped
+  // down to a single school (e.g. by a scenario), which won't always cover both phases
+  const availablePhases = [
+    ...(primarySchools.length ? ['Primary'] : []),
+    ...(secondarySchools.length ? ['Secondary'] : [])
+  ]
+  const phase = faker.helpers.arrayElement(availablePhases)
   let dob, school_id
   if (phase === 'Primary') {
     // Primary: Reception (age 4) to Year 6 (age 10)
