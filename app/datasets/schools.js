@@ -34,15 +34,40 @@ export default [
   {
     id: '777777',
     urn: '777777',
-    name: 'Grange Hill secondary school',
+    name: 'Flax Hill primary school',
+    phase: SchoolPhase.Primary,
+    yearGroups: [1, 2, 3, 4, 5, 6],
+    addressLine1: 'St. Nicholas Close',
+    addressLevel1: 'Atherstone',
+    postalCode: 'CV9 3EQ',
+    team_ids: ['001'],
+    presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
+  },
+  {
+    id: '777778',
+    urn: '777778',
+    name: 'Hope Springs Academy',
     phase: SchoolPhase.Secondary,
     yearGroups: [7, 8, 9, 10, 11],
-    addressLine1: 'Grange Road',
-    addressLevel1: 'Northam',
-    postalCode: 'CV1 1AA',
+    addressLine1: 'Mitchell Avenue',
+    addressLevel1: 'Coventry',
+    postalCode: 'CV4 8DY',
     team_ids: ['001'],
-    presetNames
+    presetNames: [SessionPresetName.HPV, SessionPresetName.MMR]
   },
+  {
+    id: '777779',
+    urn: '777779',
+    name: 'Dearborne secondary school',
+    phase: SchoolPhase.Secondary,
+    yearGroups: [7, 8, 9, 10, 11, 12, 13],
+    addressLine1: 'Clifton Road',
+    addressLevel1: 'Rugby',
+    postalCode: 'CV21 3AG',
+    team_ids: ['001'],
+    presetNames: [SessionPresetName.Doubles, SessionPresetName.MMR]
+  },
+  // End reserved schools ^^^
   {
     id: '135335',
     urn: '135335',
