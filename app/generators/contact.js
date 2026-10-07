@@ -97,5 +97,61 @@ export function generateContact(patient, isMum) {
 }
 
 /**
+ * Generate a variation of an existing contact, as if the same person has given
+ * slightly different details, e.g. a mum who has remarried and changed her
+ * surname, or has a new phone number
+ *
+ * @param {Contact} contact - Contact on the child’s record
+ * @returns {Contact} Contact with some details changed
+ */
+export function generateContactVariation(contact) {
+  const [firstName, ...otherNames] = contact.fullName.split(' ')
+  let lastName = otherNames.join(' ')
+  let { email, emailStatus, tel, smsStatus } = contact
+
+  // Only vary details the contact already has, so they can still be reached
+  const change = faker.helpers.weightedArrayElement([
+    { value: 'surname', weight: 3 },
+    ...(tel ? [{ value: 'tel', weight: 1 }] : []),
+    ...(email ? [{ value: 'email', weight: 1 }] : [])
+  ])
+
+  switch (change) {
+    case 'surname': {
+      const newLastName = faker.person.lastName().replace(`'`, '’')
+      lastName = faker.datatype.boolean(0.3)
+        ? `${lastName}-${newLastName}`
+        : newLastName
+
+      // Email addresses are based on names, so a new surname means a new address
+      if (email) {
+        email = faker.internet.email({ firstName, lastName }).toLowerCase()
+        emailStatus = NotifyEmailStatus.Delivered
+      }
+      break
+    }
+    case 'tel':
+      tel = faker.helpers.replaceSymbols('077## 9#####')
+      smsStatus = NotifySmsStatus.Delivered
+      break
+    case 'email':
+      email = faker.internet.email({ firstName, lastName }).toLowerCase()
+      emailStatus = NotifyEmailStatus.Delivered
+      break
+  }
+
+  return new Contact({
+    fullName: `${firstName} ${lastName}`,
+    relationship: contact.relationship,
+    relationshipOther: contact.relationshipOther,
+    ...(email && { email, emailStatus }),
+    ...(tel && { tel, canSms: contact.canSms, smsStatus }),
+    hasCommunicationNeeds: contact.hasCommunicationNeeds,
+    communicationNeeds: contact.communicationNeeds,
+    patient_uuid: contact.patient_uuid
+  })
+}
+
+/**
  * @import { Child, Patient } from '../models.js'
  */
