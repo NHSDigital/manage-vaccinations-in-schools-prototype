@@ -67,8 +67,8 @@ export function generateChild(schools) {
   }
 
   // Name
-  const firstName = generateChildFirstName(gender)
   const lastName = generateLastName()
+  const firstName = generateChildFirstName(lastName, gender)
 
   let preferredFirstName
   if (firstName.startsWith('Al')) {

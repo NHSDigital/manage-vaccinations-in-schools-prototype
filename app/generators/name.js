@@ -10,8 +10,11 @@ const britishOrigin = 'British'
 // Chance of a double-barrelled surname, e.g. for a child with parents of different heritage
 const doubleBarrelledProbability = 0.015
 
-// Chance that a parent’s first name isn’t from their family’s name origin...
-const otherOriginProbability = 0.15
+// Chance that someone’s first name isn’t from their family’s name origin (more likely for children)...
+const otherOriginProbabilities = {
+  child: 0.15,
+  parent: 0.05
+}
 // ...and, when it isn’t, that it’s a British name rather than one from any origin
 const britishFirstNameProbability = 0.7
 
@@ -67,35 +70,55 @@ export function getNameOrigin(lastName) {
 }
 
 /**
- * Generate a modern first name for a child of the given gender
+ * Pick the name origin to draw a first name from, so that families mostly have
+ * names from the same origin as their surname, but not always
  *
+ * @param {string} lastName - Family surname
+ * @param {boolean} isParent - true if parent, false if child
+ * @returns {string} Name origin
+ */
+function pickFirstNameOrigin(lastName, isParent) {
+  const otherOriginProbability = isParent
+    ? otherOriginProbabilities.parent
+    : otherOriginProbabilities.child
+  if (faker.datatype.boolean(otherOriginProbability)) {
+    return faker.datatype.boolean(britishFirstNameProbability)
+      ? britishOrigin
+      : generateNameOrigin()
+  }
+
+  return getNameOrigin(lastName) || generateNameOrigin()
+}
+
+/**
+ * Generate a modern first name for a child of the given gender, which suits
+ * their family’s surname
+ *
+ * @param {string} lastName - Family surname
  * @param {Gender} gender - the gender of the child
  * @returns {string} First name
  */
-export function generateChildFirstName(gender) {
-  const names = Object.values(firstNamesData).flatMap(
-    (group) => group[gender] ?? []
-  )
+export function generateChildFirstName(lastName, gender) {
+  // Not every origin has names for every gender (e.g. only the British group
+  // has names for children whose gender is not known or not specified)
+  const originNames =
+    firstNamesData[pickFirstNameOrigin(lastName, false)][gender]
+  const names = originNames?.length
+    ? originNames
+    : firstNamesData[britishOrigin][gender]
 
   return faker.helpers.arrayElement(names)
 }
 
 /**
- * Generate a parent’s first name that suits their family’s surname, so that
- * families mostly have names from the same origin, but not always
+ * Generate a parent’s first name that suits their family’s surname
  *
  * @param {string} lastName - Family surname
  * @param {'Female'|'Male'} gender - Gender of the first name
  * @returns {string} First name
  */
 export function generateParentFirstName(lastName, gender) {
-  let origin = getNameOrigin(lastName) || generateNameOrigin()
-
-  if (faker.datatype.boolean(otherOriginProbability)) {
-    origin = faker.datatype.boolean(britishFirstNameProbability)
-      ? britishOrigin
-      : generateNameOrigin()
-  }
+  const origin = pickFirstNameOrigin(lastName, true)
 
   return faker.helpers.arrayElement(parentFirstNamesData[origin][gender])
 }
