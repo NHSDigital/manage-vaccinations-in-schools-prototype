@@ -219,13 +219,18 @@ export const getPreferredNames = (replies) => {
  * @returns {string} Refusal reason
  */
 export const getRefusalReason = (type, decision) => {
-  // Gelatine content only a valid refusal reason for flu and MMR vaccines
+  // Some refusal reasons only make sense for some vaccines, e.g. gelatine content
+  // for the flu nasal spray and MMR vaccines
   let refusalReasons = Object.values(ReplyRefusal).filter((value) => {
     if (value === ReplyRefusal.Gelatine) {
       return type === ProgrammeType.Flu
     }
 
     if (value === ReplyRefusal.GelatineMMR) {
+      return type === ProgrammeType.MMR
+    }
+
+    if (value === ReplyRefusal.AlreadyVaccinatedMMR) {
       return type === ProgrammeType.MMR
     }
 
