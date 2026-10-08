@@ -1,5 +1,5 @@
 import filters from '@x-govuk/govuk-prototype-filters'
-import { isToday } from 'date-fns'
+import { isSameDay } from 'date-fns'
 
 import {
   ConsentStatus,
@@ -18,6 +18,7 @@ import {
   VaccineCriteria
 } from '../enums.js'
 
+import { today } from './date.js'
 import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
@@ -425,7 +426,9 @@ export function getPatientStatus(patientProgramme) {
       case VaccinationOutcome.Absent:
       case VaccinationOutcome.Refused:
       case VaccinationOutcome.Unwell:
-        if (isToday(patientProgramme.lastVaccinationOutcome?.createdAt)) {
+        if (
+          isSameDay(patientProgramme.lastVaccinationOutcome?.createdAt, today())
+        ) {
           // ‘Could not vaccinate’ only applies on the day it was recorded
           return PatientStatus.Deferred
         }
