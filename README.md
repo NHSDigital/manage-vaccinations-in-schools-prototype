@@ -58,7 +58,7 @@ to match scenarios we want to use in research.
 - **Scenarios are independent; they only use `shared`, never each other's output.** If two scenarios need the same thing (e.g. a school), build it once in `shared-resources.js`, add it to the `SharedResources` typedef in `types.js`, and reserve any IDs in `constants.js`.
 - **Create your own children rather than picking from the random pool.** Scenarios run after all random generation, so a random child at a given school may already have consent, vaccinations and so on.
 - **Reuse the existing generators and models** (`app/generators/*`, `Model.create`) as `create-data.js` does.
-  - Note that `generateSession` looks schools up in `app/datasets/schools.js`, so any school used with it must live in that dataset. Grange Hill does, which also gives it random children and sessions for free.
+  - Note that `generateSession` looks schools up in `app/datasets/schools.js`, so any school used with it must live in that dataset. The scenario schools (see `ScenarioSchoolUrns` in `lib/scenarios/constants.js`) do, and `create-data.js` leaves them out of the random children and sessions it generates.
 - **Keep capabilities in `helpers.js` and policy in `populate-session.js`.**
   - `lib/scenarios/helpers.js` offers scenario-focused building blocks that know nothing about programme statuses, like creating a session, a child with parents or a consent reply, along with options such as `isUnder16`.
   - `lib/scenarios/populate-session.js` holds the business logic for a mix of statuses: what backs each status (consent replies, triage decisions, vaccination records) and when to use those options.
