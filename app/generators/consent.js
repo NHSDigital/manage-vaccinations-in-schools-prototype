@@ -12,6 +12,7 @@ import { Consent } from '../models.js'
 import { today } from '../utils/date.js'
 import {
   getHealthAnswers,
+  getHealthConditionsNeedingTriage,
   getRefusalReason,
   getTriageNote
 } from '../utils/reply.js'
@@ -22,9 +23,20 @@ import {
  * @param {PatientSession} patientSession - Patient session
  * @param {Contact} contact - Contact
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
+ * @param {object} [overrides] - Choices to make instead of leaving them to chance
+ * @param {ReplyDecision} [overrides.decision] - Decision
+ * @param {boolean} [overrides.hasConsentForAlternativeVaccine] - Also gives
+ *   consent for the alternative (injected) vaccine, if the decision is to give consent
+ * @param {boolean} [overrides.needsTriage] - Answers to health questions do (or
+ *   do not) need triage
  * @returns {Consent|undefined} Consent
  */
-export function generateConsent(patientSession, contact, lastConsentCreatedAt) {
+export function generateConsent(
+  patientSession,
+  contact,
+  lastConsentCreatedAt,
+  overrides = {}
+) {
   const child = patientSession.patient
   const programme = patientSession.programme
   const session = patientSession.session
@@ -40,24 +52,27 @@ export function generateConsent(patientSession, contact, lastConsentCreatedAt) {
   }
 
   // Decision
-  const decision = faker.helpers.weightedArrayElement([
-    { value: ReplyDecision.Given, weight: 80 },
-    { value: ReplyDecision.Declined, weight: 8 },
-    { value: ReplyDecision.Refused, weight: 8 },
-    ...(ProgrammeType.Flu === programme.type
-      ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 4 }]
-      : []),
-    ...(ProgrammeType.MMR === programme.type
-      ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 8 }]
-      : [])
-  ])
+  const decision =
+    overrides.decision ??
+    faker.helpers.weightedArrayElement([
+      { value: ReplyDecision.Given, weight: 80 },
+      { value: ReplyDecision.Declined, weight: 8 },
+      { value: ReplyDecision.Refused, weight: 8 },
+      ...(ProgrammeType.Flu === programme.type
+        ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 4 }]
+        : []),
+      ...(ProgrammeType.MMR === programme.type
+        ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 8 }]
+        : [])
+    ])
 
   const isFluProgramme = programme.type === ProgrammeType.Flu
 
   // Has the contact given consent for alternative injected vaccine?
   const hasConsentForAlternativeVaccine =
     isFluProgramme && decision === ReplyDecision.Given
-      ? faker.datatype.boolean(0.75)
+      ? (overrides.hasConsentForAlternativeVaccine ??
+        faker.datatype.boolean(0.75))
       : false
 
   // Reply method
@@ -76,7 +91,16 @@ export function generateConsent(patientSession, contact, lastConsentCreatedAt) {
     ({ method }) => method === vaccineCriteria
   )
 
-  const healthCondition = faker.helpers.objectKey(healthConditions)
+  // Without a health condition, every health question is answered ‘No’
+  let healthCondition
+  if (overrides.needsTriage === undefined) {
+    healthCondition = faker.helpers.objectKey(healthConditions)
+  } else if (overrides.needsTriage) {
+    healthCondition = faker.helpers.arrayElement(
+      getHealthConditionsNeedingTriage(vaccine)
+    )
+  }
+
   const healthAnswers = getHealthAnswers(vaccine, healthCondition)
   const triageNote = getTriageNote(healthAnswers, healthCondition)
   const refusalReason = getRefusalReason(programme.type, decision)
