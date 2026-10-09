@@ -114,7 +114,10 @@
             {%- endfor %}
           {%- endset %}
 
-          {% set patientSessionUri = patientSession.clinicAppointment.uri.matched if session.type === SessionType.Clinic else patientSession.uri %}
+          {% set patientSessionUri = patientSession.uri %}
+          {% if session.type === SessionType.Clinic %}
+            {% set patientSessionUri = patientSession.clinicAppointment.uri.matched if patientSession.clinicAppointment else (patientSessionUri + "/appointment") %}
+          {% endif %}
 
           {% call card({
             classes: "app-card--compact",
