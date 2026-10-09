@@ -963,7 +963,8 @@ export const VaccinationSource = {
   Service: 'Recorded in Mavis',
   HistoricalUpload: 'Uploaded as a historical vaccination',
   NhsImmunisationsApi: 'External source such as GP practice',
-  ConsentRefusal: 'Parent reported already vaccinated'
+  ConsentRefusal: 'Parent reported already vaccinated',
+  CHIS: 'Child health information service'
 }
 
 /**

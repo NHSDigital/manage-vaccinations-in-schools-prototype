@@ -38,6 +38,7 @@ import {
   isBetweenDates,
   today
 } from '../utils/date.js'
+import { getScheduleSummary } from '../utils/dose-schedule.js'
 import {
   getPatientClinicStatusProperties,
   getPatientStatusProperties
@@ -547,6 +548,43 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get dose schedule summary (MMR only)
+   *
+   * Only vaccinations with a Vaccinated outcome are classified. Other
+   * outcomes, including part vaccinated and already vaccinated, never count.
+   *
+   * @returns {object|undefined} Schedule summary
+   */
+  get scheduleSummary() {
+    if (this.programme?.type !== ProgrammeType.MMR) {
+      return
+    }
+
+    return getScheduleSummary({
+      vaccinations: this.vaccinationOutcomes.filter(
+        ({ outcome }) => outcome === VaccinationOutcome.Vaccinated
+      ),
+      dob: this.patient.dob
+    })
+  }
+
+  /**
+   * Get encounters
+   *
+   * Every vaccination outcome that is not Vaccinated, including part
+   * vaccinated and already vaccinated, oldest first.
+   *
+   * @returns {Array<Vaccination>} Vaccinations
+   */
+  get encounters() {
+    return this.vaccinationOutcomes
+      .filter(({ outcome }) => outcome !== VaccinationOutcome.Vaccinated)
+      .sort((a, b) =>
+        getDateValueDifference(a.administeredAt, b.administeredAt)
+      )
+  }
+
+  /**
    * Get tetanus vaccinations given
    *
    * @returns {Array<Vaccination>|undefined} Vaccinations
@@ -615,6 +653,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {number} Doses remaining
    */
   get dosesRemaining() {
+    if (this.scheduleSummary) {
+      return this.dosesNeeded - this.scheduleSummary.validDoses.length
+    }
+
     if (this.vaccinationsGiven?.length > 0) {
       return this.dosesNeeded - this.vaccinationsGiven?.length
     }
@@ -1198,8 +1240,13 @@ export class PatientProgramme extends BaseModel {
     switch (this.status) {
       case PatientStatus.Ineligible:
         return this.ineligibilityDescription
-      case PatientStatus.Vaccinated:
-        return `Vaccinated on ${this.lastVaccinationGiven.formatted.administeredAt_date}`
+      case PatientStatus.Vaccinated: {
+        // MMR: date of the last valid dose (valid doses are oldest first)
+        const vaccination = this.scheduleSummary
+          ? this.scheduleSummary.validDoses.at(-1).vaccination
+          : this.lastVaccinationGiven
+        return `Vaccinated on ${vaccination.formatted.administeredAt_date}`
+      }
       case PatientStatus.Triage:
         return this.patientTriage
       case PatientStatus.Due:
@@ -1245,6 +1292,13 @@ export class PatientProgramme extends BaseModel {
               return formatDate(this.eligibilityStartAt, { dateStyle: 'long' })
             case 'eligibilityEndAt':
               return formatDate(this.eligibilityEndAt, { dateStyle: 'long' })
+            case 'nextEligibleFrom':
+              return (
+                this.scheduleSummary?.nextEligibleFrom &&
+                formatDate(this.scheduleSummary.nextEligibleFrom, {
+                  dateStyle: 'long'
+                })
+              )
             case 'vaccineCriteria':
               return formatVaccineCriteria(this.vaccineCriteria)
             case 'status':

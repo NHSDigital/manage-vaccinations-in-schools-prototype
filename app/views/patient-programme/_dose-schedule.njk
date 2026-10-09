@@ -1,0 +1,135 @@
+{% set summary = patientProgramme.scheduleSummary %}
+
+{% call card({
+  heading: {
+    text: __("patientProgramme.vaccinationRecord.label"),
+    level: 3
+  }
+}) %}
+  {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
+
+  <p class="nhsuk-body">
+    {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
+      complete: summary.validDoses.length,
+      needed: patientProgramme.dosesNeeded
+    }) }}
+  </p>
+
+  {% set doseRows = [] %}
+  {% for recorded in summary.recordedDoses %}
+    {% set doseHtml %}
+      {% if recorded.isValid %}
+        {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
+          sequence: recorded.sequence
+        }) }}
+        {% if recorded.vaccination.vaccine.type %}
+          <br>
+          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ "MMRV" if recorded.vaccination.isVariant else recorded.vaccination.vaccine.type }}</span>
+        {% endif %}
+      {% else %}
+        {{ tag({
+          text: __("patientProgramme.vaccinationRecord.outOfSchedule.label"),
+          classes: "nhsuk-tag--grey"
+        }) }}
+        <br>
+        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.reason }}</span>
+      {% endif %}
+    {% endset %}
+
+    {% set doseRows = doseRows | push([
+      {
+        html: doseHtml
+      },
+      {
+        html: link(recorded.vaccination.uri, recorded.vaccination.formatted.administeredAt_date)
+      },
+      {
+        text: patient.dob | ageInFull(at=recorded.vaccination.administeredAt)
+      },
+      {
+        text: recorded.vaccination.source
+      }
+    ]) %}
+  {% endfor %}
+
+  {% set nextSequence = summary.validDoses.length + 1 %}
+  {% for sequence in range(nextSequence, patientProgramme.dosesNeeded + 1) %}
+    {% set doseRows = doseRows | push([
+      {
+        text: __mf("patientProgramme.vaccinationRecord.dose.number", {
+          sequence: sequence
+        })
+      },
+      {
+        text: __mf("patientProgramme.vaccinationRecord.eligibleFrom", {
+          date: patientProgramme.formatted.nextEligibleFrom
+        }) if sequence == nextSequence and patientProgramme.formatted.nextEligibleFrom else "—"
+      },
+      {
+        text: "—"
+      },
+      {
+        text: "—"
+      }
+    ]) %}
+  {% endfor %}
+
+  {{ table({
+    id: "vaccinations",
+    responsive: true,
+    head: [
+      { text: __("patientProgramme.vaccinationRecord.dose.label") },
+      { text: __("vaccination.administeredAt.label") },
+      { text: __("vaccination.age.label") },
+      { text: __("vaccination.source.label") }
+    ],
+    rows: doseRows
+  }) if doseRows.length }}
+
+  {{ actionLink({
+    classes: "nhsuk-u-margin-0",
+    text: __("vaccination.new.alreadyVaccinated.title"),
+    href: patientProgramme.uri + "/new/previous-vaccination"
+  }) if patientProgramme.canRecordVaccination }}
+{% endcall %}
+
+{% if patientProgramme.encounters.length %}
+  {% call card({
+    heading: {
+      text: __mf("patientProgramme.encounters.count", {
+        count: patientProgramme.encounters.length
+      }),
+      level: 3
+    }
+  }) %}
+    {% set encounterRows = [] %}
+    {% for vaccination in patientProgramme.encounters %}
+      {% set encounterRows = encounterRows | push([
+        {
+          html: link(vaccination.uri, vaccination.formatted.administeredAt_date)
+        },
+        {
+          text: patient.dob | age(at=vaccination.administeredAt)
+        },
+        {
+          html: vaccination.formatted.outcome
+        },
+        {
+          text: vaccination.source
+        }
+      ]) %}
+    {% endfor %}
+
+    {{ table({
+      id: "encounters",
+      responsive: true,
+      head: [
+        { text: __("patientProgramme.encounters.date.label") },
+        { text: __("vaccination.age.label") },
+        { text: __("vaccination.outcome.label") },
+        { text: __("vaccination.source.label") }
+      ],
+      rows: encounterRows
+    }) }}
+  {% endcall %}
+{% endif %}

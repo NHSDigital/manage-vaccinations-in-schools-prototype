@@ -1,6 +1,7 @@
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import _ from 'lodash'
 
+import { formatAgeAt } from './utils/date.js'
 import { ordinal } from './utils/number.js'
 import {
   formatHighlight,
@@ -66,6 +67,18 @@ export default (env) => {
         (match) => formatHighlight(match)
       )
     })
+  }
+
+  /**
+   * Age at a date, to the day
+   *
+   * @param {Date|string} dob - Date of birth
+   * @param {object} kwargs - Keyword arguments
+   * @param {Date|string} kwargs.at - Date to get age at
+   * @returns {string|undefined} Age, for example ‘1 year 11 months 9 days’
+   */
+  filters.ageInFull = (dob, kwargs) => {
+    return formatAgeAt(dob, kwargs?.at)
   }
 
   /**

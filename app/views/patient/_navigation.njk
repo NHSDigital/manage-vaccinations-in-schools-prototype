@@ -5,7 +5,12 @@
 {% macro patientNavigation(params) %}
   {{ heading({
     text: params.patient.fullName,
-    size: "l"
+    size: "l",
+    caption: {
+      html: "<strong>" + __("child.dob.label") + ":</strong> " + params.patient.dobWithAge,
+      element: "p",
+      placement: "after"
+    }
   }) }}
 
   {{ appActionList({

@@ -45,54 +45,58 @@
     }) }}
   {% endif %}
 
-  {% call card({
-    heading: {
-      text: __mf("patientProgramme.vaccinationsGiven.count", {
-        count: patientProgramme.vaccinationsGiven.length
-      }),
-      level: 3
-    }
-  }) %}
-    {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
+  {% if patientProgramme.scheduleSummary %}
+    {% include "patient-programme/_dose-schedule.njk" %}
+  {% else %}
+    {% call card({
+      heading: {
+        text: __mf("patientProgramme.vaccinationsGiven.count", {
+          count: patientProgramme.vaccinationsGiven.length
+        }),
+        level: 3
+      }
+    }) %}
+      {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
 
-    {% if patientProgramme.vaccinationsGiven.length %}
-      {% set vaccinationRows = [] %}
-      {% for vaccination in patientProgramme.vaccinationsGiven %}
-        {% set vaccinationRows = vaccinationRows | push([
-          {
-            html: vaccination.link.administeredAt
-          },
-          {
-            text: patient.dob | age(at=vaccination.administeredAt)
-          },
-          {
-            html: vaccination.formatted.programmeWithSequence
-          },
-          {
-            text: vaccination.source
-          }
-        ]) %}
-      {% endfor %}
+      {% if patientProgramme.vaccinationsGiven.length %}
+        {% set vaccinationRows = [] %}
+        {% for vaccination in patientProgramme.vaccinationsGiven %}
+          {% set vaccinationRows = vaccinationRows | push([
+            {
+              html: vaccination.link.administeredAt
+            },
+            {
+              text: patient.dob | age(at=vaccination.administeredAt)
+            },
+            {
+              html: vaccination.formatted.programmeWithSequence
+            },
+            {
+              text: vaccination.source
+            }
+          ]) %}
+        {% endfor %}
 
-      {{ table({
-        id: "vaccinations",
-        responsive: true,
-        head: [
-          { text: __("vaccination.administeredAt.label") },
-          { text: __("vaccination.age.label") },
-          { text: __("vaccination.programme.label") },
-          { text: __("vaccination.source.label") }
-        ],
-        rows: vaccinationRows
-      }) }}
-    {% endif %}
+        {{ table({
+          id: "vaccinations",
+          responsive: true,
+          head: [
+            { text: __("vaccination.administeredAt.label") },
+            { text: __("vaccination.age.label") },
+            { text: __("vaccination.programme.label") },
+            { text: __("vaccination.source.label") }
+          ],
+          rows: vaccinationRows
+        }) }}
+      {% endif %}
 
-    {{ actionLink({
-      classes: "nhsuk-u-margin-0",
-      text: __("vaccination.new.alreadyVaccinated.title"),
-      href: patientProgramme.uri + "/new/previous-vaccination"
-    }) if patientProgramme.canRecordVaccination  }}
-  {% endcall %}
+      {{ actionLink({
+        classes: "nhsuk-u-margin-0",
+        text: __("vaccination.new.alreadyVaccinated.title"),
+        href: patientProgramme.uri + "/new/previous-vaccination"
+      }) if patientProgramme.canRecordVaccination  }}
+    {% endcall %}
+  {% endif %}
 
   {% if patientProgramme.tetanusVaccinations %}
     {% call card({

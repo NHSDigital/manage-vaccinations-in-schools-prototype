@@ -2199,6 +2199,25 @@ export const en = {
       count:
         '{count, plural, =0 {No vaccination record} one {Vaccination record} other {# vaccination records}}'
     },
+    vaccinationRecord: {
+      label: 'Vaccination record',
+      dosesComplete: '{complete} of {needed} doses complete',
+      dose: {
+        label: 'Dose',
+        number: 'Dose {sequence}'
+      },
+      outOfSchedule: {
+        label: 'Out of schedule'
+      },
+      eligibleFrom: 'Eligible from {date}'
+    },
+    encounters: {
+      count:
+        '{count, plural, =0 {No encounters recorded} one {Encounters} other {# encounters}}',
+      date: {
+        label: 'Encounter date'
+      }
+    },
     consent: {
       label: 'Consent status'
     },

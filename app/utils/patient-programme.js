@@ -420,7 +420,12 @@ export function getPatientStatus(patientProgramme) {
     switch (patientProgramme.outcome) {
       case VaccinationOutcome.Vaccinated:
       case VaccinationOutcome.AlreadyVaccinated:
-        return PatientStatus.Vaccinated
+        // Scheduled programmes (MMR) count valid doses only, so a given dose
+        // while doses remain falls through to screening and consent
+        if (!patientProgramme.scheduleSummary) {
+          return PatientStatus.Vaccinated
+        }
+        break
 
       case VaccinationOutcome.Absent:
       case VaccinationOutcome.Refused:

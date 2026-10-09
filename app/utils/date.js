@@ -1,6 +1,9 @@
 import process from 'node:process'
 
 import {
+  addMonths,
+  differenceInCalendarDays,
+  differenceInCalendarMonths,
   getDayOfYear,
   isAfter,
   isBefore,
@@ -163,6 +166,45 @@ export function getAge(date) {
   if (!date || isNaN(date.valueOf())) return 0
 
   return Math.floor((today().valueOf() - date.getTime()) / 3.15576e10)
+}
+
+/**
+ * Get age at a date, to the day
+ *
+ * Whole months are counted the same way as the MMR dose schedule, so a dose
+ * shown as ‘1 year 0 months 0 days’ is one the schedule treats as given at
+ * 12 months. A leading zero unit is left out.
+ *
+ * @param {Date|string} dob - Date of birth
+ * @param {Date|string} date - Date to get age at
+ * @returns {string|undefined} Age, for example ‘1 year 11 months 9 days’
+ */
+export function formatAgeAt(dob, date) {
+  if (!dob || !date) return
+
+  dob = new Date(dob)
+  date = new Date(date)
+
+  if (isNaN(dob.valueOf()) || isNaN(date.valueOf())) return
+
+  let months = differenceInCalendarMonths(date, dob)
+  if (differenceInCalendarDays(date, addMonths(dob, months)) < 0) {
+    months -= 1
+  }
+
+  const years = Math.floor(months / 12)
+  const days = differenceInCalendarDays(date, addMonths(dob, months))
+  const unit = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`
+
+  if (years > 0) {
+    return `${unit(years, 'year')} ${unit(months % 12, 'month')} ${unit(days, 'day')}`
+  }
+
+  if (months > 0) {
+    return `${unit(months, 'month')} ${unit(days, 'day')}`
+  }
+
+  return unit(days, 'day')
 }
 
 /**
