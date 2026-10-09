@@ -28,9 +28,12 @@ function generateEmailAddress(firstName, lastName) {
  *
  * @param {Child|Patient} patient - Child
  * @param {boolean} [isMum] - Contact is child’s mother
+ * @param {object} [overrides] - Choices to make instead of leaving them to chance
+ * @param {boolean} [overrides.isEmailDelivered] - Contact has an email address
+ *   that messages are delivered to
  * @returns {Contact} Contact
  */
-export function generateContact(patient, isMum) {
+export function generateContact(patient, isMum, overrides = {}) {
   // Relationship
   const relationship = isMum
     ? RelationshipType.Mum
@@ -76,13 +79,17 @@ export function generateContact(patient, isMum) {
   ])
 
   const emailAddress = generateEmailAddress(firstName, lastName)
-  const email = faker.helpers.maybe(() => emailAddress, { probability: 0.8 })
-  const emailStatus = faker.helpers.weightedArrayElement([
-    { value: NotifyEmailStatus.Delivered, weight: 100 },
-    { value: NotifyEmailStatus.Permanent, weight: 10 },
-    { value: NotifyEmailStatus.Temporary, weight: 5 },
-    { value: NotifyEmailStatus.Technical, weight: 1 }
-  ])
+  const email = overrides.isEmailDelivered
+    ? emailAddress
+    : faker.helpers.maybe(() => emailAddress, { probability: 0.8 })
+  const emailStatus = overrides.isEmailDelivered
+    ? NotifyEmailStatus.Delivered
+    : faker.helpers.weightedArrayElement([
+        { value: NotifyEmailStatus.Delivered, weight: 100 },
+        { value: NotifyEmailStatus.Permanent, weight: 10 },
+        { value: NotifyEmailStatus.Temporary, weight: 5 },
+        { value: NotifyEmailStatus.Technical, weight: 1 }
+      ])
 
   // If telephone number provided, sometimes add a communication need
   const hasCommunicationNeeds = faker.datatype.boolean(0.2)
