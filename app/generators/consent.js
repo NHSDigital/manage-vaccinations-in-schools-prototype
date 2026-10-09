@@ -145,7 +145,13 @@ export function generateConsent(
       ReplyDecision.OnlyMenACWY,
       ReplyDecision.OnlyTdIPV
     ].includes(decision) && { healthAnswers, triageNote }),
-    ...([ReplyDecision.Declined, ReplyDecision.Refused].includes(decision) && {
+    // Consent for only one of two vaccines also gives a reason for not wanting the other
+    ...([
+      ReplyDecision.Declined,
+      ReplyDecision.Refused,
+      ReplyDecision.OnlyMenACWY,
+      ReplyDecision.OnlyTdIPV
+    ].includes(decision) && {
       refusalReason,
       ...(refusalReason === ReplyRefusal.AlreadyVaccinated && {
         refusalReasonDetails: 'My child had the vaccination at our GP surgery.'
