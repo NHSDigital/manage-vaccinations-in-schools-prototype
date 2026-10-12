@@ -11,7 +11,7 @@
         size: "l"
       }
     },
-    items: enumItems(VaccinationOutcome),
+    items: enumItems(VaccinationOutcome) | rejectattr("value", "equalto", VaccinationOutcome.AlreadyHad),
     decorate: "vaccination.outcome"
   }) }}
 {% endblock %}

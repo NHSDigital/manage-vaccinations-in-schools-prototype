@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "MMR catch-up — test scenarios",
-  "description": "Six patient cases used to test schedule-aware classification of MMR vaccination records. Each case lists the inputs (date of birth and full vaccination history) and the expected classifier output.",
+  "description": "Seven patient cases used to test schedule-aware classification of MMR vaccination records. Each case lists the inputs (date of birth and full vaccination history) and the expected classifier output.",
   "dateRule": "All dates are relative, so the scenarios hold in any academic year. A date of birth is a birthday and a year group in the current academic year. A vaccination is an age at vaccination (months and days after date of birth). Eligible from is date of birth plus months, or a dose plus days. The seed writes the cohort for 2025/26 and shifts it by whole years to the current academic year, so no age changes.",
   "scheduleRules": {
     "programme": "MMR",
@@ -35,8 +35,8 @@
     ],
     "classificationOrder": "chronological by administeredAt ascending",
     "countedOutcomes": ["Vaccinated"],
-    "countedOutcomesNote": "Only Vaccinated records are classified. Every other outcome, including Partially vaccinated and Already vaccinated, goes to the encounters table and never counts.",
-    "statusRule": "Fully vaccinated only when no doses remain. While doses remain, a given dose does not set the status; it falls through to triage and consent as for any other programme (Due vaccination, Needs triage, Has a refusal, Needs consent).",
+    "countedOutcomesNote": "Only Vaccinated records are classified. Every other outcome, including Partially vaccinated and Already vaccinated, goes to the encounters table and never counts. An Already had elsewhere record is not classified either, but sets the status (see case 7).",
+    "statusRule": "Fully vaccinated only when no doses remain. While doses remain, a given dose does not set the status; it falls through to triage and consent as for any other programme (Due vaccination, Needs triage, Has a refusal, Needs consent). Exception (known gap, case 7): an Already had elsewhere record sets Fully vaccinated whatever the dose count, as already_had does in Mavis.",
     "eligibleFromLogic": "nextSlot = validDoses.length + 1; if nextSlot > 2 then null; else max(dob + minAgeMonths[nextSlot], lastValidGiven.administeredAt + 28 days) — second term only applied when a previous valid dose exists"
   },
   "vaccines": {
@@ -541,6 +541,81 @@
         "eligibleFromExplanation": "max(date of birth + 15 months, dose 1 + 28 days): the interval rule wins",
         "dosesRemaining": 1
       }
+    },
+    {
+      "id": "case-7-gita",
+      "knownGap": true,
+      "knownGapNote": "Demonstrates current behaviour, not intended behaviour. Mirrors already_had in production Mavis: a legacy marker that the child is done, now created mainly by imports (already had elsewhere). It has no dose date, skips the dose maths and gives a vaccinated status, so a vaccinated child can show 0 of 2 doses.",
+      "summary": "No dose records. One Already had elsewhere record imported from CHIS, dated on the import date. It fills no dose slot, but the child is marked Fully vaccinated with 0 of 2 doses complete.",
+      "patient": {
+        "firstName": "Gita",
+        "lastName": "Gill",
+        "nhsn": "9990000079",
+        "prototypeUuid": "mmr00007-0000-4000-8000-000000000007",
+        "dob": {
+          "birthday": "20 January",
+          "yearGroup": 10
+        }
+      },
+      "vaccinations": [
+        {
+          "index": 0,
+          "administeredAt": {
+            "importDate": "10 June in the previous academic year",
+            "note": "Import date, not a dose date"
+          },
+          "vaccineSnomed": null,
+          "vaccineBrand": null,
+          "programmeId": "mmr",
+          "outcome": "Already had elsewhere",
+          "source": "CHIS"
+        }
+      ],
+      "expected": {
+        "classifications": [
+          {
+            "index": 0,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          }
+        ],
+        "programmeStatus": "Fully vaccinated",
+        "programmeStatusExplanation": "Set by the Already had elsewhere record, whatever the dose count (2 doses remaining)",
+        "statusNotes": "Vaccinated on the import date (no valid dose to date it from)",
+        "vaccinatedStatus": "Already vaccinated",
+        "dosesComplete": "0 of 2 doses complete",
+        "dosesRemaining": 2,
+        "doseRows": [
+          {
+            "dose": "Dose 1",
+            "date": "Eligible from date of birth + 12 months",
+            "age": "—",
+            "source": "—"
+          },
+          {
+            "dose": "Dose 2",
+            "date": "—",
+            "age": "—",
+            "source": "—"
+          }
+        ],
+        "eligibleFrom": {
+          "after": "dob",
+          "months": 12
+        },
+        "eligibleFromExplanation": "No valid doses, so the Dose 1 age rule applies; long past",
+        "encountersCard": {
+          "shown": true,
+          "heading": "Encounters",
+          "rows": [
+            {
+              "date": "Import date",
+              "outcome": "Already had elsewhere",
+              "source": "Child health information service"
+            }
+          ]
+        }
+      }
     }
   ],
   "cohortSession": {
@@ -556,7 +631,7 @@
     "yearGroups": [9, 10],
     "presetNames": ["MMR", "Doubles"],
     "programmes": ["mmr", "menacwy", "td-ipv"],
-    "consents": "Consent given for every patient and programme, except Dmitri's MMR (Refused, 'Already had both doses of the MMR vaccine'). Bilal's MMR consent answers Yes to the immune system question",
+    "consents": "Consent given for every patient and programme (including Gita), except Dmitri's MMR (Refused, 'Already had both doses of the MMR vaccine'). Bilal's MMR consent answers Yes to the immune system question",
     "consentOpenAt": {
       "before": "today",
       "days": 28

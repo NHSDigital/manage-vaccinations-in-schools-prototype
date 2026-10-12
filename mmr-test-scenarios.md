@@ -1,6 +1,6 @@
 # MMR catch-up — test scenarios
 
-Six patient cases used to test schedule-aware classification of MMR
+Seven patient cases used to test schedule-aware classification of MMR
 vaccination records. Each case lists the inputs (date of birth and full vaccination
 history) and the expected classifier output (which doses are valid, which
 are out of schedule and why, the resulting programme status, and the
@@ -31,6 +31,9 @@ years to the current academic year, so no age changes.
   encounters table and never counts
 - Status is Fully vaccinated only when no doses remain. While doses
   remain, status falls through to triage and consent as usual
+- Known gap (case 7): an Already had elsewhere record is not classified,
+  but sets Fully vaccinated whatever the dose count, as `already_had`
+  does in Mavis
 - Doses are classified in chronological order (`administeredAt` ascending)
 - A non-given record (Absent, Refused, Unwell, Contraindicated) is not
   counted toward the schedule and does not affect classification of later
@@ -272,9 +275,54 @@ disagree.
 
 ---
 
+## Case 7 — Gita Gill (known gap)
+
+> **Known gap.** This case demonstrates current behaviour, not intended
+> behaviour.
+
+In production Mavis, `already_had` is a legacy marker that the child is
+done, now created mainly by imports (already had elsewhere). It has no
+dose date, skips the dose maths and gives a vaccinated status, so a
+vaccinated child can show 0 of 2 doses. This case reproduces that state.
+
+Gita has no dose records. One Already had elsewhere record was imported
+from CHIS, dated on the import date. It fills no dose slot.
+
+- **NHS number:** 9990000079
+- **Date of birth:** 20 January, Year 10 in the current academic year
+
+### Vaccination history
+
+| #   | Date                                                                 | Vaccine | Source | Outcome               |
+| --- | -------------------------------------------------------------------- | ------- | ------ | --------------------- |
+| 1   | 10 June in the previous academic year (import date, not a dose date) | –       | CHIS   | Already had elsewhere |
+
+### Expected classification
+
+| #   | Status      | Slot | Reason                                         |
+| --- | ----------- | ---- | ---------------------------------------------- |
+| 1   | Not counted | –    | Outcome `Already had elsewhere`, no dose given |
+
+### Expected page (current behaviour)
+
+- **Programme status:** Fully vaccinated (set by the Already had
+  elsewhere record, whatever the dose count)
+- **Status note:** Vaccinated on the import date (there is no valid dose
+  to date it from)
+- **Doses complete:** 0 of 2 doses complete
+- **Dose rows:** Dose 1 shows Eligible from date of birth + 12 months
+  (long past); Dose 2 shows dashes
+- **Encounters card:** shown, with one row: the import date, Already had
+  elsewhere, Child health information service
+- **Doses remaining:** 2
+- **Consent:** given for the catch-up session, like the other cohort
+  patients
+
+---
+
 ## Cohort session
 
-All six patients are tied to a single co-located session for the
+All seven patients are tied to a single co-located session for the
 catch-up scenario:
 
 - **Session id:** `mmr-catchup-y9y10-current`

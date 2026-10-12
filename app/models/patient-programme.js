@@ -569,6 +569,24 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get already had elsewhere record (MMR only)
+   *
+   * Mirrors already_had in Mavis: an undated marker that the child is done,
+   * mostly from imports. It fills no dose slot.
+   *
+   * @returns {Vaccination|undefined} Vaccination
+   */
+  get alreadyHadVaccination() {
+    if (this.programme?.type !== ProgrammeType.MMR) {
+      return
+    }
+
+    return this.vaccinationOutcomes.findLast(
+      ({ outcome }) => outcome === VaccinationOutcome.AlreadyHad
+    )
+  }
+
+  /**
    * Get encounters
    *
    * Every vaccination outcome that is not Vaccinated, including part
@@ -1241,9 +1259,11 @@ export class PatientProgramme extends BaseModel {
       case PatientStatus.Ineligible:
         return this.ineligibilityDescription
       case PatientStatus.Vaccinated: {
-        // MMR: date of the last valid dose (valid doses are oldest first)
+        // MMR: date of the last valid dose (valid doses are oldest first),
+        // or of the already had record when no dose is valid
         const vaccination = this.scheduleSummary
-          ? this.scheduleSummary.validDoses.at(-1).vaccination
+          ? this.scheduleSummary.validDoses.at(-1)?.vaccination ||
+            this.alreadyHadVaccination
           : this.lastVaccinationGiven
         return `Vaccinated on ${vaccination.formatted.administeredAt_date}`
       }
