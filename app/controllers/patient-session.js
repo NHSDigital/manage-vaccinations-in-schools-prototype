@@ -332,7 +332,7 @@ export const patientSessionController = {
   remind(request, response) {
     const { account, back, patient, patientSession } = response.locals
 
-    patientSession.sendReminder(
+    patientSession.sendConsentReminder(
       {
         createdBy_uid: account.uid
       },
