@@ -31,7 +31,7 @@
     {{ appButtonGroup({
       buttons: [
         {
-          text: __("remind.new.title"),
+          text: __("remind.new.title", ((options.remindersSent + 1) | ordinal) if options.remindersSent else "a"),
           variant: "secondary",
           attributes: {
             formaction: patientSession.uri + "/new/remind",

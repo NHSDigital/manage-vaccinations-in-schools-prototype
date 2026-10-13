@@ -61,6 +61,7 @@ export const patientSessionController = {
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
         patientProgramme.consent === ConsentStatus.NoResponse,
+      remindersSent: 0,
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
