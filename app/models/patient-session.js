@@ -456,6 +456,7 @@ export class PatientSession extends BaseModel {
       messageRecipient: contact,
       messageTemplate: 'invite-reminder',
       type: AuditEventType.Reminder,
+      createdAt: event.createdAt,
       createdBy_uid: event.createdBy_uid,
       patient_uuid: this.patient_uuid,
       programme_ids: [this.programme_id],
