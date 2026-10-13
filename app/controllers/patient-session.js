@@ -55,12 +55,21 @@ export const patientSessionController = {
     response.locals.options = {
       // Show outstanding vaccinations
       showOutstandingVaccinations: vaccinated && due.length > 1,
-      // Send a reminder to give consent
+      // Send a request to give consent (if none sent yet, or it failed)
+      canInvite:
+        patient.hasContactDetails &&
+        session.consentWindow === ConsentWindow.Open &&
+        !session.isActive &&
+        (patientProgramme.consent === ConsentStatus.NotDelivered ||
+          (patientProgramme.consent === ConsentStatus.NoResponse &&
+            patientProgramme.consentRequests.length === 0)),
+      // Send a reminder to give consent (if request sent but no response yet)
       canRemind:
         patient.hasContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
-        patientProgramme.consent === ConsentStatus.NoResponse,
+        patientProgramme.consent === ConsentStatus.NoResponse &&
+        patientProgramme.consentRequests.length > 0,
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
@@ -88,7 +97,7 @@ export const patientSessionController = {
 
     // Extra info about the consent reminders sent so far
     if (response.locals.options.canRemind) {
-      const { count, lastSentAt } = patientProgramme.consentReminderStats
+      const { count, lastSentAt } = patientProgramme.consentRemindersSummary
       response.locals.consentRemindersSent = count
 
       if (count > 0) {

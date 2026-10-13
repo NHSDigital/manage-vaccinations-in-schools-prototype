@@ -186,17 +186,17 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get consent reminders sent for this patient programme, both automatic and
-   * manual (manual reminders have `createdBy_uid` set)
+   * Get messages sent for this patient programme using a given template
    *
-   * @returns {Array<AuditEvent>} Consent reminders, oldest first
+   * @param {string} messageTemplate - Message template
+   * @returns {Array<AuditEvent>} Messages sent, oldest first
    */
-  get consentReminders() {
+  #messagesSent(messageTemplate) {
     return this.patient.events
       .map((event) => new AuditEvent(event, this.context))
       .filter(
         (auditEvent) =>
-          auditEvent.messageTemplate === 'invite-reminder' &&
+          auditEvent.messageTemplate === messageTemplate &&
           auditEvent.programme_ids?.includes(this.programme_id) &&
           auditEvent.session?.academicYear === this.academicYear
       )
@@ -204,13 +204,31 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get number of times consent reminders have been sent (a reminder sent to
-   * several contacts at once counts as one), and when the last one was sent
+   * Get consent requests sent for this patient programme
+   *
+   * @returns {Array<AuditEvent>} Consent requests, oldest first
+   */
+  get consentRequests() {
+    return this.#messagesSent('invite')
+  }
+
+  /**
+   * Get consent reminders sent for this patient programme, both automatic and
+   * manual (manual reminders have `createdBy_uid` set)
+   *
+   * @returns {Array<AuditEvent>} Consent reminders, oldest first
+   */
+  get consentReminders() {
+    return this.#messagesSent('invite-reminder')
+  }
+
+  /**
+   * Get summary details of the consent reminders sent out for this programme
    *
    * @returns {{count: number, lastSentAt: Date|undefined}} Number of consent
    *   reminders sent, and date last reminder sent
    */
-  get consentReminderStats() {
+  get consentRemindersSummary() {
     const { consentReminders } = this
     const sentAtTimes = consentReminders.map(({ createdAt }) =>
       createdAt.valueOf()

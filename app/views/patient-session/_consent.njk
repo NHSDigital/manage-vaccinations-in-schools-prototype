@@ -33,7 +33,7 @@
             formaction: patientSession.uri + "/new/invite",
             formmethod: "post"
           }
-        } if not options.canRemind,
+        } if options.canInvite,
         {
           text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
           variant: "secondary",
