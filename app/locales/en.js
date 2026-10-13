@@ -2209,7 +2209,14 @@ export const en = {
       outOfSchedule: {
         label: 'Out of schedule'
       },
-      eligibleFrom: 'Eligible from {date}'
+      eligibleFrom: 'Eligible from {date}',
+      // Design variants of the already had gap (prototype only)
+      designVariant: {
+        unknown: 'Unknown',
+        source: 'Parent or guardian report',
+        alreadyHad:
+          '{name} was reported as vaccinated by a parent via CHIS. We do not hold the dates of any doses.'
+      }
     },
     encounters: {
       count:

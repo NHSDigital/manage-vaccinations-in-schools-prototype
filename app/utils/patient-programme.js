@@ -410,8 +410,8 @@ export function getPatientStatus(patientProgramme) {
     return PatientStatus.Vaccinated
   }
 
-  // MMR: an already had record marks the child vaccinated whatever the dose
-  // count, as already_had does in Mavis (a known gap)
+  // MMR: an already had the vaccine record marks the child vaccinated
+  // whatever the dose count, as already_had does in Mavis (a known gap)
   if (patientProgramme.alreadyHadVaccination) {
     return PatientStatus.Vaccinated
   }
@@ -644,7 +644,6 @@ export function getPatientVaccinatedStatus(patientProgramme) {
     case VaccinationOutcome.PartVaccinated:
       return PatientVaccinatedStatus.Vaccinated
     case VaccinationOutcome.AlreadyVaccinated:
-    case VaccinationOutcome.AlreadyHad:
       return PatientVaccinatedStatus.AlreadyVaccinated
   }
 }

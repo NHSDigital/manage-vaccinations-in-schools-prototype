@@ -569,10 +569,10 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get already had elsewhere record (MMR only)
+   * Get already had the vaccine record (MMR only)
    *
-   * Mirrors already_had in Mavis: an undated marker that the child is done,
-   * mostly from imports. It fills no dose slot.
+   * Stands in for already_had in Mavis, which marks the child vaccinated
+   * whatever the dose count. It is not classified as a dose.
    *
    * @returns {Vaccination|undefined} Vaccination
    */
@@ -582,7 +582,7 @@ export class PatientProgramme extends BaseModel {
     }
 
     return this.vaccinationOutcomes.findLast(
-      ({ outcome }) => outcome === VaccinationOutcome.AlreadyHad
+      ({ outcome }) => outcome === VaccinationOutcome.AlreadyVaccinated
     )
   }
 

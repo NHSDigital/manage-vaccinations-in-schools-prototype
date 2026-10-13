@@ -911,7 +911,6 @@ export const VaccinationOutcome = {
   Vaccinated: 'Vaccinated',
   PartVaccinated: 'Partially vaccinated',
   AlreadyVaccinated: 'Already had the vaccine',
-  AlreadyHad: 'Already had elsewhere',
   ConsentRefused: 'Consent refused',
   Refused: 'Child refused',
   Absent: 'Child absent',

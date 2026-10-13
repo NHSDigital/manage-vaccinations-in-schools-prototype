@@ -1,4 +1,6 @@
 {% set summary = patientProgramme.scheduleSummary %}
+{# Scaffolding: prototype-only design variants of the already had gap #}
+{% set designVariant = patient.designVariant %}
 
 {% call card({
   heading: {
@@ -8,83 +10,110 @@
 }) %}
   {{ patientProgramme.formatted.statusWithNotes | nhsukMarkdown }}
 
-  <p class="nhsuk-body">
-    {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
-      complete: summary.validDoses.length,
-      needed: patientProgramme.dosesNeeded
+  {% if designVariant == "B" %}
+    {{ insetText({
+      text: __mf("patientProgramme.vaccinationRecord.designVariant.alreadyHad", {
+        name: patient.fullFriendlyName
+      })
     }) }}
-  </p>
+  {% else %}
+    <p class="nhsuk-body">
+      {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
+        complete: summary.validDoses.length,
+        needed: patientProgramme.dosesNeeded
+      }) }}
+    </p>
 
-  {% set doseRows = [] %}
-  {% for recorded in summary.recordedDoses %}
-    {% set doseHtml %}
-      {% if recorded.isValid %}
-        {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
-          sequence: recorded.sequence
-        }) }}
-        {% if recorded.vaccination.vaccine.type %}
+    {% set doseRows = [] %}
+    {% for recorded in summary.recordedDoses %}
+      {% set doseHtml %}
+        {% if recorded.isValid %}
+          {{ __mf("patientProgramme.vaccinationRecord.dose.number", {
+            sequence: recorded.sequence
+          }) }}
+          {% if recorded.vaccination.vaccine.type %}
+            <br>
+            <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ "MMRV" if recorded.vaccination.isVariant else recorded.vaccination.vaccine.type }}</span>
+          {% endif %}
+        {% else %}
+          {{ tag({
+            text: __("patientProgramme.vaccinationRecord.outOfSchedule.label"),
+            classes: "nhsuk-tag--grey"
+          }) }}
           <br>
-          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ "MMRV" if recorded.vaccination.isVariant else recorded.vaccination.vaccine.type }}</span>
+          <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.reason }}</span>
         {% endif %}
+      {% endset %}
+
+      {% set doseRows = doseRows | push([
+        {
+          html: doseHtml
+        },
+        {
+          html: link(recorded.vaccination.uri, recorded.vaccination.formatted.administeredAt_date)
+        },
+        {
+          text: patient.dob | ageInFull(at=recorded.vaccination.administeredAt)
+        },
+        {
+          text: recorded.vaccination.source
+        }
+      ]) %}
+    {% endfor %}
+
+    {% set nextSequence = summary.validDoses.length + 1 %}
+    {% for sequence in range(nextSequence, patientProgramme.dosesNeeded + 1) %}
+      {% if designVariant == "A" %}
+        {% set doseRows = doseRows | push([
+          {
+            text: __mf("patientProgramme.vaccinationRecord.dose.number", {
+              sequence: sequence
+            })
+          },
+          {
+            text: __("patientProgramme.vaccinationRecord.designVariant.unknown")
+          },
+          {
+            text: __("patientProgramme.vaccinationRecord.designVariant.unknown")
+          },
+          {
+            text: __("patientProgramme.vaccinationRecord.designVariant.source")
+          }
+        ]) %}
       {% else %}
-        {{ tag({
-          text: __("patientProgramme.vaccinationRecord.outOfSchedule.label"),
-          classes: "nhsuk-tag--grey"
-        }) }}
-        <br>
-        <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">{{ recorded.reason }}</span>
+        {% set doseRows = doseRows | push([
+          {
+            text: __mf("patientProgramme.vaccinationRecord.dose.number", {
+              sequence: sequence
+            })
+          },
+          {
+            text: __mf("patientProgramme.vaccinationRecord.eligibleFrom", {
+              date: patientProgramme.formatted.nextEligibleFrom
+            }) if sequence == nextSequence and patientProgramme.formatted.nextEligibleFrom else "—"
+          },
+          {
+            text: "—"
+          },
+          {
+            text: "—"
+          }
+        ]) %}
       {% endif %}
-    {% endset %}
+    {% endfor %}
 
-    {% set doseRows = doseRows | push([
-      {
-        html: doseHtml
-      },
-      {
-        html: link(recorded.vaccination.uri, recorded.vaccination.formatted.administeredAt_date)
-      },
-      {
-        text: patient.dob | ageInFull(at=recorded.vaccination.administeredAt)
-      },
-      {
-        text: recorded.vaccination.source
-      }
-    ]) %}
-  {% endfor %}
-
-  {% set nextSequence = summary.validDoses.length + 1 %}
-  {% for sequence in range(nextSequence, patientProgramme.dosesNeeded + 1) %}
-    {% set doseRows = doseRows | push([
-      {
-        text: __mf("patientProgramme.vaccinationRecord.dose.number", {
-          sequence: sequence
-        })
-      },
-      {
-        text: __mf("patientProgramme.vaccinationRecord.eligibleFrom", {
-          date: patientProgramme.formatted.nextEligibleFrom
-        }) if sequence == nextSequence and patientProgramme.formatted.nextEligibleFrom else "—"
-      },
-      {
-        text: "—"
-      },
-      {
-        text: "—"
-      }
-    ]) %}
-  {% endfor %}
-
-  {{ table({
-    id: "vaccinations",
-    responsive: true,
-    head: [
-      { text: __("patientProgramme.vaccinationRecord.dose.label") },
-      { text: __("vaccination.administeredAt.label") },
-      { text: __("vaccination.age.label") },
-      { text: __("vaccination.source.label") }
-    ],
-    rows: doseRows
-  }) if doseRows.length }}
+    {{ table({
+      id: "vaccinations",
+      responsive: true,
+      head: [
+        { text: __("patientProgramme.vaccinationRecord.dose.label") },
+        { text: __("vaccination.administeredAt.label") },
+        { text: __("vaccination.age.label") },
+        { text: __("vaccination.source.label") }
+      ],
+      rows: doseRows
+    }) if doseRows.length }}
+  {% endif %}
 
   {{ actionLink({
     classes: "nhsuk-u-margin-0",

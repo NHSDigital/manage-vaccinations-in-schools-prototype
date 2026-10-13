@@ -63,6 +63,7 @@ import {
  * @property {Partial<Child>} [pendingChanges] - Pending changes to record values
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
+ * @property {string} [designVariant] - Design variant to show (prototype only)
  * @property {Array<AuditEvent>} [events] - Events
  * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
@@ -99,6 +100,8 @@ export class Patient extends Child {
     this.archiveReason = options?.archiveReason
     this.archiveReasonOther = options?.archiveReasonOther
     this.pendingChanges = options?.pendingChanges || {}
+    // Scaffolding: prototype-only flag to show a design variant on a page
+    this.designVariant = options?.designVariant
 
     this.events = options?.events || []
     this.instructions = options?.instructions || []
