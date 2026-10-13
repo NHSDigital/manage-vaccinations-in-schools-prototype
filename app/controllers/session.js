@@ -69,7 +69,7 @@ export const sessionController = {
         {
           text: __('session.show.label'),
           href: session.uri,
-          ...(session.consents.length && { icon: 'alert' }),
+          ...(session.unmatchedConsents.length && { icon: 'alert' }),
           current: view === undefined
         },
         ...(session.type === SessionType.Clinic

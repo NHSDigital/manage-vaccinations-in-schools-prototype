@@ -266,14 +266,17 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get consents (unmatched consent responses)
+   * Get unmatched consent responses
    *
    * @returns {Array<Consent>} Consent
    */
-  get consents() {
+  get unmatchedConsents() {
     if (this.context.replies) {
       return Consent.findAll(this.context).filter(
-        ({ session_id }) => session_id === this.id
+        (consent) =>
+          consent.session_id === this.id &&
+          !consent.patient_uuid &&
+          consent.isValid
       )
     }
 
@@ -1509,8 +1512,8 @@ export class Session extends BaseModel {
             case 'patients':
               return filters.plural(this.patients.length, 'child')
             case 'consents':
-              return this.consents.length > 0
-                ? filters.plural(this.consents.length, 'child')
+              return this.unmatchedConsents.length > 0
+                ? filters.plural(this.unmatchedConsents.length, 'child')
                 : undefined
             case 'programmes':
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')

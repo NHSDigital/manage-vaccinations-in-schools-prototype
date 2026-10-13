@@ -52,7 +52,7 @@ export const consentController = {
     // Session consents
     if (session_id) {
       const session = Session.findOne(session_id, request.session.data)
-      results = session.consents
+      results = session.unmatchedConsents
       response.locals.session = session
     }
 

@@ -2,7 +2,7 @@
 
 {# Unmatched consent for school sessions #}
 {% if session.type === SessionType.School %}
-  {% set consents = session.consents %}
+  {% set consents = session.unmatchedConsents %}
   {% if consents.length > 0 %}
     {% set sessionActivityRows = sessionActivityRows | push(
       {
