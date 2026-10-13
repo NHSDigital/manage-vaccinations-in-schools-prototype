@@ -764,6 +764,10 @@ export class Patient extends Child {
    * @param {PatientSession} patientSession - PatientSession
    */
   addToSession(patientSession) {
+    if (this.patientSession_uuids.includes(patientSession.uuid)) {
+      return
+    }
+
     this.patientSession_uuids.push(patientSession.uuid)
 
     patientSession = PatientSession.findOne(patientSession.uuid, this.context)
