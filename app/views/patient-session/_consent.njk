@@ -10,10 +10,6 @@
   {# Description #}
   {% if not patientProgramme.isVaccinated %}
     {{ patientProgramme.consentDescription | nhsukMarkdown }}
-
-    {% if patientProgramme.patient.lastReminderDate %}
-      {{ patientProgramme.patient.formatted.lastReminderDate | nhsukMarkdown }}
-    {% endif %}
   {% endif %}
 
   {# Actions #}

@@ -332,29 +332,6 @@ export class Patient extends Child {
   }
 
   /**
-   * Get reminders sent
-   *
-   * @returns {Array} Reminders sent
-   */
-  get reminders() {
-    return this.events
-      .map((event) => new AuditEvent(event))
-      .filter((event) => event.type === AuditEventType.Reminder)
-  }
-
-  /**
-   * Get date last reminders sent
-   *
-   * @returns {string|undefined} Date last reminders sent
-   */
-  get lastReminderDate() {
-    const lastReminder = this.reminders.at(-1)
-    if (lastReminder) {
-      return lastReminder.formatted.createdAt
-    }
-  }
-
-  /**
    * Get all notices
    *
    * @returns {Array<AuditEvent>} Notice events
@@ -623,10 +600,6 @@ export class Patient extends Child {
                 ?.name
             case 'archiveReason':
               return formatOther(this.archiveReasonOther, this.archiveReason)
-            case 'lastReminderDate':
-              return this.lastReminderDate
-                ? `Last reminder sent on ${this.lastReminderDate}`
-                : 'No reminders sent'
             case 'clinicProgramme_ids':
               return this.clinicProgramme_ids
                 .map((id) => this.programmes[id].programme.nameTag)
