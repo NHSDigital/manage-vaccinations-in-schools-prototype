@@ -94,8 +94,17 @@ export function getConsentStatus(patientProgramme) {
     return ConsentStatus.NotDelivered
   }
 
-  // Get valid and delivered replies
-  const replies = validReplies.filter(({ isDelivered }) => isDelivered)
+  // Get valid and delivered replies, ignoring any that say nothing about
+  // consent, so they can’t conflict with a reply that does
+  const replies = validReplies.filter(
+    ({ isDelivered, decision }) =>
+      isDelivered && decision !== ReplyDecision.NoResponse
+  )
+
+  // If no-one has given a decision, no response
+  if (replies.length === 0) {
+    return ConsentStatus.NoResponse
+  }
 
   // If any reply is child self consenting, use child’s decision
   const childReply = replies.find((reply) => reply.hasSelfConsent)
