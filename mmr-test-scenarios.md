@@ -1,7 +1,7 @@
 # MMR catch-up — test scenarios
 
 Seven patient cases used to test schedule-aware classification of MMR
-vaccination records. Each case lists the inputs (date of birth and full vaccination
+vaccination records, plus two design variants of case 7 (7A and 7B). Each case lists the inputs (date of birth and full vaccination
 history) and the expected classifier output (which doses are valid, which
 are out of schedule and why, the resulting programme status, and the
 eligible-from date for the next slot).
@@ -27,13 +27,16 @@ years to the current academic year, so no age changes.
 - Maximum schedule length: **2 doses**. Any additional given dose is
   classified as `Additional dose`
 - Only `Vaccinated` records are classified. Every other outcome,
-  including Partially vaccinated and Already vaccinated, goes to the
-  encounters table and never counts
+  including Partially vaccinated and Already had the vaccine, goes to
+  the encounters table and never counts as a dose
 - Status is Fully vaccinated only when no doses remain. While doses
   remain, status falls through to triage and consent as usual
-- Known gap (case 7): an Already had elsewhere record is not classified,
-  but sets Fully vaccinated whatever the dose count, as `already_had`
-  does in Mavis
+- Known gap (case 7): an Already had the vaccine record is not
+  classified, but for MMR sets Fully vaccinated whatever the dose count,
+  as `already_had` does in Mavis. The prototype uses the same outcome when
+  a previous vaccination is recorded, so recording one previous MMR
+  vaccination also sets Fully vaccinated. In Mavis that flow records an
+  administered dose that counts toward the schedule
 - Doses are classified in chronological order (`administeredAt` ascending)
 - A non-given record (Absent, Refused, Unwell, Contraindicated) is not
   counted toward the schedule and does not affect classification of later
@@ -285,7 +288,7 @@ done, now created mainly by imports (already had elsewhere). It has no
 dose date, skips the dose maths and gives a vaccinated status, so a
 vaccinated child can show 0 of 2 doses. This case reproduces that state.
 
-Gita has no dose records. One Already had elsewhere record was imported
+Gita has no dose records. One Already had the vaccine record was imported
 from CHIS, dated on the import date. It fills no dose slot.
 
 - **NHS number:** 9990000079
@@ -293,37 +296,91 @@ from CHIS, dated on the import date. It fills no dose slot.
 
 ### Vaccination history
 
-| #   | Date                                                                 | Vaccine | Source | Outcome               |
-| --- | -------------------------------------------------------------------- | ------- | ------ | --------------------- |
-| 1   | 10 June in the previous academic year (import date, not a dose date) | –       | CHIS   | Already had elsewhere |
+| #   | Date                                                                 | Vaccine | Source | Outcome                 |
+| --- | -------------------------------------------------------------------- | ------- | ------ | ----------------------- |
+| 1   | 10 June in the previous academic year (import date, not a dose date) | –       | CHIS   | Already had the vaccine |
 
 ### Expected classification
 
-| #   | Status      | Slot | Reason                                         |
-| --- | ----------- | ---- | ---------------------------------------------- |
-| 1   | Not counted | –    | Outcome `Already had elsewhere`, no dose given |
+| #   | Status      | Slot | Reason                                           |
+| --- | ----------- | ---- | ------------------------------------------------ |
+| 1   | Not counted | –    | Outcome `Already had the vaccine`, no dose given |
 
 ### Expected page (current behaviour)
 
-- **Programme status:** Fully vaccinated (set by the Already had
-  elsewhere record, whatever the dose count)
+- **Programme status:** Fully vaccinated (set by the Already had the
+  vaccine record, whatever the dose count)
 - **Status note:** Vaccinated on the import date (there is no valid dose
   to date it from)
 - **Doses complete:** 0 of 2 doses complete
 - **Dose rows:** Dose 1 shows Eligible from date of birth + 12 months
   (long past); Dose 2 shows dashes
 - **Encounters card:** shown, with one row: the import date, Already had
-  elsewhere, Child health information service
+  the vaccine, Child health information service
 - **Doses remaining:** 2
 - **Consent:** given for the catch-up session, like the other cohort
   patients
 
 ---
 
+## Case 7A — Gita Gill A (design variant of case 7)
+
+> **Design variant.** This case demonstrates a design option for case 7,
+> not expected behaviour. It is prototype-only scaffolding: the patient
+> record carries `designVariant: "A"`, which chooses how the MMR page
+> shows the Vaccination record card.
+
+A copy of case 7 with the same dates, record and consent. The
+classifier and status logic are unchanged, so the classification,
+programme status, status note and doses remaining are as case 7.
+
+- **NHS number:** 9990000087
+- **Date of birth:** 20 January, Year 10 in the current academic year
+
+### Page (variant A: filled dose rows)
+
+- **Status note:** as case 7
+- **Doses complete:** 0 of 2 doses complete, as case 7
+- **Dose rows:** both filled, with no Eligible from on either row
+
+| Dose   | Vaccination date | Age     | Source                    |
+| ------ | ---------------- | ------- | ------------------------- |
+| Dose 1 | Unknown          | Unknown | Parent or guardian report |
+| Dose 2 | Unknown          | Unknown | Parent or guardian report |
+
+- **Encounters card:** as case 7
+
+---
+
+## Case 7B — Gita Gill B (design variant of case 7)
+
+> **Design variant.** This case demonstrates a design option for case 7,
+> not expected behaviour. It is prototype-only scaffolding: the patient
+> record carries `designVariant: "B"`, which chooses how the MMR page
+> shows the Vaccination record card.
+
+A copy of case 7 with the same dates, record and consent. The
+classifier and status logic are unchanged, so the classification,
+programme status, status note and doses remaining are as case 7.
+
+- **NHS number:** 9990000095
+- **Date of birth:** 20 January, Year 10 in the current academic year
+
+### Page (variant B: explanation in place of the doses)
+
+- **Status note:** as case 7
+- **Doses complete and vaccinations table:** not shown. In their place,
+  inset text using the name from the patient record: "Gita Gill B was
+  reported as vaccinated by a parent via CHIS. We do not hold the dates
+  of any doses."
+- **Encounters card:** as case 7
+
+---
+
 ## Cohort session
 
-All seven patients are tied to a single co-located session for the
-catch-up scenario:
+All seven patients, and the two case 7 design variants, are tied to a
+single co-located session for the catch-up scenario:
 
 - **Session id:** `mmr-catchup-y9y10-current`
 - **School:** Grace Academy Coventry (id `135335`)
