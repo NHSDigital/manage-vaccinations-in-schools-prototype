@@ -88,13 +88,11 @@ export const patientSessionController = {
 
     // Extra info about the consent reminders sent so far
     if (response.locals.options.canRemind) {
-      response.locals.consentRemindersSent =
-        patientProgramme.consentRemindersSent
+      const { count, lastSentAt } = patientProgramme.consentReminderStats
+      response.locals.consentRemindersSent = count
 
-      if (response.locals.consentRemindersSent > 0) {
-        const lastConsentReminderAt =
-          patientProgramme.consentReminders.at(-1).createdAt
-        const formattedDate = formatDate(lastConsentReminderAt, {
+      if (count > 0) {
+        const formattedDate = formatDate(lastSentAt, {
           dateStyle: 'long'
         })
         response.locals.lastConsentReminder = `Last reminder sent on ${formattedDate}`

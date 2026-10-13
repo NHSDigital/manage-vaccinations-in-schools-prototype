@@ -205,14 +205,21 @@ export class PatientProgramme extends BaseModel {
 
   /**
    * Get number of times consent reminders have been sent (a reminder sent to
-   * several contacts at once counts as one)
+   * several contacts at once counts as one), and when the last one was sent
    *
-   * @returns {number} Number of consent reminders sent
+   * @returns {{count: number, lastSentAt: Date|undefined}} Number of consent
+   *   reminders sent, and date last reminder sent
    */
-  get consentRemindersSent() {
-    return new Set(
-      this.consentReminders.map(({ createdAt }) => createdAt.valueOf())
-    ).size
+  get consentReminderStats() {
+    const { consentReminders } = this
+    const sentAtTimes = consentReminders.map(({ createdAt }) =>
+      createdAt.valueOf()
+    )
+
+    return {
+      count: new Set(sentAtTimes).size,
+      lastSentAt: consentReminders.at(-1)?.createdAt
+    }
   }
 
   /**
