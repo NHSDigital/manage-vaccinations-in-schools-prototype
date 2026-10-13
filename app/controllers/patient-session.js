@@ -11,7 +11,7 @@ import {
 } from '../enums.js'
 import { PatientSession, Programme, User, Vaccination } from '../models.js'
 import { getAccountVaccineMethods } from '../utils/account.js'
-import { today } from '../utils/date.js'
+import { formatDate, today } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
@@ -61,7 +61,6 @@ export const patientSessionController = {
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
         patientProgramme.consent === ConsentStatus.NoResponse,
-      remindersSent: 0,
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
@@ -85,6 +84,21 @@ export const patientSessionController = {
         session.isActive,
       canRecordInjectionSite:
         patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal
+    }
+
+    // Extra info about the consent reminders sent so far
+    if (response.locals.options.canRemind) {
+      response.locals.consentRemindersSent =
+        patientProgramme.consentRemindersSent
+
+      if (response.locals.consentRemindersSent > 0) {
+        const lastConsentReminderAt =
+          patientProgramme.consentReminders.at(-1).createdAt
+        const formattedDate = formatDate(lastConsentReminderAt, {
+          dateStyle: 'long'
+        })
+        response.locals.lastConsentReminder = `Last reminder sent on ${formattedDate}`
+      }
     }
 
     // Vaccinator has permission to record using the alternative vaccine

@@ -31,23 +31,26 @@
     {{ appButtonGroup({
       buttons: [
         {
-          text: __("remind.new.title", ((options.remindersSent + 1) | ordinal) if options.remindersSent else "a"),
-          variant: "secondary",
-          attributes: {
-            formaction: patientSession.uri + "/new/remind",
-            formmethod: "post"
-          }
-        } if options.canRemind,
-        {
           text: __("patientSession.invite.label"),
           variant: "secondary",
           attributes: {
             formaction: patientSession.uri + "/new/invite",
             formmethod: "post"
           }
-        }
+        } if not options.canRemind,
+        {
+          text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
+          variant: "secondary",
+          attributes: {
+            formaction: patientSession.uri + "/new/remind",
+            formmethod: "post"
+          }
+        } if options.canRemind
       ]
     }) }}
+  {% endif %}
+  {% if lastConsentReminder %}
+    {{ lastConsentReminder | nhsukMarkdown }}
   {% endif %}
 
   {% if patientProgramme.replies | length %}

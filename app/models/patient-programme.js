@@ -186,6 +186,36 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get consent reminders sent for this patient programme, both automatic and
+   * manual (manual reminders have `createdBy_uid` set)
+   *
+   * @returns {Array<AuditEvent>} Consent reminders, oldest first
+   */
+  get consentReminders() {
+    return this.patient.events
+      .map((event) => new AuditEvent(event, this.context))
+      .filter(
+        (auditEvent) =>
+          auditEvent.messageTemplate === 'invite-reminder' &&
+          auditEvent.programme_ids?.includes(this.programme_id) &&
+          auditEvent.session?.academicYear === this.academicYear
+      )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+  }
+
+  /**
+   * Get number of times consent reminders have been sent (a reminder sent to
+   * several contacts at once counts as one)
+   *
+   * @returns {number} Number of consent reminders sent
+   */
+  get consentRemindersSent() {
+    return new Set(
+      this.consentReminders.map(({ createdAt }) => createdAt.valueOf())
+    ).size
+  }
+
+  /**
    * Get triage notes
    *
    * @returns {Array<AuditEvent>} Audit events
