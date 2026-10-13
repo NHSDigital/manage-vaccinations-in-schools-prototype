@@ -95,7 +95,7 @@ export const patientSessionController = {
         const formattedDate = formatDate(lastSentAt, {
           dateStyle: 'long'
         })
-        response.locals.lastConsentReminder = `Last reminder sent on ${formattedDate}`
+        response.locals.lastConsentReminderDate = `Last reminder sent on ${formattedDate}`
       }
     }
 

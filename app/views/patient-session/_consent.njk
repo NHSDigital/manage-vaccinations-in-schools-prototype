@@ -42,11 +42,9 @@
             formmethod: "post"
           }
         } if options.canRemind
-      ]
+      ],
+      description: lastConsentReminderDate
     }) }}
-  {% endif %}
-  {% if lastConsentReminder %}
-    {{ lastConsentReminder | nhsukMarkdown }}
   {% endif %}
 
   {% if patientProgramme.replies | length %}
