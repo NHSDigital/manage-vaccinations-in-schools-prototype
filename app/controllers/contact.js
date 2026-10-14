@@ -1,3 +1,4 @@
+import { RelationshipType } from '../enums.js'
 import { Contact, Patient } from '../models.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
@@ -94,6 +95,14 @@ export const contactController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
+    // Prepare the radio options for the parental relationship
+    response.locals.parentalRelationshipItems = Object.values(RelationshipType)
+      .filter((relationship) => relationship !== RelationshipType.Unknown)
+      .map((relationship) => ({
+        text: relationship,
+        value: relationship
+      }))
+
     return response.render(`contact/form/edit`)
   },
 
