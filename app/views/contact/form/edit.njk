@@ -2,6 +2,7 @@
 
 {% set confirmButtonText = __("contact." + type + ".confirm") %}
 {% set title = __("contact." + type + ".title") %}
+{% set isSensitive = contact.patient.isSensitive %}
 
 {% block form %}
   {{ heading({
@@ -65,12 +66,12 @@
   {{ input({
     label: __("contact.email.label"),
     decorate: "contact.email"
-  }) }}
+  }) if not isSensitive }}
 
   {{ input({
     label: __("contact.tel.label"),
     decorate: "contact.tel"
-  }) }}
+  }) if not isSensitive }}
 
   {{ radios({
     fieldset: {
@@ -93,5 +94,5 @@
       }
     ],
     decorate: "contact.hasCommunicationNeeds"
-  }) }}
+  }) if not isSensitive }}
 {% endblock %}
