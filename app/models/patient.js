@@ -233,7 +233,7 @@ export class Patient extends Child {
       .filter(({ hasSelfConsent }) => !hasSelfConsent)
       .filter(({ contact }) => contact)
       .forEach(({ contact }) => {
-        contacts.set(contact.uuid, new Contact(contact))
+        contacts.set(contact.uuid, new Contact(contact, this.context))
       })
 
     // Add any contacts found in clinic appointments
@@ -246,7 +246,7 @@ export class Patient extends Child {
         ].includes(status)
       )
       .forEach(({ contact }) =>
-        contacts.set(contact.uuid, new Contact(contact))
+        contacts.set(contact.uuid, new Contact(contact, this.context))
       )
 
     return [...contacts.values()]

@@ -556,9 +556,9 @@ export class Reply extends BaseModel {
             case 'contact':
               return formatContact(this.contact, true)
             case 'tel':
-              return this.contact && this.contact.tel
+              return this.contact && this.contact.formatted.tel
             case 'email':
-              return this.contact && this.contact.email
+              return this.contact && this.contact.formatted.email
             case 'programme':
               return this.programme?.nameTag
             case 'refusalReason':

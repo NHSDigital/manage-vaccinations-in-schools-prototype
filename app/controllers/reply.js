@@ -292,7 +292,7 @@ export const replyController = {
       response.locals.respondentItems = patientProgramme.patient.contacts.map(
         (contact) => ({
           text: formatContact(contact, false),
-          hint: contact.tel,
+          hint: contact.tel && `Phone: ${contact.formatted.tel}`,
           value: contact.uuid
         })
       )
