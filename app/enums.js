@@ -968,6 +968,27 @@ export const VaccinationSource = {
 }
 
 /**
+ * System that sent a record to the NHS Immunisations API, shown in place of
+ * the source (as in Mavis, which maps the record identifier system to these)
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const VaccinationSourceSystem = {
+  SystmOne: 'SystmOne (used by GPs and NHS trusts)',
+  EMIS: 'EMIS (GP system)',
+  NIVS: 'NIVS (SAIS upload)',
+  Vision: 'Vision (GP system)',
+  PharmOutcomes: 'PharmOutcomes (pharmacy system)',
+  RAVS: 'RAVS (used by community pharmacies, NHS trusts and GPs)',
+  SonarHealth: 'SonarHealth (pharmacy system)',
+  PharmacyServices: 'PharmacyServices (pharmacy system)',
+  Medicus: 'Medicus (GP system)',
+  PositiveSolutions: 'PositiveSolutions (pharmacy system)',
+  Unknown: 'Unknown external source'
+}
+
+/**
  * @readonly
  * @enum {string}
  */

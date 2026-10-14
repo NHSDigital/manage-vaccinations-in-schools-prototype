@@ -56,7 +56,7 @@
           text: patient.dob | ageInFull(at=recorded.vaccination.administeredAt)
         },
         {
-          text: recorded.vaccination.source
+          text: recorded.vaccination.formatted.source
         }
       ]) %}
     {% endfor %}
@@ -144,7 +144,7 @@
           html: vaccination.formatted.outcome
         },
         {
-          text: vaccination.source
+          text: vaccination.formatted.source
         }
       ]) %}
     {% endfor %}

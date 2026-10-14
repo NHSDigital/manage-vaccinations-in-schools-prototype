@@ -9,6 +9,7 @@ import {
   VaccinationProtocol,
   VaccinationSite,
   VaccinationSource,
+  VaccinationSourceSystem,
   VaccinationSyncStatus,
   VaccineCriteria
 } from '../enums.js'
@@ -71,6 +72,7 @@ import { BaseModel } from './base.js'
  * @property {VaccinationMethod} [injectionMethod] - Injection method
  * @property {VaccinationSite} [injectionSite] - Injection site on body
  * @property {VaccinationSource} [source] - Vaccination reporting source
+ * @property {VaccinationSourceSystem} [sourceSystem] - System that sent the record (NHS Immunisations API only)
  * @property {number} [dose] - Dosage (ml)
  * @property {string} [sequence] - Dose sequence
  * @property {string} [protocol] - Protocol
@@ -172,6 +174,10 @@ export class Vaccination extends BaseModel {
     this.injectionMethod = options?.injectionMethod
     this.injectionSite = options?.injectionSite
     this.source = options?.source || VaccinationSource.Service
+    this.sourceSystem =
+      this.source === VaccinationSource.NhsImmunisationsApi
+        ? options?.sourceSystem || VaccinationSourceSystem.Unknown
+        : undefined
     this.dose = this.wasGiven ? Number(options?.dose) : undefined
     this.sequence = options?.sequence
     this.protocol = this.wasGiven
@@ -539,6 +545,8 @@ export class Vaccination extends BaseModel {
               return this.countryOther || this.country || 'England'
             case 'school':
               return this.school && this.school.name
+            case 'source':
+              return this.sourceSystem || this.source
             case 'identifiedBy':
               return this.hasSelfIdentified
                 ? 'The child'

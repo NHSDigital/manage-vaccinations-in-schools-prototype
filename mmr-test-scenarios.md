@@ -88,10 +88,10 @@ classifier still counts it because the programme is MMR.
 
 ### Vaccination history
 
-| #   | Age     | Vaccine           | Source                | Outcome    |
-| --- | ------- | ----------------- | --------------------- | ---------- |
-| 1   | 12m 14d | M-M-RvaxPro (MMR) | NHS Immunisations API | Vaccinated |
-| 2   | 40m 10d | ProQuad (MMRV)    | NHS Immunisations API | Vaccinated |
+| #   | Age     | Vaccine           | Source                                                       | Outcome    |
+| --- | ------- | ----------------- | ------------------------------------------------------------ | ---------- |
+| 1   | 12m 14d | M-M-RvaxPro (MMR) | NHS Immunisations API: SystmOne (used by GPs and NHS trusts) | Vaccinated |
+| 2   | 40m 10d | ProQuad (MMRV)    | NHS Immunisations API: SystmOne (used by GPs and NHS trusts) | Vaccinated |
 
 ### Expected classification
 
@@ -116,12 +116,12 @@ consultant advice. Bilal still needs a second MMR dose.
 
 ### Vaccination history (MMR)
 
-| #   | Age              | Vaccine     | Source                | Outcome         | Note                                                                                                                                                                                                                                               |
-| --- | ---------------- | ----------- | --------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 12m 14d          | M-M-RvaxPro | NHS Immunisations API | Vaccinated      | –                                                                                                                                                                                                                                                  |
-| 2   | 50m 0d           | M-M-RvaxPro | CHIS                  | Absent          | –                                                                                                                                                                                                                                                  |
-| 3   | 57m 0d           | M-M-RvaxPro | CHIS                  | Absent          | –                                                                                                                                                                                                                                                  |
-| 4   | 171m 9d (Year 9) | M-M-RvaxPro | Recorded in Mavis     | Consent refused | Parents asked their paediatric oncology consultant for advice given Bilal's treatment history before consenting. They had not heard back by the day of the session, so refused consent for now. To be revisited once consultant input is received. |
+| #   | Age              | Vaccine     | Source                                  | Outcome         | Note                                                                                                                                                                                                                                               |
+| --- | ---------------- | ----------- | --------------------------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 12m 14d          | M-M-RvaxPro | NHS Immunisations API: EMIS (GP system) | Vaccinated      | –                                                                                                                                                                                                                                                  |
+| 2   | 50m 0d           | M-M-RvaxPro | CHIS                                    | Absent          | –                                                                                                                                                                                                                                                  |
+| 3   | 57m 0d           | M-M-RvaxPro | CHIS                                    | Absent          | –                                                                                                                                                                                                                                                  |
+| 4   | 171m 9d (Year 9) | M-M-RvaxPro | Recorded in Mavis                       | Consent refused | Parents asked their paediatric oncology consultant for advice given Bilal's treatment history before consenting. They had not heard back by the day of the session, so refused consent for now. To be revisited once consultant input is received. |
 
 ### Expected classification
 
@@ -157,10 +157,10 @@ months) becomes Dose 1.
 
 ### Vaccination history
 
-| #   | Age    | Vaccine     | Source                | Outcome    |
-| --- | ------ | ----------- | --------------------- | ---------- |
-| 1   | 11m 0d | M-M-RvaxPro | NHS Immunisations API | Vaccinated |
-| 2   | 50m 0d | M-M-RvaxPro | Recorded in Mavis     | Vaccinated |
+| #   | Age    | Vaccine     | Source                                                       | Outcome    |
+| --- | ------ | ----------- | ------------------------------------------------------------ | ---------- |
+| 1   | 11m 0d | M-M-RvaxPro | NHS Immunisations API: SystmOne (used by GPs and NHS trusts) | Vaccinated |
+| 2   | 50m 0d | M-M-RvaxPro | Recorded in Mavis                                            | Vaccinated |
 
 ### Expected classification
 
@@ -193,10 +193,10 @@ parent reports 2 doses while the record holds 1 valid dose.
 
 ### Vaccination history
 
-| #   | Age     | Vaccine     | Source                | Outcome    |
-| --- | ------- | ----------- | --------------------- | ---------- |
-| 1   | 11m 29d | M-M-RvaxPro | NHS Immunisations API | Vaccinated |
-| 2   | 48m 14d | M-M-RvaxPro | NHS Immunisations API | Vaccinated |
+| #   | Age     | Vaccine     | Source                                  | Outcome    |
+| --- | ------- | ----------- | --------------------------------------- | ---------- |
+| 1   | 11m 29d | M-M-RvaxPro | NHS Immunisations API: EMIS (GP system) | Vaccinated |
+| 2   | 48m 14d | M-M-RvaxPro | NHS Immunisations API: EMIS (GP system) | Vaccinated |
 
 ### Expected classification
 
@@ -219,8 +219,12 @@ parent reports 2 doses while the record holds 1 valid dose.
 
 ## Case 5 — Eshe Edwards
 
-One clinical Dose 1 event recorded three times — the original GP record
-plus two echo duplicates from other feeds, arriving days apart. The
+One clinical Dose 1 event recorded three times, each with a different
+date: the GP record from the NHS Immunisations API on the day, a CHIS
+entry keyed in a few days later and uploaded by the SAIS team, and a
+previous area's CHIS or SAIS file uploaded after the child moved. Mavis
+only treats records as duplicates when the date matches, so all three
+stay. The
 classifier counts the earliest as Dose 1 and marks the duplicates as
 out of schedule because they fall within the 28-day interval rule.
 
@@ -229,11 +233,11 @@ out of schedule because they fall within the 28-day interval rule.
 
 ### Vaccination history
 
-| #   | Age    | Vaccine     | Source                              | Outcome    |
-| --- | ------ | ----------- | ----------------------------------- | ---------- |
-| 1   | 13m 0d | M-M-RvaxPro | NHS Immunisations API (GP)          | Vaccinated |
-| 2   | 13m 3d | M-M-RvaxPro | NHS Immunisations API (echo feed)   | Vaccinated |
-| 3   | 13m 4d | M-M-RvaxPro | NHS Immunisations API (second echo) | Vaccinated |
+| #   | Age    | Vaccine     | Source                                                       | Outcome    |
+| --- | ------ | ----------- | ------------------------------------------------------------ | ---------- |
+| 1   | 13m 0d | M-M-RvaxPro | NHS Immunisations API: SystmOne (used by GPs and NHS trusts) | Vaccinated |
+| 2   | 13m 3d | M-M-RvaxPro | Uploaded as a historical vaccination                         | Vaccinated |
+| 3   | 13m 4d | M-M-RvaxPro | Uploaded as a historical vaccination                         | Vaccinated |
 
 ### Expected classification
 
@@ -262,9 +266,9 @@ disagree.
 
 ### Vaccination history
 
-| #   | Age    | Vaccine     | Source                | Outcome    | Sequence label |
-| --- | ------ | ----------- | --------------------- | ---------- | -------------- |
-| 1   | 48m 0d | M-M-RvaxPro | NHS Immunisations API | Vaccinated | `2P`           |
+| #   | Age    | Vaccine     | Source                                                       | Outcome    | Sequence label |
+| --- | ------ | ----------- | ------------------------------------------------------------ | ---------- | -------------- |
+| 1   | 48m 0d | M-M-RvaxPro | NHS Immunisations API: SystmOne (used by GPs and NHS trusts) | Vaccinated | `2P`           |
 
 ### Expected classification
 

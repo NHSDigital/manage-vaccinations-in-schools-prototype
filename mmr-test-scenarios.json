@@ -93,7 +93,7 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API"
+          "source": "SystmOne (used by GPs and NHS trusts)"
         },
         {
           "index": 1,
@@ -106,7 +106,7 @@
           "vaccineBrand": "ProQuad",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API"
+          "source": "SystmOne (used by GPs and NHS trusts)"
         }
       ],
       "expected": {
@@ -154,7 +154,7 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API"
+          "source": "EMIS (GP system)"
         },
         {
           "index": 1,
@@ -297,7 +297,7 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API"
+          "source": "SystmOne (used by GPs and NHS trusts)"
         },
         {
           "index": 1,
@@ -362,7 +362,7 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API"
+          "source": "EMIS (GP system)"
         },
         {
           "index": 1,
@@ -375,7 +375,7 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API"
+          "source": "EMIS (GP system)"
         }
       ],
       "consent": {
@@ -410,7 +410,7 @@
     },
     {
       "id": "case-5-eshe",
-      "summary": "One clinical Dose 1 event recorded three times — the original GP record plus two echo duplicates from other feeds, arriving days apart. The earliest counts as Dose 1 and the duplicates fall foul of the 28-day interval rule.",
+      "summary": "One clinical Dose 1 event recorded three times — the GP record from the NHS Immunisations API plus two historical uploads, each with a different date. Mavis only treats records as duplicates when the date matches, so all three stay. The earliest counts as Dose 1 and the duplicates fall foul of the 28-day interval rule.",
       "patient": {
         "firstName": "Eshe",
         "lastName": "Edwards",
@@ -433,8 +433,8 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API",
-          "feedNote": "GP original record"
+          "source": "SystmOne (used by GPs and NHS trusts)",
+          "feedNote": "GP record, sent to the NHS Immunisations API on the day"
         },
         {
           "index": 1,
@@ -447,8 +447,8 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API",
-          "feedNote": "Echo from external feed (e.g. CHIS)"
+          "source": "Uploaded as a historical vaccination",
+          "feedNote": "CHIS keyed it in a few days later, then uploaded by the SAIS team"
         },
         {
           "index": 2,
@@ -461,8 +461,8 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API",
-          "feedNote": "Second echo from another feed"
+          "source": "Uploaded as a historical vaccination",
+          "feedNote": "Previous area CHIS or SAIS file, uploaded after the child moved"
         }
       ],
       "expected": {
@@ -518,7 +518,7 @@
           "vaccineBrand": "M-M-RvaxPro",
           "programmeId": "mmr",
           "outcome": "Vaccinated",
-          "source": "NHS Immunisations API",
+          "source": "SystmOne (used by GPs and NHS trusts)",
           "sourceSequenceLabel": "2P"
         }
       ],
