@@ -1,6 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("consent.contact.title") %}
+{% set showContactDetails = true if not consent.patient.isSensitive else false %}
 
 {% block form %}
   {{ heading({
@@ -64,13 +65,13 @@
     label: __("consent.contact.email.label"),
     hint: __("consent.contact.email.hint"),
     decorate: "consent.contact_.email"
-  }) }}
+  }) if showContactDetails }}
 
   {{ input({
     label: __("consent.contact.tel.label") + " (optional)",
     hint: __("consent.contact.tel.hint"),
     decorate: "consent.contact_.tel"
-  }) }}
+  }) if showContactDetails }}
 
   {{ checkboxes({
     items: [
@@ -80,5 +81,5 @@
       }
     ],
     decorate: "consent.contact_.canSms"
-  }) }}
+  }) if showContactDetails }}
 {% endblock %}
