@@ -224,11 +224,9 @@ export class Patient extends Child {
   get contacts() {
     const contacts = new Map()
 
-    if (!this.isSensitive) {
-      this.contact_uuids.forEach((uuid) =>
-        contacts.set(uuid, Contact.findOne(uuid, this.context))
-      )
-    }
+    this.contact_uuids.forEach((uuid) =>
+      contacts.set(uuid, Contact.findOne(uuid, this.context))
+    )
 
     // Add any new contacts found in consent replies
     Object.values(this.replies)
