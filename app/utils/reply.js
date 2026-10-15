@@ -9,15 +9,15 @@ import { formatParentalRelationship } from './string.js'
 /**
  * Add example answers to health questions
  *
- * @param {string} key - Health question key, i.e. aspirin
- * @param {string} healthCondition - Health condition
+ * @param {string} questionKey - Health question key, i.e. aspirin
+ * @param {string} healthConditionKey - Health condition
  * @returns {object} Health answer
  */
-const enrichWithRealisticAnswer = (key, healthCondition) => {
-  if (healthConditions[healthCondition][key]) {
+const enrichWithRealisticAnswer = (questionKey, healthConditionKey) => {
+  if (healthConditions[healthConditionKey]?.[questionKey]) {
     return {
       answer: 'Yes',
-      details: healthConditions[healthCondition][key]
+      details: healthConditions[healthConditionKey][questionKey]
     }
   }
 
@@ -219,13 +219,18 @@ export const getPreferredNames = (replies) => {
  * @returns {string} Refusal reason
  */
 export const getRefusalReason = (type, decision) => {
-  // Gelatine content only a valid refusal reason for flu and MMR vaccines
+  // Some refusal reasons only make sense for some vaccines, e.g. gelatine content
+  // for the flu nasal spray and MMR vaccines
   let refusalReasons = Object.values(ReplyRefusal).filter((value) => {
     if (value === ReplyRefusal.Gelatine) {
       return type === ProgrammeType.Flu
     }
 
     if (value === ReplyRefusal.GelatineMMR) {
+      return type === ProgrammeType.MMR
+    }
+
+    if (value === ReplyRefusal.AlreadyVaccinatedMMR) {
       return type === ProgrammeType.MMR
     }
 
@@ -265,6 +270,21 @@ export const countAnswersNeedingTriage = (healthAnswers) => {
     .flatMap(([, answer]) => (Array.isArray(answer) ? answer : [answer]))
     .filter((answer) => answer.answer === 'Yes').length
 }
+
+/**
+ * Get health conditions whose answers would need triage for a vaccine
+ *
+ * Not every condition applies to every vaccine, as vaccines ask different health
+ * questions, i.e. only the nasal spray asks about asthma
+ *
+ * @param {Vaccine} vaccine - Vaccine
+ * @returns {Array<string>} Health conditions
+ */
+export const getHealthConditionsNeedingTriage = (vaccine) =>
+  Object.keys(healthConditions).filter(
+    (healthCondition) =>
+      countAnswersNeedingTriage(getHealthAnswers(vaccine, healthCondition)) > 0
+  )
 
 /**
  * @import { ClinicAppointment, Reply, Vaccine } from '../models.js'
