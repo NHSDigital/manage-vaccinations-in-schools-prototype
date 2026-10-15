@@ -3394,8 +3394,14 @@ export const en = {
       }
     },
     appointmentLengths: {
-      label: 'Appointment length',
-      title: 'How long are your appointments?',
+      label: {
+        booking: 'Appointment length',
+        dropIn: 'Vaccination length'
+      },
+      title: {
+        booking: 'How long are your appointments?',
+        dropIn: 'How long will it take to vaccinate each child?'
+      },
       flu: {
         short: {
           label: 'Time for a nasal spray, in minutes'

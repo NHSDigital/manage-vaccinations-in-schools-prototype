@@ -61,6 +61,7 @@
       })
     }) }}
   {% else %}
+    {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
     {{ summaryList({
       card: {
         heading: {
@@ -99,6 +100,7 @@
           href: session.uri + "/new/vaccinators"
         },
         appointmentLengths: {
+          label: __("session.appointmentLengths.label." + appointmentLengthKey),
           href: session.uri + "/new/appointment-length"
         },
         totalSlots: {}
