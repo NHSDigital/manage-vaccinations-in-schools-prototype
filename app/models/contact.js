@@ -99,7 +99,7 @@ export class Contact extends BaseModel {
         get: (_target, prop) => {
           const isSensitive = this.patient?.isSensitive
           const redactIfSensitive = (value) =>
-            isSensitive && value ? 'Sensitive' : value
+            isSensitive && value !== undefined ? 'Sensitive' : value
 
           switch (prop) {
             case 'communicationNeeds':
