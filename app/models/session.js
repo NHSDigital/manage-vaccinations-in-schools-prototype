@@ -1521,6 +1521,14 @@ export class Session extends BaseModel {
               return this.unmatchedConsents.length > 0
                 ? filters.plural(this.unmatchedConsents.length, 'child')
                 : undefined
+            case 'clinicType':
+              return this.clinicType === ClinicType.Restricted
+                ? formatWithSecondaryText(
+                    this.clinicType,
+                    `Audience: ${this.clinicAudience}`,
+                    true
+                  )
+                : this.clinicType
             case 'programmes':
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
             case 'catchUps':
