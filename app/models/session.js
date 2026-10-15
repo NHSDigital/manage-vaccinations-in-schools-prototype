@@ -1028,7 +1028,9 @@ export class Session extends BaseModel {
    */
   get shortName() {
     if (this.type === SessionType.Clinic) {
-      return `${this.programmeNames.titleCase} clinic at ${this.location.name}`
+      return this.clinicType === ClinicType.DropIn
+        ? `${this.programmeNames.titleCase} drop-in clinic at ${this.location.name}`
+        : `${this.programmeNames.titleCase} clinic at ${this.location.name}`
     }
 
     if (this.type === SessionType.Home) {
