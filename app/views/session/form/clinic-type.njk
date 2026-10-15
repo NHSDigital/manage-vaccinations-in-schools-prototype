@@ -1,0 +1,39 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.clinicType.title") %}
+
+{% block form %}
+  {% set audienceHtml %}
+    {{ input({
+      label: __("session.clinicType.audience.label") + __("form.optionalSuffix"),
+      hint: __("session.clinicType.audience.hint"),
+      decorate: "session.clinicAudience"
+    }) }}
+  {% endset %}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    items: [
+    {
+      label: ClinicType.Open,
+      hint: __("session.clinicType.hint.open")
+    },
+    {
+      label: ClinicType.Restricted,
+      hint: __("session.clinicType.hint.restricted"),
+      conditional: {
+        html: audienceHtml
+      }
+    },
+    {
+      label: ClinicType.DropIn,
+      hint: __("session.clinicType.hint.dropIn")
+    }],
+    decorate: "session.clinicType"
+  }) }}
+{% endblock %}

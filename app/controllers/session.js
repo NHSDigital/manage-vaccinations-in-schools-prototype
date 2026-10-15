@@ -856,7 +856,13 @@ export const sessionController = {
 
       const journey = {
         [`/`]: {},
-        [`/${session_id}/${type}/type`]: {},
+        [`/${session_id}/${type}/type`]: {
+          [`/${session_id}/${type}/programmes`]: {
+            data: 'session.type',
+            excludedValue: SessionType.Clinic
+          }
+        },
+        [`/${session_id}/${type}/clinic-type`]: {},
         [`/${session_id}/${type}/programmes`]: {
           [`/${session_id}/${type}/clinic`]: () => {
             if (session.type !== SessionType.Clinic) {

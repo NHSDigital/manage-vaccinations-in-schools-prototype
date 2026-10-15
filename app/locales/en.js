@@ -84,7 +84,8 @@ export const en = {
   },
   form: {
     confirm: 'Save changes',
-    continue: 'Continue'
+    continue: 'Continue',
+    optionalSuffix: ' (optional)'
   },
   error: {
     title: 'There is a problem'
@@ -3305,6 +3306,20 @@ export const en = {
     yearGroups: {
       label: 'Year groups',
       title: 'Which year groups do you want to invite to this session?'
+    },
+    clinicType: {
+      label: 'Access type',
+      title: 'Is this clinic session open, restricted invitation, or drop-in?',
+      hint: {
+        open: 'Any parent can see this session when they’re searching for an available clinic',
+        restricted:
+          'Only specific parents who you invite to this session can see it',
+        dropIn: 'Not available for booking'
+      },
+      audience: {
+        label: 'Audience',
+        hint: 'You will see this in Mavis when inviting parents to clinics'
+      }
     },
     clinic: {
       label: 'Clinic location',
