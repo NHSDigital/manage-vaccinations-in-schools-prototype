@@ -3335,12 +3335,12 @@ export const en = {
       hint: {
         open: 'Any parent can see this session when they’re searching for an available clinic',
         restricted:
-          'Only specific parents who you invite to this session can see it',
+          'Only specific parents who you send invitations to can see it',
         dropIn: 'Not available for booking'
       },
       audience: {
         label: 'Audience',
-        hint: 'You will see this in Mavis when inviting parents to clinics'
+        hint: 'You will see this in Mavis when inviting children to clinics'
       }
     },
     clinic: {
