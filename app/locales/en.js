@@ -3335,7 +3335,11 @@ export const en = {
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
-      hint: 'Parents will be able to book appointments between these times.',
+      hint: {
+        booking:
+          'Parents will be able to book appointments between these times.',
+        dropIn: 'This will help to determine the clinic’s capacity.'
+      },
       label: 'Vaccination periods',
       period: {
         title: 'Vaccination period %d',
