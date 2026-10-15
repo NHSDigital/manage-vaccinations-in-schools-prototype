@@ -11,7 +11,7 @@ import {
 } from '../enums.js'
 import { PatientSession, Programme, User, Vaccination } from '../models.js'
 import { getAccountVaccineMethods } from '../utils/account.js'
-import { today } from '../utils/date.js'
+import { formatDate, today } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
@@ -55,12 +55,21 @@ export const patientSessionController = {
     response.locals.options = {
       // Show outstanding vaccinations
       showOutstandingVaccinations: vaccinated && due.length > 1,
-      // Send a reminder to give consent
+      // Send a request to give consent (if none sent yet, or it failed)
+      canInvite:
+        patient.hasContactDetails &&
+        session.consentWindow === ConsentWindow.Open &&
+        !session.isActive &&
+        (patientProgramme.consent === ConsentStatus.NotDelivered ||
+          (patientProgramme.consent === ConsentStatus.NoResponse &&
+            patientProgramme.consentRequests.length === 0)),
+      // Send a reminder to give consent (if request sent but no response yet)
       canRemind:
         patient.hasContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
-        patientProgramme.consent === ConsentStatus.NoResponse,
+        patientProgramme.consent === ConsentStatus.NoResponse &&
+        patientProgramme.consentRequests.length > 0,
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
@@ -84,6 +93,19 @@ export const patientSessionController = {
         session.isActive,
       canRecordInjectionSite:
         patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal
+    }
+
+    // Extra info about the consent reminders sent so far
+    if (response.locals.options.canRemind) {
+      const { count, lastSentAt } = patientProgramme.consentRemindersSummary
+      response.locals.consentRemindersSent = count
+
+      if (count > 0) {
+        const formattedDate = formatDate(lastSentAt, {
+          dateStyle: 'long'
+        })
+        response.locals.lastConsentReminderDate = `Last reminder sent on ${formattedDate}`
+      }
     }
 
     // Vaccinator has permission to record using the alternative vaccine
@@ -331,7 +353,7 @@ export const patientSessionController = {
   remind(request, response) {
     const { account, back, patient, patientSession } = response.locals
 
-    patientSession.sendReminder(
+    patientSession.sendConsentReminder(
       {
         createdBy_uid: account.uid
       },

@@ -14,6 +14,9 @@
 {%- for item in params.links -%}
 {{- link(item.href, item.text) | safe if item -}}
 {%- endfor %}
+{%- if params.description %}
+<p><span class="nhsuk-u-secondary-text-colour">{{ params.description }}</span></p>
+{%- endif %}
 </div>
 {% endif %}
 {% endmacro %}

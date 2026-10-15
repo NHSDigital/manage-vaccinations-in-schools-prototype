@@ -2003,9 +2003,6 @@ export const en = {
       details:
         'A fuzzy search finds text that matches a term closely as well as exactly. For example, a fuzzy search can identify Jon Smith even if the term entered was John Smith.\n\nA wildcard searches for unknown parts of text. For example, if you only have part of a postcode: CV1, you can use a wildcard to search all records with a postcode that includes CV1.\n\nHistory refers to the child’s history, for example if they have changed their name or address.'
     },
-    lastReminderDate: {
-      label: 'Last reminder sent'
-    },
     count: '{count, plural, =0 {No children} one {1 child} other {# children}}',
     results: {
       summary:
@@ -2641,7 +2638,7 @@ export const en = {
   },
   remind: {
     new: {
-      title: 'Re-send consent request'
+      title: 'Send %s consent reminder'
     }
   },
   reply: {

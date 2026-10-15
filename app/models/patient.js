@@ -1,4 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { isAfter, isBefore } from 'date-fns'
 
 import activity from '../datasets/activity.js'
 import programmesData from '../datasets/programmes.js'
@@ -331,29 +332,6 @@ export class Patient extends Child {
   }
 
   /**
-   * Get reminders sent
-   *
-   * @returns {Array} Reminders sent
-   */
-  get reminders() {
-    return this.events
-      .map((event) => new AuditEvent(event))
-      .filter((event) => event.type === AuditEventType.Reminder)
-  }
-
-  /**
-   * Get date last reminders sent
-   *
-   * @returns {string|undefined} Date last reminders sent
-   */
-  get lastReminderDate() {
-    const lastReminder = this.reminders.at(-1)
-    if (lastReminder) {
-      return lastReminder.formatted.createdAt
-    }
-  }
-
-  /**
    * Get all notices
    *
    * @returns {Array<AuditEvent>} Notice events
@@ -622,10 +600,6 @@ export class Patient extends Child {
                 ?.name
             case 'archiveReason':
               return formatOther(this.archiveReasonOther, this.archiveReason)
-            case 'lastReminderDate':
-              return this.lastReminderDate
-                ? `Last reminder sent on ${this.lastReminderDate}`
-                : 'No reminders sent'
             case 'clinicProgramme_ids':
               return this.clinicProgramme_ids
                 .map((id) => this.programmes[id].programme.nameTag)
@@ -790,6 +764,10 @@ export class Patient extends Child {
    * @param {PatientSession} patientSession - PatientSession
    */
   addToSession(patientSession) {
+    if (this.patientSession_uuids.includes(patientSession.uuid)) {
+      return
+    }
+
     this.patientSession_uuids.push(patientSession.uuid)
 
     patientSession = PatientSession.findOne(patientSession.uuid, this.context)
@@ -874,6 +852,46 @@ export class Patient extends Child {
           programme_ids: patientSession.session.programme_ids,
           session_id: patientSession.session.id
         })
+      }
+    }
+  }
+
+  /**
+   * Send automatic reminder to contacts to give consent, if they haven’t
+   * responded by the time the session’s reminder is due
+   *
+   * @param {PatientSession} patientSession - Patient session
+   */
+  remindToGiveConsent(patientSession) {
+    const { programme_id, session } = patientSession
+    const remindAt = session.nextReminderDate
+
+    // Reminder not yet due, or would be due before consent was requested?
+    if (
+      !remindAt ||
+      isAfter(remindAt, today()) ||
+      isBefore(remindAt, session.consentOpenAt)
+    ) {
+      return
+    }
+
+    // Already had a response before the reminder was due?
+    const hasRepliedBeforeReminder = this.replies.some(
+      (reply) =>
+        reply.programme_id === programme_id &&
+        reply.academicYear === session.academicYear &&
+        isBefore(reply.createdAt, remindAt)
+    )
+    if (hasRepliedBeforeReminder) {
+      return
+    }
+
+    for (const contact of this.contacts) {
+      if (
+        contact.email &&
+        contact.emailStatus === NotifyEmailStatus.Delivered
+      ) {
+        patientSession.sendConsentReminder({ createdAt: remindAt }, contact)
       }
     }
   }

@@ -186,6 +186,61 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get messages sent for this patient programme using a given template
+   *
+   * @param {string} messageTemplate - Message template
+   * @returns {Array<AuditEvent>} Messages sent, oldest first
+   */
+  #messagesSent(messageTemplate) {
+    return this.patient.events
+      .map((event) => new AuditEvent(event, this.context))
+      .filter(
+        (auditEvent) =>
+          auditEvent.messageTemplate === messageTemplate &&
+          auditEvent.programme_ids?.includes(this.programme_id) &&
+          auditEvent.session?.academicYear === this.academicYear
+      )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+  }
+
+  /**
+   * Get consent requests sent for this patient programme
+   *
+   * @returns {Array<AuditEvent>} Consent requests, oldest first
+   */
+  get consentRequests() {
+    return this.#messagesSent('invite')
+  }
+
+  /**
+   * Get consent reminders sent for this patient programme, both automatic and
+   * manual (manual reminders have `createdBy_uid` set)
+   *
+   * @returns {Array<AuditEvent>} Consent reminders, oldest first
+   */
+  get consentReminders() {
+    return this.#messagesSent('invite-reminder')
+  }
+
+  /**
+   * Get summary details of the consent reminders sent out for this programme
+   *
+   * @returns {{count: number, lastSentAt: Date|undefined}} Number of consent
+   *   reminders sent, and date last reminder sent
+   */
+  get consentRemindersSummary() {
+    const { consentReminders } = this
+    const sentAtTimes = consentReminders.map(({ createdAt }) =>
+      createdAt.valueOf()
+    )
+
+    return {
+      count: new Set(sentAtTimes).size,
+      lastSentAt: consentReminders.at(-1)?.createdAt
+    }
+  }
+
+  /**
    * Get triage notes
    *
    * @returns {Array<AuditEvent>} Audit events

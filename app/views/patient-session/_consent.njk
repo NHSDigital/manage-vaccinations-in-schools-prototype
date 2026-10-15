@@ -10,10 +10,6 @@
   {# Description #}
   {% if not patientProgramme.isVaccinated %}
     {{ patientProgramme.consentDescription | nhsukMarkdown }}
-
-    {% if patientProgramme.patient.lastReminderDate %}
-      {{ patientProgramme.patient.formatted.lastReminderDate | nhsukMarkdown }}
-    {% endif %}
   {% endif %}
 
   {# Actions #}
@@ -31,22 +27,23 @@
     {{ appButtonGroup({
       buttons: [
         {
-          text: __("remind.new.title"),
-          variant: "secondary",
-          attributes: {
-            formaction: patientSession.uri + "/new/remind",
-            formmethod: "post"
-          }
-        } if options.canRemind,
-        {
           text: __("patientSession.invite.label"),
           variant: "secondary",
           attributes: {
             formaction: patientSession.uri + "/new/invite",
             formmethod: "post"
           }
-        }
-      ]
+        } if options.canInvite,
+        {
+          text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
+          variant: "secondary",
+          attributes: {
+            formaction: patientSession.uri + "/new/remind",
+            formmethod: "post"
+          }
+        } if options.canRemind
+      ],
+      description: lastConsentReminderDate
     }) }}
   {% endif %}
 
