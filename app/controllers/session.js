@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import {
   AcademicYear,
+  ClinicType,
   InstructionStatus,
   PatientStatus,
   ProgrammeType,
@@ -72,7 +73,8 @@ export const sessionController = {
           ...(session.unmatchedConsents.length && { icon: 'alert' }),
           current: view === undefined
         },
-        ...(session.type === SessionType.Clinic
+        ...(session.type === SessionType.Clinic &&
+        session.clinicType !== ClinicType.DropIn
           ? [
               {
                 text: __('session.appointments.label'),
