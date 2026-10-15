@@ -377,12 +377,12 @@ export function formatContact(contact, shouldIncludeContactDetails = true) {
 
   // Add telephone number, if provided
   if (shouldIncludeContactDetails && contact.tel) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.tel}</span>`
+    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.formatted.tel}</span>`
   }
 
   // Add email address, if provided
   if (shouldIncludeContactDetails && contact.email) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.email}</span>`
+    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.formatted.email}</span>`
   }
 
   return string

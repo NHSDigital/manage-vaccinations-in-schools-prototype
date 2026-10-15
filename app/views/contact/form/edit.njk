@@ -2,6 +2,7 @@
 
 {% set confirmButtonText = __("contact." + type + ".confirm") %}
 {% set title = __("contact." + type + ".title") %}
+{% set isSensitive = contact.patient.isSensitive %}
 
 {% block form %}
   {{ heading({
@@ -15,40 +16,66 @@
     decorate: "contact.fullName"
   }) }}
 
+  {%- set fosterCarerHtml = radios({
+    fieldset: {
+      legend: __("contact.hasParentalResponsibility.delegatedLabel")
+    },
+    hint: __("contact.hasParentalResponsibility.hint"),
+    items: getBooleanItems(),
+    decorate: "contact.hasParentalResponsibility"
+  }) %}
+
+  {%- set guardianHtml = radios({
+    fieldset: {
+      legend: __("contact.hasParentalResponsibility.label")
+    },
+    hint: __("contact.hasParentalResponsibility.hint"),
+    items: getBooleanItems(),
+    decorate: "contact.hasParentalResponsibility"
+  }) %}
+
+  {%- set otherHtml = input({
+    label: __("contact.relationshipOther.label"),
+    decorate: "contact.relationshipOther"
+  }) + radios({
+    fieldset: {
+      legend: __("contact.hasParentalResponsibility.label")
+    },
+    hint: __("contact.hasParentalResponsibility.hint"),
+    items: getBooleanItems(),
+    decorate: "contact.hasParentalResponsibility"
+  }) %}
+
+  {# Add conditional html for ‘Foster carer’ option #}
+  {% set items = injectConditionalHtml(parentalRelationshipItems, RelationshipType.Fosterer, fosterCarerHtml) %}
+
+  {# Add conditional html for ‘Guardian’ option #}
+  {% set items = injectConditionalHtml(items, RelationshipType.Guardian, guardianHtml) %}
+
+  {# Add conditional html for ‘Other’ option #}
+  {% set items = injectConditionalHtml(items, RelationshipType.Other, otherHtml) %}
+
   {{ radios({
     fieldset: {
       legend: __("contact.relationship.label")
     },
-    items: [
-      { label: RelationshipType.Mum },
-      { label: RelationshipType.Dad },
-      { label: RelationshipType.Guardian },
-      {
-        label: RelationshipType.Other,
-        conditional: {
-          html: input({
-            label: __("contact.relationshipOther.label"),
-            decorate: "contact.relationshipOther"
-          })
-        }
-      }
-    ],
+    items: items,
     decorate: "contact.relationship"
   }) }}
 
   {{ input({
     label: __("contact.email.label"),
     decorate: "contact.email"
-  }) }}
+  }) if not isSensitive }}
 
   {{ input({
     label: __("contact.tel.label"),
     decorate: "contact.tel"
-  }) }}
+  }) if not isSensitive }}
 
   {{ radios({
     fieldset: {
-      legend: __("contact.hasCommunicationNeeds.label")
+      legend: __("contact.hasCommunicationNeeds.title")
     },
     items: [
       {
@@ -67,5 +94,5 @@
       }
     ],
     decorate: "contact.hasCommunicationNeeds"
-  }) }}
+  }) if not isSensitive }}
 {% endblock %}

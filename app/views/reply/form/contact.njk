@@ -5,6 +5,7 @@
 {% else %}
   {% set title = __("reply.contact.title.new") %}
 {% endif %}
+{% set showContactDetails = true if not patientProgramme.patient.isSensitive else false %}
 
 {% block form %}
   {{ heading({
@@ -69,12 +70,12 @@
   {{ input({
     label: __("contact.email.label"),
     decorate: "reply.contact.email"
-  }) }}
+  }) if showContactDetails }}
 
   {{ input({
     label: __("contact.tel.label") + " (optional)",
     decorate: "reply.contact.tel"
-  }) }}
+  }) if showContactDetails }}
 
   {{ radios({
     fieldset: {
@@ -97,5 +98,5 @@
       }
     ],
     decorate: "reply.contact.hasCommunicationNeeds"
-  }) }}
+  }) if showContactDetails }}
 {% endblock %}

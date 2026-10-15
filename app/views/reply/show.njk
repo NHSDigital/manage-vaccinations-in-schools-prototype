@@ -1,6 +1,7 @@
 {% extends "_layouts/default.njk" %}
 
 {% set title = __("reply.show.title", reply.fullName) %}
+{% set showContactDetails = true if not reply.patient.isSensitive else false %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -90,10 +91,10 @@
         },
         hasParentalResponsibility: {},
         email: {
-          href: reply.uri + "/edit/contact"
+          href: reply.uri + "/edit/contact" if showContactDetails
         },
         tel: {
-          href: reply.uri + "/edit/contact"
+          href: reply.uri + "/edit/contact" if showContactDetails
         },
         canSms: {},
         communicationNeeds: {}

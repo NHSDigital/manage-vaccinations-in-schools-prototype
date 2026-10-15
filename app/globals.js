@@ -9,7 +9,7 @@ import {
   PatientRefusedStatus
 } from './enums.js'
 import { en } from './locales/en.js'
-import { Location, User } from './models.js'
+import { Contact, Location, User } from './models.js'
 import { getSessionActivityCount } from './utils/session.js'
 import {
   camelToKebabCase,
@@ -114,9 +114,12 @@ export default () => {
 
     for (const auditEvent of Object.values(auditEvents)) {
       const details = []
+      const contact =
+        auditEvent.messageRecipient &&
+        new Contact(auditEvent.messageRecipient, this.ctx.data)
 
       // Show email message content if recipient given with email address
-      if (auditEvent.messageRecipient?.email) {
+      if (contact?.email) {
         const subject = nunjucksEnv.renderString(
           en.emails.consent[auditEvent.messageTemplate].name,
           auditEvent.messageData
@@ -132,20 +135,17 @@ export default () => {
 
         details.push({
           classes: 'app-details--notify-message',
-          summary: `Email sent to ${auditEvent.messageRecipient?.email}`,
+          summary: `Email sent to ${contact?.formatted.email}`,
           html: formatMarkdown(`### ${subject}\n\n${body}`)
         })
       }
 
       // Show email message content if recipient given with telephone number
       // and text message content provided
-      if (
-        auditEvent.messageRecipient?.tel &&
-        en.texts.consent[auditEvent.messageTemplate]?.text
-      ) {
+      if (contact?.tel && en.texts.consent[auditEvent.messageTemplate]?.text) {
         details.push({
           classes: 'app-details--notify-message',
-          summary: `Message sent to ${auditEvent.messageRecipient?.tel}`,
+          summary: `Message sent to ${contact?.formatted.tel}`,
           html: formatMarkdown(
             nunjucksEnv.renderString(
               `${en.texts.consent[auditEvent.messageTemplate].text}`,

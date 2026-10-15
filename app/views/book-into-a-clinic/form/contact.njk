@@ -9,6 +9,7 @@
     {% set title = __("clinicBooking.contact.title.team.existing") %}
   {% endif %}
 {% endif %}
+{% set showContactDetails = true if not patient.isSensitive else false %}
 
 {% block form %}
   {% call fieldset({
@@ -30,13 +31,13 @@
       label: __("clinicBooking.contact.email.label") + ("" if isParentFacing else " (optional)"),
       hint: __("clinicBooking.contact.email.hint") if isParentFacing,
       decorate: "booking.contact.email"
-    }) }}
+    }) if showContactDetails }}
 
     {{ input({
       label: __("clinicBooking.contact.tel.label") + " (optional)",
       hint: __("clinicBooking.contact.tel.hint") if isParentFacing,
       decorate: "booking.contact.tel"
-    }) }}
+    }) if showContactDetails }}
 
     {{ checkboxes({
       items: [
@@ -46,7 +47,7 @@
         }
       ],
       decorate: "booking.contact.canSms"
-    }) }}
+    }) if showContactDetails }}
 
   {% endcall %}
 {% endblock %}

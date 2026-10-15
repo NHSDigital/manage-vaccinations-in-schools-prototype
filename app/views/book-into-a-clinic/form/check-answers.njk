@@ -4,6 +4,7 @@
 {% set confirmButtonText = __("clinicBooking.check-answers.confirm." + audience) %}
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
 {% set structuredNeeds = (additionalNeedsFeatureFlag === AdditionalNeeds.Structured) %}
+{% set canEditContactDetails = true if isParentFacing or not patient.isSensitive else false %}
 
 {% block form %}
   {{ heading({
@@ -102,16 +103,16 @@
         value: appointment.parentHasParentalResponsibility
       },
       email: {
-        href: "contact"
+        href: "contact" if canEditContactDetails
       },
       tel: {
-        href: "contact"
+        href: "contact" if canEditContactDetails
       },
       canSms: {
-        href: "contact"
+        href: "contact" if canEditContactDetails
       },
       communicationNeeds: {
-        href: "communication-needs"
+        href: "communication-needs" if canEditContactDetails
       }
     })
   }) }}

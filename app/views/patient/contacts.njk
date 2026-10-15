@@ -34,6 +34,13 @@
     href: "/contacts/new?patient_uuid=" + patient.uuid
   }) }}
 
+  {# Note: this isn't guaranteed to work if the patient has multiple notices but should be fine for canned data #}
+  {{ appStatus({
+    text: patient.notice.name,
+    icon: "warning",
+    colour: "blue"
+  }) if patient.isSensitive }}
+
   {% for contact in patient.contacts %}
     {{ summaryList({
       card: {
