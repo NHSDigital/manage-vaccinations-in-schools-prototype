@@ -3257,6 +3257,12 @@ export const en = {
         available: {
           label: 'Available slots'
         },
+        capacity: {
+          label: 'Maximum drop-ins'
+        },
+        dropInLength: {
+          label: 'Minutes per child'
+        },
         programmeRequests: {
           label: '%s appointments'
         },
@@ -3373,7 +3379,7 @@ export const en = {
     appointmentLengths: {
       label: {
         booking: 'Appointment length',
-        dropIn: 'Vaccination length'
+        dropIn: 'Minutes per child'
       },
       title: {
         booking: 'How long are your appointments?',
@@ -3407,7 +3413,10 @@ export const en = {
       suffix: 'minutes'
     },
     totalSlots: {
-      label: 'Number of slots'
+      label: {
+        booking: 'Number of slots',
+        dropIn: 'Maximum drop-ins'
+      }
     },
     appointments: {
       label: 'Appointments'
