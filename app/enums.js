@@ -132,6 +132,16 @@ export const ClinicBookingJourneyType = {
  * @readonly
  * @enum {string}
  */
+export const ClinicType = {
+  Open: 'Open',
+  Restricted: 'Restricted invitation',
+  DropIn: 'Drop-in'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentStatus = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',

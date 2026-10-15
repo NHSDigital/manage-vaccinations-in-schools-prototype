@@ -76,6 +76,8 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasRegistration] - Session has registration?
  *
  *   Clinics only
+ * @property {ClinicType} [clinicType] - open, restricted or drop-in?
+ * @property {string} clinicAudience - for restricted-invite clinics, who's it aimed at? (SAIS-facing)
  * @property {boolean} [canVaccinateForOtherProgrammes] - allow programmes beyond those targeted to be administered?
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [slotLength] - the default length of an appointment, in minutes; for flu-only clinics, this is the nasal spray length
@@ -150,6 +152,8 @@ export class Session extends BaseModel {
     this.register = options?.register || {}
 
     if (this.type === SessionType.Clinic) {
+      this.clinicType = options?.clinicType
+      this.clinicAudience = options?.clinicAudience
       this.canVaccinateForOtherProgrammes = stringToBoolean(
         options?.canVaccinateForOtherProgrammes
       )
