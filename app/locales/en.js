@@ -3338,7 +3338,7 @@ export const en = {
       hint: {
         booking:
           'Parents will be able to book appointments between these times.',
-        dropIn: 'This will help to determine the clinic’s capacity.'
+        dropIn: 'This is to help calculate how many vaccinations are possible.'
       },
       label: 'Vaccination periods',
       period: {
