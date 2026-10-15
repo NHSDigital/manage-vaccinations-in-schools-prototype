@@ -19,7 +19,7 @@
   {% else %}
     <p class="nhsuk-body">
       {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
-        complete: summary.validDoses.length,
+        complete: patientProgramme.dosesNeeded if designVariant == "A" else summary.validDoses.length,
         needed: patientProgramme.dosesNeeded
       }) }}
     </p>

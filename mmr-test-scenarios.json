@@ -695,7 +695,8 @@
         "page": {
           "vaccinationRecordCard": {
             "statusNotes": "As case 7",
-            "dosesComplete": "0 of 2 doses complete",
+            "dosesComplete": "2 of 2 doses complete",
+            "dosesCompleteNote": "Shows the doses needed as complete, to match the filled rows; the dose count from the classifier is still 0",
             "doseRows": [
               {
                 "dose": "Dose 1",

@@ -344,7 +344,7 @@ programme status, status note and doses remaining are as case 7.
 ### Page (variant A: filled dose rows)
 
 - **Status note:** as case 7
-- **Doses complete:** 0 of 2 doses complete, as case 7
+- **Doses complete:** 2 of 2 doses complete, to match the filled rows (the classifier still counts 0 valid doses)
 - **Dose rows:** both filled, with no Eligible from on either row
 
 | Dose   | Vaccination date | Age     | Source                    |
