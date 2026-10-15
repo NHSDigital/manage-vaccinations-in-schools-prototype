@@ -56,6 +56,7 @@
       hasPsdProtocol: {}
     } %}
     {% if session.type === SessionType.Clinic %}
+      {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
       {% set sessionDetailsRows = {
           location: {},
           status: {},
@@ -63,7 +64,9 @@
           date: {},
           vaccinationPeriods: {},
           vaccinators: {},
-          appointmentLengths: {},
+          appointmentLengths: {
+            label: __("session.appointmentLengths.label." + appointmentLengthKey)
+          },
           hasRegistration: {}
       } %}
     {% endif %}

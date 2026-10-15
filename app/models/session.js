@@ -6,6 +6,7 @@ import _ from 'lodash'
 import programmesData from '../datasets/programmes.js'
 import {
   ClinicAppointmentStatus,
+  ClinicType,
   ConsentStatus,
   ConsentWindow,
   InstructionStatus,
@@ -499,6 +500,11 @@ export class Session extends BaseModel {
    * @returns {boolean} - true if we can differentiate short and long appointments, or false otherwise
    */
   get canBeSetUpForLongerAppointments() {
+    // No such thing as appointments in drop-in clinics
+    if (this.clinicType === ClinicType.DropIn) {
+      return false
+    }
+
     // Appointments in flu-only clinics can be nasal or IM (short or long)
     if (this.isFluOnlyClinic) {
       return true

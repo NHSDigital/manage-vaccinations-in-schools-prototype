@@ -1,7 +1,8 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("session.appointmentLengths.title") %}
-{% set clinicTypeKey = "flu" if session.isFluOnlyClinic else "other" %}
+{% set clinicTypeKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
+{% set title = __("session.appointmentLengths.title." + clinicTypeKey) %}
+{% set programmeTypeKey = "flu" if session.isFluOnlyClinic and session.clinicType !== ClinicType.DropIn else "other" %}
 
 {% block form %}
   {% call fieldset({
@@ -13,7 +14,7 @@
     {# Ask about the length of the shortest appointment possible, and use as the slot length #}
     {{ input({
       label: {
-        text: __("session.appointmentLengths." + clinicTypeKey + ".short.label"),
+        text: __("session.appointmentLengths." + programmeTypeKey + ".short.label"),
         size: "m"
       },
       suffix: __("session.appointmentLengths.suffix"),
@@ -29,17 +30,17 @@
         {{ radios({
           fieldset: {
             legend: {
-              text: __("session.appointmentLengths." + clinicTypeKey + ".long.label"),
+              text: __("session.appointmentLengths." + programmeTypeKey + ".long.label"),
               size: "m"
             }
           },
           items: [
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.yes"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.yes"),
             value: true
           },
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.no"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.no"),
             value: false
           }
           ],
@@ -50,29 +51,29 @@
         {{ radios({
           fieldset: {
             legend: {
-              text: __("session.appointmentLengths." + clinicTypeKey + ".long.label"),
+              text: __("session.appointmentLengths." + programmeTypeKey + ".long.label"),
               size: "m"
             }
           },
           items: [
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.threeplus"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.threeplus"),
             value: 3
           } if session.maximumNumberOfBookableInjections > 3,
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.three"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.three"),
             value: 3
           } if session.maximumNumberOfBookableInjections === 3,
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.twoplus"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.twoplus"),
             value: 2
           } if session.maximumNumberOfBookableInjections > 2,
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.yes"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.yes"),
             value: 2
           } if session.maximumNumberOfBookableInjections === 2,
           {
-            text: __("session.appointmentLengths." + clinicTypeKey + ".long.no"),
+            text: __("session.appointmentLengths." + programmeTypeKey + ".long.no"),
             value: 0
           }
           ],
