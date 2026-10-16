@@ -1,8 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("patient.bulkInviteToClinic.title") %}
-{% set confirmButtonText = __("patient.bulkInviteToClinic.confirm") %}
-{% set formAction = "invite-to-clinic" + query | asQueryString %}
 
 {% set checkboxItems = [] %}
 {% for programme in clinicReadyProgrammes %}
@@ -57,7 +55,7 @@
         }
       },
       items: checkboxItems,
-      decorate: "clinicProgramme_ids"
+      decorate: "clinicInvitation.programme_ids"
     }) }}
 
     {# Warn about inviting to any programmes that have no scheduled clinics #}
@@ -92,7 +90,7 @@
     {% endif %}
 
     {# Fake the user's selection of a checkbox for this one programme #}
-    <input type="hidden" id="clinicProgramme_ids" name="clinicProgramme_ids" value="{{clinicReadyProgrammes[0].id}}" />
+    <input type="hidden" id="clinicInvitation-programme_ids" name="[clinicInvitation][programme_ids]" value="{{clinicReadyProgrammes[0].id}}" />
   {% endif %}
 {% endblock %}
 
@@ -109,7 +107,7 @@
       links: [
         {
           text: __("patient.bulkInviteToClinic.cancel"),
-          href: "/patients" + query | asQueryString
+          href: "/patients" + data.clinicInvitationQuery | asQueryString
         }
       ]
     }) }}
