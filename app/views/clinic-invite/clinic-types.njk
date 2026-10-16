@@ -1,0 +1,33 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicInvitation.clinicTypes.title") %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        caption: inviteCaption,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: [
+    {
+      text: __("clinicInvitation.clinicTypes.open.label"),
+      value: ClinicType.Open,
+      hint: __mf("clinicInvitation.clinicTypes.open.hint", {
+        count: openClinicCount,
+        programmeNames: programmeNames
+      })
+    },
+    {
+      text: __("clinicInvitation.clinicTypes.restricted.label"),
+      value: ClinicType.Restricted,
+      hint: __mf("clinicInvitation.clinicTypes.restricted.hint", {
+        count: restrictedClinicCount,
+        programmeNames: programmeNames
+      })
+    }],
+    decorate: "clinicInvitation.clinicTypes"
+  }) }}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("clinicInvitation.checkAnswers.confirm") %}
+{% set title = __("clinicInvitation.checkAnswers.title") %}
+
+{% block form %}
+  {{ heading({
+    caption: inviteCaption,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __("clinicInvitation.checkAnswers.intro") | nhsukMarkdown }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("clinicInvitation.checkAnswers.summaryTitle"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(clinicInvitation, {
+      programmes: {
+        href: "programmes"
+      },
+      clinicTypes: {
+        href: "clinic-types" if areRestrictedClinicsAvailable
+      },
+      restrictedClinics: {
+        href: "restricted-clinics"
+      } if ClinicType.Restricted in clinicInvitation.clinicTypes else none
+    })
+  }) }}
+{% endblock %}
