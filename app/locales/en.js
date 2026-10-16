@@ -358,6 +358,33 @@ export const en = {
         'Clinic appointment made by {{appointment.contact.fullName}} archived'
     }
   },
+  clinicInvitation: {
+    programmes: {
+      label: 'Programmes'
+    },
+    clinicTypes: {
+      title: 'Which clinic types do you want to offer?',
+      label: 'Clinic types',
+      open: {
+        label: 'All open clinics',
+        hint: '{count, plural, =0 {No open clinics are} one {1 open clinic is} other {{count} open clinics are}} scheduled for {programmeNames}'
+      },
+      restricted: {
+        label: 'Specific restricted invitation clinics',
+        hint: '{count, plural, =0 {No restricted invitation clinics are} one {1 restricted invitation clinic is} other {{count} restricted invitation clinics are}} scheduled for {programmeNames}'
+      }
+    },
+    restrictedClinics: {
+      title: 'Which restricted invitation clinics do you want to offer?',
+      label: 'Restricted invitation clinics'
+    },
+    checkAnswers: {
+      title: 'Check and confirm the invitation details',
+      intro: 'Check the invitation details before sending.',
+      summaryTitle: 'Invitation details',
+      confirm: 'Send clinic invitations'
+    }
+  },
   clinicAppointment: {
     label: 'Appointment details',
     show: {
