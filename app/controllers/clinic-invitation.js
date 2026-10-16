@@ -25,15 +25,20 @@ export const clinicInvitationController = {
    */
   new(request, response) {
     const { data } = request.session
+    const { account } = response.locals
 
-    // Start a new invitation, remembering the filters to return to afterwards
-    data.clinicInvitation = {}
+    // Start a new draft invitation, remembering the filters to return to afterwards
+    const clinicInvitation = ClinicInvitation.create(
+      { createdBy_uid: account?.uid },
+      data.wizard
+    )
+    delete data.clinicInvitation
     data.clinicInvitationQuery = request.query
 
     return saveAndRedirect(
       request,
       response,
-      `${request.baseUrl}/new/programmes`
+      `${request.baseUrl}/${clinicInvitation.id}/new/programmes`
     )
   },
 
@@ -41,28 +46,37 @@ export const clinicInvitationController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
-    const { view } = request.params
+    const { invite_id, view } = request.params
     const { data } = request.session
     const query = data.clinicInvitationQuery || {}
 
-    const clinicInvitation = new ClinicInvitation(data.clinicInvitation, data)
+    // Drafts don't survive a restart of the prototype, so start again if it's gone
+    const draft = ClinicInvitation.findOne(invite_id, data.wizard)
+    if (!draft) {
+      return response.redirect(`/patients${formatQueryString(query)}`)
+    }
+    response.locals.clinicInvitation = new ClinicInvitation(draft, data)
 
+    // Forks are evaluated before `updateForm` saves the posted answers to the draft,
+    // so they use the answers auto-stored in `data.clinicInvitation`
     const journey = {
       [`/`]: {},
-      [`/new/programmes`]: {
+      [`/${invite_id}/new/programmes`]: {
         // Skip the clinic type questions if there are no restricted clinics to offer
-        [`/new/check-answers`]: () =>
-          getRestrictedAccessClinics(clinicInvitation.programme_ids, data)
-            .length === 0
+        [`/${invite_id}/new/check-answers`]: () =>
+          getRestrictedAccessClinics(
+            stringToArray(data.clinicInvitation?.programme_ids),
+            data
+          ).length === 0
       },
-      [`/new/clinic-types`]: {
-        [`/new/check-answers`]: {
+      [`/${invite_id}/new/clinic-types`]: {
+        [`/${invite_id}/new/check-answers`]: {
           data: 'clinicInvitation.clinicTypes',
           excludedValue: ClinicType.Restricted
         }
       },
-      [`/new/restricted-clinics`]: {},
-      [`/new/check-answers`]: {}
+      [`/${invite_id}/new/restricted-clinics`]: {},
+      [`/${invite_id}/new/check-answers`]: {}
     }
 
     response.locals.paths = {
@@ -89,11 +103,9 @@ export const clinicInvitationController = {
         { count: stringToArray(data.clinicPatient_ids).length }
       )
 
-      const clinicInvitation = new ClinicInvitation(data.clinicInvitation, data)
-      const { programme_ids } = clinicInvitation
+      const { programme_ids } = response.locals.clinicInvitation
       const restrictedClinics = getRestrictedAccessClinics(programme_ids, data)
 
-      response.locals.clinicInvitation = clinicInvitation
       response.locals.areRestrictedClinicsAvailable =
         restrictedClinics.length > 0
       response.locals.openClinicCount = getOpenAccessClinics(
@@ -206,11 +218,20 @@ export const clinicInvitationController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
+    const { invite_id } = request.params
     const { data } = request.session
     const { paths } = response.locals
 
+    // Apply the posted answers to the draft
+    const clinicInvitation = new ClinicInvitation(
+      {
+        ...response.locals.clinicInvitation,
+        ...request.body.clinicInvitation
+      },
+      data
+    )
+
     // Remove answers made stale by a change to an earlier answer
-    const clinicInvitation = new ClinicInvitation(data.clinicInvitation, data)
     const availableClinic_ids = getRestrictedAccessClinics(
       clinicInvitation.programme_ids,
       data
@@ -228,11 +249,18 @@ export const clinicInvitationController = {
       ? restrictedClinic_ids.filter((id) => availableClinic_ids.includes(id))
       : []
 
-    data.clinicInvitation = {
-      ...data.clinicInvitation,
-      clinicTypes,
-      restrictedClinic_ids
-    }
+    ClinicInvitation.update(
+      invite_id,
+      {
+        programme_ids: clinicInvitation.programme_ids,
+        clinicTypes,
+        restrictedClinic_ids
+      },
+      data.wizard
+    )
+
+    // Pre-fill answers from the draft rather than from auto-stored session data
+    delete data.clinicInvitation
 
     return saveAndRedirect(request, response, paths.next)
   },
@@ -241,13 +269,16 @@ export const clinicInvitationController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   update(request, response) {
+    const { invite_id } = request.params
     const { data } = request.session
-    const { __mf, account } = response.locals
+    const { __mf } = response.locals
 
+    // Move the draft invitation out of the wizard
     const clinicInvitation = ClinicInvitation.create(
-      { ...data.clinicInvitation, createdBy_uid: account?.uid },
+      response.locals.clinicInvitation,
       data
     )
+    ClinicInvitation.delete(invite_id, data.wizard)
 
     const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
     const clinicProgramme_ids = clinicInvitation.programme_ids

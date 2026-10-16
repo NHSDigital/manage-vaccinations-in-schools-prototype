@@ -2,6 +2,7 @@ import 'express-flash'
 import 'express-session'
 import {
   ClinicBooking,
+  ClinicInvitation,
   Consent,
   PatientSession,
   Reply,
@@ -53,6 +54,7 @@ interface ApplicationData {
 
 interface ApplicationLocals extends ApplicationData {
   bookingPhoneNumber?: string
+  clinicInvitation?: ClinicInvitation
   currentPage?: string
   session?: Session
 }
