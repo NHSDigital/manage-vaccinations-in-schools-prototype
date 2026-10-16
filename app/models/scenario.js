@@ -40,3 +40,7 @@ export class Scenario extends BaseModel {
     this.links = options?.links || []
   }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */
