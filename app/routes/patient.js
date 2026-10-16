@@ -7,9 +7,6 @@ const router = express.Router({ strict: true, mergeParams: true })
 router.get('/', patient.readAll, patient.list)
 router.post('/', patient.filterList)
 
-router.get('/invite-to-clinic', patient.readAll, patient.showInviteManyToClinic)
-router.post('/invite-to-clinic', patient.inviteManyToClinic)
-
 router.param('patient_uuid', patient.read)
 
 router.get('/:patient_uuid/edit', patient.edit)
