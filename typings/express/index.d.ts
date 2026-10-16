@@ -9,6 +9,7 @@ import {
   Team,
   User
 } from '../../app/models.js'
+import type { ClinicInvitationOptions } from '../../app/models/clinic-invitation.js'
 
 declare module 'express-serve-static-core' {
   interface Locals extends ApplicationLocals {
@@ -27,6 +28,8 @@ interface ApplicationData {
   booking?: ClinicBooking
   cancellation?: Record<string, any>
   clinicAdvert?: Record<string, any>
+  clinicInvitation?: ClinicInvitationOptions
+  clinicInvitationQuery?: Record<string, any>
   programmesToOffer?: Record<string, any>
   clinicPatient_ids?: string | string[]
   consent?: Consent
