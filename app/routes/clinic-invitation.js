@@ -7,9 +7,9 @@ const router = express.Router({ strict: true, mergeParams: true })
 
 router.get('/', patient.readAll, clinicInvitation.new)
 
-router.all('/new/:view', clinicInvitation.readForm)
-router.get('/new/:view', clinicInvitation.showForm)
-router.post('/new/check-answers', clinicInvitation.update)
-router.post('/new/:view', clinicInvitation.updateForm)
+router.all('/:invite_id/new/:view', clinicInvitation.readForm)
+router.get('/:invite_id/new/:view', clinicInvitation.showForm)
+router.post('/:invite_id/new/check-answers', clinicInvitation.update)
+router.post('/:invite_id/new/:view', clinicInvitation.updateForm)
 
 export const clinicInvitationRoutes = router
