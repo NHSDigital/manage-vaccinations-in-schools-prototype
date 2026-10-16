@@ -1,11 +1,15 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
-import { PatientClinicStatus, SessionStatus, SessionType } from '../enums.js'
+import {
+  ClinicType,
+  PatientClinicStatus,
+  SessionStatus,
+  SessionType
+} from '../enums.js'
 import { ClinicInvitation, Patient, Programme, Session } from '../models.js'
 import {
-  getClinicInvitationJourney,
-  setClinicInvitationLocals,
-  updateClinicInvitation
+  getOpenAccessClinics,
+  getRestrictedAccessClinics
 } from '../utils/clinic-invitation.js'
 import {
   ConjunctionType,
@@ -39,11 +43,26 @@ export const clinicInvitationController = {
   readForm(request, response, next) {
     const { view } = request.params
     const { data } = request.session
-    const query = /** @type {ParsedQs} */ (data.clinicInvitationQuery) || {}
+    const query = data.clinicInvitationQuery || {}
+
+    const clinicInvitation = new ClinicInvitation(data.clinicInvitation, data)
 
     const journey = {
       [`/`]: {},
-      ...getClinicInvitationJourney('/new', data)
+      [`/new/programmes`]: {
+        // Skip the clinic type questions if there are no restricted clinics to offer
+        [`/new/check-answers`]: () =>
+          getRestrictedAccessClinics(clinicInvitation.programme_ids, data)
+            .length === 0
+      },
+      [`/new/clinic-types`]: {
+        [`/new/check-answers`]: {
+          data: 'clinicInvitation.clinicTypes',
+          excludedValue: ClinicType.Restricted
+        }
+      },
+      [`/new/restricted-clinics`]: {},
+      [`/new/check-answers`]: {}
     }
 
     response.locals.paths = {
@@ -69,7 +88,39 @@ export const clinicInvitationController = {
         'patient.bulkInviteToClinic.caption',
         { count: stringToArray(data.clinicPatient_ids).length }
       )
-      setClinicInvitationLocals(response, data)
+
+      const clinicInvitation = new ClinicInvitation(data.clinicInvitation, data)
+      const { programme_ids } = clinicInvitation
+      const restrictedClinics = getRestrictedAccessClinics(programme_ids, data)
+
+      response.locals.clinicInvitation = clinicInvitation
+      response.locals.areRestrictedClinicsAvailable =
+        restrictedClinics.length > 0
+      response.locals.openClinicCount = getOpenAccessClinics(
+        programme_ids,
+        data
+      ).length
+      response.locals.restrictedClinicCount = restrictedClinics.length
+      response.locals.programmeNames = programmeNamesListForSentence(
+        programme_ids,
+        false,
+        ConjunctionType.or,
+        data
+      )
+      response.locals.restrictedClinicItems = restrictedClinics.map(
+        (session) => ({
+          text: session.clinic?.formatted.location,
+          value: session.id,
+          hint: {
+            html: [
+              `Date: ${session.formatted.dateShort}`,
+              session.clinicAudience && `Audience: ${session.clinicAudience}`
+            ]
+              .filter(Boolean)
+              .join('<br>')
+          }
+        })
+      )
 
       return response.render(`clinic-invite/${view}`)
     }
@@ -158,7 +209,30 @@ export const clinicInvitationController = {
     const { data } = request.session
     const { paths } = response.locals
 
-    updateClinicInvitation(data)
+    // Remove answers made stale by a change to an earlier answer
+    const clinicInvitation = new ClinicInvitation(data.clinicInvitation, data)
+    const availableClinic_ids = getRestrictedAccessClinics(
+      clinicInvitation.programme_ids,
+      data
+    ).map(({ id }) => id)
+
+    let { clinicTypes, restrictedClinic_ids } = clinicInvitation
+
+    // Can only offer open clinics if no restricted clinics are available
+    if (availableClinic_ids.length === 0) {
+      clinicTypes = [ClinicType.Open]
+    }
+
+    // Only keep restricted clinics that are offered and that serve the programmes
+    restrictedClinic_ids = clinicTypes.includes(ClinicType.Restricted)
+      ? restrictedClinic_ids.filter((id) => availableClinic_ids.includes(id))
+      : []
+
+    data.clinicInvitation = {
+      ...data.clinicInvitation,
+      clinicTypes,
+      restrictedClinic_ids
+    }
 
     return saveAndRedirect(request, response, paths.next)
   },
@@ -170,9 +244,8 @@ export const clinicInvitationController = {
     const { data } = request.session
     const { __mf, account } = response.locals
 
-    const query = /** @type {ParsedQs} */ (data.clinicInvitation)
     const clinicInvitation = ClinicInvitation.create(
-      { ...query, createdBy_uid: account?.uid },
+      { ...data.clinicInvitation, createdBy_uid: account?.uid },
       data
     )
 
@@ -222,6 +295,8 @@ export const clinicInvitationController = {
     const messageType = invitedChildrenCount > 0 ? 'success' : 'message'
     request.flash(messageType, details.join('<br>'))
 
+    const query = data.clinicInvitationQuery
+
     // Reset the cohort and invitation
     delete data.clinicPatient_ids
     delete data.clinicInvitation
@@ -235,5 +310,4 @@ export const clinicInvitationController = {
 
 /**
  * @import { RequestHandler } from 'express'
- * @import { ParsedQs } from 'qs'
  */
