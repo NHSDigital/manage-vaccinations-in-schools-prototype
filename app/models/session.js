@@ -73,7 +73,6 @@ import { BaseModel } from './base.js'
  * @property {number} [academicYear] - Programme year
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  * @property {string} [presetOverrideProgramme_ids] - Programme IDs (no preset)
- * @property {SessionMMRConsent} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {boolean} [hasRegistration] - Session has registration?
  *
  *   Clinics only
@@ -88,6 +87,8 @@ import { BaseModel } from './base.js'
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Date} [consentOpenAt] - Date consent window opens
  * @property {object} [consentOpenAt_] - Date consent window opens (from `dateInput`)
+ * @property {SessionConsentContacts} [consentContacts] - Send consent requests to refusers?
+ * @property {SessionMMRConsent} [mmrConsent] - Does session use MMR outbreak comms?
  * @property {Date} [closeAt] - Date session closed
  * @property {Date} [cancelledAt] - Date session cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
@@ -178,6 +179,7 @@ export class Session extends BaseModel {
       this.closeAt = options?.closeAt && new Date(options.closeAt)
       this.reminderWeeks =
         options?.reminderWeeks || TeamDefaults.SessionReminderWeeks
+      this.consentContacts = options?.consentContacts
       this.mmrConsent = this.presetNames?.includes(SessionPresetName.MMR)
         ? options?.mmrConsent
         : undefined
@@ -1611,6 +1613,6 @@ Session.relate('clinic_id', () => Clinic, 'clinic')
 Session.relate('school_id', () => School, 'school')
 
 /**
- * @import { RegistrationStatus, SessionMMRConsent, SessionPreset } from '../enums.js'
+ * @import { RegistrationStatus, SessionConsentContacts, SessionMMRConsent, SessionPreset } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

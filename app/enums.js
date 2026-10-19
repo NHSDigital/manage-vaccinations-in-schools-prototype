@@ -609,6 +609,15 @@ export const SchoolClosureReason = {
  * @readonly
  * @enum {string}
  */
+export const SessionConsentContacts = {
+  All: 'All parents, including those who previously refused consent',
+  NonRefusers: 'Only parents who have not previously refused consent'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const SessionMMRConsent = {
   Standard: 'Standard request',
   Outbreak: 'Outbreak request'

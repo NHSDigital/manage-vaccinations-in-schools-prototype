@@ -1,0 +1,16 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.consentContacts.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    items: enumItems(SessionConsentContacts),
+    decorate: "session.consentContacts"
+  }) }}
+{% endblock %}
