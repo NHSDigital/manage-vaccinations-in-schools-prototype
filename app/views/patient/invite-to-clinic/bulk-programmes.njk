@@ -16,12 +16,11 @@
               count: programme.childrenCount,
               programmeName: programme.name | replace("Flu", "flu")
             }),
-          clinicsHint: __mf(
-            'patient.bulkInviteToClinic.programme.hint.clinics',
-            {
-              count: programme.clinicCount,
-              programmeName: programme.name | replace("Flu", "flu")
-            })
+          clinicsHint: clinicCountHint(
+            programme.openClinicCount,
+            programme.restrictedClinicCount,
+            programme.name | replace("Flu", "flu")
+          )
         })
     }
   }) %}

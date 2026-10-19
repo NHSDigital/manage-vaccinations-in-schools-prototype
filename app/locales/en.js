@@ -362,6 +362,13 @@ export const en = {
     programmes: {
       label: 'Programmes'
     },
+    clinicCount: {
+      none: 'No clinics are scheduled for {programmeName}',
+      open: '{count, plural, one {1 open clinic is} other {# open clinics are}} scheduled for {programmeName}',
+      restricted:
+        '{count, plural, one {1 restricted invitation clinic is} other {# restricted invitation clinics are}} scheduled for {programmeName}',
+      both: '{openCount, plural, one {1 open clinic} other {# open clinics}} and {restrictedCount, plural, one {1 restricted invitation clinic} other {# restricted invitation clinics}} are scheduled for {programmeName}'
+    },
     clinicTypes: {
       title: 'Which clinic types do you want to offer?',
       label: 'Clinic types',
@@ -1966,7 +1973,6 @@ export const en = {
         }
       },
       clinicCount: {
-        hint: '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {# clinics are scheduled for {programmeName}}}',
         someParagraph:
           '{count, plural, one {There is 1 clinic scheduled for the {programmeName} programme.} other {There are # clinics scheduled for the {programmeName} programme.}}',
         noneParagraph:
@@ -1998,8 +2004,6 @@ export const en = {
         hint: {
           children:
             '{count, plural, one {1 child can be invited for {programmeName}} other {{count} children can be invited for {programmeName}}}',
-          clinics:
-            '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {{count} clinics are scheduled for {programmeName}}}',
           combined: '{{childrenHint}}<br>{{clinicsHint}}'
         }
       },
@@ -3524,10 +3528,7 @@ export const en = {
       label: 'Share a booking link for clinics',
       programmes: {
         title: 'Select the clinic programmes for your link',
-        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
-        programme: {
-          hint: '{count, plural, =0 {No clinics are scheduled} one {1 clinic is scheduled} other {{count} clinics are scheduled}}'
-        }
+        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.'
       },
       link: {
         title: 'Copy this link',

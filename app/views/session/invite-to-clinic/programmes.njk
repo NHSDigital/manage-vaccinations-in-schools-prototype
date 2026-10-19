@@ -7,9 +7,11 @@
   {% set programmeItems = programmeItems | push({
     text: programme.name,
     value: programme.id,
-    hint: __mf("session.advertise.programmes.programme.hint", {
-      count: programme.clinicCount
-    })
+    hint: clinicCountHint(
+      programme.openClinicCount,
+      programme.restrictedClinicCount,
+      programme.name | replace("Flu", "flu")
+    )
   }) %}
 {% endfor %}
 

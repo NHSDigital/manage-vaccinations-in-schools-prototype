@@ -16,10 +16,11 @@
   {% set checkboxItems = checkboxItems | push({
     text: patientProgramme.programme.type,
     value: patientProgramme.programme_id,
-    hint: __mf("patient.inviteToClinic.clinicCount.hint", {
-      programmeName: patientProgramme.programme.name | replace("Flu", "flu"),
-      count: patientProgramme.scheduledClinicsCount
-    })
+    hint: clinicCountHint(
+      clinicCounts[patientProgramme.programme_id].openClinicCount,
+      clinicCounts[patientProgramme.programme_id].restrictedClinicCount,
+      patientProgramme.programme.name | replace("Flu", "flu")
+    )
   }) %}
 {% endfor %}
 
@@ -64,7 +65,7 @@
       {{ __mf("patient.inviteToClinic.clinicCount.someParagraph",
       {
         programmeName: clinicReadyProgrammes[0].programme.name | replace("Flu", "flu"),
-        count: clinicReadyProgrammes[0].scheduledClinicsCount
+        count: clinicCounts[clinicReadyProgrammes[0].programme_id].openClinicCount + clinicCounts[clinicReadyProgrammes[0].programme_id].restrictedClinicCount
       }) | nhsukMarkdown }}
     {% else %}
       {# Tell the user there are NO clinics available for this child's one clinic-ready programme #}

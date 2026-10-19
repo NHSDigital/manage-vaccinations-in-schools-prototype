@@ -61,6 +61,21 @@ export const getRestrictedAccessClinics = (programme_ids, context) =>
     )
 
 /**
+ * Count the open and restricted invitation clinics that can be offered for a programme
+ *
+ * Uses the same rules as the clinic type questions, so the counts on programmes pages match.
+ *
+ * @param {string} programme_id - Programme to count clinics for
+ * @param {object} context - the data context holding the sessions
+ * @returns {{ openClinicCount: number, restrictedClinicCount: number }} Clinic counts
+ */
+export const getClinicCountsForProgramme = (programme_id, context) => ({
+  openClinicCount: getOpenAccessClinics([programme_id], context).length,
+  restrictedClinicCount: getRestrictedAccessClinics([programme_id], context)
+    .length
+})
+
+/**
  * Get the details needed to offer the clinics serving an invitation’s programmes
  *
  * Used by the clinic type, restricted clinic and check answers pages shared by every invite journey.
@@ -79,7 +94,7 @@ export const getOfferedClinicLocals = (programme_ids, context) => {
     programmeNames: programmeNamesListForSentence(
       programme_ids,
       false,
-      ConjunctionType.or,
+      ConjunctionType.and,
       context
     ),
     restrictedClinicItems: restrictedClinics.map((session) => ({
@@ -109,9 +124,20 @@ export const getPatientInviteProgrammeLocals = (patient) => {
     .filter(({ clinicStatus }) => clinicStatus === PatientClinicStatus.Ready)
     .sort((a, b) => a.programme_id.localeCompare(b.programme_id))
 
+  // Count the clinics that can be offered for each programme
+  const clinicCounts = Object.fromEntries(
+    clinicReadyProgrammes.map(({ programme_id }) => [
+      programme_id,
+      getClinicCountsForProgramme(programme_id, patient.context)
+    ])
+  )
+
   // Warn about inviting to any programmes that don't have clinics scheduled
   const programmesWithoutClinics = clinicReadyProgrammes.filter(
-    (patientProgramme) => patientProgramme.scheduledClinicsCount === 0
+    ({ programme_id }) =>
+      clinicCounts[programme_id].openClinicCount +
+        clinicCounts[programme_id].restrictedClinicCount ===
+      0
   )
   const formatter = new Intl.ListFormat('en', {
     style: 'long',
@@ -120,6 +146,7 @@ export const getPatientInviteProgrammeLocals = (patient) => {
 
   return {
     clinicReadyProgrammes,
+    clinicCounts,
     clinicReadyProgrammesWithoutClinics: {
       count: programmesWithoutClinics.length,
       names: formatter.format(
@@ -173,9 +200,6 @@ export const getBulkInviteProgrammeLocals = (
 
   // Details required for the programme checkboxes
   const clinicReadyProgrammes = []
-  const scheduledSessions = Session.findAll(context)
-    .filter(({ type }) => type === SessionType.Clinic)
-    .filter(({ status }) => status === SessionStatus.Planned)
   for (const programme of invitableProgrammes) {
     const clinicReadyChildrenCount = clinicPatient_ids
       .map((id) => Patient.findOne(id, context))
@@ -185,15 +209,16 @@ export const getBulkInviteProgrammeLocals = (
           PatientClinicStatus.Ready
       ).length
     if (clinicReadyChildrenCount > 0) {
-      const scheduledClinicsCount = scheduledSessions.filter((session) =>
-        session.programme_ids.includes(programme.id)
-      ).length
+      const { openClinicCount, restrictedClinicCount } =
+        getClinicCountsForProgramme(programme.id, context)
 
       clinicReadyProgrammes.push({
         name: programme.name,
         id: programme.id,
         childrenCount: clinicReadyChildrenCount,
-        clinicCount: scheduledClinicsCount
+        clinicCount: openClinicCount + restrictedClinicCount,
+        openClinicCount,
+        restrictedClinicCount
       })
     }
   }
@@ -228,26 +253,23 @@ export const getBookingLinkProgrammeLocals = (context) => {
   const scheduledClinics = Session.findAll(context)
     .filter(({ type }) => type === SessionType.Clinic)
     .filter(({ status }) => status === SessionStatus.Planned)
-  const scheduledProgrammes = scheduledClinics.flatMap(
+  const scheduledProgramme_ids = scheduledClinics.flatMap(
     ({ programme_ids }) => programme_ids
   )
-  const programmeFrequencyMap = _.countBy(scheduledProgrammes)
 
   // Offer even those programmes with no clinics scheduled
-  const allProgrammes = Programme.findAll(context).filter(
-    (programme) => !programme.isHidden
-  )
-  allProgrammes.forEach((programme) => {
-    if (!programmeFrequencyMap[programme.id]) {
-      programmeFrequencyMap[programme.id] = 0
-    }
-  })
+  const visibleProgramme_ids = Programme.findAll(context)
+    .filter((programme) => !programme.isHidden)
+    .map(({ id }) => id)
 
-  const bookingLinkProgrammes = Object.entries(programmeFrequencyMap)
-    .map(([programme_id, clinicCount]) => ({
+  const bookingLinkProgrammes = _.uniq([
+    ...scheduledProgramme_ids,
+    ...visibleProgramme_ids
+  ])
+    .map((programme_id) => ({
       id: programme_id,
       name: Programme.findOne(programme_id, context)?.name,
-      clinicCount
+      ...getClinicCountsForProgramme(programme_id, context)
     }))
     .sort((a, b) => a.name.localeCompare(b.name))
 
