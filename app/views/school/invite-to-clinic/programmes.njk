@@ -1,7 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("school.inviteToClinic.title") %}
-{% set confirmButtonText = __("school.inviteToClinic.confirm") %}
 
 {% block form %}
   {{ heading({
@@ -60,6 +59,6 @@
         value: "td-ipv"
       } if school.patientsToInviteToSession('td-ipv').length
     ],
-    decorate: "clinicProgramme_ids"
+    decorate: "clinicInvitation.programme_ids"
   }) }}
 {% endblock %}

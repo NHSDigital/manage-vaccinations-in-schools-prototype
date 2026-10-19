@@ -2,6 +2,7 @@ import express from 'express'
 
 import { clinicInvitationController as clinicInvitation } from '../controllers/clinic-invitation.js'
 import { patientController as patient } from '../controllers/patient.js'
+import { schoolController as school } from '../controllers/school.js'
 
 /**
  * Add the routes for the pages of the journey, shared by every way of inviting to clinic
@@ -35,6 +36,16 @@ patientRouter.use((request, response, next) =>
 patientRouter.get('/', clinicInvitation.new)
 addInviteJourneyRoutes(patientRouter)
 
+// JOURNEY: Invite all children at the unknown school or home-educated
+const schoolRouter = express.Router({ strict: true, mergeParams: true })
+// Populate `response.locals.school`
+schoolRouter.use((request, response, next) =>
+  school.read(request, response, next, request.params.school_id, 'school_id')
+)
+schoolRouter.get('/', clinicInvitation.new)
+addInviteJourneyRoutes(schoolRouter)
+
 // Export the different routers for the different journey start points
 export const clinicInvitationRoutes = bulkRouter
 export const patientClinicInvitationRoutes = patientRouter
+export const schoolClinicInvitationRoutes = schoolRouter
