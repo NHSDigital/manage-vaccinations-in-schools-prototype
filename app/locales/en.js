@@ -382,7 +382,10 @@ export const en = {
       title: 'Check and confirm the invitation details',
       intro: 'Check the invitation details before sending.',
       summaryTitle: 'Invitation details',
-      confirm: 'Send clinic invitations'
+      confirm: {
+        single: 'Send clinic invitation',
+        multiple: 'Send clinic invitations'
+      }
     }
   },
   clinicAppointment: {

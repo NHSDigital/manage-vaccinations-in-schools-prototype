@@ -1,6 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
-{% set confirmButtonText = __("clinicInvitation.checkAnswers.confirm") %}
+{% set recipientsKey = "single" if inviteJourneyType == ClinicInvitationJourneyType.Patient else "multiple" %}
+{% set confirmButtonText = __("clinicInvitation.checkAnswers.confirm." + recipientsKey) %}
 {% set title = __("clinicInvitation.checkAnswers.title") %}
 
 {% block form %}
