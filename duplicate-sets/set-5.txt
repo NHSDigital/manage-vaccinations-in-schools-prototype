@@ -1,0 +1,30 @@
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  1st
+Location:     Unknown
+Date:         5 June 2018
+Time:         1:00am
+Vaccinator:   Unknown
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 308081000000105 – Measles mumps and rubella vaccination - first dose (procedure)
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  Unknown
+Location:     Unknown
+Date:         5 June 2018
+Time:         Unknown
+Vaccinator:   Unknown
+Protocol:     Patient group direction (PGD)
+Source:       Uploaded as a historical vaccination
+Reported on:  16 August 2026 at 7:58pm
