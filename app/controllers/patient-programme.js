@@ -16,7 +16,7 @@ export const patientProgrammeController = {
   read(request, response, next) {
     const { programme_id } = request.params
     const { data } = request.session
-    const { patient } = response.locals
+    const { account, patient } = response.locals
 
     if (!programme_id) {
       return saveAndRedirect(request, response, patient.uri)
@@ -35,7 +35,13 @@ export const patientProgrammeController = {
       })
     )
 
+    response.locals.options = {
+      canTriage: account.isRegisteredNurse
+    }
+
     response.locals.patientProgramme = patientProgramme
+
+    response.locals.referrer = request.originalUrl
 
     return next()
   },
