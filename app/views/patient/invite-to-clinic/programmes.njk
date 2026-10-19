@@ -1,7 +1,5 @@
 {% extends "_layouts/form.njk" %}
 
-{% set paths = { back: patient.uri } %}
-{% set confirmButtonText = __("patient.inviteToClinic.confirm") %}
 
 {% if clinicReadyProgrammes.length > 1 %}
   {% set title = __("patient.inviteToClinic.title.multiple") %}
@@ -45,7 +43,7 @@
         }
       },
       items: checkboxItems,
-      decorate: "clinicProgramme_ids"
+      decorate: "clinicInvitation.programme_ids"
     }) }}
 
     {{ warningCallout({
@@ -78,7 +76,7 @@
     {% endif %}
 
     {# Fake the user's selection of a checkbox for this programme #}
-    <input type="hidden" id="clinicProgramme_ids" name="clinicProgramme_ids" value="{{clinicReadyProgrammes[0].programme_id}}" />
+    <input type="hidden" id="clinicInvitation-programme_ids" name="[clinicInvitation][programme_ids]" value="{{clinicReadyProgrammes[0].programme_id}}" />
   {% endif %}
 {% endblock %}
 
