@@ -104,6 +104,15 @@ export const getOfferedClinicLocals = (programme_ids, context) => {
       ConjunctionType.and,
       context
     ),
+    // Programmes that have restricted clinics on their own, even if not all together
+    restrictedProgrammeNames: programmeNamesListForSentence(
+      programme_ids.filter(
+        (id) => getRestrictedAccessClinics([id], context).length > 0
+      ),
+      false,
+      ConjunctionType.and,
+      context
+    ),
     restrictedClinicItems: restrictedClinics.map((session) => ({
       text: session.clinic?.formatted.location,
       value: session.id,

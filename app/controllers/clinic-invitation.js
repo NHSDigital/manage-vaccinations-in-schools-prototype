@@ -100,15 +100,25 @@ export const clinicInvitationController = {
 
     // Forks are evaluated before `updateForm` saves the posted answers to the draft,
     // so they use the answers auto-stored in `data.clinicInvitation`
+    const postedProgramme_ids = stringToArray(
+      data.clinicInvitation?.programme_ids
+    )
+    const canOfferRestrictedClinics = () =>
+      getRestrictedAccessClinics(postedProgramme_ids, data).length > 0
+    const hasRestrictedClinicsForAnyProgramme = () =>
+      postedProgramme_ids.some(
+        (id) => getRestrictedAccessClinics([id], data).length > 0
+      )
+
     const journey = {
       [`/`]: {},
       [`/${invite_id}/new/programmes`]: {
+        // Explain why restricted clinics can't be offered if there are some for the
+        // programmes on their own, but none that can offer them all together
+        [`/${invite_id}/new/no-restricted-clinics`]: () =>
+          !canOfferRestrictedClinics() && hasRestrictedClinicsForAnyProgramme(),
         // Skip the clinic type questions if there are no restricted clinics to offer
-        [finishPath]: () =>
-          getRestrictedAccessClinics(
-            stringToArray(data.clinicInvitation?.programme_ids),
-            data
-          ).length === 0
+        [finishPath]: () => !canOfferRestrictedClinics()
       },
       [`/${invite_id}/new/clinic-types`]: {
         [finishPath]: {
@@ -116,7 +126,10 @@ export const clinicInvitationController = {
           excludedValue: ClinicType.Restricted
         }
       },
-      [`/${invite_id}/new/restricted-clinics`]: {},
+      [`/${invite_id}/new/restricted-clinics`]: {
+        [finishPath]: true
+      },
+      [`/${invite_id}/new/no-restricted-clinics`]: {},
       [finishPath]: {}
     }
 

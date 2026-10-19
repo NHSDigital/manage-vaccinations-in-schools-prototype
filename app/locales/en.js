@@ -381,6 +381,21 @@ export const en = {
         hint: '{count, plural, =0 {No restricted invitation clinics are} one {1 restricted invitation clinic is} other {{count} restricted invitation clinics are}} scheduled for {programmeNames}'
       }
     },
+    noRestrictedClinics: {
+      title:
+        'No restricted invitation clinics can offer all of the selected programmes',
+      description:
+        'There are restricted invitation clinics for {{restrictedProgrammeNames}}, but none of them can offer {{programmeNames}} together.',
+      advice: {
+        invitation:
+          'To offer restricted invitation clinics, send a separate invitation for each programme.',
+        link: 'To offer restricted invitation clinics, create a separate link for each programme.'
+      },
+      consequence:
+        'If you continue, parents will only be offered open clinics.',
+      confirm: 'Continue with open clinics only',
+      change: 'Change programmes'
+    },
     restrictedClinics: {
       title: 'Which restricted invitation clinics do you want to offer?',
       label: 'Restricted invitation clinics'
