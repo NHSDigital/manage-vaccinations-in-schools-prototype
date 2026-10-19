@@ -12,6 +12,7 @@ import {
   Team,
   User
 } from '../../app/models.js'
+import type { ClinicInvitationJourneyType } from '../../app/enums.js'
 import type { ClinicInvitationOptions } from '../../app/models/clinic-invitation.js'
 
 declare module 'express-serve-static-core' {
@@ -30,7 +31,6 @@ declare module 'express-session' {
 interface ApplicationData {
   booking?: ClinicBooking
   cancellation?: Record<string, any>
-  clinicAdvert?: Record<string, any>
   clinicInvitation?: ClinicInvitationOptions
   clinicInvitationQuery?: Record<string, any>
   programmesToOffer?: Record<string, any>
@@ -58,6 +58,7 @@ interface ApplicationLocals extends ApplicationData {
   bookingPhoneNumber?: string
   clinicInvitation?: ClinicInvitation
   currentPage?: string
+  inviteJourneyType?: ClinicInvitationJourneyType
   patient?: Patient
   school?: School
   session?: Session

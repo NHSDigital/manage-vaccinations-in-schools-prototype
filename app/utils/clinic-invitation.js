@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import {
   ClinicType,
   PatientClinicStatus,
@@ -213,5 +215,43 @@ export const getBulkInviteProgrammeLocals = (
         context
       )
     }
+  }
+}
+
+/**
+ * Get the programmes that a booking link can be shared for
+ *
+ * @param {object} context - the data context holding the programmes and sessions
+ * @returns {object} Programmes, with how many clinics are scheduled for each
+ */
+export const getBookingLinkProgrammeLocals = (context) => {
+  const scheduledClinics = Session.findAll(context)
+    .filter(({ type }) => type === SessionType.Clinic)
+    .filter(({ status }) => status === SessionStatus.Planned)
+  const scheduledProgrammes = scheduledClinics.flatMap(
+    ({ programme_ids }) => programme_ids
+  )
+  const programmeFrequencyMap = _.countBy(scheduledProgrammes)
+
+  // Offer even those programmes with no clinics scheduled
+  const allProgrammes = Programme.findAll(context).filter(
+    (programme) => !programme.isHidden
+  )
+  allProgrammes.forEach((programme) => {
+    if (!programmeFrequencyMap[programme.id]) {
+      programmeFrequencyMap[programme.id] = 0
+    }
+  })
+
+  const bookingLinkProgrammes = Object.entries(programmeFrequencyMap)
+    .map(([programme_id, clinicCount]) => ({
+      id: programme_id,
+      name: Programme.findOne(programme_id, context)?.name,
+      clinicCount
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+
+  return {
+    bookingLinkProgrammes
   }
 }
