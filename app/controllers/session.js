@@ -888,7 +888,8 @@ export const sessionController = {
           ? {
               [`/${session_id}/${type}/school`]: {},
               [`/${session_id}/${type}/year-groups`]: {},
-              [`/${session_id}/${type}/date`]: {}
+              [`/${session_id}/${type}/date`]: {},
+              [`/${session_id}/${type}/consent-contacts`]: {}
             }
           : {
               [`/${session_id}/${type}/catch-ups`]: {},

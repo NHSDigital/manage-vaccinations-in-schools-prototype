@@ -3154,6 +3154,10 @@ export const en = {
     address: {
       label: 'Address'
     },
+    consentContacts: {
+      label: 'Parents to contact',
+      title: 'Which parents do you want to send consent requests to?'
+    },
     consentForms: {
       label: 'Consent forms'
     },
