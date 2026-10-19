@@ -4,8 +4,10 @@ import {
   ClinicBooking,
   ClinicInvitation,
   Consent,
+  Patient,
   PatientSession,
   Reply,
+  School,
   Session,
   Team,
   User
@@ -56,5 +58,7 @@ interface ApplicationLocals extends ApplicationData {
   bookingPhoneNumber?: string
   clinicInvitation?: ClinicInvitation
   currentPage?: string
+  patient?: Patient
+  school?: School
   session?: Session
 }

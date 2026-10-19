@@ -2,11 +2,11 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
 import { PatientStatus } from '../enums.js'
-import { Patient, Programme, School, Team } from '../models.js'
+import { Programme, School, Team } from '../models.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
-import { formatYearGroup, stringToArray } from '../utils/string.js'
+import { formatYearGroup } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const schoolController = {
@@ -579,38 +579,6 @@ export const schoolController = {
     request.flash('success', __(`school.delete.success`))
 
     return saveAndRedirect(request, response, referrer)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  inviteToClinic(request, response) {
-    const { school_id } = request.params
-    const { data } = request.session
-    const { __mf } = response.locals
-
-    const school = School.findOne(school_id, data)
-
-    // Find patients to invite to clinic
-    const patient_uuids = school.patients.map((patient) => patient.uuid)
-
-    // Invite contacts to book into a clinic
-    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
-
-    for (const patient_uuid of patient_uuids) {
-      const patient = Patient.findOne(patient_uuid, data)
-      patient.inviteToClinic(clinicProgramme_ids)
-      Patient.update(patient_uuid, patient, data)
-    }
-
-    request.flash(
-      'success',
-      __mf(`school.inviteToClinic.success`, {
-        count: patient_uuids.length
-      })
-    )
-
-    return saveAndRedirect(request, response, school.uri)
   }
 }
 

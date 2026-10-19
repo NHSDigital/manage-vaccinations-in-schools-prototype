@@ -19,18 +19,25 @@ import { formatQueryString } from '../utils/url.js'
 /**
  * Get the page to return to when leaving a clinic invitation journey
  *
- * @param {Patient} [patient] - Child being invited, if not a bulk invite
+ * @param {object} start - Where the journey was started from
+ * @param {Patient} [start.patient] - Child being invited, if inviting a single child
+ * @param {School} [start.school] - School whose children are being invited, if inviting a school
  * @param {ParsedQs} [query] - Query string the journey was started with
  * @returns {string} Path of the page to return to
  */
-const getReturnUri = (patient, query = {}) => {
-  // Bulk invite: back to the Children list, filtered as it was
-  if (!patient) {
-    return `/patients${formatQueryString(query)}`
+const getReturnUri = ({ patient, school }, query = {}) => {
+  // School: back to the school's children
+  if (school) {
+    return school.uri
   }
 
   // Single child: back to the programme tab or Child record tab it was started from
-  return patient.programmes[String(query.programme_id)]?.uri || patient.uri
+  if (patient) {
+    return patient.programmes[String(query.programme_id)]?.uri || patient.uri
+  }
+
+  // Bulk invite: back to the Children list, filtered as it was
+  return `/patients${formatQueryString(query)}`
 }
 
 export const clinicInvitationController = {
@@ -70,8 +77,7 @@ export const clinicInvitationController = {
   readForm(request, response, next) {
     const { invite_id, view } = request.params
     const { data } = request.session
-    const { patient } = response.locals
-    const returnUri = getReturnUri(patient, data.clinicInvitationQuery)
+    const returnUri = getReturnUri(response.locals, data.clinicInvitationQuery)
 
     // Drafts don't survive a restart of the prototype, so start again if it's gone
     const draft = ClinicInvitation.findOne(invite_id, data.wizard)
@@ -116,7 +122,7 @@ export const clinicInvitationController = {
   showForm(request, response) {
     const { view } = request.params
     const { data } = request.session
-    const { __mf, clinicInvitation, patient } = response.locals
+    const { __mf, clinicInvitation, patient, school } = response.locals
     const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     // Programmes page for a single child
@@ -124,6 +130,11 @@ export const clinicInvitationController = {
       Object.assign(response.locals, getPatientInviteProgrammeLocals(patient))
 
       return response.render('patient/invite-to-clinic/programmes')
+    }
+
+    // Programmes page for a school
+    if (view === 'programmes' && school) {
+      return response.render('school/invite-to-clinic/programmes')
     }
 
     // Programmes page for a bulk invite
@@ -138,11 +149,12 @@ export const clinicInvitationController = {
     }
 
     // Pages shared by every invite journey
-    response.locals.inviteCaption = patient
-      ? patient.fullName
-      : __mf('patient.bulkInviteToClinic.caption', {
-          count: clinicPatient_ids.length
-        })
+    response.locals.inviteCaption =
+      school?.name ||
+      patient?.fullName ||
+      __mf('patient.bulkInviteToClinic.caption', {
+        count: clinicPatient_ids.length
+      })
     Object.assign(
       response.locals,
       getOfferedClinicLocals(clinicInvitation.programme_ids, data)
@@ -208,7 +220,7 @@ export const clinicInvitationController = {
   update(request, response) {
     const { invite_id } = request.params
     const { data } = request.session
-    const { __, __mf, patient } = response.locals
+    const { __, __mf, patient, school } = response.locals
 
     // Move the draft invitation out of the wizard
     const clinicInvitation = ClinicInvitation.create(
@@ -217,7 +229,7 @@ export const clinicInvitationController = {
     )
     ClinicInvitation.delete(invite_id, data.wizard)
 
-    const returnUri = getReturnUri(patient, data.clinicInvitationQuery)
+    const returnUri = getReturnUri(response.locals, data.clinicInvitationQuery)
 
     // Reset the invitation and the query it was started with
     delete data.clinicInvitation
@@ -240,6 +252,24 @@ export const clinicInvitationController = {
             ConjunctionType.and,
             data
           )
+        })
+      )
+
+      return saveAndRedirect(request, response, returnUri)
+    }
+
+    // Invite all the children at a school
+    if (school) {
+      for (const patient of school.patients) {
+        // TODO: only invite each child for the programmes that make sense for them
+        patient.inviteToClinic(clinicInvitation.programme_ids)
+        Patient.update(patient.uuid, patient, data)
+      }
+
+      request.flash(
+        'success',
+        __mf('school.inviteToClinic.success', {
+          count: school.patients.length
         })
       )
 
@@ -303,4 +333,5 @@ export const clinicInvitationController = {
 /**
  * @import { RequestHandler } from 'express'
  * @import { ParsedQs } from 'qs'
+ * @import { School } from '../models.js'
  */
