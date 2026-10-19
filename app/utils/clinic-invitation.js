@@ -18,10 +18,12 @@ import { stringToArray } from './string.js'
  * @returns {Array<Session>} Planned clinic sessions, excluding drop-in clinics
  */
 const getInvitableClinics = (context) =>
-  Session.findAll(context)
-    .filter(({ type }) => type === SessionType.Clinic)
-    .filter(({ isPlanned }) => isPlanned)
-    .filter(({ clinicType }) => clinicType !== ClinicType.DropIn)
+  Session.findAll(context).filter(
+    (session) =>
+      session.type === SessionType.Clinic &&
+      session.isPlanned &&
+      session.clinicType !== ClinicType.DropIn
+  )
 
 /**
  * Get open clinic sessions serving any of the given programmes
@@ -34,7 +36,7 @@ const getInvitableClinics = (context) =>
  */
 export const getOpenAccessClinics = (programme_ids, context) =>
   getInvitableClinics(context)
-    .filter(({ clinicType }) => clinicType !== ClinicType.Restricted)
+    .filter(({ clinicType }) => clinicType === ClinicType.Open)
     .filter((session) =>
       programme_ids.some((id) => session.programme_ids.includes(id))
     )
