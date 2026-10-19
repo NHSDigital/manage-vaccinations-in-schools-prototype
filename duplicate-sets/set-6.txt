@@ -1,0 +1,64 @@
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  2nd
+Location:     Unknown
+Date:         26 May 2016
+Time:         Unknown
+Vaccinator:   Unknown
+Protocol:     Patient group direction (PGD)
+Source:       Uploaded as a historical vaccination
+Reported on:  16 March 2026 at 4:50pm
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Priorix
+Batch number: A69CD981A
+Batch expiry: 31 January 2017
+Method:       Intramuscular (IM) injection
+Site:         Right arm (upper position)
+Dose volume:  0.5 ml
+Dose number:  2nd
+Location:     Unknown
+Date:         26 May 2016
+Time:         12:42pm
+Vaccinator:   Unknown
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 170433008 – Administration of second dose of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  Unknown
+Location:     Unknown
+Date:         26 May 2016
+Time:         12:42pm
+Vaccinator:   Unknown
+Notes:        Reported dose number string: Dose sequence not recorded
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 170431005 – Administration of booster dose of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  Unknown
+Location:     E12 HEALTH
+Date:         26 May 2016
+Time:         12:42pm
+Vaccinator:   Unknown
+Notes:        Reported dose number string: Dose sequence not recorded
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 170432003 – MMR pre-school booster vaccination

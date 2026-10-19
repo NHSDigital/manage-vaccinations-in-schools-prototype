@@ -1,0 +1,32 @@
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  Unknown
+Location:     THE SMITHY SURGERY
+Date:         23 March 2022
+Time:         10:55am
+Vaccinator:   Unknown
+Notes:        Reported dose number string: Dose sequence not recorded
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 170431005 – Administration of booster dose of measles and mumps and rubella vaccine
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      MMR VaxPro
+Batch number: T037125
+Batch expiry: 31 October 2022
+Method:       Not provided
+Site:         Not provided
+Dose volume:  0.5 ml
+Dose number:  2nd
+Location:     Unknown
+Date:         23 March 2022
+Time:         1:33pm
+Vaccinator:   Unknown
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 170433008 – Administration of second dose of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)

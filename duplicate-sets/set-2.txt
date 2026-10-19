@@ -1,0 +1,47 @@
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  Unknown
+Location:     CLAVERLEY
+Date:         20 October 2011
+Time:         1:00am
+Vaccinator:   Unknown
+Notes:        Reported dose number string: Dose sequence not recorded
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 38598009 – Measles/mumps/rubella vaccn.
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: Not provided
+Method:       Not provided
+Site:         Not provided
+Dose number:  Unknown
+Location:     Unknown
+Date:         20 October 2011
+Time:         1:00am
+Vaccinator:   Unknown
+Notes:        Reported dose number string: Dose sequence not recorded
+Source:       External source such as GP or SAIS outside Mavis
+SNOMED procedure: 38598009 – Administration of vaccine product containing only Measles morbillivirus and Mumps orthorubulavirus and Rubella virus antigens (procedure)
+
+============================================================
+Outcome:      Vaccinated
+Programme:    MMR
+Vaccine:      Not provided
+Batch number: NP39950
+Method:       Not provided
+Site:         Not provided
+Dose number:  1st
+Location:     Unknown
+Date:         20 October 2011
+Time:         Unknown
+Vaccinator:   Unknown
+Protocol:     Patient group direction (PGD)
+Source:       Uploaded as a historical vaccination
+Reported on:  13 August 2026 at 2:01pm

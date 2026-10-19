@@ -1,0 +1,248 @@
+{% extends "_layouts/default.njk" %}
+
+{% set pageName = "Review complete (user testing)" %}
+{% block header %}
+  <!-- Mavis site chrome: environment banner and site header exactly as rendered
+       on /notices, with the Review item current. Static copy for presentation
+       only; these demo pages do not actually live under /notices yet. -->
+  <div class="app-environment nhsuk-tag--grey">
+    <div class="nhsuk-width-container">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Prototype</strong>
+      This is a prototype used for research.
+    </div>
+  </div>
+  <header class="nhsuk-header" data-module="nhsuk-header" role="banner">
+    <div class="nhsuk-header__container nhsuk-width-container">
+      <div class="nhsuk-header__service">
+        <a class="nhsuk-header__service-logo" href="/home" aria-label="NHS Manage vaccinations in schools homepage">
+          <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+            <title>NHS</title>
+            <path fill="currentcolor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+          </svg>
+          <span class="nhsuk-header__service-name">Manage vaccinations in schools</span>
+        </a>
+      </div>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            JOY, Jane (Nurse)
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/change-role">Change role</a>
+          </li>
+          <li class="nhsuk-header__account-item">
+            <a class="nhsuk-header__account-link" href="/account/sign-out">Log out</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/schools">Schools</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/patients">Children</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/sessions">Sessions</a>
+          </li>
+          <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--current app-header__navigation-item--with-badge">
+            <a class="nhsuk-header__navigation-link" href="/reviews" aria-current="true"><strong class="nhsuk-header__navigation-item-current-fallback">Review<strong class="app-badge">124</strong></strong></a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/reports">Reports</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/uploads">Uploads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/downloads">Downloads</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/vaccines">Vaccines</a>
+          </li>
+          <li class="nhsuk-header__navigation-item">
+            <a class="nhsuk-header__navigation-link" href="/teams/001">Your team</a>
+          </li>
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse </span>More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+{% endblock %}
+
+{% block content %}
+  <!-- Review section chrome: page heading and section navigation as on /notices,
+       plus a Duplicates tab shown as current and linking to the start page. The other
+       tabs are presentation only, and these pages do not actually live under /notices yet.
+       This page has no wide content, so it uses the default width container and
+       needs no fluid band. -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-l">Review</h1>
+      <nav class="app-section-navigation" data-module="app-section-navigation" aria-label="Section navigation">
+        <ul class="app-section-navigation__list">
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/notices">Important notices<span class="app-section-navigation__suffix"><strong class="app-badge">4</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/consents">Consent responses<span class="app-section-navigation__suffix"><strong class="app-badge">0</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/unmatched-appointments">Clinic appointments<span class="app-section-navigation__suffix"><strong class="app-badge">23</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item">
+            <a class="app-section-navigation__link" href="/moves">School moves<span class="app-section-navigation__suffix"><strong class="app-badge">90</strong></span></a>
+          </li>
+          <li class="app-section-navigation__item app-section-navigation__item--current">
+            <a class="app-section-navigation__link" href="/duplicate-training/start" aria-current="page"><strong class="app-section-navigation__current">Duplicate records<span class="app-section-navigation__suffix"><strong class="app-badge" data-duplicates-badge>6</strong></span></strong></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <!-- /Review section chrome -->
+  <!-- Live count on the Duplicate records tab: the six user testing sets minus those
+       moved past in this browser session. The test pages record an advance when the
+       action button goes on to the next set, and the comment pages record one on
+       Submit; nothing else changes the number, so demo pages only display it. -->
+  <script>
+    (() => {
+      const render = () => {
+        let progressed = []
+        try { progressed = JSON.parse(sessionStorage.getItem("duplicate-training:progressed") || "[]") } catch (error) {}
+        const remaining = Math.max(0, 6 - progressed.length)
+        for (const badge of document.querySelectorAll("[data-duplicates-badge]")) badge.textContent = String(remaining)
+        const sentence = document.querySelector("[data-duplicates-sentence]")
+        if (sentence) sentence.textContent = remaining === 0 ? "There are no duplicates awaiting review."
+          : remaining === 1 ? "There is 1 duplicate awaiting review."
+          : "There are " + remaining + " duplicates awaiting review."
+      }
+      render()
+      window.addEventListener("pageshow", render)
+    })()
+  </script>
+
+  <!-- Completion page for the six user testing sets, reached only by advancing past
+       set 6. A check-your-answers style summary list, one row per set, filled by the
+       script below from the session state the sets already write: the chosen record
+       (duplicate-training:choice:test-N), whether the set was moved past
+       (duplicate-training:progressed) and any comment (duplicate-training:comment:test-N,
+       a JSON entry holding decision and text). A chosen record is named as
+       Record N only; the sets' field values do not tell records apart reliably
+       enough to add one here. Change goes back to the set, where the saved choice is
+       restored on load (the action is labelled View, not Change); there is no route straight back here yet, the tester
+       carries on through the remaining sets. Nothing is submitted anywhere. -->
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-l">Review complete</h1>
+      <p class="nhsuk-body">These are the decisions you made on the 6 duplicate sets. Select View to go back to a set.</p>
+
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">Your decisions</h2>
+          <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row" data-set="test-1">
+            <dt class="nhsuk-summary-list__key">Duplicate set 1</dt>
+            <dd class="nhsuk-summary-list__value" data-outcome>Not yet reviewed</dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/duplicate-training/test-1">View<span class="nhsuk-u-visually-hidden"> duplicate set 1</span></a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row" data-set="test-2">
+            <dt class="nhsuk-summary-list__key">Duplicate set 2</dt>
+            <dd class="nhsuk-summary-list__value" data-outcome>Not yet reviewed</dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/duplicate-training/test-2">View<span class="nhsuk-u-visually-hidden"> duplicate set 2</span></a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row" data-set="test-3">
+            <dt class="nhsuk-summary-list__key">Duplicate set 3</dt>
+            <dd class="nhsuk-summary-list__value" data-outcome>Not yet reviewed</dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/duplicate-training/test-3">View<span class="nhsuk-u-visually-hidden"> duplicate set 3</span></a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row" data-set="test-4">
+            <dt class="nhsuk-summary-list__key">Duplicate set 4</dt>
+            <dd class="nhsuk-summary-list__value" data-outcome>Not yet reviewed</dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/duplicate-training/test-4">View<span class="nhsuk-u-visually-hidden"> duplicate set 4</span></a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row" data-set="test-5">
+            <dt class="nhsuk-summary-list__key">Duplicate set 5</dt>
+            <dd class="nhsuk-summary-list__value" data-outcome>Not yet reviewed</dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/duplicate-training/test-5">View<span class="nhsuk-u-visually-hidden"> duplicate set 5</span></a>
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row" data-set="test-6">
+            <dt class="nhsuk-summary-list__key">Duplicate set 6</dt>
+            <dd class="nhsuk-summary-list__value" data-outcome>Not yet reviewed</dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a href="/duplicate-training/test-6">View<span class="nhsuk-u-visually-hidden"> duplicate set 6</span></a>
+            </dd>
+          </div>
+          </dl>
+        </div>
+      </div>
+
+      <p class="nhsuk-body">Thank you. Your decisions are not saved to any child’s vaccination history.</p>
+      <!-- Reset for testing sessions, as on the start page: removes every
+           duplicate-training key from sessionStorage and goes back to the start page -->
+      <p class="nhsuk-body-s nhsuk-u-margin-top-4">
+        <a class="nhsuk-link" href="/duplicate-training/start" data-clear-all>Clear choices and start over</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const read = (key) => { try { return sessionStorage.getItem(key) } catch (error) { return null } }
+      const progressed = (() => { try { return JSON.parse(read("duplicate-training:progressed") || "[]") } catch (error) { return [] } })()
+      const secondary = (text) => {
+        const line = document.createElement("span")
+        line.className = "nhsuk-u-secondary-text-colour"
+        line.textContent = text
+        return line
+      }
+      for (const row of document.querySelectorAll("[data-set]")) {
+        const set = row.dataset.set
+        const outcome = row.querySelector("[data-outcome]")
+        outcome.textContent = ""
+        const choice = read("duplicate-training:choice:" + set)
+        const number = choice && choice.match(/^record-(\d+)$/)
+        if (number) {
+          outcome.appendChild(document.createTextNode("Record " + number[1]))
+        } else {
+          outcome.textContent = progressed.includes(set) ? "Skipped" : "Not yet reviewed"
+        }
+        let comment = null
+        try { comment = JSON.parse(read("duplicate-training:comment:" + set) || "null") } catch (error) {}
+        if (comment && comment.comment && comment.comment.trim()) {
+          outcome.appendChild(document.createElement("br"))
+          outcome.appendChild(secondary("Comment: " + comment.comment.trim()))
+        }
+      }
+
+      document.querySelector("[data-clear-all]").addEventListener("click", () => {
+        try {
+          for (const key of Object.keys(sessionStorage)) {
+            if (key.startsWith("duplicate-training:")) sessionStorage.removeItem(key)
+          }
+        } catch (error) {}
+        // the link's own href then takes the tester to the start page
+      })
+    })()
+  </script>
+{% endblock %}
