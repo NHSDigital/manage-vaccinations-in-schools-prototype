@@ -40,7 +40,7 @@ export const getOpenAccessClinics = (programme_ids, context) =>
     )
 
 /**
- * Get restricted invitation clinic sessions serving all of the given programmes
+ * Get restricted invitation clinic sessions that a parent could book for all of the given programmes
  *
  * Sorted by audience, then date, so that clinics for the same audience are listed together.
  *
@@ -52,7 +52,12 @@ export const getRestrictedAccessClinics = (programme_ids, context) =>
   getInvitableClinics(context)
     .filter(({ clinicType }) => clinicType === ClinicType.Restricted)
     .filter((session) =>
-      programme_ids.every((id) => session.programme_ids.includes(id))
+      // Only the selected programmes matter when checking which clinics can serve an invitation
+      session.canCoverVaccinationChoices(
+        /** @type {ClinicVaccinationChoices} */ ({
+          selected_programme_ids: programme_ids
+        })
+      )
     )
     .sort(
       (a, b) =>
@@ -277,3 +282,7 @@ export const getBookingLinkProgrammeLocals = (context) => {
     bookingLinkProgrammes
   }
 }
+
+/**
+ * @import { ClinicVaccinationChoices } from '../models/session.js'
+ */
