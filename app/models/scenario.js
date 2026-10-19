@@ -5,8 +5,8 @@ import { BaseModel } from './base.js'
  * @property {string} [id] - Scenario ID
  * @property {string} [name] - Name, shown on the scenarios page
  * @property {string} [description] - What this scenario sets up and why
- * @property {string} [startUrl] - Best page to land on for a demo of this scenario
- * @property {Array<ScenarioLink>} [links] - Direct links to the key entities this scenario created
+ * @property {string} [startUrl] - Best page to land on for a demo of scenario
+ * @property {Array<ScenarioLink>} [links] - Links to entities scenario created
  */
 
 /**
@@ -40,3 +40,7 @@ export class Scenario extends BaseModel {
     this.links = options?.links || []
   }
 }
+
+/**
+ * @import { BaseModelOptions } from './base.js'
+ */
