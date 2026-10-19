@@ -132,6 +132,17 @@ export const ClinicBookingJourneyType = {
  * @readonly
  * @enum {string}
  */
+export const ClinicInvitationJourneyType = {
+  Bulk: 'Bulk invite from the Children list',
+  Patient: 'Invite a child from their child record',
+  School: 'Invite all children at a school',
+  BookingLink: 'Share a booking link'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ClinicType = {
   Open: 'Open',
   Restricted: 'Restricted invitation',
