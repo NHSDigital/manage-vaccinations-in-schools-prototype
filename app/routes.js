@@ -15,7 +15,10 @@ import { accountRoutes } from './routes/account.js'
 import { activityRoutes } from './routes/activity.js'
 import { bookIntoClinicRoutes } from './routes/book-into-a-clinic.js'
 import { clinicBookingRoutes } from './routes/clinic-booking.js'
-import { clinicInvitationRoutes } from './routes/clinic-invitation.js'
+import {
+  clinicInvitationRoutes,
+  patientClinicInvitationRoutes
+} from './routes/clinic-invitation.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
 import { contactRoutes } from './routes/contact.js'
@@ -78,6 +81,10 @@ router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/contacts', contactRoutes)
 router.use('/patients/invite-to-clinic', clinicInvitationRoutes)
+router.use(
+  '/patients/:patient_uuid/invite-to-clinic',
+  patientClinicInvitationRoutes
+)
 router.use('/patients/:patient_uuid/book-into-a-clinic', bookIntoClinicRoutes)
 router.use(
   '/patients/:patient_uuid/programmes/:programme_id/replies',

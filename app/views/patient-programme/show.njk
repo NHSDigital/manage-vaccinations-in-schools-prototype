@@ -187,12 +187,8 @@
       buttons: [
         {
           text: __("patientProgramme.inviteToClinic.label") | safe,
-          variant: "secondary",
-          decorate: "programme_ids",
-          value: patientProgramme.programme.id,
-          attributes: {
-            formaction: patient.uri + "/invite-to-clinic?referrer=" + patientProgramme.uri
-          }
+          href: patient.uri + "/invite-to-clinic?programme_id=" + patientProgramme.programme.id,
+          variant: "secondary"
         },
         {
           text: __("patientProgramme.activeClinics.label") | safe,

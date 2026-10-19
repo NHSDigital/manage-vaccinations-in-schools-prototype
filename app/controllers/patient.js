@@ -9,12 +9,8 @@ import {
 import { Patient, PatientSession, Programme, Session, Team } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
-import {
-  ConjunctionType,
-  programmeNamesListForSentence
-} from '../utils/programme.js'
 import { saveAndRedirect } from '../utils/redirect.js'
-import { formatYearGroup, stringToArray } from '../utils/string.js'
+import { formatYearGroup } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const patientController = {
@@ -320,34 +316,6 @@ export const patientController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
-    const { patient } = response.locals
-
-    if (view === 'invite-to-clinic') {
-      // Order the clinic-ready programmes alphabetically
-      response.locals.clinicReadyProgrammes = Object.values(patient.programmes)
-        .filter(
-          ({ clinicStatus }) => clinicStatus === PatientClinicStatus.Ready
-        )
-        .sort((a, b) => a.programme_id.localeCompare(b.programme_id))
-
-      // Warn about inviting to any programmes that don't have clinics scheduled
-      const programmesWithoutClinics =
-        response.locals.clinicReadyProgrammes.filter(
-          (patientProgramme) => patientProgramme.scheduledClinicsCount === 0
-        )
-      const formatter = new Intl.ListFormat('en', {
-        style: 'long',
-        type: 'disjunction'
-      })
-      response.locals.clinicReadyProgrammesWithoutClinics = {
-        count: programmesWithoutClinics.length,
-        names: formatter.format(
-          programmesWithoutClinics.map(({ programme }) =>
-            programme.name.replace('Flu', 'flu')
-          )
-        )
-      }
-    }
 
     return response.render(`patient/${view}`)
   },
@@ -542,40 +510,6 @@ export const patientController = {
     const returnUri = PatientSession.findOne(patientSession_uuid, data).uri
 
     return saveAndRedirect(request, response, returnUri)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  inviteOneToClinic(request, response) {
-    const { patient_uuid } = request.params
-    const { data, referrer } = request.session
-    const { __ } = response.locals
-
-    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
-
-    // Send comms to contacts and record in audit trail
-    const patient = Patient.findOne(patient_uuid, data)
-    patient.inviteToClinic(clinicProgramme_ids)
-    Patient.update(patient.uuid, patient, data)
-
-    // Report the success
-    const selectedProgrammeNames = programmeNamesListForSentence(
-      clinicProgramme_ids,
-      patient.canBeOfferedMmrv,
-      ConjunctionType.and,
-      data
-    )
-
-    request.flash(
-      'success',
-      __('patient.inviteToClinic.success', {
-        patientName: patient.firstName,
-        selectedProgrammes: selectedProgrammeNames
-      })
-    )
-
-    return saveAndRedirect(request, response, referrer || patient.uri)
   },
 
   /**
