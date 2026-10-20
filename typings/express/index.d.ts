@@ -30,6 +30,7 @@ declare module 'express-session' {
 
 interface ApplicationData {
   booking?: ClinicBooking
+  bookingInvitation_id?: string
   cancellation?: Record<string, any>
   clinicInvitation?: ClinicInvitationOptions
   clinicInvitationQuery?: Record<string, any>
