@@ -26,6 +26,37 @@ const getInvitableClinics = (context) =>
   )
 
 /**
+ * Sort restricted invitation clinics by audience, then date, so that clinics for the same audience are listed together
+ *
+ * @param {Session} a - a clinic session
+ * @param {Session} b - another clinic session
+ * @returns {number} negative if a comes first, positive if b does
+ */
+export const compareByAudienceThenDate = (a, b) =>
+  (a.clinicAudience || '').localeCompare(b.clinicAudience || '') ||
+  new Date(a.date).getTime() - new Date(b.date).getTime()
+
+/**
+ * Get checkbox items for choosing restricted invitation clinics, showing each clinic's date and audience
+ *
+ * @param {Array<Session>} sessions - restricted invitation clinic sessions
+ * @returns {Array<object>} Checkbox items, one per session
+ */
+export const getRestrictedClinicItems = (sessions) =>
+  sessions.map((session) => ({
+    text: session.clinic?.formatted.location,
+    value: session.id,
+    hint: {
+      html: [
+        `Date: ${session.formatted.dateShort}`,
+        session.clinicAudience && `Audience: ${session.clinicAudience}`
+      ]
+        .filter(Boolean)
+        .join('<br>')
+    }
+  }))
+
+/**
  * Get open clinic sessions serving any of the given programmes
  *
  * Clinics created before clinic types existed are treated as open.
@@ -61,11 +92,7 @@ export const getRestrictedAccessClinics = (programme_ids, context) =>
         })
       )
     )
-    .sort(
-      (a, b) =>
-        (a.clinicAudience || '').localeCompare(b.clinicAudience || '') ||
-        new Date(a.date).getTime() - new Date(b.date).getTime()
-    )
+    .sort(compareByAudienceThenDate)
 
 /**
  * Count the open and restricted invitation clinics that can be offered for a programme
@@ -113,18 +140,7 @@ export const getOfferedClinicLocals = (programme_ids, context) => {
       ConjunctionType.and,
       context
     ),
-    restrictedClinicItems: restrictedClinics.map((session) => ({
-      text: session.clinic?.formatted.location,
-      value: session.id,
-      hint: {
-        html: [
-          `Date: ${session.formatted.dateShort}`,
-          session.clinicAudience && `Audience: ${session.clinicAudience}`
-        ]
-          .filter(Boolean)
-          .join('<br>')
-      }
-    }))
+    restrictedClinicItems: getRestrictedClinicItems(restrictedClinics)
   }
 }
 

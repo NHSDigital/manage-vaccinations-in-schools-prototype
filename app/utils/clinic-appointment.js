@@ -11,7 +11,11 @@ import {
 } from '../enums.js'
 import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 
-import { getBookableClinicSessions } from './clinic-booking.js'
+import {
+  getBookableClinicSessions,
+  getOfferableRestrictedClinics,
+  getOfferedClinics
+} from './clinic-booking.js'
 import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
 import { camelToKebabCase, stringToArray, stringToBoolean } from './string.js'
@@ -145,9 +149,11 @@ export const getAllAppointmentPaths = (
     sessionData.journeyData[booking_uuid]?.journeyType ??
     ClinicBookingJourneyType.ParentOnline
   const isParentJourney = journeyType === ClinicBookingJourneyType.ParentOnline
-  const invitation_id = sessionData.journeyData[booking_uuid]?.invitation_id
+  const offeredClinics = getOfferedClinics(sessionData, booking_uuid)
   const isDataMigrationJourney =
     journeyType === ClinicBookingJourneyType.DataMigration
+  const isPhoneBookingJourney =
+    journeyType === ClinicBookingJourneyType.PhoneBooking
 
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
@@ -172,7 +178,7 @@ export const getAllAppointmentPaths = (
             getBookableClinicSessions(sessionData, vaccinationChoices, {
               extendForSupportNeeds,
               isParentBooking: isParentJourney,
-              invitation_id
+              offeredClinics
             }).length === 0
           )
         }
@@ -200,6 +206,18 @@ export const getAllAppointmentPaths = (
             [appointmentPath('impairments')]: {},
             [appointmentPath('adjustments')]: {}
           }),
+
+      // Offer restricted invitation clinics, if any can give the vaccinations (team booking from child record only)
+      ...(isPhoneBookingJourney &&
+      getOfferableRestrictedClinics(sessionData, appointment).length
+        ? {
+            [appointmentPath('offer-restricted-clinics')]: {
+              [appointmentPath('preferred-location')]: () =>
+                !stringToBoolean(sessionData.journeyData.offerRestrictedClinics)
+            },
+            [appointmentPath('restricted-clinics')]: {}
+          }
+        : {}),
 
       // Interrupt if the appointment is too long for the slot selected on Appointments page
       ...(isDataMigrationJourney &&
@@ -265,7 +283,7 @@ export const getAllAppointmentPaths = (
                     {
                       extendForSupportNeeds,
                       isParentBooking: isParentJourney,
-                      invitation_id
+                      offeredClinics
                     }
                   ).length === 0
                 )
@@ -280,7 +298,7 @@ export const getAllAppointmentPaths = (
                     {
                       extendForSupportNeeds,
                       isParentBooking: isParentJourney,
-                      invitation_id
+                      offeredClinics
                     }
                   ).length === 0
                 )
@@ -302,7 +320,7 @@ export const getAllAppointmentPaths = (
                     {
                       extendForSupportNeeds,
                       isParentBooking: isParentJourney,
-                      invitation_id
+                      offeredClinics
                     }
                   ).length === 0
                 )
@@ -317,7 +335,7 @@ export const getAllAppointmentPaths = (
                     {
                       extendForSupportNeeds,
                       isParentBooking: isParentJourney,
-                      invitation_id
+                      offeredClinics
                     }
                   ).length === 0
                 )

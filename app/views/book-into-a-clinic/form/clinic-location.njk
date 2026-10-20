@@ -2,14 +2,15 @@
 
 {% set title = __("clinicBooking.clinicLocation.title", firstName) %}
 
-{# Show parents the clinics they've been invited to separately from the others #}
+{# Show restricted invitation clinics separately from open ones #}
+{% set audience = "parent" if isParentFacing else "team" %}
 {% set invitedItems = clinicLocationItems | selectattr("isInvited") %}
 {% set otherItems = clinicLocationItems | rejectattr("isInvited") %}
 
 {% block form %}
   {% set hint = __('clinicBooking.clinicLocation.hint', appointment.preferredPostcode) %}
 
-  {% if isParentFacing and invitedItems.length and otherItems.length %}
+  {% if invitedItems.length and otherItems.length %}
     {# Listing a mix of restricted-invite and open clinics #}
     {{ heading({
       caption: appointmentCaption,
@@ -22,7 +23,7 @@
     {{ radios({
       fieldset: {
         legend: {
-          text: __("clinicBooking.clinicLocation.invited.label", firstName),
+          text: __("clinicBooking.clinicLocation.invited.label." + audience, firstName),
           size: "m"
         }
       },
@@ -33,7 +34,7 @@
     {{ radios({
       fieldset: {
         legend: {
-          text: __("clinicBooking.clinicLocation.other.label"),
+          text: __("clinicBooking.clinicLocation.other.label." + audience),
           size: "m"
         }
       },

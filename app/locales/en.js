@@ -754,14 +754,29 @@ export const en = {
       confirm: 'Continue anyway',
       cancel: 'Try another location'
     },
+    offerRestrictedClinics: {
+      title: 'Do you want to offer booking into restricted invitation clinics?',
+      yes: 'Yes',
+      yesHint: 'You can choose the clinics in the next step',
+      no: 'No'
+    },
+    restrictedClinics: {
+      title: 'Which restricted invitation clinics do you want to offer?'
+    },
     clinicLocation: {
       title: 'Choose a clinic for %s’s appointment',
       hint: 'The following clinics are ordered by distance from %s',
       invited: {
-        label: 'Clinics specifically for %s'
+        label: {
+          parent: 'Clinics specifically for %s',
+          team: 'Restricted invitation clinics'
+        }
       },
       other: {
-        label: 'Clinics available to all parents'
+        label: {
+          parent: 'Clinics available to all parents',
+          team: 'Open clinics'
+        }
       }
     },
     clinicDate: {
