@@ -119,7 +119,8 @@ export const getBookableClinicSessions = (
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
  * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
  * @param {boolean|undefined} isFakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
- * @returns {Array<object>} Set of radio buttons to present to the user, one per location
+ * @returns {Array<object>} Set of radio buttons to present to the user, one per location, with `isInvited` set
+ *   on any location that has restricted invitation clinics
  */
 export const getBookableClinicLocationItems = (
   context,
@@ -153,7 +154,10 @@ export const getBookableClinicLocationItems = (
     clinicLocationItems.push({
       text: sessions[0].formatted.location,
       value: clinic_id,
-      hint: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`
+      hint: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`,
+      isInvited: sessions.some(
+        ({ clinicType }) => clinicType === ClinicType.Restricted
+      )
     })
     distanceToClinic += 2.1
   })
@@ -168,7 +172,8 @@ export const getBookableClinicLocationItems = (
  * @param {string} clinic_id - the ID of the clinic location we're booking into
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
  * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
- * @returns {Array<object>} Set of radio buttons to present to the user, one per location
+ * @returns {Array<object>} Set of radio buttons to present to the user, one per date, with `isInvited` set
+ *   on any restricted invitation clinic
  */
 export const getBookableClinicDateItems = (
   context,
@@ -211,7 +216,8 @@ export const getBookableClinicDateItems = (
     clinicDateItems.push({
       text: session.formatted.date,
       value: session.id,
-      hint: availability
+      hint: availability,
+      isInvited: session.clinicType === ClinicType.Restricted
     })
   })
 
