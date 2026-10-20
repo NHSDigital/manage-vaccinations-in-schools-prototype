@@ -145,6 +145,7 @@ export const getAllAppointmentPaths = (
     sessionData.journeyData[booking_uuid]?.journeyType ??
     ClinicBookingJourneyType.ParentOnline
   const isParentJourney = journeyType === ClinicBookingJourneyType.ParentOnline
+  const invitation_id = sessionData.journeyData[booking_uuid]?.invitation_id
   const isDataMigrationJourney =
     journeyType === ClinicBookingJourneyType.DataMigration
 
@@ -172,7 +173,8 @@ export const getAllAppointmentPaths = (
               sessionData,
               vaccinationChoices,
               extendForSupportNeeds,
-              isParentJourney
+              isParentJourney,
+              invitation_id
             ).length === 0
           )
         }
@@ -263,7 +265,8 @@ export const getAllAppointmentPaths = (
                     sessionData,
                     appointment.vaccinationChoices,
                     extendForSupportNeeds,
-                    isParentJourney
+                    isParentJourney,
+                    invitation_id
                   ).length === 0
                 )
               }
@@ -275,7 +278,8 @@ export const getAllAppointmentPaths = (
                     sessionData,
                     appointment.vaccinationChoices,
                     extendForSupportNeeds,
-                    isParentJourney
+                    isParentJourney,
+                    invitation_id
                   ).length === 0
                 )
               }
@@ -294,7 +298,8 @@ export const getAllAppointmentPaths = (
                     sessionData,
                     appointment.vaccinationChoices,
                     extendForSupportNeeds,
-                    isParentJourney
+                    isParentJourney,
+                    invitation_id
                   ).length === 0
                 )
               }
@@ -306,7 +311,8 @@ export const getAllAppointmentPaths = (
                     sessionData,
                     appointment.vaccinationChoices,
                     extendForSupportNeeds,
-                    isParentJourney
+                    isParentJourney,
+                    invitation_id
                   ).length === 0
                 )
               },

@@ -16,6 +16,7 @@ import {
   Clinic,
   ClinicAppointment,
   ClinicBooking,
+  ClinicInvitation,
   Contact,
   Patient,
   Programme,
@@ -114,9 +115,15 @@ export const bookIntoClinicController = {
       }
     } else {
       // Starting the booking from the parent's invite link
-      const { programme_id } = /** @type {{ programme_id?: string }} */ (
-        request.query
-      )
+      const { invitation_id, programme_id } =
+        /** @type {{ invitation_id?: string, programme_id?: string }} */ (
+          request.query
+        )
+
+      // Track which invitation the link came from
+      data.bookingInvitation_id = invitation_id
+        ? ClinicInvitation.findOne(invitation_id, data)?.id
+        : undefined
 
       // We don't know anything yet about specifc vaccine choices, but we can at least
       // check that there are clinics serving the right programmes
@@ -135,7 +142,8 @@ export const bookIntoClinicController = {
         data,
         vaccinationChoices,
         false,
-        true
+        true,
+        data.bookingInvitation_id
       ).length
         ? 'start'
         : 'availability'
@@ -171,6 +179,9 @@ export const bookIntoClinicController = {
         : ClinicBookingJourneyType.ParentOnline
     if (!data.journeyData) data.journeyData = {}
     data.journeyData[booking.uuid] = { journeyType }
+    if (journeyType === ClinicBookingJourneyType.ParentOnline) {
+      data.journeyData[booking.uuid].invitation_id = data.bookingInvitation_id
+    }
 
     // Set up the first appointment
     const appointment = booking.addAppointment()

@@ -7,7 +7,7 @@ import {
   SessionStatus,
   SessionType
 } from '../enums.js'
-import { ClinicAppointment, Session } from '../models.js'
+import { ClinicAppointment, ClinicInvitation, Session } from '../models.js'
 
 import i18n from './i18n.js'
 import { stringToBoolean } from './string.js'
@@ -45,6 +45,30 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
 }
 
 /**
+ * Can a parent book into the given clinic session, based on the invitation they were sent (if any)?
+ *
+ * Without an invitation, or one that offers no clinic types, parents can book open clinics only.
+ *
+ * @param {Session} session - the clinic session to check
+ * @param {ClinicInvitation} [clinicInvitation] - the invitation the parent's booking link came from
+ * @returns {boolean} true if the parent can book into the session
+ */
+const isClinicOfferedToParent = (session, clinicInvitation) => {
+  const clinicTypes = clinicInvitation?.clinicTypes.length
+    ? clinicInvitation.clinicTypes
+    : [ClinicType.Open]
+
+  if (session.clinicType === ClinicType.Restricted) {
+    return (
+      clinicTypes.includes(ClinicType.Restricted) &&
+      clinicInvitation.restrictedClinic_ids.includes(session.id)
+    )
+  }
+
+  return clinicTypes.includes(ClinicType.Open)
+}
+
+/**
  * Get a list of clinic sessions serving any of the given programmes and that are open to booking
  *
  * When called with a null or undefined appointment, we're only checking to see whether the
@@ -54,6 +78,7 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
  * @param {boolean} extendForSupportNeeds - should we look for space for an extended appointment?
  * @param {boolean} isParentBooking - needs earlier cut-off and affects visibility of restricted clinics
+ * @param {string} [invitation_id] - the invitation a parent's booking link came from, which limits the clinics they can book
  * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
@@ -62,13 +87,19 @@ export const getBookableClinicSessions = (
   vaccinationChoices,
   extendForSupportNeeds,
   isParentBooking,
+  invitation_id = undefined,
   ignoredAppointment_uuid = undefined
 ) => {
+  const clinicInvitation = invitation_id
+    ? ClinicInvitation.findOne(invitation_id, context)
+    : undefined
+
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
       session.type === SessionType.Clinic &&
       session.status === SessionStatus.Planned &&
-      !(isParentBooking && session.clinicType === ClinicType.Restricted) &&
+      (!isParentBooking ||
+        isClinicOfferedToParent(session, clinicInvitation)) &&
       session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (isParentBooking ? 1 : 0) &&
       session.bookableStartTimesForVaccinationChoices(
@@ -104,6 +135,7 @@ export const getBookableClinicLocationItems = (
     appointment.vaccinationChoices,
     extendForSupportNeeds,
     isParentBooking,
+    context.journeyData[appointment.booking_uuid]?.invitation_id,
     appointment.uuid
   )
   const sessionsByLocation = _.groupBy(
@@ -152,6 +184,7 @@ export const getBookableClinicDateItems = (
       vaccinationChoices,
       extendForSupportNeeds,
       isParentBooking,
+      context.journeyData[appointment.booking_uuid]?.invitation_id,
       appointment.uuid
     ).filter((session) => session.clinic_id === clinic_id),
     'date'
