@@ -76,19 +76,22 @@ const isClinicOfferedToParent = (session, clinicInvitation) => {
  *
  * @param {object} context - the data context for the models to check
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
- * @param {boolean} extendForSupportNeeds - should we look for space for an extended appointment?
- * @param {boolean} isParentBooking - needs earlier cut-off and affects visibility of restricted clinics
- * @param {string} [invitation_id] - the invitation a parent's booking link came from, which limits the clinics they can book
- * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
+ * @param {object} [options] - Options
+ * @param {boolean} [options.extendForSupportNeeds] - should we look for space for an extended appointment?
+ * @param {boolean} [options.isParentBooking] - needs earlier cut-off and affects visibility of restricted clinics
+ * @param {string} [options.invitation_id] - the invitation a parent's booking link came from, which limits the clinics they can book
+ * @param {string} [options.ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
 export const getBookableClinicSessions = (
   context,
   vaccinationChoices,
-  extendForSupportNeeds,
-  isParentBooking,
-  invitation_id = undefined,
-  ignoredAppointment_uuid = undefined
+  {
+    extendForSupportNeeds = false,
+    isParentBooking = false,
+    invitation_id = undefined,
+    ignoredAppointment_uuid = undefined
+  } = {}
 ) => {
   const clinicInvitation = invitation_id
     ? ClinicInvitation.findOne(invitation_id, context)
@@ -150,10 +153,13 @@ export const getBookableClinicLocationItems = (
   const scheduledClinics = getBookableClinicSessions(
     context,
     appointment.vaccinationChoices,
-    extendForSupportNeeds,
-    isParentBooking,
-    context.journeyData[appointment.booking_uuid]?.invitation_id,
-    appointment.uuid
+    {
+      extendForSupportNeeds,
+      isParentBooking,
+      invitation_id:
+        context.journeyData[appointment.booking_uuid]?.invitation_id,
+      ignoredAppointment_uuid: appointment.uuid
+    }
   )
 
   // Show a location's restricted invitation clinics separately from its open ones
@@ -213,14 +219,13 @@ export const getBookableClinicDateItems = (
   const vaccinationChoices = appointment.vaccinationChoices
   const extendForSupportNeeds = context.journeyData.extendForSupportNeeds
   const bookableSessions = _.sortBy(
-    getBookableClinicSessions(
-      context,
-      vaccinationChoices,
+    getBookableClinicSessions(context, vaccinationChoices, {
       extendForSupportNeeds,
       isParentBooking,
-      context.journeyData[appointment.booking_uuid]?.invitation_id,
-      appointment.uuid
-    )
+      invitation_id:
+        context.journeyData[appointment.booking_uuid]?.invitation_id,
+      ignoredAppointment_uuid: appointment.uuid
+    })
       .filter((session) => session.clinic_id === clinic_id)
       .filter(
         (session) =>
