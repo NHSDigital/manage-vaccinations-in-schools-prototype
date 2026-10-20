@@ -27,7 +27,7 @@
         }
       },
       items: invitedItems,
-      decorate: "journeyData.clinic_id"
+      decorate: "journeyData.clinicLocation"
     }) }}
 
     {{ radios({
@@ -37,9 +37,9 @@
           size: "m"
         }
       },
-      idPrefix: "journeyData-clinic_id-other",
+      idPrefix: "journeyData-clinicLocation-other",
       items: otherItems,
-      decorate: "journeyData.clinic_id"
+      decorate: "journeyData.clinicLocation"
     }) }}
   {% else %}
     {# Listing only one type of clinic, so no need to differentiate them #}
@@ -53,7 +53,7 @@
       },
       hint: hint,
       items: clinicLocationItems,
-      decorate: "journeyData.clinic_id"
+      decorate: "journeyData.clinicLocation"
     }) }}
   {% endif %}
 {% endblock %}
