@@ -1,7 +1,12 @@
 import _ from 'lodash'
 
 import programmesData from '../datasets/programmes.js'
-import { SessionPresets, SessionStatus, SessionType } from '../enums.js'
+import {
+  ClinicType,
+  SessionPresets,
+  SessionStatus,
+  SessionType
+} from '../enums.js'
 import { ClinicAppointment, Session } from '../models.js'
 
 import i18n from './i18n.js'
@@ -48,7 +53,7 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
  * @param {object} context - the data context for the models to check
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
  * @param {boolean} extendForSupportNeeds - should we look for space for an extended appointment?
- * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
+ * @param {boolean} isParentBooking - needs earlier cut-off and affects visibility of restricted clinics
  * @param {string} [ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
@@ -56,15 +61,16 @@ export const getBookableClinicSessions = (
   context,
   vaccinationChoices,
   extendForSupportNeeds,
-  requiresStockingPeriod,
+  isParentBooking,
   ignoredAppointment_uuid = undefined
 ) => {
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
       session.type === SessionType.Clinic &&
       session.status === SessionStatus.Planned &&
+      !(isParentBooking && session.clinicType === ClinicType.Restricted) &&
       session.canCoverVaccinationChoices(vaccinationChoices) &&
-      session.daysLeftToBook >= (requiresStockingPeriod ? 1 : 0) &&
+      session.daysLeftToBook >= (isParentBooking ? 1 : 0) &&
       session.bookableStartTimesForVaccinationChoices(
         vaccinationChoices,
         extendForSupportNeeds,
@@ -80,14 +86,14 @@ export const getBookableClinicSessions = (
  *
  * @param {object} context - Data context for the models to check
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
- * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
+ * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
  * @param {boolean|undefined} isFakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
  * @returns {Array<object>} Set of radio buttons to present to the user, one per location
  */
 export const getBookableClinicLocationItems = (
   context,
   appointment,
-  requiresStockingPeriod,
+  isParentBooking,
   isFakeOutOfArea
 ) => {
   const extendForSupportNeeds = stringToBoolean(
@@ -97,7 +103,7 @@ export const getBookableClinicLocationItems = (
     context,
     appointment.vaccinationChoices,
     extendForSupportNeeds,
-    requiresStockingPeriod,
+    isParentBooking,
     appointment.uuid
   )
   const sessionsByLocation = _.groupBy(
@@ -129,14 +135,14 @@ export const getBookableClinicLocationItems = (
  * @param {object} context - Data context for the models to check
  * @param {string} clinic_id - the ID of the clinic location we're booking into
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
- * @param {boolean} requiresStockingPeriod - must there be time before the session starts to plan stocks?
+ * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
  * @returns {Array<object>} Set of radio buttons to present to the user, one per location
  */
 export const getBookableClinicDateItems = (
   context,
   clinic_id,
   appointment,
-  requiresStockingPeriod
+  isParentBooking
 ) => {
   const vaccinationChoices = appointment.vaccinationChoices
   const extendForSupportNeeds = context.journeyData.extendForSupportNeeds
@@ -145,7 +151,7 @@ export const getBookableClinicDateItems = (
       context,
       vaccinationChoices,
       extendForSupportNeeds,
-      requiresStockingPeriod,
+      isParentBooking,
       appointment.uuid
     ).filter((session) => session.clinic_id === clinic_id),
     'date'
