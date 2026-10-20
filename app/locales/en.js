@@ -769,12 +769,6 @@ export const en = {
       date: {
         label: 'Clinic date'
       },
-      invited: {
-        label: 'Clinic dates specifically for %s'
-      },
-      other: {
-        label: 'Clinic dates available to all parents'
-      },
       clinicSummary: {
         location: {
           label: 'Location'

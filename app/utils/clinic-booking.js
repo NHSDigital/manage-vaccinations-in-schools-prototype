@@ -113,14 +113,30 @@ export const getBookableClinicSessions = (
 }
 
 /**
+ * Get the details of the clinic location the user chose
+ *
+ * @param {string} clinicLocation - the value of the chosen clinic location option
+ * @returns {{ clinic_id: string, isInvited: boolean|undefined }} the location's ID and whether its restricted
+ *   invitation clinics (true) or its open ones (false) were chosen, or undefined if all of its clinics were
+ */
+export const parseClinicLocation = (clinicLocation) => {
+  const [clinic_id, clinicGroup] = String(clinicLocation).split(':')
+
+  return {
+    clinic_id,
+    isInvited: clinicGroup ? clinicGroup === 'invited' : undefined
+  }
+}
+
+/**
  * Get the clinic location options to present to the user
  *
  * @param {object} context - Data context for the models to check
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
  * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
  * @param {boolean|undefined} isFakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
- * @returns {Array<object>} Set of radio buttons to present to the user, one per location, with `isInvited` set
- *   on any location that has restricted invitation clinics
+ * @returns {Array<object>} Set of radio buttons to present to the user, one per location (or, for parents, one per
+ *   location's restricted invitation clinics and one per its open clinics), with `isInvited` set on the former
  */
 export const getBookableClinicLocationItems = (
   context,
@@ -139,27 +155,40 @@ export const getBookableClinicLocationItems = (
     context.journeyData[appointment.booking_uuid]?.invitation_id,
     appointment.uuid
   )
-  const sessionsByLocation = _.groupBy(
-    scheduledClinics,
-    (session) => session.clinic_id
-  )
 
-  let distanceToClinic = isFakeOutOfArea ? 100.5 : 0.5
+  // Show a location's restricted invitation clinics separately from its open ones
+  const sessionsByLocation = _.groupBy(scheduledClinics, (session) => {
+    if (!isParentBooking) {
+      return session.clinic_id
+    }
+
+    const clinicGroup =
+      session.clinicType === ClinicType.Restricted ? 'invited' : 'open'
+    return `${session.clinic_id}:${clinicGroup}`
+  })
+
+  // If we show the same location for restricted and open clinics, make sure its faked distance
+  // is the same in both lists
+  const distancesToClinics = {}
   const clinicLocationItems = []
-  Object.entries(sessionsByLocation).forEach(([clinic_id, sessions]) => {
+  let distanceToClinic = isFakeOutOfArea ? 100.5 : 0.5
+  Object.entries(sessionsByLocation).forEach(([clinicLocation, sessions]) => {
+    const { clinic_id, isInvited } = parseClinicLocation(clinicLocation)
     const firstSession = sessions.reduce((earliest, current) => {
       return current.date < earliest.date ? current : earliest
     })
 
+    if (!distancesToClinics[clinic_id]) {
+      distancesToClinics[clinic_id] = distanceToClinic
+      distanceToClinic += 2.1
+    }
+
     clinicLocationItems.push({
       text: sessions[0].formatted.location,
-      value: clinic_id,
-      hint: `${distanceToClinic.toFixed(1)} miles away, next date is ${firstSession.formatted.date}`,
-      isInvited: sessions.some(
-        ({ clinicType }) => clinicType === ClinicType.Restricted
-      )
+      value: clinicLocation,
+      hint: `${distancesToClinics[clinic_id].toFixed(1)} miles away, next date is ${firstSession.formatted.date}`,
+      isInvited: !!isInvited
     })
-    distanceToClinic += 2.1
   })
 
   return clinicLocationItems
@@ -169,18 +198,18 @@ export const getBookableClinicLocationItems = (
  * Get the clinic date options to present to the user
  *
  * @param {object} context - Data context for the models to check
- * @param {string} clinic_id - the ID of the clinic location we're booking into
+ * @param {string} clinicLocation - the chosen clinic location option (see `parseClinicLocation`)
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
  * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
- * @returns {Array<object>} Set of radio buttons to present to the user, one per date, with `isInvited` set
- *   on any restricted invitation clinic
+ * @returns {Array<object>} Set of radio buttons to present to the user, one per date
  */
 export const getBookableClinicDateItems = (
   context,
-  clinic_id,
+  clinicLocation,
   appointment,
   isParentBooking
 ) => {
+  const { clinic_id, isInvited } = parseClinicLocation(clinicLocation)
   const vaccinationChoices = appointment.vaccinationChoices
   const extendForSupportNeeds = context.journeyData.extendForSupportNeeds
   const bookableSessions = _.sortBy(
@@ -191,7 +220,13 @@ export const getBookableClinicDateItems = (
       isParentBooking,
       context.journeyData[appointment.booking_uuid]?.invitation_id,
       appointment.uuid
-    ).filter((session) => session.clinic_id === clinic_id),
+    )
+      .filter((session) => session.clinic_id === clinic_id)
+      .filter(
+        (session) =>
+          isInvited === undefined ||
+          (session.clinicType === ClinicType.Restricted) === isInvited
+      ),
     'date'
   )
 
@@ -216,8 +251,7 @@ export const getBookableClinicDateItems = (
     clinicDateItems.push({
       text: session.formatted.date,
       value: session.id,
-      hint: availability,
-      isInvited: session.clinicType === ClinicType.Restricted
+      hint: availability
     })
   })
 

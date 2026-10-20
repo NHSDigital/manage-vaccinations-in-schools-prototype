@@ -35,7 +35,8 @@ import {
 import {
   getBookableClinicSessions,
   getBookableClinicDateItems,
-  getBookableClinicLocationItems
+  getBookableClinicLocationItems,
+  parseClinicLocation
 } from '../utils/clinic-booking.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
@@ -472,7 +473,7 @@ export const bookIntoClinicController = {
 
     data.journeyData[booking.uuid] = {
       journeyType: ClinicBookingJourneyType.TeamEditing,
-      clinic_id: appointment.session?.clinic_id,
+      clinicLocation: appointment.session?.clinic_id,
       timeRange: startAt.getHours(),
       time: startAt.toISOString()
     }
@@ -837,19 +838,19 @@ export const bookIntoClinicController = {
       )
       response.locals.clinicLocationItems = clinicLocationItems
     } else if (view === 'clinic-date') {
-      const clinic_id = data.journeyData[booking_uuid].clinic_id
+      const { clinicLocation } = data.journeyData[booking_uuid]
       const clinicDateItems = getBookableClinicDateItems(
         data,
-        clinic_id,
+        clinicLocation,
         appointment,
         patient ? false : true
       )
+      const { clinic_id } = parseClinicLocation(clinicLocation)
       const clinic = Clinic.findOne(clinic_id, data)
-      const clinicLocation = clinic.formatted.nameAndAddress
 
       response.locals.clinicDateItems = clinicDateItems
       response.locals.clinicSummary = {
-        location: clinicLocation,
+        location: clinic.formatted.nameAndAddress,
         date: '—'
       }
     } else if (view === 'appointment-time-range') {
