@@ -1,0 +1,17 @@
+{% extends "_layouts/abandon-booking.njk" %}
+
+{% set title = __("clinicBooking.restrictedClinics.title") %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        caption: appointmentCaption,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: restrictedClinicItems,
+    decorate: "journeyData.restrictedClinic_ids"
+  }) }}
+{% endblock %}

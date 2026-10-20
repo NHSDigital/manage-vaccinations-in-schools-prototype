@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import programmesData from '../datasets/programmes.js'
 import {
+  ClinicBookingJourneyType,
   ClinicType,
   SessionPresets,
   SessionStatus,
@@ -9,8 +10,9 @@ import {
 } from '../enums.js'
 import { ClinicAppointment, ClinicInvitation, Session } from '../models.js'
 
+import { compareByAudienceThenDate } from './clinic-invitation.js'
 import i18n from './i18n.js'
-import { stringToBoolean } from './string.js'
+import { stringToArray, stringToBoolean } from './string.js'
 
 /**
  * Generate a URL to book into a clinic for vaccination in the given presets' programmes
@@ -45,28 +47,90 @@ export const getClinicInviteUrlForProgrammes = (programme_ids) => {
 }
 
 /**
- * Can a parent book into the given clinic session, based on the invitation they were sent (if any)?
+ * @typedef {object} OfferedClinics
+ * @property {Array<string>} clinicTypes - the types of clinic that can be booked (`ClinicType` values)
+ * @property {Array<string>} restrictedClinic_ids - the restricted invitation clinics that can be booked
+ */
+
+/**
+ * Get the clinics that a parent's booking link lets them book
  *
- * Without an invitation, or one that offers no clinic types, parents can book open clinics only.
+ * Without an invitation (e.g. from the prototype homepage), or one that offers no clinic types, parents
+ * can book open clinics only.
+ *
+ * @param {string|undefined} invitation_id - the invitation the parent's booking link came from (if any)
+ * @param {object} context - the data context holding the invitations
+ * @returns {OfferedClinics} the clinics the parent can book
+ */
+export const getOfferedClinicsForInvitation = (invitation_id, context) => {
+  const clinicInvitation = invitation_id
+    ? ClinicInvitation.findOne(invitation_id, context)
+    : undefined
+
+  return {
+    clinicTypes: clinicInvitation?.clinicTypes.length
+      ? clinicInvitation.clinicTypes
+      : [ClinicType.Open],
+    restrictedClinic_ids: clinicInvitation?.restrictedClinic_ids ?? []
+  }
+}
+
+/**
+ * Get the clinics that can be booked for a booking
+ *
+ * Parents can book the clinics their invitation offers. When booking from the child record, the team can book open
+ * clinics and any restricted invitation clinics they chose to offer. Otherwise, any clinic can be booked.
+ *
+ * @param {object} context - the data context holding the journey data and invitations
+ * @param {string} booking_uuid - the booking being made
+ * @returns {OfferedClinics|undefined} the clinics that can be booked, or undefined if any clinic can be
+ */
+export const getOfferedClinics = (context, booking_uuid) => {
+  const journeyData = context.journeyData?.[booking_uuid]
+  const journeyType =
+    journeyData?.journeyType ?? ClinicBookingJourneyType.ParentOnline
+
+  switch (journeyType) {
+    case ClinicBookingJourneyType.ParentOnline:
+      return getOfferedClinicsForInvitation(journeyData?.invitation_id, context)
+    case ClinicBookingJourneyType.PhoneBooking: {
+      // Until the team's been asked about restricted invitation clinics, don't rule any out
+      const offerRestrictedClinics = stringToBoolean(
+        journeyData.offerRestrictedClinics
+      )
+      if (offerRestrictedClinics === undefined) {
+        return undefined
+      }
+
+      const restrictedClinic_ids = offerRestrictedClinics
+        ? stringToArray(journeyData.restrictedClinic_ids)
+        : []
+
+      return {
+        clinicTypes: restrictedClinic_ids.length
+          ? [ClinicType.Open, ClinicType.Restricted]
+          : [ClinicType.Open],
+        restrictedClinic_ids
+      }
+    }
+    default:
+      // Doesn't make sense for bookings started from a specific session
+      return undefined
+  }
+}
+
+/**
+ * Can the given clinic session be booked, based on the clinics offered?
  *
  * @param {Session} session - the clinic session to check
- * @param {ClinicInvitation} [clinicInvitation] - the invitation the parent's booking link came from
- * @returns {boolean} true if the parent can book into the session
+ * @param {OfferedClinics} offeredClinics - the clinics that can be booked
+ * @returns {boolean} true if the session can be booked
  */
-const isClinicOfferedToParent = (session, clinicInvitation) => {
-  const clinicTypes = clinicInvitation?.clinicTypes.length
-    ? clinicInvitation.clinicTypes
-    : [ClinicType.Open]
-
-  if (session.clinicType === ClinicType.Restricted) {
-    return (
-      clinicTypes.includes(ClinicType.Restricted) &&
-      clinicInvitation.restrictedClinic_ids.includes(session.id)
-    )
-  }
-
-  return clinicTypes.includes(ClinicType.Open)
-}
+const isClinicOffered = (session, { clinicTypes, restrictedClinic_ids }) =>
+  session.clinicType === ClinicType.Restricted
+    ? clinicTypes.includes(ClinicType.Restricted) &&
+      restrictedClinic_ids.includes(session.id)
+    : clinicTypes.includes(ClinicType.Open)
 
 /**
  * Get a list of clinic sessions serving any of the given programmes and that are open to booking
@@ -78,8 +142,8 @@ const isClinicOfferedToParent = (session, clinicInvitation) => {
  * @param {ClinicVaccinationChoices} vaccinationChoices - the programmes and vaccines wanted
  * @param {object} [options] - Options
  * @param {boolean} [options.extendForSupportNeeds] - should we look for space for an extended appointment?
- * @param {boolean} [options.isParentBooking] - needs earlier cut-off and affects visibility of restricted clinics
- * @param {string} [options.invitation_id] - the invitation a parent's booking link came from, which limits the clinics they can book
+ * @param {boolean} [options.isParentBooking] - does the booking need an earlier cut-off, to allow time for stock planning?
+ * @param {OfferedClinics} [options.offeredClinics] - limits which clinics can be booked (see `getOfferedClinics`)
  * @param {string} [options.ignoredAppointment_uuid] - an appointment whose slots should count as free, e.g. while it's being moved
  * @returns {Array<Session>} the list of sessions open to booking serving the given programmes
  */
@@ -89,20 +153,15 @@ export const getBookableClinicSessions = (
   {
     extendForSupportNeeds = false,
     isParentBooking = false,
-    invitation_id = undefined,
+    offeredClinics = undefined,
     ignoredAppointment_uuid = undefined
   } = {}
 ) => {
-  const clinicInvitation = invitation_id
-    ? ClinicInvitation.findOne(invitation_id, context)
-    : undefined
-
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
       session.type === SessionType.Clinic &&
       session.status === SessionStatus.Planned &&
-      (!isParentBooking ||
-        isClinicOfferedToParent(session, clinicInvitation)) &&
+      (!offeredClinics || isClinicOffered(session, offeredClinics)) &&
       session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (isParentBooking ? 1 : 0) &&
       session.bookableStartTimesForVaccinationChoices(
@@ -113,6 +172,25 @@ export const getBookableClinicSessions = (
   )
 
   return scheduledClinics
+}
+
+/**
+ * Get the restricted invitation clinics the team could offer when booking an appointment from the child record
+ *
+ * @param {object} context - the data context for the models to check
+ * @param {ClinicAppointment} appointment - the appointment being booked
+ * @returns {Array<Session>} restricted invitation clinic sessions with space for the appointment, sorted by audience
+ *   then date
+ */
+export const getOfferableRestrictedClinics = (context, appointment) => {
+  return getBookableClinicSessions(context, appointment.vaccinationChoices, {
+    extendForSupportNeeds: stringToBoolean(
+      context.journeyData.extendForSupportNeeds
+    ),
+    ignoredAppointment_uuid: appointment.uuid
+  })
+    .filter(({ clinicType }) => clinicType === ClinicType.Restricted)
+    .sort(compareByAudienceThenDate)
 }
 
 /**
@@ -138,8 +216,7 @@ export const parseClinicLocation = (clinicLocation) => {
  * @param {ClinicAppointment} appointment - The appointment that we want to book into a clinic
  * @param {boolean} isParentBooking - is a parent booking for themselves, rather than the team booking for them?
  * @param {boolean|undefined} isFakeOutOfArea - Flag to say whether to pretend all clinics are a long way away
- * @returns {Array<object>} Set of radio buttons to present to the user, one per location (or, for parents, one per
- *   location's restricted invitation clinics and one per its open clinics), with `isInvited` set on the former
+ * @returns {Array<object>} Set of radio buttons to present to the user
  */
 export const getBookableClinicLocationItems = (
   context,
@@ -150,21 +227,21 @@ export const getBookableClinicLocationItems = (
   const extendForSupportNeeds = stringToBoolean(
     context.journeyData.extendForSupportNeeds
   )
+  const offeredClinics = getOfferedClinics(context, appointment.booking_uuid)
   const scheduledClinics = getBookableClinicSessions(
     context,
     appointment.vaccinationChoices,
     {
       extendForSupportNeeds,
       isParentBooking,
-      invitation_id:
-        context.journeyData[appointment.booking_uuid]?.invitation_id,
+      offeredClinics,
       ignoredAppointment_uuid: appointment.uuid
     }
   )
 
   // Show a location's restricted invitation clinics separately from its open ones
   const sessionsByLocation = _.groupBy(scheduledClinics, (session) => {
-    if (!isParentBooking) {
+    if (!offeredClinics) {
       return session.clinic_id
     }
 
@@ -222,8 +299,7 @@ export const getBookableClinicDateItems = (
     getBookableClinicSessions(context, vaccinationChoices, {
       extendForSupportNeeds,
       isParentBooking,
-      invitation_id:
-        context.journeyData[appointment.booking_uuid]?.invitation_id,
+      offeredClinics: getOfferedClinics(context, appointment.booking_uuid),
       ignoredAppointment_uuid: appointment.uuid
     })
       .filter((session) => session.clinic_id === clinic_id)

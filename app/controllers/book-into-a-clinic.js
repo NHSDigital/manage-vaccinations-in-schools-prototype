@@ -36,8 +36,11 @@ import {
   getBookableClinicSessions,
   getBookableClinicDateItems,
   getBookableClinicLocationItems,
+  getOfferableRestrictedClinics,
+  getOfferedClinicsForInvitation,
   parseClinicLocation
 } from '../utils/clinic-booking.js'
+import { getRestrictedClinicItems } from '../utils/clinic-invitation.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
@@ -50,6 +53,7 @@ import {
   formatOther,
   formatTime,
   kebabToCamelCase,
+  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
@@ -136,7 +140,10 @@ export const bookIntoClinicController = {
       // Do we need to tell the user that there are no suitable clinics at all?
       nextPath = getBookableClinicSessions(data, vaccinationChoices, {
         isParentBooking: true,
-        invitation_id: data.bookingInvitation_id
+        offeredClinics: getOfferedClinicsForInvitation(
+          data.bookingInvitation_id,
+          data
+        )
       }).length
         ? 'start'
         : 'availability'
@@ -175,6 +182,10 @@ export const bookIntoClinicController = {
     if (journeyType === ClinicBookingJourneyType.ParentOnline) {
       data.journeyData[booking.uuid].invitation_id = data.bookingInvitation_id
     }
+
+    // Don't carry answers over from an earlier booking
+    delete data.journeyData.offerRestrictedClinics
+    delete data.journeyData.restrictedClinic_ids
 
     // Set up the first appointment
     const appointment = booking.addAppointment()
@@ -785,6 +796,10 @@ export const bookIntoClinicController = {
       response.locals.previousAddressItems = getPreviousAddressItems(
         booking.appointments
       )
+    } else if (view === 'restricted-clinics') {
+      response.locals.restrictedClinicItems = getRestrictedClinicItems(
+        getOfferableRestrictedClinics(data, appointment)
+      )
     } else if (view === 'session-selection') {
       // Build the options for the selection of a clinic session from those already chosen for other appointments
       const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
@@ -1054,6 +1069,38 @@ export const bookIntoClinicController = {
       }
       if (request.body.journeyData) {
         _.merge(data.journeyData[booking_uuid], request.body.journeyData)
+      }
+
+      // Stop offering any restricted invitation clinics that no longer suit the appointment, e.g. if its programmes
+      // have changed, and stop offering them at all if none are left
+      const journeyData = data.journeyData[booking_uuid]
+      if (appointment_uuid && journeyData?.restrictedClinic_ids) {
+        // Replace, rather than merge, the choice of clinics
+        if (request.body.journeyData?.restrictedClinic_ids) {
+          journeyData.restrictedClinic_ids =
+            request.body.journeyData.restrictedClinic_ids
+        }
+
+        const appointment = new ClinicBooking(
+          ClinicBooking.findOne(booking_uuid, data.wizard),
+          data
+        ).findAppointment(appointment_uuid)
+        const offerable_ids = getOfferableRestrictedClinics(
+          data,
+          appointment
+        ).map(({ id }) => id)
+
+        journeyData.restrictedClinic_ids = stringToArray(
+          journeyData.restrictedClinic_ids
+        ).filter((id) => offerable_ids.includes(id))
+        if (!journeyData.restrictedClinic_ids.length) {
+          journeyData.offerRestrictedClinics = false
+        }
+
+        // Make sure decorate puts the latest values back in when we visit the relevant pages
+        data.journeyData.offerRestrictedClinics =
+          journeyData.offerRestrictedClinics
+        data.journeyData.restrictedClinic_ids = journeyData.restrictedClinic_ids
       }
 
       if (view === 'shorten-appointment') {

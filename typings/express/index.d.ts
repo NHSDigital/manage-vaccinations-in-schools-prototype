@@ -42,6 +42,7 @@ interface ApplicationData {
     consents: number
     review: number
   }
+  journeyData?: Record<string, any>
   organisationName?: string
   patientSession?: PatientSession
   patientSession_uuid?: string
