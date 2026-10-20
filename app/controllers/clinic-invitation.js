@@ -217,7 +217,7 @@ export const clinicInvitationController = {
       data
     )
 
-    // Remove answers made stale by a change to an earlier answer
+    // Remove answers made stale by a change to an earlier answer i.e. backtracking
     const availableClinic_ids = getRestrictedAccessClinics(
       clinicInvitation.programme_ids,
       data
@@ -225,7 +225,7 @@ export const clinicInvitationController = {
 
     let { clinicTypes, restrictedClinic_ids } = clinicInvitation
 
-    // Can only offer open clinics if no restricted clinics are available
+    // Only open clinics can be offered if no restricted clinics are available
     if (availableClinic_ids.length === 0) {
       clinicTypes = [ClinicType.Open]
     }
@@ -245,7 +245,8 @@ export const clinicInvitationController = {
       data.wizard
     )
 
-    // Pre-fill answers from the draft rather than from auto-stored session data
+    // Remove the auto-stored answers, which can be stale once tidied above (decorate
+    // will fall back to looking for response.locals.clinicInvitation)
     delete data.clinicInvitation
 
     // A booking link has no check answers page, so save the invitation as soon
@@ -272,9 +273,9 @@ export const clinicInvitationController = {
     const { invite_id } = request.params
     const { data } = request.session
 
-    // Links only exist for saved invitations, so start again if this one's not been saved
     const clinicInvitation = ClinicInvitation.findOne(invite_id, data)
     if (!clinicInvitation) {
+      // Lost the invitation? Will have to start again, if so
       return response.redirect('/sessions')
     }
 
