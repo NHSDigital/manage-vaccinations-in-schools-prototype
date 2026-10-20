@@ -2,18 +2,58 @@
 
 {% set title = __("clinicBooking.clinicLocation.title", firstName) %}
 
-{% block form %}
-  {{ radios({
-    fieldset: {
-      legend: {
-        caption: appointmentCaption,
-        heading: title,
-        size: "l"
-      }
-    },
-    hint: __('clinicBooking.clinicLocation.hint', appointment.preferredPostcode),
-    items: clinicLocationItems,
-    decorate: "journeyData.clinic_id"
-  }) }}
+{# Show parents the clinics they've been invited to separately from the others #}
+{% set invitedItems = clinicLocationItems | selectattr("isInvited") %}
+{% set otherItems = clinicLocationItems | rejectattr("isInvited") %}
 
+{% block form %}
+  {% set hint = __('clinicBooking.clinicLocation.hint', appointment.preferredPostcode) %}
+
+  {% if isParentFacing and invitedItems.length and otherItems.length %}
+    {# Listing a mix of restricted-invite and open clinics #}
+    {{ heading({
+      caption: appointmentCaption,
+      text: title,
+      size: "l"
+    }) }}
+
+    <p class="nhsuk-hint">{{ hint }}</p>
+
+    {{ radios({
+      fieldset: {
+        legend: {
+          text: __("clinicBooking.clinicLocation.invited.label", firstName),
+          size: "m"
+        }
+      },
+      items: invitedItems,
+      decorate: "journeyData.clinic_id"
+    }) }}
+
+    {{ radios({
+      fieldset: {
+        legend: {
+          text: __("clinicBooking.clinicLocation.other.label"),
+          size: "m"
+        }
+      },
+      idPrefix: "journeyData-clinic_id-other",
+      items: otherItems,
+      decorate: "journeyData.clinic_id"
+    }) }}
+  {% else %}
+    {# Listing only one type of clinic, so no need to differentiate them #}
+    {{ radios({
+      fieldset: {
+        legend: {
+          caption: appointmentCaption,
+          heading: title,
+          size: "l"
+        }
+      },
+      hint: hint,
+      items: clinicLocationItems,
+      decorate: "journeyData.clinic_id"
+    }) }}
+  {% endif %}
 {% endblock %}

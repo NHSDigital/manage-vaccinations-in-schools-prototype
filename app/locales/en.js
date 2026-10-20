@@ -756,12 +756,24 @@ export const en = {
     },
     clinicLocation: {
       title: 'Choose a clinic for %s’s appointment',
-      hint: 'The following clinics are ordered by distance from %s'
+      hint: 'The following clinics are ordered by distance from %s',
+      invited: {
+        label: 'Clinics specifically for %s'
+      },
+      other: {
+        label: 'Clinics available to all parents'
+      }
     },
     clinicDate: {
       title: 'Choose a clinic date for %s’s appointment',
       date: {
         label: 'Clinic date'
+      },
+      invited: {
+        label: 'Clinic dates specifically for %s'
+      },
+      other: {
+        label: 'Clinic dates available to all parents'
       },
       clinicSummary: {
         location: {
