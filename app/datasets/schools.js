@@ -34,7 +34,7 @@ export default [
   {
     id: '777777',
     urn: '777777',
-    name: 'Flax Hill primary school',
+    name: 'Flax Hill Primary School',
     phase: SchoolPhase.Primary,
     yearGroups: [1, 2, 3, 4, 5, 6],
     addressLine1: 'St. Nicholas Close',
@@ -58,7 +58,7 @@ export default [
   {
     id: '777779',
     urn: '777779',
-    name: 'Dearborne secondary school',
+    name: 'Dearborne Secondary School',
     phase: SchoolPhase.Secondary,
     yearGroups: [7, 8, 9, 10, 11, 12, 13],
     addressLine1: 'Clifton Road',
