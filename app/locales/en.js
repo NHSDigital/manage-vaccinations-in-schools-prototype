@@ -3386,7 +3386,7 @@ export const en = {
       title: 'Which year groups do you want to invite to this session?'
     },
     clinicType: {
-      label: 'Access type',
+      label: 'Clinic type',
       title: 'Is this clinic session open, restricted invitation, or drop-in?',
       hint: {
         open: 'Any parent can see this session when they’re searching for an available clinic',
@@ -3519,7 +3519,7 @@ export const en = {
       label: 'Status'
     },
     type: {
-      label: 'Type',
+      label: 'Session type',
       title: 'What type of session is this?'
     },
     consentUrl: {
