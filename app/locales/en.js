@@ -2941,7 +2941,7 @@ export const en = {
       title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
       count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} are due a vaccination for at least 1 programme.',
+        '{count, plural, =0 {No children are} one {1 child is} other {# children are}} due a vaccination for at least 1 programme.',
       description:
         'You can now send clinic booking invitations to their parents.',
       programme: 'Which programmes do you want to send invitations for?',

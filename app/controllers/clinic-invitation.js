@@ -7,7 +7,8 @@ import {
   getOfferedClinicLocals,
   getBulkInviteProgrammeLocals,
   getPatientInviteProgrammeLocals,
-  getRestrictedAccessClinics
+  getRestrictedAccessClinics,
+  getSchoolInviteProgrammeLocals
 } from '../utils/clinic-invitation.js'
 import {
   ConjunctionType,
@@ -161,6 +162,7 @@ export const clinicInvitationController = {
           )
           return response.render('patient/invite-to-clinic/programmes')
         case ClinicInvitationJourneyType.School:
+          Object.assign(response.locals, getSchoolInviteProgrammeLocals(data))
           return response.render('school/invite-to-clinic/programmes')
         case ClinicInvitationJourneyType.BookingLink:
           Object.assign(response.locals, getBookingLinkProgrammeLocals(data))

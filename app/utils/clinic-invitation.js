@@ -276,6 +276,21 @@ export const getBulkInviteProgrammeLocals = (
 }
 
 /**
+ * Get the clinic counts for each programme that the children at a school can be invited to clinic for
+ *
+ * @param {object} context - the data context holding the programmes and sessions
+ * @returns {object} Values that can be merged into response.locals
+ */
+export const getSchoolInviteProgrammeLocals = (context) => ({
+  clinicCounts: Object.fromEntries(
+    Programme.findAll(context).map(({ id }) => [
+      id,
+      getClinicCountsForProgramme(id, context)
+    ])
+  )
+})
+
+/**
  * Get the programmes that a booking link can be shared for
  *
  * @param {object} context - the data context holding the programmes and sessions
