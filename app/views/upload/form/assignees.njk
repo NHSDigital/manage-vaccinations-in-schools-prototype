@@ -1,0 +1,32 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("upload.request.title") %}
+{% set confirmButtonText = __("upload.request.confirm") %}
+
+{% block form %}
+  {{ heading({
+    caption: upload.school.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        heading: __("upload.assignees.title"),
+        size: "m"
+      }
+    },
+    items: assigneeItems,
+    decorate: "upload.assignee_uids"
+  }) }}
+
+  {% call details({
+    classes: "app-details--notify-message",
+    summary: __("upload.assignees.summary")
+  }) %}
+{% filter nhsukMarkdown %}
+{% include "emails/schools/request-class-lists.njk" %}
+{% endfilter %}
+  {% endcall %}
+{% endblock %}

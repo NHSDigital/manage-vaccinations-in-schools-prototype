@@ -2,11 +2,12 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
 import { UploadStatus, UploadType } from '../enums.js'
-import { Move, Patient, School } from '../models.js'
+import { Move, Patient, School, User } from '../models.js'
 import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
 import {
   formatLink,
+  formatList,
   formatProgress,
   formatTag,
   formatWithSecondaryText,
@@ -20,6 +21,7 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} UploadOptions
  * @property {string} [id] - Upload ID
+ * @property {Date} [requestedAt] - Upload requested at
  * @property {UploadFormat} [format] - Upload format
  * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
@@ -30,6 +32,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [isApproved] - Upload approved
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
+ * @property {Array<string>} [assignee_uids] - School user UIDs request sent to
  */
 
 /**
@@ -48,6 +51,12 @@ export class Upload extends BaseModel {
     super(options, context)
 
     /** @type {string|undefined} */
+    this.requestedBy_uid
+
+    /** @type {User|undefined} */
+    this.requestedBy
+
+    /** @type {string|undefined} */
     this.school_id
 
     /** @type {School|undefined} */
@@ -58,15 +67,26 @@ export class Upload extends BaseModel {
     this.format = options?.format
     this.type = options?.type || UploadType.Cohort
     this.fileName = options?.fileName
+    this.requestedAt = options?.requestedAt && new Date(options.requestedAt)
     this.rejectionReason = options?.rejectionReason
     this.validations = options?.validations || []
     this.hasFailed = stringToBoolean(options?.hasFailed)
     this.isApproved = stringToBoolean(options?.isApproved)
-    this.patient_uuids = options?.patient_uuids || []
+    this.patient_uuids = stringToArray(options?.patient_uuids)
+    this.assignee_uids = stringToArray(options?.assignee_uids)
 
     if (this.type === UploadType.School) {
       this.yearGroups = stringToArray(options?.yearGroups)
     }
+  }
+
+  /**
+   * School users request sent to
+   *
+   * @returns {Array<User>} School users
+   */
+  get assignees() {
+    return this.assignee_uids.map((uid) => User.findOne(uid, this.context))
   }
 
   /**
@@ -103,11 +123,28 @@ export class Upload extends BaseModel {
   }
 
   /**
+   * Can delete upload
+   *
+   * @returns {boolean} Can delete upload
+   */
+  get canDelete() {
+    return ![
+      UploadStatus.Requested,
+      UploadStatus.Processing,
+      UploadStatus.Approved
+    ].includes(this.status)
+  }
+
+  /**
    * Get status
    *
    * @returns {UploadStatus} Status
    */
   get status() {
+    if (this.requestedBy_uid) {
+      return UploadStatus.Requested
+    }
+
     if (this.progress < 100) {
       return UploadStatus.Processing
     }
@@ -249,6 +286,12 @@ export class Upload extends BaseModel {
               return getUpdatedAt()
             case 'updatedBy':
               return this.updatedBy?.fullName
+            case 'requestedBy':
+              return this.requestedBy?.fullName
+            case 'assignees':
+              return formatList(
+                this.assignees.map((assignee) => assignee.fullName)
+              )
             case 'isApproved':
               return this.isApproved === true
                 ? this.updatedAt &&
@@ -293,6 +336,7 @@ export class Upload extends BaseModel {
   }
 }
 
+Upload.relate('requestedBy_uid', () => User, 'requestedBy')
 Upload.relate('school_id', () => School, 'school')
 
 /**
