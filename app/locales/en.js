@@ -3155,8 +3155,11 @@ export const en = {
       label: 'Address'
     },
     consentContacts: {
-      label: 'Parents to contact',
-      title: 'Which parents do you want to send consent requests to?'
+      label: 'Children to contact',
+      title: 'Which children do you want to send consent requests for?',
+      nonRefusers: {
+        hint: '{count, plural, =0 {No children} one {# child} other {# children}} have a previous refusal'
+      }
     },
     consentForms: {
       label: 'Consent forms'

@@ -1,6 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __("session.consentContacts.title") %}
+{% set nonRefusers = [1,2,3,4,5,6,7,8,9] | random %}
 
 {% block form %}
   {{ radios({
@@ -10,7 +11,14 @@
         size: "l"
       }
     },
-    items: enumItems(SessionConsentContacts),
+    items: [{
+      text: SessionConsentContacts.All,
+      hint: __mf("session.consentContacts.nonRefusers.hint", {
+        count: nonRefusers
+      })
+    }, {
+      text: SessionConsentContacts.NonRefusers
+    }],
     decorate: "session.consentContacts"
   }) }}
 {% endblock %}
