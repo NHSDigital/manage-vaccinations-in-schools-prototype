@@ -610,8 +610,8 @@ export const SchoolClosureReason = {
  * @enum {string}
  */
 export const SessionConsentContacts = {
-  All: 'All parents, including those who previously refused consent',
-  NonRefusers: 'Only parents who have not previously refused consent'
+  All: 'All children, including those who already have a refusal',
+  NonRefusers: 'Only children without a refusal'
 }
 
 /**
