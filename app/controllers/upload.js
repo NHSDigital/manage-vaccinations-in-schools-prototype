@@ -94,7 +94,10 @@ export const uploadController = {
 
     // Filter by status
     if (status) {
-      results = results.filter((upload) => upload.status === status)
+      const statuses = Array.isArray(status) ? status : [status]
+      results = results.filter((upload) =>
+        statuses.some((status) => upload.status === status)
+      )
     }
 
     // Filter by type
@@ -165,16 +168,24 @@ export const uploadController = {
       data.wizard
     )
 
-    data.startPath = 'type'
-    if (account.isSchoolUser) {
-      // If school user, show format page
-      data.startPath = 'format'
-    } else if (type) {
-      // If type provided in query string:
-      // - if type is class list, start journey at school question
-      // - else, start journey at upload file question
-      data.startPath = type === UploadType.School ? 'school' : 'file'
+    function getStartPath(account, type, upload) {
+      if (account.isSchoolUser) {
+        return 'format'
+      }
+
+      if (!type) {
+        return 'type'
+      }
+
+      // School uploads need a school chosen before the file
+      if (type === UploadType.School && !upload.school_id) {
+        return 'school'
+      }
+
+      return 'file'
     }
+
+    data.startPath = getStartPath(account, type, upload)
 
     return saveAndRedirect(
       request,
