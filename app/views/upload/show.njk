@@ -57,6 +57,8 @@
     lastRowBorder: false,
     rows: summaryRows(upload, {
       createdBy: {},
+      requestedBy: {},
+      assignees: {},
       fileName: {},
       type: {},
       format: {},
@@ -184,7 +186,7 @@
         }
       ]
     }) }}
-  {% elif upload.status != UploadStatus.Processing and upload.status != UploadStatus.Approved %}
+  {% elif upload.canDelete %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({

@@ -34,8 +34,8 @@
   }) }}
 
   {{ actionLink({
-    href: "/uploads/new?type=" + UploadType.School + "&school_id=" + school.id,
-    text: __("school.uploads.new.title")
+    href: "/uploads/request?type=" + UploadType.School + "&school_id=" + school.id,
+    text: __("upload.request.title")
   }) }}
 
   <div class="nhsuk-grid-row">
@@ -82,12 +82,6 @@
     </div>
 
     <div class="nhsuk-grid-column-two-thirds">
-      {% if data.type and data.type != "none" and not account.isSchoolUser %}
-        {% set title = data.type | replace("records", "record uploads") %}
-      {% else %}
-        {% set title = __("upload.list.results") %}
-      {% endif %}
-
       {{ heading({
         caption: {
           html: __mf("upload.results", {
@@ -97,7 +91,7 @@
           }),
           placement: "after"
         },
-        text: title,
+        text: __("school.uploads.results"),
         level: 2,
         size: "m"
       }) }}

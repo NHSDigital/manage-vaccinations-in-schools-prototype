@@ -53,7 +53,15 @@ export default [
     uid: '000000000007',
     firstName: 'Tilly',
     lastName: 'Thompson',
-    email: 'tilly.thompson@graceacademy.example',
+    email: 'tilly.thompson@example.sch.uk',
+    role: UserRole.SchoolSecretary,
+    team_id: '003'
+  },
+  {
+    uid: '000000000008',
+    firstName: 'Wendy',
+    lastName: 'Williams',
+    email: 'wendy.williams@example.sch.uk',
     role: UserRole.SchoolSecretary,
     team_id: '003'
   }

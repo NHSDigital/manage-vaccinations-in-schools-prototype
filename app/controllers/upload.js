@@ -195,6 +195,34 @@ export const uploadController = {
   },
 
   /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  request(request, response) {
+    const { programme_id } = request.params
+    const { school_id } = request.query
+    const { data } = request.session
+    const { account } = response.locals
+
+    const upload = Upload.create(
+      {
+        requestedAt: today(),
+        requestedBy_uid: account.uid,
+        programme_id,
+        type: UploadType.School,
+        school_id,
+        status: UploadStatus.Requested
+      },
+      data.wizard
+    )
+
+    return saveAndRedirect(
+      request,
+      response,
+      `${upload.uri}/request/year-groups`
+    )
+  },
+
+  /**
    * @param {string} type - Form type
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
@@ -235,6 +263,9 @@ export const uploadController = {
       if (type === 'edit') {
         // Delete any previous validation errors
         delete upload.validations
+      } else if (type === 'request') {
+        // Add assignees before updating upload
+        upload.assignee_uids = request.body.upload.assignee_uids
       } else if (type === 'new' && upload.format === UploadFormat.Mavis) {
         // Add validation errors
         upload.validations = {}
@@ -254,13 +285,19 @@ export const uploadController = {
       delete data.upload
       delete data.wizard
 
-      if (upload.status === UploadStatus.Processing) {
+      if (
+        [UploadStatus.Requested, UploadStatus.Processing].includes(
+          upload.status
+        )
+      ) {
         request.flash('success', __(`upload.${type}.success`))
       }
 
       let nextPage = '/uploads'
       if ([UploadStatus.Failed, UploadStatus.Invalid].includes(upload.status)) {
         nextPage = upload.uri
+      } else if (type === 'request') {
+        nextPage = `${upload.school.uri}/uploads`
       }
 
       saveAndRedirect(request, response, nextPage)
@@ -281,6 +318,13 @@ export const uploadController = {
       let upload = Upload.findOne(upload_id, data.wizard)
       if (!upload) {
         upload = Upload.create(response.locals.upload, data.wizard)
+      }
+
+      // Journey for SAIS teams to request an upload from a school
+      const saisRequestJourney = {
+        [`/${upload_id}/request/year-groups`]: {},
+        [`/${upload_id}/request/assignees`]: {},
+        [`/${upload_id}`]: {}
       }
 
       // Journey for SAIS teams
@@ -319,12 +363,19 @@ export const uploadController = {
         [`/${upload_id}`]: {}
       }
 
-      const journey = account.isSchoolUser ? schoolJourney : saisJourney
+      let journey
+      if (type === 'request') {
+        journey = saisRequestJourney
+      } else {
+        journey = account.isSchoolUser ? schoolJourney : saisJourney
+      }
 
       upload = new Upload(upload, data)
       response.locals.upload = upload
 
       response.locals.paths = wizard(journey, request)
+
+      response.locals.type = type
 
       response.locals.formatItems = [
         {
@@ -354,6 +405,12 @@ export const uploadController = {
       )
 
       if (upload.school) {
+        response.locals.assigneeItems = upload.school.users.map((user) => ({
+          text: user.email,
+          hint: user.fullName,
+          value: user.uid
+        }))
+
         response.locals.yearGroupItems = upload.school.yearGroups.map(
           (yearGroup) => ({
             text: formatYearGroup(yearGroup),
