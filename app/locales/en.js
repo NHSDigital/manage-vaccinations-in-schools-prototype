@@ -2898,6 +2898,13 @@ export const en = {
       isPlanned: 'Scheduled sessions',
       isCompleted: 'Completed sessions'
     },
+    uploads: {
+      label: 'Uploads',
+      title: 'Uploads',
+      new: {
+        title: 'Upload class list'
+      }
+    },
     unplannedProgrammes: {
       label: 'Missing sessions',
       hint: 'Show schools with no sessions scheduled for:'
