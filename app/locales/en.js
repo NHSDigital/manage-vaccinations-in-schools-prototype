@@ -374,7 +374,9 @@ export const en = {
       label: 'Clinic types',
       open: {
         label: 'All open clinics',
-        hint: '{count, plural, =0 {No open clinics are} one {1 open clinic is} other {{count} open clinics are}} scheduled for {programmeNames}'
+        hint: '{count, plural, =0 {No open clinics are} one {1 open clinic is} other {{count} open clinics are}} scheduled for {programmeNames}',
+        noneScheduled:
+          'If you include open clinics, parents can also book any that are scheduled after you send the invitation.'
       },
       restricted: {
         label: 'Specific restricted invitation clinics',
