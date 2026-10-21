@@ -3396,7 +3396,7 @@ export const en = {
       },
       audience: {
         label: 'Audience',
-        hint: 'You will see this in Mavis when inviting children to clinics'
+        hint: 'Your team will see this when inviting children to clinics'
       }
     },
     clinic: {
