@@ -2898,8 +2898,9 @@ export const en = {
       isCompleted: 'Completed sessions'
     },
     uploads: {
-      label: 'Uploads',
-      title: 'Uploads',
+      label: 'Class list requests and uploads',
+      title: 'Class list requests and uploads',
+      results: 'View requests and uploads',
       new: {
         title: 'Upload class list'
       }
@@ -3717,6 +3718,14 @@ export const en = {
   },
   upload: {
     label: 'Upload',
+    request: {
+      title: 'Request a class list',
+      yearGroups: {
+        title: 'Which year groups do you want to request class lists from?'
+      },
+      confirm: 'Send request',
+      success: 'Request for class list sent'
+    },
     action: {
       title: 'Are you sure you want to %s?',
       description: 'This cannot be undone.',
@@ -3915,6 +3924,11 @@ export const en = {
       label: 'Upload corrected spreadsheet',
       success: 'Corrected spreadsheet uploaded. Mavis is processing the file.'
     },
+    assignees: {
+      label: 'Request sent to',
+      title: 'Send request to',
+      summary: 'View the email that will be sent'
+    },
     format: {
       label: 'System',
       title: 'Which management information system does your school use?',
@@ -3997,6 +4011,9 @@ export const en = {
     },
     summary: {
       label: 'Date and uploaded file'
+    },
+    requestedBy: {
+      label: 'Requested by'
     },
     programme: {
       label: 'Programme'

@@ -10,8 +10,14 @@ router.post('/', upload.filterList)
 router.get('/guides{/:view}', upload.showGuide)
 
 router.get('/new', upload.new)
+router.get('/request', upload.request)
 
 router.param('upload_id', upload.read)
+
+router.all('/:upload_id/request/:view', upload.readForm('request'))
+router.get('/:upload_id/request/:view', upload.showForm)
+router.post('/:upload_id/request/assignees', upload.update('request'))
+router.post('/:upload_id/request/:view', upload.updateForm)
 
 router.all('/:upload_id/new/:view', upload.readForm('new'))
 router.get('/:upload_id/new/:view', upload.showForm)

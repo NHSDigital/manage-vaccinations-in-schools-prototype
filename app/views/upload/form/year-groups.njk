@@ -1,12 +1,16 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("upload.yearGroups.title") %}
-{% set information = __("upload.yearGroups.information." + upload.format) %}
+{% if type == "request" %}
+  {% set title = __("upload.request.yearGroups.title") %}
+{% else %}
+  {% set title = __("upload.yearGroups.title") %}
+{% endif %}
 
 {% block form %}
   {{ checkboxes({
     fieldset: {
       legend: {
+        caption: upload.school.name if type == "request",
         heading: title,
         size: "l"
       }

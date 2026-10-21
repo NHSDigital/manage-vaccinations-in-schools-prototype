@@ -37,7 +37,7 @@
           current: params.view == "uploads"
         }
       ]
-    }) }}
+    }) if not account.isSchoolUser }}
 
     {{ heading({
       classes: "nhsuk-u-visually-hidden",

@@ -1,6 +1,6 @@
-Dear {{ school.name }},
+Dear {{ upload.school.name }},
 
-We are the local vaccination team for your school. We need information about the children in [target year groups] who may be offered vaccinations.
+We are the local vaccination team for your school. We need information about the children in {{ upload.formatted.yearGroups }} who may be offered vaccinations.
 
 You can send us this information securely using the NHS service Manage vaccinations in schools (Mavis).
 
@@ -13,7 +13,7 @@ Using Mavis means you can:
 
 ## What information we need
 
-Please send us a spreadsheet containing information about the children in {{ school.formatted.yearGroups }}, including:
+Please send us a spreadsheet containing information about the children in {{ upload.formatted.yearGroups }}, including:
 
 - their name and date of birth
 - their year or registration group
