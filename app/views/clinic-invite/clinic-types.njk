@@ -30,4 +30,9 @@
     }],
     decorate: "clinicInvitation.clinicTypes"
   }) }}
+
+  {# Explain why open clinics can be offered when none are scheduled yet #}
+  {{ insetText({
+    text: __("clinicInvitation.clinicTypes.open.noneScheduled")
+  }) if not openClinicCount }}
 {% endblock %}
