@@ -391,6 +391,45 @@ export const schoolController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  readUploads(request, response) {
+    const { data } = request.session
+    const { status } = request.query
+    const { school } = response.locals
+
+    let results = school.uploads
+
+    // Filter by status
+    if (status) {
+      const statuses = Array.isArray(status) ? status : [status]
+      results = results.filter((upload) =>
+        statuses.some((status) => upload.status === status)
+      )
+    }
+
+    // Results
+    response.locals.results = getResults(results, request.query, 40)
+    response.locals.pages = getPagination(results, request.query, 40)
+
+    // Clean up session data
+    delete data.status
+
+    return response.render('school/uploads')
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  filterUploads(request, response) {
+    const { school } = response.locals
+
+    const params = getFilterParams(request, [], ['status'])
+
+    return saveAndRedirect(request, response, `${school.uri}/uploads?${params}`)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   edit(request, response) {
     const { school_id } = request.params
     const { data } = request.session

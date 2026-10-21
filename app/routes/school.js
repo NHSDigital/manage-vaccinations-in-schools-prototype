@@ -35,6 +35,9 @@ router.post('/:school_id/delete', school.delete)
 
 router.get('/:school_id/sessions', school.readSessions)
 
+router.get('/:school_id/uploads', school.readUploads)
+router.post('/:school_id/uploads', school.filterUploads)
+
 router.all('/:school_id', school.readPatients)
 router.post('/:school_id', school.filterPatients)
 
