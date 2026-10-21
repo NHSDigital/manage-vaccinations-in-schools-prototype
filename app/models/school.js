@@ -2,7 +2,14 @@ import { default as filters } from '@x-govuk/govuk-prototype-filters'
 import { isAfter, isBefore } from 'date-fns'
 
 import { SchoolClosureReason, SchoolStatus } from '../enums.js'
-import { Location, Patient, Programme, Session, Team } from '../models.js'
+import {
+  Location,
+  Patient,
+  Programme,
+  Session,
+  Team,
+  Upload
+} from '../models.js'
 import { formatDate, getDateValueDifference, today } from '../utils/date.js'
 import { getSchoolStatusProperties } from '../utils/enum-properties.js'
 import { tokenize } from '../utils/object.js'
@@ -227,6 +234,21 @@ export class School extends Location {
       return Session.findAll(this.context)
         .filter(({ school_id }) => school_id === this.id)
         .sort((a, b) => getDateValueDifference(a.date, b.date))
+    }
+
+    return []
+  }
+
+  /**
+   * Get uploads for this school
+   *
+   * @returns {Array<Upload>} Uploads
+   */
+  get uploads() {
+    if (this.context) {
+      return Upload.findAll(this.context)
+        .filter(({ school_id }) => school_id === this.id)
+        .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
     }
 
     return []

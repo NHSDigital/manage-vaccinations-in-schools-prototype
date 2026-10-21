@@ -1,0 +1,128 @@
+{% from "school/_navigation.njk" import schoolNavigation with context %}
+
+{% extends "_layouts/form.njk" %}
+
+{% set gridColumns = "full" %}
+{% set hideConfirmButton = true %}
+{% set title = __("school.uploads.title") %}
+
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      },
+      {
+        text: __("school.list.title"),
+        href: "/schools"
+      },
+      {
+        text: school.name,
+        href: school.uri
+      }
+    ]
+  }) }}
+{% endblock %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ schoolNavigation({
+    school: school,
+    view: "uploads"
+  }) }}
+
+  {{ actionLink({
+    href: "/uploads/new?type=" + UploadType.School + "&school_id=" + school.id,
+    text: __("school.uploads.new.title")
+  }) }}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-third">
+      {% call card({
+        classes: "app-filters",
+        feature: true,
+        heading: {
+          text: __("upload.search.label"),
+          level: 2
+        }
+      }) %}
+        {{ checkboxes({
+          fieldset: {
+            legend: {
+              text: __("upload.status.label"),
+              size: "s"
+            }
+          },
+          small: true,
+          items: checkboxFilterItems(UploadStatus),
+          decorate: "status"
+        }) }}
+
+        {{ appButtonGroup({
+          buttons: [
+            {
+              text: __("search.confirm"),
+              small: true,
+              variant: "secondary",
+              attributes: {
+                formmethod: "post"
+              }
+            },
+            {
+              text: __("search.clear"),
+              href: school.uri + "/uploads",
+              small: true,
+              variant: "secondary"
+            } if data.type or data.status
+          ]
+        }) }}
+      {% endcall %}
+    </div>
+
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if data.type and data.type != "none" and not account.isSchoolUser %}
+        {% set title = data.type | replace("records", "record uploads") %}
+      {% else %}
+        {% set title = __("upload.list.results") %}
+      {% endif %}
+
+      {{ heading({
+        caption: {
+          html: __mf("upload.results", {
+            from: results.from,
+            to: results.to,
+            count: results.count
+          }),
+          placement: "after"
+        },
+        text: title,
+        level: 2,
+        size: "m"
+      }) }}
+
+      {% for upload in results.page %}
+        {{ summaryList({
+          card: {
+            classes: "app-card--compact",
+            heading: {
+              text: upload.formatted.createdAt,
+              size: "s",
+              level: 3
+            },
+            href: upload.uri,
+            clickable: true
+          },
+          lastRowBorder: false,
+          rows: summaryRows(upload, {
+            fileName: {},
+            status: {}
+          })
+        }) }}
+      {% endfor %}
+
+      {{ pagination(pages) }}
+    </div>
+  </div>
+{% endblock %}
