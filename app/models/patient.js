@@ -64,6 +64,7 @@ import {
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
  * @property {string} [designVariant] - Design variant to show (prototype only)
+ * @property {Array<object>} [sessionsCardRows] - Faked sessions card rows (prototype only)
  * @property {Array<AuditEvent>} [events] - Events
  * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
@@ -102,6 +103,8 @@ export class Patient extends Child {
     this.pendingChanges = options?.pendingChanges || {}
     // Scaffolding: prototype-only flag to show a design variant on a page
     this.designVariant = options?.designVariant
+    // Scaffolding: prototype-only rows that fake the sessions card (case 8)
+    this.sessionsCardRows = options?.sessionsCardRows
 
     this.events = options?.events || []
     this.instructions = options?.instructions || []

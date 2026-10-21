@@ -1,7 +1,8 @@
 # MMR catch-up — test scenarios
 
 Seven patient cases used to test schedule-aware classification of MMR
-vaccination records, plus two design variants of case 7 (7A and 7B). Each case lists the inputs (date of birth and full vaccination
+vaccination records, plus two design variants of case 7 (7A and 7B) and
+case 8, seeded only as two research forms (8A and 8B). Each case lists the inputs (date of birth and full vaccination
 history) and the expected classifier output (which doses are valid, which
 are out of schedule and why, the resulting programme status, and the
 eligible-from date for the next slot).
@@ -381,10 +382,81 @@ programme status, status note and doses remaining are as case 7.
 
 ---
 
+## Case 8 — Harry Hughes (research forms 8A and 8B)
+
+> **Research forms.** Case 8 exists only as two twins, Harry Hughes A
+> (form A) and Harry Hughes B (form B), with identical records. They test
+> whether the encounters card is needed when the sessions card shows a
+> session outcome. Each patient record carries `designVariant: "8A"` or
+> `"8B"`, which is prototype-only scaffolding.
+
+One valid dose 1 from the GP, two refused or unwell school sessions, then
+a clinic where he refused in the morning and was vaccinated in the
+afternoon. The afternoon vaccination is dose 2.
+
+- **NHS numbers:** 9990000107 (8A), 9990000115 (8B)
+- **Date of birth:** 14 May, Year 10 in the current academic year
+
+### Vaccination history
+
+| #   | Age                        | Vaccine     | Source                                  | Outcome       | Session                                                  |
+| --- | -------------------------- | ----------- | --------------------------------------- | ------------- | -------------------------------------------------------- |
+| 1   | 12m 20d                    | M-M-RvaxPro | NHS Immunisations API: EMIS (GP system) | Vaccinated    | –                                                        |
+| 2   | 152m 16d (Y8 spring)       | M-M-RvaxPro | Recorded in Mavis                       | Child refused | School MMR session, Grace Academy Coventry               |
+| 3   | 162m 5d (Y9 autumn)        | M-M-RvaxPro | Recorded in Mavis                       | Child unwell  | School MMR session, Grace Academy Coventry               |
+| 4   | 169m 3d, 10:05 (Y9 summer) | M-M-RvaxPro | Recorded in Mavis                       | Child refused | Community clinic MMR session, Spring Hill Medical Centre |
+| 5   | 169m 3d, 14:20 (Y9 summer) | M-M-RvaxPro | Recorded in Mavis                       | Vaccinated    | Community clinic MMR session, Spring Hill Medical Centre |
+
+Records 2 to 5 are seeded through `recordMmrSessionOutcome`, so the
+activity log entries come from `patient.recordVaccination`. Like the
+other session records in this cohort, they are linked to the school or
+clinic, not to the session itself.
+
+### Expected classification
+
+| #   | Status      | Slot   | Reason                                 |
+| --- | ----------- | ------ | -------------------------------------- |
+| 1   | Valid       | Dose 1 | –                                      |
+| 2   | Not counted | –      | Outcome `Child refused`, no dose given |
+| 3   | Not counted | –      | Outcome `Child unwell`, no dose given  |
+| 4   | Not counted | –      | Outcome `Child refused`, no dose given |
+| 5   | Valid       | Dose 2 | –                                      |
+
+- **Programme status:** Fully vaccinated (2 valid doses, so 0 doses remaining)
+- **Eligible from:** `null` (schedule complete)
+- **Consent:** given for the catch-up session, like the other cohort
+  patients
+
+### Sessions card (faked)
+
+> **Faked rows.** The prototype does not derive a session outcome:
+> `PatientSession` has no outcome, so the card shows No outcome for every
+> session, and it lists only the current academic year’s sessions. For
+> this research the seed writes the rows onto the case 8 patients
+> (`sessionsCardRows`, scaffolding) to show what production Mavis shows:
+> the latest outcome recorded in each session, across every academic
+> year for a non-seasonal programme. The location and date come from the
+> seeded sessions, so they move with the cohort.
+
+| Location                   | Date                     | Session outcome         |
+| -------------------------- | ------------------------ | ----------------------- |
+| Grace Academy Coventry     | Y8 spring session        | Refused vaccine (red)   |
+| Grace Academy Coventry     | Y9 autumn session        | Unwell (red)            |
+| Spring Hill Medical Centre | Y9 summer clinic         | Vaccinated (green)      |
+| Grace Academy Coventry     | Current catch-up session | No outcome (plain text) |
+
+### Encounters card
+
+- **8A:** shown, with three rows: the two refusals and the unwell record
+- **8B:** not shown at all
+
+---
+
 ## Cohort session
 
-All seven patients, and the two case 7 design variants, are tied to a
-single co-located session for the catch-up scenario:
+All seven patients, the two case 7 design variants and the two case 8
+research forms are tied to a single co-located session for the catch-up
+scenario:
 
 - **Session id:** `mmr-catchup-y9y10-current`
 - **School:** Grace Academy Coventry (id `135335`)

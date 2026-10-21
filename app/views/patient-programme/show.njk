@@ -150,19 +150,37 @@
       }
     }) %}
       {% set patientSessionRows = [] %}
-      {% for patientSession in patientProgramme.patientSessions %}
-        {% set patientSessionRows = patientSessionRows | push([
-          {
-            html: link(patientSession.uri, patientSession.session.location.name)
-          },
-          {
-            html: patientSession.session.formatted.date if patientSession.session.date else patientSession.session.status
-          },
-          {
-            html: patientSession.formatted.outcome or "No outcome"
-          }
-        ]) %}
-      {% endfor %}
+      {% if patient.sessionsCardRows %}
+        {# Scaffolding: faked session outcome rows for case 8 research, seeded
+           on the patient; the prototype does not derive session outcomes #}
+        {% for row in patient.sessionsCardRows %}
+          {% set patientSessionRows = patientSessionRows | push([
+            {
+              text: row.location
+            },
+            {
+              text: row.date
+            },
+            {
+              html: ('<strong class="nhsuk-tag nhsuk-tag--' + row.colour + '">' + row.outcome + '</strong>') if row.colour else row.outcome
+            }
+          ]) %}
+        {% endfor %}
+      {% else %}
+        {% for patientSession in patientProgramme.patientSessions %}
+          {% set patientSessionRows = patientSessionRows | push([
+            {
+              html: link(patientSession.uri, patientSession.session.location.name)
+            },
+            {
+              html: patientSession.session.formatted.date if patientSession.session.date else patientSession.session.status
+            },
+            {
+              html: patientSession.formatted.outcome or "No outcome"
+            }
+          ]) %}
+        {% endfor %}
+      {% endif %}
 
       {{ table({
         id: "patient-sessions",

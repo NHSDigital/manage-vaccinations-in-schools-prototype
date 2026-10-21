@@ -122,7 +122,8 @@
   }) if patientProgramme.canRecordVaccination }}
 {% endcall %}
 
-{% if patientProgramme.encounters.length %}
+{# Scaffolding: case 8B tests the page without the encounters card #}
+{% if patientProgramme.encounters.length and designVariant != "8B" %}
   {% call card({
     heading: {
       text: __mf("patientProgramme.encounters.count", {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "MMR catch-up — test scenarios",
-  "description": "Seven patient cases, plus two design variants of case 7, used to test schedule-aware classification of MMR vaccination records. Each case lists the inputs (date of birth and full vaccination history) and the expected classifier output.",
+  "description": "Seven patient cases, plus two design variants of case 7 and case 8 as two research forms, used to test schedule-aware classification of MMR vaccination records. Each case lists the inputs (date of birth and full vaccination history) and the expected classifier output.",
   "dateRule": "All dates are relative, so the scenarios hold in any academic year. A date of birth is a birthday and a year group in the current academic year. A vaccination is an age at vaccination (months and days after date of birth). Eligible from is date of birth plus months, or a dose plus days. The seed writes the cohort for 2025/26 and shifts it by whole years to the current academic year, so no age changes.",
   "scheduleRules": {
     "programme": "MMR",
@@ -788,6 +788,394 @@
           "encountersCard": "As case 7"
         }
       }
+    },
+    {
+      "id": "case-8a-harry-hughes-a",
+      "researchForm": "8A",
+      "designVariant": "8A",
+      "designVariantNote": "Research form A of case 8. Prototype-only scaffolding: the patient record carries designVariant: \"8A\". Both forms have identical records; form A shows the encounters card. Both use the faked sessions card.",
+      "summary": "One valid dose 1 from the GP, refused in a Y8 school session, unwell in a Y9 school session, then refused at 10:05 and vaccinated at 14:20 in a Y9 community clinic. The afternoon vaccination is dose 2.",
+      "patient": {
+        "firstName": "Harry",
+        "lastName": "Hughes A",
+        "nhsn": "9990000107",
+        "prototypeUuid": "mmr00010-0000-4000-8000-000000000010",
+        "designVariant": "8A",
+        "dob": {
+          "birthday": "14 May",
+          "yearGroup": 10
+        }
+      },
+      "vaccinations": [
+        {
+          "index": 0,
+          "administeredAt": {
+            "after": "dob",
+            "months": 12,
+            "days": 20
+          },
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Vaccinated",
+          "source": "EMIS (GP system)"
+        },
+        {
+          "index": 1,
+          "administeredAt": {
+            "after": "dob",
+            "months": 152,
+            "days": 16
+          },
+          "yearGroup": 8,
+          "term": "spring",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Child refused",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "School",
+            "school": "Grace Academy Coventry"
+          }
+        },
+        {
+          "index": 2,
+          "administeredAt": {
+            "after": "dob",
+            "months": 162,
+            "days": 5
+          },
+          "yearGroup": 9,
+          "term": "autumn",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Child unwell",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "School",
+            "school": "Grace Academy Coventry"
+          }
+        },
+        {
+          "index": 3,
+          "administeredAt": {
+            "after": "dob",
+            "months": 169,
+            "days": 3,
+            "time": "10:05"
+          },
+          "yearGroup": 9,
+          "term": "summer",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Child refused",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "Community clinic",
+            "clinic": {
+              "id": "M84008",
+              "name": "Spring Hill Medical Centre"
+            }
+          }
+        },
+        {
+          "index": 4,
+          "administeredAt": {
+            "after": "dob",
+            "months": 169,
+            "days": 3,
+            "time": "14:20"
+          },
+          "yearGroup": 9,
+          "term": "summer",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Vaccinated",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "Community clinic",
+            "clinic": {
+              "id": "M84008",
+              "name": "Spring Hill Medical Centre"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "classifications": [
+          {
+            "index": 0,
+            "status": "valid",
+            "slot": 1
+          },
+          {
+            "index": 1,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          },
+          {
+            "index": 2,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          },
+          {
+            "index": 3,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          },
+          {
+            "index": 4,
+            "status": "valid",
+            "slot": 2
+          }
+        ],
+        "programmeStatus": "Fully vaccinated",
+        "programmeStatusExplanation": "2 valid doses, so 0 doses remaining",
+        "eligibleFrom": null,
+        "eligibleFromExplanation": "Schedule complete",
+        "dosesRemaining": 0,
+        "sessionsCard": {
+          "faked": true,
+          "fakedNote": "Prototype-only scaffolding. The prototype does not derive a session outcome (PatientSession has no outcome, so every session shows No outcome) and lists only the current academic year. The seed writes these rows onto the case 8 patients (sessionsCardRows) to show what production Mavis shows: the latest outcome recorded in each session, across every academic year for a non-seasonal programme. Location and date come from the seeded sessions, so they move with the cohort.",
+          "heading": "Session outcome",
+          "rows": [
+            {
+              "location": "Grace Academy Coventry",
+              "date": "Y8 spring session",
+              "outcome": "Refused vaccine",
+              "tag": "red"
+            },
+            {
+              "location": "Grace Academy Coventry",
+              "date": "Y9 autumn session",
+              "outcome": "Unwell",
+              "tag": "red"
+            },
+            {
+              "location": "Spring Hill Medical Centre",
+              "date": "Y9 summer clinic",
+              "outcome": "Vaccinated",
+              "tag": "green"
+            },
+            {
+              "location": "Grace Academy Coventry",
+              "date": "Current catch-up session",
+              "outcome": "No outcome",
+              "tag": null
+            }
+          ]
+        },
+        "encountersCard": {
+          "shown": true,
+          "heading": "3 encounters",
+          "rows": [
+            {
+              "date": "Y8 spring session",
+              "outcome": "Child refused",
+              "source": "Recorded in Mavis"
+            },
+            {
+              "date": "Y9 autumn session",
+              "outcome": "Child unwell",
+              "source": "Recorded in Mavis"
+            },
+            {
+              "date": "Y9 summer clinic (10:05)",
+              "outcome": "Child refused",
+              "source": "Recorded in Mavis"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "case-8b-harry-hughes-b",
+      "researchForm": "8B",
+      "designVariant": "8B",
+      "designVariantNote": "Research form B of case 8. Prototype-only scaffolding: the patient record carries designVariant: \"8B\". Both forms have identical records; form B does not render the encounters card. Both use the faked sessions card.",
+      "summary": "One valid dose 1 from the GP, refused in a Y8 school session, unwell in a Y9 school session, then refused at 10:05 and vaccinated at 14:20 in a Y9 community clinic. The afternoon vaccination is dose 2.",
+      "patient": {
+        "firstName": "Harry",
+        "lastName": "Hughes B",
+        "nhsn": "9990000115",
+        "prototypeUuid": "mmr00011-0000-4000-8000-000000000011",
+        "designVariant": "8B",
+        "dob": {
+          "birthday": "14 May",
+          "yearGroup": 10
+        }
+      },
+      "vaccinations": [
+        {
+          "index": 0,
+          "administeredAt": {
+            "after": "dob",
+            "months": 12,
+            "days": 20
+          },
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Vaccinated",
+          "source": "EMIS (GP system)"
+        },
+        {
+          "index": 1,
+          "administeredAt": {
+            "after": "dob",
+            "months": 152,
+            "days": 16
+          },
+          "yearGroup": 8,
+          "term": "spring",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Child refused",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "School",
+            "school": "Grace Academy Coventry"
+          }
+        },
+        {
+          "index": 2,
+          "administeredAt": {
+            "after": "dob",
+            "months": 162,
+            "days": 5
+          },
+          "yearGroup": 9,
+          "term": "autumn",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Child unwell",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "School",
+            "school": "Grace Academy Coventry"
+          }
+        },
+        {
+          "index": 3,
+          "administeredAt": {
+            "after": "dob",
+            "months": 169,
+            "days": 3,
+            "time": "10:05"
+          },
+          "yearGroup": 9,
+          "term": "summer",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Child refused",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "Community clinic",
+            "clinic": {
+              "id": "M84008",
+              "name": "Spring Hill Medical Centre"
+            }
+          }
+        },
+        {
+          "index": 4,
+          "administeredAt": {
+            "after": "dob",
+            "months": 169,
+            "days": 3,
+            "time": "14:20"
+          },
+          "yearGroup": 9,
+          "term": "summer",
+          "vaccineSnomed": "13968211000001108",
+          "vaccineBrand": "M-M-RvaxPro",
+          "programmeId": "mmr",
+          "outcome": "Vaccinated",
+          "source": "Recorded in Mavis",
+          "session": {
+            "type": "Community clinic",
+            "clinic": {
+              "id": "M84008",
+              "name": "Spring Hill Medical Centre"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "classifications": [
+          {
+            "index": 0,
+            "status": "valid",
+            "slot": 1
+          },
+          {
+            "index": 1,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          },
+          {
+            "index": 2,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          },
+          {
+            "index": 3,
+            "status": "not-counted",
+            "reason": "outcome is not 'Vaccinated'"
+          },
+          {
+            "index": 4,
+            "status": "valid",
+            "slot": 2
+          }
+        ],
+        "programmeStatus": "Fully vaccinated",
+        "programmeStatusExplanation": "2 valid doses, so 0 doses remaining",
+        "eligibleFrom": null,
+        "eligibleFromExplanation": "Schedule complete",
+        "dosesRemaining": 0,
+        "sessionsCard": {
+          "faked": true,
+          "fakedNote": "Prototype-only scaffolding. The prototype does not derive a session outcome (PatientSession has no outcome, so every session shows No outcome) and lists only the current academic year. The seed writes these rows onto the case 8 patients (sessionsCardRows) to show what production Mavis shows: the latest outcome recorded in each session, across every academic year for a non-seasonal programme. Location and date come from the seeded sessions, so they move with the cohort.",
+          "heading": "Session outcome",
+          "rows": [
+            {
+              "location": "Grace Academy Coventry",
+              "date": "Y8 spring session",
+              "outcome": "Refused vaccine",
+              "tag": "red"
+            },
+            {
+              "location": "Grace Academy Coventry",
+              "date": "Y9 autumn session",
+              "outcome": "Unwell",
+              "tag": "red"
+            },
+            {
+              "location": "Spring Hill Medical Centre",
+              "date": "Y9 summer clinic",
+              "outcome": "Vaccinated",
+              "tag": "green"
+            },
+            {
+              "location": "Grace Academy Coventry",
+              "date": "Current catch-up session",
+              "outcome": "No outcome",
+              "tag": null
+            }
+          ]
+        },
+        "encountersCard": {
+          "shown": false
+        }
+      }
     }
   ],
   "cohortSession": {
@@ -803,7 +1191,7 @@
     "yearGroups": [9, 10],
     "presetNames": ["MMR", "Doubles"],
     "programmes": ["mmr", "menacwy", "td-ipv"],
-    "consents": "Consent given for every patient and programme (including Gita and the case 7 design variants), except Dmitri's MMR (Refused, 'Already had both doses of the MMR vaccine'). Bilal's MMR consent answers Yes to the immune system question",
+    "consents": "Consent given for every patient and programme (including Gita and the case 7 design variants and case 8 research forms), except Dmitri's MMR (Refused, 'Already had both doses of the MMR vaccine'). Bilal's MMR consent answers Yes to the immune system question",
     "consentOpenAt": {
       "before": "today",
       "days": 28
