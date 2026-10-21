@@ -58,6 +58,7 @@
     {% if session.type === SessionType.Clinic %}
       {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
       {% set sessionDetailsRows = {
+          clinicType: {},
           location: {},
           status: {},
           programmes: {},
