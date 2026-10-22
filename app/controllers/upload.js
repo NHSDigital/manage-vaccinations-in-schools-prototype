@@ -26,21 +26,22 @@ export const uploadController = {
     const { account } = response.locals
 
     let uploads = Upload.findAll(data).filter((upload) => {
-      // School admins can only see uploads from other users in their team
+      // School admins can only see files uploaded by users in their team
       if (account.isSchoolUser) {
-        return upload.createdBy.team_id === account.team_id
+        return upload.uploadedBy?.team_id === account.team_id
       }
 
-      // SAIS teams can only see uploads from other users in their team
-      // and uploads from other teams that have been submitted for approval
-      // and approved or rejected
+      // SAIS teams can’t see uploads that are private to a school admin
+      if (upload.teamStatus === undefined) {
+        return false
+      }
+
+      // SAIS teams can only see uploads created by users in their team
+      // (including requests sent to schools) and uploads from other teams that
+      // have been sent for approval
       return (
-        upload.createdBy.team_id === account.team_id ||
-        [
-          UploadStatus.Submitted,
-          UploadStatus.Approved,
-          UploadStatus.Rejected
-        ].includes(upload.status)
+        upload.createdBy?.team_id === account.team_id ||
+        Boolean(upload.submittedAt)
       )
     })
 
@@ -68,6 +69,14 @@ export const uploadController = {
       return response.render(`upload/show-class-list`)
     }
 
+    // SAIS teams can’t see uploads that are private to a school admin
+    if (
+      !account.isSchoolUser &&
+      response.locals.upload?.teamStatus === undefined
+    ) {
+      return response.redirect('/uploads')
+    }
+
     return response.render(`upload/${view}`)
   },
 
@@ -88,15 +97,16 @@ export const uploadController = {
   list(request, response) {
     const { status, type } = request.query
     const { data } = request.session
-    const { uploads } = response.locals
+    const { account, uploads } = response.locals
 
     let results = uploads
 
-    // Filter by status
+    // Filter by status (as shown to the type of user)
     if (status) {
       const statuses = Array.isArray(status) ? status : [status]
+      const statusKey = account.isSchoolUser ? 'schoolStatus' : 'teamStatus'
       results = results.filter((upload) =>
-        statuses.some((status) => upload.status === status)
+        statuses.some((status) => upload[statusKey] === status)
       )
     }
 
@@ -205,12 +215,13 @@ export const uploadController = {
 
     const upload = Upload.create(
       {
+        createdAt: today(),
+        createdBy_uid: account.uid,
         requestedAt: today(),
         requestedBy_uid: account.uid,
         programme_id,
         type: UploadType.School,
-        school_id,
-        status: UploadStatus.Requested
+        school_id
       },
       data.wizard
     )
@@ -230,7 +241,7 @@ export const uploadController = {
     return (request, response) => {
       const { upload_id } = request.params
       const { data } = request.session
-      const { __ } = response.locals
+      const { __, account } = response.locals
 
       // Update session data
       let upload = Upload.update(
@@ -260,9 +271,16 @@ export const uploadController = {
 
       upload.patient_uuids = patients.map((patient) => patient.uuid)
 
+      if (type === 'new' || type === 'edit') {
+        // Record file upload (restarts processing)
+        upload.uploadedAt = today()
+        upload.uploadedBy_uid = account.uid
+      }
+
       if (type === 'edit') {
-        // Delete any previous validation errors
+        // Delete any previous validation errors and failed data checks
         delete upload.validations
+        delete upload.hasFailed
       } else if (type === 'request') {
         // Add assignees before updating upload
         upload.assignee_uids = request.body.upload.assignee_uids
@@ -461,7 +479,7 @@ export const uploadController = {
   },
 
   /**
-   * @param {string} type - Form type
+   * @param {'submit'|'approve'} type - Review type
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   review(type) {
@@ -473,9 +491,15 @@ export const uploadController = {
       Upload.update(
         upload_id,
         {
-          updatedAt: new Date(),
           updatedBy_uid: account.uid,
-          ...(type === 'approve' && { isApproved: true })
+          ...(type === 'submit' && {
+            submittedAt: today(),
+            submittedBy_uid: account.uid
+          }),
+          ...(type === 'approve' && {
+            approvedAt: today(),
+            approvedBy_uid: account.uid
+          })
         },
         data
       )
@@ -499,8 +523,9 @@ export const uploadController = {
       upload_id,
       {
         updatedBy_uid: account.uid,
-        rejectionReason,
-        isApproved: false
+        rejectedAt: today(),
+        rejectedBy_uid: account.uid,
+        rejectionReason
       },
       data
     )

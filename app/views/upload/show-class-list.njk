@@ -6,8 +6,8 @@
 {% set hideConfirmButton = true %}
 {% set patientsMoved = upload.patients | slice(5) %}
 {% set programme = data.programmes[upload.programme_id] %}
-{% set needsReview = upload.status == UploadStatus.Review %}
-{% if needsReview %}
+{% set needsChecking = upload.status == UploadStatus.Pending %}
+{% if needsChecking %}
   {% set title = __("upload.show.submit.title", upload.formatted.createdAt) %}
 {% else %}
   {% set title = __("upload.show.class-list.title", upload.formatted.createdAt) %}
@@ -36,7 +36,7 @@
     size: "l"
   }) }}
 
-  {% if needsReview %}
+  {% if needsChecking %}
   <div class="nhsuk-u-reading-width">
     {{ __("upload.show.submit.description") | nhsukMarkdown }}
   </div>
@@ -51,15 +51,16 @@
     },
     lastRowBorder: false,
     rows: summaryRows(upload, {
-      createdBy: {},
+      uploaded: {},
       fileName: {},
       format: {},
       school: {},
       yearGroups: {},
       patients: {},
-      status: {},
-      isApproved: {},
-      isRejected: {},
+      schoolStatus: {},
+      submitted: {},
+      approved: {},
+      rejected: {},
       rejectionReason: {}
     })
   }) }}
@@ -144,7 +145,7 @@
     {{ classListRecords({ patients: patientsMoved[4] }) }}
   {% endif %}
 
-  {% if upload.patients.length > 0 and needsReview %}
+  {% if upload.patients.length > 0 and needsChecking %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({

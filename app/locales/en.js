@@ -3820,7 +3820,6 @@ export const en = {
       partial: {
         label: {
           [UploadStatus.Review]: 'Changes to review',
-          [UploadStatus.Submitted]: 'Changes submitted',
           [UploadStatus.Approved]: 'Changes approved',
           [UploadStatus.Rejected]: 'Changes rejected'
         },
@@ -3828,13 +3827,10 @@ export const en = {
           [UploadStatus.Review]:
             'Close matches to existing records – need review',
           [UploadStatus.Rejected]: 'Close matches to existing records',
-          [UploadStatus.Submitted]: 'Close matches to existing records',
           [UploadStatus.Approved]: 'Close matches to existing records'
         },
         count: {
           [UploadStatus.Review]:
-            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
-          [UploadStatus.Submitted]:
             '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
           [UploadStatus.Approved]:
             '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
@@ -3844,8 +3840,6 @@ export const en = {
         summary: {
           [UploadStatus.Review]:
             'These records closely match children who are already in Mavis. Review each one and choose which record to keep in Mavis.',
-          [UploadStatus.Submitted]:
-            'These records closely matched children already in Mavis.',
           [UploadStatus.Approved]:
             'These records closely matched children already in Mavis.',
           [UploadStatus.Rejected]:
@@ -3889,7 +3883,6 @@ export const en = {
       moves: {
         title: {
           [UploadStatus.Review]: 'School moves – need review',
-          [UploadStatus.Submitted]: 'School moves submitted for this upload',
           [UploadStatus.Approved]: 'School moves approved for this upload',
           [UploadStatus.Rejected]: 'School moves rejected for this upload'
         },
@@ -3908,8 +3901,6 @@ export const en = {
         summary: {
           [UploadStatus.Review]:
             'The upload shows a different school for these children from the one recorded in Mavis. Review each one and choose whether to update their school.',
-          [UploadStatus.Submitted]:
-            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} submitted.',
           [UploadStatus.Approved]:
             '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} approved.',
           [UploadStatus.Rejected]:
@@ -3983,6 +3974,7 @@ export const en = {
         '{count, plural, =0 {No unmatched records} one {1 unmatched record} other {# unmatched records}}'
     },
     rejected: {
+      label: 'Rejected',
       title: 'Upload rejected',
       description: 'This upload was rejected for the following reason:'
     },
@@ -4001,12 +3993,19 @@ export const en = {
     updatedBy: {
       label: 'Updated by'
     },
-    isApproved: {
+    requested: {
+      label: 'Requested'
+    },
+    uploaded: {
+      label: 'Uploaded'
+    },
+    submitted: {
+      label: 'Sent for approval'
+    },
+    approved: {
       label: 'Approved'
     },
-    isRejected: {
-      label: 'Rejected'
-    },
+
     fileName: {
       label: 'File'
     },
@@ -4031,6 +4030,12 @@ export const en = {
       }
     },
     status: {
+      label: 'Status'
+    },
+    teamStatus: {
+      label: 'Status'
+    },
+    schoolStatus: {
       label: 'Status'
     },
     vaccinations: {

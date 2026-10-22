@@ -5,7 +5,8 @@
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set programme = data.programmes[upload.programme_id] %}
-{% set needsReview = upload.status in [UploadStatus.Submitted, UploadStatus.Review] %}
+{% set status = upload.teamStatus %}
+{% set needsReview = status == UploadStatus.Review %}
 {% if needsReview %}
   {% set title = __("upload.show.approve.title", upload.formatted.createdAt) %}
 {% else %}
@@ -52,27 +53,28 @@
           text: __("upload.removeRelationships.label"),
           href: upload.uri + "/bulk-remove-relationships"
         }
-      ] if upload.status == UploadStatus.Approved and upload.type != UploadType.Report
+      ] if status == UploadStatus.Approved and upload.type != UploadType.Report
     },
     lastRowBorder: false,
     rows: summaryRows(upload, {
-      createdBy: {},
-      requestedBy: {},
+      requested: {},
       assignees: {},
-      fileName: {},
+      uploaded: {} if not upload.isPrivateToSchool else none,
+      fileName: {} if not upload.isPrivateToSchool else none,
       type: {},
-      format: {},
+      format: {} if not upload.isPrivateToSchool else none,
       school: {},
       yearGroups: {},
-      patients: {},
-      status: {},
-      isApproved: {},
-      isRejected: {},
+      patients: {} if not upload.isPrivateToSchool else none,
+      teamStatus: {},
+      submitted: {},
+      approved: {},
+      rejected: {},
       rejectionReason: {}
     })
   }) }}
 
-  {% if upload.status in [UploadStatus.Review, UploadStatus.Rejected] %}
+  {% if status in [UploadStatus.Review, UploadStatus.Rejected] %}
     {{ patientRecords({
       key: "new",
       patients: upload.patients | selectattr("isNewUpload")
@@ -91,7 +93,7 @@
     {% if upload.type != UploadType.Report and upload.moves.length %}
       {% include "upload/_school-moves.njk" %}
     {% endif %}
-  {% elif upload.status in [UploadStatus.Submitted, UploadStatus.Approved] %}
+  {% elif status == UploadStatus.Approved %}
     {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
     {% if pendingRecords.length %}
       {% include "upload/_pending-records.njk" %}
@@ -107,7 +109,7 @@
     }) }}
   {% endif %}
 
-  {% if upload.status == UploadStatus.Invalid %}
+  {% if status == UploadStatus.Invalid %}
     {% call card({
       feature: true,
       heading: {
@@ -137,7 +139,7 @@
         </ul>
       {% endfor %}
     {% endcall %}
-  {% elif upload.status == UploadStatus.Failed %}
+  {% elif status == UploadStatus.Failed %}
     {% call card({
       classes: "nhsuk-u-margin-bottom-6",
       feature: true,

@@ -1,7 +1,12 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
-import { UploadStatus, UploadType } from '../enums.js'
+import {
+  SchoolUploadStatus,
+  TeamUploadStatus,
+  UploadStatus,
+  UploadType
+} from '../enums.js'
 import { Move, Patient, School, User } from '../models.js'
 import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
@@ -21,15 +26,22 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} UploadOptions
  * @property {string} [id] - Upload ID
- * @property {Date} [requestedAt] - Upload requested at
  * @property {UploadFormat} [format] - Upload format
- * @property {UploadStatus} [status] - Upload status
  * @property {UploadType} [type] - Upload type
  * @property {string} [fileName] - Original file name
+ * @property {Date} [requestedAt] - Upload requested from school at
+ * @property {string} [requestedBy_uid] - Upload requested from school by
+ * @property {Date} [uploadedAt] - File uploaded at
+ * @property {string} [uploadedBy_uid] - File uploaded by
+ * @property {Date} [submittedAt] - Sent for approval by school at
+ * @property {string} [submittedBy_uid] - Sent for approval by school by
+ * @property {Date} [approvedAt] - Approved at
+ * @property {string} [approvedBy_uid] - Approved by
+ * @property {Date} [rejectedAt] - Rejected at
+ * @property {string} [rejectedBy_uid] - Rejected by
  * @property {string} [rejectionReason] - Rejection reason
- * @property {object} [validations] - File validations
+ * @property {object} [validations] - File validations, keyed by row number
  * @property {boolean} [hasFailed] - Records failed data integrity checks
- * @property {boolean} [isApproved] - Upload approved
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  * @property {Array<string>} [assignee_uids] - School user UIDs request sent to
@@ -57,6 +69,30 @@ export class Upload extends BaseModel {
     this.requestedBy
 
     /** @type {string|undefined} */
+    this.uploadedBy_uid
+
+    /** @type {User|undefined} */
+    this.uploadedBy
+
+    /** @type {string|undefined} */
+    this.submittedBy_uid
+
+    /** @type {User|undefined} */
+    this.submittedBy
+
+    /** @type {string|undefined} */
+    this.approvedBy_uid
+
+    /** @type {User|undefined} */
+    this.approvedBy
+
+    /** @type {string|undefined} */
+    this.rejectedBy_uid
+
+    /** @type {User|undefined} */
+    this.rejectedBy
+
+    /** @type {string|undefined} */
     this.school_id
 
     /** @type {School|undefined} */
@@ -68,10 +104,13 @@ export class Upload extends BaseModel {
     this.type = options?.type || UploadType.Cohort
     this.fileName = options?.fileName
     this.requestedAt = options?.requestedAt && new Date(options.requestedAt)
+    this.uploadedAt = options?.uploadedAt && new Date(options.uploadedAt)
+    this.submittedAt = options?.submittedAt && new Date(options.submittedAt)
+    this.approvedAt = options?.approvedAt && new Date(options.approvedAt)
+    this.rejectedAt = options?.rejectedAt && new Date(options.rejectedAt)
     this.rejectionReason = options?.rejectionReason
-    this.validations = options?.validations || []
+    this.validations = options?.validations || {}
     this.hasFailed = stringToBoolean(options?.hasFailed)
-    this.isApproved = stringToBoolean(options?.isApproved)
     this.patient_uuids = stringToArray(options?.patient_uuids)
     this.assignee_uids = stringToArray(options?.assignee_uids)
 
@@ -90,33 +129,31 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Upload is processed
-   * An upload is processed if approved/reject or was recently submitted by a
-   * school administrator
+   * File has validation errors
    *
-   * @returns {boolean} Upload is processed
+   * @returns {boolean} File has validation errors
    */
-  get isProcessed() {
-    return (
-      Object.keys(this.validations).length > 0 ||
-      this.isApproved !== undefined ||
-      this.updatedBy?.isSchoolUser
-    )
+  get hasValidationErrors() {
+    return Object.keys(this.validations).length > 0
   }
 
   /**
    * Get upload progress
-   * Fake this by getting number of seconds since upload created
+   * Fake this by getting number of seconds since file was uploaded. Files with
+   * validation errors are rejected immediately, before any processing.
    *
    * @returns {number} Progress
    */
   get progress() {
-    if (this.isProcessed) {
+    if (!this.uploadedAt) {
+      return 0
+    }
+
+    if (this.hasValidationErrors) {
       return 100
     }
 
-    const date = this.updatedAt || this.createdAt
-    const seconds = (today().getTime() - new Date(date).getTime()) / 1000
+    const seconds = (today().getTime() - this.uploadedAt.getTime()) / 1000
     const speedIncrease = 8
 
     return Math.min(Math.floor(seconds * speedIncrease), 100)
@@ -128,41 +165,76 @@ export class Upload extends BaseModel {
    * @returns {boolean} Can delete upload
    */
   get canDelete() {
-    return ![
-      UploadStatus.Requested,
-      UploadStatus.Processing,
-      UploadStatus.Approved
-    ].includes(this.status)
+    return (
+      this.teamStatus !== undefined &&
+      ![
+        TeamUploadStatus.Requested,
+        TeamUploadStatus.Processing,
+        TeamUploadStatus.Approved
+      ].includes(this.teamStatus)
+    )
   }
 
   /**
    * Get status
+   * Derived from which steps have happened, checked in reverse pipeline order:
+   * a decision (approved or rejected) always wins, then whether a file has
+   * been uploaded, then the outcome of processing that file, and finally
+   * whose review is outstanding.
    *
    * @returns {UploadStatus} Status
    */
   get status() {
-    if (this.requestedBy_uid) {
-      return UploadStatus.Requested
+    if (this.approvedAt) return UploadStatus.Approved
+    if (this.rejectedAt) return UploadStatus.Rejected
+    if (!this.uploadedAt) return UploadStatus.Requested
+    if (this.progress < 100) return UploadStatus.Processing
+    if (this.hasValidationErrors) return UploadStatus.Invalid
+    if (this.hasFailed) return UploadStatus.Failed
+
+    // School users check their upload before sending it to a SAIS team
+    if (this.uploadedBy?.isSchoolUser && !this.submittedAt) {
+      return UploadStatus.Pending
     }
 
-    if (this.progress < 100) {
-      return UploadStatus.Processing
+    return UploadStatus.Review
+  }
+
+  /**
+   * Upload is private to the school admin who uploaded it
+   * A school admin’s upload is private until they send it for approval
+   *
+   * @returns {boolean} Upload is private to school admin
+   */
+  get isPrivateToSchool() {
+    return Boolean(this.uploadedBy?.isSchoolUser && !this.submittedAt)
+  }
+
+  /**
+   * Get status, as shown to SAIS teams
+   * While an upload is private to a school admin, a SAIS team that requested
+   * it sees it as still requested, and other SAIS teams can’t see it at all
+   *
+   * @returns {TeamUploadStatus|undefined} Status
+   */
+  get teamStatus() {
+    if (this.isPrivateToSchool) {
+      return this.requestedAt ? TeamUploadStatus.Requested : undefined
     }
 
-    switch (true) {
-      case Object.keys(this.validations).length > 0:
-        return UploadStatus.Invalid
-      case this.hasFailed === true:
-        return UploadStatus.Failed
-      case this.updatedBy?.isSchoolUser:
-        return UploadStatus.Submitted
-      case this.isApproved === true:
-        return UploadStatus.Approved
-      case this.isApproved === false:
-        return UploadStatus.Rejected
-      default:
-        return UploadStatus.Review
-    }
+    return /** @type {TeamUploadStatus} */ (this.status)
+  }
+
+  /**
+   * Get status, as shown to school users
+   * An upload that needs review by a SAIS team has been sent for approval
+   *
+   * @returns {SchoolUploadStatus} Status
+   */
+  get schoolStatus() {
+    return this.status === UploadStatus.Review
+      ? SchoolUploadStatus.Submitted
+      : /** @type {SchoolUploadStatus} */ (this.status)
   }
 
   /**
@@ -189,31 +261,31 @@ export class Upload extends BaseModel {
   /**
    * Get duplicate patient records in upload that need review
    *
-   * @returns {Array<Patient>|undefined} Patient records with pending changes
+   * @returns {Array<Patient>} Patient records with pending changes
    */
   get duplicates() {
-    if (this.status === UploadStatus.Review) {
-      if (this.patients) {
-        return this.patients
-          .filter((patient) => patient.hasPendingChanges)
-          .sort((a, b) => a.firstName.localeCompare(b.firstName))
-      }
-
+    if (this.status !== UploadStatus.Review) {
       return []
     }
+
+    return this.patients
+      .filter((patient) => patient.hasPendingChanges)
+      .sort((a, b) => a.firstName.localeCompare(b.firstName))
   }
 
   /**
    * Get patient school movements
    *
-   * @returns {Array<Move>|undefined} Patient school movements
+   * @returns {Array<Move>} Patient school movements
    */
   get moves() {
-    if (this.status === UploadStatus.Review) {
-      return Move.findAll(this.context).filter((move) =>
-        this.patient_uuids.includes(move.patient_uuid)
-      )
+    if (this.status !== UploadStatus.Review) {
+      return []
     }
+
+    return Move.findAll(this.context).filter((move) =>
+      this.patient_uuids.includes(move.patient_uuid)
+    )
   }
 
   /**
@@ -250,58 +322,67 @@ export class Upload extends BaseModel {
    * @returns {object} Formatted values
    */
   get formatted() {
+    const dateOptions = {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }
+
+    /**
+     * Format a step in the upload’s lifecycle as ‘date by name’
+     *
+     * @param {Date} [at] - When the step happened
+     * @param {User} [by] - Who did it
+     * @returns {string|undefined} Formatted step
+     */
+    const formatStep = (at, by) => {
+      if (!at) return undefined
+
+      const date = formatDate(at, dateOptions)
+      return by ? `${date} by ${by.fullName}` : date
+    }
+
+    /**
+     * Format a status as a progress bar or tag
+     *
+     * @param {UploadStatus|TeamUploadStatus|SchoolUploadStatus} status - Status
+     * @returns {string} Formatted status
+     */
+    const formatStatus = (status) =>
+      status === UploadStatus.Processing
+        ? formatProgress(this.progress)
+        : formatTag(getUploadStatusProperties(status))
+
     return new Proxy(
       {},
       {
         get: (_target, prop) => {
-          // Lazy formatting of timestamps
-          const getCreatedAt = () =>
-            formatDate(this.createdAt, {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: true
-            })
-
-          const getUpdatedAt = () =>
-            formatDate(this.updatedAt, {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: true
-            })
-
           switch (prop) {
             case 'createdAt':
-              return getCreatedAt()
+              return formatDate(this.createdAt, dateOptions)
             case 'createdBy':
               return this.createdBy?.fullName
-            case 'created':
-              return `${getCreatedAt()} by ${this.createdBy?.fullName}`
             case 'updatedAt':
-              return getUpdatedAt()
+              return formatDate(this.updatedAt, dateOptions)
             case 'updatedBy':
               return this.updatedBy?.fullName
-            case 'requestedBy':
-              return this.requestedBy?.fullName
+            case 'requested':
+              return formatStep(this.requestedAt, this.requestedBy)
+            case 'uploaded':
+              return formatStep(this.uploadedAt, this.uploadedBy)
+            case 'submitted':
+              return formatStep(this.submittedAt, this.submittedBy)
+            case 'approved':
+              return formatStep(this.approvedAt, this.approvedBy)
+            case 'rejected':
+              return formatStep(this.rejectedAt, this.rejectedBy)
             case 'assignees':
               return formatList(
                 this.assignees.map((assignee) => assignee.fullName)
               )
-            case 'isApproved':
-              return this.isApproved === true
-                ? this.updatedAt &&
-                    `${getUpdatedAt()} by ${this.updatedBy?.fullName}`
-                : ''
-            case 'isRejected':
-              return this.isApproved === false
-                ? this.updatedAt &&
-                    `${getUpdatedAt()} by ${this.updatedBy?.fullName}`
-                : ''
             case 'school':
               if (this.type !== UploadType.School) return undefined
               return this.school?.name
@@ -315,9 +396,11 @@ export class Upload extends BaseModel {
             case 'patients':
               return this.patients.length
             case 'status':
-              return this.status === UploadStatus.Processing
-                ? formatProgress(this.progress)
-                : formatTag(getUploadStatusProperties(this.status))
+              return formatStatus(this.status)
+            case 'teamStatus':
+              return this.teamStatus && formatStatus(this.teamStatus)
+            case 'schoolStatus':
+              return formatStatus(this.schoolStatus)
             default:
               return undefined
           }
@@ -337,6 +420,10 @@ export class Upload extends BaseModel {
 }
 
 Upload.relate('requestedBy_uid', () => User, 'requestedBy')
+Upload.relate('uploadedBy_uid', () => User, 'uploadedBy')
+Upload.relate('submittedBy_uid', () => User, 'submittedBy')
+Upload.relate('approvedBy_uid', () => User, 'approvedBy')
+Upload.relate('rejectedBy_uid', () => User, 'rejectedBy')
 Upload.relate('school_id', () => School, 'school')
 
 /**

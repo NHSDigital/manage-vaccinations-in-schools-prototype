@@ -396,13 +396,16 @@ export const schoolController = {
     const { status } = request.query
     const { school } = response.locals
 
-    let results = school.uploads
+    // SAIS teams can’t see uploads that are private to a school admin
+    let results = school.uploads.filter(
+      (upload) => upload.teamStatus !== undefined
+    )
 
     // Filter by status
     if (status) {
       const statuses = Array.isArray(status) ? status : [status]
       results = results.filter((upload) =>
-        statuses.some((status) => upload.status === status)
+        statuses.some((status) => upload.teamStatus === status)
       )
     }
 
