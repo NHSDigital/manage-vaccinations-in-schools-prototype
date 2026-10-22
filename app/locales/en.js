@@ -385,9 +385,9 @@ export const en = {
     },
     noRestrictedClinics: {
       title:
-        'No restricted invitation clinics can offer all of the selected programmes',
+        'No restricted invitation clinics offer all the selected programmes',
       description:
-        'There are restricted invitation clinics for {{restrictedProgrammeNames}}, but none of them can offer {{programmeNames}} together.',
+        'There are restricted invitation clinics for {{restrictedProgrammeNames}}, but none of them offer {{programmeNames}} together.',
       advice: {
         invitation:
           'To offer restricted invitation clinics, send a separate invitation for each programme.',
