@@ -204,7 +204,8 @@ export const sessionController = {
     const filters = {
       academicYear: request.query?.academicYear || currentAcademicYear,
       status: request.query?.status || 'none',
-      type: request.query?.type || 'none'
+      type: request.query?.type || 'none',
+      clinicType: request.query?.clinicType || 'none'
     }
 
     // Filter by academic year
@@ -220,6 +221,16 @@ export const sessionController = {
     // Filter by type
     if (filters.type !== 'none') {
       results = results.filter(({ type }) => type === filters.type)
+
+      // Filter clinics by clinic type
+      if (
+        filters.type === SessionType.Clinic &&
+        filters.clinicType !== 'none'
+      ) {
+        results = results.filter(
+          ({ clinicType }) => clinicType === filters.clinicType
+        )
+      }
     }
 
     // Sort
@@ -277,7 +288,7 @@ export const sessionController = {
   filter(request, response) {
     const params = getFilterParams(
       request,
-      ['academicYear', 'q', 'status', 'type'],
+      ['academicYear', 'q', 'status', 'type', 'clinicType'],
       ['programme_id']
     )
 
