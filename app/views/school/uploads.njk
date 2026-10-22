@@ -56,7 +56,7 @@
             }
           },
           small: true,
-          items: checkboxFilterItems(UploadStatus),
+          items: checkboxFilterItems(TeamUploadStatus),
           decorate: "status"
         }) }}
 
@@ -111,7 +111,7 @@
           lastRowBorder: false,
           rows: summaryRows(upload, {
             fileName: {},
-            status: {}
+            teamStatus: {}
           })
         }) }}
       {% endfor %}

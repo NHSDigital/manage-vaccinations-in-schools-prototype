@@ -57,7 +57,7 @@
             }
           },
           small: true,
-          items: checkboxFilterItems(UploadStatus),
+          items: checkboxFilterItems(SchoolUploadStatus if account.isSchoolUser else TeamUploadStatus),
           decorate: "status"
         }) }}
 
@@ -118,13 +118,13 @@
           lastRowBorder: false,
           rows: summaryRows(upload, {
             fileName: {},
-            status: {}
+            schoolStatus: {}
           }) if account.isSchoolUser else summaryRows(upload, {
             fileName: {},
             type: {
               value: upload.summary.type
             },
-            status: {}
+            teamStatus: {}
           })
         }) }}
       {% endfor %}

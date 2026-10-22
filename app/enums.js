@@ -890,13 +890,51 @@ export const UploadType = {
  */
 export const UploadStatus = {
   Requested: 'Requested',
+  Pending: 'Check before sending',
   Processing: 'Processing',
   Failed: 'Failed',
   Invalid: 'Invalid',
-  Review: 'Check before sending',
-  Submitted: 'Sent for approval',
+  Review: 'Needs review',
   Approved: 'Approved',
   Rejected: 'Rejected'
+}
+
+/**
+ * Upload status, as shown to SAIS teams
+ *
+ * Until a school admin sends an upload for approval, it is private to them.
+ * If a SAIS team requested the upload, they see it as still requested.
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const TeamUploadStatus = {
+  Requested: UploadStatus.Requested,
+  Processing: UploadStatus.Processing,
+  Failed: UploadStatus.Failed,
+  Invalid: UploadStatus.Invalid,
+  Review: UploadStatus.Review,
+  Approved: UploadStatus.Approved,
+  Rejected: UploadStatus.Rejected
+}
+
+/**
+ * Upload status, as shown to school users
+ *
+ * School users see the uploads they have uploaded themselves, and a class list
+ * that needs review by a SAIS team has been sent for approval by the school.
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const SchoolUploadStatus = {
+  Processing: UploadStatus.Processing,
+  Pending: UploadStatus.Pending,
+  Failed: UploadStatus.Failed,
+  Invalid: UploadStatus.Invalid,
+  Submitted: 'Sent for approval',
+  Approved: UploadStatus.Approved,
+  Rejected: UploadStatus.Rejected
 }
 
 /**

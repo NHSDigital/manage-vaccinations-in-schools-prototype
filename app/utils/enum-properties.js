@@ -7,6 +7,7 @@ import {
   RegistrationStatus,
   ReplyDecision,
   SchoolStatus,
+  SchoolUploadStatus,
   ScreenStatus,
   UploadStatus,
   VaccinationOutcome,
@@ -75,6 +76,8 @@ const SCREEN_STATUS_COLOURS = {
 
 const UPLOAD_STATUS_COLOURS = {
   [UploadStatus.Requested]: 'purple',
+  [UploadStatus.Pending]: 'blue',
+  [SchoolUploadStatus.Submitted]: 'aqua-green',
   [UploadStatus.Approved]: 'green',
   [UploadStatus.Rejected]: 'yellow',
   [UploadStatus.Review]: 'blue',
@@ -223,7 +226,7 @@ export function getScreenStatusProperties(status) {
 /**
  * Get upload status properties
  *
- * @param {UploadStatus} status - Upload status
+ * @param {UploadStatus|SchoolUploadStatus} status - Upload status
  * @returns {object} Status properties
  */
 export function getUploadStatusProperties(status) {
