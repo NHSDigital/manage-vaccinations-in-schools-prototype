@@ -175,6 +175,24 @@ export const getBookableClinicSessions = (
 }
 
 /**
+ * Have all of the restricted invitation clinics offered passed their booking deadline?
+ *
+ * Parents must book at least a day before a clinic, so a clinic is past its deadline from then on, whether or not
+ * it was full.
+ *
+ * @param {OfferedClinics} offeredClinics - the clinics a parent's invitation offers
+ * @param {object} context - the data context holding the sessions
+ * @returns {boolean} true if none of the restricted invitation clinics can be booked any more
+ */
+export const areRestrictedClinicsPastDeadline = (
+  { restrictedClinic_ids },
+  context
+) =>
+  !restrictedClinic_ids
+    .map((id) => Session.findOne(id, context))
+    .some((session) => session?.daysLeftToBook >= 1)
+
+/**
  * Get the restricted invitation clinics the team could offer when booking an appointment from the child record
  *
  * @param {object} context - the data context for the models to check

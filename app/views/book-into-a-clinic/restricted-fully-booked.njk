@@ -1,0 +1,35 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("clinicBooking.restrictedFullyBooked.title") %}
+
+{# Shown at the start of the journey, when all of the clinics in a parent's invitation are full #}
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {{ heading({
+        text: title,
+        size: "l"
+      }) }}
+
+      {% call insetText() %}
+        {{ __("clinicBooking.restrictedFullyBooked.problem") | nhsukMarkdown }}
+      {% endcall %}
+
+      {{ heading({
+        text: __("clinicBooking.restrictedFullyBooked.findAnother.title"),
+        size: "m",
+        level: 2
+      }) }}
+
+      {{ __("clinicBooking.restrictedFullyBooked.findAnother.description") | nhsukMarkdown }}
+
+      {# Book as if there was no invitation, so only open clinics are offered #}
+      {{ button({
+        text: __("clinicBooking.restrictedFullyBooked.findAnother.confirm"),
+        href: "new"
+      }) }}
+
+      {{ __("clinicBooking.restrictedFullyBooked.findAnother.offline", { team: team }) | nhsukMarkdown }}
+    </div>
+  </div>
+{% endblock %}

@@ -8,6 +8,7 @@ import {
   AppointmentOverrunResolution,
   ClinicAppointmentStatus,
   ClinicBookingJourneyType,
+  ClinicType,
   ProgrammeType,
   RelationshipType,
   ReplyDecision
@@ -33,6 +34,7 @@ import {
   getPreviousSessionItems
 } from '../utils/clinic-appointment.js'
 import {
+  areRestrictedClinicsPastDeadline,
   getBookableClinicSessions,
   getBookableClinicDateItems,
   getBookableClinicLocationItems,
@@ -138,15 +140,30 @@ export const bookIntoClinicController = {
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
-      nextPath = getBookableClinicSessions(data, vaccinationChoices, {
-        isParentBooking: true,
-        offeredClinics: getOfferedClinicsForInvitation(
-          data.bookingInvitation_id,
-          data
-        )
-      }).length
-        ? 'start'
-        : 'availability'
+      const offeredClinics = getOfferedClinicsForInvitation(
+        data.bookingInvitation_id,
+        data
+      )
+      const isRestrictedOnly =
+        offeredClinics.restrictedClinic_ids.length > 0 &&
+        !offeredClinics.clinicTypes.includes(ClinicType.Open)
+      const hasBookableClinics =
+        getBookableClinicSessions(data, vaccinationChoices, {
+          isParentBooking: true,
+          offeredClinics
+        }).length > 0
+
+      if (hasBookableClinics) {
+        nextPath = 'start'
+      } else if (isRestrictedOnly) {
+        // None of the invited clinics can be booked, so let the parent look for an open clinic instead
+        nextPath = areRestrictedClinicsPastDeadline(offeredClinics, data)
+          ? 'invitation-expired'
+          : 'restricted-fully-booked'
+        data.bookingInvitation_id = undefined
+      } else {
+        nextPath = 'availability'
+      }
     }
 
     // If we already know what programmes we're going to offer, save that now

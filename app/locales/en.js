@@ -543,6 +543,31 @@ export const en = {
       guidance:
         'Contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },
+    invitationExpired: {
+      title: 'The clinic invitation has expired',
+      problem: 'The clinics that your child was invited to have now passed.',
+      findAnother: {
+        title: 'Find another clinic',
+        description:
+          'You can still find other clinics that can provide the vaccinations that your child is eligible for.'
+      },
+      confirm: 'Start now',
+      guidance:
+        'You can also contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+    },
+    restrictedFullyBooked: {
+      title: 'Clinics are now fully booked',
+      problem:
+        'The clinics that your child was invited to are now fully booked.',
+      findAnother: {
+        title: 'Find another clinic',
+        description:
+          'You can still find other clinics that can provide the vaccinations that your child is eligible for.',
+        offline:
+          'You can also contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
+        confirm: 'Start now'
+      }
+    },
     fullyBooked: {
       title: 'All clinics are now fully booked',
       problem:
