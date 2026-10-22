@@ -59,9 +59,6 @@ export const giveOrRefuseConsentController = {
     const { data } = request.session
     const { session } = response.locals
 
-    console.log('session', session)
-    console.log('view', view)
-
     // Text and email messages
     if (view === 'emails' || view === 'texts') {
       const patient = Patient.findAll(data)[0]
@@ -139,10 +136,6 @@ export const giveOrRefuseConsentController = {
     const { session_id, consent_uuid } = request.params
     const { data, referrer } = request.session
     const { __, session } = response.locals
-
-    if (!session_id) {
-      console.log('hi')
-    }
 
     const consent = new Consent(
       Consent.findOne(consent_uuid, data?.wizard),
