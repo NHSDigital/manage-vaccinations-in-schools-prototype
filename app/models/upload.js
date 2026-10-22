@@ -7,9 +7,14 @@ import {
   UploadStatus,
   UploadType
 } from '../enums.js'
-import { Move, Patient, School, User } from '../models.js'
+import { Patient, School, User } from '../models.js'
 import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
+import {
+  getPatientsMovingIn,
+  getPatientsMovingOut,
+  getUploadMoves
+} from '../utils/moves.js'
 import {
   formatLink,
   formatList,
@@ -274,18 +279,32 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Get patient school movements
+   * Get school moves reported by this upload
    *
-   * @returns {Array<Move>} Patient school movements
+   * @returns {Array<Move>} School moves
    */
   get moves() {
-    if (this.status !== UploadStatus.Review) {
-      return []
-    }
+    return getUploadMoves(this.id, this.context)
+  }
 
-    return Move.findAll(this.context).filter((move) =>
-      this.patient_uuids.includes(move.patient_uuid)
-    )
+  /**
+   * Get pupils joining the school
+   * Patients in the class list but recorded as attending another school
+   *
+   * @returns {Array<Patient>} Patient records
+   */
+  get patientsMovingIn() {
+    return getPatientsMovingIn(this.moves, this.school_id)
+  }
+
+  /**
+   * Get pupils leaving the school
+   * Patients recorded as attending the school but missing from the class list
+   *
+   * @returns {Array<Patient>} Patient records
+   */
+  get patientsMovingOut() {
+    return getPatientsMovingOut(this.moves, this.school_id)
   }
 
   /**
@@ -428,5 +447,6 @@ Upload.relate('school_id', () => School, 'school')
 
 /**
  * @import { UploadFormat } from '../enums.js'
+ * @import { Move } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */
