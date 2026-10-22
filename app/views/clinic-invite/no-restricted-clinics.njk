@@ -1,0 +1,47 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicInvitation.noRestrictedClinics.title") %}
+{% set hideConfirmButton = true %}
+
+{% block form %}
+  {# Build the panel content #}
+  {% set panelHtml %}
+    {{ __("clinicInvitation.noRestrictedClinics.description", {
+      restrictedProgrammeNames: restrictedProgrammeNames,
+      programmeNames: programmeNames
+    }) | nhsukMarkdown }}
+
+    {% if inviteJourneyType == ClinicInvitationJourneyType.BookingLink %}
+      {{ __("clinicInvitation.noRestrictedClinics.advice.link") | nhsukMarkdown }}
+    {% else %}
+      {{ __("clinicInvitation.noRestrictedClinics.advice.invitation") | nhsukMarkdown }}
+    {% endif %}
+
+    {{ __("clinicInvitation.noRestrictedClinics.consequence") | nhsukMarkdown }}
+
+    {{ appButtonGroup({
+      buttons: [
+        {
+          text: __("clinicInvitation.noRestrictedClinics.confirm"),
+          variant: "reverse"
+        }
+      ],
+      links: [
+        {
+          text: __("clinicInvitation.noRestrictedClinics.change"),
+          href: "programmes"
+        }
+      ]
+    }) }}
+  {% endset %}
+
+  {# Show the interruption panel #}
+  {{ panel({
+    heading: {
+      text: title,
+      size: "l"
+    },
+    variant: "interruption",
+    html: panelHtml
+  }) }}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "_layouts/abandon-booking.njk" %}
+
+{% set title = __("clinicBooking.offerRestrictedClinics.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        caption: appointmentCaption,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: [
+      {
+        text: __("clinicBooking.offerRestrictedClinics.yes"),
+        hint: __("clinicBooking.offerRestrictedClinics.yesHint"),
+        value: true
+      },
+      {
+        text: __("clinicBooking.offerRestrictedClinics.no"),
+        value: false
+      }
+    ],
+    decorate: "journeyData.offerRestrictedClinics"
+  }) }}
+{% endblock %}

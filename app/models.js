@@ -6,6 +6,7 @@ export * from './models/reply.js'
 
 // Other classes
 export * from './models/audit-event.js'
+export * from './models/clinic-invitation.js'
 export * from './models/clinic.js'
 export * from './models/clinic-appointment.js'
 export * from './models/clinic-booking.js'
