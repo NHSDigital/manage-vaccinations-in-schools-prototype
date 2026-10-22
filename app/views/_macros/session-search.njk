@@ -65,6 +65,14 @@
       decorate: "status"
     }) }}
 
+    {% set clinicTypesHtml = radios({
+      fieldset: {
+        legend: __("session.clinicType.label")
+      },
+      items: radioFilterItems(ClinicType, data["clinicType"], false),
+      decorate: "clinicType"
+    }) %}
+    {% set sessionTypeRadioItems = injectConditionalHtml(radioFilterItems(SessionType), SessionType.Clinic, clinicTypesHtml) %}
     {{ radios({
       fieldset: {
         legend: {
@@ -73,7 +81,7 @@
         }
       },
       small: true,
-      items: radioFilterItems(SessionType),
+      items: sessionTypeRadioItems,
       decorate: "type"
     }) if not account.isSchoolUser }}
 
