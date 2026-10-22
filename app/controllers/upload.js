@@ -212,11 +212,23 @@ export const uploadController = {
       )
 
       // Add patient records
-      let patients = Patient.findAll(data).filter(
-        (patient) =>
-          upload.school_id === patient.school_id &&
-          upload.yearGroups.map(Number).includes(patient.yearGroup)
-      )
+      let patients = Patient.findAll(data)
+      switch (upload.type) {
+        case UploadType.School:
+          // Pupils at the school in the chosen year groups
+          patients = patients.filter(
+            (patient) =>
+              upload.school_id === patient.school_id &&
+              upload.yearGroups.map(Number).includes(patient.yearGroup)
+          )
+          break
+        case UploadType.Report:
+          // Patients with vaccination records
+          patients = patients.filter(
+            (patient) => patient.vaccinations.length > 0
+          )
+          break
+      }
 
       upload.patient_uuids = patients.map((patient) => patient.uuid)
 
