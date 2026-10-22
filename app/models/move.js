@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Patient, School, Team } from '../models.js'
+import { Patient, School, Team, Upload } from '../models.js'
 import { formatDate } from '../utils/date.js'
+import { isMoveVisibleToTeam } from '../utils/moves.js'
 
 import { BaseModel } from './base.js'
 
@@ -10,6 +11,7 @@ import { BaseModel } from './base.js'
  * @property {string} [uuid] - Move UUID
  * @property {boolean} [isIgnored] - Reported move is ignored
  * @property {MoveSource} [source] - Reporting source
+ * @property {string} [upload_id] - Upload that reported move
  */
 
 /**
@@ -46,6 +48,12 @@ export class Move extends BaseModel {
     this.team
 
     /** @type {string|undefined} */
+    this.upload_id
+
+    /** @type {Upload|undefined} */
+    this.upload
+
+    /** @type {string|undefined} */
     this.to_urn
 
     /** @type {School|undefined} */
@@ -55,6 +63,18 @@ export class Move extends BaseModel {
     this.uuid = options?.uuid || faker.string.uuid()
     this.isIgnored = options?.isIgnored || false
     this.source = options?.source
+  }
+
+  /**
+   * Move is visible to SAIS teams
+   * A move reported by an upload is only visible once that upload needs
+   * review or has been approved; until then it may be private to a school
+   * admin, or the upload may have been rejected.
+   *
+   * @returns {boolean} Move is visible to SAIS teams
+   */
+  get isVisibleToTeam() {
+    return isMoveVisibleToTeam(this)
   }
 
   get movement() {
@@ -130,6 +150,7 @@ Move.relate('from_urn', () => School, 'from')
 Move.relate('patient_uuid', () => Patient, 'patient')
 Move.relate('team_id', () => Team, 'team')
 Move.relate('to_urn', () => School, 'to')
+Move.relate('upload_id', () => Upload, 'upload')
 
 /**
  * @import { MoveSource } from '../enums.js'

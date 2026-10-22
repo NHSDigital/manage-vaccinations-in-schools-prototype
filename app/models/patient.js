@@ -282,7 +282,7 @@ export class Patient extends Child {
     let move
     if (this.context.moves) {
       move = Move.findAll(this.context).find(
-        (move) => move.patient_uuid === this.uuid
+        (move) => move.patient_uuid === this.uuid && move.isVisibleToTeam
       )
     }
 
