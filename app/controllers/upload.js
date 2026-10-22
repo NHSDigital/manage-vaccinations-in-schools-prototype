@@ -1,8 +1,10 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadFormat, UploadStatus, UploadType } from '../enums.js'
+import { generateUploadMoves } from '../generators/move.js'
 import { Patient, Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
+import { createMoves, deleteUploadMoves } from '../utils/moves.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup } from '../utils/string.js'
@@ -278,9 +280,9 @@ export const uploadController = {
       }
 
       if (type === 'edit') {
-        // Delete any previous validation errors and failed data checks
-        delete upload.validations
-        delete upload.hasFailed
+        // Clear any previous validation errors and failed data checks
+        upload.validations = {}
+        upload.hasFailed = false
       } else if (type === 'request') {
         // Add assignees before updating upload
         upload.assignee_uids = request.body.upload.assignee_uids
@@ -295,6 +297,18 @@ export const uploadController = {
             CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
           }
         }
+      }
+
+      // Replace any school moves reported by a previous file
+      if (type === 'new' || type === 'edit') {
+        deleteUploadMoves(upload.id, data)
+
+        const { patient_uuids, moves } = generateUploadMoves(
+          upload,
+          Patient.findAll(data)
+        )
+        upload.patient_uuids = patient_uuids
+        createMoves(moves, data)
       }
 
       upload = Upload.create(upload, data)
@@ -470,6 +484,9 @@ export const uploadController = {
     const { upload_id } = request.params
     const { data } = request.session
     const { __ } = response.locals
+
+    // Delete any school moves reported by the upload
+    deleteUploadMoves(upload_id, data)
 
     Upload.delete(upload_id, data)
 

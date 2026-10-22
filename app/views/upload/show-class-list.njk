@@ -4,7 +4,6 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set patientsMoved = upload.patients | slice(5) %}
 {% set programme = data.programmes[upload.programme_id] %}
 {% set needsChecking = upload.status == UploadStatus.Pending %}
 {% if needsChecking %}
@@ -130,7 +129,7 @@
       size: "m"
     }) }}
 
-    {{ classListRecords({ patients: patientsMoved[0] }) }}
+    {{ classListRecords({ patients: upload.patientsMovingIn }) }}
 
     {{ heading({
       caption: {
@@ -142,7 +141,7 @@
       size: "m"
     }) }}
 
-    {{ classListRecords({ patients: patientsMoved[4] }) }}
+    {{ classListRecords({ patients: upload.patientsMovingOut }) }}
   {% endif %}
 
   {% if upload.patients.length > 0 and needsChecking %}
