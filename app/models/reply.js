@@ -302,7 +302,7 @@ export class Reply extends BaseModel {
    *
    * @returns {Date} Expiry date
    */
-  get expiredAt() {
+  get expiresAt() {
     // Responses for seasonal programmes expire when the programme year ends
     if (this.patientProgramme && this.programme?.isSeasonal) {
       return this.patientProgramme.eligibilityEndAt
@@ -323,7 +323,7 @@ export class Reply extends BaseModel {
    * @returns {boolean} Consent response has expired
    */
   get hasExpired() {
-    return isAfter(today(), this.expiredAt)
+    return isAfter(today(), this.expiresAt)
   }
 
   /**
