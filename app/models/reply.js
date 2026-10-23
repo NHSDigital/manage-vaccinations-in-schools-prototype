@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { addMonths, addYears, isAfter } from 'date-fns'
+import { addMonths, addYears, isAfter, isBefore } from 'date-fns'
 
 import vaccinesData from '../datasets/vaccines.js'
 import {
@@ -26,7 +26,6 @@ import {
 import {
   formatDate,
   getAcademicYear,
-  isBetweenDates,
   removeDays,
   today
 } from '../utils/date.js'
@@ -278,17 +277,34 @@ export class Reply extends BaseModel {
   }
 
   /**
+   * Get date response becomes valid
+   *
+   * @returns {Date|undefined} Date response becomes valid
+   */
+  get validFrom() {
+    // Responses for seasonal programmes are valid from when the programme year starts
+    if (this.patientProgramme && this.programme?.isSeasonal) {
+      return this.patientProgramme.eligibilityStartAt
+    }
+  }
+
+  /**
+   * Is consent response not yet valid?
+   *
+   * @returns {boolean} Consent response is not yet valid
+   */
+  get isNotYetValid() {
+    return isBefore(today(), this.validFrom)
+  }
+
+  /**
    * Get expiry date
    *
-   * @returns {Date|undefined} Expiry date
+   * @returns {Date} Expiry date
    */
   get expiredAt() {
-    if (!this.isDelivered) {
-      return
-    }
-
     // Responses for seasonal programmes expire when the programme year ends
-    if (this.patientProgramme && this.programme.isSeasonal) {
+    if (this.patientProgramme && this.programme?.isSeasonal) {
       return this.patientProgramme.eligibilityEndAt
     }
 
@@ -302,26 +318,16 @@ export class Reply extends BaseModel {
    * @returns {boolean} Consent response has expired
    */
   get hasExpired() {
-    // Responses for seasonal programmes expire outside programme year
-    if (this.patientProgramme && this.programme?.isSeasonal) {
-      return !isBetweenDates(
-        today(),
-        this.patientProgramme.eligibilityStartAt,
-        this.patientProgramme.eligibilityEndAt
-      )
-    }
-
-    // Responses for routine programmes after a year
     return isAfter(today(), this.expiredAt)
   }
 
   /**
-   * Is valid consent response (not invalidated and not expired)?
+   * Is valid consent response (not invalidated, not yet valid or expired)?
    *
    * @returns {boolean} Is valid consent response
    */
   get isValid() {
-    return !this.isInvalidated && !this.hasExpired
+    return !this.isInvalidated && !this.isNotYetValid && !this.hasExpired
   }
 
   /**
