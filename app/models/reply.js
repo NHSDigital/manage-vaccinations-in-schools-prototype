@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { addMonths, addYears, isAfter, isBefore } from 'date-fns'
+import { addMonths, isAfter, isBefore } from 'date-fns'
 
 import vaccinesData from '../datasets/vaccines.js'
 import {
@@ -23,12 +23,7 @@ import {
   Session,
   Vaccination
 } from '../models.js'
-import {
-  formatDate,
-  getAcademicYear,
-  removeDays,
-  today
-} from '../utils/date.js'
+import { formatDate, getAcademicYear, today } from '../utils/date.js'
 import {
   getConsentStatusProperties,
   getReplyDecisionProperties
@@ -300,7 +295,7 @@ export class Reply extends BaseModel {
   /**
    * Get expiry date
    *
-   * @returns {Date} Expiry date
+   * @returns {Date|undefined} Expiry date, or undefined if it never expires
    */
   get expiresAt() {
     // Responses for seasonal programmes expire when the season ends
@@ -313,8 +308,9 @@ export class Reply extends BaseModel {
       return addMonths(this.createdAt, 15)
     }
 
-    // Other responses for routine programmes expire after a year
-    return addYears(removeDays(this.createdAt, 1), 1)
+    // Refusals — incl. follow-up requests and already-vaccinated — and non-responses
+    // simply don't expire
+    return undefined
   }
 
   /**
@@ -323,7 +319,8 @@ export class Reply extends BaseModel {
    * @returns {boolean} Consent response has expired
    */
   get hasExpired() {
-    return isAfter(today(), this.expiresAt)
+    const expiryDate = this.expiresAt
+    return expiryDate ? isAfter(today(), expiryDate) : false
   }
 
   /**
