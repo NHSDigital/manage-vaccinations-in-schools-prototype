@@ -308,7 +308,12 @@ export class Reply extends BaseModel {
       return this.patientProgramme.eligibilityEndAt
     }
 
-    // Responses for routine programmes expire after a year
+    // Consent given for routine programmes expires after 15 months
+    if (this.hasGivenConsent) {
+      return addMonths(this.createdAt, 15)
+    }
+
+    // Other responses for routine programmes expire after a year
     return addYears(removeDays(this.createdAt, 1), 1)
   }
 
