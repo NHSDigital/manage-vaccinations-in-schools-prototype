@@ -282,9 +282,9 @@ export class Reply extends BaseModel {
    * @returns {Date|undefined} Date response becomes valid
    */
   get validFrom() {
-    // Responses for seasonal programmes are valid from when the programme year starts
-    if (this.patientProgramme && this.programme?.isSeasonal) {
-      return this.patientProgramme.eligibilityStartAt
+    // Responses for seasonal programmes are valid from when the season starts
+    if (this.programme?.isSeasonal) {
+      return this.programme.getSeasonStartAt(this.academicYear)
     }
   }
 
@@ -303,9 +303,9 @@ export class Reply extends BaseModel {
    * @returns {Date} Expiry date
    */
   get expiresAt() {
-    // Responses for seasonal programmes expire when the programme year ends
-    if (this.patientProgramme && this.programme?.isSeasonal) {
-      return this.patientProgramme.eligibilityEndAt
+    // Responses for seasonal programmes expire when the season ends
+    if (this.programme?.isSeasonal) {
+      return this.programme.getSeasonEndAt(this.academicYear)
     }
 
     // Consent given for routine programmes expires after 15 months
