@@ -113,6 +113,30 @@ export class Programme extends BaseModel {
   }
 
   /**
+   * Get date seasonal programme starts in an academic year
+   *
+   * @param {number} academicYear - Academic year
+   * @returns {Date|undefined} Season start date
+   */
+  getSeasonStartAt(academicYear) {
+    if (this.isSeasonal) {
+      return new Date(`${academicYear}-09-01`)
+    }
+  }
+
+  /**
+   * Get date seasonal programme ends in an academic year
+   *
+   * @param {number} academicYear - Academic year
+   * @returns {Date|undefined} Season end date
+   */
+  getSeasonEndAt(academicYear) {
+    if (this.isSeasonal) {
+      return new Date(`${academicYear + 1}-03-31`)
+    }
+  }
+
+  /**
    * Get vaccine(s) used by this programme
    *
    * @returns {Array<Vaccine>} Vaccine
