@@ -102,17 +102,6 @@ export class Programme extends BaseModel {
   }
 
   /**
-   * Get start date
-   *
-   * @returns {string} Start date
-   */
-  get start() {
-    const thisYear = new Date().getFullYear()
-
-    return `${thisYear}-09-01`
-  }
-
-  /**
    * Get date seasonal programme starts in an academic year
    *
    * @param {number} academicYear - Academic year
