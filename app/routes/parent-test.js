@@ -122,40 +122,20 @@ router.get('/nadia', (request, response) => {
   response.render('parent-test/nadia')
 })
 
-router.get('/real/freya/schedule', (request, response) => {
-  response.render('parent-test/real/freya/schedule')
-})
-
 router.get('/real/freya/chronological', (request, response) => {
   response.render('parent-test/real/freya/chronological')
-})
-
-router.get('/real/samuel/schedule', (request, response) => {
-  response.render('parent-test/real/samuel/schedule')
 })
 
 router.get('/real/samuel/chronological', (request, response) => {
   response.render('parent-test/real/samuel/chronological')
 })
 
-router.get('/real/isla/schedule', (request, response) => {
-  response.render('parent-test/real/isla/schedule')
-})
-
 router.get('/real/isla/chronological', (request, response) => {
   response.render('parent-test/real/isla/chronological')
 })
 
-router.get('/real/jacob/schedule', (request, response) => {
-  response.render('parent-test/real/jacob/schedule')
-})
-
 router.get('/real/jacob/chronological', (request, response) => {
   response.render('parent-test/real/jacob/chronological')
-})
-
-router.get('/real/zara/schedule', (request, response) => {
-  response.render('parent-test/real/zara/schedule')
 })
 
 router.get('/real/zara/chronological', (request, response) => {
