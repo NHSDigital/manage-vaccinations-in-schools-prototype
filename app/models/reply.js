@@ -485,11 +485,18 @@ export class Reply extends BaseModel {
    * @returns {PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
+    // Even if this reply is from a previous year, it can still be valid for this
+    // academic year, provided it's not for a seasonal programme
+    const isSeasonal = this.programme?.isSeasonal
+    const replyAcademicYear = this.academicYear
+
     if (this.patient?.programmes) {
       return Object.values(this.patient.programmes).find(
         (patientProgramme) =>
           patientProgramme.programme_id === this.programme_id &&
-          patientProgramme.academicYear === this.academicYear
+          (isSeasonal
+            ? patientProgramme.academicYear === replyAcademicYear
+            : true)
       )
     }
   }
