@@ -464,7 +464,7 @@ export class PatientProgramme extends BaseModel {
     }
 
     if (this.programme.isSeasonal) {
-      return new Date(`${this.academicYear}-09-01`)
+      return this.programme.getSeasonStartAt(this.academicYear)
     }
 
     let yearsUntilEligible =
@@ -480,7 +480,7 @@ export class PatientProgramme extends BaseModel {
    */
   get eligibilityEndAt() {
     if (this.programme?.isSeasonal) {
-      return new Date(`${this.academicYear + 1}-03-31`)
+      return this.programme.getSeasonEndAt(this.academicYear)
     }
 
     return addYears(this.patient.dob, this.programme.eligibilityEndAge)
