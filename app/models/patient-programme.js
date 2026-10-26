@@ -802,6 +802,22 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get responses, including invalidated and expired ones, for display purposes
+   *
+   * This set of responses is only to be used for display purposes; don't assume
+   * all responses in the result can affect consent status
+   *
+   * @returns {Array<Reply>|undefined} Responses
+   */
+  get repliesToShow() {
+    return this.patient?.replies
+      .filter(
+        (reply) => reply.patientProgramme.id === this.id && reply.isDelivered
+      )
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
+  }
+
+  /**
    * Get consent health answers
    *
    * @returns {object|undefined} Consent health answers

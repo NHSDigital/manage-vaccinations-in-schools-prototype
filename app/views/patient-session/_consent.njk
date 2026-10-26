@@ -47,15 +47,15 @@
     }) }}
   {% endif %}
 
-  {% if patientProgramme.replies | length %}
+  {% if patientProgramme.repliesToShow | length %}
     {# Requests with responses or requests that couldn’t be delivered #}
     {{ heading({
-      text: __("patientSession.replies.label") if patientProgramme.replies.length > 0 else __("patientSession.consentRequests.label"),
+      text: __("patientSession.replies.label"),
       level: 3,
       size: "s"
     }) }}
 
-    {% for reply in patientProgramme.replies %}
+    {% for reply in patientProgramme.repliesToShow %}
       {% call card({
         classes: "app-card--compact app-card--offset",
         heading: {
