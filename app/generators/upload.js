@@ -4,6 +4,7 @@ import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import { UploadStatus, UploadType } from '../enums.js'
 import { Upload } from '../models.js'
 import { addDays, today } from '../utils/date.js'
+import { getUploadValidations } from '../utils/upload.js'
 
 const HOUR = 60 * 60 * 1000
 
@@ -59,21 +60,6 @@ const STATUS_WEIGHTS = {
   [UploadStatus.Approved]: 8,
   [UploadStatus.Rejected]: 3
 }
-
-const VALIDATIONS = {
-  3: {
-    CHILD_FIRST_NAME: 'is required but missing',
-    CHILD_POSTCODE: '‘24 High Street’ should be a postcode, like SW1A 1AA',
-    CHILD_NHS_NUMBER:
-      '‘QQ 12 34 56 A’ should be a valid NHS number, like 485 777 3456'
-  },
-  8: {
-    CHILD_DOB: '‘Simon’ should be formatted as YYYY-MM-DD'
-  }
-}
-
-const REJECTION_REASON =
-  'These records appear to be for the wrong school. Please check that you have uploaded records for the correct school.'
 
 /**
  * Get flow for an upload
@@ -182,7 +168,7 @@ export function generateUpload(
       patient_uuids
     }),
     ...(status === UploadStatus.Invalid && {
-      validations: VALIDATIONS
+      validations: getUploadValidations(UploadStatus.Invalid)
     }),
     ...(status === UploadStatus.Failed && {
       hasFailed: true
@@ -198,55 +184,12 @@ export function generateUpload(
     ...(isRejected && {
       rejectedAt: decidedAt,
       rejectedBy_uid: user.uid,
-      rejectionReason: REJECTION_REASON
+      rejectionReason:
+        'These records appear to be for the wrong school. Please check that you have uploaded records for the correct school.'
     })
   })
 }
 
 /**
- * Select patients a file of this type would contain
- *
- * @param {Upload} upload - Upload
- * @param {Array<Patient>} patients - All patients
- * @returns {Array<Patient>} Selected patients
- */
-export function selectUploadPatients(upload, patients) {
-  switch (upload.type) {
-    case UploadType.School:
-      // Pupils at the school in the chosen year groups
-      return patients.filter(
-        (patient) =>
-          upload.school_id === patient.school_id &&
-          upload.yearGroups.map(Number).includes(patient.yearGroup)
-      )
-    case UploadType.Report:
-      // Patients with vaccination records
-      return patients.filter((patient) => patient.vaccinations.length > 0)
-    default:
-      return patients
-  }
-}
-
-/**
- * Generate row-level validation errors for an invalid file
- *
- * @param {Array<Patient>} patients - Patients in the file
- * @returns {object} Validation errors, keyed by row number
- */
-export function generateValidations(patients) {
-  const validations = {}
-
-  for (const [i, patient] of patients.entries()) {
-    validations[i + 1] = {
-      CHILD_FIRST_NAME: 'is required but missing',
-      CHILD_DOB: `‘${patient.firstName}’ should be formatted as YYYY-MM-DD`,
-      CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
-    }
-  }
-
-  return validations
-}
-
-/**
- * @import { Patient, School, User } from '../models.js'
+ * @import { School, User } from '../models.js'
  */

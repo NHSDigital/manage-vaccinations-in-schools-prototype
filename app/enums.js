@@ -900,6 +900,24 @@ export const UploadStatus = {
 }
 
 /**
+ * Outcome of processing an uploaded file
+ *
+ * - Invalid: a few rows have validation errors
+ * - Failed: passes validation but fails data checks
+ * - Valid: passes validation and data checks
+ * - WrongFormat: file is not in the chosen format
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const UploadOutcome = {
+  Invalid: 'Invalid',
+  Failed: 'Failed',
+  Valid: 'Valid',
+  WrongFormat: 'Wrong format'
+}
+
+/**
  * Upload status, as shown to SAIS teams
  *
  * Until a school admin sends an upload for approval, it is private to them.

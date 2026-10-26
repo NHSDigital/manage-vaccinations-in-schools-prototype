@@ -1,17 +1,13 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadFormat, UploadStatus, UploadType } from '../enums.js'
-import { generateUploadMoves } from '../generators/move.js'
-import {
-  generateValidations,
-  selectUploadPatients
-} from '../generators/upload.js'
-import { Patient, Upload } from '../models.js'
+import { Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
-import { createMoves, deleteUploadMoves } from '../utils/moves.js'
+import { deleteUploadMoves } from '../utils/moves.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { formatYearGroup } from '../utils/string.js'
+import { getUploadOutcome, processUpload } from '../utils/upload.js'
 import { getFilterParams } from '../utils/url.js'
 
 export const uploadController = {
@@ -233,40 +229,16 @@ export const uploadController = {
         data.wizard
       )
 
-      // Add patient records
-      const patients = selectUploadPatients(upload, Patient.findAll(data))
-
       if (type === 'new' || type === 'edit') {
         // Record file upload (restarts processing)
         upload.uploadedAt = today()
         upload.uploadedBy_uid = account.uid
 
-        // Select patients (don’t select any when making a request)
-        upload.patient_uuids = patients.map((patient) => patient.uuid)
-      }
-
-      if (type === 'edit') {
-        // Clear any previous validation errors and failed data checks
-        upload.validations = {}
-        upload.hasFailed = false
+        const uploadOutcome = getUploadOutcome(upload, type === 'edit')
+        processUpload(upload, uploadOutcome, data)
       } else if (type === 'request') {
         // Add assignees before updating upload
         upload.assignee_uids = request.body.upload.assignee_uids
-      } else if (type === 'new' && upload.format === UploadFormat.Mavis) {
-        // Add validation errors
-        upload.validations = generateValidations(patients)
-      }
-
-      // Replace any school moves reported by a previous file
-      if (type === 'new' || type === 'edit') {
-        deleteUploadMoves(upload.id, data)
-
-        const { patient_uuids, moves } = generateUploadMoves(
-          upload,
-          Patient.findAll(data)
-        )
-        upload.patient_uuids = patient_uuids
-        createMoves(moves, data)
       }
 
       upload = Upload.create(upload, data)
