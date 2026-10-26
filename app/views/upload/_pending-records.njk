@@ -1,8 +1,8 @@
 {%- from "_macros/change.njk" import appChange with context -%}
 
+{% set needsReview = upload.status == UploadStatus.Review %}
 {% set patientRows = [] %}
 {% for patient in pendingRecords %}
-  {% set type = "vaccination" if upload.type == UploadType.Report else "child" %}
   {% set archiveChangeset = __("upload.show.partial.decision.archived.label", ArchiveRecordReason.Error) | nl2br %}
   {% set archiveRadios = radios({
     formGroup: {
@@ -17,17 +17,17 @@
     small: true,
     items: [
       {
-        label: __("upload.show.partial.decision.ignore.label", type),
+        label: __("upload.show.partial.decision.ignore.label"),
         value: "ignore"
       },
       {
-        label: __("upload.show.partial.decision.restore.label", type),
+        label: __("upload.show.partial.decision.restore.label"),
         value: "restore"
       }
     ],
     decorate: "pending-record-" + loop.index0
   }) %}
-  {% set archiveDecision = __("upload.show.partial.decision.restore.label", type) %}
+  {% set archiveDecision = __("upload.show.partial.decision.restore.label") %}
 
   {% set duplicateChangeset = summaryList({
     lastRowBorder: false,
@@ -53,21 +53,21 @@
     small: true,
     items: [
       {
-        label: __("upload.show.partial.decision.original.label", type),
+        label: __("upload.show.partial.decision.original.label"),
         value: "original"
       },
       {
-        label: __("upload.show.partial.decision.duplicate.label", type),
+        label: __("upload.show.partial.decision.duplicate.label"),
         value: "duplicate"
       },
       {
-        label: __("upload.show.partial.decision.both.label", type),
+        label: __("upload.show.partial.decision.both.label"),
         value: "both"
       } if patient.hasMissingNhsNumber
     ],
     decorate: "decision-" + loop.index0
   }) %}
-  {% set duplicateDecision = __("upload.show.partial.decision.duplicate.label", type) %}
+  {% set duplicateDecision = __("upload.show.partial.decision.duplicate.label") %}
 
   {% set patientRows = patientRows | push([
     {
@@ -78,21 +78,19 @@
       html: archiveChangeset if loop.first else duplicateChangeset
     },
     {
-      html: archiveRadios if upload.status == UploadStatus.Review else archiveDecision
+      html: archiveRadios if needsReview else archiveDecision
     } if loop.first else {
-      html: duplicateRadios if upload.status == UploadStatus.Review else duplicateDecision
+      html: duplicateRadios if needsReview else duplicateDecision
     }
   ]) %}
 {% endfor %}
 
 {{ heading({
   caption: {
-    text: __mf("upload.show.partial.summary." + upload.status, {
-      count: patientRows.length
-    }),
+    text: __("upload.show.partial.summary"),
     placement: "after"
-  },
-  text: __("upload.show.partial.title." + upload.status),
+  } if needsReview,
+  text: __("upload.show.partial.title") if needsReview else __("upload.show.partial.label"),
   level: 2,
   size: "m"
 }) }}
@@ -102,7 +100,7 @@
   responsive: true,
   card: {
     heading: {
-      text: __mf("upload.show.partial.count." + upload.status, {
+      text: __mf("upload.show.partial.count", {
         count: patientRows.length
       }),
       level: 3,
