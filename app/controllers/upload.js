@@ -271,12 +271,13 @@ export const uploadController = {
           break
       }
 
-      upload.patient_uuids = patients.map((patient) => patient.uuid)
-
       if (type === 'new' || type === 'edit') {
         // Record file upload (restarts processing)
         upload.uploadedAt = today()
         upload.uploadedBy_uid = account.uid
+
+        // Select patients (don’t select any when making a request)
+        upload.patient_uuids = patients.map((patient) => patient.uuid)
       }
 
       if (type === 'edit') {

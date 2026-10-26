@@ -165,7 +165,6 @@ export function generateUpload(
   return new Upload({
     type,
     fileName: `${prototypeFilters.slugify(type)}-${faker.number.int(5)}.csv`,
-    patient_uuids,
     ...(school && {
       yearGroups: school.yearGroups,
       school_id: school.id
@@ -179,7 +178,8 @@ export function generateUpload(
     }),
     ...(isUploaded && {
       uploadedAt,
-      uploadedBy_uid: uploader.uid
+      uploadedBy_uid: uploader.uid,
+      patient_uuids
     }),
     ...(status === UploadStatus.Invalid && {
       validations: VALIDATIONS
