@@ -3,7 +3,7 @@
 {% if type == "request" %}
   {% set title = __("upload.request.yearGroups.title") %}
 {% else %}
-  {% set title = __("upload.yearGroups.title") %}
+  {% set title = __("upload.yearGroups.titleSchoolUser") if account.isSchoolUser else __("upload.yearGroups.title") %}
 {% endif %}
 
 {% block form %}

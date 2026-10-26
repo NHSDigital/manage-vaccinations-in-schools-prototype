@@ -1885,8 +1885,8 @@ export const en = {
       description: 'Find children and view their vaccination history'
     },
     listSchoolUser: {
-      label: 'Pupils with consent',
-      title: 'Pupils with consent',
+      label: 'View pupils with consent',
+      title: 'View pupils with consent',
       description: 'Find pupils and view their consent status'
     },
     show: {
@@ -3722,7 +3722,7 @@ export const en = {
     request: {
       title: 'Request a class list',
       yearGroups: {
-        title: 'Which year groups do you want to request class lists from?'
+        title: 'Which year groups do you want to request a class list from?'
       },
       confirm: 'Send request',
       success: 'Request for class list sent'
@@ -3744,7 +3744,7 @@ export const en = {
     },
     submit: {
       confirm: 'Send to vaccination team',
-      success: 'Records sent to vaccination team'
+      success: 'Pupil information sent to vaccination team'
     },
     reject: {
       title: 'Reject uploaded class list',
@@ -3767,11 +3767,11 @@ export const en = {
       label: 'Send pupil information',
       title: 'Send pupil information',
       description:
-        'Export pupil information from your school’s management information system and send it to your vaccination teams.'
+        'Export pupil information from your school’s management information system and send it to your vaccination team.'
     },
     guides: {
       index: {
-        title: 'How to send pupil information to your vaccination teams'
+        title: 'How to send pupil information to your vaccination team'
       },
       arbor: {
         title: 'How to export pupil information from Arbor'
@@ -3910,11 +3910,15 @@ export const en = {
     },
     new: {
       label: 'Upload records',
-      success: 'Records uploaded. Mavis is processing the file.'
+      success: 'Records uploaded. Mavis is processing the file.',
+      successSchoolUser:
+        'Mavis is processing your upload. Once it’s ready, you need to review it and send it to your vaccination team.'
     },
     edit: {
       label: 'Upload corrected spreadsheet',
-      success: 'Corrected spreadsheet uploaded. Mavis is processing the file.'
+      success: 'Corrected spreadsheet uploaded. Mavis is processing the file.',
+      successSchoolUser:
+        'Corrected spreadsheet uploaded. Mavis is processing the file.'
     },
     assignees: {
       label: 'Request sent to',
@@ -3930,20 +3934,26 @@ export const en = {
     },
     school: {
       label: 'School',
-      title: 'Which school is this class list for?'
+      title: 'Which school is this class list for?',
+      titleSchoolUser: 'Which school are you sending pupil information for?'
     },
     yearGroups: {
       label: 'Year groups',
-      title: 'Which year groups are included in this class list?'
+      title: 'Which year groups are included in this class list?',
+      titleSchoolUser:
+        'Which year groups are you sending pupil information for?'
     },
     file: {
       title: 'Upload {{type}}',
+      titleSchoolUser: 'Upload a spreadsheet',
       label: 'Upload file',
       description: {
         report:
           'You can add vaccination records by uploading:\n\n- a Mavis CSV file\n- a SystmOne file',
         other: 'Mavis can only upload spreadsheets saved as CSV files.'
       },
+      descriptionSchoolUser:
+        'Uploading your spreadsheet is the first step. You’ll then need to check your upload before sending it to the vaccination team',
       format: 'What information to include and how to format it',
       errors: {
         invalid: 'The selected file must be a CSV'

@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("upload.school.title") %}
+{% set title = __("upload.school.titleSchoolUser") if account.isSchoolUser else __("upload.school.title") %}
 
 {% block form %}
   {{ select({
