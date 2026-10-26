@@ -67,6 +67,18 @@ export default [
     team_ids: ['001'],
     presetNames: [SessionPresetName.Doubles, SessionPresetName.MMR]
   },
+  {
+    id: '777780',
+    urn: '777780',
+    name: 'Kingsmere Park Academy',
+    phase: SchoolPhase.Secondary,
+    yearGroups: [7, 8, 9, 10, 11],
+    addressLine1: 'Lindley Road',
+    addressLevel1: 'Nuneaton',
+    postalCode: 'CV11 6AB',
+    team_ids: ['001'],
+    presetNames: [SessionPresetName.HPV, SessionPresetName.MMR]
+  },
   // End reserved schools ^^^
   {
     id: '135335',
