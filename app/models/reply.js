@@ -553,19 +553,23 @@ export class Reply extends BaseModel {
             }
             return decisionStatus
           }
+          const formattedDate = (date) =>
+            formatDate(date, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })
 
           switch (prop) {
             case 'createdAt':
-              return formatDate(this.createdAt, {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-              })
+              return formattedDate(this.createdAt)
             case 'createdBy':
               return this.createdBy?.fullName || ''
+            case 'expiresAt':
+              return this.expiresAt ? formattedDate(this.expiresAt) : 'None'
             case 'decisionStatus':
               return getDecisionStatus()
             case 'contact':

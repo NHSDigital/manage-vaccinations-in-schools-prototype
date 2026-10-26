@@ -2723,10 +2723,13 @@ export const en = {
       success: 'Consent response from {{reply.fullName}} withdrawn'
     },
     createdAt: {
-      label: 'Date'
+      label: 'Response date'
     },
     createdBy: {
       label: 'Recorded by'
+    },
+    expiresAt: {
+      label: 'Expiry date'
     },
     respondent: {
       title: 'Who are you trying to get consent from?',
