@@ -52,27 +52,36 @@
       ]
     }) if reply.isValid }}
 
-    {{ summaryList({
-      card: {
+    {% call card({
         heading: {
           text: __("reply.label"),
           size: "m"
         }
-      },
-      lastRowBorder: false,
-      rows: summaryRows(reply, {
-        programme: {},
-        createdAt: {},
-        method: {},
-        decisionStatus: {},
-        vaccineCriteria: {},
-        refusalReason: {},
-        refusalReasonDetails: {},
-        note: {
-          href: reply.uri + "/edit/note"
-        }
-      })
-    }) }}
+      }) %}
+      {{ appStatus({
+        text: __("reply.expiringSoon.label"),
+        icon: "warning",
+        colour: "blue",
+        classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
+      }) if reply.isExpiringSoon and not reply.isInvalidated }}
+
+      {{ summaryList({
+        lastRowBorder: false,
+        rows: summaryRows(reply, {
+          programme: {},
+          createdAt: {},
+          expiresAt: {},
+          method: {},
+          decisionStatus: {},
+          vaccineCriteria: {},
+          refusalReason: {},
+          refusalReasonDetails: {},
+          note: {
+            href: reply.uri + "/edit/note"
+          }
+        })
+      }) }}
+    {% endcall %}
 
     {{ summaryList({
       card: {
