@@ -121,7 +121,11 @@ export class Programme extends BaseModel {
    */
   getSeasonEndAt(academicYear) {
     if (this.isSeasonal) {
-      return new Date(`${academicYear + 1}-03-31`)
+      const seasonEnd = new Date(`${academicYear + 1}-03-31`)
+      seasonEnd.setHours(23)
+      seasonEnd.setMinutes(59)
+      seasonEnd.setSeconds(59)
+      return seasonEnd
     }
   }
 
