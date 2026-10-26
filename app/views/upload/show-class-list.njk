@@ -4,7 +4,6 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set programme = data.programmes[upload.programme_id] %}
 {% set needsChecking = upload.status == UploadStatus.Pending %}
 {% if needsChecking %}
   {% set title = __("upload.show.submit.title", upload.formatted.createdAt) %}
@@ -78,8 +77,8 @@
         {{ __("upload.invalid.description") | nhsukMarkdown }}
 
         {{ actionLink({
-          text: __("upload.edit.label", upload.type | lower),
-          href: upload.uri + "/edit/file?type=" + upload.type
+          text: __("upload.edit.label"),
+          href: upload.uri + "/edit/file"
         }) }}
       </div>
 

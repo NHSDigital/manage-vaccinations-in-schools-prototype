@@ -16,7 +16,6 @@ import {
   getUploadMoves
 } from '../utils/moves.js'
 import {
-  formatLink,
   formatList,
   formatProgress,
   formatTag,
@@ -308,34 +307,6 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Get formatted summary
-   *
-   * @returns {object} Formatted summaries
-   */
-  get summary() {
-    return {
-      type:
-        this.type === UploadType.School
-          ? formatWithSecondaryText(this.type, this.school?.name)
-          : this.type
-    }
-  }
-
-  /**
-   * Get formatted links
-   *
-   * @returns {object} Formatted links
-   */
-  get link() {
-    return {
-      summary: formatWithSecondaryText(
-        formatLink(this.uri, this.formatted.createdAt),
-        this.fileName
-      )
-    }
-  }
-
-  /**
    * Get formatted values
    *
    * @returns {object} Formatted values
@@ -420,6 +391,10 @@ export class Upload extends BaseModel {
               return this.teamStatus && formatStatus(this.teamStatus)
             case 'schoolStatus':
               return formatStatus(this.schoolStatus)
+            case 'type':
+              return this.type === UploadType.School
+                ? formatWithSecondaryText(this.type, this.school?.name)
+                : this.type
             default:
               return undefined
           }

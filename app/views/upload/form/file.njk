@@ -1,6 +1,5 @@
 {% extends "_layouts/form.njk" %}
 
-{% set programme = data.programmes[upload.programme_id] %}
 {% set title = __("upload.file.titleSchoolUser") if account.isSchoolUser else __("upload.file.title", { type: upload.type | lower }) %}
 
 {% set templateFormat %}
@@ -22,11 +21,6 @@
 {% endset %}
 
 {% block form %}
-  {{ errorSummary({
-    heading: __("error.title"),
-    errorList: errorList(errors)
-  }) if errors }}
-
   {{ heading({
     text: title,
     size: "l"

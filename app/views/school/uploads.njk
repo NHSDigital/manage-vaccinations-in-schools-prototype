@@ -34,7 +34,7 @@
   }) }}
 
   {{ actionLink({
-    href: "/uploads/request?type=" + UploadType.School + "&school_id=" + school.id,
+    href: "/uploads/request?school_id=" + school.id,
     text: __("upload.request.title")
   }) }}
 
@@ -75,7 +75,7 @@
               href: school.uri + "/uploads",
               small: true,
               variant: "secondary"
-            } if data.type or data.status
+            } if data.status
           ]
         }) }}
       {% endcall %}
