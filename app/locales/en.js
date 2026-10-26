@@ -7,8 +7,7 @@ import {
   ReplyRefusal,
   ScreenStatus,
   SessionPresetName,
-  UploadFormat,
-  UploadStatus
+  UploadFormat
 } from '../enums.js'
 
 const thisAcademicYear = Object.values(AcademicYear).at(-1)
@@ -3805,47 +3804,20 @@ export const en = {
           'Mavis has compared your spreadsheet with the pupil information already in the service.\n\nCheck the changes below before sending your spreadsheet to the vaccination team.'
       },
       summary: 'Details',
-      pupil: {
-        title: 'New records',
-        count: '{count, plural, =0 {no pupils} one {1 pupil} other {# pupils}}',
-        summary:
-          'These records are for children who are not currently in Mavis. They will be added when the upload is approved.'
-      },
       new: {
-        title: 'New records',
-        count:
-          '{count, plural, =0 {No new records} one {1 new record} other {# new records}}',
+        label: 'New children',
+        title: 'New children (no action needed)',
         summary:
-          'These records are for children who are not currently in Mavis. They will be added when the upload is approved.'
+          'If you approve the upload, these children will be added to your cohort in Mavis.',
+        count:
+          '{count, plural, =0 {No new children} one {1 new child} other {# new children}} not currently in Mavis'
       },
       partial: {
-        label: {
-          [UploadStatus.Review]: 'Changes to review',
-          [UploadStatus.Approved]: 'Changes approved',
-          [UploadStatus.Rejected]: 'Changes rejected'
-        },
-        title: {
-          [UploadStatus.Review]:
-            'Close matches to existing records – need review',
-          [UploadStatus.Rejected]: 'Close matches to existing records',
-          [UploadStatus.Approved]: 'Close matches to existing records'
-        },
-        count: {
-          [UploadStatus.Review]:
-            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
-          [UploadStatus.Approved]:
-            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records',
-          [UploadStatus.Rejected]:
-            '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to existing records'
-        },
-        summary: {
-          [UploadStatus.Review]:
-            'These records closely match children who are already in Mavis. Review each one and choose which record to keep in Mavis.',
-          [UploadStatus.Approved]:
-            'These records closely matched children already in Mavis.',
-          [UploadStatus.Rejected]:
-            'These records closely matched children already in Mavis.'
-        },
+        label: 'Close matches to children already in Mavis',
+        title: 'Close matches to children already in Mavis (needs review)',
+        summary: 'Review each one and choose which record to keep in Mavis.',
+        count:
+          '{count, plural, =0 {No close matches} one {1 close match} other {# close matches}} to children already in Mavis',
         decision: {
           label: 'Decision',
           title: 'Which changes do you want to keep for {{patient.fullName}}?',
@@ -3870,23 +3842,23 @@ export const en = {
         }
       },
       matched: {
-        title: 'Records already in Mavis',
-        count:
-          '{count, plural, =0 {No records} one {1 record} other {# records}} already in Mavis',
+        label: 'Children already in Mavis',
+        title: 'Children already in Mavis (no action needed)',
         summary:
-          'These records match children who are already in Mavis. If the upload contains new information for these children, their records will be updated when the upload is approved.'
+          'If you approve the upload, any additional information for these children will be added to their records in Mavis.',
+        count:
+          '{count, plural, =0 {No children} one {1 child} other {# children}} already in Mavis'
       },
       imported: {
-        title: 'Uploaded records',
+        label: 'Uploaded children',
         count:
-          '{count, plural, =0 {No uploaded records} one {1 uploaded record} other {# uploaded records}}'
+          '{count, plural, =0 {No children} one {1 child} other {# children}}'
       },
       moves: {
-        title: {
-          [UploadStatus.Review]: 'School moves – need review',
-          [UploadStatus.Approved]: 'School moves approved for this upload',
-          [UploadStatus.Rejected]: 'School moves rejected for this upload'
-        },
+        label: 'School moves',
+        title: 'School moves (needs review)',
+        summary:
+          'The upload will change the school of the children listed below. Children present in the class list will be moved into the school, and those who are not in the class list will be moved out of the school.',
         count:
           '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}}',
         decision: {
@@ -3898,14 +3870,6 @@ export const en = {
           ignore: {
             label: 'Ignore move'
           }
-        },
-        summary: {
-          [UploadStatus.Review]:
-            'The upload shows a different school for these children from the one recorded in Mavis. Review each one and choose whether to update their school.',
-          [UploadStatus.Approved]:
-            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} approved.',
-          [UploadStatus.Rejected]:
-            '{count, plural, =0 {No school moves} one {1 school move} other {# school moves}} rejected.'
         }
       }
     },
@@ -3955,10 +3919,7 @@ export const en = {
       },
       descriptionSchoolUser:
         'Uploading your spreadsheet is the first step. You’ll then need to check your upload before sending it to the vaccination team',
-      format: 'What information to include and how to format it',
-      errors: {
-        invalid: 'The selected file must be a CSV'
-      }
+      format: 'What information to include and how to format it'
     },
     removeRelationships: {
       title: 'Bulk remove relationships',
@@ -3984,14 +3945,6 @@ export const en = {
       count:
         '{count, plural, =0 {No unmatched records} one {1 unmatched record} other {# unmatched records}}'
     },
-    rejected: {
-      label: 'Rejected',
-      title: 'Upload rejected',
-      description: 'This upload was rejected for the following reason:'
-    },
-    id: {
-      label: 'ID'
-    },
     created: {
       label: 'Uploaded'
     },
@@ -4016,12 +3969,11 @@ export const en = {
     approved: {
       label: 'Approved'
     },
-
+    rejected: {
+      label: 'Rejected'
+    },
     fileName: {
       label: 'File'
-    },
-    summary: {
-      label: 'Date and uploaded file'
     },
     requestedBy: {
       label: 'Requested by'
@@ -4048,9 +4000,6 @@ export const en = {
     },
     schoolStatus: {
       label: 'Status'
-    },
-    vaccinations: {
-      label: 'Vaccination records'
     },
     patients: {
       label: 'Records'
