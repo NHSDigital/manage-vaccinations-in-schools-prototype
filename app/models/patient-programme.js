@@ -818,6 +818,32 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get expired responses (not invalidated), with only the latest from each
+   * respondent, earliest expiry first
+   *
+   * @returns {Array<Reply>} Expired responses
+   */
+  get expiredReplies() {
+    const latestReplyByRespondent = new Map()
+
+    for (const reply of this.repliesToShow ?? []) {
+      if (!reply.hasExpired || reply.isInvalidated) {
+        continue
+      }
+
+      // Responses to show are newest first, so keep the first for each respondent
+      const respondent = reply.hasSelfConsent ? 'child' : reply.contact_uuid
+      if (!latestReplyByRespondent.has(respondent)) {
+        latestReplyByRespondent.set(respondent, reply)
+      }
+    }
+
+    return [...latestReplyByRespondent.values()].sort((a, b) =>
+      getDateValueDifference(a.expiresAt, b.expiresAt)
+    )
+  }
+
+  /**
    * Get consent health answers
    *
    * @returns {object|undefined} Consent health answers

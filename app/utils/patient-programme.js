@@ -18,7 +18,7 @@ import {
   VaccineCriteria
 } from '../enums.js'
 
-import { today } from './date.js'
+import { formatDate, today } from './date.js'
 import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
@@ -201,6 +201,39 @@ export function getConsentStatus(patientProgramme) {
 }
 
 /**
+ * Describe the most recent expiry of consent, and whose consent it was
+ *
+ * @param {Array<Reply>} expiredReplies - Expired responses, earliest expiry first
+ * @returns {string|undefined} Expired consent description, if any have expired
+ */
+function getExpiredConsentDescription(expiredReplies) {
+  if (!expiredReplies?.length) {
+    return undefined
+  }
+
+  const getRespondent = (reply) =>
+    reply.fullNameAndRelationship || 'parent or guardian'
+  const getExpiryDate = (reply) =>
+    formatDate(reply.expiresAt, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+  // Only mention consent that expired most recently, as older expiries don’t
+  // help the user. More than one respondent’s consent can expire that day
+  const latestExpiryDate = getExpiryDate(expiredReplies.at(-1))
+  const latestExpiredReplies = expiredReplies.filter(
+    (reply) => getExpiryDate(reply) === latestExpiryDate
+  )
+  const respondents = filters.formatList(
+    latestExpiredReplies.map(getRespondent)
+  )
+
+  return `Consent from ${respondents} expired on ${latestExpiryDate}.`
+}
+
+/**
  * Get expanded description about consent status
  *
  * @param {PatientProgramme} patientProgramme - Patient programme
@@ -229,7 +262,10 @@ export function getConsentStatusDescription(patientProgramme) {
 
   switch (patientProgramme.consent) {
     case ConsentStatus.NoResponse:
-      return 'No-one responded to our requests for consent.'
+      return (
+        getExpiredConsentDescription(patientProgramme.expiredReplies) ||
+        'No-one responded to our requests for consent.'
+      )
     case ConsentStatus.NotDelivered:
       return 'Consent response could not be delivered.'
     case ConsentStatus.Inconsistent:
