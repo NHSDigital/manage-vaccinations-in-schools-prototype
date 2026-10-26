@@ -19,7 +19,6 @@ import {
   formatList,
   formatProgress,
   formatTag,
-  formatWithSecondaryText,
   formatYearGroup,
   stringToArray,
   stringToBoolean
@@ -431,10 +430,6 @@ export class Upload extends BaseModel {
               return this.teamStatus && formatStatus(this.teamStatus)
             case 'schoolStatus':
               return formatStatus(this.schoolStatus)
-            case 'type':
-              return this.type === UploadType.School
-                ? formatWithSecondaryText(this.type, this.school?.name)
-                : this.type
             default:
               return undefined
           }
