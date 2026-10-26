@@ -38,6 +38,12 @@ Your vaccination team will tell you which year groups to provide information for
 
 You can include other information, such as preferred name, year group and registration form. This helps provide a more complete record and can help you organise pupils for vaccination sessions.
 
+{% call details({
+  summaryText: __("upload.file.format")
+}) %}
+  {% include "upload/_template-format-school-csv.njk" %}
+{% endcall %}
+
 You do not need to have all the information for every pupil.
 
 ## Preparing your spreadsheet

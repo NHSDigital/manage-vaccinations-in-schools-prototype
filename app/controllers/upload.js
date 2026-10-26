@@ -322,7 +322,11 @@ export const uploadController = {
           upload.status
         )
       ) {
-        request.flash('success', __(`upload.${type}.success`))
+        const successMessage = account.isSchoolUser
+          ? 'successSchoolUser'
+          : 'success'
+
+        request.flash('success', __(`upload.${type}.${successMessage}`))
       }
 
       let nextPage = '/uploads'

@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set programme = data.programmes[upload.programme_id] %}
-{% set title = __("upload.file.title", { type: upload.type | lower }) %}
+{% set title = __("upload.file.titleSchoolUser") if account.isSchoolUser else __("upload.file.title", { type: upload.type | lower }) %}
 
 {% set templateFormat %}
   {% if upload.type == UploadType.Cohort %}
@@ -38,10 +38,14 @@
     {{ __("upload.file.description.other") | nhsukMarkdown }}
   {% endif %}
 
+  {% if account.isSchoolUser %}
+    {{ __("upload.file.descriptionSchoolUser") | nhsukMarkdown }}
+  {% endif %}
+
   {{ details({
     summary: __("upload.file.format"),
     html: templateFormat
-  }) }}
+  }) if not account.isSchoolUser }}
 
   {{ fileUpload({
     id: "upload",
