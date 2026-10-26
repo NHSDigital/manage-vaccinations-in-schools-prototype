@@ -11,7 +11,7 @@
       }) }}
 
       <p>The following scenarios are available for use in user research:</p>
-      
+
       {% if scenarios.length > 0 %}
         {% for scenario in scenarios %}
           {% call card({
@@ -31,7 +31,7 @@
                 level: 3,
                 size: "xs",
                 classes: "nhsuk-u-margin-bottom-2"
-              })}}
+              }) }}
               <ul class="nhsuk-list nhsuk-list--bullet">
                 {% for link in scenario.links %}
                   <li><a href="{{ link.href }}">{{ link.label }}</a></li>
