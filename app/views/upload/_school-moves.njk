@@ -1,5 +1,30 @@
 {% set moveRows = [] %}
 {% for move in upload.moves %}
+  {% set moveRadios = radios({
+    formGroup: {
+      classes: "nhsuk-u-margin-bottom-2"
+    },
+    fieldset: {
+      legend: {
+        classes: "nhsuk-u-visually-hidden",
+        text: __("upload.show.moves.decision.title", { patient: move.patient })
+      }
+    },
+    small: true,
+    items: [
+      {
+        label: __("upload.show.moves.decision.accept.label"),
+        value: "restore"
+      },
+      {
+        label: __("upload.show.moves.decision.ignore.label"),
+        value: "ignore"
+      }
+    ],
+    decorate: "school-move-" + loop.index0
+  }) %}
+  {% set moveDecision = __("upload.show.moves.decision.accept.label") %}
+
   {% set moveRows = moveRows | push([
     {
       html: move.patient.formatted.fullNameAndNhsn
@@ -8,31 +33,7 @@
       html: move.movementForImport
     },
     {
-      html: radios({
-        formGroup: {
-          classes: "nhsuk-u-margin-bottom-2"
-        },
-        fieldset: {
-          legend: {
-            classes: "nhsuk-u-visually-hidden",
-            text: __("upload.show.moves.decision.title", {
-              patient: move.patient
-            })
-          }
-        },
-        small: true,
-        items: [
-          {
-            label: __("upload.show.moves.decision.accept.label"),
-            value: "restore"
-          },
-          {
-            label: __("upload.show.moves.decision.ignore.label"),
-            value: "ignore"
-          }
-        ],
-        decorate: "school-move-" + loop.index0
-      })
+      html: moveRadios if upload.status == UploadStatus.Review else moveDecision
     }
   ]) %}
 {% endfor %}
