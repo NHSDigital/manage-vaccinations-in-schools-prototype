@@ -1,4 +1,3 @@
-{% set needsReview = upload.status == UploadStatus.Review %}
 {% set moveRows = [] %}
 {% for move in upload.moves %}
   {% set moveRadios = radios({
@@ -34,17 +33,17 @@
       html: move.movementForImport
     },
     {
-      html: moveRadios if needsReview else moveDecision
+      html: moveRadios if upload.needsReview else moveDecision
     }
   ]) %}
 {% endfor %}
 
 {{ heading({
   caption: {
-    text: __("upload.show.moves.summary") if needsReview,
+    text: __("upload.show.moves.summary") if upload.needsReview,
     placement: "after"
   },
-  text: __("upload.show.moves.title") if needsReview else __("upload.show.moves.label"),
+  text: __("upload.show.moves.title") if upload.needsReview else __("upload.show.moves.label"),
   level: 2,
   size: "m"
 }) }}
