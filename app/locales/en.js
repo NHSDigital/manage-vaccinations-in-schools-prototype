@@ -26,6 +26,7 @@ export const en = {
     label: 'Actions',
     change: 'Change',
     delete: 'Delete',
+    download: 'Download',
     edit: 'Edit',
     review: 'Review',
     update: 'Update',
