@@ -18,14 +18,12 @@
         href: "/uploads/new",
         text: __("session.upload-class-list.title")
       }) }}
-      {% if account.isSchoolUser %}
-        <p class="nhsuk-body">
-          {{ link({
-            text: __("upload.guides.index.title"),
-            href: "/uploads/guides"
-          }) }}
-        </p>
-      {% endif %}
+      <p class="nhsuk-body">
+        {{ link({
+          text: __("upload.guides.index.title"),
+          href: "/uploads/guides"
+        }) }}
+      </p>
     </div>
   {% else %}
     {{ actionLink({
@@ -128,9 +126,7 @@
             schoolStatus: {}
           }) if account.isSchoolUser else summaryRows(upload, {
             fileName: {},
-            type: {
-              value: upload.summary.type
-            },
+            type: {},
             teamStatus: {}
           })
         }) }}

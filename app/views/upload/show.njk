@@ -4,7 +4,6 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set programme = data.programmes[upload.programme_id] %}
 {% set status = upload.teamStatus %}
 {% set needsReview = status == UploadStatus.Review %}
 {% if needsReview %}
@@ -125,8 +124,8 @@
     }) %}
       <div class="nhsuk-u-reading-width">
         {{ actionLink({
-          text: __("upload.edit.label", upload.type | lower),
-          href: upload.uri + "/edit/file?type=" + upload.type
+          text: __("upload.edit.label"),
+          href: upload.uri + "/edit/file"
         }) }}
       </div>
 
