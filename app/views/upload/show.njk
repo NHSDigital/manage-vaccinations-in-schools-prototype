@@ -78,6 +78,15 @@
   }) }}
 
   {% if status in [UploadStatus.Review, UploadStatus.Rejected] %}
+    {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
+    {% if pendingRecords.length %}
+      {% include "upload/_pending-records.njk" %}
+    {% endif %}
+
+    {% if upload.type != UploadType.Report and upload.moves.length %}
+      {% include "upload/_school-moves.njk" %}
+    {% endif %}
+
     {{ patientRecords({
       key: "new",
       patients: upload.patients | selectattr("isNewUpload")
@@ -87,15 +96,6 @@
       key: "matched",
       patients: upload.patients | selectattr("hasMatchingUpload")
     }) }}
-
-    {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
-    {% if pendingRecords.length %}
-      {% include "upload/_pending-records.njk" %}
-    {% endif %}
-
-    {% if upload.type != UploadType.Report and upload.moves.length %}
-      {% include "upload/_school-moves.njk" %}
-    {% endif %}
   {% elif status == UploadStatus.Approved %}
     {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
     {% if pendingRecords.length %}
