@@ -4,7 +4,7 @@
 
 {% block form %}
   {{ heading({
-    caption: __("upload.show.title", { upload: upload }),
+    caption: __("upload.show.title", upload.formatted.createdAt),
     text: title,
     size: "l"
   }) }}
