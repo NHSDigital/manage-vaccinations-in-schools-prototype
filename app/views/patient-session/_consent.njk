@@ -94,6 +94,7 @@
             value: reply.contact.communicationNeeds
           } if reply.contact.communicationNeeds,
           createdAt: {},
+          expiresAt: {} if not reply.isInvalidated,
           decisionStatus: {},
           vaccineCriteria: {}
         })
