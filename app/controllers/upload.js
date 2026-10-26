@@ -27,29 +27,9 @@ export const uploadController = {
     const { data } = request.session
     const { account } = response.locals
 
-    let uploads = Upload.findAll(data).filter((upload) => {
-      // School admins can only see files uploaded by users in their team
-      if (account.isSchoolUser) {
-        return upload.uploadedBy?.team_id === account.team_id
-      }
-
-      // SAIS teams can’t see uploads that are private to a school admin
-      if (upload.teamStatus === undefined) {
-        return false
-      }
-
-      // SAIS teams can only see uploads created by users in their team
-      // (including requests sent to schools) and uploads from other teams that
-      // have been sent for approval
-      return (
-        upload.createdBy?.team_id === account.team_id ||
-        Boolean(upload.submittedAt)
-      )
-    })
-
-    if (account.isSchoolUser) {
-      uploads = uploads.filter((upload) => upload.type === UploadType.School)
-    }
+    const uploads = Upload.findAll(data).filter((upload) =>
+      upload.isVisibleTo(account)
+    )
 
     if (account.isSchoolUser && uploads.length === 0) {
       return response.redirect('/uploads/guides')
@@ -65,18 +45,14 @@ export const uploadController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
-    const { account } = response.locals
+    const { account, upload } = response.locals
+
+    if (!upload?.isVisibleTo(account)) {
+      return response.redirect('/uploads')
+    }
 
     if (view === 'show' && account.isSchoolUser) {
       return response.render(`upload/show-class-list`)
-    }
-
-    // SAIS teams can’t see uploads that are private to a school admin
-    if (
-      !account.isSchoolUser &&
-      response.locals.upload?.teamStatus === undefined
-    ) {
-      return response.redirect('/uploads')
     }
 
     return response.render(`upload/${view}`)
@@ -106,9 +82,8 @@ export const uploadController = {
     // Filter by status (as shown to the type of user)
     if (status) {
       const statuses = Array.isArray(status) ? status : [status]
-      const statusKey = account.isSchoolUser ? 'schoolStatus' : 'teamStatus'
       results = results.filter((upload) =>
-        statuses.some((status) => upload[statusKey] === status)
+        statuses.includes(upload.statusFor(account))
       )
     }
 

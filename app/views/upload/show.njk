@@ -4,7 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set status = upload.teamStatus %}
+{% set status = upload.statusFor(account) %}
 {% if upload.needsReview %}
   {% set title = __("upload.show.approve.title", upload.formatted.createdAt) %}
 {% else %}
@@ -163,7 +163,7 @@
     {% include "upload/_failed-records.njk" %}
   {% endif %}
 
-  {% if upload.patients.length > 0 and upload.needsReview %}
+  {% if account.can("approve", upload) %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
@@ -178,17 +178,17 @@
           text: __("upload.reject.confirm"),
           href: upload.uri + "/reject",
           variant: "warning"
-        },
+        } if account.can("reject", upload),
         {
           text: __("upload.delete.confirm"),
           variant: "secondary",
           attributes: {
             formaction: upload.uri + "/delete"
           }
-        }
+        } if account.can("delete", upload)
       ]
     }) }}
-  {% elif upload.canDelete %}
+  {% elif account.can("delete", upload) %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({

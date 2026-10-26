@@ -146,7 +146,7 @@
     {% endif %}
   {% endif %}
 
-  {% if upload.patients.length > 0 and upload.needsChecking %}
+  {% if account.can("submit", upload) %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
@@ -163,10 +163,10 @@
           attributes: {
             formaction: upload.uri + "/delete"
           }
-        }
+        } if account.can("delete", upload)
       ]
     }) }}
-  {% elif upload.status != UploadStatus.Processing and upload.status != UploadStatus.Approved %}
+  {% elif account.can("delete", upload) %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
