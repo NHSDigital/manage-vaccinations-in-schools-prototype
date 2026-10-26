@@ -56,49 +56,56 @@
     }) }}
 
     {% for reply in patientProgramme.replies %}
-      {{ summaryList({
-        card: {
-          classes: "app-card--compact app-card--offset",
-          heading: {
-            text: reply.fullNameAndRelationship,
-            level: 4
-          },
-          href: reply.uri if reply.isDelivered,
-          actions: {
-            items: [
-              {
-                text: __("reply.withdraw.label"),
-                href: reply.uri + "/edit/withdraw"
-              } if reply.hasGivenConsent,
-              {
-                text: __("reply.follow-up.label"),
-                href: reply.uri + "/edit/follow-up"
-              } if not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
-              {
-                text: __("reply.invalidate.label"),
-                href: reply.uri + "/edit/invalidate"
-              }
-            ]
-          } if reply.isValid
+      {% call card({
+        classes: "app-card--compact app-card--offset",
+        heading: {
+          text: reply.fullNameAndRelationship,
+          level: 4
         },
-        lastRowBorder: false,
-        rows: summaryRows(reply, {
-          email: {
-            value: appContactEmail(reply.contact, reply.hasGivenConsent)
-          } if reply.contact.email,
-          tel: {
-            value: appContactSms(reply.contact, reply.hasGivenConsent)
-          } if reply.contact.tel,
-          communicationNeeds: {
-            label: __("contact.communicationNeeds.label"),
-            value: reply.contact.communicationNeeds
-          } if reply.contact.communicationNeeds,
-          createdAt: {},
-          expiresAt: {} if not reply.isInvalidated,
-          decisionStatus: {},
-          vaccineCriteria: {}
-        })
-      }) }}
+        href: reply.uri if reply.isDelivered,
+        actions: {
+          items: [
+            {
+              text: __("reply.withdraw.label"),
+              href: reply.uri + "/edit/withdraw"
+            } if reply.hasGivenConsent,
+            {
+              text: __("reply.follow-up.label"),
+              href: reply.uri + "/edit/follow-up"
+            } if not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
+            {
+              text: __("reply.invalidate.label"),
+              href: reply.uri + "/edit/invalidate"
+            }
+          ]
+        } if reply.isValid
+      }) %}
+        {{ appStatus({
+          text: __("reply.expiringSoon.label"),
+          icon: "warning",
+          colour: "blue",
+          classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
+        }) if reply.isExpiringSoon and not reply.isInvalidated }}
+        {{ summaryList({
+          lastRowBorder: false,
+          rows: summaryRows(reply, {
+            email: {
+              value: appContactEmail(reply.contact, reply.hasGivenConsent)
+            } if reply.contact.email,
+            tel: {
+              value: appContactSms(reply.contact, reply.hasGivenConsent)
+            } if reply.contact.tel,
+            communicationNeeds: {
+              label: __("contact.communicationNeeds.label"),
+              value: reply.contact.communicationNeeds
+            } if reply.contact.communicationNeeds,
+            createdAt: {},
+            expiresAt: {} if not reply.isInvalidated,
+            decisionStatus: {},
+            vaccineCriteria: {}
+          })
+        }) }}
+      {% endcall %}
     {% endfor %}
   {% elif patientProgramme.patient.hasContactDetails and not patientProgramme.patient.isPost16 %}
     {# Requests that have been sent but with no response yet #}
