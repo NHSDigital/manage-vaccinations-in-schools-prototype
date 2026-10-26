@@ -332,7 +332,7 @@ export class Reply extends BaseModel {
   /**
    * Is consent response expiring soon i.e. within 30 days?
    *
-   * @returns {boolean} True if consent reponse expires soon, false otherwise
+   * @returns {boolean} True if consent response expires soon, false otherwise
    */
   get isExpiringSoon() {
     // Note: only an approximation here, if using hours, mins and seconds for expiry date
@@ -561,6 +561,15 @@ export class Reply extends BaseModel {
                   html: `<s>${this.decision}</s>`
                 }),
                 'Invalid',
+                false
+              )
+            } else if (this.hasExpired) {
+              decisionStatus = formatWithSecondaryText(
+                formatTag({
+                  colour: 'grey',
+                  html: `<s>${this.decision}</s>`
+                }),
+                'Expired',
                 false
               )
             } else if (this.hasConfirmedRefusal) {
