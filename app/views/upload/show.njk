@@ -60,7 +60,11 @@
       requested: {},
       assignees: {},
       uploaded: {} if not upload.isPrivateToSchool else none,
-      fileName: {} if not upload.isPrivateToSchool else none,
+      fileName: {
+        changeText: __("actions.download"),
+        changeLabel: upload.fileName,
+        href: "#"
+      } if not upload.isPrivateToSchool else none,
       type: {},
       format: {} if not upload.isPrivateToSchool else none,
       school: {},
