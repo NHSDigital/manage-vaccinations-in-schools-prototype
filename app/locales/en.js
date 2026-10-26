@@ -2698,6 +2698,9 @@ export const en = {
     expiresAt: {
       label: 'Expiry date'
     },
+    expiringSoon: {
+      label: 'This response will expire soon'
+    },
     respondent: {
       title: 'Who are you trying to get consent from?',
       label: 'Parent or guardian',

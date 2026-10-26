@@ -23,7 +23,13 @@ import {
   Session,
   Vaccination
 } from '../models.js'
-import { formatDate, getAcademicYear, today } from '../utils/date.js'
+import {
+  addDays,
+  formatDate,
+  getAcademicYear,
+  isBetweenDates,
+  today
+} from '../utils/date.js'
 import {
   getConsentStatusProperties,
   getReplyDecisionProperties
@@ -321,6 +327,19 @@ export class Reply extends BaseModel {
   get hasExpired() {
     const expiryDate = this.expiresAt
     return expiryDate ? isAfter(today(), expiryDate) : false
+  }
+
+  /**
+   * Is consent response expiring soon i.e. within 30 days?
+   *
+   * @returns {boolean} True if consent reponse expires soon, false otherwise
+   */
+  get isExpiringSoon() {
+    // Note: only an approximation here, if using hours, mins and seconds for expiry date
+    const expiryDate = this.expiresAt
+    return expiryDate
+      ? isBetweenDates(expiryDate, today(), addDays(today(), 30))
+      : false
   }
 
   /**
