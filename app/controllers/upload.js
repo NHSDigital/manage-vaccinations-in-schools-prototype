@@ -2,6 +2,10 @@ import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import { UploadFormat, UploadStatus, UploadType } from '../enums.js'
 import { generateUploadMoves } from '../generators/move.js'
+import {
+  generateValidations,
+  selectUploadPatients
+} from '../generators/upload.js'
 import { Patient, Upload } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { createMoves, deleteUploadMoves } from '../utils/moves.js'
@@ -230,23 +234,7 @@ export const uploadController = {
       )
 
       // Add patient records
-      let patients = Patient.findAll(data)
-      switch (upload.type) {
-        case UploadType.School:
-          // Pupils at the school in the chosen year groups
-          patients = patients.filter(
-            (patient) =>
-              upload.school_id === patient.school_id &&
-              upload.yearGroups.map(Number).includes(patient.yearGroup)
-          )
-          break
-        case UploadType.Report:
-          // Patients with vaccination records
-          patients = patients.filter(
-            (patient) => patient.vaccinations.length > 0
-          )
-          break
-      }
+      const patients = selectUploadPatients(upload, Patient.findAll(data))
 
       if (type === 'new' || type === 'edit') {
         // Record file upload (restarts processing)
@@ -266,15 +254,7 @@ export const uploadController = {
         upload.assignee_uids = request.body.upload.assignee_uids
       } else if (type === 'new' && upload.format === UploadFormat.Mavis) {
         // Add validation errors
-        upload.validations = {}
-
-        for (const [i, patient] of patients.entries()) {
-          upload.validations[i + 1] = {
-            CHILD_FIRST_NAME: 'is required but missing',
-            CHILD_DOB: `‘${patient.firstName}’ should be formatted as YYYY-MM-DD`,
-            CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
-          }
-        }
+        upload.validations = generateValidations(patients)
       }
 
       // Replace any school moves reported by a previous file

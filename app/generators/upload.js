@@ -204,5 +204,49 @@ export function generateUpload(
 }
 
 /**
- * @import { School, User } from '../models.js'
+ * Select patients a file of this type would contain
+ *
+ * @param {Upload} upload - Upload
+ * @param {Array<Patient>} patients - All patients
+ * @returns {Array<Patient>} Selected patients
+ */
+export function selectUploadPatients(upload, patients) {
+  switch (upload.type) {
+    case UploadType.School:
+      // Pupils at the school in the chosen year groups
+      return patients.filter(
+        (patient) =>
+          upload.school_id === patient.school_id &&
+          upload.yearGroups.map(Number).includes(patient.yearGroup)
+      )
+    case UploadType.Report:
+      // Patients with vaccination records
+      return patients.filter((patient) => patient.vaccinations.length > 0)
+    default:
+      return patients
+  }
+}
+
+/**
+ * Generate row-level validation errors for an invalid file
+ *
+ * @param {Array<Patient>} patients - Patients in the file
+ * @returns {object} Validation errors, keyed by row number
+ */
+export function generateValidations(patients) {
+  const validations = {}
+
+  for (const [i, patient] of patients.entries()) {
+    validations[i + 1] = {
+      CHILD_FIRST_NAME: 'is required but missing',
+      CHILD_DOB: `‘${patient.firstName}’ should be formatted as YYYY-MM-DD`,
+      CHILD_POSTCODE: `‘${patient.address.addressLine1}’ should be a postcode, like SW1A 1AA`
+    }
+  }
+
+  return validations
+}
+
+/**
+ * @import { Patient, School, User } from '../models.js'
  */
