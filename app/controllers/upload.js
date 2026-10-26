@@ -164,16 +164,18 @@ export const uploadController = {
    */
   new(request, response) {
     const { programme_id } = request.params
-    const { type, school_id } = request.query
+    let { type, school_id } = request.query
     const { data } = request.session
     const { account } = response.locals
+
+    type = account.isSchoolUser ? UploadType.School : type
 
     const upload = Upload.create(
       {
         createdAt: today(),
         createdBy_uid: account.uid,
         programme_id,
-        type: account.isSchoolUser ? UploadType.School : type,
+        type,
         fileName: 'example.csv',
         ...(type === UploadType.School && school_id && { school_id })
       },
@@ -390,11 +392,7 @@ export const uploadController = {
       // Journey for school teams
       const schoolJourney = {
         [`/`]: {},
-        [`/${upload_id}/${type}/format`]: {
-          [`/${upload_id}/${type}/school`]: () =>
-            request.body?.upload?.format === UploadFormat.Mavis
-        },
-        [`/${upload_id}/${type}/school`]: {},
+        [`/${upload_id}/${type}/format`]: {},
         [`/${upload_id}/${type}/year-groups`]: {},
         [`/${upload_id}/${type}/file`]: {},
         [`/${upload_id}`]: {}

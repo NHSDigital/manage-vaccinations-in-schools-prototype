@@ -15,7 +15,7 @@
   {% if account.isSchoolUser %}
     <div class="app-action-link-with-description">
       {{ actionLink({
-        href: "/uploads/new",
+        href: "/uploads/new?school_id=" + account.team.schools[0].id,
         text: __("session.upload-class-list.title")
       }) }}
       <p class="nhsuk-body">
