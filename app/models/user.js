@@ -112,6 +112,19 @@ export class User extends BaseModel {
   }
 
   /**
+   * User can perform action on record
+   * Delegates to the record’s `permits()` method, which holds the rules for
+   * that type of record. Records without one permit nothing.
+   *
+   * @param {string} action - Action
+   * @param {object} record - Record, for example an Upload
+   * @returns {boolean} User can perform action
+   */
+  can(action, record) {
+    return Boolean(record?.permits?.(this, action))
+  }
+
+  /**
    * Get authorised views
    *
    * @returns {Array<string>} Views

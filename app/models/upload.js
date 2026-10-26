@@ -182,19 +182,14 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Can delete upload
+   * School moves reported by this upload are visible to SAIS teams
+   * Only once the upload needs review or has been approved; until then it may
+   * be private to a school admin, or the upload may have been rejected.
    *
-   * @returns {boolean} Can delete upload
+   * @returns {boolean} School moves are visible to SAIS teams
    */
-  get canDelete() {
-    return (
-      this.teamStatus !== undefined &&
-      ![
-        TeamUploadStatus.Requested,
-        TeamUploadStatus.Processing,
-        TeamUploadStatus.Approved
-      ].includes(this.teamStatus)
-    )
+  get movesAreVisibleToTeam() {
+    return [UploadStatus.Review, UploadStatus.Approved].includes(this.status)
   }
 
   /**
@@ -455,6 +450,89 @@ export class Upload extends BaseModel {
    */
   get uri() {
     return `/uploads/${this.id}`
+  }
+
+  /**
+   * Get status, as shown to user
+   *
+   * @param {User} user - User
+   * @returns {SchoolUploadStatus|TeamUploadStatus|undefined} Status
+   */
+  statusFor(user) {
+    return user?.isSchoolUser ? this.schoolStatus : this.teamStatus
+  }
+
+  /**
+   * Upload is visible to user
+   *
+   * @param {User} user - User
+   * @returns {boolean} Upload is visible to user
+   */
+  isVisibleTo(user) {
+    if (!user) {
+      return false
+    }
+
+    // School admins can only see class lists uploaded by users in their team
+    if (user.isSchoolUser) {
+      return (
+        this.type === UploadType.School &&
+        this.uploadedBy?.team_id === user.team_id
+      )
+    }
+
+    // SAIS teams can’t see uploads that are private to a school admin
+    if (this.teamStatus === undefined) {
+      return false
+    }
+
+    // SAIS teams can only see uploads created by users in their team
+    // (including requests sent to schools) and uploads from other teams that
+    // have been sent for approval
+    return this.createdBy?.team_id === user.team_id || Boolean(this.submittedAt)
+  }
+
+  /**
+   * Upload permits user to perform action
+   * Call via `User.can(action, upload)` rather than directly.
+   *
+   * @param {User} user - User
+   * @param {'approve'|'delete'|'reject'|'submit'} action - Action
+   * @returns {boolean} Upload permits user to perform action
+   */
+  permits(user, action) {
+    if (!this.isVisibleTo(user)) {
+      return false
+    }
+
+    const hasPatients = this.patients.length > 0
+
+    if (user.isSchoolUser) {
+      switch (action) {
+        case 'submit':
+          return this.needsChecking && hasPatients
+        case 'delete':
+          return ![UploadStatus.Processing, UploadStatus.Approved].includes(
+            this.status
+          )
+        default:
+          return false
+      }
+    }
+
+    switch (action) {
+      case 'approve':
+      case 'reject':
+        return this.needsReview && hasPatients
+      case 'delete':
+        return ![
+          TeamUploadStatus.Requested,
+          TeamUploadStatus.Processing,
+          TeamUploadStatus.Approved
+        ].includes(this.teamStatus)
+      default:
+        return false
+    }
   }
 }
 

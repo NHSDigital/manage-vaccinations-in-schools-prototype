@@ -1,4 +1,3 @@
-import { UploadStatus } from '../enums.js'
 import { Move } from '../models.js'
 
 /**
@@ -51,9 +50,7 @@ export function isMoveVisibleToTeam(move) {
     return true
   }
 
-  return [UploadStatus.Review, UploadStatus.Approved].includes(
-    move.upload?.teamStatus
-  )
+  return Boolean(move.upload?.movesAreVisibleToTeam)
 }
 
 /**
