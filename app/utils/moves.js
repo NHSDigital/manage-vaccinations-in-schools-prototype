@@ -1,4 +1,5 @@
-import { Move } from '../models.js'
+import { generateUploadMoves } from '../generators/move.js'
+import { Move, Patient } from '../models.js'
 
 /**
  * Get school moves reported by an upload
@@ -33,6 +34,29 @@ export function deleteUploadMoves(upload_id, context) {
  */
 export function createMoves(moves, context) {
   return moves.map((move) => Move.create(move, context))
+}
+
+/**
+ * Create school moves reported by an upload
+ *
+ * Replaces any moves reported by a previous file. Finding moves can change
+ * which patients an upload includes (pupils leaving a school are not in its
+ * class list), so the upload’s patients are updated too.
+ *
+ * @param {Upload} upload - Upload
+ * @param {object} context - Context
+ * @returns {Array<Move>} Saved school moves
+ */
+export function createUploadMoves(upload, context) {
+  deleteUploadMoves(upload.id, context)
+
+  const { patient_uuids, moves } = generateUploadMoves(
+    upload,
+    Patient.findAll(context)
+  )
+  upload.patient_uuids = patient_uuids
+
+  return createMoves(moves, context)
 }
 
 /**
@@ -82,5 +106,5 @@ export function getPatientsMovingOut(moves, school_id) {
 }
 
 /**
- * @import { Patient } from '../models.js'
+ * @import { Upload } from '../models.js'
  */
