@@ -164,6 +164,24 @@ export class Upload extends BaseModel {
   }
 
   /**
+   * Records need checking by a school admin before being sent for approval
+   *
+   * @returns {boolean} Needs checking
+   */
+  get needsChecking() {
+    return this.status === UploadStatus.Pending
+  }
+
+  /**
+   * Records need review before approval
+   *
+   * @returns {boolean} Needs review
+   */
+  get needsReview() {
+    return this.status == UploadStatus.Review
+  }
+
+  /**
    * Can delete upload
    *
    * @returns {boolean} Can delete upload
@@ -244,7 +262,7 @@ export class Upload extends BaseModel {
   /**
    * Get uploaded patient records
    *
-   * @returns {Array<Patient>} Records
+   * @returns {Array<Patient>} Patients
    */
   get patients() {
     if (this.context?.patients && this.patient_uuids) {
@@ -260,6 +278,33 @@ export class Upload extends BaseModel {
     }
 
     return []
+  }
+
+  /**
+   * Get new patient records
+   *
+   * @returns {Array<Patient>} New patient records
+   */
+  get newPatients() {
+    return this.patients.filter((patient) => patient.isNewUpload)
+  }
+
+  /**
+   * Get matched patient records
+   *
+   * @returns {Array<Patient>} Matched patient records
+   */
+  get matchedPatients() {
+    return this.patients.filter((patient) => patient.hasMatchingUpload)
+  }
+
+  /**
+   * Get patient records with changes that need review
+   *
+   * @returns {Array<Patient>} Pending patient records
+   */
+  get pendingPatients() {
+    return this.patients.filter((patient) => patient.hasPendingChanges)
   }
 
   /**

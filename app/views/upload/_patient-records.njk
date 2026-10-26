@@ -4,7 +4,6 @@
 
 {% macro patientRecords(params) %}
   {% if params.patients.length %}
-    {% set needsReview = upload.status == UploadStatus.Review %}
     {% set patientRows = [] %}
     {% for patient in params.patients %}
       {% set patientRows = patientRows | push([
@@ -30,10 +29,10 @@
       caption: {
         text: __mf("upload.show." + params.key + ".summary", {
           count: patientRows.length
-        }) if needsReview,
+        }) if upload.needsReview,
         placement: "after"
       } if params.key != "imported",
-      text: __("upload.show." + params.key + ".title") if needsReview else __("upload.show." + params.key + ".label"),
+      text: __("upload.show." + params.key + ".title") if upload.needsReview else __("upload.show." + params.key + ".label"),
       level: 2,
       size: "m"
     }) }}

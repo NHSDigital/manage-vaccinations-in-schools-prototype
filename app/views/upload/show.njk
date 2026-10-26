@@ -5,8 +5,7 @@
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set status = upload.teamStatus %}
-{% set needsReview = status == UploadStatus.Review %}
-{% if needsReview %}
+{% if upload.needsReview %}
   {% set title = __("upload.show.approve.title", upload.formatted.createdAt) %}
 {% else %}
   {% set title = __("upload.show.title", upload.formatted.createdAt) %}
@@ -35,7 +34,7 @@
     size: "l"
   }) }}
 
-  {% if needsReview %}
+  {% if upload.needsReview %}
   <div class="nhsuk-u-reading-width">
     {{ __("upload.show.approve.description") | nhsukMarkdown }}
   </div>
@@ -78,8 +77,7 @@
   }) }}
 
   {% if status in [UploadStatus.Review, UploadStatus.Rejected] %}
-    {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
-    {% if pendingRecords.length %}
+    {% if upload.pendingPatients.length %}
       {% include "upload/_pending-records.njk" %}
     {% endif %}
 
@@ -89,16 +87,15 @@
 
     {{ patientRecords({
       key: "new",
-      patients: upload.patients | selectattr("isNewUpload")
+      patients: upload.newPatients
     }) }}
 
     {{ patientRecords({
       key: "matched",
-      patients: upload.patients | selectattr("hasMatchingUpload")
+      patients: upload.matchedPatients
     }) }}
   {% elif status == UploadStatus.Approved %}
-    {% set pendingRecords = upload.patients | selectattr("hasPendingChanges") %}
-    {% if pendingRecords.length %}
+    {% if upload.pendingPatients.length %}
       {% include "upload/_pending-records.njk" %}
     {% endif %}
 
@@ -166,7 +163,7 @@
     {% include "upload/_failed-records.njk" %}
   {% endif %}
 
-  {% if upload.patients.length > 0 and needsReview %}
+  {% if upload.patients.length > 0 and upload.needsReview %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({

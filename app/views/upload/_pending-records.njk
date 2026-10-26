@@ -1,8 +1,7 @@
 {%- from "_macros/change.njk" import appChange with context -%}
 
-{% set needsReview = upload.status == UploadStatus.Review %}
 {% set patientRows = [] %}
-{% for patient in pendingRecords %}
+{% for patient in upload.pendingPatients %}
   {% set archiveChangeset = __("upload.show.partial.decision.archived.label", ArchiveRecordReason.Error) | nl2br %}
   {% set archiveRadios = radios({
     formGroup: {
@@ -78,9 +77,9 @@
       html: archiveChangeset if loop.first else duplicateChangeset
     },
     {
-      html: archiveRadios if needsReview else archiveDecision
+      html: archiveRadios if upload.needsReview else archiveDecision
     } if loop.first else {
-      html: duplicateRadios if needsReview else duplicateDecision
+      html: duplicateRadios if upload.needsReview else duplicateDecision
     }
   ]) %}
 {% endfor %}
@@ -89,8 +88,8 @@
   caption: {
     text: __("upload.show.partial.summary"),
     placement: "after"
-  } if needsReview,
-  text: __("upload.show.partial.title") if needsReview else __("upload.show.partial.label"),
+  } if upload.needsReview,
+  text: __("upload.show.partial.title") if upload.needsReview else __("upload.show.partial.label"),
   level: 2,
   size: "m"
 }) }}

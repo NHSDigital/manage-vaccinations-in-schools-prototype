@@ -4,8 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set needsChecking = upload.status == UploadStatus.Pending %}
-{% if needsChecking %}
+{% if upload.needsChecking %}
   {% set title = __("upload.show.submit.title", upload.formatted.createdAt) %}
 {% else %}
   {% set title = __("upload.show.class-list.title", upload.formatted.createdAt) %}
@@ -34,7 +33,7 @@
     size: "l"
   }) }}
 
-  {% if needsChecking %}
+  {% if upload.needsChecking %}
   <div class="nhsuk-u-reading-width">
     {{ __("upload.show.submit.description") | nhsukMarkdown }}
   </div>
@@ -147,7 +146,7 @@
     {% endif %}
   {% endif %}
 
-  {% if upload.patients.length > 0 and needsChecking %}
+  {% if upload.patients.length > 0 and upload.needsChecking %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     {{ appButtonGroup({
