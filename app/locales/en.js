@@ -2964,6 +2964,9 @@ export const en = {
       label: 'Address',
       title: 'School address'
     },
+    lastUpload: {
+      label: 'Last class list upload'
+    },
     nextSessionDate: {
       label: 'Next session'
     },
