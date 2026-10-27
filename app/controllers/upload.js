@@ -426,7 +426,7 @@ export const uploadController = {
   },
 
   /**
-   * @param {'submit'|'approve'} type - Review type
+   * @param {'submit'|'approve'|'reject'|'decision'|'delete'} type - Review type
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
   review(type) {
@@ -434,6 +434,19 @@ export const uploadController = {
       const { upload_id } = request.params
       const { data } = request.session
       const { __, account } = response.locals
+
+      if (type === 'decision') {
+        type = request.body.decision
+      }
+
+      if (type === 'delete') {
+        // Delete any school moves reported by the upload
+        deleteUploadMoves(upload_id, data)
+
+        Upload.delete(upload_id, data)
+
+        request.flash('success', __(`upload.delete.success`))
+      }
 
       Upload.update(
         upload_id,
@@ -446,6 +459,11 @@ export const uploadController = {
           ...(type === 'approve' && {
             approvedAt: today(),
             approvedBy_uid: account.uid
+          }),
+          ...(type === 'reject' && {
+            rejectedAt: today(),
+            rejectedBy_uid: account.uid,
+            rejectionReason: request.body.upload?.rejectionReason
           })
         },
         data
@@ -453,33 +471,10 @@ export const uploadController = {
 
       request.flash('success', __(`upload.${type}.success`))
 
+      delete data.decision
+
       return saveAndRedirect(request, response, '/uploads')
     }
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  reject(request, response) {
-    const { upload_id } = request.params
-    const { rejectionReason } = request.body.upload
-    const { data } = request.session
-    const { __, account } = response.locals
-
-    Upload.update(
-      upload_id,
-      {
-        updatedBy_uid: account.uid,
-        rejectedAt: today(),
-        rejectedBy_uid: account.uid,
-        rejectionReason
-      },
-      data
-    )
-
-    request.flash('success', __('upload.reject.success'))
-
-    return saveAndRedirect(request, response, '/uploads')
   },
 
   /**
