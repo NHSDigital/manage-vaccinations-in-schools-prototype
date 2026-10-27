@@ -1909,6 +1909,11 @@ export const en = {
         hint: 'This will merge the duplicate records into a single record'
       }
     },
+    checkForUpdates: {
+      message: 'Checking for updated vaccination records',
+      messageBody:
+        'This usually takes a few minutes. Refresh the page to see when vaccination records were last checked.'
+    },
     homeVisit: {
       label: 'Record vaccination at home',
       title: 'When will the home vaccination take place?',

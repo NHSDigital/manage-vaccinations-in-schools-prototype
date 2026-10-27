@@ -321,7 +321,25 @@ export const patientController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
-    const { patient } = response.locals
+    const { data } = request.session
+    const { message } = response.locals
+    let { patient } = response.locals
+
+    // Simulation: complete a requested Imms API search on the first page load
+    // after the one showing the flash message
+    if (patient.searchRequestedAt && !message) {
+      patient = Patient.update(
+        patient.uuid,
+        {
+          lastSearchedAt: new Date(
+            patient.searchRequestedAt.getTime() + 5 * 1000
+          ),
+          searchRequestedAt: null
+        },
+        data
+      )
+      response.locals.patient = patient
+    }
 
     if (view === 'invite-to-clinic') {
       // Order the clinic-ready programmes alphabetically
@@ -740,6 +758,26 @@ export const patientController = {
     )
 
     request.flash('success', __(`patient.archive.success`))
+
+    return saveAndRedirect(request, response, patient.uri)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  checkForUpdates(request, response) {
+    const { patient_uuid } = request.params
+    const { data } = request.session
+    const { __ } = response.locals
+
+    const patient = Patient.update(
+      patient_uuid,
+      { searchRequestedAt: today() },
+      data
+    )
+
+    request.flash('message', __('patient.checkForUpdates.message'))
+    request.flash('messageBody', __('patient.checkForUpdates.messageBody'))
 
     return saveAndRedirect(request, response, patient.uri)
   },
