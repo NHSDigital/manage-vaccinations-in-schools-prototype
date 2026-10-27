@@ -1,6 +1,59 @@
 {% from "../_macros/contact-email.njk" import appContactEmail with context %}
 {% from "../_macros/contact-sms.njk" import appContactSms with context %}
 
+{% macro consentResponseCard(reply) %}
+  {% call card({
+    classes: "app-card--compact app-card--offset",
+    heading: {
+      text: reply.fullNameAndRelationship,
+      level: 4
+    },
+    href: reply.uri if reply.isDelivered,
+    actions: {
+      items: [
+        {
+          text: __("reply.withdraw.label"),
+          href: reply.uri + "/edit/withdraw"
+        } if reply.hasGivenConsent,
+        {
+          text: __("reply.follow-up.label"),
+          href: reply.uri + "/edit/follow-up"
+        } if not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
+        {
+          text: __("reply.invalidate.label"),
+          href: reply.uri + "/edit/invalidate"
+        }
+      ]
+    } if reply.isValid
+  }) %}
+    {{ appStatus({
+      text: __("reply.expiringSoon.label"),
+      icon: "warning",
+      colour: "blue",
+      classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
+    }) if reply.isExpiringSoon and not reply.isInvalidated }}
+    {{ summaryList({
+      lastRowBorder: false,
+      rows: summaryRows(reply, {
+        email: {
+          value: appContactEmail(reply.contact, reply.hasGivenConsent)
+        } if reply.contact.email,
+        tel: {
+          value: appContactSms(reply.contact, reply.hasGivenConsent)
+        } if reply.contact.tel,
+        communicationNeeds: {
+          label: __("contact.communicationNeeds.label"),
+          value: reply.contact.communicationNeeds
+        } if reply.contact.communicationNeeds,
+        createdAt: {},
+        expiresAt: {} if not reply.isInvalidated else none,
+        decisionStatus: {},
+        vaccineCriteria: {}
+      })
+    }) }}
+  {% endcall %}
+{% endmacro %}
+
 {% call card({
   heading: {
     text: __("patientSession.consent.title", programme.nameSentenceCase),
@@ -47,98 +100,29 @@
     }) }}
   {% endif %}
 
-  {% if patientProgramme.repliesToShow | length %}
-    {# Requests with responses or requests that couldn’t be delivered #}
-    {{ heading({
-      text: __("patientSession.replies.label"),
-      level: 3,
-      size: "s"
-    }) }}
+  {# Responses that count towards consent #}
+  {{ heading({
+    text: __("patientSession.replies.label"),
+    level: 3,
+    size: "s"
+  }) }}
 
-    {% for reply in patientProgramme.repliesToShow %}
-      {% call card({
-        classes: "app-card--compact app-card--offset",
-        heading: {
-          text: reply.fullNameAndRelationship,
-          level: 4
-        },
-        href: reply.uri if reply.isDelivered,
-        actions: {
-          items: [
-            {
-              text: __("reply.withdraw.label"),
-              href: reply.uri + "/edit/withdraw"
-            } if reply.hasGivenConsent,
-            {
-              text: __("reply.follow-up.label"),
-              href: reply.uri + "/edit/follow-up"
-            } if not reply.hasConfirmedRefusal and not reply.hasGivenConsent,
-            {
-              text: __("reply.invalidate.label"),
-              href: reply.uri + "/edit/invalidate"
-            }
-          ]
-        } if reply.isValid
-      }) %}
-        {{ appStatus({
-          text: __("reply.expiringSoon.label"),
-          icon: "warning",
-          colour: "blue",
-          classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
-        }) if reply.isExpiringSoon and not reply.isInvalidated }}
-        {{ summaryList({
-          lastRowBorder: false,
-          rows: summaryRows(reply, {
-            email: {
-              value: appContactEmail(reply.contact, reply.hasGivenConsent)
-            } if reply.contact.email,
-            tel: {
-              value: appContactSms(reply.contact, reply.hasGivenConsent)
-            } if reply.contact.tel,
-            communicationNeeds: {
-              label: __("contact.communicationNeeds.label"),
-              value: reply.contact.communicationNeeds
-            } if reply.contact.communicationNeeds,
-            createdAt: {},
-            expiresAt: {} if not reply.isInvalidated,
-            decisionStatus: {},
-            vaccineCriteria: {}
-          })
-        }) }}
-      {% endcall %}
+  {% if patientProgramme.replies | length %}
+    {% for reply in patientProgramme.replies %}
+      {{ consentResponseCard(reply) }}
     {% endfor %}
-  {% elif patientProgramme.patient.hasContactDetails and not patientProgramme.patient.isPost16 %}
-    {# Requests that have been sent but with no response yet #}
-    {# We don’t create replies so use contact details instead #}
+  {% else %}
+    <p>{{ __("patientSession.replies.none") }}</p>
+  {% endif %}
 
-    {{ heading({
-      text: __("patientSession.consentRequests.label"),
-      level: 3,
-      size: "s"
-    }) }}
-
-    {% for contact in patientProgramme.patient.contacts %}
-      {{ summaryList({
-        card: {
-          classes: "app-card--compact app-card--offset",
-          heading: {
-            text: contact.fullNameAndRelationship,
-            level: 4
-          }
-        },
-        lastRowBorder: false,
-        rows: summaryRows(contact, {
-          email: {},
-          tel: {},
-          decisionStatus: {
-            label: __("reply.decisionStatus.label"),
-            value: tag({
-              classes: "nhsuk-tag--grey",
-              text: PatientConsentStatus.Scheduled if session.consentWindow == ConsentWindow.Opening else PatientConsentStatus.NoResponse
-            })
-          }
-        })
-      }) if contact.email or contact.tel }}
-    {% endfor %}
+  {# Responses that no longer count towards consent #}
+  {% if patientProgramme.previousReplies | length %}
+    {% call details({
+      summaryText: __("patientSession.previousReplies.label")
+    }) %}
+      {% for reply in patientProgramme.previousReplies %}
+        {{ consentResponseCard(reply) }}
+      {% endfor %}
+    {% endcall %}
   {% endif %}
 {% endcall %}
