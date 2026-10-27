@@ -2382,11 +2382,12 @@ export const en = {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
     },
-    consentRequests: {
-      label: 'Consent requests'
-    },
     replies: {
-      label: 'Consent responses'
+      label: 'Consent responses',
+      none: 'There are no active consent responses.'
+    },
+    previousReplies: {
+      label: 'Expired and invalid responses'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',

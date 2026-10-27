@@ -802,19 +802,31 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get responses, including invalidated and expired ones, for display purposes
+   * Get every delivered response for this programme, including expired and
+   * invalid ones, newest first
    *
-   * This set of responses is only to be used for display purposes; don't assume
-   * all responses in the result can affect consent status
+   * Not all of these count towards consent, so use `replies` for that instead
    *
-   * @returns {Array<Reply>|undefined} Responses
+   * @returns {Array<Reply>|undefined} Delivered responses
    */
-  get repliesToShow() {
+  get #allDeliveredReplies() {
     return this.patient?.replies
       .filter(
         (reply) => reply.patientProgramme.id === this.id && reply.isDelivered
       )
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
+  }
+
+  /**
+   * Get previous responses that no longer count towards consent, because they
+   * were invalidated or have expired, newest first
+   *
+   * @returns {Array<Reply>} Previous responses
+   */
+  get previousReplies() {
+    return (this.#allDeliveredReplies ?? []).filter(
+      (reply) => reply.isInvalidated || reply.hasExpired
+    )
   }
 
   /**
@@ -826,12 +838,12 @@ export class PatientProgramme extends BaseModel {
   get expiredReplies() {
     const latestReplyByRespondent = new Map()
 
-    for (const reply of this.repliesToShow ?? []) {
+    for (const reply of this.#allDeliveredReplies ?? []) {
       if (!reply.hasExpired || reply.isInvalidated) {
         continue
       }
 
-      // Responses to show are newest first, so keep the first for each respondent
+      // Responses are newest first, so keep the first for each respondent
       const respondent = reply.hasSelfConsent ? 'child' : reply.contact_uuid
       if (!latestReplyByRespondent.has(respondent)) {
         latestReplyByRespondent.set(respondent, reply)
