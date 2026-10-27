@@ -1,5 +1,4 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
 import {
   SchoolUploadStatus,
@@ -19,7 +18,7 @@ import {
   formatList,
   formatProgress,
   formatTag,
-  formatYearGroup,
+  formatYearGroups,
   stringToArray,
   stringToBoolean
 } from '../utils/string.js'
@@ -417,10 +416,7 @@ export class Upload extends BaseModel {
               return this.school?.name
             case 'yearGroups': {
               if (this.type !== UploadType.School) return undefined
-              const yearGroups = this.yearGroups?.map((item) =>
-                formatYearGroup(item)
-              )
-              return prototypeFilters.formatList(yearGroups)
+              return formatYearGroups(this.yearGroups)
             }
             case 'patients':
               return this.patients.length

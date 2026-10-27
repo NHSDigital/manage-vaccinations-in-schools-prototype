@@ -18,6 +18,7 @@ import {
   formatCode,
   formatLink,
   formatTag,
+  formatWithSecondaryText,
   formatYearGroups,
   localise,
   stringToArray,
@@ -256,6 +257,15 @@ export class School extends Location {
   }
 
   /**
+   * Get last upload for this school
+   *
+   * @returns {Upload} Upload
+   */
+  get lastUpload() {
+    return this.uploads.at(-1)
+  }
+
+  /**
    * Get users for this school
    *
    * @returns {Array<User>} Users
@@ -345,6 +355,14 @@ export class School extends Location {
             case 'closeAt':
               return (
                 this.closeAt && formatDate(this.closeAt, { dateStyle: 'long' })
+              )
+            case 'lastUpload':
+              return (
+                this.lastUpload?.uploadedAt &&
+                formatWithSecondaryText(
+                  formatDate(this.lastUpload.uploadedAt, { dateStyle: 'full' }),
+                  this.lastUpload.formatted.yearGroups
+                )
               )
             case 'nameAndUrn':
               return `${this.name} (${getId()})`
