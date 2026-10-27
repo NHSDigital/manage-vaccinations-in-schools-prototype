@@ -234,6 +234,37 @@ function getExpiredConsentDescription(expiredReplies) {
 }
 
 /**
+ * Describe who gave answers to health questions, and when
+ *
+ * Answers given when booking a clinic appointment aren’t included, as we don’t
+ * know when the booking was made
+ *
+ * @param {Array<Reply>} replies - Responses that count towards consent, newest first
+ * @returns {string|undefined} Health answers description, if any were given
+ */
+export function getHealthAnswersDescription(replies) {
+  const repliesWithHealthAnswers = (replies ?? []).filter(
+    (reply) => reply.healthAnswers
+  )
+  if (!repliesWithHealthAnswers.length) {
+    return undefined
+  }
+
+  const answeredBy = repliesWithHealthAnswers.map((reply) => {
+    const respondent = reply.fullNameAndRelationship || 'parent or guardian'
+    const answeredOn = formatDate(reply.createdAt, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+    return `${respondent} on ${answeredOn}`
+  })
+
+  return `Answers given by ${filters.formatList(answeredBy)}.`
+}
+
+/**
  * Get expanded description about consent status
  *
  * @param {PatientProgramme} patientProgramme - Patient programme
