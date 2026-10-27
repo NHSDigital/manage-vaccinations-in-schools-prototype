@@ -132,7 +132,11 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
 }
 
 .app-card--compact {
-  @include nhsuk-responsive-margin(3, "bottom");
+  margin-bottom: 0;
+
+  &:not(:first-child) {
+    @include nhsuk-responsive-margin(4, "top");
+  }
 
   .nhsuk-card__heading-container {
     @include nhsuk-responsive-padding(4, "left");

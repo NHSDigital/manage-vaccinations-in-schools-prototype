@@ -26,10 +26,3 @@
     }
   }
 }
-
-// Adjust margin for feature cards that are immediate siblings of a grid column
-[class^="nhsuk-grid-column"] .nhsuk-card--feature.app-filters,
-[class^="nhsuk-grid-column"] > .nhsuk-card--feature,
-[class^="nhsuk-grid-column"] > .nhsuk-card--warning {
-  margin-top: nhsuk-spacing(3);
-}
