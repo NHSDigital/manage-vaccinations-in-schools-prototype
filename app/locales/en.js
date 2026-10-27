@@ -2190,7 +2190,8 @@ export const en = {
       label: 'Programme activity'
     },
     patientSessions: {
-      label: 'Sessions'
+      label: 'Sessions',
+      none: '%s has not been added to any sessions.'
     },
     vaccinationsGiven: {
       count:

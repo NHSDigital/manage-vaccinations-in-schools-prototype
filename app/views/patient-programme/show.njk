@@ -138,13 +138,14 @@
     {% endcall %}
   {% endif %}
 
-  {% if patientProgramme.patientSessions.length %}
-    {% call card({
-      heading: {
-        text: __("patientProgramme.patientSessions.label"),
-        level: 3
-      }
-    }) %}
+  
+  {% call card({
+    heading: {
+      text: __("patientProgramme.patientSessions.label"),
+      level: 3
+    }
+  }) %}
+    {% if patientProgramme.patientSessions.length %}
       {% set patientSessionRows = [] %}
       {% for patientSession in patientProgramme.patientSessions %}
         {% set patientSessionRows = patientSessionRows | push([
@@ -178,32 +179,34 @@
         ],
         rows: patientSessionRows
       }) }}
+    {% else %}
+      {{ __("patientProgramme.patientSessions.none", patient.firstName) | nhsukMarkdown }}
+    {% endif %}
 
-      {{ appButtonGroup({
-        buttons: [
-          {
-            text: __("patientProgramme.inviteToClinic.label") | safe,
-            variant: "secondary",
-            decorate: "programme_ids",
-            value: patientProgramme.programme.id,
-            attributes: {
-              formaction: patient.uri + "/invite-to-clinic?referrer=" + patientProgramme.uri
-            }
-          },
-          {
-            text: __("patientProgramme.activeClinics.label") | safe,
-            href: patientProgramme.uri + "/clinics",
-            variant: "secondary"
-          },
-          {
-            text: __("patientProgramme.homeVisit.label"),
-            href: patientProgramme.uri + "/home-visit",
-            variant: "secondary"
+    {{ appButtonGroup({
+      buttons: [
+        {
+          text: __("patientProgramme.inviteToClinic.label") | safe,
+          variant: "secondary",
+          decorate: "programme_ids",
+          value: patientProgramme.programme.id,
+          attributes: {
+            formaction: patient.uri + "/invite-to-clinic?referrer=" + patientProgramme.uri
           }
-        ]
-      }) if patientProgramme.status != PatientStatus.Vaccinated and not patientProgramme.isIneligible and patientProgramme.isActive }}
-    {% endcall %}
-  {% endif %}
+        },
+        {
+          text: __("patientProgramme.activeClinics.label") | safe,
+          href: patientProgramme.uri + "/clinics",
+          variant: "secondary"
+        },
+        {
+          text: __("patientProgramme.homeVisit.label"),
+          href: patientProgramme.uri + "/home-visit",
+          variant: "secondary"
+        }
+      ]
+    }) if patientProgramme.status != PatientStatus.Vaccinated and not patientProgramme.isIneligible and patientProgramme.isActive }}
+  {% endcall %}
 
   {{ card({
     heading: {
