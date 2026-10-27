@@ -125,7 +125,8 @@
             fileName: {},
             school: {} if not account.isSchoolUser else none,
             yearGroups: {},
-            status: {}
+            schoolStatus: {} if account.isSchoolUser else none,
+            teamStatus: {} if not account.isSchoolUser else none
           })
         }) }}
       {% endfor %}

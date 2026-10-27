@@ -590,10 +590,15 @@ export class Upload extends BaseModel {
 
     switch (action) {
       case 'approve':
-      case 'reject':
         return this.needsReview && hasPatients
+      case 'reject':
+        return (
+          this.type === UploadType.School && this.needsReview && hasPatients
+        )
       case 'delete':
         return ![
+          TeamUploadStatus.Invalid,
+          TeamUploadStatus.Failed,
           TeamUploadStatus.Requested,
           TeamUploadStatus.Processing,
           TeamUploadStatus.Approved

@@ -158,44 +158,55 @@
     {% include "upload/_failed-records.njk" %}
   {% endif %}
 
-  {% if account.can("approve", upload) %}
+  {% if account.can("approve", upload) and account.can("delete", upload) %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
-    {{ appButtonGroup({
-      buttons: [
+    {{ radios({
+      formGroup: {
+        classes: "nhsuk-u-width-two-thirds"
+      },
+      fieldset: {
+        legend: {
+          text: __("upload.show.decision.title"),
+          size: "m"
+        }
+      },
+      items: [
         {
-          text: __("upload.approve.confirm"),
-          attributes: {
-            formaction: upload.uri + "/approve"
+          label: __("upload.show.decision.approve.label", upload.type | lower),
+          value: "approve"
+        } if account.can("approve", upload),
+        {
+          label: __("upload.show.decision.reject.label"),
+          value: "reject",
+          conditional: {
+            html: textarea({
+              label: __("upload.rejectionReason.title"),
+              hint: __("upload.rejectionReason.hint"),
+              decorate: "upload.rejectionReason"
+            })
           }
-        },
-        {
-          text: __("upload.reject.confirm"),
-          href: upload.uri + "/reject",
-          variant: "warning"
         } if account.can("reject", upload),
         {
-          text: __("upload.delete.confirm"),
-          variant: "secondary",
-          attributes: {
-            formaction: upload.uri + "/delete"
-          }
+          label: __("upload.show.decision.delete.label"),
+          value: "delete"
         } if account.can("delete", upload)
-      ]
+      ],
+      decorate: "decision"
+    }) }}
+
+    {{ button({
+      text: __("upload.show.decision.confirm")
     }) }}
   {% elif account.can("delete", upload) %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
-    {{ appButtonGroup({
-      buttons: [
-        {
-          text: __("upload.delete.label"),
-          variant: "secondary",
-          attributes: {
-            formaction: upload.uri + "/delete"
-          }
-        }
-      ]
+    {{ button({
+      text: __("upload.delete.label"),
+      variant: "warning",
+      attributes: {
+        formaction: upload.uri + "/delete"
+      }
     }) }}
   {% endif %}
 {% endblock %}

@@ -3736,29 +3736,25 @@ export const en = {
       cancel: 'No, return to upload',
       confirm: 'Yes, %s'
     },
+    approve: {
+      success: 'Upload approved'
+    },
     delete: {
       label: 'Delete upload',
       confirm: 'Cancel and delete upload',
       success: 'Upload deleted'
     },
-    approve: {
-      confirm: 'Approve and upload records',
-      success: 'Upload approved'
-    },
-    submit: {
-      confirm: 'Send to vaccination team',
-      success: 'Pupil information sent to vaccination team'
-    },
     reject: {
-      title: 'Reject uploaded class list',
-      description: 'Confirm you would like to reject this class list',
-      confirm: 'Reject upload',
       success: 'Upload rejected'
     },
     rejectionReason: {
       label: 'Reason for rejection',
       title: 'Why are you rejecting this upload?',
       hint: 'This information will be shown to the school user'
+    },
+    submit: {
+      confirm: 'Send to vaccination team',
+      success: 'Pupil information sent to vaccination team'
     },
     list: {
       label: 'Uploads',
@@ -3796,8 +3792,20 @@ export const en = {
         description:
           'Records in Mavis will only be updated when the upload is approved.'
       },
+      decision: {
+        title: 'What do you want to do with this upload?',
+        confirm: 'Confirm decision',
+        approve: {
+          label: 'Approve and add %s to Mavis'
+        },
+        reject: {
+          label: 'Reject upload'
+        },
+        delete: {
+          label: 'Delete upload'
+        }
+      },
       submit: {
-        title: 'Check before sending',
         description:
           'Mavis has compared your spreadsheet with the pupil information already in the service.\n\nCheck the changes below before sending your spreadsheet to the vaccination team.'
       },
