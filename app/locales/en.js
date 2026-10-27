@@ -3792,12 +3792,7 @@ export const en = {
     results:
       '{count, plural, =0 {There are no uploads to display} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> upload} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> uploads}}',
     show: {
-      title: 'Upload (%s)',
-      'class-list': {
-        title: 'Spreadsheet upload (%s)'
-      },
       approve: {
-        title: 'Review and approve upload (%s)',
         description:
           'Records in Mavis will only be updated when the upload is approved.'
       },

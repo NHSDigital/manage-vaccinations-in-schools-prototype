@@ -113,7 +113,7 @@
           card: {
             classes: "app-card--compact",
             heading: {
-              text: upload.formatted.createdAt,
+              text: upload.nameFor(account),
               size: "s",
               level: 3
             },
@@ -123,12 +123,9 @@
           lastRowBorder: false,
           rows: summaryRows(upload, {
             fileName: {},
-            schoolStatus: {}
-          }) if account.isSchoolUser else summaryRows(upload, {
-            fileName: {},
-            type: {},
-            school: {},
-            teamStatus: {}
+            school: {} if not account.isSchoolUser else none,
+            yearGroups: {},
+            status: {}
           })
         }) }}
       {% endfor %}

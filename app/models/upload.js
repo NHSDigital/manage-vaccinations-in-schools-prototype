@@ -171,6 +171,15 @@ export class Upload extends BaseModel {
   }
 
   /**
+   * Records submitted to SAIS team for approval
+   *
+   * @returns {boolean} Submitted
+   */
+  get isSubmitted() {
+    return this.schoolStatus === SchoolUploadStatus.Submitted
+  }
+
+  /**
    * Records need review before approval
    *
    * @returns {boolean} Needs review
@@ -399,14 +408,24 @@ export class Upload extends BaseModel {
               return this.updatedBy?.fullName
             case 'requested':
               return formatStep(this.requestedAt, this.requestedBy)
+            case 'requestedAt':
+              return formatDate(this.requestedAt, dateOptions)
             case 'uploaded':
               return formatStep(this.uploadedAt, this.uploadedBy)
+            case 'uploadedAt':
+              return formatDate(this.uploadedAt, dateOptions)
             case 'submitted':
               return formatStep(this.submittedAt, this.submittedBy)
+            case 'submittedAt':
+              return formatDate(this.submittedAt, dateOptions)
             case 'approved':
               return formatStep(this.approvedAt, this.approvedBy)
+            case 'approvedAt':
+              return formatDate(this.approvedAt, dateOptions)
             case 'rejected':
               return formatStep(this.rejectedAt, this.rejectedBy)
+            case 'rejectedAt':
+              return formatDate(this.rejectedAt, dateOptions)
             case 'assignees':
               return formatList(
                 this.assignees.map((assignee) => assignee.fullName)
@@ -451,6 +470,64 @@ export class Upload extends BaseModel {
    */
   statusFor(user) {
     return user?.isSchoolUser ? this.schoolStatus : this.teamStatus
+  }
+
+  /**
+   * Get type, as shown to user
+   *
+   * @param {User} user - User
+   * @returns {UploadType|string|undefined} Type
+   */
+  typeFor(user) {
+    if (this.type === UploadType.School) {
+      return user?.isSchoolUser ? 'Pupil records' : this.type
+    }
+
+    return this.type
+  }
+
+  /**
+   * Get name, as shown to user
+   *
+   * @param {User} user - User
+   * @param {boolean} [inSentence] - Use within a sentence
+   * @returns {string} Name
+   */
+  nameFor(user, inSentence = false) {
+    const type = inSentence
+      ? this.typeFor(user).toLowerCase()
+      : this.typeFor(user)
+
+    if (user.isSchoolUser && this.isSubmitted) {
+      return `${type} (sent for approval on ${this.formatted.submittedAt})`
+    }
+
+    switch (this.status) {
+      case UploadStatus.Requested:
+        return `${type} (requested on ${this.formatted.requestedAt})`
+      case UploadStatus.Approved:
+        return `${type} (approved on ${this.formatted.approvedAt})`
+      case UploadStatus.Rejected:
+        return `${type} (rejected on ${this.formatted.rejectedAt})`
+      default:
+        return `${type} (uploaded on ${this.formatted.uploadedAt})`
+    }
+  }
+
+  /**
+   * Get title, as shown to user
+   *
+   * @param {User} user - User
+   * @returns {string} Title
+   */
+  titleFor(user) {
+    if (this.needsChecking) {
+      return `Check before sending ${this.nameFor(user, true)}`
+    } else if (this.needsReview && !user.isSchoolUser) {
+      return `Review and approve ${this.nameFor(user, true)}`
+    }
+
+    return this.nameFor(user)
   }
 
   /**
