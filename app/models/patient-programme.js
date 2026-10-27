@@ -871,7 +871,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {string|undefined} Health answers description
    */
   get healthAnswersDescription() {
-    return getHealthAnswersDescription(this.replies)
+    return getHealthAnswersDescription(this.replies, this.appointments)
   }
 
   /**
