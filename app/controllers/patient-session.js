@@ -9,7 +9,13 @@ import {
   VaccinationOutcome,
   VaccineCriteria
 } from '../enums.js'
-import { PatientSession, Programme, User, Vaccination } from '../models.js'
+import {
+  ConsentRequest,
+  PatientSession,
+  Programme,
+  User,
+  Vaccination
+} from '../models.js'
 import { getAccountVaccineMethods } from '../utils/account.js'
 import { formatDate, today } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
@@ -78,10 +84,6 @@ export const patientSessionController = {
         !patientProgramme.consentGiven,
       // Perform triage
       canTriage: account.isRegisteredNurse,
-      // Patient needs triage
-      needsTriage: patientProgramme.status === PatientStatus.Triage,
-      // Patient already triaged
-      hasTriage: patientProgramme.triageNotes.length > 0,
       hasInstruction: session.hasPsdProtocol && patientProgramme.hasInstruction,
       canAssess:
         account.isRegisteredNurse ||
@@ -335,14 +337,24 @@ export const patientSessionController = {
    */
   invite(request, response) {
     const { __, back, patient, patientSession } = response.locals
+    const { data } = request.session
+    const contact = patient.contacts[0]
 
     patient.addToSession(patientSession)
-    patient.requestConsent(patientSession)
 
-    request.flash(
-      'success',
-      __('patientSession.invite.success', { contact: patient.contacts[0] })
+    const consentRequest = ConsentRequest.create(
+      {
+        createdAt: patientSession.session.consentOpenAt,
+        contact_uuid: contact.uuid,
+        patient_uuid: patient.uuid,
+        programme_ids: patientSession.session.programme_ids,
+        session_id: patientSession.session.id
+      },
+      data
     )
+    patient.requestConsent(consentRequest)
+
+    request.flash('success', __('patientSession.invite.success', { contact }))
 
     return saveAndRedirect(request, response, back)
   },

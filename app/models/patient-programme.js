@@ -155,6 +155,23 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get programme title
+   *
+   * @returns {string} Programme title
+   */
+  get title() {
+    if (this.programme.type === ProgrammeType.MMR && this.patient?.age <= 6) {
+      return 'Measles, mumps, rubella and varicella (MMRV)'
+    }
+
+    if (this.programme.type === ProgrammeType.Flu) {
+      return `Children’s flu (${this.eligibilityStartAt.getFullYear()} to ${this.eligibilityEndAt.getFullYear()} season)`
+    }
+
+    return this.programme.title
+  }
+
+  /**
    * Is active programme
    *
    * @returns {boolean} Is active programme
@@ -251,6 +268,15 @@ export class PatientProgramme extends BaseModel {
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       .filter(({ status }) => status)
       .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+  }
+
+  /**
+   * Has triage notes
+   *
+   * @returns {boolean} Has triage notes
+   */
+  get hasTriageNotes() {
+    return this.triageNotes.length > 0
   }
 
   /**
@@ -770,26 +796,31 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get valid replies
+   * Get valid consent responses for programme
    *
-   * @returns {Array<Reply>|undefined} Valid replies
+   * @returns {Array<Reply>|undefined} Consent responses
    */
-  get validReplies() {
+  get replies() {
     return this.patient?.replies
       .filter(
-        ({ isValid, patientProgramme }) =>
-          patientProgramme.id === this.id && isValid
+        ({ patientProgramme, isValid }) =>
+          patientProgramme?.id === this.id && isValid
       )
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
-   * Get responses (consent requests that were delivered)
+   * Get expired consent responses for this programme
    *
-   * @returns {Array<Reply>|undefined} Responses
+   * @returns {Array<Reply>|undefined} Consent responses
    */
-  get replies() {
-    return this.validReplies?.filter((reply) => reply.isDelivered)
+  get expiredReplies() {
+    return this.patient?.replies
+      .filter(
+        ({ patientProgramme, hasExpired }) =>
+          patientProgramme?.id === this.id && hasExpired
+      )
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
   }
 
   /**
@@ -1075,6 +1106,15 @@ export class PatientProgramme extends BaseModel {
    */
   get patientConsent() {
     return getPatientConsentStatus(this)
+  }
+
+  /**
+   * Needs triage
+   *
+   * @returns {boolean} Needs triage
+   */
+  get needsTriage() {
+    return this.status === PatientStatus.Triage
   }
 
   /**
@@ -1418,6 +1458,6 @@ PatientProgramme.relate('programme_id', () => Programme, 'programme')
 
 /**
  * @import { PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
- * @import { PatientSession, Vaccine } from '../models.js'
+ * @import { ConsentRequest, PatientSession, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */
