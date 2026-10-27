@@ -8,6 +8,7 @@
 {%- from "code/macro.njk" import code -%}
 {%- from "contents-list/macro.njk" import contentsList %}
 {%- from "details/macro.njk" import details %}
+{%- from "environment-banner/macro.njk" import environmentBanner %}
 {%- from "error-message/macro.njk" import errorMessage %}
 {%- from "error-summary/macro.njk" import errorSummary %}
 {%- from "fieldset/macro.njk" import fieldset %}
@@ -47,7 +48,6 @@
 {%- from "_macros/badge.njk" import appBadge %}
 {%- from "_macros/button-group.njk" import appButtonGroup with context %}
 {%- from "_macros/data-card.njk" import appDataCard with context %}
-{%- from "_macros/environment.njk" import appEnvironment %}
 {%- from "_macros/event.njk" import appEvent %}
 {%- from "_macros/section-navigation.njk" import appSectionNavigation %}
 {%- from "_macros/status.njk" import appStatus %}
@@ -70,7 +70,7 @@
 {% endblock %}
 
 {% block header %}
-  {{ appEnvironment(environment) if environment }}
+  {{ environmentBanner(environment) if environment }}
   {{ header(headerOptions if headerOptions else {
     service: {
       text: serviceName,

@@ -21,17 +21,17 @@ export const environment = (request, response, next) => {
   const environments = {
     development: {
       colour: 'white',
-      name: 'Prototype',
+      tag: 'Prototype',
       text: 'This is a prototype in development.'
     },
     production: {
       colour: 'grey',
-      name: 'Prototype',
+      tag: 'Prototype',
       text: 'This is a prototype used for research.'
     },
     review: {
       colour: 'purple',
-      name: HEROKU_PR_NUMBER ? `Prototype PR ${HEROKU_PR_NUMBER}` : 'Prototype',
+      tag: HEROKU_PR_NUMBER ? `Prototype PR ${HEROKU_PR_NUMBER}` : 'Prototype',
       html: HEROKU_PR_NUMBER
         ? `This is a prototype for review. ${formatLink(pullRequestUrl, 'View pull request')}`
         : 'This is a prototype for review.'
@@ -39,6 +39,7 @@ export const environment = (request, response, next) => {
   }
 
   response.locals.environment = environments[environment]
+  response.locals.themeName = environments[environment].colour
 
   next()
 }
