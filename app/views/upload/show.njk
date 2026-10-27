@@ -5,11 +5,7 @@
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
 {% set status = upload.statusFor(account) %}
-{% if upload.needsReview %}
-  {% set title = __("upload.show.approve.title", upload.formatted.createdAt) %}
-{% else %}
-  {% set title = __("upload.show.title", upload.formatted.createdAt) %}
-{% endif %}
+{% set title = upload.titleFor(account) %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -63,7 +59,6 @@
         changeLabel: upload.fileName,
         href: "#"
       } if not upload.isPrivateToSchool else none,
-      type: {},
       format: {} if not upload.isPrivateToSchool else none,
       school: {},
       yearGroups: {},

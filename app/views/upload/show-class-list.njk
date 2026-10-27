@@ -4,11 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% if upload.needsChecking %}
-  {% set title = __("upload.show.submit.title", upload.formatted.createdAt) %}
-{% else %}
-  {% set title = __("upload.show.class-list.title", upload.formatted.createdAt) %}
-{% endif %}
+{% set title = upload.titleFor(account) %}
 
 {% block beforeContent %}
   {{ breadcrumb({
