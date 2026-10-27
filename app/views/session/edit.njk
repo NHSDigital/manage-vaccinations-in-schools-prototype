@@ -81,7 +81,7 @@
         },
         catchUps: {
           href: session.uri + "/new/catch-ups"
-        },
+        } if not session.isFluOnlyClinic else none,
         location: {
           href: session.uri + "/edit/clinic" if not session.hasAppointments
         },
