@@ -138,7 +138,6 @@
     {% endcall %}
   {% endif %}
 
-  
   {% call card({
     heading: {
       text: __("patientProgramme.patientSessions.label"),
@@ -182,7 +181,7 @@
     {% else %}
       {{ __("patientProgramme.patientSessions.none", patient.firstName) | nhsukMarkdown }}
     {% endif %}
-
+    
     {{ appButtonGroup({
       buttons: [
         {
