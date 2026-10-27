@@ -26,12 +26,18 @@
       ]
     } if reply.isValid
   }) %}
-    {{ appStatus({
-      text: __("reply.expiringSoon.label"),
-      icon: "warning",
-      colour: "blue",
-      classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
-    }) if reply.isExpiringSoon and not reply.isInvalidated }}
+    {# Expiring soon? #}
+    {% if reply.expiresAt %}
+      {% set expiresAfterSession = reply.expiresAt > session.date %}
+      {{ appStatus({
+        text: __("reply.expiringSoon.label") if expiresAfterSession else __("reply.expiringBeforeSession.label"),
+        icon: "warning" if expiresAfterSession else "alert",
+        colour: "blue",
+        classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
+      }) if reply.isExpiringSoon and not reply.isInvalidated }}
+    {% endif %}
+
+    {# Details of the response #}
     {{ summaryList({
       lastRowBorder: false,
       rows: summaryRows(reply, {

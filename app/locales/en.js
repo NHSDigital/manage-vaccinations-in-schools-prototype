@@ -2702,6 +2702,9 @@ export const en = {
     expiringSoon: {
       label: 'This response will expire soon'
     },
+    expiringBeforeSession: {
+      label: 'This response will expire before the session'
+    },
     respondent: {
       title: 'Who are you trying to get consent from?',
       label: 'Parent or guardian',
