@@ -2,8 +2,8 @@
 {%- from "_macros/triage-notes.njk" import appTriageNotes with context %}
 
 {# Health answers #}
-{{ summaryList({
-  card: {
+{% if patientProgramme.consentHealthAnswers %}
+  {% call card({
     heading: {
       text: __mf("healthAnswers.count", {
         count: patientProgramme.answersNeedingTriageCount
@@ -11,10 +11,15 @@
       size: "m"
     },
     variant: "warning" if patientProgramme.answersNeedingTriageCount
-  },
-  classes: "app-summary-list--full-width",
-  rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
-}) if patientProgramme.consentHealthAnswers }}
+  }) %}
+    {{ patientProgramme.healthAnswersDescription | nhsukMarkdown if patientProgramme.healthAnswersDescription }}
+
+    {{ summaryList({
+      classes: "app-summary-list--full-width",
+      rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
+    }) }}
+  {% endcall %}
+{% endif %}
 
 {# Unanswered health questions #}
 {% if options.needsTriage and not patientProgramme.consentHealthAnswers %}

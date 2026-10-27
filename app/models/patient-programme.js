@@ -46,6 +46,7 @@ import { ordinal } from '../utils/number.js'
 import {
   getConsentStatus,
   getConsentStatusDescription,
+  getHealthAnswersDescription,
   getInstructionStatus,
   getScreenStatus,
   getScreenStatusDescription,
@@ -862,6 +863,15 @@ export class PatientProgramme extends BaseModel {
    */
   get consentHealthAnswers() {
     return getConsentHealthAnswers(this.replies, this.appointments)
+  }
+
+  /**
+   * Get description of who gave answers to health questions, and when
+   *
+   * @returns {string|undefined} Health answers description
+   */
+  get healthAnswersDescription() {
+    return getHealthAnswersDescription(this.replies)
   }
 
   /**
