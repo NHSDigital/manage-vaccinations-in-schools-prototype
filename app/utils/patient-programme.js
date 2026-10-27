@@ -18,7 +18,7 @@ import {
   VaccineCriteria
 } from '../enums.js'
 
-import { formatDate, today } from './date.js'
+import { formatDate, getDateValueDifference, today } from './date.js'
 import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
@@ -236,29 +236,41 @@ function getExpiredConsentDescription(expiredReplies) {
 /**
  * Describe who gave answers to health questions, and when
  *
- * Answers given when booking a clinic appointment aren’t included, as we don’t
- * know when the booking was made
- *
- * @param {Array<Reply>} replies - Responses that count towards consent, newest first
+ * @param {Array<Reply>} replies - Responses that count towards consent
+ * @param {Array<ClinicAppointment>} appointments - Clinic appointments
  * @returns {string|undefined} Health answers description, if any were given
  */
-export function getHealthAnswersDescription(replies) {
-  const repliesWithHealthAnswers = (replies ?? []).filter(
-    (reply) => reply.healthAnswers
+export function getHealthAnswersDescription(replies, appointments) {
+  const answersFromReplies = (replies ?? [])
+    .filter((reply) => reply.healthAnswers)
+    .map((reply) => ({
+      respondent: reply.fullNameAndRelationship,
+      answeredAt: reply.createdAt
+    }))
+
+  // Answers given when booking a clinic appointment
+  const answersFromAppointments = (appointments ?? [])
+    .filter((appointment) => appointment.healthAnswers)
+    .map((appointment) => ({
+      respondent: appointment.contact.fullNameAndRelationship,
+      answeredAt: appointment.booking?.createdAt
+    }))
+
+  const answers = [...answersFromReplies, ...answersFromAppointments].sort(
+    (a, b) => getDateValueDifference(b.answeredAt, a.answeredAt)
   )
-  if (!repliesWithHealthAnswers.length) {
+  if (!answers.length) {
     return undefined
   }
 
-  const answeredBy = repliesWithHealthAnswers.map((reply) => {
-    const respondent = reply.fullNameAndRelationship || 'parent or guardian'
-    const answeredOn = formatDate(reply.createdAt, {
+  const answeredBy = answers.map(({ respondent, answeredAt }) => {
+    const answeredOn = formatDate(answeredAt, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     })
 
-    return `${respondent} on ${answeredOn}`
+    return `${respondent || 'parent or guardian'} on ${answeredOn}`
   })
 
   return `Answers given by ${filters.formatList(answeredBy)}.`
@@ -717,5 +729,5 @@ export function getPatientVaccinatedStatus(patientProgramme) {
 }
 
 /**
- * @import { PatientProgramme, Reply, Session } from '../models.js'
+ * @import { ClinicAppointment, PatientProgramme, Reply, Session } from '../models.js'
  */
