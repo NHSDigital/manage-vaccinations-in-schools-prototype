@@ -24,25 +24,32 @@ export function getUploadOutcome(upload, isCorrection) {
 
 /**
  * Select patients a file of this type would contain
+ * Children who have aged out of programmes are not included.
  *
  * @param {Upload} upload - Upload
  * @param {Array<Patient>} patients - All patients
  * @returns {Array<Patient>} Selected patients
  */
 export function getUploadPatients(upload, patients) {
+  const eligiblePatients = patients.filter(
+    (patient) => !patient.hasAgedOutOfProgrammes
+  )
+
   switch (upload.type) {
     case UploadType.School:
       // Pupils at the school in the chosen year groups
-      return patients.filter(
+      return eligiblePatients.filter(
         (patient) =>
           upload.school_id === patient.school_id &&
           upload.yearGroups.map(Number).includes(patient.yearGroup)
       )
     case UploadType.Report:
       // Patients with vaccination records
-      return patients.filter((patient) => patient.vaccinations.length > 0)
+      return eligiblePatients.filter(
+        (patient) => patient.vaccinations.length > 0
+      )
     default:
-      return patients
+      return eligiblePatients
   }
 }
 
