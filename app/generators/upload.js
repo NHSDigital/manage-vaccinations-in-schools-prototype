@@ -160,7 +160,7 @@ export function generateUpload(
     ...(isRequested && {
       requestedAt: createdAt,
       requestedBy_uid: user.uid,
-      assignee_uids: [schoolUser.uid]
+      assignee_emails: [schoolUser.email]
     }),
     ...(isUploaded && {
       uploadedAt,

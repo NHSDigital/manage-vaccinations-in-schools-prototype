@@ -46,7 +46,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasFailed] - Records failed data integrity checks
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
- * @property {Array<string>} [assignee_uids] - School user UIDs request sent to
+ * @property {Array<string>} [assignee_emails] - School emails request sent to
  */
 
 /**
@@ -114,20 +114,11 @@ export class Upload extends BaseModel {
     this.validations = options?.validations || {}
     this.hasFailed = stringToBoolean(options?.hasFailed)
     this.patient_uuids = stringToArray(options?.patient_uuids)
-    this.assignee_uids = stringToArray(options?.assignee_uids)
+    this.assignee_emails = stringToArray(options?.assignee_emails)
 
     if (this.type === UploadType.School) {
       this.yearGroups = stringToArray(options?.yearGroups)
     }
-  }
-
-  /**
-   * School users request sent to
-   *
-   * @returns {Array<User>} School users
-   */
-  get assignees() {
-    return this.assignee_uids.map((uid) => User.findOne(uid, this.context))
   }
 
   /**
@@ -427,9 +418,7 @@ export class Upload extends BaseModel {
             case 'rejectedAt':
               return formatDate(this.rejectedAt, dateOptions)
             case 'assignees':
-              return formatList(
-                this.assignees.map((assignee) => assignee.fullName)
-              )
+              return formatList(this.assignee_emails)
             case 'school':
               if (this.type !== UploadType.School) return undefined
               return this.school?.name

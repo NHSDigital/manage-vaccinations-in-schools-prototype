@@ -58,6 +58,15 @@ export class User extends BaseModel {
   }
 
   /**
+   * Get full name, formatted as Firstname Lastname
+   *
+   * @returns {string} Full name
+   */
+  get firstNameAndLastName() {
+    return [this.firstName, this.lastName].join(' ')
+  }
+
+  /**
    * Get user name and role
    *
    * @returns {string} Full name
