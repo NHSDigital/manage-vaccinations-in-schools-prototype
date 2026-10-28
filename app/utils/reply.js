@@ -84,11 +84,17 @@ export function getConsentHealthAnswers(replies, appointments) {
         healthAnswer.answer = 'No'
       }
 
-      const hasSingleResponse = responsesWithHealthAnswers.length === 1
-      const hasSameAnswers = responsesWithHealthAnswers.every(
+      // Only compare with responses that were asked this question, as a clinic
+      // booking only asks questions not already answered in consent responses
+      const responsesAnsweringQuestion = responsesWithHealthAnswers.filter(
+        (reply) => reply.healthAnswers[key]
+      )
+
+      const hasSingleResponse = responsesAnsweringQuestion.length === 1
+      const hasSameAnswers = responsesAnsweringQuestion.every(
         (reply) => reply.healthAnswers[key]?.answer === healthAnswer.answer
       )
-      const hasSameAnswersWithDetails = responsesWithHealthAnswers.some(
+      const hasSameAnswersWithDetails = responsesAnsweringQuestion.some(
         (reply) =>
           reply.healthAnswers[key]?.details &&
           reply.healthAnswers[key]?.answer === healthAnswer.answer
@@ -111,6 +117,9 @@ export function getConsentHealthAnswers(replies, appointments) {
         } else if (hasSameAnswers && consentHealthAnswers[key].length === 0) {
           // All responded: Yes/No
           thisHealthAnswer.relationship = 'All'
+          consentHealthAnswers[key].push(thisHealthAnswer)
+        } else if (!hasSameAnswers && healthAnswer.answer === 'Yes') {
+          // Mum responded: Yes (without details, where someone else said No)
           consentHealthAnswers[key].push(thisHealthAnswer)
         }
       }
