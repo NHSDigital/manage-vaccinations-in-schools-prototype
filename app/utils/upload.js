@@ -1,4 +1,5 @@
 import { UploadFormat, UploadOutcome, UploadType } from '../enums.js'
+import { generateUploadContactChanges } from '../generators/contact.js'
 import { Patient } from '../models.js'
 
 import { createUploadMoves } from './moves.js'
@@ -100,7 +101,8 @@ export function getUploadValidations(outcome, patients) {
  * Process an uploaded file
  *
  * Simulates what Mavis does with a file: finds the patients in it, checks it
- * for errors and, if it passes, finds any school moves it reports.
+ * for errors and, if it passes, finds any school moves it reports and any new
+ * contact details for parents.
  *
  * @param {Upload} upload - Upload (must have been uploaded)
  * @param {UploadOutcome} uploadOutcome - Outcome of processing the file
@@ -113,6 +115,10 @@ export function processUpload(upload, uploadOutcome, context) {
   upload.patient_uuids = patients.map(({ uuid }) => uuid)
   upload.validations = getUploadValidations(uploadOutcome, patients)
   upload.hasFailed = uploadOutcome === UploadOutcome.Failed
+  upload.contactChanges = generateUploadContactChanges(
+    upload,
+    Patient.findAll(context)
+  )
 
   createUploadMoves(upload, context)
 

@@ -34,6 +34,16 @@ export default (env) => {
   }
 
   /**
+   * Highlight
+   *
+   * @param {string} string - String to highlight
+   * @returns {string} Highlighted string
+   */
+  filters.highlight = (string) => {
+    return formatHighlight(string)
+  }
+
+  /**
    * Highlight difference
    *
    * @param {string} a - Value in consent response

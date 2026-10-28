@@ -6,7 +6,7 @@ import {
   UploadStatus,
   UploadType
 } from '../enums.js'
-import { Patient, School, User } from '../models.js'
+import { Contact, Patient, School, User } from '../models.js'
 import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
 import {
@@ -44,6 +44,8 @@ import { BaseModel } from './base.js'
  * @property {string} [rejectionReason] - Rejection reason
  * @property {object} [validations] - File validations, keyed by row number
  * @property {boolean} [hasFailed] - Records failed data integrity checks
+ * @property {object} [contactChanges] - New parent contact details found in
+ *   the file, keyed by contact UUID
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  * @property {Array<string>} [assignee_emails] - School emails request sent to
@@ -113,6 +115,7 @@ export class Upload extends BaseModel {
     this.rejectionReason = options?.rejectionReason
     this.validations = options?.validations || {}
     this.hasFailed = stringToBoolean(options?.hasFailed)
+    this.contactChanges = options?.contactChanges || {}
     this.patient_uuids = stringToArray(options?.patient_uuids)
     this.assignee_emails = stringToArray(options?.assignee_emails)
 
@@ -298,6 +301,24 @@ export class Upload extends BaseModel {
    */
   get pendingPatients() {
     return this.patients.filter((patient) => patient.hasPendingChanges)
+  }
+
+  /**
+   * Get parent contacts with new contact details that need review
+   * Each contact has the details found in the file as its pending changes
+   *
+   * @returns {Array<Contact>} Contacts with pending changes
+   */
+  get pendingContacts() {
+    return Object.entries(this.contactChanges)
+      .map(([uuid, pendingChanges]) => {
+        const contact = Contact.findOne(uuid, this.context)
+
+        return (
+          contact && new Contact({ ...contact, pendingChanges }, this.context)
+        )
+      })
+      .filter(Boolean)
   }
 
   /**

@@ -3881,6 +3881,16 @@ export const en = {
             label: 'Ignore move'
           }
         }
+      },
+      contacts: {
+        label: 'New contacts',
+        title: 'New contacts (no action needed)',
+        summary:
+          'If you approve the upload, new contacts will be added to existing records.',
+        count:
+          '{count, plural, =0 {No parents or guardians} one {1 new contact} other {# new contacts}}',
+        uploaded: 'New contacts',
+        missing: 'Not provided'
       }
     },
     new: {
