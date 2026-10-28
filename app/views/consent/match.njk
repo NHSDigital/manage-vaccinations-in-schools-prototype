@@ -41,7 +41,12 @@
           })
         }) }}
 
-        {{ link(consentPath + "?referrer=" + consentPath + "/match", "View full consent response") | nhsukMarkdown }}
+        <p class="nhsuk-body">
+          {{ link({
+            text: "View full consent response",
+            href: consentPath + "?referrer=" + consentPath + "/match"
+          }) }}
+        </p>
 
         {{ actionLink({
           href: consentPath + "/add",

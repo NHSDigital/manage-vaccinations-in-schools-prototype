@@ -1,8 +1,9 @@
+{%- from "nhsuk/components/link/macro.njk" import link %}
 {%- from "nhsuk/components/tag/macro.njk" import tag -%}
 
 {%- macro _action(params) -%}
 {%- if params.href -%}
-  {{- link(params.href, params.text, params.attributes) | safe -}}
+  {{- link(params) -}}
 {%- elif params.tag -%}
   {{- tag(params.tag) -}}
 {%- else -%}

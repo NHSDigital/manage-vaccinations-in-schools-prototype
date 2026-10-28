@@ -5,7 +5,10 @@
       {{ truncatedNote | nhsukMarkdown  }}
       {% if truncatedNote.includes("…") %}
       <p class="nhsuk-body">
-        {{ link(params.patientSession.uri + "/events", "Continue reading") | safe }}
+        {{ link({
+          text: "Continue reading",
+          href: params.patientSession.uri + "/events"
+        }) }}
         <span class="nhsuk-u-visually-hidden">note for {{ params.patientSession.patient.fullName }}</span>
       </p>
       {% endif %}

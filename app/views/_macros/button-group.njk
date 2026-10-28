@@ -1,3 +1,4 @@
+{%- from "nhsuk/components/link/macro.njk" import link %}
 {%- from "x-nhsuk/decorated/button/macro.njk" import button with context %}
 
 {%- set classNames = "nhsuk-button-group" -%}
@@ -12,7 +13,7 @@
 {{- button(item) if item -}}
 {%- endfor -%}
 {%- for item in params.links -%}
-{{- link(item.href, item.text) | safe if item -}}
+{{- link(item) -}}
 {%- endfor %}
 {%- if params.description %}
 <p><span class="nhsuk-u-secondary-text-colour">{{ params.description }}</span></p>

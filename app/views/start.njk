@@ -32,7 +32,12 @@ Once you log in, you'll be taken to the service your organisation is set up to u
         variant: "login"
       }) }}
 
-      {{ link("https://manage-care-identities.care-identity-service2.nhs.uk/#/self-service/unlock-authenticator", __("account.cis2.unlock")) | nhsukMarkdown }}
+      <p class="nhsuk-body">
+        {{ link({
+          text: __("account.cis2.unlock"),
+          href: "https://manage-care-identities.care-identity-service2.nhs.uk/#/self-service/unlock-authenticator"
+        }) }}
+      </p>
     </div>
   </div>
 {% endblock %}

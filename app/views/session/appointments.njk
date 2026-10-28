@@ -56,7 +56,12 @@
       {% endif %}
     {% else %}
       {# Booking link for empty slot #}
-      {{ link(session.uri + "/book-into-a-clinic/?" + bookingQueryString, "Book") | safe }}
+      <p class="nhsuk-body">
+        {{ link({
+          text: "Book",
+          href: session.uri + "/book-into-a-clinic/?" + bookingQueryString
+        }) }}
+      </p>
     {% endif %}
   {% endmacro %}
 

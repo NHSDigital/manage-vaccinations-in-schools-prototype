@@ -17,7 +17,12 @@
 
           {{ programme.information.startPage | nhsukMarkdown }}
 
-          {{ link(programme.information.url, __("consent.start.more", { programme: programme })) | nhsukMarkdown }}
+          <p class="nhsuk-body">
+            {{ link({
+              text: __("consent.start.more", { programme: programme }),
+              href: programme.information.url
+            }) }}
+          </p>
         {% endfor %}
 
         <h2 class="nhsuk-heading-m">

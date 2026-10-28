@@ -40,7 +40,12 @@
         })
       }) }}
 
-      {{ link(session.uri + "/patients", __("clinicBooking.notEligible.return")) | nhsukMarkdown }}
+      <p class="nhsuk-body">
+        {{ link({
+          text: __("clinicBooking.notEligible.return"),
+          href: session.uri + "/patients"
+        }) }}
+      </p>
     </div>
   </div>
 {% endblock %}
