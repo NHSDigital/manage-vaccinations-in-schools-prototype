@@ -751,6 +751,28 @@ export const en = {
     abandon: {
       label: 'I cannot find a convenient appointment'
     },
+    pharmacy: {
+      title: 'Book your child’s flu vaccination at a pharmacy',
+      flu: {
+        heading: 'Flu vaccination',
+        description:
+          'You may be able to book a free NHS flu vaccination at a community pharmacy. You will be taken to the Vaccinations National Booking Service to continue.',
+        action: 'Book a pharmacy vaccination for flu'
+      },
+      others: {
+        heading: 'Other vaccinations',
+        description:
+          'For your child’s {programmeNames} {count, plural, one {vaccination} other {vaccinations}}, you may be able to find a more convenient clinic by booking an appointment for only {count, plural, one {that programme} other {those programmes}}.',
+        action: 'Look for a clinic offering only %s vaccinations'
+      },
+      feedback: {
+        heading: 'Help us to improve',
+        description:
+          'Tell us the reasons you were unable to find a suitable appointment so that we can improve the clinics we offer.',
+        action:
+          'Tell us what would make our clinics more convenient (opens in new tab)'
+      }
+    },
     notConvenient: {
       title: 'We’re sorry you’ve not been able to find a convenient clinic',
       intro:

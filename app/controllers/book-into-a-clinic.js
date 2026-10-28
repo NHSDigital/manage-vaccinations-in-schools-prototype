@@ -40,6 +40,7 @@ import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
+  isPharmacyVaccinationAvailable,
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -907,6 +908,19 @@ export const bookIntoClinicController = {
         location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
+    } else if (view === 'pharmacy-vaccination') {
+      const otherProgramme_ids = appointment.selected_programme_ids.filter(
+        (id) => id !== 'flu'
+      )
+      const canBeOfferedMmrv = appointment.patient_uuid
+        ? appointment.patient?.canBeOfferedMmrv
+        : appointment.child?.canBeOfferedMmrv
+      response.locals.otherProgrammeNames = programmeNamesListForSentence(
+        otherProgramme_ids,
+        canBeOfferedMmrv,
+        ConjunctionType.and,
+        data
+      )
     } else if (view === 'appointment-length') {
       const session = Session.findOne(appointment.session_id, data)
       response.locals.clinicSummary = {
@@ -985,6 +999,9 @@ export const bookIntoClinicController = {
     }
 
     response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
+
+    response.locals.isPharmacyVaccinationAvailable =
+      isPharmacyVaccinationAvailable(appointment?.selected_programme_ids, data)
 
     // All health questions use the same view
     let key
