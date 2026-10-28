@@ -507,6 +507,7 @@ export const schoolController = {
         ...(data.startPath === 'new-site'
           ? { [`/${school_id}/${type}/site`]: {} }
           : { [`/${school_id}/${type}/confirm-school`]: {} }),
+        [`/${school_id}/${type}/email`]: {},
         [`/${school_id}/${type}/phase`]: {},
         [`/${school_id}/${type}/sen`]: {},
         [`/${school_id}/${type}/year-groups`]: {},

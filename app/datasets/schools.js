@@ -28,9 +28,10 @@ export default [
     team_ids: ['001'],
     presetNames
   },
-  // Reserved for scenario data (see lib/scenarios/) - a recurring school used across multiple
-  // scenarios. Kept in this dataset (rather than created ad hoc) so it gets exactly the same
-  // random session/patient generation as every other school in create-data.js
+  // Reserved for scenario data (see lib/scenarios/) - a recurring school used
+  // across multiple scenarios. Kept in this dataset (rather than created
+  // ad-hoc) so it gets exactly the same random session/patient generation as
+  // every other school in create-data.js
   {
     id: '777777',
     urn: '777777',
@@ -40,6 +41,7 @@ export default [
     addressLine1: 'St. Nicholas Close',
     addressLevel1: 'Atherstone',
     postalCode: 'CV9 3EQ',
+    email: 'contact@flax-hill.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
@@ -52,6 +54,7 @@ export default [
     addressLine1: 'Mitchell Avenue',
     addressLevel1: 'Coventry',
     postalCode: 'CV4 8DY',
+    email: 'contact@hope-springs.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.HPV, SessionPresetName.MMR]
   },
@@ -64,6 +67,7 @@ export default [
     addressLine1: 'Clifton Road',
     addressLevel1: 'Rugby',
     postalCode: 'CV21 3AG',
+    email: 'contact@dearborne.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Doubles, SessionPresetName.MMR]
   },
@@ -80,6 +84,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 2RH',
+    email: 'contact@grace-academy.example.sch.uk',
     team_ids: ['001', '003'],
     presetNames
   },
@@ -94,6 +99,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV4 9PW',
+    email: 'contact@west-coventry.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -108,6 +114,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV1 2BA',
+    email: 'contact@blue-coat.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -122,6 +129,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV6 2AJ',
+    email: 'contact@coundon-court.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -137,6 +145,7 @@ export default [
     addressLine2: 'Hillfields',
     addressLevel1: 'Coventry',
     postalCode: 'CV1 5HG',
+    email: 'contact@st-marys.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -151,6 +160,7 @@ export default [
     addressLine2: 'Wyken',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 5BD',
+    email: 'contact@caludon-castle.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -165,6 +175,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV6 4GL',
+    email: 'contact@president-kennedy.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -180,6 +191,7 @@ export default [
     addressLine2: 'Walsgrave Triangle',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 2TB',
+    email: 'contact@seva-primary.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
@@ -195,6 +207,7 @@ export default [
     addressLine2: 'Walsgrave Triangle',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 2TB',
+    email: 'contact@seva-secondary.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -209,6 +222,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 2AJ',
+    email: 'contact@cardinal-wiseman.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -223,6 +237,7 @@ export default [
     addressLine2: 'Stoke',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 4DW',
+    email: 'contact@sacred-heart.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
@@ -237,6 +252,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 5AT',
+    email: 'contact@st-gregorys.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
@@ -251,6 +267,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV1 4BU',
+    email: 'contact@barrs-hill.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -265,6 +282,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV3 6EJ',
+    email: 'contact@finham.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
@@ -279,6 +297,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 3JS',
+    email: 'contact@lyng-hall.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -293,6 +312,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV6 4GF',
+    email: 'contact@parkgate.example.sch.uk',
     team_ids: ['001'],
     presetNames: [SessionPresetName.Flu, SessionPresetName.MMR]
   },
@@ -307,6 +327,7 @@ export default [
     addressLine2: '',
     addressLevel1: 'Coventry',
     postalCode: 'CV2 4JW',
+    email: 'contact@stoke-park.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -321,6 +342,7 @@ export default [
     addressLine2: 'Keresley',
     addressLevel1: 'Coventry',
     postalCode: 'CV6 2FR',
+    email: 'contact@cardinal-newman.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -335,6 +357,7 @@ export default [
     addressLine2: 'Whitley',
     addressLevel1: 'Coventry',
     postalCode: 'CV3 4BD',
+    email: 'contact@meadow-park.example.sch.uk',
     team_ids: ['001'],
     presetNames
   },
@@ -352,6 +375,7 @@ export default [
     addressLine2: 'Coventry',
     addressLevel1: 'West Midlands',
     postalCode: 'CV2 2RH',
+    email: 'contact@woodway-park.example.sch.uk',
     team_id: '001'
   },
   // Closing
@@ -369,6 +393,7 @@ export default [
     addressLine2: 'Coventry',
     addressLevel1: 'West Midlands',
     postalCode: 'CV4 7AB',
+    email: 'contact@woodfield.example.sch.uk',
     team_id: '001'
   },
   // Opening
@@ -384,6 +409,7 @@ export default [
     addressLine2: 'Coventry',
     addressLevel1: 'West Midlands',
     postalCode: 'CV4 7AB',
+    email: 'contact@woodfield.example.sch.uk',
     team_id: '001'
   },
   // Amalgamated/merged
@@ -400,6 +426,7 @@ export default [
     addressLine2: 'Coventry',
     addressLevel1: 'West Midlands',
     postalCode: 'CV2 4FN',
+    email: 'contact@st-marys.example.sch.uk',
     team_id: '001'
   },
   {
@@ -415,6 +442,7 @@ export default [
     addressLine2: 'Hillfields',
     addressLevel1: 'Coventry',
     postalCode: 'CV1 5HG',
+    email: 'contact@st-benedicts.example.sch.uk',
     team_id: '001'
   }
 ]
