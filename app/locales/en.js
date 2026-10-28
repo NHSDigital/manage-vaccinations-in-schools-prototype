@@ -4023,6 +4023,11 @@ export const en = {
     },
     patients: {
       label: 'Records'
+    },
+    yearGroupChanges: {
+      label: 'Year group changes',
+      count:
+        '{count, plural, one {1 child} other {# children}} moved from {from} to {to}'
     }
   },
   manual: {

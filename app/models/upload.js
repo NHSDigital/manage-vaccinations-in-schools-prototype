@@ -47,6 +47,8 @@ import { BaseModel } from './base.js'
  * @property {object} [contactChanges] - New parent contact details found in
  *   the file, keyed by contact UUID
  * @property {Array<number>} [yearGroups] - Year groups
+ * @property {object} [yearGroupChanges] - Year groups children were in before
+ *   the file moved them up, keyed by patient UUID
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  * @property {Array<string>} [assignee_emails] - School emails request sent to
  */
@@ -116,6 +118,7 @@ export class Upload extends BaseModel {
     this.validations = options?.validations || {}
     this.hasFailed = stringToBoolean(options?.hasFailed)
     this.contactChanges = options?.contactChanges || {}
+    this.yearGroupChanges = options?.yearGroupChanges || {}
     this.patient_uuids = stringToArray(options?.patient_uuids)
     this.assignee_emails = stringToArray(options?.assignee_emails)
 
@@ -153,6 +156,19 @@ export class Upload extends BaseModel {
     const speedIncrease = 8
 
     return Math.min(Math.floor(seconds * speedIncrease), 100)
+  }
+
+  /**
+   * File passed validation and data checks
+   * Only these files are compared with records in Mavis, to find school moves,
+   * new contact details and year group changes
+   *
+   * @returns {boolean} File passed validation and data checks
+   */
+  get hasPassedChecks() {
+    return (
+      Boolean(this.uploadedAt) && !this.hasValidationErrors && !this.hasFailed
+    )
   }
 
   /**
@@ -292,6 +308,34 @@ export class Upload extends BaseModel {
    */
   get matchedPatients() {
     return this.patients.filter((patient) => patient.hasMatchingUpload)
+  }
+
+  /**
+   * Get number of children whose year group changed, for each change
+   * For example, 12 children who moved from Year 8 to Year 9
+   *
+   * @returns {Array<{from: number, to: number, count: number}>} Year group
+   *   changes, in year group order
+   */
+  get yearGroupChangeCounts() {
+    const counts = new Map()
+
+    for (const patient of this.patients) {
+      const from = this.yearGroupChanges[patient.uuid]
+      if (from === undefined) {
+        continue
+      }
+
+      const change = counts.get(from) || {
+        from,
+        to: patient.yearGroup,
+        count: 0
+      }
+      change.count++
+      counts.set(from, change)
+    }
+
+    return [...counts.values()].sort((a, b) => a.from - b.from)
   }
 
   /**

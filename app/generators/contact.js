@@ -196,12 +196,7 @@ export function generateContactVariation(contact) {
  * @returns {object} New contact details, keyed by contact UUID
  */
 export function generateUploadContactChanges(upload, patients) {
-  if (
-    !upload.uploadedAt ||
-    upload.hasValidationErrors ||
-    upload.hasFailed ||
-    upload.type === UploadType.Report
-  ) {
+  if (!upload.hasPassedChecks || upload.type === UploadType.Report) {
     return {}
   }
 
