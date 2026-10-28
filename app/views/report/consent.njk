@@ -23,7 +23,13 @@
 
     <div class="nhsuk-grid-column-three-quarters">
       {{ __("report.list.updated", today) | nhsukMarkdown }}
-      {{ link("/reports/consent-terms", __("report.consent-terms.label")) | nhsukMarkdown }}
+
+      <p class="nhsuk-body">
+        {{ link({
+          text: __("report.consent-terms.label"),
+          href: "/reports/consent-terms"
+        }) }}
+      </p>
     </div>
   </div>
 {% endblock %}

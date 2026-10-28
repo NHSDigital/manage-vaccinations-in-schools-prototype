@@ -39,7 +39,12 @@
         })
       }) }}
 
-      {{ link(patient.uri, __("patientSession.show.childRecordLink.label")) | nhsukMarkdown }}
+      <p class="nhsuk-body">
+        {{ link({
+          text: __("patientSession.show.childRecordLink.label"),
+          href: patient.uri
+        }) }}
+      </p>
     </div>
 
     <div class="app-grid-column-patient-session">

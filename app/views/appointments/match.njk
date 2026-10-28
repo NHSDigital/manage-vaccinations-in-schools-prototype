@@ -41,7 +41,12 @@
           })
         }) }}
 
-        {{ link(appointmentPath + "?referrer=" + appointmentPath + "/match", "View full clinic appointment") | nhsukMarkdown }}
+        <p class="nhsuk-body">
+          {{ link({
+            text: "View full clinic appointment",
+            href: appointmentPath + "?referrer=" + appointmentPath + "/match"
+          }) }}
+        </p>
 
         {{ actionLink({
           href: appointmentPath + "/add",

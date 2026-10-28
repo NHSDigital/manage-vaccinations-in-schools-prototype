@@ -18,7 +18,14 @@
         href: "/uploads/new",
         text: __("session.upload-class-list.title")
       }) }}
-      {{ link("/uploads/guides", __("upload.guides.index.title")) | nhsukMarkdown if account.isSchoolUser }}
+      {% if account.isSchoolUser %}
+        <p class="nhsuk-body">
+          {{ link({
+            text: __("upload.guides.index.title"),
+            href: "/uploads/guides"
+          }) }}
+        </p>
+      {% endif %}
     </div>
   {% else %}
     {{ actionLink({

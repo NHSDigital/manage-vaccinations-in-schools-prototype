@@ -14,17 +14,23 @@
       slotStartTime: slotStartTime
     }) | nhsukMarkdown }}
 
-    <div class="nhsuk-button-group">
-      {{ button({
-        text: __("clinicBooking.shortenAppointment.confirm"),
-        variant: "reverse"
-      }) }}
-      {% if journeyData.journeyType === ClinicBookingJourneyType.TeamEditing %}
-        {{ link(editPath + "/discard", __("clinicBooking.shortenAppointment.cancelEdit")) | nhsukMarkdown }}
-      {% else %}
-        {{ link(session.uri + "/appointments", __("clinicBooking.shortenAppointment.cancel")) | nhsukMarkdown }}
-      {% endif %}
-    </div>
+    {{ buttonGroup({
+      buttons: [
+        {
+          text: __("clinicBooking.shortenAppointment.confirm"),
+          variant: "reverse"
+        }
+      ],
+      links: [
+        {
+          text: __("clinicBooking.shortenAppointment.cancelEdit"),
+          href: editPath + "/discard"
+        } if journeyData.journeyType === ClinicBookingJourneyType.TeamEditing else {
+          text: __("clinicBooking.shortenAppointment.cancelEdit"),
+          href: session.uri + "/appointments"
+        }
+      ]
+    }) }}
   {% endset %}
 
   {{ panel({
