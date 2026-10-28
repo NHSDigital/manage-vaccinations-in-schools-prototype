@@ -81,10 +81,6 @@ export class Move extends BaseModel {
     return `<span><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">${this.source} updated</span><br>${this.formatted.from_urn}<br><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">to</span> ${this.formatted.to_urn}</span>`
   }
 
-  get movementForImport() {
-    return `<span>${this.formatted.from_urn}<br><span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">to</span> ${this.formatted.to_urn}</span>`
-  }
-
   /**
    * Get formatted values
    *
