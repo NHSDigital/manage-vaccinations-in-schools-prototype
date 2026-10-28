@@ -164,13 +164,16 @@ export const getConsentRefusalReasons = (replies) => {
  * @param {string} healthCondition - Health condition
  * @returns {object|undefined} Health answers
  */
-export const getHealthAnswers = (vaccine, healthCondition) => {
+export const generateHealthAnswers = (vaccine, healthCondition) => {
   // If no vaccine, we don’t have consent
   if (!vaccine) {
     return
   }
 
-  return getHealthAnswersForQuestions(vaccine.healthQuestions, healthCondition)
+  return generateHealthAnswersForQuestions(
+    vaccine.healthQuestions,
+    healthCondition
+  )
 }
 
 /**
@@ -181,7 +184,7 @@ export const getHealthAnswers = (vaccine, healthCondition) => {
  * @param {string} healthCondition - Health condition
  * @returns {object} Health answers
  */
-export const getHealthAnswersForQuestions = (
+export const generateHealthAnswersForQuestions = (
   healthQuestions,
   healthCondition
 ) => {
@@ -217,7 +220,7 @@ export const getHealthAnswersForQuestions = (
  * @param {string} healthCondition - Health condition
  * @returns {string|undefined} Triage note
  */
-export const getTriageNote = (healthAnswers, healthCondition) => {
+export const generateTriageNote = (healthAnswers, healthCondition) => {
   if (countAnswersNeedingTriage(healthAnswers)) {
     return healthConditions[healthCondition].triageNote
   }
@@ -314,7 +317,9 @@ export const countAnswersNeedingTriage = (healthAnswers) => {
 export const getHealthConditionsNeedingTriage = (vaccine) =>
   Object.keys(healthConditions).filter(
     (healthCondition) =>
-      countAnswersNeedingTriage(getHealthAnswers(vaccine, healthCondition)) > 0
+      countAnswersNeedingTriage(
+        generateHealthAnswers(vaccine, healthCondition)
+      ) > 0
   )
 
 /**

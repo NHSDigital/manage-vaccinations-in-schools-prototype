@@ -11,7 +11,7 @@ import {
 } from '../enums.js'
 import { Child, ClinicAppointment } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
-import { getHealthAnswersForQuestions } from '../utils/reply.js'
+import { generateHealthAnswersForQuestions } from '../utils/reply.js'
 
 import { generateContact } from './contact.js'
 
@@ -218,7 +218,7 @@ export function generateClinicAppointment(
     booking.context
   )
   const healthAnswers = Object.keys(unansweredHealthQuestions).length
-    ? getHealthAnswersForQuestions(
+    ? generateHealthAnswersForQuestions(
         unansweredHealthQuestions,
         faker.helpers.objectKey(healthConditions)
       )
