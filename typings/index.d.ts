@@ -22,5 +22,6 @@ export interface SchoolFilterQuery {
   option?: string | string[]
   phase?: string | string[]
   programme_id?: string | string[]
+  sort?: string
   q?: string
 }

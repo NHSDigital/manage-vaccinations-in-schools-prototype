@@ -264,7 +264,9 @@ export class School extends Location {
    * @returns {Upload} Upload
    */
   get lastUpload() {
-    return this.uploads.at(-1)
+    return this.uploads
+      .filter(({ uploadedAt }) => uploadedAt)
+      .sort((a, b) => getDateValueDifference(b.uploadedAt, a.uploadedAt))[0]
   }
 
   /**
