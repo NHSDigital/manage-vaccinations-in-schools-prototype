@@ -813,7 +813,12 @@ export const en = {
     thankYou: {
       title: 'Thank you for your feedback',
       advice:
-        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
+      pharmacy: {
+        description:
+          'You may also be able to book a free NHS flu vaccination for your child at a community pharmacy:',
+        action: 'Book a pharmacy vaccination for flu'
+      }
     },
     'check-answers': {
       title: 'Check and confirm %s’s appointment details',
