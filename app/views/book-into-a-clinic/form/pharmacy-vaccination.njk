@@ -47,7 +47,5 @@
 
   {{ __("clinicBooking.pharmacy.feedback.description") | nhsukMarkdown }}
 
-  <p class='nhsuk-body'>
-    <a href="not-convenient" target="_blank" rel="noreferrer noopener">{{ __("clinicBooking.pharmacy.feedback.action") }}</a>
-  </p>
+  {{ link("not-convenient", __("clinicBooking.pharmacy.feedback.action")) | nhsukMarkdown }}
 {% endblock %}

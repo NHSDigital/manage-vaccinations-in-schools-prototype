@@ -769,8 +769,7 @@ export const en = {
         heading: 'Help us to improve',
         description:
           'Tell us the reasons you were unable to find a suitable appointment so that we can improve the clinics we offer.',
-        action:
-          'Tell us what would make our clinics more convenient (opens in new tab)'
+        action: 'Tell us what would make our clinics more convenient'
       }
     },
     notConvenient: {
