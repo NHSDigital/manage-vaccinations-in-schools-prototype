@@ -1,5 +1,6 @@
 import { UploadFormat, UploadOutcome, UploadType } from '../enums.js'
 import { generateUploadContactChanges } from '../generators/contact.js'
+import { generateUploadYearGroupChanges } from '../generators/patient.js'
 import { Patient } from '../models.js'
 
 import { createUploadMoves } from './moves.js'
@@ -102,7 +103,7 @@ export function getUploadValidations(outcome, patients) {
  *
  * Simulates what Mavis does with a file: finds the patients in it, checks it
  * for errors and, if it passes, finds any school moves it reports and any new
- * contact details for parents.
+ * contact details for parents and year group changes.
  *
  * @param {Upload} upload - Upload (must have been uploaded)
  * @param {UploadOutcome} uploadOutcome - Outcome of processing the file
@@ -121,6 +122,12 @@ export function processUpload(upload, uploadOutcome, context) {
   )
 
   createUploadMoves(upload, context)
+
+  // After moves, so pupils joining the school are included
+  upload.yearGroupChanges = generateUploadYearGroupChanges(
+    upload,
+    Patient.findAll(context)
+  )
 
   return upload
 }

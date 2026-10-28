@@ -36,6 +36,15 @@
   </div>
   {% endif %}
 
+  {% set yearGroupChanges = [] %}
+  {% for change in upload.yearGroupChangeCounts %}
+    {% set yearGroupChanges = yearGroupChanges | push(__mf("upload.yearGroupChanges.count", {
+      count: change.count,
+      from: change.from | yearGroup,
+      to: change.to | yearGroup
+    })) %}
+  {% endfor %}
+
   {{ summaryList({
     card: {
       heading: {
@@ -63,6 +72,9 @@
       school: {},
       yearGroups: {},
       patients: {} if not upload.isPrivateToSchool else none,
+      yearGroupChanges: {
+        value: yearGroupChanges | nhsukList
+      } if yearGroupChanges.length and not upload.isPrivateToSchool else none,
       teamStatus: {},
       submitted: {},
       approved: {},

@@ -10,19 +10,6 @@ import { Move } from '../models.js'
 const UNKNOWN_SCHOOL_URN = '888888'
 
 /**
- * Upload has a file that could report school moves
- * A file must have been uploaded, and passed validation and data checks
- *
- * @param {Upload} upload - Upload
- * @returns {boolean} Upload can report school moves
- */
-function canReportMoves(upload) {
-  const hasValidationErrors = Object.keys(upload.validations || {}).length > 0
-
-  return Boolean(upload.uploadedAt) && !hasValidationErrors && !upload.hasFailed
-}
-
-/**
  * Patient can be given a school move
  * Patients with a pending change to their school are excluded, as that change
  * is reviewed as part of a duplicate record instead
@@ -212,7 +199,7 @@ function generateCohortMoves(upload, patients) {
  *   records in the upload, and moves it reports
  */
 export function generateUploadMoves(upload, patients) {
-  if (!canReportMoves(upload)) {
+  if (!upload.hasPassedChecks) {
     return { patient_uuids: upload.patient_uuids, moves: [] }
   }
 
