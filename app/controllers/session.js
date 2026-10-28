@@ -76,11 +76,21 @@ export const sessionController = {
               }
             ]
           : []),
-        {
-          text: __('session.patients.label'),
-          href: `${session.uri}/patients`,
-          current: view === 'patients'
-        },
+        ...(session.type !== SessionType.Clinic ||
+        session.clinicType !== ClinicType.DropIn ||
+        [
+          SessionStatus.Active,
+          SessionStatus.Completed,
+          SessionStatus.Closed
+        ].includes(session.status)
+          ? [
+              {
+                text: __('session.patients.label'),
+                href: `${session.uri}/patients`,
+                current: view === 'patients'
+              }
+            ]
+          : []),
         ...(session.hasPsdProtocol
           ? [
               {
