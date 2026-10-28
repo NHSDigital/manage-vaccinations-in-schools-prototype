@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import { PatientStatus } from '../enums.js'
 import { Patient, Programme, School, Team } from '../models.js'
+import { getDateValueDifference } from '../utils/date.js'
 import { generateNewSiteCode } from '../utils/location.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -78,22 +79,13 @@ export const schoolController = {
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, SchoolFilterQuery>}
    */
   list(request, response) {
-    const { option, phase, programme_id, q } = request.query
+    const { option, phase, programme_id, sort, q } = request.query
     const { data } = request.session
-    const { schools } = response.locals
+    const { __, schools } = response.locals
 
     const programmes = Programme.findAll(data)
       ?.filter((programme) => !programme.isHidden)
       .sort((a, b) => a.name.localeCompare(b.name))
-
-    let results = schools
-
-    // Query
-    if (q) {
-      results = results.filter((school) =>
-        school.tokenized.includes(String(q).toLowerCase())
-      )
-    }
 
     // Convert programme IDs into an array of IDs
     let programme_ids
@@ -101,6 +93,30 @@ export const schoolController = {
       programme_ids = Array.isArray(programme_id)
         ? programme_id
         : [programme_id]
+    }
+
+    // Sort
+    let results = schools.sort((a, b) => a.name.localeCompare(b.name))
+
+    if (sort === 'lastUpload') {
+      // Sort by last upload, most recent first (schools with none go last)
+      results.sort((a, b) => {
+        const aUploadedAt = a.lastUpload?.uploadedAt
+        const bUploadedAt = b.lastUpload?.uploadedAt
+
+        if (!aUploadedAt || !bUploadedAt) {
+          return Number(!aUploadedAt) - Number(!bUploadedAt)
+        }
+
+        return getDateValueDifference(bUploadedAt, aUploadedAt)
+      })
+    }
+
+    // Query
+    if (q) {
+      results = results.filter((school) =>
+        school.tokenized.includes(String(q).toLowerCase())
+      )
     }
 
     // Filter by phase
@@ -133,9 +149,6 @@ export const schoolController = {
       })
     }
 
-    // Sort
-    results = results.sort((a, b) => a.name.localeCompare(b.name))
-
     // Results
     response.locals.results = getResults(results, request.query, 40)
     response.locals.pages = getPagination(results, request.query, 40)
@@ -147,11 +160,26 @@ export const schoolController = {
       checked: programme_id === programme.id
     }))
 
+    // Sort options
+    response.locals.sortItems = [
+      {
+        text: __('school.name.label'),
+        value: 'name',
+        checked: !sort || sort === 'name'
+      },
+      {
+        text: __('school.lastUpload.label'),
+        value: 'lastUpload',
+        checked: sort === 'lastUpload'
+      }
+    ]
+
     // Clean up session data
     delete data.option
     delete data.q
     delete data.phase
     delete data.programme_id
+    delete data.sort
 
     return response.render('school/list')
   },
@@ -162,7 +190,7 @@ export const schoolController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['phase', 'q'],
+      ['phase', 'q', 'sort'],
       ['option', 'programme_id']
     )
 

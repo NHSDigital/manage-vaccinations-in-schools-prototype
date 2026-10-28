@@ -36,6 +36,18 @@
         {{ radios({
           fieldset: {
             legend: {
+              text: __("search.sort.label"),
+              size: "s"
+            }
+          },
+          small: true,
+          items: sortItems,
+          decorate: "sort"
+        }) if sortItems }}
+
+        {{ radios({
+          fieldset: {
+            legend: {
               text: __("school.phase.label"),
               size: "s"
             }
