@@ -25,7 +25,7 @@ export function generateVaccination(patientSession, programme, batch, user) {
   let injectionSite = VaccinationSite.ArmLeftUpper
   let sequence
 
-  if (batch.vaccine.method === VaccineMethod.Intranasal) {
+  if (batch.vaccine?.method === VaccineMethod.Intranasal) {
     injectionMethod = VaccinationMethod.Intranasal
     injectionSite = VaccinationSite.Nose
   }
