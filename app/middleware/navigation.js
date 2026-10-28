@@ -9,37 +9,40 @@ export const navigation = (request, response, next) => {
   const { __, account } = response.locals
 
   const primaryNavigation = new Map([
-    ['school', 'schools'],
-    ['patient', 'patients'],
-    ['session', 'sessions'],
-    ['review', 'reviews'],
-    ['report', 'reports'],
-    ['upload', 'uploads'],
-    ['download', 'downloads'],
-    ['vaccine', 'vaccines'],
+    ['school', '/schools'],
+    ['patient', '/patients'],
+    ['session', '/sessions'],
+    ['review', '/reviews'],
+    ['report', '/reports'],
+    ['upload', '/uploads'],
+    ['download', '/downloads'],
+    ['vaccine', '/vaccines'],
     ['team', account.team.uri]
   ])
 
-  // Get currently active section
-  let activeSection = request.path.split('/')[1]
-  if (activeSection === 'programmes' && request.query.activity) {
-    activeSection = 'sessions'
-  }
-  if (['moves', 'notices', 'consents'].includes(activeSection)) {
-    activeSection = 'reviews'
+  const sectionAliases = {
+    consents: 'reviews',
+    moves: 'reviews',
+    notices: 'reviews',
+    'unmatched-appointments': 'reviews'
   }
 
+  // Get currently active section
+  let activeSection = request.path.split('/')[1]
+  activeSection = sectionAliases[activeSection] ?? activeSection
+
   // Construct primary navigation
-  let primary = []
+  const primary = []
   for (const view of account.views) {
-    const itemLabel = account.isSchoolUser
+    const href = primaryNavigation.get(view)
+    const label = account.isSchoolUser
       ? __(`${view}.listSchoolUser.label`)
       : __(`${view}.list.label`)
 
     primary.push({
-      href: `/${primaryNavigation.get(view)}`,
-      text: view === 'team' ? __(`team.show.label`) : itemLabel,
-      active: activeSection == primaryNavigation.get(view)
+      href,
+      text: view === 'team' ? __(`team.show.label`) : label,
+      active: activeSection === href.split('/')[1]
     })
   }
 
