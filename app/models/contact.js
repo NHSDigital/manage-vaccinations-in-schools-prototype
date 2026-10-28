@@ -21,6 +21,7 @@ import { BaseModel } from './base.js'
  * @property {NotifySmsStatus} [smsStatus] - SMS status
  * @property {boolean} [hasCommunicationNeeds] - Has communication needs
  * @property {string} [communicationNeeds] - Communication or language needs
+ * @property {Partial<Contact>} [pendingChanges] - Pending changes to contact details
  */
 
 /**
@@ -67,6 +68,8 @@ export class Contact extends BaseModel {
     if (this.hasCommunicationNeeds) {
       this.communicationNeeds = options?.communicationNeeds
     }
+
+    this.pendingChanges = options?.pendingChanges || {}
   }
 
   /**
@@ -85,6 +88,15 @@ export class Contact extends BaseModel {
    */
   get hasContactDetails() {
     return !!this.email || !!this.tel
+  }
+
+  /**
+   * Has pending changes
+   *
+   * @returns {boolean} Has pending changes
+   */
+  get hasPendingChanges() {
+    return Object.keys(this.pendingChanges).length > 0
   }
 
   /**

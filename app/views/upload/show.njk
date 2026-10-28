@@ -80,6 +80,10 @@
       {% include "upload/_school-moves.njk" %}
     {% endif %}
 
+    {% if upload.pendingContacts.length %}
+      {% include "upload/_contact-changes.njk" %}
+    {% endif %}
+
     {{ patientRecords({
       key: "new",
       patients: upload.newPatients
@@ -96,6 +100,10 @@
 
     {% if upload.type != UploadType.Report and upload.moves.length %}
       {% include "upload/_school-moves.njk" %}
+    {% endif %}
+
+    {% if upload.pendingContacts.length %}
+      {% include "upload/_contact-changes.njk" %}
     {% endif %}
 
     {{ patientRecords({

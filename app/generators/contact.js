@@ -3,7 +3,8 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 import {
   NotifyEmailStatus,
   NotifySmsStatus,
-  RelationshipType
+  RelationshipType,
+  UploadType
 } from '../enums.js'
 import { Contact } from '../models.js'
 
@@ -21,6 +22,15 @@ function generateEmailAddress(firstName, lastName) {
   return faker.internet
     .email({ firstName, lastName: lastName.replace(/[’']/g, '') })
     .toLowerCase()
+}
+
+/**
+ * Generate a UK mobile phone number
+ *
+ * @returns {string} Phone number
+ */
+function generatePhoneNumber() {
+  return '077## 9#####'.replace(/#+/g, (m) => faker.string.numeric(m.length))
 }
 
 /**
@@ -65,10 +75,7 @@ export function generateContact(patient, isMum, overrides = {}) {
   }
 
   // Contact details
-  const phoneNumber = '077## 9#####'.replace(/#+/g, (m) =>
-    faker.string.numeric(m.length)
-  )
-  const tel = faker.helpers.maybe(() => phoneNumber, { probability: 0.6 })
+  const tel = faker.helpers.maybe(generatePhoneNumber, { probability: 0.6 })
 
   const canSms = faker.datatype.boolean(0.5)
   const smsStatus = faker.helpers.weightedArrayElement([
@@ -177,5 +184,55 @@ export function generateContactVariation(contact) {
 }
 
 /**
- * @import { Child, Patient } from '../models.js'
+ * Generate new contact details for parents of children in an upload
+ *
+ * Picks 1–5 parents who are missing a phone number or email address, and
+ * generates the details the file adds for them. Only files that passed
+ * validation and data checks are compared with records in Mavis, and
+ * vaccination records don’t include parent details.
+ *
+ * @param {Upload} upload - Upload
+ * @param {Array<Patient>} patients - All patients
+ * @returns {object} New contact details, keyed by contact UUID
+ */
+export function generateUploadContactChanges(upload, patients) {
+  if (
+    !upload.uploadedAt ||
+    upload.hasValidationErrors ||
+    upload.hasFailed ||
+    upload.type === UploadType.Report
+  ) {
+    return {}
+  }
+
+  const inUpload = new Set(upload.patient_uuids)
+  const contacts = patients
+    .filter((patient) => inUpload.has(patient.uuid) && !patient.isSensitive)
+    .flatMap((patient) =>
+      patient.contacts.filter(({ uuid }) =>
+        patient.contact_uuids.includes(uuid)
+      )
+    )
+    .filter((contact) => !contact.tel || !contact.email)
+
+  const contactChanges = {}
+  for (const contact of faker.helpers.arrayElements(contacts, {
+    min: 1,
+    max: 5
+  })) {
+    const [firstName, ...lastNames] = contact.fullName.split(' ')
+
+    contactChanges[contact.uuid] = {
+      ...(!contact.tel && { tel: generatePhoneNumber() }),
+      ...(!contact.email && {
+        email: generateEmailAddress(firstName, lastNames.join(' '))
+      })
+    }
+  }
+
+  return contactChanges
+}
+
+/**
+ * @import { Child, Patient, Upload } from '../models.js'
  */

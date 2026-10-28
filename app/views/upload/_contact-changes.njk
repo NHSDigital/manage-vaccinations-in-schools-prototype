@@ -1,0 +1,54 @@
+{%- from "_macros/change.njk" import appChange with context -%}
+
+{% set contactRows = [] %}
+{% for contact in upload.pendingContacts %}
+  {% set newContacts %}
+    <ul>
+    {% if contact.pendingChanges.tel %}
+      <li>{{ contact.pendingChanges.tel | highlight | safe }}</li>
+    {% endif %}
+
+    {% if contact.pendingChanges.email %}
+      <li>{{ contact.pendingChanges.email | highlight | safe }}</li>
+    {% endif %}
+    </ul>
+  {% endset %}
+
+  {% set contactRows = contactRows | push([
+    {
+      html: contact.patient.formatted.fullNameAndNhsn
+    },
+    {
+      text: contact.fullNameAndRelationship
+    },
+    {
+      classes: "app-table__cell--summary-list",
+      html: newContacts
+    }
+  ]) %}
+{% endfor %}
+
+{{ heading({
+  caption: {
+    text: __("upload.show.contacts.summary"),
+    placement: "after"
+  } if upload.needsReview,
+  text: __("upload.show.contacts.title") if upload.needsReview else __("upload.show.contacts.label"),
+  level: 2,
+  size: "m"
+}) }}
+
+{{ details({
+  classes: "nhsuk-expander",
+  summary: __mf("upload.show.contacts.count", { count: contactRows.length }),
+  html: table({
+    classes: "app-table--review",
+    responsive: true,
+    head: [
+      { text: __("patient.fullNameAndNhsn.label") },
+      { text: __("contact.label") },
+      { text: __("upload.show.contacts.uploaded") }
+    ],
+    rows: contactRows
+  })
+}) | replace('class="nhsuk-details__summary"', 'class="nhsuk-details__summary" data-module="app-sticky"') }}
