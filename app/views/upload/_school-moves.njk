@@ -1,3 +1,5 @@
+{%- from "_macros/change.njk" import appChange with context -%}
+
 {% set moveRows = [] %}
 {% for move in upload.moves %}
   {% set moveRadios = radios({
@@ -30,7 +32,7 @@
       html: move.patient.formatted.fullNameAndNhsn
     },
     {
-      html: move.movementForImport
+      html: appChange(move.formatted.from_urn, move.formatted.to_urn, true)
     },
     {
       html: moveRadios if upload.needsReview else moveDecision

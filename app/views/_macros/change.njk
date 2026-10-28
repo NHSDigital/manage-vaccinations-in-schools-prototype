@@ -1,6 +1,7 @@
 {%- from "nhsuk/macros/icon.njk" import nhsukIcon -%}
-{% macro appChange(before, after) -%}
+{% macro appChange(before, after, hasLineBreak) -%}
 {{- before }}
+{%- if hasLineBreak %}<br>{% endif -%}
 {{ nhsukIcon("arrow-right", { title: "changed to" }) }}
 {{ after | highlightDifference(before, after) -}}
 {% endmacro %}
