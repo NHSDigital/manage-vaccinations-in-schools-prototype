@@ -238,7 +238,7 @@ export const uploadController = {
         processUpload(upload, uploadOutcome, data)
       } else if (type === 'request') {
         // Add assignees before updating upload
-        upload.assignee_uids = request.body.upload.assignee_uids
+        upload.assignee_emails = request.body.upload.assignee_emails
       }
 
       upload = Upload.create(upload, data)
@@ -367,10 +367,18 @@ export const uploadController = {
       )
 
       if (upload.school) {
-        response.locals.assigneeItems = upload.school.users.map((user) => ({
+        const users = [
+          {
+            email: upload.school.email,
+            firstNameAndLastName: 'School email address'
+          },
+          ...upload.school.users
+        ]
+
+        response.locals.assigneeItems = users.map((user) => ({
           text: user.email,
-          hint: user.fullName,
-          value: user.uid
+          hint: user.firstNameAndLastName,
+          value: user.email
         }))
 
         response.locals.yearGroupItems = upload.school.yearGroups.map(
