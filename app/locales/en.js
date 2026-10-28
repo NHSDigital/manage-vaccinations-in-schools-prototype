@@ -2964,6 +2964,10 @@ export const en = {
       label: 'Address',
       title: 'School address'
     },
+    email: {
+      label: 'Email address',
+      title: 'Email address'
+    },
     lastUpload: {
       label: 'Last class list upload'
     },

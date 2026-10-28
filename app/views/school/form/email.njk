@@ -1,0 +1,14 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("school.email.title") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      caption: school.name,
+      heading: title,
+      size: "l"
+    },
+    decorate: "school.email"
+  }) }}
+{% endblock %}

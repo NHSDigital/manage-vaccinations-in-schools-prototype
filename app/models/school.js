@@ -31,6 +31,7 @@ import {
  * @property {Date} [openAt] - Date school opened (or will open)
  * @property {Date} [closeAt] - Date school closed (or will close)
  * @property {SchoolClosureReason} [closeReason] - Reason school closed
+ * @property {string} [email] - Contact email address
  * @property {Array<string>} [linkedUrns] - GIAS linked URNs
  * @property {SchoolPhase} [phase] - Phase
  * @property {boolean} [isSen] - SEN school
@@ -58,6 +59,7 @@ export class School extends Location {
     this.openAt = options?.openAt && new Date(options.openAt)
     this.closeAt = options?.closeAt && new Date(options.closeAt)
     this.closeReason = options?.closeReason
+    this.email = options?.email
     this.linkedUrns = stringToArray(options?.linkedUrns)
     this.phase = options?.phase
     this.isSen = stringToBoolean(options?.isSen) || false
