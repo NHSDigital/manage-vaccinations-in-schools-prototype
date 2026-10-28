@@ -170,10 +170,32 @@ export const getHealthAnswers = (vaccine, healthCondition) => {
     return
   }
 
+  return getHealthAnswersForQuestions(vaccine.healthQuestions, healthCondition)
+}
+
+/**
+ * Get faked answers for a given set of health questions, including any
+ * sub-questions
+ *
+ * @param {object} healthQuestions - Health questions, keyed by question
+ * @param {string} healthCondition - Health condition
+ * @returns {object} Health answers
+ */
+export const getHealthAnswersForQuestions = (
+  healthQuestions,
+  healthCondition
+) => {
   const answers = {}
 
-  for (const key of Object.keys(vaccine.flatHealthQuestions)) {
+  for (const [key, question] of Object.entries(healthQuestions)) {
     answers[key] = enrichWithRealisticAnswer(key, healthCondition)
+
+    for (const subQuestionKey of Object.keys(question.conditional ?? {})) {
+      answers[subQuestionKey] = enrichWithRealisticAnswer(
+        subQuestionKey,
+        healthCondition
+      )
+    }
   }
 
   // If asthma sub-question(s) has 'Yes’ answer, change contact answer to ‘Yes’

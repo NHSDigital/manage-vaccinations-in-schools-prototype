@@ -7,7 +7,10 @@ import {
   ClinicBookingJourneyType,
   LocationSearchType,
   PatientClinicStatus,
-  ReplyDecision
+  ProgrammeType,
+  ReplyDecision,
+  VaccineCriteria,
+  VaccineMethod
 } from '../enums.js'
 import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 
@@ -677,5 +680,86 @@ export const getPreviousSessionItems = (appointments, sessionContext) => {
 }
 
 /**
+ * Get health questions for an appointment that haven’t already been answered
+ * in the child’s consent responses
+ *
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices for the appointment
+ * @param {Patient} [patient] - Child the appointment’s for, if matched
+ * @param {object} context - the context in which we'll find programmes and vaccines
+ * @returns {object} Health questions, keyed by question
+ */
+export const getUnansweredHealthQuestions = (
+  vaccinationChoices,
+  patient,
+  context
+) => {
+  const {
+    selected_programme_ids,
+    fluDecision,
+    fluAlternative,
+    mmrAlternative
+  } = vaccinationChoices
+  const selectedProgrammes = selected_programme_ids
+    .map((id) => Programme.findOne(id, context))
+    .filter(Boolean)
+
+  const vaccinesForSelectedProgrammes = []
+  for (const programme of selectedProgrammes) {
+    let agreedProgrammeVaccines = Object.values(context.vaccines).filter(
+      (vaccine) => vaccine.type === programme.type
+    )
+
+    if (programme.type === ProgrammeType.Flu) {
+      // Get the right vaccine(s) for flu, according to types of flu vaccine agreed to
+      if (fluDecision === ReplyDecision.OnlyAlternativeInjection) {
+        agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
+          ({ method }) => method === VaccineMethod.Injection
+        )
+      } else if (!fluAlternative) {
+        agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
+          ({ method }) => method === VaccineMethod.Intranasal
+        )
+      }
+    } else if (programme.type === ProgrammeType.MMR) {
+      // Get the right vaccine for MMR or MMRV, according to gelatine content agreed to
+      agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
+        ({ criteria }) =>
+          criteria ===
+          (mmrAlternative
+            ? VaccineCriteria.AlternativeInjection
+            : VaccineCriteria.Injection)
+      )
+    }
+
+    vaccinesForSelectedProgrammes.push(...agreedProgrammeVaccines)
+  }
+
+  // Collate the questions from the vaccines, making sure we don't duplicate them
+  const questions = new Map()
+  for (const vaccine of vaccinesForSelectedProgrammes) {
+    for (const [key, value] of Object.entries(vaccine.healthQuestions)) {
+      questions.set(key, value)
+    }
+  }
+
+  // Remove any questions for which we already have an answer
+  if (patient) {
+    for (const programme of selectedProgrammes) {
+      const patientProgramme = patient.programmes[programme.id]
+      const consentHealthAnswers = patientProgramme?.consentHealthAnswers ?? {}
+
+      for (const [key, answers] of Object.entries(consentHealthAnswers)) {
+        if (answers.length > 0) {
+          questions.delete(key)
+        }
+      }
+    }
+  }
+
+  return Object.fromEntries(questions)
+}
+
+/**
  * @import { Request } from 'express'
+ * @import { ClinicVaccinationChoices } from '../models.js'
  */

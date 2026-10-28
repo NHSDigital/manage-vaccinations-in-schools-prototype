@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import { addYears } from 'date-fns'
 
+import { healthConditions } from '../datasets/health-conditions.js'
 import {
   Adjustment,
   ClinicAppointmentStatus,
@@ -9,6 +10,8 @@ import {
   ReplyDecision
 } from '../enums.js'
 import { Child, ClinicAppointment } from '../models.js'
+import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
+import { getHealthAnswersForQuestions } from '../utils/reply.js'
 
 import { generateContact } from './contact.js'
 
@@ -207,7 +210,21 @@ export function generateClinicAppointment(
 
   const status = ClinicAppointmentStatus.Booked
 
-  const appointment = booking.addAppointment({
+  // Answer any health questions not already answered in consent responses,
+  // picking a health condition the same way as for consent responses
+  const unansweredHealthQuestions = getUnansweredHealthQuestions(
+    vaccinationChoices,
+    patient_uuid ? patient : undefined,
+    booking.context
+  )
+  const healthAnswers = Object.keys(unansweredHealthQuestions).length
+    ? getHealthAnswersForQuestions(
+        unansweredHealthQuestions,
+        faker.helpers.objectKey(healthConditions)
+      )
+    : undefined
+
+  return booking.addAppointment({
     uuid,
     booking_uuid,
     patient_uuid,
@@ -226,10 +243,9 @@ export function generateClinicAppointment(
     mmrAlternative,
     hasAdditionalSupportNeeds,
     additionalSupportNeedsDetails,
+    healthAnswers,
     status
   })
-
-  return appointment
 }
 
 /**
