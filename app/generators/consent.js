@@ -11,10 +11,10 @@ import {
 import { Consent } from '../models.js'
 import { today } from '../utils/date.js'
 import {
-  getHealthAnswers,
+  generateHealthAnswers,
   getHealthConditionsNeedingTriage,
   getRefusalReason,
-  getTriageNote
+  generateTriageNote
 } from '../utils/reply.js'
 
 /**
@@ -101,8 +101,8 @@ export function generateConsent(
     )
   }
 
-  const healthAnswers = getHealthAnswers(vaccine, healthCondition)
-  const triageNote = getTriageNote(healthAnswers, healthCondition)
+  const healthAnswers = generateHealthAnswers(vaccine, healthCondition)
+  const triageNote = generateTriageNote(healthAnswers, healthCondition)
   const refusalReason = getRefusalReason(programme.type, decision)
 
   // If decision is declined then a follow-up consultation was requested
