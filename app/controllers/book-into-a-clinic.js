@@ -1319,6 +1319,37 @@ export const bookIntoClinicController = {
   },
 
   /**
+   * If the parent's using community pharmacies to book flu, but still has other vaccinations
+   * to book and they're trying to find a convenient clinic for those remaining, strip flu
+   * from the booking and let them go through the process again.
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  removeFlu(request, response) {
+    const { data } = request.session
+    const { appointment_uuid, booking_uuid } = request.params
+
+    // Find out which programme(s) we need to leave selected
+    const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    const appointment = booking.findAppointment(appointment_uuid)
+    const remainingProgramme_ids = appointment.selected_programme_ids.filter(
+      (id) => id !== 'flu'
+    )
+
+    // Update the programmes both in the draft appointment and the auto-stored session data
+    appointment.selected_programme_ids = remainingProgramme_ids
+    ClinicBooking.update(booking_uuid, booking, data.wizard)
+    data.appointment['selected_programme_ids'] = remainingProgramme_ids
+
+    // Leave the user on the programme selection page, so they can see the effect that
+    // following the link had
+    const relativePath = appointment.uri.new.replace('/book-into-a-clinic', '')
+    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
+
+    return saveAndRedirect(request, response, redirectUrl)
+  },
+
+  /**
    * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
