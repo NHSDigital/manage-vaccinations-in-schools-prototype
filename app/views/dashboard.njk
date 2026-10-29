@@ -12,9 +12,11 @@
 
   {{ warningCallout({
     heading: __("notice.list.title"),
-    html: link("/notices", __mf("notice.warning", { count: notices.length }), {
-      classes: "nhsuk-link--no-visited-state"
-    }) | nhsukMarkdown
+    text: link({
+      classes: "nhsuk-link--no-visited-state",
+      text: __mf("notice.warning", { count: notices.length }),
+      href: "/notices"
+    })
   }) if notices.length }}
 
   <ul class="nhsuk-grid-row nhsuk-card-group">
