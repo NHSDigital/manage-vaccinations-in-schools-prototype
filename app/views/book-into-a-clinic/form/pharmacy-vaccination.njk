@@ -9,6 +9,7 @@
     size: "l"
   }) }}
 
+  {# Offer a redirect to the NBS for booking a pharmacy appointment #}
   {% if appointment.selected_programme_ids.length > 1 %}
     {{ heading({
       text: __("clinicBooking.pharmacy.flu.heading"),
@@ -24,6 +25,7 @@
     href: pharmacyBookingUri
   }) }}
 
+  {# If the parent had selected more than just flu, offering trying without flu #}
   {% if appointment.selected_programme_ids.length > 1 %}
     {{ heading({
       text: __("clinicBooking.pharmacy.others.heading"),
@@ -31,31 +33,27 @@
       size: "m"
     }) }}
 
-    {{ __mf("clinicBooking.pharmacy.others.description", {
-      count: appointment.selected_programme_ids.length - 1,
-      programmeNames: otherProgrammeNames
-    }) | nhsukMarkdown }}
-
     <p class="nhsuk-body">
-      {{ link({
-        text: __("clinicBooking.pharmacy.others.action", otherProgrammeNames),
-        href: "remove-flu"
+      {{ __mf("clinicBooking.pharmacy.others.description.intro", {
+        count: appointment.selected_programme_ids.length - 1,
+        programmeNames: otherProgrammeNames
       }) }}
+      <a href="remove-flu" class="nhsuk-link">{{ __("clinicBooking.pharmacy.others.description.link", otherProgrammeNames) }}</a>.
     </p>
   {% endif %}
 
+  {# Keep the possibility of giving us feedback on the clinics; we'll re-offer NBS at the end of that #}
   {{ heading({
     text: __("clinicBooking.pharmacy.feedback.heading"),
     level: 2,
     size: "m"
   }) }}
 
-  {{ __("clinicBooking.pharmacy.feedback.description") | nhsukMarkdown }}
-
   <p class="nhsuk-body">
     {{ link({
-      text: __("clinicBooking.pharmacy.feedback.action"),
+      text: __("clinicBooking.pharmacy.feedback.description.link"),
       href: "not-convenient"
     }) }}
+    {{ __("clinicBooking.pharmacy.feedback.description.outro") | safe }}
   </p>
 {% endblock %}

@@ -756,20 +756,23 @@ export const en = {
       flu: {
         heading: 'Flu vaccination',
         description:
-          'You may be able to book a free NHS flu vaccination at a community pharmacy. You will be taken to the Vaccinations National Booking Service to continue.',
+          'You may be able to book a free NHS flu vaccination at a pharmacy. You will be taken to the Vaccinations National Booking Service to continue.',
         action: 'Book a pharmacy vaccination for flu'
       },
       others: {
         heading: 'Other vaccinations',
-        description:
-          'For your child’s {programmeNames} {count, plural, one {vaccination} other {vaccinations}}, you may be able to find a more convenient clinic by booking an appointment for only {count, plural, one {that programme} other {those programmes}}.',
-        action: 'Look for a clinic offering only %s vaccinations'
+        description: {
+          intro:
+            'For your child’s {programmeNames} {count, plural, one {vaccination} other {vaccinations}}, you may be able to ',
+          link: 'find a more convenient clinic offering only %s vaccinations'
+        }
       },
       feedback: {
         heading: 'Help us to improve',
-        description:
-          'Tell us the reasons you were unable to find a suitable appointment so that we can improve the clinics we offer.',
-        action: 'Tell us what would make our clinics more convenient'
+        description: {
+          link: 'Tell us the reasons you were unable to find a suitable appointment',
+          outro: ' so that we can improve the clinics we offer.'
+        }
       }
     },
     notConvenient: {
@@ -816,7 +819,7 @@ export const en = {
         'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
       pharmacy: {
         description:
-          'You may also be able to book a free NHS flu vaccination for your child at a community pharmacy:',
+          'You may also be able to book a free NHS flu vaccination for your child at a pharmacy.',
         action: 'Book a pharmacy vaccination for flu'
       }
     },
