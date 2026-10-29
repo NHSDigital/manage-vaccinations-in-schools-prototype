@@ -18,6 +18,7 @@ import {
   formatList,
   formatProgress,
   formatTag,
+  formatWithSecondaryText,
   formatYearGroups,
   stringToArray,
   stringToBoolean
@@ -470,6 +471,14 @@ export class Upload extends BaseModel {
               return formatStep(this.uploadedAt, this.uploadedBy)
             case 'uploadedAt':
               return formatDate(this.uploadedAt, dateOptions)
+            case 'uploadedBy':
+              return (
+                this.uploadedBy &&
+                formatWithSecondaryText(
+                  this.uploadedBy.fullName,
+                  this.uploadedBy.role
+                )
+              )
             case 'submitted':
               return formatStep(this.submittedAt, this.submittedBy)
             case 'submittedAt':
