@@ -6,6 +6,7 @@ import _ from 'lodash'
 import programmesData from '../datasets/programmes.js'
 import {
   ClinicAppointmentStatus,
+  ClinicType,
   ConsentStatus,
   ConsentWindow,
   InstructionStatus,
@@ -76,6 +77,8 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasRegistration] - Session has registration?
  *
  *   Clinics only
+ * @property {ClinicType} [clinicType] - open, restricted or drop-in?
+ * @property {string} clinicAudience - for restricted-invite clinics, who's it aimed at? (SAIS-facing)
  * @property {boolean} [canVaccinateForOtherProgrammes] - allow programmes beyond those targeted to be administered?
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [slotLength] - the default length of an appointment, in minutes; for flu-only clinics, this is the nasal spray length
@@ -150,6 +153,8 @@ export class Session extends BaseModel {
     this.register = options?.register || {}
 
     if (this.type === SessionType.Clinic) {
+      this.clinicType = options?.clinicType
+      this.clinicAudience = options?.clinicAudience
       this.canVaccinateForOtherProgrammes = stringToBoolean(
         options?.canVaccinateForOtherProgrammes
       )
@@ -495,6 +500,11 @@ export class Session extends BaseModel {
    * @returns {boolean} - true if we can differentiate short and long appointments, or false otherwise
    */
   get canBeSetUpForLongerAppointments() {
+    // No such thing as appointments in drop-in clinics
+    if (this.clinicType === ClinicType.DropIn) {
+      return false
+    }
+
     // Appointments in flu-only clinics can be nasal or IM (short or long)
     if (this.isFluOnlyClinic) {
       return true
@@ -1018,7 +1028,9 @@ export class Session extends BaseModel {
    */
   get shortName() {
     if (this.type === SessionType.Clinic) {
-      return `${this.programmeNames.titleCase} clinic at ${this.location.name}`
+      return this.clinicType === ClinicType.DropIn
+        ? `${this.programmeNames.titleCase} drop-in clinic at ${this.location.name}`
+        : `${this.programmeNames.titleCase} clinic at ${this.location.name}`
     }
 
     if (this.type === SessionType.Home) {
@@ -1517,6 +1529,14 @@ export class Session extends BaseModel {
               return this.unmatchedConsents.length > 0
                 ? filters.plural(this.unmatchedConsents.length, 'child')
                 : undefined
+            case 'clinicType':
+              return this.clinicType === ClinicType.Restricted
+                ? formatWithSecondaryText(
+                    this.clinicType,
+                    `Audience: ${this.clinicAudience}`,
+                    true
+                  )
+                : this.clinicType
             case 'programmes':
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
             case 'catchUps':

@@ -1,0 +1,30 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.advertise.programmes.title") %}
+
+{% set programmeItems = [] %}
+{% for programme in bookingLinkProgrammes %}
+  {% set programmeItems = programmeItems | push({
+    text: programme.name,
+    value: programme.id,
+    hint: clinicCountHint(
+      programme.openClinicCount,
+      programme.restrictedClinicCount,
+      programme.name | replace("Flu", "flu")
+    )
+  }) %}
+{% endfor %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    hint: __("session.advertise.programmes.hint"),
+    items: programmeItems,
+    decorate: "clinicInvitation.programme_ids"
+  }) }}
+{% endblock %}

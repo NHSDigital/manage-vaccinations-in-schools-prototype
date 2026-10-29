@@ -1,0 +1,34 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("clinicBooking.invitationExpired.title") %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {{ heading({
+        text: title,
+        size: "l"
+      }) }}
+
+      {% call insetText() %}
+        {{ __("clinicBooking.invitationExpired.problem") | nhsukMarkdown }}
+      {% endcall %}
+
+      {{ heading({
+        text: __("clinicBooking.invitationExpired.findAnother.title"),
+        size: "m",
+        level: 2
+      }) }}
+
+      {{ __("clinicBooking.invitationExpired.findAnother.description") | nhsukMarkdown }}
+
+      {# Book as if there was no invitation, so only open clinics are offered #}
+      {{ button({
+        text: __("clinicBooking.invitationExpired.confirm"),
+        href: "new"
+      }) }}
+
+      {{ __("clinicBooking.invitationExpired.guidance", { team: team }) | nhsukMarkdown }}
+    </div>
+  </div>
+{% endblock %}

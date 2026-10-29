@@ -1,0 +1,17 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicInvitation.restrictedClinics.title") %}
+
+{% block form %}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        caption: inviteCaption,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: restrictedClinicItems,
+    decorate: "clinicInvitation.restrictedClinic_ids"
+  }) }}
+{% endblock %}

@@ -84,7 +84,8 @@ export const en = {
   },
   form: {
     confirm: 'Save changes',
-    continue: 'Continue'
+    continue: 'Continue',
+    optionalSuffix: ' (optional)'
   },
   error: {
     title: 'There is a problem'
@@ -357,6 +358,60 @@ export const en = {
         'Clinic appointment made by {{appointment.contact.fullName}} archived'
     }
   },
+  clinicInvitation: {
+    programmes: {
+      label: 'Programmes'
+    },
+    clinicCount: {
+      none: 'No clinics are scheduled for {programmeName}',
+      open: '{count, plural, one {1 open clinic is} other {# open clinics are}} scheduled for {programmeName}',
+      restricted:
+        '{count, plural, one {1 restricted invitation clinic is} other {# restricted invitation clinics are}} scheduled for {programmeName}',
+      both: '{openCount, plural, one {1 open clinic} other {# open clinics}} and {restrictedCount, plural, one {1 restricted invitation clinic} other {# restricted invitation clinics}} are scheduled for {programmeName}'
+    },
+    clinicTypes: {
+      title: 'Which clinic types do you want to offer?',
+      label: 'Clinic types',
+      open: {
+        label: 'All open clinics',
+        hint: '{count, plural, =0 {No open clinics are} one {1 open clinic is} other {{count} open clinics are}} scheduled for {programmeNames}',
+        noneScheduled:
+          'If you include open clinics, parents can also book any that are scheduled after you send the invitation.'
+      },
+      restricted: {
+        label: 'Specific restricted invitation clinics',
+        hint: '{count, plural, =0 {No restricted invitation clinics are} one {1 restricted invitation clinic is} other {{count} restricted invitation clinics are}} scheduled for {programmeNames}'
+      }
+    },
+    noRestrictedClinics: {
+      title:
+        'No restricted invitation clinics offer all the selected programmes',
+      description:
+        'There are restricted invitation clinics for {{restrictedProgrammeNames}}, but none of them offer {{programmeNames}} together.',
+      advice: {
+        invitation:
+          'To offer restricted invitation clinics, send a separate invitation for each programme.',
+        link: 'To offer restricted invitation clinics, create a separate link for each programme.'
+      },
+      consequence:
+        'If you continue, parents will only be offered open clinics.',
+      confirm: 'Continue with open clinics only',
+      change: 'Change programmes'
+    },
+    restrictedClinics: {
+      title: 'Which restricted invitation clinics do you want to offer?',
+      label: 'Restricted invitation clinics'
+    },
+    checkAnswers: {
+      title: 'Check and confirm the invitation details',
+      intro: 'Check the invitation details before sending.',
+      summaryTitle: 'Invitation details',
+      confirm: {
+        single: 'Send clinic invitation',
+        multiple: 'Send clinic invitations'
+      }
+    }
+  },
   clinicAppointment: {
     label: 'Appointment details',
     show: {
@@ -487,6 +542,31 @@ export const en = {
         'There are no clinics scheduled for {{ programmes }} vaccinations at this time.',
       guidance:
         'Contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+    },
+    invitationExpired: {
+      title: 'The clinic invitation has expired',
+      problem: 'The clinics that your child was invited to have now passed.',
+      findAnother: {
+        title: 'Find another clinic',
+        description:
+          'You can still find other clinics that can provide the vaccinations that your child is eligible for.'
+      },
+      confirm: 'Start now',
+      guidance:
+        'You can also contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+    },
+    restrictedFullyBooked: {
+      title: 'Clinics are now fully booked',
+      problem:
+        'The clinics that your child was invited to are now fully booked.',
+      findAnother: {
+        title: 'Find another clinic',
+        description:
+          'You can still find other clinics that can provide the vaccinations that your child is eligible for.',
+        offline:
+          'You can also contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
+        confirm: 'Start now'
+      }
     },
     fullyBooked: {
       title: 'All clinics are now fully booked',
@@ -701,9 +781,30 @@ export const en = {
       confirm: 'Continue anyway',
       cancel: 'Try another location'
     },
+    offerRestrictedClinics: {
+      title: 'Do you want to offer booking into restricted invitation clinics?',
+      yes: 'Yes',
+      yesHint: 'You can choose the clinics in the next step',
+      no: 'No'
+    },
+    restrictedClinics: {
+      title: 'Which restricted invitation clinics do you want to offer?'
+    },
     clinicLocation: {
       title: 'Choose a clinic for %s’s appointment',
-      hint: 'The following clinics are ordered by distance from %s'
+      hint: 'The following clinics are ordered by distance from %s',
+      invited: {
+        label: {
+          parent: 'Clinics specifically for %s',
+          team: 'Restricted invitation clinics'
+        }
+      },
+      other: {
+        label: {
+          parent: 'Clinics available to all parents',
+          team: 'Open clinics'
+        }
+      }
     },
     clinicDate: {
       title: 'Choose a clinic date for %s’s appointment',
@@ -1935,7 +2036,6 @@ export const en = {
         }
       },
       clinicCount: {
-        hint: '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {# clinics are scheduled for {programmeName}}}',
         someParagraph:
           '{count, plural, one {There is 1 clinic scheduled for the {programmeName} programme.} other {There are # clinics scheduled for the {programmeName} programme.}}',
         noneParagraph:
@@ -1967,8 +2067,6 @@ export const en = {
         hint: {
           children:
             '{count, plural, one {1 child can be invited for {programmeName}} other {{count} children can be invited for {programmeName}}}',
-          clinics:
-            '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {{count} clinics are scheduled for {programmeName}}}',
           combined: '{{childrenHint}}<br>{{clinicsHint}}'
         }
       },
@@ -2870,7 +2968,7 @@ export const en = {
       title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
       count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} are due a vaccination for at least 1 programme.',
+        '{count, plural, =0 {No children are} one {1 child is} other {# children are}} due a vaccination for at least 1 programme.',
       description:
         'You can now send clinic booking invitations to their parents.',
       programme: 'Which programmes do you want to send invitations for?',
@@ -3279,6 +3377,12 @@ export const en = {
         available: {
           label: 'Available slots'
         },
+        capacity: {
+          label: 'Maximum drop-ins'
+        },
+        dropInLength: {
+          label: 'Minutes per child'
+        },
         programmeRequests: {
           label: '%s appointments'
         },
@@ -3322,6 +3426,20 @@ export const en = {
       label: 'Year groups',
       title: 'Which year groups do you want to invite to this session?'
     },
+    clinicType: {
+      label: 'Clinic type',
+      title: 'Is this clinic session open, restricted invitation, or drop-in?',
+      hint: {
+        open: 'Any parent can see this session when they’re searching for an available clinic',
+        restricted:
+          'Only specific parents who you send invitations to can see it',
+        dropIn: 'Not available for booking'
+      },
+      audience: {
+        label: 'Audience',
+        hint: 'Your team will see this when inviting children to clinics'
+      }
+    },
     clinic: {
       label: 'Clinic location',
       title: 'Where will this session be held?',
@@ -3336,7 +3454,11 @@ export const en = {
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
-      hint: 'Parents will be able to book appointments between these times.',
+      hint: {
+        booking:
+          'Parents will be able to book appointments between these times.',
+        dropIn: 'This is to help calculate how many vaccinations are possible.'
+      },
       label: 'Vaccination periods',
       period: {
         title: 'Vaccination period %d',
@@ -3375,8 +3497,14 @@ export const en = {
       }
     },
     appointmentLengths: {
-      label: 'Appointment length',
-      title: 'How long are your appointments?',
+      label: {
+        booking: 'Appointment length',
+        dropIn: 'Minutes per child'
+      },
+      title: {
+        booking: 'How long are your appointments?',
+        dropIn: 'How long will it take to vaccinate each child?'
+      },
       flu: {
         short: {
           label: 'Time for a nasal spray, in minutes'
@@ -3405,7 +3533,10 @@ export const en = {
       suffix: 'minutes'
     },
     totalSlots: {
-      label: 'Number of slots'
+      label: {
+        booking: 'Number of slots',
+        dropIn: 'Maximum drop-ins'
+      }
     },
     appointments: {
       label: 'Appointments'
@@ -3429,7 +3560,7 @@ export const en = {
       label: 'Status'
     },
     type: {
-      label: 'Type',
+      label: 'Session type',
       title: 'What type of session is this?'
     },
     consentUrl: {
@@ -3476,10 +3607,7 @@ export const en = {
       label: 'Share a booking link for clinics',
       programmes: {
         title: 'Select the clinic programmes for your link',
-        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
-        programme: {
-          hint: '{count, plural, =0 {No clinics are scheduled} one {1 clinic is scheduled} other {{count} clinics are scheduled}}'
-        }
+        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.'
       },
       link: {
         title: 'Copy this link',
