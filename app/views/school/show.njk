@@ -46,9 +46,12 @@
       {{ warningCallout({
         classes: "nhsuk-u-margin-top-3",
         heading: __("school.patientsMissingNhsNumber.title"),
-        html: link(school.uri + "?option=hasMissingNhsNumber", __mf("school.patientsMissingNhsNumber.count", {
-          count: school.patientsMissingNhsNumber.length
-        })) | nhsukMarkdown
+        text: link({
+          text: __mf("school.patientsMissingNhsNumber.count", {
+            count: school.patientsMissingNhsNumber.length
+          }),
+          href: school.uri + "?option=hasMissingNhsNumber"
+        })
       }) if school.patientsMissingNhsNumber.length }}
 
       {{ heading({
