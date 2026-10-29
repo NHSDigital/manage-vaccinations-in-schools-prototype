@@ -40,6 +40,7 @@ import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
 import {
   ConjunctionType,
+  isPharmacyVaccinationAvailable,
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import { saveAndRedirect } from '../utils/redirect.js'
@@ -907,6 +908,19 @@ export const bookIntoClinicController = {
         location: session.clinic.formatted.nameAndAddress,
         date: session.formatted.date
       }
+    } else if (view === 'pharmacy-vaccination') {
+      const otherProgramme_ids = appointment.selected_programme_ids.filter(
+        (id) => id !== 'flu'
+      )
+      const canBeOfferedMmrv = appointment.patient_uuid
+        ? appointment.patient?.canBeOfferedMmrv
+        : appointment.child?.canBeOfferedMmrv
+      response.locals.otherProgrammeNames = programmeNamesListForSentence(
+        otherProgramme_ids,
+        canBeOfferedMmrv,
+        ConjunctionType.and,
+        data
+      )
     } else if (view === 'appointment-length') {
       const session = Session.findOne(appointment.session_id, data)
       response.locals.clinicSummary = {
@@ -985,6 +999,17 @@ export const bookIntoClinicController = {
     }
 
     response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
+
+    // Can we redirect flu vaccinations to NBS if needed?
+    const offerPharmacies = isPharmacyVaccinationAvailable(
+      appointment?.selected_programme_ids,
+      data
+    )
+    if (offerPharmacies) {
+      response.locals.isPharmacyVaccinationAvailable = true
+      response.locals.pharmacyBookingUri =
+        'https://www.nhs.uk/nhs-services/vaccination-and-booking-services/book-flu-vaccination/'
+    }
 
     // All health questions use the same view
     let key
@@ -1291,6 +1316,37 @@ export const bookIntoClinicController = {
 
       return saveAndRedirect(request, response, paths.next)
     }
+  },
+
+  /**
+   * If the parent's using community pharmacies to book flu, but still has other vaccinations
+   * to book and they're trying to find a convenient clinic for those remaining, strip flu
+   * from the booking and let them go through the process again.
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  removeFlu(request, response) {
+    const { data } = request.session
+    const { appointment_uuid, booking_uuid } = request.params
+
+    // Find out which programme(s) we need to leave selected
+    const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
+    const appointment = booking.findAppointment(appointment_uuid)
+    const remainingProgramme_ids = appointment.selected_programme_ids.filter(
+      (id) => id !== 'flu'
+    )
+
+    // Update the programmes both in the draft appointment and the auto-stored session data
+    appointment.selected_programme_ids = remainingProgramme_ids
+    ClinicBooking.update(booking_uuid, booking, data.wizard)
+    data.appointment['selected_programme_ids'] = remainingProgramme_ids
+
+    // Leave the user on the programme selection page, so they can see the effect that
+    // following the link had
+    const relativePath = appointment.uri.new.replace('/book-into-a-clinic', '')
+    const redirectUrl = `${request.baseUrl}${relativePath}/programmes`
+
+    return saveAndRedirect(request, response, redirectUrl)
   },
 
   /**

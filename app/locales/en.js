@@ -751,6 +751,30 @@ export const en = {
     abandon: {
       label: 'I cannot find a convenient appointment'
     },
+    pharmacy: {
+      title: 'Book your child’s flu vaccination at a pharmacy',
+      flu: {
+        heading: 'Flu vaccination',
+        description:
+          'You may be able to book a free NHS flu vaccination at a pharmacy. You will be taken to the Vaccinations National Booking Service to continue.',
+        action: 'Book a pharmacy vaccination for flu'
+      },
+      others: {
+        heading: 'Other vaccinations',
+        description: {
+          intro:
+            'For your child’s {programmeNames} {count, plural, one {vaccination} other {vaccinations}}, you may be able to ',
+          link: 'find a more convenient clinic offering only %s vaccinations'
+        }
+      },
+      feedback: {
+        heading: 'Help us to improve',
+        description: {
+          link: 'Tell us the reasons you were unable to find a suitable appointment',
+          outro: ' so that we can improve the clinics we offer.'
+        }
+      }
+    },
     notConvenient: {
       title: 'We’re sorry you’ve not been able to find a convenient clinic',
       intro:
@@ -792,7 +816,12 @@ export const en = {
     thankYou: {
       title: 'Thank you for your feedback',
       advice:
-        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
+        'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
+      pharmacy: {
+        description:
+          'You may also be able to book a free NHS flu vaccination for your child at a pharmacy.',
+        action: 'Book a pharmacy vaccination for flu'
+      }
     },
     'check-answers': {
       title: 'Check and confirm %s’s appointment details',

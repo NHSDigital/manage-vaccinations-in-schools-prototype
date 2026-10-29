@@ -2,6 +2,7 @@
 
 {% block afterForm %}
   {% if not patient %}
+    {% set redirectPage = ("/pharmacy-vaccination" if isPharmacyVaccinationAvailable else "/not-convenient") %}
     {{ appButtonGroup({
       buttons: [
         {
@@ -11,7 +12,7 @@
       links: [
         {
           text: __("clinicBooking.abandon.label"),
-          href: appointment.uri.new + "/not-convenient"
+          href: appointment.uri.new + redirectPage
         }
       ]
     }) }}
