@@ -62,7 +62,8 @@
     rows: summaryRows(upload, {
       requested: {},
       assignees: {},
-      uploaded: {} if not upload.isPrivateToSchool else none,
+      uploadedAt: {} if not upload.isPrivateToSchool else none,
+      uploadedBy: {} if not upload.isPrivateToSchool else none,
       fileName: {
         changeText: __("actions.download"),
         changeLabel: upload.fileName,
@@ -70,8 +71,8 @@
       } if not upload.isPrivateToSchool else none,
       format: {} if not upload.isPrivateToSchool else none,
       school: {},
-      yearGroups: {},
       patients: {} if not upload.isPrivateToSchool else none,
+      yearGroups: {},
       yearGroupChanges: {
         value: yearGroupChanges | nhsukList
       } if yearGroupChanges.length and not upload.isPrivateToSchool else none,
@@ -198,11 +199,11 @@
         } if account.can("approve", upload),
         {
           label: __("upload.show.decision.reject.label"),
+          hint: __("upload.show.decision.reject.label"),
           value: "reject",
           conditional: {
             html: textarea({
               label: __("upload.rejectionReason.title"),
-              hint: __("upload.rejectionReason.hint"),
               decorate: "upload.rejectionReason"
             })
           }

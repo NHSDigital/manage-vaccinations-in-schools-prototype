@@ -3753,8 +3753,7 @@ export const en = {
     },
     rejectionReason: {
       label: 'Reason for rejection',
-      title: 'Why are you rejecting this upload?',
-      hint: 'This information will be shown to the school user'
+      title: 'Why are you rejecting this upload?'
     },
     submit: {
       confirm: 'Send to vaccination team',
@@ -3764,7 +3763,7 @@ export const en = {
       label: 'Uploads',
       title: 'Uploads',
       results: 'View uploads',
-      description: 'Upload cohort, class list and vaccination records'
+      description: 'Upload records and review class lists sent by schools'
     },
     listSchoolUser: {
       label: 'Send pupil information',
@@ -3803,7 +3802,8 @@ export const en = {
           label: 'Approve and add %s to Mavis'
         },
         reject: {
-          label: 'Reject upload'
+          label: 'Reject upload',
+          hint: 'You can explain why you’re rejecting the upload before confirming your decision. The school will be notified by email.'
         },
         delete: {
           label: 'Delete upload'
@@ -3883,14 +3883,13 @@ export const en = {
         }
       },
       contacts: {
-        label: 'New contacts',
-        title: 'New contacts (no action needed)',
+        label: 'New parent contacts',
+        title: 'New parent contacts (no action needed)',
         summary:
           'If you approve the upload, new contacts will be added to existing records.',
         count:
-          '{count, plural, =0 {No parents or guardians} one {1 new contact} other {# new contacts}}',
-        uploaded: 'New contacts',
-        missing: 'Not provided'
+          '{count, plural, =0 {No parent contacts} one {1 new parent contact} other {# new parent contacts}}',
+        uploaded: 'New parent contacts'
       }
     },
     new: {
@@ -3982,6 +3981,12 @@ export const en = {
     },
     uploaded: {
       label: 'Uploaded'
+    },
+    uploadedAt: {
+      label: 'Uploaded on'
+    },
+    uploadedBy: {
+      label: 'Uploaded by'
     },
     submitted: {
       label: 'Sent for approval'
