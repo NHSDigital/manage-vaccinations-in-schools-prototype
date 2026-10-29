@@ -36,7 +36,12 @@
       programmeNames: otherProgrammeNames
     }) | nhsukMarkdown }}
 
-    {{ link("remove-flu", __("clinicBooking.pharmacy.others.action", otherProgrammeNames)) | nhsukMarkdown }}
+    <p class="nhsuk-body">
+      {{ link({
+        text: __("clinicBooking.pharmacy.others.action", otherProgrammeNames),
+        href: "remove-flu"
+      }) }}
+    </p>
   {% endif %}
 
   {{ heading({
@@ -47,5 +52,10 @@
 
   {{ __("clinicBooking.pharmacy.feedback.description") | nhsukMarkdown }}
 
-  {{ link("not-convenient", __("clinicBooking.pharmacy.feedback.action")) | nhsukMarkdown }}
+  <p class="nhsuk-body">
+    {{ link({
+      text: __("clinicBooking.pharmacy.feedback.action"),
+      href: "not-convenient"
+    }) }}
+  </p>
 {% endblock %}
