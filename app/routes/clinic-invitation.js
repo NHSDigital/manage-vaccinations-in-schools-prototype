@@ -3,6 +3,7 @@ import express from 'express'
 import { clinicInvitationController as clinicInvitation } from '../controllers/clinic-invitation.js'
 import { patientController as patient } from '../controllers/patient.js'
 import { schoolController as school } from '../controllers/school.js'
+import { sessionController as session } from '../controllers/session.js'
 import { ClinicInvitationJourneyType } from '../enums.js'
 
 /**
@@ -59,6 +60,18 @@ schoolRouter.use((request, response, next) =>
 schoolRouter.get('/', clinicInvitation.new)
 addInviteJourneyRoutes(schoolRouter)
 
+// JOURNEY: Invite the children who weren't vaccinated in a completed school session
+const sessionRouter = express.Router({ strict: true, mergeParams: true })
+sessionRouter.use(setJourneyType(ClinicInvitationJourneyType.Session))
+// Populate `response.locals.session`
+sessionRouter.use((request, response, next) =>
+  session.read(request, response, next, request.params.session_id, undefined)
+)
+sessionRouter.get('/', clinicInvitation.new)
+// Close the session as its invitations are sent (from the programmes page, the last in the journey)
+sessionRouter.post('/:invite_id/new/programmes', session.close)
+addInviteJourneyRoutes(sessionRouter)
+
 // JOURNEY: Share a booking link that parents can use to book into clinics
 const bookingLinkRouter = express.Router({ strict: true, mergeParams: true })
 bookingLinkRouter.use(setJourneyType(ClinicInvitationJourneyType.BookingLink))
@@ -70,4 +83,5 @@ bookingLinkRouter.get('/:invite_id/copy-link', clinicInvitation.showLink)
 export const clinicInvitationRoutes = bulkRouter
 export const patientClinicInvitationRoutes = patientRouter
 export const schoolClinicInvitationRoutes = schoolRouter
+export const sessionClinicInvitationRoutes = sessionRouter
 export const bookingLinkClinicInvitationRoutes = bookingLinkRouter

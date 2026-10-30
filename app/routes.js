@@ -19,7 +19,8 @@ import {
   bookingLinkClinicInvitationRoutes,
   clinicInvitationRoutes,
   patientClinicInvitationRoutes,
-  schoolClinicInvitationRoutes
+  schoolClinicInvitationRoutes,
+  sessionClinicInvitationRoutes
 } from './routes/clinic-invitation.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
@@ -108,6 +109,10 @@ router.use('/schools/:school_id/invite-to-clinic', schoolClinicInvitationRoutes)
 router.use('/schools', schoolRoutes)
 router.use('/sessions/advertise', bookingLinkClinicInvitationRoutes)
 router.use('/sessions/:session_id/book-into-a-clinic', bookIntoClinicRoutes)
+router.use(
+  '/sessions/:session_id/invite-to-clinic',
+  sessionClinicInvitationRoutes
+)
 router.use('/sessions/:session_id/appointments', sessionAppointmentRoutes)
 router.use(
   '/sessions/:session_id/unmatched-appointments',

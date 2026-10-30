@@ -3496,15 +3496,8 @@ export const en = {
       label: 'Download session spreadsheet'
     },
     inviteToClinic: {
-      title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
-      count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} were not vaccinated at this school and have not already been invited to a clinic.',
-      description:
-        'You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.\n\nThe next clinic is on %s.',
-      confirm: 'Send clinic invitations',
-      success:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
+      cancel: 'Go back to session'
     },
     advertise: {
       label: 'Share a booking link for clinics',

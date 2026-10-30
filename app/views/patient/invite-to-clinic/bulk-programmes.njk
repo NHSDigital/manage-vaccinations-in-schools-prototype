@@ -27,13 +27,15 @@
 {% endfor %}
 
 {% block form %}
-  {{ heading({
-    caption: __mf("patient.bulkInviteToClinic.caption", {
-      count: cohortDetails.childrenCount
-    }),
-    text: title,
-    size: "l"
-  }) }}
+  {% block heading %}
+    {{ heading({
+      caption: __mf("patient.bulkInviteToClinic.caption", {
+        count: cohortDetails.childrenCount
+      }),
+      text: title,
+      size: "l"
+    }) }}
+  {% endblock %}
 
   {# e.g. 271 children can be invited to clinic for HPV, MenACWY, or Td/IPV programmes. #}
   {{ __('patient.bulkInviteToClinic.cohortSummary',
@@ -67,7 +69,7 @@
         }) | safe
     }) if clinicReadyProgrammesWithoutClinics.count > 0 }}
 
-  {% else %}
+  {% elif clinicReadyProgrammes.length === 1 %}
 
     {# Hide checkboxes: can invite to clinic for only a single programme #}
     {% if clinicReadyProgrammesWithoutClinics.count === 0 %}
@@ -94,8 +96,16 @@
 {% endblock %}
 
 {% block afterForm %}
-  {# Include a link to back out if there are no clinics available for the clinic-ready programmes #}
-  {% if clinicReadyProgrammes.length === clinicReadyProgrammesWithoutClinics.count %}
+  {% set cancelLink = {
+    text: cancelText or __("patient.bulkInviteToClinic.cancel"),
+    href: paths.back
+  } %}
+
+  {% if clinicReadyProgrammes.length === 0 %}
+    {# Nobody to invite, so only offer a way back #}
+    <p><a class="nhsuk-link" href="{{ cancelLink.href }}">{{ cancelLink.text }}</a></p>
+  {% elif clinicReadyProgrammes.length === clinicReadyProgrammesWithoutClinics.count %}
+    {# Include a link to back out if there are no clinics available for the clinic-ready programmes #}
     {{ appButtonGroup({
       buttons: [
         {
@@ -103,12 +113,7 @@
           variant: confirmButtonVariant
         }
       ],
-      links: [
-        {
-          text: __("patient.bulkInviteToClinic.cancel"),
-          href: "/patients" + data.clinicInvitationQuery | asQueryString
-        }
-      ]
+      links: [cancelLink]
     }) }}
   {% else %}
     {{ super() }}

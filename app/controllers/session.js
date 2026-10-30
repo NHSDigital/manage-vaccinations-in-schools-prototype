@@ -20,7 +20,6 @@ import {
   ClinicBooking,
   DefaultBatch,
   PatientSession,
-  Patient,
   School,
   Session,
   Team
@@ -1100,68 +1099,17 @@ export const sessionController = {
   },
 
   /**
+   * Close the session, then carry on to the next handler
+   *
    * @type {RequestHandler<Record<string, string>>}
    */
-  inviteToClinic(request, response) {
-    const { session_id } = request.params
+  close(request, response, next) {
     const { data } = request.session
-    const { __mf, account } = response.locals
+    const { session } = response.locals
 
-    // Update session as closed
-    const session = Session.update(session_id, { closeAt: today() }, data)
+    Session.update(session.id, { closeAt: today() }, data)
 
-    // Find a clinic (but not a drop-in)
-    const clinic = Session.findAll(data)
-      .filter(
-        (session) =>
-          session.type === SessionType.Clinic &&
-          session.clinicType !== ClinicType.DropIn
-      )
-      .find(({ programme_ids }) =>
-        programme_ids.some((id) => session.programme_ids.includes(id))
-      )
-
-    // Find patients to invite to clinic
-    const patientSessionUuidsForClinic = session.patientSessionsForClinic.map(
-      (patientSession) => patientSession.uuid
-    )
-
-    if (clinic) {
-      // Move patients to clinic
-      for (const patientSessionUuid of patientSessionUuidsForClinic) {
-        const patientSession = PatientSession.findOne(patientSessionUuid, data)
-
-        if (patientSession) {
-          patientSession.removeFromSession({
-            createdBy_uid: account.uid
-          })
-          let clinicPatientSession = PatientSession.create(
-            {
-              createdBy_uid: account.uid,
-              patient_uuid: patientSession.patient_uuid,
-              programme_id: patientSession.programme_id,
-              session_id
-            },
-            data
-          )
-          clinicPatientSession = new PatientSession(clinicPatientSession, data)
-          patientSession.patient.addToSession(clinicPatientSession)
-
-          const patient = Patient.findOne(patientSession.patient_uuid, data)
-          patient.inviteToClinic(clinic.programme_ids)
-          Patient.update(patient.uuid, patient, data)
-        }
-      }
-    }
-
-    request.flash(
-      'success',
-      __mf(`session.inviteToClinic.success`, {
-        count: patientSessionUuidsForClinic.length
-      })
-    )
-
-    return saveAndRedirect(request, response, session.uri)
+    return next()
   },
 
   /**

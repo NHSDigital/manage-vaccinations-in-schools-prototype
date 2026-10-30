@@ -1372,28 +1372,6 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get patient sessions that can be moved to a clinic session
-   *
-   * @returns {Array<PatientSession>} Patient sessions
-   */
-  get patientSessionsForClinic() {
-    return this.patients.filter(
-      ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
-    )
-  }
-
-  /**
-   * Get next available clinic session
-   *
-   * @returns {Session} Session
-   */
-  get nextProgrammeClinic() {
-    return Session.findAll(this.context).find(
-      (session) => session.type === SessionType.Clinic
-    )
-  }
-
-  /**
    * Get tokenised values (to use in search queries)
    *
    * @returns {string} Tokens

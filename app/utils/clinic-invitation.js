@@ -176,6 +176,36 @@ export const getSchoolInviteProgrammeLocals = (context) => ({
 })
 
 /**
+ * Get the children in a school session who can be invited to clinic for any of its programmes
+ *
+ * @param {Session} session - School session
+ * @returns {Array<string>} UUIDs of the children to invite
+ */
+export const getSessionPatient_idsToInvite = (session) =>
+  session.patients
+    .filter(({ patient }) =>
+      patient.clinicReadyProgramme_ids.some((id) =>
+        session.programme_ids.includes(id)
+      )
+    )
+    .map(({ patient_uuid }) => patient_uuid)
+
+/**
+ * Get the programmes that children in a school session can be invited to clinic for, as required
+ * by programme selection page
+ *
+ * @param {Session} session - School session
+ * @param {object} context - the data context holding the children, programmes and sessions
+ * @returns {object} Values that can be merged into response.locals
+ */
+export const getSessionInviteProgrammeLocals = (session, context) =>
+  getBulkInviteProgrammeLocals(
+    getSessionPatient_idsToInvite(session),
+    session.programme_ids,
+    context
+  )
+
+/**
  * Get the programmes that a booking link can be shared for
  *
  * @param {object} context - the data context holding the programmes and sessions

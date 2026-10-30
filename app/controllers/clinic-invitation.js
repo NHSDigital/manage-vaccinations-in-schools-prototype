@@ -6,7 +6,9 @@ import {
   getBookingLinkProgrammeLocals,
   getBulkInviteProgrammeLocals,
   getPatientInviteProgrammeLocals,
-  getSchoolInviteProgrammeLocals
+  getSchoolInviteProgrammeLocals,
+  getSessionInviteProgrammeLocals,
+  getSessionPatient_idsToInvite
 } from '../utils/clinic-invitation.js'
 import {
   ConjunctionType,
@@ -23,10 +25,14 @@ import { formatQueryString } from '../utils/url.js'
  * @param {string} [locals.inviteJourneyType] - Invite journey type, from `ClinicInvitationJourneyType`
  * @param {Patient} [locals.patient] - Child being invited, for a single child
  * @param {School} [locals.school] - School whose children are being invited, for a school
+ * @param {Session} [locals.session] - School session whose children are being invited, for a session
  * @param {ParsedQs} [query] - Query string the journey was started with
  * @returns {string} Path of the page to return to
  */
-const getReturnUri = ({ inviteJourneyType, patient, school }, query = {}) => {
+const getReturnUri = (
+  { inviteJourneyType, patient, school, session },
+  query = {}
+) => {
   switch (inviteJourneyType) {
     case ClinicInvitationJourneyType.Patient:
       // Back to the programme tab or Child record tab it was started from
@@ -34,6 +40,9 @@ const getReturnUri = ({ inviteJourneyType, patient, school }, query = {}) => {
     case ClinicInvitationJourneyType.School:
       // Back to the school's children
       return school.uri
+    case ClinicInvitationJourneyType.Session:
+      // Back to the session's overview
+      return session.uri
     case ClinicInvitationJourneyType.BookingLink:
       // Back to the Sessions list
       return '/sessions'
@@ -115,7 +124,7 @@ export const clinicInvitationController = {
   showForm(request, response) {
     const { view } = request.params
     const { data } = request.session
-    const { inviteJourneyType, patient } = response.locals
+    const { inviteJourneyType, patient, session } = response.locals
     const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     // Programmes page, which differs for each invite journey
@@ -130,6 +139,12 @@ export const clinicInvitationController = {
         case ClinicInvitationJourneyType.School:
           Object.assign(response.locals, getSchoolInviteProgrammeLocals(data))
           return response.render('school/invite-to-clinic/programmes')
+        case ClinicInvitationJourneyType.Session:
+          Object.assign(
+            response.locals,
+            getSessionInviteProgrammeLocals(session, data)
+          )
+          return response.render('session/invite-to-clinic')
         case ClinicInvitationJourneyType.BookingLink:
           Object.assign(response.locals, getBookingLinkProgrammeLocals(data))
           return response.render('session/invite-to-clinic/programmes')
@@ -228,7 +243,8 @@ export const clinicInvitationController = {
   update(request, response) {
     const { invite_id } = request.params
     const { data } = request.session
-    const { __, __mf, inviteJourneyType, patient, school } = response.locals
+    const { __, __mf, inviteJourneyType, patient, school, session } =
+      response.locals
 
     // Move the draft invitation out of the wizard
     const clinicInvitation = ClinicInvitation.create(
@@ -284,9 +300,12 @@ export const clinicInvitationController = {
       return saveAndRedirect(request, response, returnUri)
     }
 
-    // Invite the cohort of children for a bulk invite (the only other journey
-    // that sends invitations, as booking links don't)
-    const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
+    // Invite a cohort of children, either for a bulk invite or from a school session (the only
+    // other journeys that send invitations, as booking links don't)
+    const clinicPatient_ids =
+      inviteJourneyType === ClinicInvitationJourneyType.Session
+        ? getSessionPatient_idsToInvite(session)
+        : stringToArray(data.clinicPatient_ids)
     const clinicProgramme_ids = clinicInvitation.programme_ids
 
     // Invite each of the children to clinic for the subset of the selected programmes
@@ -342,5 +361,5 @@ export const clinicInvitationController = {
 /**
  * @import { RequestHandler } from 'express'
  * @import { ParsedQs } from 'qs'
- * @import { School } from '../models.js'
+ * @import { School, Session } from '../models.js'
  */
