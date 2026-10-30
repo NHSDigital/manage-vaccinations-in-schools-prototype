@@ -362,46 +362,8 @@ export const en = {
     programmes: {
       label: 'Programmes'
     },
-    clinicCount: {
-      none: 'No clinics are scheduled for {programmeName}',
-      open: '{count, plural, one {1 open clinic is} other {# open clinics are}} scheduled for {programmeName}',
-      restricted:
-        '{count, plural, one {1 restricted invitation clinic is} other {# restricted invitation clinics are}} scheduled for {programmeName}',
-      both: '{openCount, plural, one {1 open clinic} other {# open clinics}} and {restrictedCount, plural, one {1 restricted invitation clinic} other {# restricted invitation clinics}} are scheduled for {programmeName}'
-    },
-    clinicTypes: {
-      title: 'Which clinic types do you want to offer?',
-      label: 'Clinic types',
-      open: {
-        label: 'All open clinics',
-        hint: '{count, plural, =0 {No open clinics are} one {1 open clinic is} other {{count} open clinics are}} scheduled for {programmeNames}',
-        noneScheduled:
-          'If you include open clinics, parents can also book any that are scheduled after you send the invitation.'
-      },
-      restricted: {
-        label: 'Specific restricted invitation clinics',
-        hint: '{count, plural, =0 {No restricted invitation clinics are} one {1 restricted invitation clinic is} other {{count} restricted invitation clinics are}} scheduled for {programmeNames}'
-      }
-    },
-    noRestrictedClinics: {
-      title:
-        'No restricted invitation clinics offer all the selected programmes',
-      description:
-        'There are restricted invitation clinics for {{restrictedProgrammeNames}}, but none of them offer {{programmeNames}} together.',
-      advice: {
-        invitation:
-          'To offer restricted invitation clinics, send a separate invitation for each programme.',
-        link: 'To offer restricted invitation clinics, create a separate link for each programme.'
-      },
-      consequence:
-        'If you continue, parents will only be offered open clinics.',
-      confirm: 'Continue with open clinics only',
-      change: 'Change programmes'
-    },
-    restrictedClinics: {
-      title: 'Which restricted invitation clinics do you want to offer?',
-      label: 'Restricted invitation clinics'
-    },
+    clinicCount:
+      '{count, plural, =0 {No clinics are} one {1 clinic is} other {# clinics are}} scheduled for {programmeName}',
     checkAnswers: {
       title: 'Check and confirm the invitation details',
       intro: 'Check the invitation details before sending.',

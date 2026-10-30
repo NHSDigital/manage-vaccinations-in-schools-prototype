@@ -1,13 +1,11 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
-import { ClinicInvitationJourneyType, ClinicType } from '../enums.js'
+import { ClinicInvitationJourneyType } from '../enums.js'
 import { ClinicInvitation, Patient } from '../models.js'
 import {
   getBookingLinkProgrammeLocals,
-  getOfferedClinicLocals,
   getBulkInviteProgrammeLocals,
   getPatientInviteProgrammeLocals,
-  getRestrictedAccessClinics,
   getSchoolInviteProgrammeLocals
 } from '../utils/clinic-invitation.js'
 import {
@@ -99,38 +97,9 @@ export const clinicInvitationController = {
     }
     response.locals.clinicInvitation = new ClinicInvitation(draft, data)
 
-    // Forks are evaluated before `updateForm` saves the posted answers to the draft,
-    // so they use the answers auto-stored in `data.clinicInvitation`
-    const postedProgramme_ids = stringToArray(
-      data.clinicInvitation?.programme_ids
-    )
-    const canOfferRestrictedClinics = () =>
-      getRestrictedAccessClinics(postedProgramme_ids, data).length > 0
-    const hasRestrictedClinicsForAnyProgramme = () =>
-      postedProgramme_ids.some(
-        (id) => getRestrictedAccessClinics([id], data).length > 0
-      )
-
     const journey = {
       [`/`]: {},
-      [`/${invite_id}/new/programmes`]: {
-        // Explain why restricted clinics can't be offered if there are some for the
-        // programmes on their own, but none that can offer them all together
-        [`/${invite_id}/new/no-restricted-clinics`]: () =>
-          !canOfferRestrictedClinics() && hasRestrictedClinicsForAnyProgramme(),
-        // Skip the clinic type questions if there are no restricted clinics to offer
-        [finishPath]: () => !canOfferRestrictedClinics()
-      },
-      [`/${invite_id}/new/clinic-types`]: {
-        [finishPath]: {
-          data: 'clinicInvitation.clinicTypes',
-          excludedValue: ClinicType.Restricted
-        }
-      },
-      [`/${invite_id}/new/restricted-clinics`]: {
-        [finishPath]: true
-      },
-      [`/${invite_id}/new/no-restricted-clinics`]: {},
+      [`/${invite_id}/new/programmes`]: {},
       [finishPath]: {}
     }
 
@@ -148,8 +117,7 @@ export const clinicInvitationController = {
   showForm(request, response) {
     const { view } = request.params
     const { data } = request.session
-    const { __mf, clinicInvitation, inviteJourneyType, patient, school } =
-      response.locals
+    const { __mf, inviteJourneyType, patient, school } = response.locals
     const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     // Programmes page, which differs for each invite journey
@@ -194,10 +162,6 @@ export const clinicInvitationController = {
         break
     }
     response.locals.inviteCaption = inviteCaption
-    Object.assign(
-      response.locals,
-      getOfferedClinicLocals(clinicInvitation.programme_ids, data)
-    )
 
     return response.render(`clinic-invite/${view}`)
   },
@@ -219,35 +183,13 @@ export const clinicInvitationController = {
       data
     )
 
-    // Remove answers made stale by a change to an earlier answer i.e. backtracking
-    const availableClinic_ids = getRestrictedAccessClinics(
-      clinicInvitation.programme_ids,
-      data
-    ).map(({ id }) => id)
-
-    let { clinicTypes, restrictedClinic_ids } = clinicInvitation
-
-    // Only open clinics can be offered if no restricted clinics are available
-    if (availableClinic_ids.length === 0) {
-      clinicTypes = [ClinicType.Open]
-    }
-
-    // Only keep restricted clinics that are offered and that serve the programmes
-    restrictedClinic_ids = clinicTypes.includes(ClinicType.Restricted)
-      ? restrictedClinic_ids.filter((id) => availableClinic_ids.includes(id))
-      : []
-
     ClinicInvitation.update(
       invite_id,
-      {
-        programme_ids: clinicInvitation.programme_ids,
-        clinicTypes,
-        restrictedClinic_ids
-      },
+      { programme_ids: clinicInvitation.programme_ids },
       data.wizard
     )
 
-    // Remove the auto-stored answers, which can be stale once tidied above (decorate
+    // Remove the auto-stored answers, so pages are pre-filled from the draft instead (decorate
     // will fall back to looking for response.locals.clinicInvitation)
     delete data.clinicInvitation
 

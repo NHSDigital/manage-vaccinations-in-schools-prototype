@@ -22,8 +22,7 @@
             count: childrenCount
           }),
           clinicsHint: clinicCountHint(
-            clinicCounts[programme.id].openClinicCount,
-            clinicCounts[programme.id].restrictedClinicCount,
+            clinicCounts[programme.id],
             programme.name | replace("Flu", "flu")
           )
         })

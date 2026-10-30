@@ -8,8 +8,7 @@
     text: programme.name,
     value: programme.id,
     hint: clinicCountHint(
-      programme.openClinicCount,
-      programme.restrictedClinicCount,
+      programme.clinicCount,
       programme.name | replace("Flu", "flu")
     )
   }) %}

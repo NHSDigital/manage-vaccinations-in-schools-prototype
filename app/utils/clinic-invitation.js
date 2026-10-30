@@ -26,107 +26,16 @@ const getInvitableClinics = (context) =>
   )
 
 /**
- * Get open clinic sessions serving any of the given programmes
- *
- * Clinics created before clinic types existed are treated as open.
- *
- * @param {Array<string>} programme_ids - Programmes being invited for
- * @param {object} context - the data context holding the sessions
- * @returns {Array<Session>} Open-to-all clinic sessions
- */
-export const getOpenAccessClinics = (programme_ids, context) =>
-  getInvitableClinics(context)
-    .filter(({ clinicType }) => clinicType === ClinicType.Open)
-    .filter((session) =>
-      programme_ids.some((id) => session.programme_ids.includes(id))
-    )
-
-/**
- * Get restricted invitation clinic sessions that a parent could book for all of the given programmes
- *
- * Sorted by audience, then date, so that clinics for the same audience are listed together.
- *
- * @param {Array<string>} programme_ids - Programmes being invited for
- * @param {object} context - the data context holding the sessions
- * @returns {Array<Session>} Restricted-invitation clinic sessions that match the given programmes
- */
-export const getRestrictedAccessClinics = (programme_ids, context) =>
-  getInvitableClinics(context)
-    .filter(({ clinicType }) => clinicType === ClinicType.Restricted)
-    .filter((session) =>
-      // Only the selected programmes matter when checking which clinics can serve an invitation
-      session.canCoverVaccinationChoices(
-        /** @type {ClinicVaccinationChoices} */ ({
-          selected_programme_ids: programme_ids
-        })
-      )
-    )
-    .sort(
-      (a, b) =>
-        (a.clinicAudience || '').localeCompare(b.clinicAudience || '') ||
-        new Date(a.date).getTime() - new Date(b.date).getTime()
-    )
-
-/**
- * Count the open and restricted invitation clinics that can be offered for a programme
- *
- * Uses the same rules as the clinic type questions, so the counts on programmes pages match.
+ * Count the clinics that can be offered for a programme
  *
  * @param {string} programme_id - Programme to count clinics for
  * @param {object} context - the data context holding the sessions
- * @returns {{ openClinicCount: number, restrictedClinicCount: number }} Clinic counts
+ * @returns {number} Number of clinics
  */
-export const getClinicCountsForProgramme = (programme_id, context) => ({
-  openClinicCount: getOpenAccessClinics([programme_id], context).length,
-  restrictedClinicCount: getRestrictedAccessClinics([programme_id], context)
-    .length
-})
-
-/**
- * Get the details needed to offer the clinics serving an invitation’s programmes
- *
- * Used by the clinic type, restricted clinic and check answers pages shared by every invite journey.
- *
- * @param {Array<string>} programme_ids - Programmes being invited for
- * @param {object} context - the data context holding the sessions
- * @returns {object} Values that can be merged into response.locals
- */
-export const getOfferedClinicLocals = (programme_ids, context) => {
-  const restrictedClinics = getRestrictedAccessClinics(programme_ids, context)
-
-  return {
-    areRestrictedClinicsAvailable: restrictedClinics.length > 0,
-    openClinicCount: getOpenAccessClinics(programme_ids, context).length,
-    restrictedClinicCount: restrictedClinics.length,
-    programmeNames: programmeNamesListForSentence(
-      programme_ids,
-      false,
-      ConjunctionType.and,
-      context
-    ),
-    // Programmes that have restricted clinics on their own, even if not all together
-    restrictedProgrammeNames: programmeNamesListForSentence(
-      programme_ids.filter(
-        (id) => getRestrictedAccessClinics([id], context).length > 0
-      ),
-      false,
-      ConjunctionType.and,
-      context
-    ),
-    restrictedClinicItems: restrictedClinics.map((session) => ({
-      text: session.clinic?.formatted.location,
-      value: session.id,
-      hint: {
-        html: [
-          `Date: ${session.formatted.dateShort}`,
-          session.clinicAudience && `Audience: ${session.clinicAudience}`
-        ]
-          .filter(Boolean)
-          .join('<br>')
-      }
-    }))
-  }
-}
+export const getClinicCountForProgramme = (programme_id, context) =>
+  getInvitableClinics(context).filter((session) =>
+    session.programme_ids.includes(programme_id)
+  ).length
 
 /**
  * Get the programmes a single child can be invited to clinic for, as required by programme selection pages
@@ -144,16 +53,13 @@ export const getPatientInviteProgrammeLocals = (patient) => {
   const clinicCounts = Object.fromEntries(
     clinicReadyProgrammes.map(({ programme_id }) => [
       programme_id,
-      getClinicCountsForProgramme(programme_id, patient.context)
+      getClinicCountForProgramme(programme_id, patient.context)
     ])
   )
 
   // Warn about inviting to any programmes that don't have clinics scheduled
   const programmesWithoutClinics = clinicReadyProgrammes.filter(
-    ({ programme_id }) =>
-      clinicCounts[programme_id].openClinicCount +
-        clinicCounts[programme_id].restrictedClinicCount ===
-      0
+    ({ programme_id }) => clinicCounts[programme_id] === 0
   )
   const formatter = new Intl.ListFormat('en', {
     style: 'long',
@@ -225,16 +131,11 @@ export const getBulkInviteProgrammeLocals = (
           PatientClinicStatus.Ready
       ).length
     if (clinicReadyChildrenCount > 0) {
-      const { openClinicCount, restrictedClinicCount } =
-        getClinicCountsForProgramme(programme.id, context)
-
       clinicReadyProgrammes.push({
         name: programme.name,
         id: programme.id,
         childrenCount: clinicReadyChildrenCount,
-        clinicCount: openClinicCount + restrictedClinicCount,
-        openClinicCount,
-        restrictedClinicCount
+        clinicCount: getClinicCountForProgramme(programme.id, context)
       })
     }
   }
@@ -269,7 +170,7 @@ export const getSchoolInviteProgrammeLocals = (context) => ({
   clinicCounts: Object.fromEntries(
     Programme.findAll(context).map(({ id }) => [
       id,
-      getClinicCountsForProgramme(id, context)
+      getClinicCountForProgramme(id, context)
     ])
   )
 })
@@ -300,7 +201,7 @@ export const getBookingLinkProgrammeLocals = (context) => {
     .map((programme_id) => ({
       id: programme_id,
       name: Programme.findOne(programme_id, context)?.name,
-      ...getClinicCountsForProgramme(programme_id, context)
+      clinicCount: getClinicCountForProgramme(programme_id, context)
     }))
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -308,7 +209,3 @@ export const getBookingLinkProgrammeLocals = (context) => {
     bookingLinkProgrammes
   }
 }
-
-/**
- * @import { ClinicVaccinationChoices } from '../models/session.js'
- */

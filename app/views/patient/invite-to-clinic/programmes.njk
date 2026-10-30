@@ -17,8 +17,7 @@
     text: patientProgramme.programme.type,
     value: patientProgramme.programme_id,
     hint: clinicCountHint(
-      clinicCounts[patientProgramme.programme_id].openClinicCount,
-      clinicCounts[patientProgramme.programme_id].restrictedClinicCount,
+      clinicCounts[patientProgramme.programme_id],
       patientProgramme.programme.name | replace("Flu", "flu")
     )
   }) %}
@@ -65,7 +64,7 @@
       {{ __mf("patient.inviteToClinic.clinicCount.someParagraph",
       {
         programmeName: clinicReadyProgrammes[0].programme.name | replace("Flu", "flu"),
-        count: clinicCounts[clinicReadyProgrammes[0].programme_id].openClinicCount + clinicCounts[clinicReadyProgrammes[0].programme_id].restrictedClinicCount
+        count: clinicCounts[clinicReadyProgrammes[0].programme_id]
       }) | nhsukMarkdown }}
     {% else %}
       {# Tell the user there are NO clinics available for this child's one clinic-ready programme #}

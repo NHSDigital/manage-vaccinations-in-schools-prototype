@@ -555,39 +555,16 @@ export default () => {
   }
 
   /**
-   * Describe how many open and restricted invitation clinics are scheduled for a programme
+   * Describe how many clinics are scheduled for a programme
    *
-   * @param {number} openCount - Number of open clinics
-   * @param {number} restrictedCount - Number of restricted invitation clinics
+   * @param {number} count - Number of clinics
    * @param {string} programmeName - Programme name, as used in a sentence
    * @returns {string} Clinic count hint
    */
-  globals.clinicCountHint = function (
-    openCount,
-    restrictedCount,
-    programmeName
-  ) {
+  globals.clinicCountHint = function (count, programmeName) {
     const { __mf } = this.ctx
 
-    if (openCount && restrictedCount) {
-      return __mf('clinicInvitation.clinicCount.both', {
-        openCount,
-        restrictedCount,
-        programmeName
-      })
-    } else if (openCount) {
-      return __mf('clinicInvitation.clinicCount.open', {
-        count: openCount,
-        programmeName
-      })
-    } else if (restrictedCount) {
-      return __mf('clinicInvitation.clinicCount.restricted', {
-        count: restrictedCount,
-        programmeName
-      })
-    }
-
-    return __mf('clinicInvitation.clinicCount.none', { programmeName })
+    return __mf('clinicInvitation.clinicCount', { count, programmeName })
   }
 
   /**

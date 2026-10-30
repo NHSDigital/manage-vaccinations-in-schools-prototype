@@ -1,8 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
-import { Programme, Session } from '../models.js'
-import { formatList, stringToArray } from '../utils/string.js'
+import { Programme } from '../models.js'
+import { stringToArray } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
@@ -10,8 +9,6 @@ import { BaseModel } from './base.js'
  * @typedef {BaseModelOptions & object} ClinicInvitationOptions
  * @property {string} [id] - ClinicInvitation ID
  * @property {Array<string>} [programme_ids] - Programmes being invited for
- * @property {Array<ClinicType>} [clinicTypes] - The types of clinic to offer when booking
- * @property {Array<string>} [restrictedClinic_ids] - IDs of restricted clinic sessions the parent can book
  */
 
 /**
@@ -32,8 +29,6 @@ export class ClinicInvitation extends BaseModel {
     this.id = options?.id ?? faker.helpers.replaceSymbols('********')
 
     this.programme_ids = stringToArray(options?.programme_ids)
-    this.clinicTypes = stringToArray(options?.clinicTypes)
-    this.restrictedClinic_ids = stringToArray(options?.restrictedClinic_ids)
   }
 
   /**
@@ -80,22 +75,6 @@ export class ClinicInvitation extends BaseModel {
           switch (prop) {
             case 'programmes':
               return this.programmes.map(({ nameTag }) => nameTag).join(' ')
-            case 'clinicTypes':
-              return this.clinicTypes?.length === 1
-                ? `${this.clinicTypes[0]} clinics only`
-                : `${prototypeFilters.formatList(
-                    this.clinicTypes.map((clinicType, index) =>
-                      index === 0 ? clinicType : clinicType.toLowerCase()
-                    )
-                  )} clinics`
-            case 'restrictedClinics':
-              return this.restrictedClinic_ids?.length
-                ? formatList(
-                    this.restrictedClinic_ids.map(
-                      (id) => Session.findOne(id, this.context)?.name
-                    )
-                  )
-                : undefined
             default:
               return undefined
           }
@@ -106,6 +85,5 @@ export class ClinicInvitation extends BaseModel {
 }
 
 /**
- * @import { ClinicType } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

@@ -24,13 +24,7 @@
     rows: summaryRows(clinicInvitation, {
       programmes: {
         href: "programmes"
-      },
-      clinicTypes: {
-        href: "clinic-types" if areRestrictedClinicsAvailable
-      },
-      restrictedClinics: {
-        href: "restricted-clinics"
-      } if ClinicType.Restricted in clinicInvitation.clinicTypes else none
+      }
     })
   }) }}
 {% endblock %}
