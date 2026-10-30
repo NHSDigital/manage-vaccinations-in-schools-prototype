@@ -3334,9 +3334,9 @@ export const en = {
     },
     clinicType: {
       label: 'Clinic type',
-      title: 'Will this clinic session be bookable or drop-in only?',
+      title: 'Will this session be appointment-based or drop-in?',
       hint: {
-        open: 'Parents can be invited to book a timed appointment',
+        open: 'Parents or your team can book appointments',
         dropIn: 'Not available for booking'
       }
     },
