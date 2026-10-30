@@ -1,7 +1,12 @@
 import _ from 'lodash'
 
 import programmesData from '../datasets/programmes.js'
-import { SessionPresets, SessionStatus, SessionType } from '../enums.js'
+import {
+  ClinicType,
+  SessionPresets,
+  SessionStatus,
+  SessionType
+} from '../enums.js'
 import { ClinicAppointment, Session } from '../models.js'
 
 import i18n from './i18n.js'
@@ -65,6 +70,7 @@ export const getBookableClinicSessions = (
   const scheduledClinics = Session.findAll(context).filter(
     (session) =>
       session.type === SessionType.Clinic &&
+      session.clinicType !== ClinicType.DropIn &&
       session.status === SessionStatus.Planned &&
       session.canCoverVaccinationChoices(vaccinationChoices) &&
       session.daysLeftToBook >= (isParentBooking ? 1 : 0) &&
