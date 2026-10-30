@@ -11,11 +11,6 @@ router.post('/', session.filter)
 
 router.get('/new', session.new)
 
-router.get('/advertise', session.advertise)
-router.post('/advertise', session.updateAdvertLink)
-router.get('/advert-link', session.showAdvertLink)
-router.post('/advert-link', session.copyAdvertLink)
-
 router.param('session_id', session.read)
 
 router.get('/:session_id/download', download.new(DownloadType.Session))
@@ -37,7 +32,6 @@ router.get('/:session_id/cancel/:view', session.showCancel)
 router.post('/:session_id/cancel/:view', session.updateCancel)
 
 router.post('/:session_id/give-instructions', session.giveInstructions)
-router.post('/:session_id/invite-to-clinic', session.inviteToClinic)
 router.post('/:session_id/reminders', session.sendReminders)
 router.post('/:session_id/cancel', session.cancelSession)
 router.post('/:session_id/status', session.makeActive)

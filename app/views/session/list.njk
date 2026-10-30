@@ -38,6 +38,9 @@
     <div class="nhsuk-grid-column-two-thirds">
       {% if data.type and data.type != "none" %}
         {% set title = data.type + "s" %}
+        {% if data.clinicType and data.clinicType !== 'none' %}
+          {% set title = title + ((": " + data.clinicType + " clinics") | lower) %}
+        {% endif %}
       {% else %}
         {% set title = "All sessions" %}
       {% endif %}

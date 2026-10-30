@@ -9,6 +9,7 @@ import {
   SchoolStatus,
   SchoolUploadStatus,
   ScreenStatus,
+  SessionType,
   UploadStatus,
   VaccinationOutcome,
   VaccinationSyncStatus
@@ -72,6 +73,12 @@ const SCREEN_STATUS_COLOURS = {
   [ScreenStatus.InvitedToClinic]: 'orange',
   [ScreenStatus.DelayVaccination]: 'orange',
   [ScreenStatus.DoNotVaccinate]: 'red'
+}
+
+const SESSION_TYPE_COLOURS = {
+  [SessionType.School]: 'blue',
+  [SessionType.Clinic]: 'green',
+  [SessionType.Home]: 'pink'
 }
 
 const UPLOAD_STATUS_COLOURS = {
@@ -220,6 +227,19 @@ export function getScreenStatusProperties(status) {
   return {
     colour: hasStatus ? SCREEN_STATUS_COLOURS[status] : 'green',
     text: hasStatus ? status : 'No triage needed'
+  }
+}
+
+/**
+ * Get session type properties
+ *
+ * @param {SessionType} type - Session type
+ * @returns {object} Session type properties
+ */
+export function getSessionTypeProperties(type) {
+  return {
+    colour: SESSION_TYPE_COLOURS[type] ?? 'white',
+    text: type
   }
 }
 

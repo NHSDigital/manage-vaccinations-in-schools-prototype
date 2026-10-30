@@ -94,12 +94,7 @@ export const bookIntoClinicController = {
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
-      nextPath = getBookableClinicSessions(
-        data,
-        vaccinationChoices,
-        false,
-        false
-      ).length
+      nextPath = getBookableClinicSessions(data, vaccinationChoices).length
         ? 'new'
         : 'availability'
     } else if (session_id) {
@@ -131,12 +126,9 @@ export const bookIntoClinicController = {
       }
 
       // Do we need to tell the user that there are no suitable clinics at all?
-      nextPath = getBookableClinicSessions(
-        data,
-        vaccinationChoices,
-        false,
-        true
-      ).length
+      nextPath = getBookableClinicSessions(data, vaccinationChoices, {
+        isParentBooking: true
+      }).length
         ? 'start'
         : 'availability'
     }

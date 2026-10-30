@@ -132,6 +132,27 @@ export const ClinicBookingJourneyType = {
  * @readonly
  * @enum {string}
  */
+export const ClinicInvitationJourneyType = {
+  Bulk: 'Bulk invite from the Children list',
+  Patient: 'Invite a child from their child record',
+  School: 'Invite all children at a school',
+  Session: 'Invite children not vaccinated in a school session',
+  BookingLink: 'Share a booking link'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const ClinicType = {
+  Open: 'Appointment-based',
+  DropIn: 'Drop-in only'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const ConsentStatus = {
   NotDelivered: 'Request failed',
   NoResponse: 'No response',

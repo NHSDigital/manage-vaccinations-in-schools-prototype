@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import {
   AcademicYear,
+  ClinicType,
   InstructionStatus,
   PatientStatus,
   ProgrammeType,
@@ -19,14 +20,11 @@ import {
   ClinicBooking,
   DefaultBatch,
   PatientSession,
-  Patient,
-  Programme,
   School,
   Session,
   Team
 } from '../models.js'
 import { getAccountVaccineMethods } from '../utils/account.js'
-import { getClinicInviteUrlForProgrammes } from '../utils/clinic-booking.js'
 import {
   convertIsoDateToObject,
   getDateValueDifference,
@@ -34,16 +32,11 @@ import {
 } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { getResults, getPagination } from '../utils/pagination.js'
-import {
-  ConjunctionType,
-  programmeNamesListForSentence
-} from '../utils/programme.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { getSessionYearGroups } from '../utils/session.js'
 import {
   formatTime,
   formatYearGroup,
-  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
@@ -72,7 +65,8 @@ export const sessionController = {
           ...(session.unmatchedConsents.length && { icon: 'alert' }),
           current: view === undefined
         },
-        ...(session.type === SessionType.Clinic
+        ...(session.type === SessionType.Clinic &&
+        session.clinicType !== ClinicType.DropIn
           ? [
               {
                 text: __('session.appointments.label'),
@@ -81,11 +75,21 @@ export const sessionController = {
               }
             ]
           : []),
-        {
-          text: __('session.patients.label'),
-          href: `${session.uri}/patients`,
-          current: view === 'patients'
-        },
+        ...(session.type !== SessionType.Clinic ||
+        session.clinicType !== ClinicType.DropIn ||
+        [
+          SessionStatus.Active,
+          SessionStatus.Completed,
+          SessionStatus.Closed
+        ].includes(session.status)
+          ? [
+              {
+                text: __('session.patients.label'),
+                href: `${session.uri}/patients`,
+                current: view === 'patients'
+              }
+            ]
+          : []),
         ...(session.hasPsdProtocol
           ? [
               {
@@ -175,98 +179,6 @@ export const sessionController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  advertise(request, response) {
-    // Handling a GET for /sessions/advertise
-    const { data } = request.session
-    const { __mf } = response.locals
-
-    // Any refresh will reset stuff
-    delete data.clinicAdvert
-
-    // Set up the programme radio buttons
-    const sessions = Session.findAll(data)
-    const scheduledClinics = sessions.filter(
-      (session) =>
-        session.type === SessionType.Clinic &&
-        session.status === SessionStatus.Planned
-    )
-    const scheduledProgrammes = scheduledClinics.flatMap(
-      ({ programme_ids }) => programme_ids
-    )
-    const programmeFrequencyMap = _.countBy(scheduledProgrammes)
-
-    // Offer even those programmes with no clinics scheduled
-    const allProgrammes = Programme.findAll(data).filter(
-      (programme) => !programme.isHidden
-    )
-    allProgrammes.forEach((programme) => {
-      if (!programmeFrequencyMap[programme.id]) {
-        programmeFrequencyMap[programme.id] = 0
-      }
-    })
-
-    response.locals.programmeItems = Object.entries(programmeFrequencyMap)
-      .map(([programme_id, count]) => ({
-        text: Programme.findOne(programme_id, data)?.name,
-        value: programme_id,
-        hint: __mf('session.advertise.programmes.programme.hint', { count })
-      }))
-      .sort((a, b) => a.text.localeCompare(b.text))
-
-    response.locals.back = '/sessions'
-
-    return response.render('session/advert-programmes')
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  updateAdvertLink(request, response) {
-    // Handling a POST for /sessions/advertise
-    const { clinicAdvert } = request.session.data
-    const { data } = request.session
-
-    clinicAdvert.selected_programme_ids = stringToArray(
-      clinicAdvert.selected_programme_ids
-    )
-
-    clinicAdvert.link = `https://www.manage-vaccinations-in-schools.nhs.uk${getClinicInviteUrlForProgrammes(clinicAdvert.selected_programme_ids)}`
-    clinicAdvert.programmeNames = programmeNamesListForSentence(
-      clinicAdvert.selected_programme_ids,
-      false,
-      ConjunctionType.and,
-      data
-    )
-
-    return saveAndRedirect(request, response, '/sessions/advert-link')
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showAdvertLink(request, response) {
-    // Handling a GET for /sessions/advert-link
-    response.locals.back = '/sessions/advertise'
-
-    return response.render('session/advert-link')
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  copyAdvertLink(request, response) {
-    // Handling a POST for /sessions/advert-link
-    const { data } = request.session
-
-    // Tidy up
-    delete data.clinicAdvert
-
-    return saveAndRedirect(request, response, '/sessions')
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
   list(request, response) {
     const { programme_id, q } = request.query
     const { data } = request.session
@@ -301,7 +213,8 @@ export const sessionController = {
     const filters = {
       academicYear: request.query?.academicYear || currentAcademicYear,
       status: request.query?.status || 'none',
-      type: request.query?.type || 'none'
+      type: request.query?.type || 'none',
+      clinicType: request.query?.clinicType || 'none'
     }
 
     // Filter by academic year
@@ -317,6 +230,16 @@ export const sessionController = {
     // Filter by type
     if (filters.type !== 'none') {
       results = results.filter(({ type }) => type === filters.type)
+
+      // Filter clinics by clinic type
+      if (
+        filters.type === SessionType.Clinic &&
+        filters.clinicType !== 'none'
+      ) {
+        results = results.filter(
+          ({ clinicType }) => clinicType === filters.clinicType
+        )
+      }
     }
 
     // Sort
@@ -374,7 +297,7 @@ export const sessionController = {
   filter(request, response) {
     const params = getFilterParams(
       request,
-      ['academicYear', 'q', 'status', 'type'],
+      ['academicYear', 'q', 'status', 'type', 'clinicType'],
       ['programme_id']
     )
 
@@ -856,7 +779,13 @@ export const sessionController = {
 
       const journey = {
         [`/`]: {},
-        [`/${session_id}/${type}/type`]: {},
+        [`/${session_id}/${type}/type`]: {
+          [`/${session_id}/${type}/programmes`]: {
+            data: 'session.type',
+            excludedValue: SessionType.Clinic
+          }
+        },
+        [`/${session_id}/${type}/clinic-type`]: {},
         [`/${session_id}/${type}/programmes`]: {
           [`/${session_id}/${type}/clinic`]: () => {
             if (session.type !== SessionType.Clinic) {
@@ -1170,64 +1099,17 @@ export const sessionController = {
   },
 
   /**
+   * Close the session, then carry on to the next handler
+   *
    * @type {RequestHandler<Record<string, string>>}
    */
-  inviteToClinic(request, response) {
-    const { session_id } = request.params
+  close(request, response, next) {
     const { data } = request.session
-    const { __mf, account } = response.locals
+    const { session } = response.locals
 
-    // Update session as closed
-    const session = Session.update(session_id, { closeAt: today() }, data)
+    Session.update(session.id, { closeAt: today() }, data)
 
-    // Find a clinic
-    const clinic = Session.findAll(data)
-      .filter(({ type }) => type === SessionType.Clinic)
-      .find(({ programme_ids }) =>
-        programme_ids.some((id) => session.programme_ids.includes(id))
-      )
-
-    // Find patients to invite to clinic
-    const patientSessionUuidsForClinic = session.patientSessionsForClinic.map(
-      (patientSession) => patientSession.uuid
-    )
-
-    if (clinic) {
-      // Move patients to clinic
-      for (const patientSessionUuid of patientSessionUuidsForClinic) {
-        const patientSession = PatientSession.findOne(patientSessionUuid, data)
-
-        if (patientSession) {
-          patientSession.removeFromSession({
-            createdBy_uid: account.uid
-          })
-          let clinicPatientSession = PatientSession.create(
-            {
-              createdBy_uid: account.uid,
-              patient_uuid: patientSession.patient_uuid,
-              programme_id: patientSession.programme_id,
-              session_id
-            },
-            data
-          )
-          clinicPatientSession = new PatientSession(clinicPatientSession, data)
-          patientSession.patient.addToSession(clinicPatientSession)
-
-          const patient = Patient.findOne(patientSession.patient_uuid, data)
-          patient.inviteToClinic(clinic.programme_ids)
-          Patient.update(patient.uuid, patient, data)
-        }
-      }
-    }
-
-    request.flash(
-      'success',
-      __mf(`session.inviteToClinic.success`, {
-        count: patientSessionUuidsForClinic.length
-      })
-    )
-
-    return saveAndRedirect(request, response, session.uri)
+    return next()
   },
 
   /**

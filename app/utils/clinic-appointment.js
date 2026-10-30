@@ -168,12 +168,10 @@ export const getAllAppointmentPaths = (
             sessionData.appointment?.selected_programme_ids
           )
           return (
-            getBookableClinicSessions(
-              sessionData,
-              vaccinationChoices,
+            getBookableClinicSessions(sessionData, vaccinationChoices, {
               extendForSupportNeeds,
-              isParentJourney
-            ).length === 0
+              isParentBooking: isParentJourney
+            }).length === 0
           )
         }
       },
@@ -262,8 +260,10 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
+                    {
+                      extendForSupportNeeds,
+                      isParentBooking: isParentJourney
+                    }
                   ).length === 0
                 )
               }
@@ -274,8 +274,10 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
+                    {
+                      extendForSupportNeeds,
+                      isParentBooking: isParentJourney
+                    }
                   ).length === 0
                 )
               }
@@ -293,8 +295,10 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
+                    {
+                      extendForSupportNeeds,
+                      isParentBooking: isParentJourney
+                    }
                   ).length === 0
                 )
               }
@@ -305,8 +309,10 @@ export const getAllAppointmentPaths = (
                   getBookableClinicSessions(
                     sessionData,
                     appointment.vaccinationChoices,
-                    extendForSupportNeeds,
-                    isParentJourney
+                    {
+                      extendForSupportNeeds,
+                      isParentBooking: isParentJourney
+                    }
                   ).length === 0
                 )
               },

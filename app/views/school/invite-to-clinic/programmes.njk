@@ -1,0 +1,58 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("school.inviteToClinic.title") %}
+{% set confirmButtonText = __("school.inviteToClinic.confirm") %}
+
+{# One checkbox per programme that any children still need inviting for, showing how many children and clinics #}
+{% set programmeItems = [] %}
+{% for programme in [
+  { id: "flu", name: ProgrammeType.Flu },
+  { id: "hpv", name: ProgrammeType.HPV },
+  { id: "menacwy", name: ProgrammeType.MenACWY },
+  { id: "mmr", name: ProgrammeType.MMR },
+  { id: "td-ipv", name: ProgrammeType.TdIPV }
+] %}
+  {% set childrenCount = school.patientsToInviteToSession(programme.id).length %}
+  {% if childrenCount %}
+    {% set programmeItems = programmeItems | push({
+      label: programme.name,
+      value: programme.id,
+      hint: {
+        html: __("patient.bulkInviteToClinic.programme.hint.combined", {
+          childrenHint: __mf("school.inviteToClinic." + programme.id, {
+            count: childrenCount
+          }),
+          clinicsHint: clinicCountHint(
+            clinicCounts[programme.id],
+            programme.name | replace("Flu", "flu")
+          )
+        })
+      }
+    }) %}
+  {% endif %}
+{% endfor %}
+
+{% block form %}
+  {{ heading({
+    caption: school.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __mf("school.inviteToClinic.count", {
+    count: school.patients.length
+  }) | nhsukMarkdown }}
+
+  {{ __("school.inviteToClinic.description", "1 June 2026") | nhsukMarkdown }}
+
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        text: __("school.inviteToClinic.programme"),
+        size: "m"
+      }
+    },
+    items: programmeItems,
+    decorate: "clinicInvitation.programme_ids"
+  }) }}
+{% endblock %}
