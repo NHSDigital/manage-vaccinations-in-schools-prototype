@@ -184,7 +184,7 @@ export const clinicInvitationController = {
         data
       )
 
-      return clinicInvitationController.update(request, response)
+      return clinicInvitationController.update(request, response, undefined)
     }
 
     // A booking link saves the invitation instead, ready for the link to be shown
