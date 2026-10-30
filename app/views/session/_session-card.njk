@@ -32,7 +32,7 @@
   lastRowBorder: false,
   rows: summaryRows(session, {
     clinicType: {},
-    patients: {},
+    patients: {} if session.clinicType !== ClinicType.DropIn or session.isActive else none,
     percentageBooked: {},
     programmes: {},
     yearGroups: {},

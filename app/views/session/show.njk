@@ -59,16 +59,17 @@
       {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
       {% set sessionDetailsRows = {
           clinicType: {},
-          location: {},
           status: {},
           programmes: {},
+          catchUps: {} if not session.isFluOnlyClinic else none,
+          location: {},
           date: {},
+          hasRegistration: {} if session.clinicType !== ClinicType.DropIn else none,
           vaccinationPeriods: {},
           vaccinators: {},
           appointmentLengths: {
             label: __("session.appointmentLengths.label." + appointmentLengthKey)
-          },
-          hasRegistration: {}
+          }
       } %}
     {% endif %}
 

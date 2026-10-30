@@ -94,7 +94,7 @@
         },
         hasRegistration: {
           href: session.uri + "/edit/registration"
-        },
+        } if session.clinicType !== ClinicType.DropIn else none,
         vaccinationPeriods: {
           href: session.uri + "/edit/vaccination-periods"
         },
