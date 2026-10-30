@@ -84,12 +84,6 @@ export const clinicInvitationController = {
     const { inviteJourneyType } = response.locals
     const returnUri = getReturnUri(response.locals, data.clinicInvitationQuery)
 
-    // A booking link has no check answers page, so finish by showing the link
-    const finishPath =
-      inviteJourneyType === ClinicInvitationJourneyType.BookingLink
-        ? `/${invite_id}/copy-link`
-        : `/${invite_id}/new/check-answers`
-
     // Drafts don't survive a restart of the prototype, so start again if it's gone
     const draft = ClinicInvitation.findOne(invite_id, data.wizard)
     if (!draft) {
@@ -97,10 +91,14 @@ export const clinicInvitationController = {
     }
     response.locals.clinicInvitation = new ClinicInvitation(draft, data)
 
+    // A booking link finishes by showing the link, but other journeys send their
+    // invitations as soon as the programmes are chosen
     const journey = {
       [`/`]: {},
       [`/${invite_id}/new/programmes`]: {},
-      [finishPath]: {}
+      ...(inviteJourneyType === ClinicInvitationJourneyType.BookingLink && {
+        [`/${invite_id}/copy-link`]: {}
+      })
     }
 
     response.locals.paths = {
@@ -117,7 +115,7 @@ export const clinicInvitationController = {
   showForm(request, response) {
     const { view } = request.params
     const { data } = request.session
-    const { __mf, inviteJourneyType, patient, school } = response.locals
+    const { inviteJourneyType, patient } = response.locals
     const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
 
     // Programmes page, which differs for each invite journey
@@ -146,24 +144,10 @@ export const clinicInvitationController = {
       }
     }
 
-    // Pages shared by every invite journey
-    let inviteCaption
-    switch (inviteJourneyType) {
-      case ClinicInvitationJourneyType.Bulk:
-        inviteCaption = __mf('patient.bulkInviteToClinic.caption', {
-          count: clinicPatient_ids.length
-        })
-        break
-      case ClinicInvitationJourneyType.Patient:
-        inviteCaption = patient?.fullName
-        break
-      case ClinicInvitationJourneyType.School:
-        inviteCaption = school?.name
-        break
-    }
-    response.locals.inviteCaption = inviteCaption
-
-    return response.render(`clinic-invite/${view}`)
+    // There are no other pages in the journey
+    return response.redirect(
+      getReturnUri(response.locals, data.clinicInvitationQuery)
+    )
   },
 
   /**
@@ -193,19 +177,23 @@ export const clinicInvitationController = {
     // will fall back to looking for response.locals.clinicInvitation)
     delete data.clinicInvitation
 
-    // A booking link has no check answers page, so save the invitation as soon
-    // as the last question is answered, ready for the link to be shown
-    if (
-      inviteJourneyType === ClinicInvitationJourneyType.BookingLink &&
-      paths.next.endsWith(`/${invite_id}/copy-link`)
-    ) {
-      ClinicInvitation.create(
+    // Other journeys send their invitations as soon as the programmes are chosen
+    if (inviteJourneyType !== ClinicInvitationJourneyType.BookingLink) {
+      response.locals.clinicInvitation = new ClinicInvitation(
         ClinicInvitation.findOne(invite_id, data.wizard),
         data
       )
-      ClinicInvitation.delete(invite_id, data.wizard)
-      delete data.clinicInvitationQuery
+
+      return clinicInvitationController.update(request, response)
     }
+
+    // A booking link saves the invitation instead, ready for the link to be shown
+    ClinicInvitation.create(
+      ClinicInvitation.findOne(invite_id, data.wizard),
+      data
+    )
+    ClinicInvitation.delete(invite_id, data.wizard)
+    delete data.clinicInvitationQuery
 
     return saveAndRedirect(request, response, paths.next)
   },
@@ -297,7 +285,7 @@ export const clinicInvitationController = {
     }
 
     // Invite the cohort of children for a bulk invite (the only other journey
-    // with a check answers page, as booking links don't have one)
+    // that sends invitations, as booking links don't)
     const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
     const clinicProgramme_ids = clinicInvitation.programme_ids
 

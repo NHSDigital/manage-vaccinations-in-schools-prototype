@@ -363,16 +363,7 @@ export const en = {
       label: 'Programmes'
     },
     clinicCount:
-      '{count, plural, =0 {No clinics are} one {1 clinic is} other {# clinics are}} scheduled for {programmeName}',
-    checkAnswers: {
-      title: 'Check and confirm the invitation details',
-      intro: 'Check the invitation details before sending.',
-      summaryTitle: 'Invitation details',
-      confirm: {
-        single: 'Send clinic invitation',
-        multiple: 'Send clinic invitations'
-      }
-    }
+      '{count, plural, =0 {No clinics are} one {1 clinic is} other {# clinics are}} scheduled for {programmeName}'
   },
   clinicAppointment: {
     label: 'Appointment details',

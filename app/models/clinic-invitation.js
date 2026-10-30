@@ -50,7 +50,6 @@ export class ClinicInvitation extends BaseModel {
    */
   generateUriForEligibleProgrammes(eligibleProgramme_ids = this.programme_ids) {
     const searchParams = new URLSearchParams()
-    searchParams.append('invitation_id', this.id)
 
     const inviteProgramme_ids = eligibleProgramme_ids.filter((id) =>
       this.programme_ids.includes(id)

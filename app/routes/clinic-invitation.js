@@ -24,7 +24,6 @@ const setJourneyType = (journeyType) => (request, response, next) => {
 const addInviteJourneyRoutes = (router) => {
   router.all('/:invite_id/new/:view', clinicInvitation.readForm)
   router.get('/:invite_id/new/:view', clinicInvitation.showForm)
-  router.post('/:invite_id/new/check-answers', clinicInvitation.update)
   router.post('/:invite_id/new/:view', clinicInvitation.updateForm)
 }
 

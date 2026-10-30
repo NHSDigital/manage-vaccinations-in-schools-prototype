@@ -1,5 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
+{% set confirmButtonText = __("patient.inviteToClinic.confirm") %}
 
 {% if clinicReadyProgrammes.length > 1 %}
   {% set title = __("patient.inviteToClinic.title.multiple") %}
