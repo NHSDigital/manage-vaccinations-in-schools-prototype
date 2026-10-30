@@ -142,8 +142,84 @@ router.get('/real/zara/chronological', (request, response) => {
   response.render('parent-test/real/zara/chronological')
 })
 
+router.get('/real/freya/non-routine', (request, response) => {
+  response.render('parent-test/real/freya/non-routine')
+})
+
+router.get('/real/freya/dose-1', (request, response) => {
+  response.render('parent-test/real/freya/dose-1')
+})
+
+router.get('/real/freya/dose-2', (request, response) => {
+  response.render('parent-test/real/freya/dose-2')
+})
+
+router.get('/real/samuel/dose-1', (request, response) => {
+  response.render('parent-test/real/samuel/dose-1')
+})
+
+router.get('/real/samuel/dose-2', (request, response) => {
+  response.render('parent-test/real/samuel/dose-2')
+})
+
+router.get('/real/samuel/non-routine', (request, response) => {
+  response.render('parent-test/real/samuel/non-routine')
+})
+
+router.get('/real/isla/dose-1', (request, response) => {
+  response.render('parent-test/real/isla/dose-1')
+})
+
+router.get('/real/isla/non-routine', (request, response) => {
+  response.render('parent-test/real/isla/non-routine')
+})
+
+router.get('/real/isla/dose-2', (request, response) => {
+  response.render('parent-test/real/isla/dose-2')
+})
+
+router.get('/real/jacob/dose-1', (request, response) => {
+  response.render('parent-test/real/jacob/dose-1')
+})
+
+router.get('/real/jacob/dose-2', (request, response) => {
+  response.render('parent-test/real/jacob/dose-2')
+})
+
+router.get('/real/jacob/non-routine', (request, response) => {
+  response.render('parent-test/real/jacob/non-routine')
+})
+
+router.get('/real/zara/non-routine', (request, response) => {
+  response.render('parent-test/real/zara/non-routine')
+})
+
+router.get('/real/zara/dose-1', (request, response) => {
+  response.render('parent-test/real/zara/dose-1')
+})
+
+router.get('/real/zara/dose-2', (request, response) => {
+  response.render('parent-test/real/zara/dose-2')
+})
+
 router.get('/understanding-records', (request, response) => {
   response.render('parent-test/understanding-records')
+})
+
+router.get('/how-we-calculate', (request, response) => {
+  response.render('parent-test/how-we-calculate')
+})
+
+router.get('/missing-or-incorrect-data', (request, response) => {
+  response.render('parent-test/missing-or-incorrect-data')
+})
+
+router.get('/non-routine-doses', (request, response) => {
+  response.render('parent-test/non-routine-doses')
+})
+
+router.get('/help-and-support', (request, response) => {
+  response.render('parent-test/help-and-support')
 })
 
 export const parentTestRoutes = router

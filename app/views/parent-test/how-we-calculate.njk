@@ -1,0 +1,29 @@
+{% extends "_layouts/default.njk" %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">How we calculate vaccination status</h1>
+
+      <p>To calculate a child’s vaccination status:</p>
+
+      <ol class="nhsuk-list nhsuk-list--number">
+        <li>We analyse a child’s vaccination records from a variety of sources such as GP practices, school vaccination services, regional child health information services and parents (for example, if a child was vaccinated in another country).</li>
+        <li>We combine these records and list them, from the 1st vaccination onwards, to form a vaccination history for that child.</li>
+        <li>We compare the vaccination history against the
+        <a href="https://www.gov.uk/government/publications/routine-childhood-immunisation-schedule/routine-childhood-immunisations-from-1-july-2025-babies-born-from-1-july-2024">UK Health Security Agency (UKHSA) routine schedule</a>
+        to check that:
+          <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>they have had all the appropriate vaccines for their age</li>
+            <li>the 1st dose was after the minimum starting age for that vaccine</li>
+            <li>they had the vaccinations with the correct length of time between doses for that vaccine</li>
+          </ul>
+        </li>
+      </ol>
+
+      <a class="nhsuk-back-link" href="/parent-test/">
+        Back to scenarios
+      </a>
+    </div>
+  </div>
+{% endblock %}
