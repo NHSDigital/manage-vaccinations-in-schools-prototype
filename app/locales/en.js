@@ -84,8 +84,7 @@ export const en = {
   },
   form: {
     confirm: 'Save changes',
-    continue: 'Continue',
-    optionalSuffix: ' (optional)'
+    continue: 'Continue'
   },
   error: {
     title: 'There is a problem'
@@ -3335,16 +3334,10 @@ export const en = {
     },
     clinicType: {
       label: 'Clinic type',
-      title: 'Is this clinic session open, restricted invitation, or drop-in?',
+      title: 'Is this clinic session open or drop-in?',
       hint: {
         open: 'Any parent can see this session when they’re searching for an available clinic',
-        restricted:
-          'Only specific parents who you send invitations to can see it',
         dropIn: 'Not available for booking'
-      },
-      audience: {
-        label: 'Audience',
-        hint: 'Your team will see this when inviting children to clinics'
       }
     },
     clinic: {

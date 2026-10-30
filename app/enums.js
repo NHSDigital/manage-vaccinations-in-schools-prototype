@@ -145,7 +145,6 @@ export const ClinicInvitationJourneyType = {
  */
 export const ClinicType = {
   Open: 'Open',
-  Restricted: 'Restricted invitation',
   DropIn: 'Drop-in'
 }
 
