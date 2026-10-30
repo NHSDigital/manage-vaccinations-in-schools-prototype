@@ -45,6 +45,7 @@ import {
   setMidday,
   today
 } from '../utils/date.js'
+import { getSessionTypeProperties } from '../utils/enum-properties.js'
 import { tokenize } from '../utils/object.js'
 import {
   getConsentWindow,
@@ -56,6 +57,7 @@ import {
   formatList,
   formatMarkdown,
   formatPercentBooked,
+  formatTag,
   formatWithSecondaryText,
   formatYearGroups,
   sentenceCaseProgrammeName,
@@ -1480,6 +1482,13 @@ export class Session extends BaseModel {
           }
 
           switch (prop) {
+            case 'sessionType':
+              return formatWithSecondaryText(
+                formatTag(getSessionTypeProperties(this.type)),
+                this.clinicType || '',
+                false
+              )
+
             case 'address':
               return (
                 this.address &&

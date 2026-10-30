@@ -3463,6 +3463,9 @@ export const en = {
       label: 'Session type',
       title: 'What type of session is this?'
     },
+    sessionType: {
+      label: 'Session type'
+    },
     consentUrl: {
       label: 'Online consent form'
     },
