@@ -144,8 +144,8 @@ export const ClinicInvitationJourneyType = {
  * @enum {string}
  */
 export const ClinicType = {
-  Open: 'Open',
-  DropIn: 'Drop-in'
+  Open: 'Appointment-based',
+  DropIn: 'Drop-in only'
 }
 
 /**
