@@ -78,7 +78,7 @@
       rows: summaryRows(session, {
         type: {},
         clinicType: {
-          href: session.uri + "/edit/clinic-type"
+          href: session.uri + "/edit/clinic-type" if not session.hasAppointments
         },
         programmes: {
           href: session.uri + "/edit/programmes"
