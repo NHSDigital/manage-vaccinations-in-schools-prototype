@@ -1110,9 +1110,13 @@ export const sessionController = {
     // Update session as closed
     const session = Session.update(session_id, { closeAt: today() }, data)
 
-    // Find a clinic
+    // Find a clinic (but not a drop-in)
     const clinic = Session.findAll(data)
-      .filter(({ type }) => type === SessionType.Clinic)
+      .filter(
+        (session) =>
+          session.type === SessionType.Clinic &&
+          session.clinicType !== ClinicType.DropIn
+      )
       .find(({ programme_ids }) =>
         programme_ids.some((id) => session.programme_ids.includes(id))
       )
