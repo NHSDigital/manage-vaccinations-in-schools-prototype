@@ -30,7 +30,6 @@ declare module 'express-session' {
 
 interface ApplicationData {
   booking?: ClinicBooking
-  bookingInvitation_id?: string
   cancellation?: Record<string, any>
   clinicInvitation?: ClinicInvitationOptions
   clinicInvitationQuery?: Record<string, any>
@@ -42,7 +41,6 @@ interface ApplicationData {
     consents: number
     review: number
   }
-  journeyData?: Record<string, any>
   organisationName?: string
   patientSession?: PatientSession
   patientSession_uuid?: string

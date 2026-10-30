@@ -543,31 +543,6 @@ export const en = {
       guidance:
         'Contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
     },
-    invitationExpired: {
-      title: 'The clinic invitation has expired',
-      problem: 'The clinics that your child was invited to have now passed.',
-      findAnother: {
-        title: 'Find another clinic',
-        description:
-          'You can still find other clinics that can provide the vaccinations that your child is eligible for.'
-      },
-      confirm: 'Start now',
-      guidance:
-        'You can also contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.'
-    },
-    restrictedFullyBooked: {
-      title: 'Clinics are now fully booked',
-      problem:
-        'The clinics that your child was invited to are now fully booked.',
-      findAnother: {
-        title: 'Find another clinic',
-        description:
-          'You can still find other clinics that can provide the vaccinations that your child is eligible for.',
-        offline:
-          'You can also contact your local vaccinations team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
-        confirm: 'Start now'
-      }
-    },
     fullyBooked: {
       title: 'All clinics are now fully booked',
       problem:
@@ -781,30 +756,9 @@ export const en = {
       confirm: 'Continue anyway',
       cancel: 'Try another location'
     },
-    offerRestrictedClinics: {
-      title: 'Do you want to offer booking into restricted invitation clinics?',
-      yes: 'Yes',
-      yesHint: 'You can choose the clinics in the next step',
-      no: 'No'
-    },
-    restrictedClinics: {
-      title: 'Which restricted invitation clinics do you want to offer?'
-    },
     clinicLocation: {
       title: 'Choose a clinic for %s’s appointment',
-      hint: 'The following clinics are ordered by distance from %s',
-      invited: {
-        label: {
-          parent: 'Clinics specifically for %s',
-          team: 'Restricted invitation clinics'
-        }
-      },
-      other: {
-        label: {
-          parent: 'Clinics available to all parents',
-          team: 'Open clinics'
-        }
-      }
+      hint: 'The following clinics are ordered by distance from %s'
     },
     clinicDate: {
       title: 'Choose a clinic date for %s’s appointment',
