@@ -8,7 +8,10 @@
     {% if patientProgramme.canOfferClinicCatchup and not id in appointmentProgrammeIds %}
       {% set patientProgrammeRows = patientProgrammeRows | push([
         {
-          html: link(patientProgramme.uri, patientProgramme.programme.name)
+          html: link({
+            text: patientProgramme.programme.name,
+            href: patientProgramme.uri
+          })
         },
         {
           html: patientProgramme.formatted.status
@@ -17,7 +20,10 @@
           html: patientProgramme.statusNotes
         },
         {
-          html: link(clinicAppointment.uri.addProgramme + patientProgramme.programme.id, "Add to appointment")
+          html: link({
+            text: "Add to appointment",
+            href: clinicAppointment.uri.addProgramme + patientProgramme.programme.id
+          })
         } if not session.isCancelled
       ]) %}
     {% endif %}

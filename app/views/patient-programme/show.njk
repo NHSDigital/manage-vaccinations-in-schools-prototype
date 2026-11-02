@@ -149,7 +149,10 @@
       {% for patientSession in patientProgramme.patientSessions %}
         {% set patientSessionRows = patientSessionRows | push([
           {
-            html: link(patientSession.uri, patientSession.session.location.name)
+            html: link({
+              text: patientSession.session.location.name,
+              href: patientSession.uri
+            })
           },
           {
             html: patientSession.session.formatted.date if patientSession.session.date else patientSession.session.status
@@ -226,7 +229,10 @@
       {% for patientProgramme in patientProgramme.otherSeasons %}
         {% set otherSeasonRows = otherSeasonRows | push([
           {
-            html: link(patientProgramme.uri, patientProgramme.name)
+            html: link({
+              text: patientProgramme.name,
+              href: patientProgramme.uri
+            })
           },
           {
             html: patientProgramme.formatted.status

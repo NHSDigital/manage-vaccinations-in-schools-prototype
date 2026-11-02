@@ -105,7 +105,10 @@
     {% elif patientProgramme.isActive %}
       {% set patientProgrammeRows = patientProgrammeRows | push([
         {
-          html: link(patientProgramme.uri, patientProgramme.name)
+          html: link({
+            text: patientProgramme.name,
+            href: patientProgramme.uri
+          })
         },
         {
           html: patientProgramme.formatted.status
