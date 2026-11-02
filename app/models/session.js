@@ -6,6 +6,7 @@ import _ from 'lodash'
 import programmesData from '../datasets/programmes.js'
 import {
   ClinicAppointmentStatus,
+  ClinicType,
   ConsentStatus,
   ConsentWindow,
   InstructionStatus,
@@ -44,6 +45,7 @@ import {
   setMidday,
   today
 } from '../utils/date.js'
+import { getSessionTypeProperties } from '../utils/enum-properties.js'
 import { tokenize } from '../utils/object.js'
 import {
   getConsentWindow,
@@ -55,6 +57,7 @@ import {
   formatList,
   formatMarkdown,
   formatPercentBooked,
+  formatTag,
   formatWithSecondaryText,
   formatYearGroups,
   sentenceCaseProgrammeName,
@@ -76,6 +79,7 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasRegistration] - Session has registration?
  *
  *   Clinics only
+ * @property {ClinicType} [clinicType] - open or drop-in?
  * @property {boolean} [canVaccinateForOtherProgrammes] - allow programmes beyond those targeted to be administered?
  * @property {Array<ClinicVaccinationPeriod>} [vaccinationPeriods] - Vaccination periods
  * @property {number} [slotLength] - the default length of an appointment, in minutes; for flu-only clinics, this is the nasal spray length
@@ -150,6 +154,7 @@ export class Session extends BaseModel {
     this.register = options?.register || {}
 
     if (this.type === SessionType.Clinic) {
+      this.clinicType = options?.clinicType
       this.canVaccinateForOtherProgrammes = stringToBoolean(
         options?.canVaccinateForOtherProgrammes
       )
@@ -495,6 +500,11 @@ export class Session extends BaseModel {
    * @returns {boolean} - true if we can differentiate short and long appointments, or false otherwise
    */
   get canBeSetUpForLongerAppointments() {
+    // No such thing as appointments in drop-in clinics
+    if (this.clinicType === ClinicType.DropIn) {
+      return false
+    }
+
     // Appointments in flu-only clinics can be nasal or IM (short or long)
     if (this.isFluOnlyClinic) {
       return true
@@ -1018,7 +1028,9 @@ export class Session extends BaseModel {
    */
   get shortName() {
     if (this.type === SessionType.Clinic) {
-      return `${this.programmeNames.titleCase} clinic at ${this.location.name}`
+      return this.clinicType === ClinicType.DropIn
+        ? `${this.programmeNames.titleCase} drop-in clinic at ${this.location.name}`
+        : `${this.programmeNames.titleCase} clinic at ${this.location.name}`
     }
 
     if (this.type === SessionType.Home) {
@@ -1360,28 +1372,6 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Get patient sessions that can be moved to a clinic session
-   *
-   * @returns {Array<PatientSession>} Patient sessions
-   */
-  get patientSessionsForClinic() {
-    return this.patients.filter(
-      ({ patientProgramme }) => patientProgramme.status === PatientStatus.Due
-    )
-  }
-
-  /**
-   * Get next available clinic session
-   *
-   * @returns {Session} Session
-   */
-  get nextProgrammeClinic() {
-    return Session.findAll(this.context).find(
-      (session) => session.type === SessionType.Clinic
-    )
-  }
-
-  /**
    * Get tokenised values (to use in search queries)
    *
    * @returns {string} Tokens
@@ -1470,6 +1460,13 @@ export class Session extends BaseModel {
           }
 
           switch (prop) {
+            case 'sessionType':
+              return formatWithSecondaryText(
+                formatTag(getSessionTypeProperties(this.type)),
+                this.clinicType || '',
+                false
+              )
+
             case 'address':
               return (
                 this.address &&
@@ -1517,6 +1514,8 @@ export class Session extends BaseModel {
               return this.unmatchedConsents.length > 0
                 ? filters.plural(this.unmatchedConsents.length, 'child')
                 : undefined
+            case 'clinicType':
+              return this.clinicType
             case 'programmes':
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
             case 'catchUps':

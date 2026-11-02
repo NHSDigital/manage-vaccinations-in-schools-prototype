@@ -83,7 +83,7 @@
           {% endcall %}
         {% endif %}
 
-        {% if view === "patients" and session.type === SessionType.Clinic and (session.isPlanned or session.isActive) %}
+        {% if view === "patients" and session.type === SessionType.Clinic and session.clinicType !== ClinicType.DropIn and (session.isPlanned or session.isActive) %}
           {{ actionLink({
             href: session.uri + "/book-into-a-clinic/",
             text: "Add a child to this clinic"

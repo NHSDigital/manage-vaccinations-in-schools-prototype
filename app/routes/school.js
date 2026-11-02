@@ -41,8 +41,6 @@ router.post('/:school_id/uploads', school.filterUploads)
 router.all('/:school_id', school.readPatients)
 router.post('/:school_id', school.filterPatients)
 
-router.post('/:school_id/invite-to-clinic', school.inviteToClinic)
-
 router.get('/:school_id{/:view}', school.show)
 
 export const schoolRoutes = router

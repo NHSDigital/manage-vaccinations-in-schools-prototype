@@ -1,18 +1,12 @@
-{% extends "_layouts/form.njk" %}
+{% extends "patient/invite-to-clinic/bulk-programmes.njk" %}
 
-{% set title = __("session.inviteToClinic.title") %}
-{% set confirmButtonText = __("session.inviteToClinic.confirm") %}
+{# The same page as a bulk invite from the Children list, but for the children in a school session #}
+{% set cancelText = __("session.inviteToClinic.cancel") %}
 
-{% block form %}
+{% block heading %}
   {{ heading({
     caption: session.location.name,
     text: title,
     size: "l"
   }) }}
-
-  {{ __mf("session.inviteToClinic.count", {
-    count: session.patientSessionsForClinic.length
-  }) | nhsukMarkdown }}
-
-  {{ __("session.inviteToClinic.description", session.nextProgrammeClinic.formatted.date) | nhsukMarkdown }}
 {% endblock %}

@@ -1,0 +1,24 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.clinicType.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        heading: title,
+        size: "l"
+      }
+    },
+    items: [
+    {
+      label: ClinicType.Open,
+      hint: __("session.clinicType.hint.open")
+    },
+    {
+      label: ClinicType.DropIn,
+      hint: __("session.clinicType.hint.dropIn")
+    }],
+    decorate: "session.clinicType"
+  }) }}
+{% endblock %}

@@ -1,6 +1,11 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { SessionPresetName, SessionType, TeamDefaults } from '../enums.js'
+import {
+  ClinicType,
+  SessionPresetName,
+  SessionType,
+  TeamDefaults
+} from '../enums.js'
 import { Session } from '../models.js'
 import {
   addDays,
@@ -110,6 +115,7 @@ export function generateSession(preset, user, options) {
     presetNames: [preset.name],
     ...(clinic_id && {
       type: SessionType.Clinic,
+      clinicType: ClinicType.Open,
       canVaccinateForOtherProgrammes,
       clinic_id,
       slotLength,

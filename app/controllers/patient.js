@@ -4,19 +4,14 @@ import {
   ArchiveRecordReason,
   PatientClinicStatus,
   PatientStatus,
-  SessionStatus,
   SessionType
 } from '../enums.js'
 import { Patient, PatientSession, Programme, Session, Team } from '../models.js'
 import { getDateValueDifference, today } from '../utils/date.js'
 import { getResults, getPagination } from '../utils/pagination.js'
-import {
-  ConjunctionType,
-  programmeNamesListForSentence
-} from '../utils/programme.js'
 import { saveAndRedirect } from '../utils/redirect.js'
-import { formatYearGroup, stringToArray } from '../utils/string.js'
-import { getFilterParams, formatQueryString } from '../utils/url.js'
+import { formatYearGroup } from '../utils/string.js'
+import { getFilterParams } from '../utils/url.js'
 
 export const patientController = {
   /**
@@ -321,34 +316,6 @@ export const patientController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
-    const { patient } = response.locals
-
-    if (view === 'invite-to-clinic') {
-      // Order the clinic-ready programmes alphabetically
-      response.locals.clinicReadyProgrammes = Object.values(patient.programmes)
-        .filter(
-          ({ clinicStatus }) => clinicStatus === PatientClinicStatus.Ready
-        )
-        .sort((a, b) => a.programme_id.localeCompare(b.programme_id))
-
-      // Warn about inviting to any programmes that don't have clinics scheduled
-      const programmesWithoutClinics =
-        response.locals.clinicReadyProgrammes.filter(
-          (patientProgramme) => patientProgramme.scheduledClinicsCount === 0
-        )
-      const formatter = new Intl.ListFormat('en', {
-        style: 'long',
-        type: 'disjunction'
-      })
-      response.locals.clinicReadyProgrammesWithoutClinics = {
-        count: programmesWithoutClinics.length,
-        names: formatter.format(
-          programmesWithoutClinics.map(({ programme }) =>
-            programme.name.replace('Flu', 'flu')
-          )
-        )
-      }
-    }
 
     return response.render(`patient/${view}`)
   },
@@ -543,183 +510,6 @@ export const patientController = {
     const returnUri = PatientSession.findOne(patientSession_uuid, data).uri
 
     return saveAndRedirect(request, response, returnUri)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  inviteOneToClinic(request, response) {
-    const { patient_uuid } = request.params
-    const { data, referrer } = request.session
-    const { __ } = response.locals
-
-    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
-
-    // Send comms to contacts and record in audit trail
-    const patient = Patient.findOne(patient_uuid, data)
-    patient.inviteToClinic(clinicProgramme_ids)
-    Patient.update(patient.uuid, patient, data)
-
-    // Report the success
-    const selectedProgrammeNames = programmeNamesListForSentence(
-      clinicProgramme_ids,
-      patient.canBeOfferedMmrv,
-      ConjunctionType.and,
-      data
-    )
-
-    request.flash(
-      'success',
-      __('patient.inviteToClinic.success', {
-        patientName: patient.firstName,
-        selectedProgrammes: selectedProgrammeNames
-      })
-    )
-
-    return saveAndRedirect(request, response, referrer || patient.uri)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showInviteManyToClinic(request, response) {
-    const { programme_id } = /** @type {{ programme_id?: string }} */ (
-      request.query
-    )
-    const { data } = request.session
-    let clinicPatient_ids = stringToArray(data.clinicPatient_ids)
-
-    const programmes = Programme.findAll(data)
-      .filter((programme) => !programme.isHidden)
-      .sort((a, b) => a.name.localeCompare(b.name))
-
-    let programme_ids
-    if (programme_id) {
-      programme_ids = stringToArray(programme_id)
-    } else {
-      programme_ids = programmes.map(({ id }) => id)
-    }
-    const invitableProgrammes = programmes.filter((programme) =>
-      programme_ids.includes(programme.id)
-    )
-
-    // Details required for the intro paragraph
-    response.locals.cohortDetails = {
-      childrenCount: clinicPatient_ids.length,
-      specificProgrammes: !!programme_id,
-      programmeCount: programme_ids.length,
-      programmeNames: programmeNamesListForSentence(
-        programme_ids,
-        false,
-        ConjunctionType.or,
-        data
-      )
-    }
-
-    // Details required for the programme checkboxes
-    const clinicReadyProgrammes = []
-    const scheduledSessions = Session.findAll(data)
-      .filter(({ type }) => type === SessionType.Clinic)
-      .filter(({ status }) => status === SessionStatus.Planned)
-    for (const programme of invitableProgrammes) {
-      const clinicReadyChildrenCount = clinicPatient_ids
-        .map((id) => Patient.findOne(id, data))
-        .filter(
-          (patient) =>
-            patient.programmes[programme.id].clinicStatus ===
-            PatientClinicStatus.Ready
-        ).length
-      if (clinicReadyChildrenCount > 0) {
-        const scheduledClinicsCount = scheduledSessions.filter((session) =>
-          session.programme_ids.includes(programme.id)
-        ).length
-
-        clinicReadyProgrammes.push({
-          name: programme.name,
-          id: programme.id,
-          childrenCount: clinicReadyChildrenCount,
-          clinicCount: scheduledClinicsCount
-        })
-      }
-    }
-    response.locals.clinicReadyProgrammes = clinicReadyProgrammes
-
-    // Summary information for a warning about programmes without clinics
-    const programmesWithoutClinics = clinicReadyProgrammes.filter(
-      ({ clinicCount }) => clinicCount === 0
-    )
-    response.locals.clinicReadyProgrammesWithoutClinics = {
-      count: programmesWithoutClinics.length,
-      names: programmeNamesListForSentence(
-        programmesWithoutClinics.map(({ id }) => id),
-        false,
-        ConjunctionType.or,
-        data
-      )
-    }
-
-    return response.render('patient/bulk-invite-to-clinic')
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  inviteManyToClinic(request, response) {
-    const { data } = request.session
-    const { __mf } = response.locals
-
-    const clinicPatient_ids = stringToArray(data.clinicPatient_ids)
-    const clinicProgramme_ids = stringToArray(request.body.clinicProgramme_ids)
-
-    // Invite each of the children to clinic for the subset of the selected programmes
-    // that make sense for that child
-    let invitedChildrenCount = 0
-    let notInvitedChildrenCount = 0
-    for (const patient of clinicPatient_ids.map((id) =>
-      Patient.findOne(id, data)
-    )) {
-      // Work out which of the selected programmes this patient was clinic-ready for
-      const { clinicReadyProgramme_ids } = patient
-      if (!patient.hasContactDetails) {
-        notInvitedChildrenCount++
-        continue
-      }
-
-      const invitedProgramme_ids = [
-        ...new Set(clinicReadyProgramme_ids).intersection(
-          new Set(clinicProgramme_ids)
-        )
-      ]
-
-      if (invitedProgramme_ids.length) {
-        // Send comms to contacts and record in audit trail
-        patient.inviteToClinic(invitedProgramme_ids)
-        Patient.update(patient.uuid, patient, data)
-
-        invitedChildrenCount++
-      }
-    }
-
-    // Report success (or otherwise)
-    const details = [
-      invitedChildrenCount > 0 &&
-        __mf('patient.bulkInviteToClinic.success.invited', {
-          count: invitedChildrenCount
-        }),
-      notInvitedChildrenCount > 0 &&
-        __mf('patient.bulkInviteToClinic.success.notInvited', {
-          count: notInvitedChildrenCount
-        })
-    ].filter(Boolean)
-    const messageType = invitedChildrenCount > 0 ? 'success' : 'message'
-    request.flash(messageType, details.join('<br>'))
-
-    // Reset the cohort
-    delete data.clinicPatient_ids
-
-    // Get back to the filter page as we left it
-    const filterUrl = `/patients${formatQueryString(request.query)}`
-    return saveAndRedirect(request, response, filterUrl)
   },
 
   /**

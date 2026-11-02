@@ -56,15 +56,20 @@
       hasPsdProtocol: {}
     } %}
     {% if session.type === SessionType.Clinic %}
+      {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
       {% set sessionDetailsRows = {
-          location: {},
+          clinicType: {},
           status: {},
           programmes: {},
+          catchUps: {} if not session.isFluOnlyClinic else none,
+          location: {},
           date: {},
+          hasRegistration: {} if session.clinicType !== ClinicType.DropIn else none,
           vaccinationPeriods: {},
           vaccinators: {},
-          appointmentLengths: {},
-          hasRegistration: {}
+          appointmentLengths: {
+            label: __("session.appointmentLengths.label." + appointmentLengthKey)
+          }
       } %}
     {% endif %}
 

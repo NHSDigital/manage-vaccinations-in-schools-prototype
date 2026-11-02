@@ -2,13 +2,18 @@ import 'express-flash'
 import 'express-session'
 import {
   ClinicBooking,
+  ClinicInvitation,
   Consent,
+  Patient,
   PatientSession,
   Reply,
+  School,
   Session,
   Team,
   User
 } from '../../app/models.js'
+import type { ClinicInvitationJourneyType } from '../../app/enums.js'
+import type { ClinicInvitationOptions } from '../../app/models/clinic-invitation.js'
 
 declare module 'express-serve-static-core' {
   interface Locals extends ApplicationLocals {
@@ -26,7 +31,8 @@ declare module 'express-session' {
 interface ApplicationData {
   booking?: ClinicBooking
   cancellation?: Record<string, any>
-  clinicAdvert?: Record<string, any>
+  clinicInvitation?: ClinicInvitationOptions
+  clinicInvitationQuery?: Record<string, any>
   programmesToOffer?: Record<string, any>
   clinicPatient_ids?: string | string[]
   consent?: Consent
@@ -50,6 +56,10 @@ interface ApplicationData {
 
 interface ApplicationLocals extends ApplicationData {
   bookingPhoneNumber?: string
+  clinicInvitation?: ClinicInvitation
   currentPage?: string
+  inviteJourneyType?: ClinicInvitationJourneyType
+  patient?: Patient
+  school?: School
   session?: Session
 }

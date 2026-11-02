@@ -10,17 +10,16 @@
   }) }}
 
   {{ code({
-    text: data.clinicAdvert.link,
+    text: bookingLink,
     button: true,
     copyButtonText: __("session.advertise.link.copy.label"),
     copiedButtonText: __("session.advertise.link.copied.label")
   }) }}
 
-  {{ __("session.advertise.link.description", { programmeNames: data.clinicAdvert.programmeNames }) | nhsukMarkdown }}
+  {{ __("session.advertise.link.description", { programmeNames: programmeNames }) | nhsukMarkdown }}
 
   {{ button({
     text: __("session.advertise.link.confirm"),
-    name: "action",
-    value: "return"
+    href: "/sessions"
   }) }}
 {% endblock %}

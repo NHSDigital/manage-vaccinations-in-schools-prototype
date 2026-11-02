@@ -61,6 +61,7 @@
       })
     }) }}
   {% else %}
+    {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
     {{ summaryList({
       card: {
         heading: {
@@ -71,6 +72,9 @@
       lastRowBorder: false,
       rows: summaryRows(session, {
         type: {},
+        clinicType: {
+          href: session.uri + "/new/clinic-type"
+        },
         programmes: {
           href: session.uri + "/new/programmes"
         },
@@ -88,7 +92,7 @@
         },
         hasRegistration: {
           href: session.uri + "/new/registration"
-        },
+        } if session.clinicType !== ClinicType.DropIn else none,
         vaccinationPeriods: {
           href: session.uri + "/new/vaccination-periods"
         },
@@ -96,9 +100,12 @@
           href: session.uri + "/new/vaccinators"
         },
         appointmentLengths: {
+          label: __("session.appointmentLengths.label." + appointmentLengthKey),
           href: session.uri + "/new/appointment-length"
         },
-        totalSlots: {}
+        totalSlots: {
+          label: __("session.totalSlots.label." + appointmentLengthKey)
+        }
       })
     }) }}
   {% endif %}

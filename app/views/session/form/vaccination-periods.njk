@@ -9,7 +9,8 @@
     size: "l"
   }) }}
 
-  {{ __("session.vaccinationPeriods.hint") | nhsukMarkdown }}
+  {% set hintKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
+  {{ __("session.vaccinationPeriods.hint." + hintKey) | nhsukMarkdown }}
 
   {% for vaccinationPeriod in session.vaccinationPeriods %}
     {% call fieldset({

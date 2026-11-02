@@ -357,6 +357,13 @@ export const en = {
         'Clinic appointment made by {{appointment.contact.fullName}} archived'
     }
   },
+  clinicInvitation: {
+    programmes: {
+      label: 'Programmes'
+    },
+    clinicCount:
+      '{count, plural, =0 {No clinics are} one {1 clinic is} other {# clinics are}} scheduled for {programmeName}'
+  },
   clinicAppointment: {
     label: 'Appointment details',
     show: {
@@ -1935,7 +1942,6 @@ export const en = {
         }
       },
       clinicCount: {
-        hint: '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {# clinics are scheduled for {programmeName}}}',
         someParagraph:
           '{count, plural, one {There is 1 clinic scheduled for the {programmeName} programme.} other {There are # clinics scheduled for the {programmeName} programme.}}',
         noneParagraph:
@@ -1967,8 +1973,6 @@ export const en = {
         hint: {
           children:
             '{count, plural, one {1 child can be invited for {programmeName}} other {{count} children can be invited for {programmeName}}}',
-          clinics:
-            '{count, plural, =0 {No clinics are scheduled for {programmeName}} one {1 clinic is scheduled for {programmeName}} other {{count} clinics are scheduled for {programmeName}}}',
           combined: '{{childrenHint}}<br>{{clinicsHint}}'
         }
       },
@@ -2870,7 +2874,7 @@ export const en = {
       title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
       count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} are due a vaccination for at least 1 programme.',
+        '{count, plural, =0 {No children are} one {1 child is} other {# children are}} due a vaccination for at least 1 programme.',
       description:
         'You can now send clinic booking invitations to their parents.',
       programme: 'Which programmes do you want to send invitations for?',
@@ -3279,6 +3283,12 @@ export const en = {
         available: {
           label: 'Available slots'
         },
+        capacity: {
+          label: 'Maximum drop-ins'
+        },
+        dropInLength: {
+          label: 'Minutes per child'
+        },
         programmeRequests: {
           label: '%s appointments'
         },
@@ -3322,6 +3332,14 @@ export const en = {
       label: 'Year groups',
       title: 'Which year groups do you want to invite to this session?'
     },
+    clinicType: {
+      label: 'Clinic type',
+      title: 'Will this session be appointment-based or drop-in?',
+      hint: {
+        open: 'Parents or your team can book appointments',
+        dropIn: 'Not available for booking'
+      }
+    },
     clinic: {
       label: 'Clinic location',
       title: 'Where will this session be held?',
@@ -3336,7 +3354,11 @@ export const en = {
     },
     vaccinationPeriods: {
       title: 'When will the session start and end?',
-      hint: 'Parents will be able to book appointments between these times.',
+      hint: {
+        booking:
+          'Parents will be able to book appointments between these times.',
+        dropIn: 'This is to help calculate how many vaccinations are possible.'
+      },
       label: 'Vaccination periods',
       period: {
         title: 'Vaccination period %d',
@@ -3375,8 +3397,14 @@ export const en = {
       }
     },
     appointmentLengths: {
-      label: 'Appointment length',
-      title: 'How long are your appointments?',
+      label: {
+        booking: 'Appointment length',
+        dropIn: 'Minutes per child'
+      },
+      title: {
+        booking: 'How long are your appointments?',
+        dropIn: 'How long will it take to vaccinate each child?'
+      },
       flu: {
         short: {
           label: 'Time for a nasal spray, in minutes'
@@ -3405,7 +3433,10 @@ export const en = {
       suffix: 'minutes'
     },
     totalSlots: {
-      label: 'Number of slots'
+      label: {
+        booking: 'Number of slots',
+        dropIn: 'Maximum drop-ins'
+      }
     },
     appointments: {
       label: 'Appointments'
@@ -3429,8 +3460,11 @@ export const en = {
       label: 'Status'
     },
     type: {
-      label: 'Type',
+      label: 'Session type',
       title: 'What type of session is this?'
+    },
+    sessionType: {
+      label: 'Session type'
     },
     consentUrl: {
       label: 'Online consent form'
@@ -3462,24 +3496,14 @@ export const en = {
       label: 'Download session spreadsheet'
     },
     inviteToClinic: {
-      title: 'Invite parents to book a clinic appointment',
       label: 'Send clinic invitations',
-      count:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} were not vaccinated at this school and have not already been invited to a clinic.',
-      description:
-        'You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.\n\nThe next clinic is on %s.',
-      confirm: 'Send clinic invitations',
-      success:
-        '{count, plural, =0 {No children} one {1 child} other {# children}} invited to the clinic'
+      cancel: 'Go back to session'
     },
     advertise: {
       label: 'Share a booking link for clinics',
       programmes: {
         title: 'Select the clinic programmes for your link',
-        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.',
-        programme: {
-          hint: '{count, plural, =0 {No clinics are scheduled} one {1 clinic is scheduled} other {{count} clinics are scheduled}}'
-        }
+        hint: 'The selected programmes will be combined into a single link that parents can use to book appointments.'
       },
       link: {
         title: 'Copy this link',

@@ -555,6 +555,19 @@ export default () => {
   }
 
   /**
+   * Describe how many clinics are scheduled for a programme
+   *
+   * @param {number} count - Number of clinics
+   * @param {string} programmeName - Programme name, as used in a sentence
+   * @returns {string} Clinic count hint
+   */
+  globals.clinicCountHint = function (count, programmeName) {
+    const { __mf } = this.ctx
+
+    return __mf('clinicInvitation.clinicCount', { count, programmeName })
+  }
+
+  /**
    * Get summaryList `rows` parameters
    *
    * @param {object} data - Data
