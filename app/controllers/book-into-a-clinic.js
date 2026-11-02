@@ -993,14 +993,16 @@ export const bookIntoClinicController = {
     response.locals.additionalNeedsFeatureFlag = getAdditionalNeeds()
 
     // Can we redirect flu vaccinations to NBS if needed?
-    const offerPharmacies = isPharmacyVaccinationAvailable(
-      appointment?.selected_programme_ids,
-      data
-    )
-    if (offerPharmacies) {
-      response.locals.isPharmacyVaccinationAvailable = true
-      response.locals.pharmacyBookingUri =
-        'https://www.nhs.uk/nhs-services/vaccination-and-booking-services/book-flu-vaccination/'
+    if (appointment) {
+      const offerPharmacies = isPharmacyVaccinationAvailable(
+        appointment?.selected_programme_ids,
+        data
+      )
+      if (offerPharmacies) {
+        response.locals.isPharmacyVaccinationAvailable = true
+        response.locals.pharmacyBookingUri =
+          'https://www.nhs.uk/nhs-services/vaccination-and-booking-services/book-flu-vaccination/'
+      }
     }
 
     // All health questions use the same view
