@@ -1,4 +1,4 @@
-import { addYears, isAfter, isBefore } from 'date-fns'
+import { addYears, isAfter, isBefore, max } from 'date-fns'
 
 import activity from '../datasets/activity.js'
 import {
@@ -242,16 +242,114 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get triage notes
+   * Get every triage note for this programme, including expired ones, oldest
+   * first
+   *
+   * Not all of these are still current, so use `triageNotes` for that instead
    *
    * @returns {Array<AuditEvent>} Audit events
    */
-  get triageNotes() {
+  get #allTriageNotes() {
     return this.auditEvents
       .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       .filter(({ status }) => status)
       .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+  }
+
+  /**
+   * Get triage notes that are still current, oldest first
+   *
+   * @returns {Array<AuditEvent>} Audit events
+   */
+  get triageNotes() {
+    return this.#allTriageNotes.filter(
+      (triageNote) => !this.hasTriageExpired(triageNote)
+    )
+  }
+
+  /**
+   * Get previous triage notes that have expired, because the health answers
+   * they reviewed have expired, oldest first
+   *
+   * @returns {Array<AuditEvent>} Audit events
+   */
+  get previousTriageNotes() {
+    return this.#allTriageNotes.filter((triageNote) =>
+      this.hasTriageExpired(triageNote)
+    )
+  }
+
+  /**
+   * Get responses whose health answers were reviewed in a triage, i.e. those
+   * giving consent before the triage was recorded, and not since invalidated
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Array<Reply>} Responses
+   */
+  #getRepliesReviewedInTriage(triageNote) {
+    const triagedAt = new Date(triageNote.createdAt)
+
+    return (this.#allDeliveredReplies ?? []).filter(
+      (reply) =>
+        reply.hasGivenConsent &&
+        !reply.isInvalidated &&
+        !isAfter(new Date(reply.createdAt), triagedAt)
+    )
+  }
+
+  /**
+   * Get the date a triage expires, which is when the last of the health
+   * answers it reviewed expires
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Date|undefined} Expiry date, or undefined if it never expires
+   */
+  getTriageExpiresAt(triageNote) {
+    const reviewedReplies = this.#getRepliesReviewedInTriage(triageNote)
+
+    // Without any responses to base it on, we can’t tell when it expires
+    if (reviewedReplies.length === 0) {
+      return
+    }
+
+    // If any response it reviewed never expires, neither does the triage
+    const expiryDates = reviewedReplies.map((reply) => reply.expiresAt)
+    if (expiryDates.some((expiryDate) => !expiryDate)) {
+      return
+    }
+
+    return max(expiryDates)
+  }
+
+  /**
+   * Has a triage expired?
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {boolean} Triage has expired
+   */
+  hasTriageExpired(triageNote) {
+    const expiryDate = this.getTriageExpiresAt(triageNote)
+    return expiryDate ? isAfter(today(), expiryDate) : false
+  }
+
+  /**
+   * Get description of when a triage expires, or expired
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {string|undefined} Expiry description
+   */
+  getTriageExpiryDescription(triageNote) {
+    const expiryDate = this.getTriageExpiresAt(triageNote)
+    if (!expiryDate) {
+      return
+    }
+
+    const formattedExpiryDate = formatDate(expiryDate, { dateStyle: 'long' })
+
+    return this.hasTriageExpired(triageNote)
+      ? `Expired ${formattedExpiryDate}`
+      : `Expires ${formattedExpiryDate}`
   }
 
   /**
