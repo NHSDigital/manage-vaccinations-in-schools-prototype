@@ -2086,7 +2086,7 @@ export const en = {
       label: 'Missing NHS number'
     },
     fullNameAndNhsn: {
-      label: 'Name and NHS number'
+      label: 'Child’s name and NHS number'
     },
     fullName: {
       label: 'Full name',
