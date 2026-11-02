@@ -56,20 +56,6 @@
     patientProgramme: patientProgramme
   }) }}
 
-  {# Triage outcomes that no longer count, as the health answers they reviewed have expired #}
-  {% if patientProgramme.previousTriageNotes | length %}
-    {% call details({
-      summaryText: __("patientSession.previousTriageNotes.label"),
-      classes: "nhsuk-u-margin-top-4"
-    }) %}
-      {{ appTriageNotes({
-        id: "previous-triage-notes",
-        triageNotes: patientProgramme.previousTriageNotes,
-        patientProgramme: patientProgramme
-      }) }}
-    {% endcall %}
-  {% endif %}
-
   {% if options.needsTriage and not triageNoteRows.length %}
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
   {% endif %}
@@ -86,5 +72,18 @@
         formaction: patientProgramme.uri + "/new/triage?referrer=" + referrer
       }
     }) }}
+  {% endif %}
+
+  {# Triage outcomes that no longer count, as the health answers they reviewed have expired #}
+  {% if patientProgramme.previousTriageNotes | length %}
+    {% call details({
+      summaryText: __("patientSession.previousTriageNotes.label")
+    }) %}
+      {{ appTriageNotes({
+        id: "previous-triage-notes",
+        triageNotes: patientProgramme.previousTriageNotes,
+        patientProgramme: patientProgramme
+      }) }}
+    {% endcall %}
   {% endif %}
 {% endcall %}
