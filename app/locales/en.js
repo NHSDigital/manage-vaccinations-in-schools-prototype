@@ -4064,10 +4064,11 @@ export const en = {
       title: 'What type of records are you uploading?',
       hint: {
         Cohort:
-          'Records of children from a CHIS, local authority or school, used to create cohorts',
+          'Adds children to your area or updates records for children already in your area. Can be for multiple children or individual children.',
         Report:
-          'Records of previous vaccinations to be reported to GPs and/or NHS England',
-        School: 'Records of children from a school, used to update cohorts'
+          'Updates children’s records with previous vaccinations recorded elsewhere. Also uploads records from an offline spreadsheet used when working offline during a vaccination session.',
+        School:
+          'Updates the list of children at a school. Can be for all year groups or selected year groups. Must include all children in the year groups you select.'
       }
     },
     status: {
