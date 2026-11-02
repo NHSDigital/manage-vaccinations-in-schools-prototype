@@ -409,6 +409,11 @@ export function getScreenStatusDescription(patientProgramme) {
   const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
   const person = patientProgramme.patient.isPost16 ? 'child' : 'parent'
 
+  // Without consent, there are no current health answers to triage
+  if (!patientProgramme.consentGiven) {
+    return `${patientProgramme.patient.firstName} can be triaged once consent has been given.`
+  }
+
   switch (patientProgramme.screen) {
     case ScreenStatus.NeedsTriage:
       return patientProgramme.lastPatientSession?.clinicAppointment
