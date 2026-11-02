@@ -935,6 +935,12 @@ export const sessionController = {
             ? team.hasSchoolSessionRegistration
             : team.hasClinicSessionRegistration
       }
+    } else if (view === 'clinic-type') {
+      // Automatically turn off registration for drop-in only clinics
+      request.body.session.hasRegistration =
+        request.body.session.clinicType === ClinicType.DropIn
+          ? false
+          : team.hasClinicSessionRegistration
     }
 
     // Update values in the session model
