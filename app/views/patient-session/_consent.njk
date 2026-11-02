@@ -124,7 +124,8 @@
   {# Responses that no longer count towards consent #}
   {% if patientProgramme.previousReplies | length %}
     {% call details({
-      summaryText: __("patientSession.previousReplies.label")
+      summaryText: __("patientSession.previousReplies.label"),
+      classes: "nhsuk-u-margin-top-4"
     }) %}
       {% for reply in patientProgramme.previousReplies %}
         {{ consentResponseCard(reply) }}
