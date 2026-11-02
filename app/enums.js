@@ -900,7 +900,7 @@ export const UploadFormat = {
  * @enum {string}
  */
 export const UploadType = {
-  Cohort: 'Cohort records',
+  Cohort: 'Child records',
   School: 'Class list records',
   Report: 'Vaccination records'
 }

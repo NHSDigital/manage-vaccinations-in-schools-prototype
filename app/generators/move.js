@@ -127,7 +127,7 @@ function generateClassListMoves(upload, patients) {
 /**
  * Generate school moves found in cohort records
  *
- * Cohort records include each child’s school. Where this differs from the
+ * Child records include each child’s school. Where this differs from the
  * school Mavis records, the child has moved school. Children are moved to
  * another school of the same phase (primary to primary, secondary to
  * secondary), chosen from schools that already have patients so that every
