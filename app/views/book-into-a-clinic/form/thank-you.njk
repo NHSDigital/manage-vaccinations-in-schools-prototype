@@ -12,6 +12,15 @@
       }) }}
 
       {{ __("clinicBooking.thankYou.advice", { team: team }) | nhsukMarkdown }}
+
+      {% if isPharmacyVaccinationAvailable %}
+          {{ __("clinicBooking.thankYou.pharmacy.description") | nhsukMarkdown }}
+
+          {{ button({
+            text: __("clinicBooking.thankYou.pharmacy.action"),
+            href: pharmacyBookingUri
+          }) }}
+      {% endif %}
     </div>
   </div>
 {% endblock %}

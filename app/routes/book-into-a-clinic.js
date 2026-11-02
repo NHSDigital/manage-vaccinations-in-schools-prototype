@@ -30,6 +30,11 @@ router.get(
 )
 
 // Creating a new appointment
+router.get(
+  '/:booking_uuid/new/:appointment_uuid/remove-flu',
+  bookIntoClinic.removeFlu
+)
+
 router.all(
   '/:booking_uuid/new/:appointment_uuid/:view',
   bookIntoClinic.readForm('new')
