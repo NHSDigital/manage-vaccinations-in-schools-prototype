@@ -465,6 +465,7 @@ export const replyController = {
 
     // Clean up session data
     delete data.reply
+    delete request.session.referrer
 
     // Update batch data
     const reply = Reply.update(reply_uuid, { isInvalidated: true, note }, data)
@@ -521,6 +522,7 @@ export const replyController = {
 
     // Clean up session data
     delete data.reply
+    delete request.session.referrer
 
     request.flash('success', __(`reply.withdraw.success`, { reply }))
 
