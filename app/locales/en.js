@@ -3660,7 +3660,11 @@ export const en = {
       description: 'Manage your team’s settings'
     },
     edit: {
+      label: 'Edit',
       success: 'Team settings updated'
+    },
+    new: {
+      label: 'Add a new sub team'
     },
     contact: {
       title: 'Contact details',
@@ -3689,6 +3693,14 @@ export const en = {
         text: 'You can change these values when scheduling new clinics.',
         defaults: 'Clinic session defaults'
       }
+    },
+    team: {
+      label: 'Team',
+      title: 'Team details'
+    },
+    teams: {
+      title: 'Sub teams',
+      summary: 'Sub teams'
     },
     sessionOpenWeeks: {
       title: 'When should parents get a request to give consent?',

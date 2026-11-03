@@ -1,0 +1,67 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("team.show.title") %}
+
+{% block content %}
+  {{ super() }}
+
+  {{ heading({
+    caption: team.team.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-quarter">
+      {{ appSectionNavigation({
+        vertical: true,
+        items: navigationItems
+      }) }}
+    </div>
+
+    <div class="nhsuk-grid-column-three-quarters">
+      {% set teamRows = [] %}
+      {% for team in team.teams %}
+        {% set teamRows = teamRows | push([
+          {
+            html: team.name or "Not provided"
+          },
+          {
+            html: appActionList({
+              items: [
+                {
+                  text: __("team.edit.label"),
+                  href: team.uri + "/edit/team"
+                }
+              ]
+            })
+          }
+        ]) %}
+      {% endfor %}
+
+      {{ table({
+        id: "teams",
+        responsive: true,
+        card: {
+          heading: {
+            text: __("team.teams.summary"),
+            size: "m"
+          },
+          actions: {
+            items: [
+              {
+                text: __("team.new.label"),
+                href: "/teams/new"
+              }
+            ]
+          }
+        },
+        head: [
+          { text: __("team.name.label") },
+          { text: __("actions.label") }
+        ],
+        rows: teamRows
+      }) }}
+    <div>
+  </div>
+{% endblock %}

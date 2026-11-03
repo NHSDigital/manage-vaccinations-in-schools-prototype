@@ -1,13 +1,18 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("team.contact.title") %}
+{% set title = __("team.team.title") %}
 
 {% block form %}
   {{ heading({
-    caption: team.name,
+    caption: team.team.name if team.team_id,
     text: title,
     size: "l"
   }) }}
+
+  {{ input({
+    label: __("team.name.label"),
+    decorate: "team.name"
+  }) if team.team_id }}
 
   {{ input({
     label: __("team.email.label"),

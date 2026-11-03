@@ -3,9 +3,30 @@ export default [
     id: '001',
     ods: 'RYG',
     name: 'Coventry and Warwickshire Partnership NHS Trust',
-    email: 'enquiries@covwarkpt.nhs.uk',
-    tel: '024 7636 2100',
-    privacyPolicyUrl: 'https://www.covwarkpt.nhs.uk/download.cfm?ver=8286'
+    email: 'Bewise.Immunise@covwarkpt.nhs.uk',
+    tel: '024 7696 1422',
+    privacyPolicyUrl: 'https://www.covwarkpt.nhs.uk/privacy'
+  },
+  {
+    id: '0011',
+    team_id: '001',
+    name: 'Coventry School-Aged Immunisation Service',
+    email: 'Bewise.Immunise@covwarkpt.nhs.uk',
+    tel: '024 7696 1422'
+  },
+  {
+    id: '0012',
+    team_id: '001',
+    name: 'North Warwickshire School-Aged Immunisation Service',
+    email: 'NorthImms@covwarkpt.nhs.uk',
+    tel: '024 7632 1550'
+  },
+  {
+    id: '0013',
+    team_id: '001',
+    name: 'South Warwickshire School-Aged Immunisation Service',
+    email: 'SouthImms@covwarkpt.nhs.uk',
+    tel: '01926 353899'
   },
   {
     id: '002',

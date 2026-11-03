@@ -14,6 +14,7 @@ export const teamController = {
 
     response.locals.navigationItems = [
       'contact',
+      'teams',
       'clinics',
       'schools',
       'sessions'

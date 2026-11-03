@@ -10,6 +10,7 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} TeamOptions
  * @property {string} [id] - Team ID
+ * @property {string} [team_id] - Parent team ID
  * @property {string} [ods] - ODS code
  * @property {string} [name] - Full name
  * @property {string} [email] - Email address
@@ -40,11 +41,13 @@ export class Team extends BaseModel {
 
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('###')
+    this.team_id = options?.team_id
     this.ods = options?.ods || faker.helpers.replaceSymbols('???')
     this.name = options?.name
     this.email = options?.email
     this.tel = options?.tel
-    this.privacyPolicyUrl = options?.privacyPolicyUrl
+    this.privacyPolicyUrl =
+      options?.privacyPolicyUrl || this.team?.privacyPolicyUrl
     this.sessionOpenWeeks =
       Number(options?.sessionOpenWeeks) || TeamDefaults.SessionOpenWeeks
     this.sessionReminderWeeks =
@@ -90,6 +93,34 @@ export class Team extends BaseModel {
         .sort((a, b) => a.name.localeCompare(b.name))
     } catch (error) {
       console.error('Team.schools', error.message)
+    }
+  }
+
+  /**
+   * Get parent team
+   *
+   * @returns {Team|undefined} Parent team
+   */
+  get team() {
+    try {
+      return Team.findOne(this.team_id, this.context)
+    } catch (error) {
+      console.error('Team.team', error.message)
+    }
+  }
+
+  /**
+   * Get child teams
+   *
+   * @returns {Array<Team>|undefined} Child teams
+   */
+  get teams() {
+    try {
+      return Team.findAll(this.context)
+        .filter((team) => team.team_id === this.id)
+        .sort((a, b) => a.name.localeCompare(b.name))
+    } catch (error) {
+      console.error('Team.teams', error.message)
     }
   }
 
