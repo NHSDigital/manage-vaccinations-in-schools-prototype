@@ -110,17 +110,10 @@
   {{ heading({
     text: __("patientSession.replies.label"),
     level: 3,
-    size: "s",
-    classes: "nhsuk-u-margin-bottom-2"
+    size: "s"
   }) }}
 
   {% if patientProgramme.replies | length %}
-    {# Explain non-expiring refusals, if there are any active #}
-    {% if patientProgramme.replies | selectattr("hasRefusedConsent") | length %}
-      {{ __("patientSession.replies.refusals") | nhsukMarkdown }}
-    {% endif %}
-
-    {# Show the active consent responses themselves #}
     {% for reply in patientProgramme.replies %}
       {{ consentResponseCard(reply) }}
     {% endfor %}

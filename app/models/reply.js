@@ -601,7 +601,9 @@ export class Reply extends BaseModel {
             case 'createdBy':
               return this.createdBy?.fullName || ''
             case 'expiresAt':
-              return this.expiresAt ? formattedDate(this.expiresAt) : 'None'
+              return this.expiresAt
+                ? formattedDate(this.expiresAt)
+                : 'Consent refusals do not expire'
             case 'decisionStatus':
               return getDecisionStatus()
             case 'contact':
