@@ -210,8 +210,8 @@ router.get('/how-we-calculate', (request, response) => {
   response.render('parent-test/how-we-calculate')
 })
 
-router.get('/missing-or-incorrect-data', (request, response) => {
-  response.render('parent-test/missing-or-incorrect-data')
+router.get('/missing-or-incorrect-details', (request, response) => {
+  response.render('parent-test/missing-or-incorrect-details')
 })
 
 router.get('/non-routine-doses', (request, response) => {
