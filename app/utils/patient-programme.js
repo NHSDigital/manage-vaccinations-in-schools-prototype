@@ -255,7 +255,8 @@ function getExpiredConsentDescription(expiredReplies) {
  *
  * @param {Array<Reply>} replies - Responses that count towards consent
  * @param {Array<ClinicAppointment>} appointments - Clinic appointments
- * @returns {string|undefined} Health answers description, if any were given
+ * @returns {string|undefined} Health answers description (Markdown), if any
+ *   were given
  */
 export function getHealthAnswersDescription(replies, appointments) {
   const answersFromReplies = (replies ?? [])
@@ -290,7 +291,16 @@ export function getHealthAnswersDescription(replies, appointments) {
     return `${respondent || 'parent or guardian'} on ${answeredOn}`
   })
 
-  return `Answers given by ${filters.formatList(answeredBy)}.`
+  if (answeredBy.length === 1) {
+    return `Answers given by ${answeredBy[0]}.`
+  }
+
+  // List several respondents as bullets (Markdown), so they’re easier to scan
+  const answeredByList = answeredBy
+    .map((respondentAndDate) => `- ${respondentAndDate}`)
+    .join('\n')
+
+  return `Answers given by:\n\n${answeredByList}`
 }
 
 /**
