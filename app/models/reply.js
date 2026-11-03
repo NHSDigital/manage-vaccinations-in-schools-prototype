@@ -311,7 +311,11 @@ export class Reply extends BaseModel {
 
     // Consent given for routine programmes expires after 15 months
     if (this.hasGivenConsent) {
-      return addMonths(this.createdAt, 15)
+      const expiry = addMonths(this.createdAt, 15)
+      expiry.setHours(23)
+      expiry.setMinutes(59)
+
+      return expiry
     }
 
     // Refusals — incl. follow-up requests and already-vaccinated — and non-responses
