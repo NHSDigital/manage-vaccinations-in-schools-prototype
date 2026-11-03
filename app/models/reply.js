@@ -603,7 +603,9 @@ export class Reply extends BaseModel {
             case 'expiresAt':
               return this.expiresAt
                 ? formattedDate(this.expiresAt)
-                : 'Consent refusals do not expire'
+                : this.decision === ReplyDecision.NoResponse
+                  ? 'Non-responses do not expire'
+                  : 'Consent refusals do not expire'
             case 'decisionStatus':
               return getDecisionStatus()
             case 'contact':
