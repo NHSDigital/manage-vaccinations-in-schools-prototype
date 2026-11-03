@@ -265,19 +265,33 @@ export class PatientProgramme extends BaseModel {
    */
   get triageNotes() {
     return this.#allTriageNotes.filter(
-      (triageNote) => !this.hasTriageExpired(triageNote)
+      (triageNote) => !this.#isPreviousTriage(triageNote)
     )
   }
 
   /**
-   * Get previous triage notes that have expired, because the health answers
-   * they reviewed have expired, oldest first
+   * Get previous triage notes that no longer count, because the health
+   * answers they reviewed have expired, or a newer response invalidated them,
+   * oldest first
    *
    * @returns {Array<AuditEvent>} Audit events
    */
   get previousTriageNotes() {
     return this.#allTriageNotes.filter((triageNote) =>
-      this.hasTriageExpired(triageNote)
+      this.#isPreviousTriage(triageNote)
+    )
+  }
+
+  /**
+   * Does a triage no longer count?
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {boolean} Triage has expired or been invalidated
+   */
+  #isPreviousTriage(triageNote) {
+    return (
+      this.hasTriageExpired(triageNote) ||
+      this.hasTriageBeenInvalidated(triageNote)
     )
   }
 
@@ -335,12 +349,91 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get description of when a triage expires, or expired
+   * Get the first response that invalidated a triage
+   *
+   * A triage deciding it was safe to vaccinate is invalidated by a later
+   * response giving consent, if that response’s health answers need triage,
+   * or it doesn’t include the vaccine method the triage approved
    *
    * @param {AuditEvent} triageNote - Triage note
-   * @returns {string|undefined} Expiry description
+   * @returns {Reply|undefined} Response that invalidated the triage
    */
-  getTriageExpiryDescription(triageNote) {
+  getReplyInvalidatingTriage(triageNote) {
+    const safeToVaccinateStatuses = [
+      ScreenStatus.Vaccinate,
+      ScreenStatus.VaccinateAlternativeFluInjectionOnly,
+      ScreenStatus.VaccinateAlternativeMMRInjectionOnly,
+      ScreenStatus.VaccinateIntranasalOnly
+    ]
+    if (!safeToVaccinateStatuses.includes(triageNote.status)) {
+      return
+    }
+
+    const triagedAt = new Date(triageNote.createdAt)
+    const repliesGivenSinceTriage = (this.replies ?? [])
+      .filter(
+        (reply) =>
+          reply.hasGivenConsent && isAfter(new Date(reply.createdAt), triagedAt)
+      )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+
+    return repliesGivenSinceTriage.find(
+      (reply) =>
+        countAnswersNeedingTriage(reply.healthAnswers) > 0 ||
+        !this.#doesReplyIncludeTriagedMethod(reply, triageNote.status)
+    )
+  }
+
+  /**
+   * Has a triage been invalidated by a newer response?
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {boolean} Triage has been invalidated
+   */
+  hasTriageBeenInvalidated(triageNote) {
+    return Boolean(this.getReplyInvalidatingTriage(triageNote))
+  }
+
+  /**
+   * Does a response giving consent include the vaccine method a triage
+   * approved?
+   *
+   * @param {Reply} reply - Response giving consent
+   * @param {ScreenStatus} triageStatus - Triage status
+   * @returns {boolean} Response includes the approved vaccine method
+   */
+  #doesReplyIncludeTriagedMethod(reply, triageStatus) {
+    switch (triageStatus) {
+      case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
+      case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
+        // Approved the injection (or gelatine-free injection)
+        return reply.hasConsentForInjection
+      case ScreenStatus.Vaccinate:
+      case ScreenStatus.VaccinateIntranasalOnly:
+      default:
+        // Approved the standard vaccine (nasal spray, for flu)
+        return reply.decision !== ReplyDecision.OnlyAlternativeInjection
+    }
+  }
+
+  /**
+   * Get description of when a triage was invalidated, or when it expires (or
+   * expired)
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {string|undefined} Validity description
+   */
+  getTriageValidityDescription(triageNote) {
+    const invalidatingReply = this.getReplyInvalidatingTriage(triageNote)
+    if (invalidatingReply) {
+      const formattedInvalidatedDate = formatDate(
+        new Date(invalidatingReply.createdAt),
+        { dateStyle: 'long' }
+      )
+
+      return `Invalidated ${formattedInvalidatedDate} by a new response`
+    }
+
     const expiryDate = this.getTriageExpiresAt(triageNote)
     if (!expiryDate) {
       return

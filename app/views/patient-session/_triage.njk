@@ -74,7 +74,7 @@
     }) }}
   {% endif %}
 
-  {# Triage outcomes that no longer count, as the health answers they reviewed have expired #}
+  {# Triage outcomes that no longer count, as the health answers they reviewed have expired, or a newer response invalidated them #}
   {% if patientProgramme.previousTriageNotes | length %}
     {% call details({
       summaryText: __("patientSession.previousTriageNotes.label")

@@ -2423,7 +2423,7 @@ export const en = {
       label: 'Expired and invalid responses'
     },
     previousTriageNotes: {
-      label: 'Expired triage outcomes'
+      label: 'Expired and invalid triage outcomes'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',
