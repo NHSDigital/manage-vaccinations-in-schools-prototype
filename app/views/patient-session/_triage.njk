@@ -82,7 +82,8 @@
       {{ appTriageNotes({
         id: "previous-triage-notes",
         triageNotes: patientProgramme.previousTriageNotes,
-        patientProgramme: patientProgramme
+        patientProgramme: patientProgramme,
+        isPrevious: true
       }) }}
     {% endcall %}
   {% endif %}

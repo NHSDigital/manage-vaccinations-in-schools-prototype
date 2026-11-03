@@ -4,6 +4,7 @@
   {% set triageNoteRows = [] %}
   {% for triageNote in params.triageNotes | reverse %}
     {% set validityDescription = params.patientProgramme.getTriageValidityDescription(triageNote) if params.patientProgramme %}
+    {% set status = triageNote.formatted.previousStatus if params.isPrevious else triageNote.formatted.status %}
     {% set triageNoteRows = triageNoteRows | push([
       {
         html: triageNote.summary.createdAtAndBy
@@ -12,7 +13,7 @@
         html: triageNote.note or "—" | nhsukMarkdown
       },
       {
-        html: triageNote.formatted.status + ("<br><span class=\"nhsuk-u-secondary-text-colour nhsuk-u-font-size-16\">" + validityDescription + "</span>" if validityDescription else "")
+        html: status + ("<br><span class=\"nhsuk-u-secondary-text-colour nhsuk-u-font-size-16\">" + validityDescription + "</span>" if validityDescription else "")
       }
     ]) %}
   {% endfor %}
