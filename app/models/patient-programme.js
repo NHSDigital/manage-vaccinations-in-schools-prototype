@@ -1096,19 +1096,6 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get parental relationships from valid replies
-   *
-   * @returns {Array<string>|undefined} Parental relationships
-   */
-  get parentalRelationships() {
-    if (this.replies) {
-      return this.repliesCountingTowardsConsent.flatMap(
-        (reply) => reply.relationship || 'Parent or guardian'
-      )
-    }
-  }
-
-  /**
    * Get names of contacts who have requested a follow up
    *
    * @returns {Array<string>|undefined} Contact names and relationships

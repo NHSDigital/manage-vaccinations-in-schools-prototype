@@ -2417,6 +2417,8 @@ export const en = {
     },
     replies: {
       label: 'Consent responses',
+      refusals:
+        'Consent refusals do not expire, but you can request consent again.',
       none: 'There are no active consent responses.'
     },
     previousReplies: {

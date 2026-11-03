@@ -301,8 +301,15 @@ export function getHealthAnswersDescription(replies, appointments) {
  */
 export function getConsentStatusDescription(patientProgramme) {
   const session = patientProgramme.lastPatientSession?.session
-  const relationships = filters.formatList(
-    patientProgramme.parentalRelationships
+  const replies = patientProgramme.repliesCountingTowardsConsent ?? []
+  const relationshipsOf = (repliesToName) =>
+    filters.formatList(
+      repliesToName.map((reply) => reply.relationship || 'Parent or guardian')
+    )
+  const givers = replies.filter((reply) => reply.hasGivenConsent)
+  const refusers = replies.filter((reply) => reply.hasRefusedConsent)
+  const confirmedRefusers = refusers.filter(
+    (reply) => reply.hasConfirmedRefusal
   )
   const contactNames = filters.formatList(
     patientProgramme.contactsRequestingFollowUp
@@ -335,11 +342,11 @@ export function getConsentStatusDescription(patientProgramme) {
     case ConsentStatus.Given:
     case ConsentStatus.GivenForAlternativeInjection:
     case ConsentStatus.GivenForIntranasal:
-      return `${relationships} gave consent.`
+      return `${relationshipsOf(givers)} gave consent.`
     case ConsentStatus.Refused:
-      return `${relationships} refused consent.`
+      return `${relationshipsOf(refusers)} refused consent.`
     case ConsentStatus.FinalRefusal:
-      return `Refusal to give consent confirmed by ${relationships}.`
+      return `Refusal to give consent confirmed by ${relationshipsOf(confirmedRefusers)}.`
     default:
   }
 }
