@@ -22,6 +22,28 @@ import { formatDate, getDateValueDifference, today } from './date.js'
 import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
+ * Get only the latest response from each respondent, as a newer response
+ * supersedes an older one from the same person
+ *
+ * @param {Array<Reply>} replies - Responses, newest first
+ * @returns {Array<Reply>} Latest response from each respondent, newest first
+ */
+export function getLatestReplyFromEachRespondent(replies) {
+  const latestReplyByRespondent = new Map()
+
+  for (const reply of replies ?? []) {
+    const respondent = reply.hasSelfConsent ? 'child' : reply.contact_uuid
+
+    // Responses are newest first, so keep the first for each respondent
+    if (!latestReplyByRespondent.has(respondent)) {
+      latestReplyByRespondent.set(respondent, reply)
+    }
+  }
+
+  return [...latestReplyByRespondent.values()]
+}
+
+/**
  * Get confirmed consent status
  *
  * @param {Reply} reply - Reply
@@ -94,12 +116,7 @@ export function getConsentStatus(patientProgramme) {
     return ConsentStatus.NotDelivered
   }
 
-  // Get valid and delivered replies, ignoring any that say nothing about
-  // consent, so they can’t conflict with a reply that does
-  const replies = validReplies.filter(
-    ({ isDelivered, decision }) =>
-      isDelivered && decision !== ReplyDecision.NoResponse
-  )
+  const replies = patientProgramme.repliesCountingTowardsConsent
 
   // If no-one has given a decision, no response
   if (replies.length === 0) {

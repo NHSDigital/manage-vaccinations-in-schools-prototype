@@ -48,6 +48,7 @@ import {
   getConsentStatusDescription,
   getHealthAnswersDescription,
   getInstructionStatus,
+  getLatestReplyFromEachRespondent,
   getScreenStatus,
   getScreenStatusDescription,
   getPatientConsentStatus,
@@ -935,23 +936,28 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<Reply>} Expired responses
    */
   get expiredReplies() {
-    const latestReplyByRespondent = new Map()
+    const expiredReplies = (this.#allDeliveredReplies ?? []).filter(
+      (reply) => reply.hasExpired && !reply.isInvalidated
+    )
 
-    for (const reply of this.#allDeliveredReplies ?? []) {
-      if (!reply.hasExpired || reply.isInvalidated) {
-        continue
-      }
-
-      // Responses are newest first, so keep the first for each respondent
-      const respondent = reply.hasSelfConsent ? 'child' : reply.contact_uuid
-      if (!latestReplyByRespondent.has(respondent)) {
-        latestReplyByRespondent.set(respondent, reply)
-      }
-    }
-
-    return [...latestReplyByRespondent.values()].sort((a, b) =>
+    return getLatestReplyFromEachRespondent(expiredReplies).sort((a, b) =>
       getDateValueDifference(a.expiresAt, b.expiresAt)
     )
+  }
+
+  /**
+   * Get responses that count towards consent status: only the latest from
+   * each respondent, and ignoring any that say nothing about consent, so they
+   * can’t conflict with a response that does
+   *
+   * @returns {Array<Reply>} Responses, newest first
+   */
+  get repliesCountingTowardsConsent() {
+    const repliesWithDecision = (this.replies ?? []).filter(
+      ({ decision }) => decision !== ReplyDecision.NoResponse
+    )
+
+    return getLatestReplyFromEachRespondent(repliesWithDecision)
   }
 
   /**
@@ -997,9 +1003,9 @@ export class PatientProgramme extends BaseModel {
    */
   get parentalRelationships() {
     if (this.replies) {
-      return this.replies
-        .filter((reply) => reply.isValid)
-        .flatMap((reply) => reply.relationship || 'Parent or guardian')
+      return this.repliesCountingTowardsConsent.flatMap(
+        (reply) => reply.relationship || 'Parent or guardian'
+      )
     }
   }
 
