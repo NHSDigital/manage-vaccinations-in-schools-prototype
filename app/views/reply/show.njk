@@ -15,12 +15,15 @@
         href: "/sessions"
       },
       {
+        text: referringPatientSession.session.location.name,
+        href: referringPatientSession.session.uri
+      } if referringPatientSession else {
         text: reply.session.location.name,
         href: reply.session.uri
       },
       {
         text: reply.patient.fullName,
-        href: reply.session.uri + "/patients/" + reply.patient.nhsn + "/" + reply.programme.id
+        href: referringPatientSession.uri if referringPatientSession else reply.session.uri + "/patients/" + reply.patient.nhsn + "/" + reply.programme.id
       }
     ]
   }) }}
