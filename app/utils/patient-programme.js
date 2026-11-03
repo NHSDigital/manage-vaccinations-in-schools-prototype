@@ -380,7 +380,7 @@ export function getScreenStatus(patientProgramme) {
     }
   }
 
-  const responses = Object.values(patientProgramme.replies)
+  const responses = patientProgramme.repliesCountingTowardsConsent
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
   const lastTriageNoteWithStatus = patientProgramme.triageNotes
     .filter((event) => event.status)
@@ -652,7 +652,7 @@ export function getPatientConsentStatus(patientProgramme) {
  * @returns {PatientTriageStatus|undefined} Patient triage status
  */
 export function getPatientTriageStatus(patientProgramme) {
-  const responses = Object.values(patientProgramme.replies)
+  const responses = patientProgramme.repliesCountingTowardsConsent
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
 
   if (patientProgramme.screen === ScreenStatus.NeedsTriage) {

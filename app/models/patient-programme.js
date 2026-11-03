@@ -966,7 +966,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(this.replies, this.appointments)
+    return getConsentHealthAnswers(
+      this.repliesCountingTowardsConsent,
+      this.appointments
+    )
   }
 
   /**
@@ -975,7 +978,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {string|undefined} Health answers description
    */
   get healthAnswersDescription() {
-    return getHealthAnswersDescription(this.replies, this.appointments)
+    return getHealthAnswersDescription(
+      this.repliesCountingTowardsConsent,
+      this.appointments
+    )
   }
 
   /**
@@ -993,7 +999,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|boolean} Consent refusal reasons
    */
   get consentRefusalReasons() {
-    return getConsentRefusalReasons(this.replies)
+    return getConsentRefusalReasons(this.repliesCountingTowardsConsent)
   }
 
   /**
@@ -1016,8 +1022,7 @@ export class PatientProgramme extends BaseModel {
    */
   get contactsRequestingFollowUp() {
     if (this.replies) {
-      return this.replies
-        .filter((reply) => reply.isValid)
+      return this.repliesCountingTowardsConsent
         .filter((reply) => reply.hasDeclinedConsent)
         .flatMap((reply) => reply.contact.fullNameAndRelationship)
     }
@@ -1032,7 +1037,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForInjection() {
-    return this.replies?.every(
+    return this.repliesCountingTowardsConsent.every(
       ({ hasConsentForInjection }) => hasConsentForInjection
     )
   }
@@ -1046,7 +1051,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForAlternativeInjectionOnly() {
-    return this.replies?.every(
+    return this.repliesCountingTowardsConsent.every(
       ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
     )
   }
@@ -1077,7 +1082,7 @@ export class PatientProgramme extends BaseModel {
    */
   get consentGivenDate() {
     // Replies are sorted newest first, so take the first reply giving consent
-    const reply = this.replies?.find(({ decision }) =>
+    const reply = this.repliesCountingTowardsConsent.find(({ decision }) =>
       [
         ReplyDecision.Given,
         ReplyDecision.OnlyAlternativeInjection,
@@ -1095,7 +1100,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<ScreenStatus>} Screen statuses
    */
   get screenStatusesForConsentMethod() {
-    return getScreenStatusesForConsentMethod(this.programme, this.replies)
+    return getScreenStatusesForConsentMethod(
+      this.programme,
+      this.repliesCountingTowardsConsent
+    )
   }
 
   /**
@@ -1104,7 +1112,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {ScreenVaccineCriteria|boolean} Criteria
    */
   get screenVaccineCriteria() {
-    return getScreenVaccineCriteria(this.programme, this.replies)
+    return getScreenVaccineCriteria(
+      this.programme,
+      this.repliesCountingTowardsConsent
+    )
   }
 
   /**
