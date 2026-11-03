@@ -171,7 +171,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<AuditEvent>} Audit events
    */
   get auditEvents() {
-    return this.patient.events
+    return [...this.patient.events, ...this.#consentExpiryEvents]
       .map((auditEvent) => new AuditEvent(auditEvent, this.context))
       .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) =>
@@ -185,6 +185,30 @@ export class PatientProgramme extends BaseModel {
         )
       )
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
+  }
+
+  /**
+   * Get events for consent that has expired, including consent superseded by
+   * a newer response from the same respondent, as superseded responses are
+   * still listed until they expire
+   *
+   * Worked out from responses, rather than stored, as expiry happens with the
+   * passing of time, not when someone does something
+   *
+   * @returns {Array<Partial<AuditEvent>>} Audit events
+   */
+  get #consentExpiryEvents() {
+    return (this.#allDeliveredReplies ?? [])
+      .filter(
+        (reply) =>
+          reply.hasGivenConsent && reply.hasExpired && !reply.isInvalidated
+      )
+      .map((reply) => ({
+        name: activity.consent.expired(reply),
+        type: AuditEventType.ProgrammeNote,
+        createdAt: reply.expiresAt,
+        programme_ids: [this.programme_id]
+      }))
   }
 
   /**

@@ -20,7 +20,11 @@ export default {
     invalid: ({ contact }) =>
       `Consent response from ${contact.fullNameAndRelationship} marked as invalid`,
     withdrawn: ({ contact }) =>
-      `Consent response from ${contact.fullNameAndRelationship} withdrawn`
+      `Consent response from ${contact.fullNameAndRelationship} withdrawn`,
+    expired: ({ child, contact, hasSelfConsent }) =>
+      hasSelfConsent
+        ? `Consent from ${child?.fullName} (child) expired`
+        : `Consent from ${contact?.fullNameAndRelationship} expired`
   },
   gillick: {
     created: (gillick) => gillick.competent,
