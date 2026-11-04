@@ -677,6 +677,10 @@ export class Reply extends BaseModel {
               return formatMarkdown(this.refusalReasonDetails)
             case 'note':
               return formatMarkdown(this.note)
+            case 'responseType':
+              return this.clinicAppointment_uuid
+                ? 'Clinic booking'
+                : 'Consent response'
             default:
               return undefined
           }
