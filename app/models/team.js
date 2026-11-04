@@ -1,8 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
-import { TeamDefaults } from '../enums.js'
-import { Clinic, School } from '../models.js'
+import { TeamDefaults, TeamType } from '../enums.js'
+import { Clinic, School, Subteam } from '../models.js'
 import { stringToBoolean } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -10,6 +10,7 @@ import { BaseModel } from './base.js'
 /**
  * @typedef {BaseModelOptions & object} TeamOptions
  * @property {string} [id] - Team ID
+ * @property {TeamType} [type] - Team type
  * @property {string} [ods] - ODS code
  * @property {string} [name] - Full name
  * @property {string} [email] - Email address
@@ -40,6 +41,7 @@ export class Team extends BaseModel {
 
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('###')
+    this.type = options?.type || TeamType.SAIS
     this.ods = options?.ods || faker.helpers.replaceSymbols('???')
     this.name = options?.name
     this.email = options?.email
@@ -63,7 +65,51 @@ export class Team extends BaseModel {
   }
 
   /**
+   * Is a SAIS team
+   *
+   * @returns {boolean} Is a SAIS team
+   */
+  get isSAIS() {
+    return this.type === TeamType.SAIS
+  }
+
+  /**
+   * Can have subteams (only SAIS teams can)
+   *
+   * @returns {boolean} Can have subteams
+   */
+  get canHaveSubteams() {
+    return this.isSAIS
+  }
+
+  /**
+   * Get subteams
+   *
+   * @returns {Array<Subteam>} Subteams
+   */
+  get subteams() {
+    if (!this.canHaveSubteams) {
+      return []
+    }
+
+    return Subteam.findAll(this.context)
+      .filter((subteam) => subteam.team_id === this.id)
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  /**
+   * Has subteams
+   *
+   * @returns {boolean} Has subteams
+   */
+  get hasSubteams() {
+    return this.subteams.length > 0
+  }
+
+  /**
    * Get clinics
+   *
+   * Includes clinics assigned to any of this team’s subteams
    *
    * @returns {Array<Clinic>|undefined} Clinics
    */
@@ -79,6 +125,8 @@ export class Team extends BaseModel {
 
   /**
    * Get schools
+   *
+   * Includes schools assigned to any of this team’s subteams
    *
    * @returns {Array<School>|undefined} Schools
    */

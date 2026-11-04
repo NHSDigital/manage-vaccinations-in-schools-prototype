@@ -376,7 +376,7 @@ export default [
     addressLevel1: 'West Midlands',
     postalCode: 'CV2 2RH',
     email: 'contact@woodway-park.example.sch.uk',
-    team_id: '001'
+    team_ids: ['001']
   },
   // Closing
   {
@@ -394,7 +394,7 @@ export default [
     addressLevel1: 'West Midlands',
     postalCode: 'CV4 7AB',
     email: 'contact@woodfield.example.sch.uk',
-    team_id: '001'
+    team_ids: ['001']
   },
   // Opening
   {
@@ -410,7 +410,7 @@ export default [
     addressLevel1: 'West Midlands',
     postalCode: 'CV4 7AB',
     email: 'contact@woodfield.example.sch.uk',
-    team_id: '001'
+    team_ids: ['001']
   },
   // Amalgamated/merged
   {
@@ -427,7 +427,7 @@ export default [
     addressLevel1: 'West Midlands',
     postalCode: 'CV2 4FN',
     email: 'contact@st-marys.example.sch.uk',
-    team_id: '001'
+    team_ids: ['001']
   },
   {
     id: '103718',
@@ -443,6 +443,6 @@ export default [
     addressLevel1: 'Coventry',
     postalCode: 'CV1 5HG',
     email: 'contact@st-benedicts.example.sch.uk',
-    team_id: '001'
+    team_ids: ['001']
   }
 ]

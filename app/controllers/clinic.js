@@ -155,6 +155,9 @@ export const clinicController = {
         [`/${clinic_id}/${type}/ods-code`]: {},
         [`/${clinic_id}/${type}/careplus-code`]: {},
         [`/${clinic_id}/${type}/clinic-information`]: {},
+        ...(clinic.team?.hasSubteams && {
+          [`/${clinic_id}/${type}/sub-team`]: {}
+        }),
         [`/${clinic_id}/${type}/check-answers`]: {}
       }
 

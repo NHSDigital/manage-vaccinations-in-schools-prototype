@@ -540,6 +540,9 @@ export const schoolController = {
         [`/${school_id}/${type}/sen`]: {},
         [`/${school_id}/${type}/year-groups`]: {},
         [`/${school_id}/${type}/programmes`]: {},
+        ...(response.locals.school.team?.hasSubteams && {
+          [`/${school_id}/${type}/sub-team`]: {}
+        }),
         [`/${school_id}/${type}/check-answers`]: {},
         [`/${school_id}`]: {}
       }

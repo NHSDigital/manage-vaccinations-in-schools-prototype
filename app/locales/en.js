@@ -227,6 +227,10 @@ export const en = {
       description:
         'This helps CHIS providers using CarePlus maintain an accurate record of where a vaccination took place.'
     },
+    subteam: {
+      label: 'Sub-team',
+      title: 'Which sub-team manages this clinic?'
+    },
     venueInformation: {
       label: 'Clinic information',
       title: 'Clinic information',
@@ -2952,6 +2956,10 @@ export const en = {
       isPlanned: 'Scheduled sessions',
       isCompleted: 'Completed sessions'
     },
+    subteam: {
+      label: 'Sub-team',
+      title: 'Which sub-team manages this school?'
+    },
     uploads: {
       label: 'Class list requests and uploads',
       title: 'Class list requests and uploads',
@@ -3674,6 +3682,61 @@ export const en = {
       }
     }
   },
+  subteam: {
+    divider: 'or',
+    count:
+      '{count, plural, =0 {No sub-teams} one {1 sub-team} other {# sub-teams}}',
+    none: {
+      label: 'No sub-team',
+      hint: 'Managed by {{team.name}}'
+    },
+    new: {
+      title: 'Add a sub-team',
+      'check-answers': {
+        title: 'Check and confirm',
+        confirm: 'Add sub-team'
+      },
+      summary: 'Sub-team details',
+      success: '{{subteam.name}} sub-team added'
+    },
+    edit: {
+      label: 'Edit',
+      title: 'Edit sub-team',
+      summary: 'Sub-team details',
+      confirm: 'Save changes',
+      success: '{{subteam.name}} sub-team updated'
+    },
+    delete: {
+      label: 'Delete',
+      success: '{{subteam.name}} sub-team deleted'
+    },
+    action: {
+      title: 'Are you sure you want to %s this sub-team?',
+      description:
+        'Any clinics and schools assigned to this sub-team will be managed by {{team.name}}.',
+      confirm: 'Yes, %s this sub-team',
+      cancel: 'No, return to sub-teams'
+    },
+    name: {
+      label: 'Name',
+      title: 'What is the sub-team’s name?',
+      hint: 'For example, the area this sub-team covers'
+    },
+    contactDetails: {
+      title: 'Which contact details should parents use?',
+      hint: 'Shown to parents in emails, text messages and online forms about this sub-team’s clinics and schools',
+      team: 'Same as {{team.name}}',
+      subteam: 'Different contact details'
+    },
+    email: {
+      label: 'Email address',
+      hint: 'Leave blank to use the team’s email address'
+    },
+    tel: {
+      label: 'Phone number',
+      hint: 'Leave blank to use the team’s phone number'
+    }
+  },
   team: {
     show: {
       label: 'Your team',
@@ -3697,6 +3760,10 @@ export const en = {
     schools: {
       title: 'Schools',
       summary: 'Schools'
+    },
+    subteams: {
+      title: 'Sub-teams',
+      summary: 'Sub-teams'
     },
     sessions: {
       title: 'Sessions',

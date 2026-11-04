@@ -1,0 +1,81 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("team.show.title") %}
+
+{% block content %}
+  {{ super() }}
+
+  {{ heading({
+    caption: team.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-quarter">
+      {{ appSectionNavigation({
+        vertical: true,
+        items: navigationItems
+      }) }}
+    </div>
+
+    <div class="nhsuk-grid-column-three-quarters">
+      {% set subteamRows = [] %}
+      {% for subteam in team.subteams %}
+        {% set subteamRows = subteamRows | push([
+          {
+            text: subteam.name
+          },
+          {
+            html: appActionList({
+              items: [
+                {
+                  text: __("subteam.edit.label"),
+                  href: subteam.uri + "/edit"
+                },
+                {
+                  text: __("subteam.delete.label"),
+                  href: subteam.uri + "/delete"
+                }
+              ]
+            })
+          }
+        ]) %}
+      {% endfor %}
+
+      {% if team.subteams.length %}
+        {{ table({
+          id: "subteams",
+          responsive: true,
+          card: {
+            heading: {
+              text: __("team.subteams.summary"),
+              size: "m"
+            },
+            actions: {
+              items: [
+                {
+                  text: __("subteam.new.title"),
+                  href: team.uri + "/subteams/new"
+                }
+              ]
+            }
+          },
+          head: [
+            { text: __("subteam.name.label") },
+            { text: __("actions.label") }
+          ],
+          rows: subteamRows
+        }) }}
+      {% else %}
+        {{ __mf("subteam.count", { count: 0 }) | nhsukMarkdown }}
+
+        {{ button({
+          text: __("subteam.new.title"),
+          href: team.uri + "/subteams/new",
+          variant: "secondary"
+        }) }}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
