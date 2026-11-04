@@ -45,10 +45,10 @@ export function getLatestReplyFromEachRespondent(replies) {
  * Get confirmed consent status
  *
  * @param {Reply} reply - Reply
- * @param {Session} session - Session
+ * @param {Programme} programme - Programme the reply is for
  * @returns {ConsentStatus} Confirmed consent status
  */
-export function getConfirmedConsentStatus(reply, session) {
+export function getConfirmedConsentStatus(reply, programme) {
   if (!reply.isDelivered) {
     return ConsentStatus.NotDelivered
   }
@@ -67,14 +67,14 @@ export function getConfirmedConsentStatus(reply, session) {
 
   if (reply.hasGivenConsent) {
     if (
-      session?.canOfferAlternativeVaccine &&
+      programme?.alternativeVaccine &&
       reply.decision === ReplyDecision.OnlyAlternativeInjection
     ) {
       return ConsentStatus.GivenForAlternativeInjection
     }
 
     if (
-      session?.canOfferIntranasalVaccine &&
+      programme?.hasIntranasalVaccine &&
       reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
       !reply.hasConsentForAlternativeVaccine
     ) {
@@ -94,7 +94,7 @@ export function getConfirmedConsentStatus(reply, session) {
  * @returns {ConsentStatus} Consent status
  */
 export function getConsentStatus(patientProgramme) {
-  const session = patientProgramme.lastPatientSession?.session
+  const { programme } = patientProgramme
 
   // If patient is 16+, assume consent given
   if (patientProgramme.patient.isPost16) {
@@ -124,12 +124,12 @@ export function getConsentStatus(patientProgramme) {
   // If any reply is child self consenting, use child’s decision
   const childReply = replies.find((reply) => reply.hasSelfConsent)
   if (childReply) {
-    return getConfirmedConsentStatus(childReply, session)
+    return getConfirmedConsentStatus(childReply, programme)
   }
 
   // If only one reply, use that decision
   if (replies.length === 1) {
-    return getConfirmedConsentStatus(replies[0], session)
+    return getConfirmedConsentStatus(replies[0], programme)
   }
 
   // If many replies, determine if responses are consistent or inconsistent
@@ -158,7 +158,7 @@ export function getConsentStatus(patientProgramme) {
     // If consent given, determine which vaccine method has consent
     if (replies.every(({ hasGivenConsent }) => hasGivenConsent)) {
       // For flu programme, determine which methods every response allows
-      if (session?.canOfferIntranasalVaccine) {
+      if (programme?.hasIntranasalVaccine) {
         const someWantInjectionOnly = replies.some(
           ({ vaccineCriteria }) =>
             vaccineCriteria ===
@@ -188,7 +188,7 @@ export function getConsentStatus(patientProgramme) {
       }
 
       // For MMR programme, determine if any consent requested gelatine-free
-      if (session?.canOfferAlternativeVaccine) {
+      if (programme?.alternativeVaccine) {
         if (
           replies.some(
             ({ hasConsentForAlternativeVaccine }) =>
@@ -766,5 +766,5 @@ export function getPatientVaccinatedStatus(patientProgramme) {
 }
 
 /**
- * @import { PatientProgramme, Reply, Session } from '../models.js'
+ * @import { PatientProgramme, Programme, Reply } from '../models.js'
  */
