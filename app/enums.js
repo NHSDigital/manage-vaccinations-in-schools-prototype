@@ -888,6 +888,16 @@ export const TeamDefaults = {
  * @readonly
  * @enum {string}
  */
+export const TeamType = {
+  SAIS: 'SAIS team',
+  ICB: 'Integrated care board',
+  School: 'School'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const UploadFormat = {
   Arbor: 'Arbor',
   Bromcom: 'Bromcom',

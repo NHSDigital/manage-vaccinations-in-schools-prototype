@@ -79,9 +79,9 @@ export const schoolController = {
    * @type {RequestHandler<Record<string, string>, Record<string, unknown>, Record<string, unknown>, SchoolFilterQuery>}
    */
   list(request, response) {
-    const { option, phase, programme_id, sort, q } = request.query
+    const { option, phase, programme_id, sort, subteam, q } = request.query
     const { data } = request.session
-    const { __, schools } = response.locals
+    const { __, account, schools } = response.locals
 
     const programmes = Programme.findAll(data)
       ?.filter((programme) => !programme.isHidden)
@@ -149,9 +149,28 @@ export const schoolController = {
       })
     }
 
+    // Filter by subteam
+    if (subteam && subteam !== 'none') {
+      results = results.filter((school) => school.subteam_id === subteam)
+    }
+
     // Results
     response.locals.results = getResults(results, request.query, 40)
     response.locals.pages = getPagination(results, request.query, 40)
+
+    // Sub-team filter options
+    response.locals.subteamItems = [
+      {
+        label: 'Any',
+        value: 'none',
+        checked: !subteam || subteam === 'none'
+      },
+      ...account.team.subteams.map((team) => ({
+        text: team.name,
+        value: team.id,
+        checked: subteam === team.id
+      }))
+    ]
 
     // Programme filter options
     response.locals.unplannedProgrammeItems = programmes.map((programme) => ({
@@ -180,6 +199,7 @@ export const schoolController = {
     delete data.phase
     delete data.programme_id
     delete data.sort
+    delete data.subteam
 
     return response.render('school/list')
   },
@@ -190,7 +210,7 @@ export const schoolController = {
   filterList(request, response) {
     const params = getFilterParams(
       request,
-      ['phase', 'q', 'sort'],
+      ['phase', 'q', 'sort', 'subteam'],
       ['option', 'programme_id']
     )
 
@@ -540,6 +560,9 @@ export const schoolController = {
         [`/${school_id}/${type}/sen`]: {},
         [`/${school_id}/${type}/year-groups`]: {},
         [`/${school_id}/${type}/programmes`]: {},
+        ...(response.locals.school.team?.hasSubteams && {
+          [`/${school_id}/${type}/sub-team`]: {}
+        }),
         [`/${school_id}/${type}/check-answers`]: {},
         [`/${school_id}`]: {}
       }

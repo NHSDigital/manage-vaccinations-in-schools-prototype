@@ -23,5 +23,6 @@ export interface SchoolFilterQuery {
   phase?: string | string[]
   programme_id?: string | string[]
   sort?: string
+  subteam?: string
   q?: string
 }

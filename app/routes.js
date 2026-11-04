@@ -42,6 +42,7 @@ import { scenarioRoutes } from './routes/scenario.js'
 import { schoolRoutes } from './routes/school.js'
 import { sessionAppointmentRoutes } from './routes/session-appointment.js'
 import { sessionRoutes } from './routes/session.js'
+import { subteamRoutes } from './routes/subteam.js'
 import { teamRoutes } from './routes/team.js'
 import { unmatchedAppointmentRoutes } from './routes/unmatched-appointment.js'
 import { uploadRoutes } from './routes/upload.js'
@@ -82,6 +83,7 @@ router.use('/moves', moveRoutes)
 router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
+router.use('/teams/:team_id/subteams', subteamRoutes)
 router.use('/contacts', contactRoutes)
 router.use('/patients/invite-to-clinic', clinicInvitationRoutes)
 router.use(

@@ -2,7 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import programmesData from '../datasets/programmes.js'
 import { SessionPresets } from '../enums.js'
-import { Programme, Team } from '../models.js'
+import { Programme, Subteam, Team } from '../models.js'
 
 import { BaseModel } from './base.js'
 
@@ -33,10 +33,10 @@ export class Location extends BaseModel {
     super(options, context)
 
     /** @type {string|undefined} */
-    this.team_id
+    this.subteam_id
 
-    /** @type {Team|undefined} */
-    this.team
+    /** @type {Subteam|undefined} */
+    this.subteam
 
     this.context = context
     this.id = options?.id || faker.helpers.replaceSymbols('?#####')
@@ -75,6 +75,32 @@ export class Location extends BaseModel {
       name: this.name,
       ...this.address
     }
+  }
+
+  /**
+   * Get SAIS team responsible for this location
+   *
+   * Clinics and schools store their team differently (`team_id` vs
+   * `team_ids`), so each subclass overrides this accessor.
+   *
+   * @returns {Team|undefined} Team
+   */
+  get team() {
+    return undefined
+  }
+
+  /**
+   * Team contact details to use in communications with parents about this
+   * location: the subteam’s, if assigned to one, else the parent team’s
+   *
+   * @returns {object|undefined} Team contact details
+   */
+  get teamContact() {
+    if (this.subteam && this.subteam.team_id === this.team?.id) {
+      return this.subteam.contact
+    }
+
+    return this.team
   }
 
   /**
@@ -141,6 +167,8 @@ export class Location extends BaseModel {
             <span class="nhsuk-u-secondary-text-colour">${getAddress()}</span>
           </span>`
                 : this.name
+            case 'subteam':
+              return this.subteam?.name
             case 'programmes':
               return this.programmes
                 .flatMap((programme) => programme?.nameTag)
@@ -154,7 +182,7 @@ export class Location extends BaseModel {
   }
 }
 
-Location.relate('team_id', () => Team, 'team')
+Location.relate('subteam_id', () => Subteam, 'subteam')
 
 /**
  * @import { SessionPreset, SessionPresetName } from '../enums.js'

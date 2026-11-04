@@ -1,0 +1,31 @@
+{% extends "_layouts/form.njk" %}
+
+{% block form %}
+  {{ heading({
+    caption: subteam.name,
+    text: __("subteam.action.title", type),
+    size: "l"
+  }) }}
+
+  {{ __("subteam.action.description", { team: team }) | nhsukMarkdown }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [
+      {
+        text: __("subteam.action.confirm", type),
+        variant: "warning",
+        attributes: {
+          formAction: subteam.uri + "/" + type
+        }
+      }
+    ],
+    links: [
+      {
+        text: __("subteam.action.cancel"),
+        href: paths.back
+      }
+    ]
+  }) }}
+{% endblock %}

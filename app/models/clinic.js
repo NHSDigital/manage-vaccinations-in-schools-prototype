@@ -1,8 +1,9 @@
-import { Location } from '../models.js'
+import { Location, Team } from '../models.js'
 import { formatMarkdown } from '../utils/string.js'
 
 /**
  * @typedef {LocationOptions & object} ClinicOptions
+ * @property {string} [team_id] - Team ID
  * @property {string} [odsCode] - ODS venue code
  * @property {string} [carePlusCode] - CarePlus venue code
  */
@@ -21,6 +22,9 @@ export class Clinic extends Location {
    */
   constructor(options, context) {
     super(options, context)
+
+    /** @type {string|undefined} */
+    this.team_id
 
     this.odsCode = options?.odsCode
     this.carePlusCode = options?.carePlusCode
@@ -67,6 +71,8 @@ export class Clinic extends Location {
     )
   }
 }
+
+Clinic.relate('team_id', () => Team, 'team')
 
 /**
  * @import { LocationOptions } from './location.js'

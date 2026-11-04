@@ -1,0 +1,17 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinic.subteam.title") %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        caption: clinic.name,
+        heading: title,
+        size: "l"
+      }
+    },
+    items: subteamItems(clinic.team),
+    decorate: "clinic.subteam_id"
+  }) }}
+{% endblock %}
