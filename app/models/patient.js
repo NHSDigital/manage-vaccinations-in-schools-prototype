@@ -32,6 +32,7 @@ import {
 } from '../models.js'
 import { getUpdatedFields } from '../utils/audit-event.js'
 import {
+  formatDate,
   getAllAcademicYears,
   getCurrentAcademicYear,
   getDateValueDifference,
@@ -64,6 +65,8 @@ import {
  * @property {Partial<Child>} [pendingChanges] - Pending changes to record values
  * @property {ArchiveRecordReason} [archiveReason] - Archival reason
  * @property {string} [archiveReasonOther] - Other archival reason
+ * @property {Date} [lastSearchedAt] - Date last searched for in Imms API
+ * @property {Date} [searchRequestedAt] - Date search in Imms API requested
  * @property {Array<AuditEvent>} [events] - Events
  * @property {Array<Instruction>} [instructions] - PSD instruction UUIDs
  * @property {Array<string>} [clinicProgramme_ids] - Clinic programme invitations
@@ -100,6 +103,12 @@ export class Patient extends Child {
     this.archiveReason = options?.archiveReason
     this.archiveReasonOther = options?.archiveReasonOther
     this.pendingChanges = options?.pendingChanges || {}
+    this.lastSearchedAt = options?.lastSearchedAt
+      ? new Date(options.lastSearchedAt)
+      : undefined
+    this.searchRequestedAt = options?.searchRequestedAt
+      ? new Date(options.searchRequestedAt)
+      : undefined
 
     this.events = options?.events || []
     this.instructions = options?.instructions || []
@@ -600,6 +609,17 @@ export class Patient extends Child {
                 ?.name
             case 'archiveReason':
               return formatOther(this.archiveReasonOther, this.archiveReason)
+            case 'lastSearchedAt':
+              return (
+                formatDate(this.lastSearchedAt, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                }) || 'Never'
+              )
             case 'clinicProgramme_ids':
               return this.clinicProgramme_ids
                 .map((id) => this.programmes[id].programme.nameTag)

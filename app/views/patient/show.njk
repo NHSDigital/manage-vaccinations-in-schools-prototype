@@ -144,6 +144,18 @@
       ]
     } if not account.isSchoolUser
   }) %}
+    <!-- Last checked for vaccinations from other services (MAV-20180) -->
+    <p class="nhsuk-body nhsuk-u-reading-width nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-1">Mavis regularly checks for vaccinations recorded by GP practices and other healthcare services.</p>
+    <p class="nhsuk-body nhsuk-u-secondary-text-colour nhsuk-u-font-size-16 nhsuk-u-margin-bottom-3">Last checked: {{ patient.formatted.lastSearchedAt }}</p>
+    {{ button({
+      text: "Check for updates now",
+      variant: "secondary",
+      small: true,
+      attributes: {
+        formaction: patient.uri + "/check-for-updates"
+      }
+    }) }}
+
     {{ table({
       id: "programmes",
       responsive: true,
