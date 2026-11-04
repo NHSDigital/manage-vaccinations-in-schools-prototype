@@ -1,0 +1,41 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("clinic.new.check-answers.confirm") %}
+{% set title = __("clinic.new.check-answers.title") %}
+{% set referrer = "?referrer=" + clinic.uri + "/new/check-answers" %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("clinic.new.summary"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(clinic, {
+      name: {
+        href: clinic.uri + "/new/details" + referrer
+      },
+      address: {
+        href: clinic.uri + "/new/details" + referrer
+      },
+      odsCode: {
+        href: clinic.uri + "/new/ods-code" + referrer,
+        changeLabel: __("clinic.odsCode.label")
+      },
+      carePlusCode: {
+        href: clinic.uri + "/new/careplus-code" + referrer,
+        changeLabel: __("clinic.carePlusCode.label")
+      },
+      venueInformation: {
+        href: clinic.uri + "/new/clinic-information" + referrer
+      }
+    })
+  }) }}
+{% endblock %}

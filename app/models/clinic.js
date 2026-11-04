@@ -1,4 +1,5 @@
 import { Location } from '../models.js'
+import { formatMarkdown } from '../utils/string.js'
 
 /**
  * @typedef {LocationOptions & object} ClinicOptions
@@ -32,6 +33,38 @@ export class Clinic extends Location {
    */
   get uri() {
     return `/teams/${this.team_id}/clinics/${this.id}`
+  }
+
+  /**
+   * Get formatted values
+   *
+   * Returns `null` for missing codes and clinic information so that summary rows still show,
+   * with a link to add a value.
+   *
+   * @returns {object} Formatted values
+   */
+  get formatted() {
+    const formatted = super.formatted
+
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'odsCode':
+              return this.odsCode || null
+            case 'carePlusCode':
+              return this.carePlusCode || null
+            case 'venueInformation':
+              return this.venueInformation
+                ? formatMarkdown(this.venueInformation, { inline: true })
+                : null
+            default:
+              return formatted[prop]
+          }
+        }
+      }
+    )
   }
 }
 

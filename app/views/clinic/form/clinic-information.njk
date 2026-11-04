@@ -1,0 +1,15 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinic.venueInformation.title") %}
+
+{% block form %}
+  {{ textarea({
+    label: {
+      caption: clinic.name,
+      heading: title + " (optional)",
+      size: "l"
+    },
+    hint: __("clinic.venueInformation.hint"),
+    decorate: "clinic.venueInformation"
+  }) }}
+{% endblock %}
