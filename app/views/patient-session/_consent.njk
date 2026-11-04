@@ -8,7 +8,7 @@
       text: reply.fullNameAndRelationship,
       level: 4
     },
-    href: reply.uri + "?referrer=" + referrer if reply.isDelivered,
+    href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered,
     actions: {
       items: [
         {
