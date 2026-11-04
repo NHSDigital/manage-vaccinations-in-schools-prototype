@@ -1,0 +1,20 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinic.odsCode.title") %}
+
+{% block form %}
+  {{ heading({
+    caption: clinic.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __("clinic.odsCode.description") | nhsukMarkdown }}
+
+  {{ input({
+    label: __("clinic.odsCode.label") + " (optional)",
+    hint: __("clinic.odsCode.hint"),
+    width: 10,
+    decorate: "clinic.odsCode"
+  }) }}
+{% endblock %}

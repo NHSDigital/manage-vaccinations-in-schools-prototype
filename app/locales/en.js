@@ -54,19 +54,7 @@ export const en = {
     },
     postalCode: {
       label: 'Postcode'
-    },
-    odsCode: {
-      label: 'ODS code'
-    },
-    carePlusCode: {
-      label: 'CarePlus code'
-    },
-    venueInformation: {
-      label: 'Clinic information',
-      hint: 'How to access the clinic – for example, parking or entrance information (this displays in the parent’s booking confirmation)'
-    },
-    shared:
-      'This clinic is shared with other teams. Any changes made here will affect all teams that use it.'
+    }
   },
   defaultBatch: {
     label: 'Default batch',
@@ -193,12 +181,17 @@ export const en = {
   clinic: {
     new: {
       title: 'Add a new clinic',
-      confirm: 'Add clinic',
+      'check-answers': {
+        title: 'Check and confirm',
+        confirm: 'Add clinic'
+      },
+      summary: 'Clinic details',
       success: '{{clinic.name}} created'
     },
     edit: {
       label: 'Edit',
       title: 'Edit clinic',
+      summary: 'Clinic details',
       confirm: 'Save changes',
       success: '{{clinic.name}} updated'
     },
@@ -218,6 +211,29 @@ export const en = {
     address: {
       label: 'Address'
     },
+    details: {
+      title: 'What is the clinic’s name and address?'
+    },
+    odsCode: {
+      label: 'ODS code',
+      title: 'What is the clinic’s ODS site code?',
+      hint: 'If provided, this must be an ODS site code that is not already in use',
+      description:
+        'We use this to ensure that GPs, CHIS, other vaccination providers and patients have an accurate record of where the vaccination was given.'
+    },
+    carePlusCode: {
+      label: 'CarePlus code',
+      title: 'What is the clinic’s CarePlus venue code?',
+      description:
+        'This helps CHIS providers using CarePlus maintain an accurate record of where a vaccination took place.'
+    },
+    venueInformation: {
+      label: 'Clinic information',
+      title: 'Clinic information',
+      hint: 'How to access the clinic – for example, parking or entrance information (this displays in the parent’s booking confirmation)'
+    },
+    shared:
+      'This clinic is shared with other teams. Any changes made here will affect all teams that use it.',
     count: '{count, plural, =0 {No clinics} one {1 clinic} other {# clinics}}'
   },
   child: {

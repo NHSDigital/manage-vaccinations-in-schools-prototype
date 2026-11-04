@@ -1,0 +1,49 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("clinic.edit.confirm") %}
+{% set title = __("clinic.edit.title") %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ heading({
+    caption: clinic.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {% if clinic.id === "M86633" %}
+    {{ insetText({
+      text: __("clinic.shared")
+    }) }}
+  {% endif %}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("clinic.edit.summary"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(clinic, {
+      name: {
+        href: "edit/details"
+      },
+      address: {
+        href: "edit/details"
+      },
+      odsCode: {
+        href: "edit/ods-code",
+        changeLabel: __("clinic.odsCode.label")
+      },
+      carePlusCode: {
+        href: "edit/careplus-code",
+        changeLabel: __("clinic.carePlusCode.label")
+      },
+      venueInformation: {
+        href: "edit/clinic-information"
+      }
+    })
+  }) }}
+{% endblock %}
