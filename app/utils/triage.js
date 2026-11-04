@@ -17,7 +17,9 @@ export const getScreenStatusesForConsentMethod = (programme, replies) => {
     ({ hasConsentForInjection }) => hasConsentForInjection
   )
 
-  const hasConsentForAlternativeInjectionOnly = replies?.every(
+  // If anyone gave consent for the injection only, the nasal spray can’t be
+  // given, even if others prefer it
+  const hasConsentForAlternativeInjectionOnly = replies?.some(
     ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
   )
 
@@ -56,7 +58,9 @@ export const getScreenVaccineCriteria = (programme, replies) => {
     ({ hasConsentForInjection }) => hasConsentForInjection
   )
 
-  const hasConsentForAlternativeInjectionOnly = replies?.every(
+  // If anyone gave consent for the injection only, the nasal spray can’t be
+  // given, even if others prefer it
+  const hasConsentForAlternativeInjectionOnly = replies?.some(
     ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
   )
 

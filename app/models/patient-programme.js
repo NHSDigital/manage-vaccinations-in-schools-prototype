@@ -1141,15 +1141,16 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Has every contact given consent only for an injected vaccine?
+   * Has any contact given consent only for an injected vaccine?
    *
-   * We need this so that we don’t offer multiple triage outcomes if consent has
-   * only been given for the injected vaccine
+   * If so, only the injected vaccine can be given, even if other contacts
+   * prefer the nasal spray. We need this so that we don’t offer multiple
+   * triage outcomes if consent has only been given for the injected vaccine
    *
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForAlternativeInjectionOnly() {
-    return this.repliesCountingTowardsConsent.every(
+    return this.repliesCountingTowardsConsent.some(
       ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
     )
   }

@@ -157,13 +157,8 @@ export function getConsentStatus(patientProgramme) {
 
     // If consent given, determine which vaccine method has consent
     if (replies.every(({ hasGivenConsent }) => hasGivenConsent)) {
-      // For flu programme, determine if consent given for injection
+      // For flu programme, determine which methods every response allows
       if (session?.canOfferIntranasalVaccine) {
-        const allWantInjection = replies.every(
-          ({ vaccineCriteria }) =>
-            vaccineCriteria ===
-            ConsentVaccineCriteria.AlternativeFluInjectionOnly
-        )
         const someWantInjectionOnly = replies.some(
           ({ vaccineCriteria }) =>
             vaccineCriteria ===
@@ -173,23 +168,23 @@ export function getConsentStatus(patientProgramme) {
           ({ vaccineCriteria }) =>
             vaccineCriteria === ConsentVaccineCriteria.IntranasalOnly
         )
-        const allAcceptAlternative = replies.every(
-          ({ hasConsentForAlternativeVaccine }) =>
-            hasConsentForAlternativeVaccine
-        )
 
         if (someWantInjectionOnly && someWantIntranasalOnly) {
           return ConsentStatus.Inconsistent
         }
 
-        if (
-          allWantInjection ||
-          (someWantInjectionOnly && allAcceptAlternative)
-        ) {
+        // Any other responses prefer the nasal spray but also accept the
+        // injection, so the injection is the only method everyone allows
+        if (someWantInjectionOnly) {
           return ConsentStatus.GivenForAlternativeInjection
         }
 
-        return ConsentStatus.GivenForIntranasal
+        if (someWantIntranasalOnly) {
+          return ConsentStatus.GivenForIntranasal
+        }
+
+        // Every response prefers the nasal spray but also accepts the injection
+        return ConsentStatus.Given
       }
 
       // For MMR programme, determine if any consent requested gelatine-free
