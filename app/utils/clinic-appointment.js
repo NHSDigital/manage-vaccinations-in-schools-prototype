@@ -17,6 +17,7 @@ import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
+import { getConsentHealthAnswers } from './reply.js'
 import { camelToKebabCase, stringToArray, stringToBoolean } from './string.js'
 
 /**
@@ -689,15 +690,20 @@ export const getPreviousSessionItems = (appointments, sessionContext) => {
  * Get health questions for an appointment that haven’t already been answered
  * in the child’s consent responses
  *
+ * The appointment’s own answers don’t count, so its questions are still asked
+ * when it’s changed
+ *
  * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices for the appointment
- * @param {Patient} [patient] - Child the appointment’s for, if matched
+ * @param {Patient} patient - Child the appointment’s for, if matched
  * @param {object} context - the context in which we'll find programmes and vaccines
+ * @param {string} [appointment_uuid] - UUID of the appointment, if already booked
  * @returns {object} Health questions, keyed by question
  */
 export const getUnansweredHealthQuestions = (
   vaccinationChoices,
   patient,
-  context
+  context,
+  appointment_uuid
 ) => {
   const {
     selected_programme_ids,
@@ -752,7 +758,14 @@ export const getUnansweredHealthQuestions = (
   if (patient) {
     for (const programme of selectedProgrammes) {
       const patientProgramme = patient.programmes[programme.id]
-      const consentHealthAnswers = patientProgramme?.consentHealthAnswers ?? {}
+      const isFromThisAppointment = (reply) =>
+        appointment_uuid !== undefined &&
+        reply.clinicAppointment_uuid === appointment_uuid
+      const responsesFromElsewhere = (
+        patientProgramme?.repliesCountingTowardsConsent ?? []
+      ).filter((reply) => !isFromThisAppointment(reply))
+      const consentHealthAnswers =
+        getConsentHealthAnswers(responsesFromElsewhere) ?? {}
 
       for (const [key, answers] of Object.entries(consentHealthAnswers)) {
         if (answers.length > 0) {

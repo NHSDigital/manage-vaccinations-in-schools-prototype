@@ -1083,10 +1083,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(
-      this.repliesCountingTowardsConsent,
-      this.appointments
-    )
+    return getConsentHealthAnswers(this.repliesCountingTowardsConsent)
   }
 
   /**
@@ -1095,10 +1092,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {string|undefined} Health answers description
    */
   get healthAnswersDescription() {
-    return getHealthAnswersDescription(
-      this.repliesCountingTowardsConsent,
-      this.appointments
-    )
+    return getHealthAnswersDescription(this.repliesCountingTowardsConsent)
   }
 
   /**
@@ -1166,17 +1160,11 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean} Consent has been given
    */
   get consentGiven() {
-    if (this.consent && !this.lastPatientSession?.clinicAppointment) {
-      return [
-        ConsentStatus.Given,
-        ConsentStatus.GivenForAlternativeInjection,
-        ConsentStatus.GivenForIntranasal
-      ].includes(this.consent)
-    } else if (this.lastPatientSession?.clinicAppointment) {
-      return true
-    }
-
-    return false
+    return [
+      ConsentStatus.Given,
+      ConsentStatus.GivenForAlternativeInjection,
+      ConsentStatus.GivenForIntranasal
+    ].includes(this.consent)
   }
 
   /**
@@ -1234,8 +1222,7 @@ export class PatientProgramme extends BaseModel {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
     const alternativeVaccine = this.programme?.alternativeVaccine
 
-    // Need consent response (or a clinic appointment) before we can determine
-    // the chosen method.
+    // Need consent response before we can determine the chosen method.
     // We only want to instruct patients being vaccinated using nasal spray
     if (!this.consentGiven) {
       return
@@ -1247,11 +1234,17 @@ export class PatientProgramme extends BaseModel {
     }
 
     // Administered vaccine was the alternative
-    if (
-      this.lastPatientSession?.clinicAppointment
-        ?.hasConsentForAlternativeVaccine ||
-      this.lastPatientSession?.hasAlternativeVaccine
-    ) {
+    if (this.lastPatientSession?.hasAlternativeVaccine) {
+      return alternativeVaccine
+    }
+
+    // Gelatine-free MMR vaccine requested
+    const hasRequestedGelatineFree =
+      this.programme.type === ProgrammeType.MMR &&
+      this.repliesCountingTowardsConsent.some(
+        ({ hasConsentForAlternativeVaccine }) => hasConsentForAlternativeVaccine
+      )
+    if (hasRequestedGelatineFree) {
       return alternativeVaccine
     }
 

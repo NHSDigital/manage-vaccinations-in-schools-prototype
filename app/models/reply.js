@@ -16,6 +16,7 @@ import {
 } from '../enums.js'
 import {
   Child,
+  ClinicAppointment,
   Contact,
   Patient,
   PatientSession,
@@ -72,6 +73,7 @@ import { BaseModel } from './base.js'
  * @property {string} [refusalReasonOther] - Other refusal reason
  * @property {string} [refusalReasonDetails] - Refusal reason details
  * @property {boolean} [hasSelfConsent] - Reply given by child
+ * @property {string} [clinicAppointment_uuid] - Clinic appointment, if given by booking one
  * @property {string} [note] - Note about this response
  */
 
@@ -92,9 +94,6 @@ export class Reply extends BaseModel {
 
     /** @type {string|undefined} */
     this.contact_uuid
-
-    /** @type {Contact|undefined} */
-    this.contact
 
     /** @type {string|undefined} */
     this.patient_uuid
@@ -146,6 +145,7 @@ export class Reply extends BaseModel {
         : stringToBoolean(options?.isInvalidated) || false
     this.method = options?.method
     this.hasSelfConsent = options?.hasSelfConsent || false
+    this.clinicAppointment_uuid = options?.clinicAppointment_uuid
     this.note = options?.note || ''
 
     // For reasons of simplicity, we use `contact_` this to store contact
@@ -246,6 +246,61 @@ export class Reply extends BaseModel {
     return this.hasSelfConsent
       ? this.relationship
       : formatContact(this.contact, false)
+  }
+
+  /**
+   * Get parent or guardian who responded
+   *
+   * @returns {Contact|undefined} Contact
+   */
+  get contact() {
+    // A clinic booking keeps its own contact details, rather than storing
+    // them with the other contacts
+    if (this.clinicAppointment_uuid) {
+      return this.contact_
+    }
+
+    return Contact.findOne(this.contact_uuid, this.context)
+  }
+
+  /**
+   * Update parent or guardian who responded
+   *
+   * @param {object} updates - Updates
+   */
+  set contact(updates) {
+    Contact.update(this.contact_uuid, updates, this.context)
+  }
+
+  /**
+   * Get clinic appointment, if this response was given by booking one
+   *
+   * @returns {ClinicAppointment|undefined} Clinic appointment
+   */
+  get clinicAppointment() {
+    if (this.clinicAppointment_uuid) {
+      return ClinicAppointment.findOne(
+        this.clinicAppointment_uuid,
+        this.context
+      )
+    }
+  }
+
+  /**
+   * Get who gave this response, so we can tell when a newer response from
+   * the same person replaces it
+   *
+   * @returns {string|undefined} Respondent
+   */
+  get respondent() {
+    // TODO: Match a booking’s contact to the child’s contacts, so a booking
+    // can replace an earlier response from the same parent (and vice versa).
+    // Until then, each appointment counts as a separate respondent
+    if (this.clinicAppointment_uuid) {
+      return `clinic-appointment-${this.clinicAppointment_uuid}`
+    }
+
+    return this.hasSelfConsent ? 'child' : this.contact_uuid
   }
 
   /**
@@ -649,7 +704,9 @@ export class Reply extends BaseModel {
   }
 }
 
-Reply.relate('contact_uuid', () => Contact, 'contact')
+// Related by hand (see `get contact`), so responses from clinic bookings can
+// use the contact details given in the booking
+Reply.foreignKeys = { ...Reply.foreignKeys, contact_uuid: () => Contact }
 Reply.relate('patient_uuid', () => Patient, 'patient')
 Reply.relate('programme_id', () => Programme, 'programme')
 Reply.relate('session_id', () => Session, 'session')

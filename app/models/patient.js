@@ -6,7 +6,6 @@ import programmesData from '../datasets/programmes.js'
 import {
   Adjustment,
   AuditEventType,
-  ClinicAppointmentStatus,
   Impairment,
   NoticeType,
   NotifyEmailStatus,
@@ -238,26 +237,14 @@ export class Patient extends Child {
       contacts.set(uuid, Contact.findOne(uuid, this.context))
     )
 
-    // Add any new contacts found in consent replies
+    // Add any new contacts found in consent replies, including those given
+    // by booking clinic appointments
     Object.values(this.replies)
       .filter(({ hasSelfConsent }) => !hasSelfConsent)
       .filter(({ contact }) => contact)
       .forEach(({ contact }) => {
         contacts.set(contact.uuid, new Contact(contact, this.context))
       })
-
-    // Add any contacts found in clinic appointments
-    this.appointments
-      .filter(({ contact }) => contact)
-      .filter(({ status }) =>
-        [
-          ClinicAppointmentStatus.Booked,
-          ClinicAppointmentStatus.Cancelled
-        ].includes(status)
-      )
-      .forEach(({ contact }) =>
-        contacts.set(contact.uuid, new Contact(contact, this.context))
-      )
 
     return [...contacts.values()]
   }
@@ -443,14 +430,20 @@ export class Patient extends Child {
   }
 
   /**
-   * Get replies
+   * Get replies, including those given by booking clinic appointments
    *
    * @returns {Array<Reply>} Replies
    */
   get replies() {
-    return this.reply_uuids
+    const storedReplies = this.reply_uuids
       .map((uuid) => Reply.findOne(uuid, this.context))
       .filter((reply) => reply?.patient_uuid === this.uuid)
+
+    const clinicBookingReplies = this.appointments.flatMap(
+      (appointment) => appointment.replies
+    )
+
+    return [...storedReplies, ...clinicBookingReplies]
   }
 
   /**
