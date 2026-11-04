@@ -43,7 +43,11 @@
       },
       venueInformation: {
         href: "edit/clinic-information"
-      }
+      },
+      subteam: {
+        value: clinic.subteam.name if clinic.subteam else __("subteam.none.label"),
+        href: "edit/sub-team"
+      } if clinic.team.hasSubteams else none
     })
   }) }}
 {% endblock %}

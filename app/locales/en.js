@@ -227,6 +227,10 @@ export const en = {
       description:
         'This helps CHIS providers using CarePlus maintain an accurate record of where a vaccination took place.'
     },
+    subteam: {
+      label: 'Sub-team',
+      title: 'Which sub-team runs sessions at this clinic?'
+    },
     venueInformation: {
       label: 'Clinic information',
       title: 'Clinic information',
@@ -2965,6 +2969,10 @@ export const en = {
       isPlanned: 'Scheduled sessions',
       isCompleted: 'Completed sessions'
     },
+    subteam: {
+      label: 'Sub-team',
+      title: 'Which sub-team runs sessions at this school?'
+    },
     uploads: {
       label: 'Class list requests and uploads',
       title: 'Class list requests and uploads',
@@ -3687,6 +3695,62 @@ export const en = {
       }
     }
   },
+  subteam: {
+    divider: 'or',
+    count:
+      '{count, plural, =0 {No sub-teams} one {1 sub-team} other {# sub-teams}}',
+    none: {
+      label: 'No sub-team',
+      hint: 'Sessions are run by {{team.name}}'
+    },
+    new: {
+      title: 'Add a sub-team',
+      'check-answers': {
+        title: 'Check and confirm',
+        confirm: 'Add sub-team'
+      },
+      summary: 'Sub-team details',
+      success: '{{subteam.name}} sub-team added'
+    },
+    edit: {
+      label: 'Edit',
+      title: 'Edit sub-team',
+      summary: 'Sub-team details',
+      preview: 'How these details will appear on emails',
+      confirm: 'Save changes',
+      success: '{{subteam.name}} sub-team updated'
+    },
+    delete: {
+      label: 'Delete',
+      success: '{{subteam.name}} sub-team deleted'
+    },
+    action: {
+      title: 'Are you sure you want to %s this sub-team?',
+      description:
+        'Any clinics and schools assigned to this sub-team will be managed by {{team.name}}.',
+      confirm: 'Yes, %s this sub-team',
+      cancel: 'No, return to sub-teams'
+    },
+    name: {
+      label: 'Name',
+      title: 'What is the sub-team’s name?',
+      hint: 'The sub-team name must be unique. It will be shown to parents in emails and text messages sent through Mavis.'
+    },
+    contactDetails: {
+      title: 'Which contact details should be shown to parents?',
+      hint: 'Parents will see these contact details in emails and text messages about sessions at schools and clinics assigned to this sub-team.',
+      team: 'Use the team’s contact details',
+      subteam: 'Use different contact details'
+    },
+    email: {
+      label: 'Email address',
+      hint: 'Leave blank to use the team’s email address'
+    },
+    tel: {
+      label: 'Phone number',
+      hint: 'Leave blank to use the team’s phone number'
+    }
+  },
   team: {
     show: {
       label: 'Your team',
@@ -3710,6 +3774,10 @@ export const en = {
     schools: {
       title: 'Schools',
       summary: 'Schools'
+    },
+    subteams: {
+      title: 'Sub-teams',
+      summary: 'Sub-teams'
     },
     sessions: {
       title: 'Sessions',

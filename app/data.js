@@ -12,6 +12,7 @@ import replies from '../.data/replies.json' with { type: 'json' }
 import scenarios from '../.data/scenarios.json' with { type: 'json' }
 import schools from '../.data/schools.json' with { type: 'json' }
 import sessions from '../.data/sessions.json' with { type: 'json' }
+import subteams from '../.data/subteams.json' with { type: 'json' }
 import teams from '../.data/teams.json' with { type: 'json' }
 import uploads from '../.data/uploads.json' with { type: 'json' }
 import users from '../.data/users.json' with { type: 'json' }
@@ -45,6 +46,7 @@ const data = {
   scenarios,
   schools,
   sessions,
+  subteams,
   teams,
   uploads,
   users,

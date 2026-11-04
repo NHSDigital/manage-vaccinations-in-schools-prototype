@@ -1,0 +1,15 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("subteam.name.title") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      caption: team.name,
+      heading: title,
+      size: "l"
+    },
+    hint: __("subteam.name.hint"),
+    decorate: "subteam.name"
+  }) }}
+{% endblock %}

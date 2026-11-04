@@ -57,6 +57,18 @@
           decorate: "phase"
         }) }}
 
+        {{ radios({
+          fieldset: {
+            legend: {
+              text: __("school.subteam.label"),
+              size: "s"
+            }
+          },
+          small: true,
+          items: subteamItems,
+          decorate: "subteam"
+        }) }}
+
         {{ checkboxes({
           fieldset: {
             legend: {
@@ -148,6 +160,7 @@
             status: {},
             phase: {},
             address: {},
+            subteam: {},
             lastUpload: {},
             nextSessionDate: {},
             unplannedProgrammes: {}

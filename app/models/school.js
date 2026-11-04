@@ -64,7 +64,8 @@ export class School extends Location {
     this.phase = options?.phase
     this.isSen = stringToBoolean(options?.isSen) || false
     this.site = options?.site
-    this.team_ids = options?.team_ids || []
+    this.team_ids =
+      options?.team_ids || (options?.team_id ? [options.team_id] : [])
     this.yearGroups = stringToArray(options?.yearGroups).map(Number)
   }
 
@@ -107,13 +108,21 @@ export class School extends Location {
    * @returns {Array<Team>} Teams
    */
   get teams() {
-    if (this.context?.teams && this.id) {
-      return Object.values(this.context?.teams)
-        .filter((school) => school.team_ids.includes(this.id))
-        .map((team) => new Team(team, this.context))
-    }
+    return this.team_ids
+      .map((team_id) => Team.findOne(team_id, this.context))
+      .filter(Boolean)
+  }
 
-    return []
+  /**
+   * Get SAIS team responsible for this school
+   *
+   * A school can also belong to a school team, so `team_ids` can contain more
+   * than one team, but for now we assume only one SAIS team serves a school.
+   *
+   * @returns {Team|undefined} SAIS team
+   */
+  get team() {
+    return this.teams.find((team) => team.isSAIS)
   }
 
   /**

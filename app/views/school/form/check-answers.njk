@@ -36,7 +36,11 @@
       },
       programmes: {
         href: school.uri + "/new/programmes"
-      }
+      },
+      subteam: {
+        value: school.subteam.name if school.subteam else __("subteam.none.label"),
+        href: school.uri + "/new/sub-team"
+      } if school.team.hasSubteams else none
     })
   }) }}
 {% endblock %}

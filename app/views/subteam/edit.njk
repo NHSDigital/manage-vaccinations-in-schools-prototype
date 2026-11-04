@@ -1,0 +1,48 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("subteam.edit.confirm") %}
+{% set title = __("subteam.edit.title") %}
+
+{% block form %}
+  {{ super() }}
+
+  {{ heading({
+    caption: subteam.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("subteam.edit.summary"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(subteam, {
+      name: {
+        href: "edit/details"
+      },
+      email: {
+        href: "edit/contact-details"
+      },
+      tel: {
+        href: "edit/contact-details"
+      }
+    })
+  }) }}
+
+  {% call card({
+    heading: {
+      text: __("subteam.edit.preview"),
+      size: "m"
+    }
+  }) %}
+    <p class="nhsuk-body">
+      {{ subteam.name }}<br>
+      {{ subteam.contact.email }}<br>
+      {{ subteam.contact.tel }}
+    </p>
+  {% endcall %}
+{% endblock %}
