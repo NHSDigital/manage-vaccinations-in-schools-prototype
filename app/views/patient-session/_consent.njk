@@ -6,6 +6,11 @@
     classes: "app-card--compact app-card--offset",
     heading: {
       text: reply.fullNameAndRelationship,
+      caption: {
+        text: 
+          ("Phone: " + reply.contact.tel) if reply.contact.tel else ("Email: " + reply.contact.email),
+        placement: "end"
+      },  
       level: 4
     },
     href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered,
@@ -50,12 +55,6 @@
     {{ summaryList({
       lastRowBorder: false,
       rows: summaryRows(reply, {
-        email: {
-          value: appContactEmail(reply.contact, reply.hasGivenConsent)
-        } if reply.contact.email,
-        tel: {
-          value: appContactSms(reply.contact, reply.hasGivenConsent)
-        } if reply.contact.tel,
         communicationNeeds: {
           label: __("contact.communicationNeeds.label"),
           value: reply.contact.communicationNeeds
