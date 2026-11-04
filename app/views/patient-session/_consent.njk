@@ -12,6 +12,15 @@
     actions: {
       items: [
         {
+          text: __("patientSession.clinicAppointment.edit.label"),
+          href: reply.clinicAppointment.uri.edit + "?referrer=" + referrer
+        } if reply.clinicAppointment.status === ClinicAppointmentStatus.Booked,
+        {
+          text: __("patientSession.clinicAppointment.cancel.label"),
+          href: clinicAppointment.uri.cancel + "?referrer=" + referrer
+        } if reply.clinicAppointment.status === ClinicAppointmentStatus.Booked
+      ] if reply.clinicAppointment else [
+        {
           text: __("reply.withdraw.label"),
           href: reply.uri + "/edit/withdraw?referrer=" + referrer
         } if reply.hasGivenConsent,
