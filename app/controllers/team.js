@@ -14,6 +14,7 @@ export const teamController = {
 
     response.locals.navigationItems = [
       'contact',
+      ...(team.canHaveSubteams ? ['subteams'] : []),
       'clinics',
       'schools',
       'sessions'
@@ -40,6 +41,12 @@ export const teamController = {
    */
   show(request, response) {
     const view = request.params.view || 'show'
+    const { team } = response.locals
+
+    // Only SAIS teams can have subteams
+    if (view === 'subteams' && !team.canHaveSubteams) {
+      return response.redirect(`${team.uri}/contact`)
+    }
 
     return response.render(`team/${view}`)
   },

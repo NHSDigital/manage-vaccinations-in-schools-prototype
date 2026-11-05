@@ -53,6 +53,30 @@ export default () => {
     }))
   }
 
+  /**
+   * Get form field items for assigning a location to one of a team’s subteams
+   *
+   * @param {import('./models.js').Team} team - Parent team
+   * @returns {Array<object>} Form field items
+   */
+  globals.subteamItems = function (team) {
+    const { __ } = this.ctx
+
+    return [
+      ...(team?.subteams || []).map((subteam) => ({
+        text: subteam.name,
+        value: subteam.id
+      })),
+      { divider: __('subteam.divider') },
+      {
+        text: __('subteam.none.label'),
+        hint: __('subteam.none.hint', { team }),
+        value: '',
+        checked: true
+      }
+    ]
+  }
+
   globals.otherCountryItems = function (countries, value) {
     countries = Object.entries(countries).filter(
       ([, name]) => name !== 'United Kingdom'

@@ -1,5 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
+import { TeamType } from '../enums.js'
 import { Team } from '../models.js'
 
 /**
@@ -11,6 +12,7 @@ export function generateTeam() {
   const ods = faker.helpers.replaceSymbols('???')
 
   return new Team({
+    type: TeamType.SAIS,
     ods,
     name: `${faker.location.county()} Child Immunisation Service`,
     email: faker.internet

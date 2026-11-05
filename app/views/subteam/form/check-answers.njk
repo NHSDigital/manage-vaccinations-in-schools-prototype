@@ -1,0 +1,33 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("subteam.new.check-answers.confirm") %}
+{% set title = __("subteam.new.check-answers.title") %}
+{% set referrer = "?referrer=" + subteam.uri + "/new/check-answers" %}
+
+{% block form %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("subteam.new.summary"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(subteam, {
+      name: {
+        href: subteam.uri + "/new/details" + referrer
+      },
+      email: {
+        href: subteam.uri + "/new/contact-details" + referrer
+      },
+      tel: {
+        href: subteam.uri + "/new/contact-details" + referrer
+      }
+    })
+  }) }}
+{% endblock %}
