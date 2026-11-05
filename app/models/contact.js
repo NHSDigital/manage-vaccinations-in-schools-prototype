@@ -93,10 +93,8 @@ export class Contact extends BaseModel {
   /**
    * Are these the contact details of the same person as another contact?
    *
-   * They need to have the same name, and either the same email address or the
-   * same phone number. Matching on the name stops someone being mistaken for
-   * another person who shares their email address or phone, like a parent
-   * using a family email address
+   * They need to have the same and the same relationship to the child
+   * (ignoring parental responsibility settings)
    *
    * @param {Contact} [contact] - Other contact
    * @returns {boolean} Contact details are for the same person
@@ -114,10 +112,10 @@ export class Contact extends BaseModel {
       normaliseText(this.fullName) === normaliseText(contact.fullName)
     const hasSameRelationship =
       this.relationship === contact.relationship &&
-      this.relationship === RelationshipType.Other
+      (this.relationship === RelationshipType.Other
         ? normaliseText(this.relationshipOther) ===
           normaliseText(contact.relationshipOther)
-        : true
+        : true)
 
     return hasSameName && hasSameRelationship
   }
