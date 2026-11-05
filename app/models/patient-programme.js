@@ -341,6 +341,12 @@ export class PatientProgramme extends BaseModel {
    * Get the date a triage expires, which is when the last of the health
    * answers it reviewed expires
    *
+   * A response without health answers, like a clinic booking that skipped
+   * questions already answered, doesn’t keep a triage outcome alive, because
+   * the triage wasn’t based on anything in it. But if _none_ of the responses
+   * reviewed had health answers (for example, if the child was triaged in
+   * person), the triage lasts until the last of those responses expires
+   *
    * @param {AuditEvent} triageNote - Triage note
    * @returns {Date|undefined} Expiry date, or undefined if it never expires
    */
@@ -352,8 +358,16 @@ export class PatientProgramme extends BaseModel {
       return
     }
 
-    // If any response it reviewed never expires, neither does the triage
-    const expiryDates = reviewedReplies.map((reply) => reply.expiresAt)
+    const reviewedRepliesWithHealthAnswers = reviewedReplies.filter(
+      (reply) => Object.keys(reply.healthAnswers ?? {}).length > 0
+    )
+    const repliesTriageIsBasedOn =
+      reviewedRepliesWithHealthAnswers.length > 0
+        ? reviewedRepliesWithHealthAnswers
+        : reviewedReplies
+
+    // If any response it’s based on never expires, neither does the triage
+    const expiryDates = repliesTriageIsBasedOn.map((reply) => reply.expiresAt)
     if (expiryDates.some((expiryDate) => !expiryDate)) {
       return
     }
