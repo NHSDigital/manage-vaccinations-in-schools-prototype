@@ -293,14 +293,17 @@ export class Reply extends BaseModel {
    * @returns {string|undefined} Respondent
    */
   get respondent() {
-    // TODO: Match a booking’s contact to the child’s contacts, so a booking
-    // can replace an earlier response from the same parent (and vice versa).
-    // Until then, each appointment counts as a separate respondent
-    if (this.clinicAppointment_uuid) {
+    if (this.hasSelfConsent) {
+      return 'child'
+    }
+
+    // Someone who booked a clinic appointment, but isn’t one of the child’s
+    // contacts, counts as a different respondent for each appointment
+    if (this.clinicAppointment_uuid && !this.contact_uuid) {
       return `clinic-appointment-${this.clinicAppointment_uuid}`
     }
 
-    return this.hasSelfConsent ? 'child' : this.contact_uuid
+    return this.contact_uuid
   }
 
   /**

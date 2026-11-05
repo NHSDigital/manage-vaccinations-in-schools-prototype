@@ -17,6 +17,7 @@ import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
+import { getLatestReplyFromEachRespondent } from './patient-programme.js'
 import { getConsentHealthAnswers } from './reply.js'
 import { camelToKebabCase, stringToArray, stringToBoolean } from './string.js'
 
@@ -761,9 +762,21 @@ export const getUnansweredHealthQuestions = (
       const isFromThisAppointment = (reply) =>
         appointment_uuid !== undefined &&
         reply.clinicAppointment_uuid === appointment_uuid
-      const responsesFromElsewhere = (
-        patientProgramme?.repliesCountingTowardsConsent ?? []
-      ).filter((reply) => !isFromThisAppointment(reply))
+
+      // Work out which responses would count towards consent if this
+      // appointment hadn’t been booked. We can’t just leave it out of the
+      // responses that count now, as it may have replaced an earlier response
+      // from the same parent, whose answers we don’t want to ask for again
+      const responsesWithDecisionFromElsewhere = (
+        patientProgramme?.replies ?? []
+      ).filter(
+        (reply) =>
+          reply.decision !== ReplyDecision.NoResponse &&
+          !isFromThisAppointment(reply)
+      )
+      const responsesFromElsewhere = getLatestReplyFromEachRespondent(
+        responsesWithDecisionFromElsewhere
+      )
       const consentHealthAnswers =
         getConsentHealthAnswers(responsesFromElsewhere) ?? {}
 

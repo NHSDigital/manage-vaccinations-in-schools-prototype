@@ -91,6 +91,38 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Are these the contact details of the same person as another contact?
+   *
+   * They need to have the same name, and either the same email address or the
+   * same phone number. Matching on the name stops someone being mistaken for
+   * another person who shares their email address or phone, like a parent
+   * using a family email address
+   *
+   * @param {Contact} [contact] - Other contact
+   * @returns {boolean} Contact details are for the same person
+   */
+  isSamePersonAs(contact) {
+    if (!contact) {
+      return false
+    }
+
+    const normaliseText = (text) =>
+      text?.trim().replace(/\s+/g, ' ').toLowerCase() || undefined
+
+    const hasSameName =
+      normaliseText(this.fullName) !== undefined &&
+      normaliseText(this.fullName) === normaliseText(contact.fullName)
+    const hasSameRelationship =
+      this.relationship === contact.relationship &&
+      this.relationship === RelationshipType.Other
+        ? normaliseText(this.relationshipOther) ===
+          normaliseText(contact.relationshipOther)
+        : true
+
+    return hasSameName && hasSameRelationship
+  }
+
+  /**
    * Has pending changes
    *
    * @returns {boolean} Has pending changes

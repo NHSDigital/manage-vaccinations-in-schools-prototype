@@ -1083,7 +1083,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(this.repliesCountingTowardsConsent)
+    return getConsentHealthAnswers(this.repliesWithHealthAnswersThatCount)
   }
 
   /**
@@ -1092,7 +1092,82 @@ export class PatientProgramme extends BaseModel {
    * @returns {string|undefined} Health answers description
    */
   get healthAnswersDescription() {
-    return getHealthAnswersDescription(this.repliesCountingTowardsConsent)
+    return getHealthAnswersDescription(this.repliesWithHealthAnswersThatCount)
+  }
+
+  /**
+   * Get responses whose answers to the health questions count
+   *
+   * These are the responses that count towards consent, plus the answers in
+   * any response replaced by a clinic booking from the same person, to the
+   * questions the booking didn’t ask. When booking, a parent isn’t asked
+   * questions they’ve already answered, so those earlier answers still count
+   * (until that earlier response expires or is invalidated)
+   *
+   * @returns {Array<Reply>} Responses, newest first
+   */
+  get repliesWithHealthAnswersThatCount() {
+    const replies = [...this.repliesCountingTowardsConsent]
+
+    const bookingRepliesFromKnownContacts = replies.filter(
+      (reply) => reply.clinicAppointment_uuid && reply.contact_uuid
+    )
+    for (const bookingReply of bookingRepliesFromKnownContacts) {
+      const replacedReply = this.#getReplyReplacedByBooking(bookingReply)
+      if (!replacedReply?.healthAnswers) {
+        continue
+      }
+
+      const questionsInBooking =
+        bookingReply.clinicAppointment?.getHealthQuestionsForProgramme(
+          this.programme
+        ) ?? {}
+      const answersFromBooking = bookingReply.healthAnswers ?? {}
+      const answersToQuestionsNotAskedInBooking = Object.entries(
+        replacedReply.healthAnswers
+      ).filter(
+        ([question]) =>
+          question in questionsInBooking && !(question in answersFromBooking)
+      )
+      if (answersToQuestionsNotAskedInBooking.length === 0) {
+        continue
+      }
+
+      // Keep only those answers, so we don’t show any the booking replaced
+      replies.push(
+        new Reply(
+          {
+            ...replacedReply,
+            healthAnswers: Object.fromEntries(
+              answersToQuestionsNotAskedInBooking
+            )
+          },
+          this.context
+        )
+      )
+    }
+
+    return replies.sort((a, b) =>
+      getDateValueDifference(b.createdAt, a.createdAt)
+    )
+  }
+
+  /**
+   * Get the latest response that a clinic booking replaced, given before the
+   * booking by the same person
+   *
+   * @param {Reply} bookingReply - Response given by booking a clinic appointment
+   * @returns {Reply|undefined} Replaced response
+   */
+  #getReplyReplacedByBooking(bookingReply) {
+    // Responses are newest first, so the first earlier one is the latest
+    return (this.replies ?? []).find(
+      (reply) =>
+        reply !== bookingReply &&
+        reply.respondent === bookingReply.respondent &&
+        reply.decision !== ReplyDecision.NoResponse &&
+        new Date(reply.createdAt) < new Date(bookingReply.createdAt)
+    )
   }
 
   /**
