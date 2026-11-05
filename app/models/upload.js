@@ -585,7 +585,7 @@ export class Upload extends BaseModel {
    */
   titleFor(user) {
     if (this.needsChecking) {
-      return `Check before sending ${this.nameFor(user, true)}`
+      return `Step 2 of 2: Check before sending ${this.typeFor(user).toLowerCase()}`
     } else if (this.needsReview && !user.isSchoolUser) {
       return `Review and approve ${this.nameFor(user, true)}`
     }
