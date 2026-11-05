@@ -244,32 +244,58 @@ function getExpiredConsentDescription(expiredReplies) {
 }
 
 /**
+ * Get a note about when a response’s health answers expire, if they expire
+ * before the session or soon
+ *
+ * @param {Reply} reply - Response with health answers
+ * @param {Session} [session] - Session the answers are being looked at for
+ * @returns {string} Expiry note, or an empty string if there’s nothing to note
+ */
+function getHealthAnswersExpiryNote(reply, session) {
+  const expiresBeforeSession =
+    reply.expiresAt && session?.date ? reply.expiresAt < session.date : false
+
+  // Expiring before the session matters more than expiring soon
+  if (expiresBeforeSession) {
+    return ' (expiring before the session)'
+  }
+
+  if (reply.isExpiringSoon) {
+    return ' (expiring soon)'
+  }
+
+  return ''
+}
+
+/**
  * Describe who gave answers to health questions, and when
  *
  * @param {Array<Reply>} replies - Responses that count towards consent
+ * @param {Session} [session] - Session the answers are being looked at for
  * @returns {string|undefined} Health answers description (Markdown), if any
  *   were given
  */
-export function getHealthAnswersDescription(replies) {
+export function getHealthAnswersDescription(replies, session) {
   const answers = (replies ?? [])
     .filter((reply) => reply.healthAnswers)
     .map((reply) => ({
       respondent: reply.fullNameAndRelationship,
-      answeredAt: reply.createdAt
+      answeredAt: reply.createdAt,
+      expiryNotice: getHealthAnswersExpiryNote(reply, session)
     }))
     .sort((a, b) => getDateValueDifference(b.answeredAt, a.answeredAt))
   if (!answers.length) {
     return undefined
   }
 
-  const answeredBy = answers.map(({ respondent, answeredAt }) => {
+  const answeredBy = answers.map(({ respondent, answeredAt, expiryNotice }) => {
     const answeredOn = formatDate(answeredAt, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     })
 
-    return `${respondent || 'parent or guardian'} on ${answeredOn}`
+    return `${respondent || 'parent or guardian'} on ${answeredOn}${expiryNotice}`
   })
 
   if (answeredBy.length === 1) {
@@ -766,5 +792,5 @@ export function getPatientVaccinatedStatus(patientProgramme) {
 }
 
 /**
- * @import { PatientProgramme, Programme, Reply } from '../models.js'
+ * @import { PatientProgramme, Programme, Reply, Session } from '../models.js'
  */

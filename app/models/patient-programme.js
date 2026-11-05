@@ -1101,12 +1101,17 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get description of who gave answers to health questions, and when
+   * Get description of who gave answers to health questions, and when,
+   * noting any answers that expire before the given session
    *
+   * @param {Session} [session] - Session the answers are being looked at for
    * @returns {string|undefined} Health answers description
    */
-  get healthAnswersDescription() {
-    return getHealthAnswersDescription(this.repliesWithHealthAnswersThatCount)
+  getHealthAnswersDescriptionForSession(session) {
+    return getHealthAnswersDescription(
+      this.repliesWithHealthAnswersThatCount,
+      session
+    )
   }
 
   /**
