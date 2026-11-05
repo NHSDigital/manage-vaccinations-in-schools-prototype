@@ -443,14 +443,20 @@ export class PatientProgramme extends BaseModel {
   #doesReplyIncludeTriagedMethod(reply, triageStatus) {
     switch (triageStatus) {
       case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
-      case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
-        // Approved the injection (or gelatine-free injection)
+        // Approved the flu injection
         return reply.hasConsentForInjection
+      case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
+        // Approved the gelatine-free vaccine, which any consent for MMR
+        // includes
+        return true
       case ScreenStatus.Vaccinate:
       case ScreenStatus.VaccinateIntranasalOnly:
       default:
         // Approved the standard vaccine (nasal spray, for flu)
-        return reply.decision !== ReplyDecision.OnlyAlternativeInjection
+        return (
+          reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
+          !reply.hasConsentForGelatineFreeVaccineOnly
+        )
     }
   }
 
@@ -1334,11 +1340,10 @@ export class PatientProgramme extends BaseModel {
     }
 
     // Gelatine-free MMR vaccine requested
-    const hasRequestedGelatineFree =
-      this.programme.type === ProgrammeType.MMR &&
-      this.repliesCountingTowardsConsent.some(
-        ({ hasConsentForAlternativeVaccine }) => hasConsentForAlternativeVaccine
-      )
+    const hasRequestedGelatineFree = this.repliesCountingTowardsConsent.some(
+      ({ hasConsentForGelatineFreeVaccineOnly }) =>
+        hasConsentForGelatineFreeVaccineOnly
+    )
     if (hasRequestedGelatineFree) {
       return alternativeVaccine
     }

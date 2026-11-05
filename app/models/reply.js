@@ -431,11 +431,35 @@ export class Reply extends BaseModel {
       }
     }
 
-    if (this.hasGivenConsent && this.programme.type === ProgrammeType.MMR) {
-      if (this.decision === ReplyDecision.OnlyAlternativeInjection) {
-        return ConsentVaccineCriteria.AlternativeMMRInjectionOnly
-      }
+    if (this.hasConsentForGelatineFreeVaccineOnly) {
+      return ConsentVaccineCriteria.AlternativeMMRInjectionOnly
     }
+  }
+
+  /**
+   * Has contact given consent for the MMR vaccine that doesn’t contain
+   * gelatine, and not the one that does?
+   *
+   * The parent consent form and clinic bookings record this as consent for
+   * the alternative vaccine. But the team’s consent form records it as
+   * consent for the alternative injection only, as it does for flu
+   *
+   * TODO: Change the team’s consent form (`reply/form/decision.njk`) to ask
+   * about MMR the way the parent consent form does, and record consent for the
+   * alternative vaccine. Its MMR options are currently written for flu. Then
+   * this only needs to check `hasConsentForAlternativeVaccine`
+   *
+   * @returns {boolean} Consent given for the gelatine-free vaccine only
+   */
+  get hasConsentForGelatineFreeVaccineOnly() {
+    if (!this.hasGivenConsent || this.programme?.type !== ProgrammeType.MMR) {
+      return false
+    }
+
+    return (
+      Boolean(this.hasConsentForAlternativeVaccine) ||
+      this.decision === ReplyDecision.OnlyAlternativeInjection
+    )
   }
 
   /**
@@ -532,7 +556,7 @@ export class Reply extends BaseModel {
     if (this.programme?.type == MMR) {
       const allowedCriteria = [
         VaccineCriteria.AlternativeInjection,
-        ...(this.hasConsentForAlternativeVaccine
+        ...(this.hasConsentForGelatineFreeVaccineOnly
           ? []
           : [VaccineCriteria.Injection])
       ]

@@ -64,19 +64,28 @@ export const getScreenVaccineCriteria = (programme, replies) => {
     ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
   )
 
-  if (programme?.alternativeVaccine) {
+  if (programme?.type === ProgrammeType.Flu) {
     switch (true) {
-      case hasConsentForAlternativeInjectionOnly &&
-        programme.type === ProgrammeType.Flu:
+      case hasConsentForAlternativeInjectionOnly:
         return ScreenVaccineCriteria.AlternativeFluInjectionOnly
-      case hasConsentForAlternativeInjectionOnly &&
-        programme.type === ProgrammeType.MMR:
-        return ScreenVaccineCriteria.AlternativeMMRInjectionOnly
       case !hasConsentForInjection:
         return ScreenVaccineCriteria.IntranasalOnly
       default:
         return false
     }
+  }
+
+  // If anyone gave consent for the gelatine-free vaccine only, the vaccine
+  // containing gelatine can’t be given, even if others are happy with either
+  const hasConsentForGelatineFreeVaccineOnly = replies?.some(
+    ({ hasConsentForGelatineFreeVaccineOnly }) =>
+      hasConsentForGelatineFreeVaccineOnly
+  )
+  if (
+    programme?.type === ProgrammeType.MMR &&
+    hasConsentForGelatineFreeVaccineOnly
+  ) {
+    return ScreenVaccineCriteria.AlternativeMMRInjectionOnly
   }
 
   return false

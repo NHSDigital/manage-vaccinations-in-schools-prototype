@@ -67,9 +67,13 @@ export function getConfirmedConsentStatus(reply, programme) {
 
   if (reply.hasGivenConsent) {
     if (
-      programme?.alternativeVaccine &&
+      programme?.hasIntranasalVaccine &&
       reply.decision === ReplyDecision.OnlyAlternativeInjection
     ) {
+      return ConsentStatus.GivenForAlternativeInjection
+    }
+
+    if (reply.hasConsentForGelatineFreeVaccineOnly) {
       return ConsentStatus.GivenForAlternativeInjection
     }
 
@@ -191,8 +195,8 @@ export function getConsentStatus(patientProgramme) {
       if (programme?.alternativeVaccine) {
         if (
           replies.some(
-            ({ hasConsentForAlternativeVaccine }) =>
-              hasConsentForAlternativeVaccine
+            ({ hasConsentForGelatineFreeVaccineOnly }) =>
+              hasConsentForGelatineFreeVaccineOnly
           )
         ) {
           return ConsentStatus.GivenForAlternativeInjection
