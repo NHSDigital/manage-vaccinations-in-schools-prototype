@@ -646,7 +646,7 @@ export class Reply extends BaseModel {
                   colour: 'grey',
                   html: `<s>${this.decision}</s>`
                 }),
-                'Invalid',
+                this.clinicAppointment_uuid ? 'Cancelled' : 'Invalid',
                 false
               )
             } else if (this.hasExpired) {
