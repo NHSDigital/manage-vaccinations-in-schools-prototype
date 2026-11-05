@@ -202,6 +202,15 @@ export class AuditEvent extends BaseModel {
               return (
                 this.status && formatTag(getScreenStatusProperties(this.status))
               )
+            case 'previousStatus': {
+              // Status that no longer counts, as it’s expired or invalidated
+              if (!this.status) {
+                return undefined
+              }
+
+              const { text } = getScreenStatusProperties(this.status)
+              return formatTag({ colour: 'grey', html: `<s>${text}</s>` })
+            }
             case 'statusInvalidAt':
               return (
                 this.statusInvalidAt &&

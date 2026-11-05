@@ -3,6 +3,8 @@
 {% macro appTriageNotes(params) %}
   {% set triageNoteRows = [] %}
   {% for triageNote in params.triageNotes | reverse %}
+    {% set validityDescription = params.patientProgramme.getTriageValidityDescription(triageNote) if params.patientProgramme %}
+    {% set status = triageNote.formatted.previousStatus if params.isPrevious else triageNote.formatted.status %}
     {% set triageNoteRows = triageNoteRows | push([
       {
         html: triageNote.summary.createdAtAndBy
@@ -11,15 +13,15 @@
         html: triageNote.note or "—" | nhsukMarkdown
       },
       {
-        html: triageNote.formatted.status
+        html: status + ("<br><span class=\"nhsuk-u-secondary-text-colour nhsuk-u-font-size-16\">" + validityDescription + "</span>" if validityDescription else "")
       }
     ]) %}
   {% endfor %}
 
   {% if triageNoteRows | length %}
     {{ table({
-      id: "triage-notes",
-      caption: __("triage.note.label"),
+      id: params.id or "triage-notes",
+      caption: params.caption or __("triage.note.label"),
       responsive: true,
       head: [
         {

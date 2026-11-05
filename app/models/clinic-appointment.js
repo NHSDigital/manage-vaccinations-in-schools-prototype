@@ -9,13 +9,10 @@ import {
   ConsentVaccineCriteria,
   Impairment,
   LocationSearchType,
-  ProgrammeType,
   RegistrationStatus,
   RelationshipType,
   ReplyDecision,
-  SessionStatus,
-  VaccineCriteria,
-  VaccineMethod
+  SessionStatus
 } from '../enums.js'
 import {
   Child,
@@ -27,6 +24,7 @@ import {
   Session,
   User
 } from '../models.js'
+import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
 import {
   getLocationSearchType,
   getPostcodeSector
@@ -408,67 +406,14 @@ export class ClinicAppointment {
    * Note: this method requires this instance to have a full context
    *
    * @param {object} programmeContext - the context in which we'll find the programmes
-   * @returns {Array} Health questions
+   * @returns {object} Health questions, keyed by question
    */
   getUnansweredHealthQuestions(programmeContext) {
-    const selectedProgrammes = this.#getSelectedProgrammes(programmeContext)
-
-    const vaccinesForSelectedProgrammes = []
-    for (const programme of selectedProgrammes) {
-      let agreedProgrammeVaccines = Object.values(
-        programmeContext.vaccines
-      ).filter((vaccine) => vaccine.type === programme.type)
-
-      if (programme.type === ProgrammeType.Flu) {
-        // Get the right vaccine(s) for flu, according to types of flu vaccine agreed to
-        if (this.fluDecision === ReplyDecision.OnlyAlternativeInjection) {
-          agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
-            ({ method }) => method === VaccineMethod.Injection
-          )
-        } else if (!this.fluAlternative) {
-          agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
-            ({ method }) => method === VaccineMethod.Intranasal
-          )
-        }
-      } else if (programme.type === ProgrammeType.MMR) {
-        // Get the right vaccine for MMR or MMRV, according to gelatine content agreed to
-        agreedProgrammeVaccines = agreedProgrammeVaccines.filter(
-          ({ criteria }) =>
-            criteria ===
-            (this.mmrAlternative
-              ? VaccineCriteria.AlternativeInjection
-              : VaccineCriteria.Injection)
-        )
-      }
-
-      vaccinesForSelectedProgrammes.push(...agreedProgrammeVaccines)
-    }
-
-    // Collate the questions from the vaccines, making sure we don't duplicate them
-    const questions = new Map()
-    for (const vaccine of vaccinesForSelectedProgrammes) {
-      for (const [key, value] of Object.entries(vaccine.healthQuestions)) {
-        questions.set(key, value)
-      }
-    }
-
-    // Remove any questions for which we already have an answer
-    const patient = this.patient
-    if (patient) {
-      for (const programme of selectedProgrammes) {
-        const patientProgramme = patient.programmes[programme.id]
-        const consentHealthAnswers =
-          patientProgramme?.consentHealthAnswers ?? {}
-
-        for (const [key, answers] of Object.entries(consentHealthAnswers)) {
-          if (answers.length > 0) {
-            questions.delete(key)
-          }
-        }
-      }
-    }
-
-    return Object.fromEntries(questions)
+    return getUnansweredHealthQuestions(
+      this.vaccinationChoices,
+      this.patient,
+      programmeContext
+    )
   }
 
   /**

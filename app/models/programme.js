@@ -102,14 +102,31 @@ export class Programme extends BaseModel {
   }
 
   /**
-   * Get start date
+   * Get date seasonal programme starts in an academic year
    *
-   * @returns {string} Start date
+   * @param {number} academicYear - Academic year
+   * @returns {Date|undefined} Season start date
    */
-  get start() {
-    const thisYear = new Date().getFullYear()
+  getSeasonStartAt(academicYear) {
+    if (this.isSeasonal) {
+      return new Date(`${academicYear}-09-01`)
+    }
+  }
 
-    return `${thisYear}-09-01`
+  /**
+   * Get date seasonal programme ends in an academic year
+   *
+   * @param {number} academicYear - Academic year
+   * @returns {Date|undefined} Season end date
+   */
+  getSeasonEndAt(academicYear) {
+    if (this.isSeasonal) {
+      const seasonEnd = new Date(`${academicYear + 1}-03-31`)
+      seasonEnd.setHours(23)
+      seasonEnd.setMinutes(59)
+      seasonEnd.setSeconds(59)
+      return seasonEnd
+    }
   }
 
   /**

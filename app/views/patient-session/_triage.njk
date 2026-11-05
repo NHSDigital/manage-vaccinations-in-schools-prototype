@@ -2,8 +2,8 @@
 {%- from "_macros/triage-notes.njk" import appTriageNotes with context %}
 
 {# Health answers #}
-{{ summaryList({
-  card: {
+{% if patientProgramme.consentHealthAnswers %}
+  {% call card({
     heading: {
       text: __mf("healthAnswers.count", {
         count: patientProgramme.answersNeedingTriageCount
@@ -11,10 +11,15 @@
       size: "m"
     },
     variant: "warning" if patientProgramme.answersNeedingTriageCount
-  },
-  classes: "app-summary-list--full-width",
-  rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
-}) if patientProgramme.consentHealthAnswers }}
+  }) %}
+    {{ patientProgramme.healthAnswersDescription | nhsukMarkdown if patientProgramme.healthAnswersDescription }}
+
+    {{ summaryList({
+      classes: "app-summary-list--full-width",
+      rows: healthAnswerRows(patientProgramme.consentHealthAnswers)
+    }) }}
+  {% endcall %}
+{% endif %}
 
 {# Unanswered health questions #}
 {% if options.needsTriage and not patientProgramme.consentHealthAnswers %}
@@ -43,11 +48,12 @@
   {{ actionLink({
     text: __("triage.new.title"),
     href: patientProgramme.uri + "/new/triage?referrer=" + referrer
-  }) if options.canTriage and not options.needsTriage and not patientProgramme.isVaccinated }}
+  }) if options.canTriage and not options.needsTriage and not patientProgramme.isVaccinated and patientProgramme.consentGiven }}
 
   {# Decision table #}
   {{ appTriageNotes({
-    triageNotes: patientProgramme.triageNotes
+    triageNotes: patientProgramme.triageNotes,
+    patientProgramme: patientProgramme
   }) }}
 
   {% if options.needsTriage and not triageNoteRows.length %}
@@ -66,5 +72,19 @@
         formaction: patientProgramme.uri + "/new/triage?referrer=" + referrer
       }
     }) }}
+  {% endif %}
+
+  {# Triage outcomes that no longer count, as the health answers they reviewed have expired, or a newer response invalidated them #}
+  {% if patientProgramme.previousTriageNotes | length %}
+    {% call details({
+      summaryText: __("patientSession.previousTriageNotes.label")
+    }) %}
+      {{ appTriageNotes({
+        id: "previous-triage-notes",
+        triageNotes: patientProgramme.previousTriageNotes,
+        patientProgramme: patientProgramme,
+        isPrevious: true
+      }) }}
+    {% endcall %}
   {% endif %}
 {% endcall %}

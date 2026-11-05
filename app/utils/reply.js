@@ -84,11 +84,17 @@ export function getConsentHealthAnswers(replies, appointments) {
         healthAnswer.answer = 'No'
       }
 
-      const hasSingleResponse = responsesWithHealthAnswers.length === 1
-      const hasSameAnswers = responsesWithHealthAnswers.every(
+      // Only compare with responses that were asked this question, as a clinic
+      // booking only asks questions not already answered in consent responses
+      const responsesAnsweringQuestion = responsesWithHealthAnswers.filter(
+        (reply) => reply.healthAnswers[key]
+      )
+
+      const hasSingleResponse = responsesAnsweringQuestion.length === 1
+      const hasSameAnswers = responsesAnsweringQuestion.every(
         (reply) => reply.healthAnswers[key]?.answer === healthAnswer.answer
       )
-      const hasSameAnswersWithDetails = responsesWithHealthAnswers.some(
+      const hasSameAnswersWithDetails = responsesAnsweringQuestion.some(
         (reply) =>
           reply.healthAnswers[key]?.details &&
           reply.healthAnswers[key]?.answer === healthAnswer.answer
@@ -111,6 +117,9 @@ export function getConsentHealthAnswers(replies, appointments) {
         } else if (hasSameAnswers && consentHealthAnswers[key].length === 0) {
           // All responded: Yes/No
           thisHealthAnswer.relationship = 'All'
+          consentHealthAnswers[key].push(thisHealthAnswer)
+        } else if (!hasSameAnswers && healthAnswer.answer === 'Yes') {
+          // Mum responded: Yes (without details, where someone else said No)
           consentHealthAnswers[key].push(thisHealthAnswer)
         }
       }
@@ -155,16 +164,41 @@ export const getConsentRefusalReasons = (replies) => {
  * @param {string} healthCondition - Health condition
  * @returns {object|undefined} Health answers
  */
-export const getHealthAnswers = (vaccine, healthCondition) => {
+export const generateHealthAnswers = (vaccine, healthCondition) => {
   // If no vaccine, we don’t have consent
   if (!vaccine) {
     return
   }
 
+  return generateHealthAnswersForQuestions(
+    vaccine.healthQuestions,
+    healthCondition
+  )
+}
+
+/**
+ * Get faked answers for a given set of health questions, including any
+ * sub-questions
+ *
+ * @param {object} healthQuestions - Health questions, keyed by question
+ * @param {string} healthCondition - Health condition
+ * @returns {object} Health answers
+ */
+export const generateHealthAnswersForQuestions = (
+  healthQuestions,
+  healthCondition
+) => {
   const answers = {}
 
-  for (const key of Object.keys(vaccine.flatHealthQuestions)) {
+  for (const [key, question] of Object.entries(healthQuestions)) {
     answers[key] = enrichWithRealisticAnswer(key, healthCondition)
+
+    for (const subQuestionKey of Object.keys(question.conditional ?? {})) {
+      answers[subQuestionKey] = enrichWithRealisticAnswer(
+        subQuestionKey,
+        healthCondition
+      )
+    }
   }
 
   // If asthma sub-question(s) has 'Yes’ answer, change contact answer to ‘Yes’
@@ -186,7 +220,7 @@ export const getHealthAnswers = (vaccine, healthCondition) => {
  * @param {string} healthCondition - Health condition
  * @returns {string|undefined} Triage note
  */
-export const getTriageNote = (healthAnswers, healthCondition) => {
+export const generateTriageNote = (healthAnswers, healthCondition) => {
   if (countAnswersNeedingTriage(healthAnswers)) {
     return healthConditions[healthCondition].triageNote
   }
@@ -283,7 +317,9 @@ export const countAnswersNeedingTriage = (healthAnswers) => {
 export const getHealthConditionsNeedingTriage = (vaccine) =>
   Object.keys(healthConditions).filter(
     (healthCondition) =>
-      countAnswersNeedingTriage(getHealthAnswers(vaccine, healthCondition)) > 0
+      countAnswersNeedingTriage(
+        generateHealthAnswers(vaccine, healthCondition)
+      ) > 0
   )
 
 /**

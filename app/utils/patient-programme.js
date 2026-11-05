@@ -18,8 +18,30 @@ import {
   VaccineCriteria
 } from '../enums.js'
 
-import { today } from './date.js'
+import { formatDate, getDateValueDifference, today } from './date.js'
 import { getRepliesWithHealthAnswers } from './reply.js'
+
+/**
+ * Get only the latest response from each respondent, as a newer response
+ * supersedes an older one from the same person
+ *
+ * @param {Array<Reply>} replies - Responses, newest first
+ * @returns {Array<Reply>} Latest response from each respondent, newest first
+ */
+export function getLatestReplyFromEachRespondent(replies) {
+  const latestReplyByRespondent = new Map()
+
+  for (const reply of replies ?? []) {
+    const respondent = reply.hasSelfConsent ? 'child' : reply.contact_uuid
+
+    // Responses are newest first, so keep the first for each respondent
+    if (!latestReplyByRespondent.has(respondent)) {
+      latestReplyByRespondent.set(respondent, reply)
+    }
+  }
+
+  return [...latestReplyByRespondent.values()]
+}
 
 /**
  * Get confirmed consent status
@@ -94,12 +116,7 @@ export function getConsentStatus(patientProgramme) {
     return ConsentStatus.NotDelivered
   }
 
-  // Get valid and delivered replies, ignoring any that say nothing about
-  // consent, so they can’t conflict with a reply that does
-  const replies = validReplies.filter(
-    ({ isDelivered, decision }) =>
-      isDelivered && decision !== ReplyDecision.NoResponse
-  )
+  const replies = patientProgramme.repliesCountingTowardsConsent
 
   // If no-one has given a decision, no response
   if (replies.length === 0) {
@@ -201,6 +218,92 @@ export function getConsentStatus(patientProgramme) {
 }
 
 /**
+ * Describe the most recent expiry of consent, and whose consent it was
+ *
+ * @param {Array<Reply>} expiredReplies - Expired responses, earliest expiry first
+ * @returns {string|undefined} Expired consent description, if any have expired
+ */
+function getExpiredConsentDescription(expiredReplies) {
+  if (!expiredReplies?.length) {
+    return undefined
+  }
+
+  const getRespondent = (reply) =>
+    reply.fullNameAndRelationship || 'parent or guardian'
+  const getExpiryDate = (reply) =>
+    formatDate(reply.expiresAt, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+  // Only mention consent that expired most recently, as older expiries don’t
+  // help the user. More than one respondent’s consent can expire that day
+  const latestExpiryDate = getExpiryDate(expiredReplies.at(-1))
+  const latestExpiredReplies = expiredReplies.filter(
+    (reply) => getExpiryDate(reply) === latestExpiryDate
+  )
+  const respondents = filters.formatList(
+    latestExpiredReplies.map(getRespondent)
+  )
+
+  return `Consent from ${respondents} expired on ${latestExpiryDate}.`
+}
+
+/**
+ * Describe who gave answers to health questions, and when
+ *
+ * @param {Array<Reply>} replies - Responses that count towards consent
+ * @param {Array<ClinicAppointment>} appointments - Clinic appointments
+ * @returns {string|undefined} Health answers description (Markdown), if any
+ *   were given
+ */
+export function getHealthAnswersDescription(replies, appointments) {
+  const answersFromReplies = (replies ?? [])
+    .filter((reply) => reply.healthAnswers)
+    .map((reply) => ({
+      respondent: reply.fullNameAndRelationship,
+      answeredAt: reply.createdAt
+    }))
+
+  // Answers given when booking a clinic appointment
+  const answersFromAppointments = (appointments ?? [])
+    .filter((appointment) => appointment.healthAnswers)
+    .map((appointment) => ({
+      respondent: appointment.contact.fullNameAndRelationship,
+      answeredAt: appointment.booking?.createdAt
+    }))
+
+  const answers = [...answersFromReplies, ...answersFromAppointments].sort(
+    (a, b) => getDateValueDifference(b.answeredAt, a.answeredAt)
+  )
+  if (!answers.length) {
+    return undefined
+  }
+
+  const answeredBy = answers.map(({ respondent, answeredAt }) => {
+    const answeredOn = formatDate(answeredAt, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+    return `${respondent || 'parent or guardian'} on ${answeredOn}`
+  })
+
+  if (answeredBy.length === 1) {
+    return `Answers given by ${answeredBy[0]}.`
+  }
+
+  // List several respondents as bullets (Markdown), so they’re easier to scan
+  const answeredByList = answeredBy
+    .map((respondentAndDate) => `- ${respondentAndDate}`)
+    .join('\n')
+
+  return `Answers given by:\n\n${answeredByList}`
+}
+
+/**
  * Get expanded description about consent status
  *
  * @param {PatientProgramme} patientProgramme - Patient programme
@@ -208,8 +311,15 @@ export function getConsentStatus(patientProgramme) {
  */
 export function getConsentStatusDescription(patientProgramme) {
   const session = patientProgramme.lastPatientSession?.session
-  const relationships = filters.formatList(
-    patientProgramme.parentalRelationships
+  const replies = patientProgramme.repliesCountingTowardsConsent ?? []
+  const relationshipsOf = (repliesToName) =>
+    filters.formatList(
+      repliesToName.map((reply) => reply.relationship || 'Parent or guardian')
+    )
+  const givers = replies.filter((reply) => reply.hasGivenConsent)
+  const refusers = replies.filter((reply) => reply.hasRefusedConsent)
+  const confirmedRefusers = refusers.filter(
+    (reply) => reply.hasConfirmedRefusal
   )
   const contactNames = filters.formatList(
     patientProgramme.contactsRequestingFollowUp
@@ -229,7 +339,10 @@ export function getConsentStatusDescription(patientProgramme) {
 
   switch (patientProgramme.consent) {
     case ConsentStatus.NoResponse:
-      return 'No-one responded to our requests for consent.'
+      return (
+        getExpiredConsentDescription(patientProgramme.expiredReplies) ||
+        'No-one responded to our requests for consent.'
+      )
     case ConsentStatus.NotDelivered:
       return 'Consent response could not be delivered.'
     case ConsentStatus.Inconsistent:
@@ -239,11 +352,11 @@ export function getConsentStatusDescription(patientProgramme) {
     case ConsentStatus.Given:
     case ConsentStatus.GivenForAlternativeInjection:
     case ConsentStatus.GivenForIntranasal:
-      return `${relationships} gave consent.`
+      return `${relationshipsOf(givers)} gave consent.`
     case ConsentStatus.Refused:
-      return `${relationships} refused consent.`
+      return `${relationshipsOf(refusers)} refused consent.`
     case ConsentStatus.FinalRefusal:
-      return `Refusal to give consent confirmed by ${relationships}.`
+      return `Refusal to give consent confirmed by ${relationshipsOf(confirmedRefusers)}.`
     default:
   }
 }
@@ -284,7 +397,7 @@ export function getScreenStatus(patientProgramme) {
     }
   }
 
-  const responses = Object.values(patientProgramme.replies)
+  const responses = patientProgramme.repliesCountingTowardsConsent
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
   const lastTriageNoteWithStatus = patientProgramme.triageNotes
     .filter((event) => event.status)
@@ -329,6 +442,11 @@ export function getScreenStatusDescription(patientProgramme) {
   const triageNote = patientProgramme.triageNotes.at(-1)
   const user = triageNote?.createdBy || { fullName: 'Jane Joy' }
   const person = patientProgramme.patient.isPost16 ? 'child' : 'parent'
+
+  // Without consent, there are no current health answers to triage
+  if (!patientProgramme.consentGiven) {
+    return `${patientProgramme.patient.firstName} can be triaged once consent has been given.`
+  }
 
   switch (patientProgramme.screen) {
     case ScreenStatus.NeedsTriage:
@@ -551,7 +669,7 @@ export function getPatientConsentStatus(patientProgramme) {
  * @returns {PatientTriageStatus|undefined} Patient triage status
  */
 export function getPatientTriageStatus(patientProgramme) {
-  const responses = Object.values(patientProgramme.replies)
+  const responses = patientProgramme.repliesCountingTowardsConsent
   const responsesToTriage = getRepliesWithHealthAnswers(responses)
 
   if (patientProgramme.screen === ScreenStatus.NeedsTriage) {
@@ -650,5 +768,5 @@ export function getPatientVaccinatedStatus(patientProgramme) {
 }
 
 /**
- * @import { PatientProgramme, Reply, Session } from '../models.js'
+ * @import { ClinicAppointment, PatientProgramme, Reply, Session } from '../models.js'
  */

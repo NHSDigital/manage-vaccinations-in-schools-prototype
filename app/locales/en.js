@@ -2436,11 +2436,15 @@ export const en = {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
     },
-    consentRequests: {
-      label: 'Consent requests'
-    },
     replies: {
-      label: 'Consent responses'
+      label: 'Consent responses',
+      none: 'There are no active consent responses.'
+    },
+    previousReplies: {
+      label: 'Expired and invalid responses'
+    },
+    previousTriageNotes: {
+      label: 'Expired and invalid triage outcomes'
     },
     record: {
       title: 'Record a new {{programme.nameSentenceCase}} vaccination',
@@ -2744,10 +2748,19 @@ export const en = {
       success: 'Consent response from {{reply.fullName}} withdrawn'
     },
     createdAt: {
-      label: 'Date'
+      label: 'Response date'
     },
     createdBy: {
       label: 'Recorded by'
+    },
+    expiresAt: {
+      label: 'Expiry date'
+    },
+    expiringSoon: {
+      label: 'This response will expire soon'
+    },
+    expiringBeforeSession: {
+      label: 'This response will expire before the session'
     },
     respondent: {
       title: 'Who are you trying to get consent from?',

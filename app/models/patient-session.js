@@ -90,10 +90,16 @@ export class PatientSession extends BaseModel {
    * @returns {PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
+    // Routine programmes have a single patient programme, for the current
+    // academic year, so a session from an earlier year still uses it
+    const isSeasonal = this.programme?.isSeasonal
+
     return Object.values(this.patient?.programmes).find(
       (patientProgramme) =>
         patientProgramme.programme_id === this.programme_id &&
-        patientProgramme.academicYear === this.session.academicYear
+        (isSeasonal
+          ? patientProgramme.academicYear === this.session.academicYear
+          : true)
     )
   }
 

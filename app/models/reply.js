@@ -1,5 +1,5 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
-import { addMonths, addYears, isAfter } from 'date-fns'
+import { addMonths, isAfter, isBefore } from 'date-fns'
 
 import vaccinesData from '../datasets/vaccines.js'
 import {
@@ -24,10 +24,10 @@ import {
   Vaccination
 } from '../models.js'
 import {
+  addDays,
   formatDate,
   getAcademicYear,
   isBetweenDates,
-  removeDays,
   today
 } from '../utils/date.js'
 import {
@@ -278,22 +278,49 @@ export class Reply extends BaseModel {
   }
 
   /**
+   * Get date response becomes valid
+   *
+   * @returns {Date|undefined} Date response becomes valid
+   */
+  get validFrom() {
+    // Responses for seasonal programmes are valid from when the season starts
+    if (this.programme?.isSeasonal) {
+      return this.programme.getSeasonStartAt(this.academicYear)
+    }
+  }
+
+  /**
+   * Is consent response not yet valid?
+   *
+   * @returns {boolean} Consent response is not yet valid
+   */
+  get isNotYetValid() {
+    return isBefore(today(), this.validFrom)
+  }
+
+  /**
    * Get expiry date
    *
-   * @returns {Date|undefined} Expiry date
+   * @returns {Date|undefined} Expiry date, or undefined if it never expires
    */
-  get expiredAt() {
-    if (!this.isDelivered) {
-      return
+  get expiresAt() {
+    // Responses for seasonal programmes expire when the season ends
+    if (this.programme?.isSeasonal) {
+      return this.programme.getSeasonEndAt(this.academicYear)
     }
 
-    // Responses for seasonal programmes expire when the programme year ends
-    if (this.patientProgramme && this.programme.isSeasonal) {
-      return this.patientProgramme.eligibilityEndAt
+    // Consent given for routine programmes expires after 15 months
+    if (this.hasGivenConsent) {
+      const expiry = addMonths(this.createdAt, 15)
+      expiry.setHours(23)
+      expiry.setMinutes(59)
+
+      return expiry
     }
 
-    // Responses for routine programmes expire after a year
-    return addYears(removeDays(this.createdAt, 1), 1)
+    // Refusals — incl. follow-up requests and already-vaccinated — and non-responses
+    // simply don't expire
+    return undefined
   }
 
   /**
@@ -302,26 +329,30 @@ export class Reply extends BaseModel {
    * @returns {boolean} Consent response has expired
    */
   get hasExpired() {
-    // Responses for seasonal programmes expire outside programme year
-    if (this.patientProgramme && this.programme?.isSeasonal) {
-      return !isBetweenDates(
-        today(),
-        this.patientProgramme.eligibilityStartAt,
-        this.patientProgramme.eligibilityEndAt
-      )
-    }
-
-    // Responses for routine programmes after a year
-    return isAfter(today(), this.expiredAt)
+    const expiryDate = this.expiresAt
+    return expiryDate ? isAfter(today(), expiryDate) : false
   }
 
   /**
-   * Is valid consent response (not invalidated and not expired)?
+   * Is consent response expiring soon i.e. within 30 days?
+   *
+   * @returns {boolean} True if consent response expires soon, false otherwise
+   */
+  get isExpiringSoon() {
+    // Note: only an approximation here, if using hours, mins and seconds for expiry date
+    const expiryDate = this.expiresAt
+    return expiryDate
+      ? isBetweenDates(expiryDate, today(), addDays(today(), 30))
+      : false
+  }
+
+  /**
+   * Is valid consent response (not invalidated, not yet valid or expired)?
    *
    * @returns {boolean} Is valid consent response
    */
   get isValid() {
-    return !this.isInvalidated && !this.hasExpired
+    return !this.isInvalidated && !this.isNotYetValid && !this.hasExpired
   }
 
   /**
@@ -477,11 +508,18 @@ export class Reply extends BaseModel {
    * @returns {PatientProgramme|undefined} Patient programme
    */
   get patientProgramme() {
+    // Even if this reply is from a previous year, it can still be valid for this
+    // academic year, provided it's not for a seasonal programme
+    const isSeasonal = this.programme?.isSeasonal
+    const replyAcademicYear = this.academicYear
+
     if (this.patient?.programmes) {
       return Object.values(this.patient.programmes).find(
         (patientProgramme) =>
           patientProgramme.programme_id === this.programme_id &&
-          patientProgramme.academicYear === this.academicYear
+          (isSeasonal
+            ? patientProgramme.academicYear === replyAcademicYear
+            : true)
       )
     }
   }
@@ -529,6 +567,15 @@ export class Reply extends BaseModel {
                 'Invalid',
                 false
               )
+            } else if (this.hasExpired) {
+              decisionStatus = formatWithSecondaryText(
+                formatTag({
+                  colour: 'grey',
+                  html: `<s>${this.decision}</s>`
+                }),
+                'Expired',
+                false
+              )
             } else if (this.hasConfirmedRefusal) {
               decisionStatus = formatWithSecondaryText(
                 decisionStatus,
@@ -538,19 +585,27 @@ export class Reply extends BaseModel {
             }
             return decisionStatus
           }
+          const formattedDate = (date) =>
+            formatDate(date, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })
 
           switch (prop) {
             case 'createdAt':
-              return formatDate(this.createdAt, {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-              })
+              return formattedDate(this.createdAt)
             case 'createdBy':
               return this.createdBy?.fullName || ''
+            case 'expiresAt':
+              return this.expiresAt
+                ? formattedDate(this.expiresAt)
+                : this.decision === ReplyDecision.NoResponse
+                  ? 'Non-responses do not expire'
+                  : 'Consent refusals do not expire'
             case 'decisionStatus':
               return getDecisionStatus()
             case 'contact':

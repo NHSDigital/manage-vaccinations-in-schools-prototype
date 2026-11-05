@@ -1,4 +1,4 @@
-import { addYears, isAfter, isBefore } from 'date-fns'
+import { addYears, isAfter, isBefore, max } from 'date-fns'
 
 import activity from '../datasets/activity.js'
 import {
@@ -46,7 +46,9 @@ import { ordinal } from '../utils/number.js'
 import {
   getConsentStatus,
   getConsentStatusDescription,
+  getHealthAnswersDescription,
   getInstructionStatus,
+  getLatestReplyFromEachRespondent,
   getScreenStatus,
   getScreenStatusDescription,
   getPatientConsentStatus,
@@ -169,7 +171,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<AuditEvent>} Audit events
    */
   get auditEvents() {
-    return this.patient.events
+    return [...this.patient.events, ...this.#consentExpiryEvents]
       .map((auditEvent) => new AuditEvent(auditEvent, this.context))
       .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) =>
@@ -183,6 +185,30 @@ export class PatientProgramme extends BaseModel {
         )
       )
       .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
+  }
+
+  /**
+   * Get events for consent that has expired, including consent superseded by
+   * a newer response from the same respondent, as superseded responses are
+   * still listed until they expire
+   *
+   * Worked out from responses, rather than stored, as expiry happens with the
+   * passing of time, not when someone does something
+   *
+   * @returns {Array<Partial<AuditEvent>>} Audit events
+   */
+  get #consentExpiryEvents() {
+    return (this.#allDeliveredReplies ?? [])
+      .filter(
+        (reply) =>
+          reply.hasGivenConsent && reply.hasExpired && !reply.isInvalidated
+      )
+      .map((reply) => ({
+        name: activity.consent.expired(reply),
+        type: AuditEventType.ProgrammeNote,
+        createdAt: reply.expiresAt,
+        programme_ids: [this.programme_id]
+      }))
   }
 
   /**
@@ -241,16 +267,207 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get triage notes
+   * Get every triage note for this programme, including expired ones, oldest
+   * first
+   *
+   * Not all of these are still current, so use `triageNotes` for that instead
    *
    * @returns {Array<AuditEvent>} Audit events
    */
-  get triageNotes() {
+  get #allTriageNotes() {
     return this.auditEvents
       .filter(({ type }) => type === AuditEventType.ProgrammeNote)
       .filter(({ programme_ids }) => programme_ids.includes(this.programme_id))
       .filter(({ status }) => status)
       .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+  }
+
+  /**
+   * Get triage notes that are still current, oldest first
+   *
+   * @returns {Array<AuditEvent>} Audit events
+   */
+  get triageNotes() {
+    return this.#allTriageNotes.filter(
+      (triageNote) => !this.#isPreviousTriage(triageNote)
+    )
+  }
+
+  /**
+   * Get previous triage notes that no longer count, because the health
+   * answers they reviewed have expired, or a newer response invalidated them,
+   * oldest first
+   *
+   * @returns {Array<AuditEvent>} Audit events
+   */
+  get previousTriageNotes() {
+    return this.#allTriageNotes.filter((triageNote) =>
+      this.#isPreviousTriage(triageNote)
+    )
+  }
+
+  /**
+   * Does a triage no longer count?
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {boolean} Triage has expired or been invalidated
+   */
+  #isPreviousTriage(triageNote) {
+    return (
+      this.hasTriageExpired(triageNote) ||
+      this.hasTriageBeenInvalidated(triageNote)
+    )
+  }
+
+  /**
+   * Get responses whose health answers were reviewed in a triage, i.e. those
+   * giving consent before the triage was recorded, and not since invalidated
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Array<Reply>} Responses
+   */
+  #getRepliesReviewedInTriage(triageNote) {
+    const triagedAt = new Date(triageNote.createdAt)
+
+    return (this.#allDeliveredReplies ?? []).filter(
+      (reply) =>
+        reply.hasGivenConsent &&
+        !reply.isInvalidated &&
+        !isAfter(new Date(reply.createdAt), triagedAt)
+    )
+  }
+
+  /**
+   * Get the date a triage expires, which is when the last of the health
+   * answers it reviewed expires
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Date|undefined} Expiry date, or undefined if it never expires
+   */
+  getTriageExpiresAt(triageNote) {
+    const reviewedReplies = this.#getRepliesReviewedInTriage(triageNote)
+
+    // Without any responses to base it on, we can’t tell when it expires
+    if (reviewedReplies.length === 0) {
+      return
+    }
+
+    // If any response it reviewed never expires, neither does the triage
+    const expiryDates = reviewedReplies.map((reply) => reply.expiresAt)
+    if (expiryDates.some((expiryDate) => !expiryDate)) {
+      return
+    }
+
+    return max(expiryDates)
+  }
+
+  /**
+   * Has a triage expired?
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {boolean} Triage has expired
+   */
+  hasTriageExpired(triageNote) {
+    const expiryDate = this.getTriageExpiresAt(triageNote)
+    return expiryDate ? isAfter(today(), expiryDate) : false
+  }
+
+  /**
+   * Get the first response that invalidated a triage
+   *
+   * A triage deciding it was safe to vaccinate is invalidated by a later
+   * response giving consent, if that response’s health answers need triage,
+   * or it doesn’t include the vaccine method the triage approved
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Reply|undefined} Response that invalidated the triage
+   */
+  getReplyInvalidatingTriage(triageNote) {
+    const safeToVaccinateStatuses = [
+      ScreenStatus.Vaccinate,
+      ScreenStatus.VaccinateAlternativeFluInjectionOnly,
+      ScreenStatus.VaccinateAlternativeMMRInjectionOnly,
+      ScreenStatus.VaccinateIntranasalOnly
+    ]
+    if (!safeToVaccinateStatuses.includes(triageNote.status)) {
+      return
+    }
+
+    const triagedAt = new Date(triageNote.createdAt)
+    const repliesGivenSinceTriage = (this.replies ?? [])
+      .filter(
+        (reply) =>
+          reply.hasGivenConsent && isAfter(new Date(reply.createdAt), triagedAt)
+      )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+
+    return repliesGivenSinceTriage.find(
+      (reply) =>
+        countAnswersNeedingTriage(reply.healthAnswers) > 0 ||
+        !this.#doesReplyIncludeTriagedMethod(reply, triageNote.status)
+    )
+  }
+
+  /**
+   * Has a triage been invalidated by a newer response?
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {boolean} Triage has been invalidated
+   */
+  hasTriageBeenInvalidated(triageNote) {
+    return Boolean(this.getReplyInvalidatingTriage(triageNote))
+  }
+
+  /**
+   * Does a response giving consent include the vaccine method a triage
+   * approved?
+   *
+   * @param {Reply} reply - Response giving consent
+   * @param {ScreenStatus} triageStatus - Triage status
+   * @returns {boolean} Response includes the approved vaccine method
+   */
+  #doesReplyIncludeTriagedMethod(reply, triageStatus) {
+    switch (triageStatus) {
+      case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
+      case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
+        // Approved the injection (or gelatine-free injection)
+        return reply.hasConsentForInjection
+      case ScreenStatus.Vaccinate:
+      case ScreenStatus.VaccinateIntranasalOnly:
+      default:
+        // Approved the standard vaccine (nasal spray, for flu)
+        return reply.decision !== ReplyDecision.OnlyAlternativeInjection
+    }
+  }
+
+  /**
+   * Get description of when a triage was invalidated, or when it expires (or
+   * expired)
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {string|undefined} Validity description
+   */
+  getTriageValidityDescription(triageNote) {
+    const invalidatingReply = this.getReplyInvalidatingTriage(triageNote)
+    if (invalidatingReply) {
+      const formattedInvalidatedDate = formatDate(
+        new Date(invalidatingReply.createdAt),
+        { dateStyle: 'long' }
+      )
+
+      return `Invalidated ${formattedInvalidatedDate} by a new response`
+    }
+
+    const expiryDate = this.getTriageExpiresAt(triageNote)
+    if (!expiryDate) {
+      return
+    }
+
+    const formattedExpiryDate = formatDate(expiryDate, { dateStyle: 'long' })
+
+    return this.hasTriageExpired(triageNote)
+      ? `Expired ${formattedExpiryDate}`
+      : `Expires ${formattedExpiryDate}`
   }
 
   /**
@@ -464,7 +681,7 @@ export class PatientProgramme extends BaseModel {
     }
 
     if (this.programme.isSeasonal) {
-      return new Date(`${this.academicYear}-09-01`)
+      return this.programme.getSeasonStartAt(this.academicYear)
     }
 
     let yearsUntilEligible =
@@ -480,7 +697,7 @@ export class PatientProgramme extends BaseModel {
    */
   get eligibilityEndAt() {
     if (this.programme?.isSeasonal) {
-      return new Date(`${this.academicYear + 1}-03-31`)
+      return this.programme.getSeasonEndAt(this.academicYear)
     }
 
     return addYears(this.patient.dob, this.programme.eligibilityEndAge)
@@ -802,12 +1019,86 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get every delivered response for this programme, including expired and
+   * invalid ones, newest first
+   *
+   * Not all of these count towards consent, so use `replies` for that instead
+   *
+   * @returns {Array<Reply>|undefined} Delivered responses
+   */
+  get #allDeliveredReplies() {
+    return this.patient?.replies
+      .filter(
+        (reply) => reply.patientProgramme.id === this.id && reply.isDelivered
+      )
+      .sort((a, b) => getDateValueDifference(b.createdAt, a.createdAt))
+  }
+
+  /**
+   * Get previous responses that no longer count towards consent, because they
+   * were invalidated or have expired, newest first
+   *
+   * @returns {Array<Reply>} Previous responses
+   */
+  get previousReplies() {
+    return (this.#allDeliveredReplies ?? []).filter(
+      (reply) => reply.isInvalidated || reply.hasExpired
+    )
+  }
+
+  /**
+   * Get expired responses (not invalidated), with only the latest from each
+   * respondent, earliest expiry first
+   *
+   * @returns {Array<Reply>} Expired responses
+   */
+  get expiredReplies() {
+    const expiredReplies = (this.#allDeliveredReplies ?? []).filter(
+      (reply) => reply.hasExpired && !reply.isInvalidated
+    )
+
+    return getLatestReplyFromEachRespondent(expiredReplies).sort((a, b) =>
+      getDateValueDifference(a.expiresAt, b.expiresAt)
+    )
+  }
+
+  /**
+   * Get responses that count towards consent status: only the latest from
+   * each respondent, and ignoring any that say nothing about consent, so they
+   * can’t conflict with a response that does
+   *
+   * @returns {Array<Reply>} Responses, newest first
+   */
+  get repliesCountingTowardsConsent() {
+    const repliesWithDecision = (this.replies ?? []).filter(
+      ({ decision }) => decision !== ReplyDecision.NoResponse
+    )
+
+    return getLatestReplyFromEachRespondent(repliesWithDecision)
+  }
+
+  /**
    * Get consent health answers
    *
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(this.replies, this.appointments)
+    return getConsentHealthAnswers(
+      this.repliesCountingTowardsConsent,
+      this.appointments
+    )
+  }
+
+  /**
+   * Get description of who gave answers to health questions, and when
+   *
+   * @returns {string|undefined} Health answers description
+   */
+  get healthAnswersDescription() {
+    return getHealthAnswersDescription(
+      this.repliesCountingTowardsConsent,
+      this.appointments
+    )
   }
 
   /**
@@ -825,20 +1116,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|boolean} Consent refusal reasons
    */
   get consentRefusalReasons() {
-    return getConsentRefusalReasons(this.replies)
-  }
-
-  /**
-   * Get parental relationships from valid replies
-   *
-   * @returns {Array<string>|undefined} Parental relationships
-   */
-  get parentalRelationships() {
-    if (this.replies) {
-      return this.replies
-        .filter((reply) => reply.isValid)
-        .flatMap((reply) => reply.relationship || 'Parent or guardian')
-    }
+    return getConsentRefusalReasons(this.repliesCountingTowardsConsent)
   }
 
   /**
@@ -848,8 +1126,7 @@ export class PatientProgramme extends BaseModel {
    */
   get contactsRequestingFollowUp() {
     if (this.replies) {
-      return this.replies
-        .filter((reply) => reply.isValid)
+      return this.repliesCountingTowardsConsent
         .filter((reply) => reply.hasDeclinedConsent)
         .flatMap((reply) => reply.contact.fullNameAndRelationship)
     }
@@ -864,7 +1141,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForInjection() {
-    return this.replies?.every(
+    return this.repliesCountingTowardsConsent.every(
       ({ hasConsentForInjection }) => hasConsentForInjection
     )
   }
@@ -878,7 +1155,7 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForAlternativeInjectionOnly() {
-    return this.replies?.every(
+    return this.repliesCountingTowardsConsent.every(
       ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
     )
   }
@@ -909,7 +1186,7 @@ export class PatientProgramme extends BaseModel {
    */
   get consentGivenDate() {
     // Replies are sorted newest first, so take the first reply giving consent
-    const reply = this.replies?.find(({ decision }) =>
+    const reply = this.repliesCountingTowardsConsent.find(({ decision }) =>
       [
         ReplyDecision.Given,
         ReplyDecision.OnlyAlternativeInjection,
@@ -927,7 +1204,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {Array<ScreenStatus>} Screen statuses
    */
   get screenStatusesForConsentMethod() {
-    return getScreenStatusesForConsentMethod(this.programme, this.replies)
+    return getScreenStatusesForConsentMethod(
+      this.programme,
+      this.repliesCountingTowardsConsent
+    )
   }
 
   /**
@@ -936,7 +1216,10 @@ export class PatientProgramme extends BaseModel {
    * @returns {ScreenVaccineCriteria|boolean} Criteria
    */
   get screenVaccineCriteria() {
-    return getScreenVaccineCriteria(this.programme, this.replies)
+    return getScreenVaccineCriteria(
+      this.programme,
+      this.repliesCountingTowardsConsent
+    )
   }
 
   /**

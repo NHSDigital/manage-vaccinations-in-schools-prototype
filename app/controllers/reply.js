@@ -8,7 +8,14 @@ import {
   ReplyRefusal,
   VaccinationOutcome
 } from '../enums.js'
-import { Contact, Patient, Programme, Reply, Vaccination } from '../models.js'
+import {
+  Contact,
+  Patient,
+  PatientSession,
+  Programme,
+  Reply,
+  Vaccination
+} from '../models.js'
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
@@ -49,6 +56,15 @@ export const replyController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   show(request, response) {
+    const { referrer } = request.query
+    const { data } = request.session
+
+    // Link back to the patient session the user came from, which may not be
+    // the session this response was given in, i.e. one from an earlier year
+    response.locals.referringPatientSession =
+      referrer &&
+      PatientSession.findAll(data).find(({ uri }) => uri === referrer)
+
     return response.render('reply/show')
   },
 
@@ -404,7 +420,7 @@ export const replyController = {
    */
   followUp(request, response) {
     const { decision } = request.body
-    const { data } = request.session
+    const { data, referrer } = request.session
     const { patientProgramme, reply } = response.locals
 
     if (decision === 'true') {
@@ -434,7 +450,7 @@ export const replyController = {
     return saveAndRedirect(
       request,
       response,
-      `${createdReply.uri}/new/decision?referrer=${reply.uri}`
+      `${createdReply.uri}/new/decision?referrer=${referrer || reply.uri}`
     )
   },
 
@@ -444,16 +460,17 @@ export const replyController = {
   invalidate(request, response) {
     const { note } = request.body.reply
     const { reply_uuid } = request.params
-    const { data } = request.session
-    const { __, referrer } = response.locals
+    const { data, referrer } = request.session
+    const { __ } = response.locals
 
     // Clean up session data
     delete data.reply
+    delete request.session.referrer
 
     // Update batch data
     const reply = Reply.update(reply_uuid, { isInvalidated: true, note }, data)
 
-    request.flash('success', __(`reply.invalidate.success`, { reply }))
+    request.flash('success', __('reply.invalidate.success', { reply }))
 
     return saveAndRedirect(request, response, referrer || reply.uri)
   },
@@ -505,6 +522,7 @@ export const replyController = {
 
     // Clean up session data
     delete data.reply
+    delete request.session.referrer
 
     request.flash('success', __(`reply.withdraw.success`, { reply }))
 
