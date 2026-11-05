@@ -3966,7 +3966,7 @@ export const en = {
       },
       submit: {
         description:
-          'Mavis has compared your spreadsheet with the pupil information already in the service.\n\nReview the changes below to make sure they’re what you’d expect. If the information looks right, send it to your vaccination team. If you need to make changes, cancel this upload and upload a new spreadsheet.'
+          'Mavis has compared your spreadsheet with the pupil information already in the service.\n\nReview the differences below to check they’re what you’d expect. If the information looks right, send it to your vaccination team. If you need to make changes, cancel this upload and upload a new spreadsheet.'
       },
       summary: 'Details',
       new: {
@@ -4084,7 +4084,7 @@ export const en = {
     },
     file: {
       title: 'Upload {{type}}',
-      titleSchoolUser: 'Upload a spreadsheet',
+      titleSchoolUser: 'Step 1 of 2: Upload a spreadsheet',
       label: 'Upload file',
       description: {
         report:
@@ -4092,7 +4092,7 @@ export const en = {
         other: 'Mavis can only upload spreadsheets saved as CSV files.'
       },
       descriptionSchoolUser:
-        'Uploading your spreadsheet is the first step. You’ll then need to check your upload before sending it to the vaccination team',
+        'After uploading, Mavis will check your spreadsheet before you can send it to your vaccination team.',
       format: 'What information to include and how to format it'
     },
     removeRelationships: {
