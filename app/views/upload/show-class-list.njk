@@ -114,29 +114,33 @@
     {% include "upload/_failed-records.njk" %}
   {% elif upload.status != UploadStatus.Processing %}
     {% if upload.patientsMovingIn.length > 0 %}
-      {{ heading({
-        caption: {
-          text: "These pupils are in your spreadsheet but are not currently recorded as attending your school in Mavis.",
-          placement: "after"
-        },
-        text: "Pupils who may have joined your school",
-        level: 2,
-        size: "m"
-      }) }}
+      <div class="nhsuk-u-reading-width">
+        {{ heading({
+          caption: {
+            text: "These pupils are in your spreadsheet but are not currently recorded as attending your school in Mavis. Check whether you’d expect them to be included.",
+            placement: "after"
+          },
+          text: "Pupils who may have joined your school",
+          level: 2,
+          size: "m"
+        }) }}
+      </div>
 
       {{ classListRecords({ patients: upload.patientsMovingIn }) }}
     {% endif %}
 
     {% if upload.patientsMovingOut.length > 0 %}
-      {{ heading({
-        caption: {
-          text: "These pupils are recorded as attending your school in Mavis but are not in your spreadsheet.",
-          placement: "after"
-        },
-        text: "Pupils who may have left your school",
-        level: 2,
-        size: "m"
-      }) }}
+      <div class="nhsuk-u-reading-width">
+        {{ heading({
+          caption: {
+            text: "These pupils are recorded as attending your school in Mavis but are not in your spreadsheet. Check whether they’ve left your school or should have been included in the spreadsheet.",
+            placement: "after"
+          },
+          text: "Pupils who may have left your school",
+          level: 2,
+          size: "m"
+        }) }}
+      </div>
 
       {{ classListRecords({ patients: upload.patientsMovingOut }) }}
     {% endif %}
