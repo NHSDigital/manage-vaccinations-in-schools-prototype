@@ -784,11 +784,8 @@ export const en = {
       },
       others: {
         heading: 'Other vaccinations',
-        description: {
-          intro:
-            'For your child’s {programmeNames} {count, plural, one {vaccination} other {vaccinations}}, you may be able to ',
-          link: 'find a more convenient clinic offering only %s vaccinations'
-        }
+        description:
+          'To find a suitable clinic for your child’s {programmeNames} {count, plural, one {vaccination} other {vaccinations}}, you can:\n- use the ‘book a clinic appointment‘ link in your invitation at a later date\n- contact the vaccination team by phoning {teamTel} or emailing {teamEmail}'
       },
       feedback: {
         heading: 'Help us to improve',

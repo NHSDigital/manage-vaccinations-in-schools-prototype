@@ -33,13 +33,12 @@
       size: "m"
     }) }}
 
-    <p class="nhsuk-body">
-      {{ __mf("clinicBooking.pharmacy.others.description.intro", {
-        count: appointment.selected_programme_ids.length - 1,
-        programmeNames: otherProgrammeNames
-      }) }}
-      <a href="remove-flu" class="nhsuk-link">{{ __("clinicBooking.pharmacy.others.description.link", otherProgrammeNames) }}</a>.
-    </p>
+    {{ __mf("clinicBooking.pharmacy.others.description", {
+      count: appointment.selected_programme_ids.length - 1,
+      programmeNames: otherProgrammeNames,
+      teamTel: team.tel,
+      teamEmail: team.email
+    }) | nhsukMarkdown }}
   {% endif %}
 
   {# Keep the possibility of giving us feedback on the clinics; we'll re-offer NBS at the end of that #}
