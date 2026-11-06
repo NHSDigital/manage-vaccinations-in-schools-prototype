@@ -13,7 +13,7 @@
       },  
       level: 4
     },
-    href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered,
+    href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered and (not reply.clinicAppointment or reply.clinicAppointment.status === ClinicAppointmentStatus.Booked),
     actions: {
       items: [
         {
