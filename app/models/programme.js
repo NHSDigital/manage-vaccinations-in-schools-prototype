@@ -169,6 +169,16 @@ export class Programme extends BaseModel {
   }
 
   /**
+   * Is the standard vaccine for this programme given as a nasal spray?
+   * For example, the flu programme
+   *
+   * @returns {boolean} Standard vaccine is a nasal spray
+   */
+  get hasIntranasalVaccine() {
+    return this.standardVaccine?.criteria === VaccineCriteria.Intranasal
+  }
+
+  /**
    * Get vaccine name
    *
    * @returns {object} Vaccine name

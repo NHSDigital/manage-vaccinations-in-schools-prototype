@@ -341,6 +341,12 @@ export class PatientProgramme extends BaseModel {
    * Get the date a triage expires, which is when the last of the health
    * answers it reviewed expires
    *
+   * A response without health answers, like a clinic booking that skipped
+   * questions already answered, doesn’t keep a triage outcome alive, because
+   * the triage wasn’t based on anything in it. But if _none_ of the responses
+   * reviewed had health answers (for example, if the child was triaged in
+   * person), the triage lasts until the last of those responses expires
+   *
    * @param {AuditEvent} triageNote - Triage note
    * @returns {Date|undefined} Expiry date, or undefined if it never expires
    */
@@ -352,8 +358,16 @@ export class PatientProgramme extends BaseModel {
       return
     }
 
-    // If any response it reviewed never expires, neither does the triage
-    const expiryDates = reviewedReplies.map((reply) => reply.expiresAt)
+    const reviewedRepliesWithHealthAnswers = reviewedReplies.filter(
+      (reply) => Object.keys(reply.healthAnswers ?? {}).length > 0
+    )
+    const repliesTriageIsBasedOn =
+      reviewedRepliesWithHealthAnswers.length > 0
+        ? reviewedRepliesWithHealthAnswers
+        : reviewedReplies
+
+    // If any response it’s based on never expires, neither does the triage
+    const expiryDates = repliesTriageIsBasedOn.map((reply) => reply.expiresAt)
     if (expiryDates.some((expiryDate) => !expiryDate)) {
       return
     }
@@ -429,14 +443,20 @@ export class PatientProgramme extends BaseModel {
   #doesReplyIncludeTriagedMethod(reply, triageStatus) {
     switch (triageStatus) {
       case ScreenStatus.VaccinateAlternativeFluInjectionOnly:
-      case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
-        // Approved the injection (or gelatine-free injection)
+        // Approved the flu injection
         return reply.hasConsentForInjection
+      case ScreenStatus.VaccinateAlternativeMMRInjectionOnly:
+        // Approved the gelatine-free vaccine, which any consent for MMR
+        // includes
+        return true
       case ScreenStatus.Vaccinate:
       case ScreenStatus.VaccinateIntranasalOnly:
       default:
         // Approved the standard vaccine (nasal spray, for flu)
-        return reply.decision !== ReplyDecision.OnlyAlternativeInjection
+        return (
+          reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
+          !reply.hasConsentForGelatineFreeVaccineOnly
+        )
     }
   }
 
@@ -1083,21 +1103,95 @@ export class PatientProgramme extends BaseModel {
    * @returns {object|undefined} Consent health answers
    */
   get consentHealthAnswers() {
-    return getConsentHealthAnswers(
-      this.repliesCountingTowardsConsent,
-      this.appointments
+    return getConsentHealthAnswers(this.repliesWithHealthAnswersThatCount)
+  }
+
+  /**
+   * Get description of who gave answers to health questions, and when,
+   * noting any answers that expire before the given session
+   *
+   * @param {Session} [session] - Session the answers are being looked at for
+   * @returns {string|undefined} Health answers description
+   */
+  getHealthAnswersDescriptionForSession(session) {
+    return getHealthAnswersDescription(
+      this.repliesWithHealthAnswersThatCount,
+      session
     )
   }
 
   /**
-   * Get description of who gave answers to health questions, and when
+   * Get responses whose answers to the health questions count
    *
-   * @returns {string|undefined} Health answers description
+   * These are the responses that count towards consent, plus the answers in
+   * any response replaced by a clinic booking from the same person, to the
+   * questions the booking didn’t ask. When booking, a parent isn’t asked
+   * questions they’ve already answered, so those earlier answers still count
+   * (until that earlier response expires or is invalidated)
+   *
+   * @returns {Array<Reply>} Responses, newest first
    */
-  get healthAnswersDescription() {
-    return getHealthAnswersDescription(
-      this.repliesCountingTowardsConsent,
-      this.appointments
+  get repliesWithHealthAnswersThatCount() {
+    const replies = [...this.repliesCountingTowardsConsent]
+
+    const bookingRepliesFromKnownContacts = replies.filter(
+      (reply) => reply.clinicAppointment_uuid && reply.contact_uuid
+    )
+    for (const bookingReply of bookingRepliesFromKnownContacts) {
+      const replacedReply = this.#getReplyReplacedByBooking(bookingReply)
+      if (!replacedReply?.healthAnswers) {
+        continue
+      }
+
+      const questionsInBooking =
+        bookingReply.clinicAppointment?.getHealthQuestionsForProgramme(
+          this.programme
+        ) ?? {}
+      const answersFromBooking = bookingReply.healthAnswers ?? {}
+      const answersToQuestionsNotAskedInBooking = Object.entries(
+        replacedReply.healthAnswers
+      ).filter(
+        ([question]) =>
+          question in questionsInBooking && !(question in answersFromBooking)
+      )
+      if (answersToQuestionsNotAskedInBooking.length === 0) {
+        continue
+      }
+
+      // Keep only those answers, so we don’t show any the booking replaced
+      replies.push(
+        new Reply(
+          {
+            ...replacedReply,
+            healthAnswers: Object.fromEntries(
+              answersToQuestionsNotAskedInBooking
+            )
+          },
+          this.context
+        )
+      )
+    }
+
+    return replies.sort((a, b) =>
+      getDateValueDifference(b.createdAt, a.createdAt)
+    )
+  }
+
+  /**
+   * Get the latest response that a clinic booking replaced, given before the
+   * booking by the same person
+   *
+   * @param {Reply} bookingReply - Response given by booking a clinic appointment
+   * @returns {Reply|undefined} Replaced response
+   */
+  #getReplyReplacedByBooking(bookingReply) {
+    // Responses are newest first, so the first earlier one is the latest
+    return (this.replies ?? []).find(
+      (reply) =>
+        reply !== bookingReply &&
+        reply.respondent === bookingReply.respondent &&
+        reply.decision !== ReplyDecision.NoResponse &&
+        new Date(reply.createdAt) < new Date(bookingReply.createdAt)
     )
   }
 
@@ -1147,15 +1241,16 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Has every contact given consent only for an injected vaccine?
+   * Has any contact given consent only for an injected vaccine?
    *
-   * We need this so that we don’t offer multiple triage outcomes if consent has
-   * only been given for the injected vaccine
+   * If so, only the injected vaccine can be given, even if other contacts
+   * prefer the nasal spray. We need this so that we don’t offer multiple
+   * triage outcomes if consent has only been given for the injected vaccine
    *
    * @returns {boolean|undefined} Consent given for an injected vaccine
    */
   get hasConsentForAlternativeInjectionOnly() {
-    return this.repliesCountingTowardsConsent.every(
+    return this.repliesCountingTowardsConsent.some(
       ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
     )
   }
@@ -1166,17 +1261,11 @@ export class PatientProgramme extends BaseModel {
    * @returns {boolean} Consent has been given
    */
   get consentGiven() {
-    if (this.consent && !this.lastPatientSession?.clinicAppointment) {
-      return [
-        ConsentStatus.Given,
-        ConsentStatus.GivenForAlternativeInjection,
-        ConsentStatus.GivenForIntranasal
-      ].includes(this.consent)
-    } else if (this.lastPatientSession?.clinicAppointment) {
-      return true
-    }
-
-    return false
+    return [
+      ConsentStatus.Given,
+      ConsentStatus.GivenForAlternativeInjection,
+      ConsentStatus.GivenForIntranasal
+    ].includes(this.consent)
   }
 
   /**
@@ -1234,8 +1323,7 @@ export class PatientProgramme extends BaseModel {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
     const alternativeVaccine = this.programme?.alternativeVaccine
 
-    // Need consent response (or a clinic appointment) before we can determine
-    // the chosen method.
+    // Need consent response before we can determine the chosen method.
     // We only want to instruct patients being vaccinated using nasal spray
     if (!this.consentGiven) {
       return
@@ -1247,11 +1335,16 @@ export class PatientProgramme extends BaseModel {
     }
 
     // Administered vaccine was the alternative
-    if (
-      this.lastPatientSession?.clinicAppointment
-        ?.hasConsentForAlternativeVaccine ||
-      this.lastPatientSession?.hasAlternativeVaccine
-    ) {
+    if (this.lastPatientSession?.hasAlternativeVaccine) {
+      return alternativeVaccine
+    }
+
+    // Gelatine-free MMR vaccine requested
+    const hasRequestedGelatineFree = this.repliesCountingTowardsConsent.some(
+      ({ hasConsentForGelatineFreeVaccineOnly }) =>
+        hasConsentForGelatineFreeVaccineOnly
+    )
+    if (hasRequestedGelatineFree) {
       return alternativeVaccine
     }
 

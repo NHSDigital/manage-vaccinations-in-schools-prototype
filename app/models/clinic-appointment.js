@@ -9,6 +9,7 @@ import {
   ConsentVaccineCriteria,
   Impairment,
   LocationSearchType,
+  ProgrammeType,
   RegistrationStatus,
   RelationshipType,
   ReplyDecision,
@@ -21,6 +22,7 @@ import {
   Patient,
   PatientSession,
   Programme,
+  Reply,
   Session,
   User
 } from '../models.js'
@@ -159,6 +161,114 @@ export class ClinicAppointment {
     } catch (error) {
       console.error('ClinicAppointment.booking', error.message)
     }
+  }
+
+  /**
+   * Get the consent responses given by booking this appointment, one for each
+   * selected programme
+   *
+   * These aren’t stored, but made from the appointment whenever they’re needed,
+   * so they always match the appointment as it is now
+   *
+   * @returns {Array<Reply>} Consent responses
+   */
+  get replies() {
+    // The parent gave up before booking, so they haven’t responded
+    if (this.status === ClinicAppointmentStatus.Abandoned) {
+      return []
+    }
+
+    // If the person who booked is already one of the child’s contacts, their
+    // booking replaces any earlier response they gave (and the other way round)
+    const matchingContact = this.patient?.contactsExcludingClinicBookings.find(
+      (contact) => contact.isSamePersonAs(this.contact)
+    )
+
+    return this.#getSelectedProgrammes(this.context).map((programme) => {
+      let decision, hasConsentForAlternativeVaccine
+      switch (programme.type) {
+        case ProgrammeType.Flu:
+          // Nasal spray only, nasal spray preferred (also accepting the
+          // injection), or injection only
+          decision = this.fluDecision
+          hasConsentForAlternativeVaccine =
+            this.fluDecision === ReplyDecision.Given && this.fluAlternative
+          break
+        case ProgrammeType.MMR:
+          // Either vaccine, or the gelatine-free vaccine only
+          decision = ReplyDecision.Given
+          hasConsentForAlternativeVaccine = this.mmrAlternative
+          break
+        default:
+          decision = ReplyDecision.Given
+          hasConsentForAlternativeVaccine = false
+      }
+
+      const options = {
+        // Always the same for this appointment and programme, as the
+        // response is made afresh each time
+        uuid: `${this.uuid}-${programme.id}`,
+        clinicAppointment_uuid: this.uuid,
+        contact_: this.contact,
+        contact_uuid: matchingContact?.uuid,
+        patient_uuid: this.patient_uuid,
+        programme_id: programme.id,
+        session_id: this.session_id,
+        decision,
+        hasConsentForAlternativeVaccine: Boolean(
+          hasConsentForAlternativeVaccine
+        ),
+        healthAnswers: this.#getHealthAnswersForProgramme(programme),
+        // Cancelled appointments no longer count, like invalid responses
+        isInvalidated: this.status === ClinicAppointmentStatus.Cancelled,
+        // Consent counts from when the appointment was first booked, even
+        // if it’s since been changed
+        createdAt: this.booking?.createdAt
+      }
+
+      return new Reply(options, this.context)
+    })
+  }
+
+  /**
+   * Get the health questions asked for a programme when booking, before
+   * leaving out any already answered in other responses
+   *
+   * @param {Programme} programme - Programme
+   * @returns {object} Health questions, keyed by question
+   */
+  getHealthQuestionsForProgramme(programme) {
+    // Leave out the patient, so we get every question for the programme,
+    // not just those that weren’t answered in other responses
+    return getUnansweredHealthQuestions(
+      { ...this.vaccinationChoices, selected_programme_ids: [programme.id] },
+      undefined,
+      this.context
+    )
+  }
+
+  /**
+   * Get the answers to the health questions for a programme, as one booking
+   * asks the questions for all the selected programmes together
+   *
+   * @param {Programme} programme - Programme
+   * @returns {object|undefined} Answers to health questions, keyed by question
+   */
+  #getHealthAnswersForProgramme(programme) {
+    if (!this.healthAnswers) {
+      return
+    }
+
+    const questionsForProgramme = this.getHealthQuestionsForProgramme(programme)
+
+    const answersForProgramme = Object.entries(this.healthAnswers).filter(
+      ([question]) => question in questionsForProgramme
+    )
+    if (answersForProgramme.length === 0) {
+      return
+    }
+
+    return Object.fromEntries(answersForProgramme)
   }
 
   /**
@@ -412,7 +522,8 @@ export class ClinicAppointment {
     return getUnansweredHealthQuestions(
       this.vaccinationChoices,
       this.patient,
-      programmeContext
+      programmeContext,
+      this.uuid
     )
   }
 

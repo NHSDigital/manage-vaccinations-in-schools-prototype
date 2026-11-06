@@ -46,28 +46,16 @@ export function getRepliesWithHealthAnswers(replies) {
  * Get combined answers to health questions
  *
  * @param {Array<Reply>} replies - Consent responses
- * @param {Array<ClinicAppointment>} appointments - Clinic appointments
  * @returns {object|undefined} Combined answers to health questions
  */
-export function getConsentHealthAnswers(replies, appointments) {
+export function getConsentHealthAnswers(replies) {
   const consentHealthAnswers = {}
 
-  // Get consent responses with health answers
-  const repliesWithHealthAnswers = replies.filter(
+  // Get consent responses with health answers, including those given when
+  // booking a clinic appointment
+  const responsesWithHealthAnswers = replies.filter(
     (reply) => reply.healthAnswers
   )
-
-  // Get clinic appointments with health answers given as part of booking
-  const appointmentsWithHealthAnswers = appointments.filter(
-    (appointment) => appointment.healthAnswers
-  )
-
-  // Both replies and appointments expose compatible `healthAnswers` and
-  // `contact` properties, so can be treated the same from here on
-  const responsesWithHealthAnswers = [
-    ...repliesWithHealthAnswers,
-    ...appointmentsWithHealthAnswers
-  ]
 
   if (responsesWithHealthAnswers.length === 0) {
     return
@@ -323,5 +311,5 @@ export const getHealthConditionsNeedingTriage = (vaccine) =>
   )
 
 /**
- * @import { ClinicAppointment, Reply, Vaccine } from '../models.js'
+ * @import { Reply, Vaccine } from '../models.js'
  */

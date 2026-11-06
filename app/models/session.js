@@ -957,21 +957,6 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Check if session offers an intranasal vaccine
-   * For example, the standard vaccine for the flu programme is a nasal spray
-   *
-   * @returns {boolean} Has alternative vaccines
-   */
-  get canOfferIntranasalVaccine() {
-    const programmesWithIntranasalVaccine = this.programmes.filter(
-      ({ standardVaccine }) =>
-        standardVaccine.criteria === VaccineCriteria.Intranasal
-    )
-
-    return programmesWithIntranasalVaccine.length > 0
-  }
-
-  /**
    * Get programme name(s)
    *
    * @returns {object} Programme name(s)

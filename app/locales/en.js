@@ -2759,6 +2759,9 @@ export const en = {
     expiringBeforeSession: {
       label: 'This response will expire before the session'
     },
+    responseType: {
+      label: 'Response type'
+    },
     respondent: {
       title: 'Who are you trying to get consent from?',
       label: 'Parent or guardian',

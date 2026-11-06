@@ -16,6 +16,7 @@ import {
 } from '../enums.js'
 import {
   Child,
+  ClinicAppointment,
   Contact,
   Patient,
   PatientSession,
@@ -72,6 +73,7 @@ import { BaseModel } from './base.js'
  * @property {string} [refusalReasonOther] - Other refusal reason
  * @property {string} [refusalReasonDetails] - Refusal reason details
  * @property {boolean} [hasSelfConsent] - Reply given by child
+ * @property {string} [clinicAppointment_uuid] - Clinic appointment, if given by booking one
  * @property {string} [note] - Note about this response
  */
 
@@ -92,9 +94,6 @@ export class Reply extends BaseModel {
 
     /** @type {string|undefined} */
     this.contact_uuid
-
-    /** @type {Contact|undefined} */
-    this.contact
 
     /** @type {string|undefined} */
     this.patient_uuid
@@ -146,6 +145,7 @@ export class Reply extends BaseModel {
         : stringToBoolean(options?.isInvalidated) || false
     this.method = options?.method
     this.hasSelfConsent = options?.hasSelfConsent || false
+    this.clinicAppointment_uuid = options?.clinicAppointment_uuid
     this.note = options?.note || ''
 
     // For reasons of simplicity, we use `contact_` this to store contact
@@ -246,6 +246,64 @@ export class Reply extends BaseModel {
     return this.hasSelfConsent
       ? this.relationship
       : formatContact(this.contact, false)
+  }
+
+  /**
+   * Get parent or guardian who responded
+   *
+   * @returns {Contact|undefined} Contact
+   */
+  get contact() {
+    // A clinic booking keeps its own contact details, rather than storing
+    // them with the other contacts
+    if (this.clinicAppointment_uuid) {
+      return this.contact_
+    }
+
+    return Contact.findOne(this.contact_uuid, this.context)
+  }
+
+  /**
+   * Update parent or guardian who responded
+   *
+   * @param {object} updates - Updates
+   */
+  set contact(updates) {
+    Contact.update(this.contact_uuid, updates, this.context)
+  }
+
+  /**
+   * Get clinic appointment, if this response was given by booking one
+   *
+   * @returns {ClinicAppointment|undefined} Clinic appointment
+   */
+  get clinicAppointment() {
+    if (this.clinicAppointment_uuid) {
+      return ClinicAppointment.findOne(
+        this.clinicAppointment_uuid,
+        this.context
+      )
+    }
+  }
+
+  /**
+   * Get who gave this response, so we can tell when a newer response from
+   * the same person replaces it
+   *
+   * @returns {string|undefined} Respondent
+   */
+  get respondent() {
+    if (this.hasSelfConsent) {
+      return 'child'
+    }
+
+    // Someone who booked a clinic appointment, but isn’t one of the child’s
+    // contacts, counts as a different respondent for each appointment
+    if (this.clinicAppointment_uuid && !this.contact_uuid) {
+      return `clinic-appointment-${this.clinicAppointment_uuid}`
+    }
+
+    return this.contact_uuid
   }
 
   /**
@@ -373,11 +431,35 @@ export class Reply extends BaseModel {
       }
     }
 
-    if (this.hasGivenConsent && this.programme.type === ProgrammeType.MMR) {
-      if (this.decision === ReplyDecision.OnlyAlternativeInjection) {
-        return ConsentVaccineCriteria.AlternativeMMRInjectionOnly
-      }
+    if (this.hasConsentForGelatineFreeVaccineOnly) {
+      return ConsentVaccineCriteria.AlternativeMMRInjectionOnly
     }
+  }
+
+  /**
+   * Has contact given consent for the MMR vaccine that doesn’t contain
+   * gelatine, and not the one that does?
+   *
+   * The parent consent form and clinic bookings record this as consent for
+   * the alternative vaccine. But the team’s consent form records it as
+   * consent for the alternative injection only, as it does for flu
+   *
+   * TODO: Change the team’s consent form (`reply/form/decision.njk`) to ask
+   * about MMR the way the parent consent form does, and record consent for the
+   * alternative vaccine. Its MMR options are currently written for flu. Then
+   * this only needs to check `hasConsentForAlternativeVaccine`
+   *
+   * @returns {boolean} Consent given for the gelatine-free vaccine only
+   */
+  get hasConsentForGelatineFreeVaccineOnly() {
+    if (!this.hasGivenConsent || this.programme?.type !== ProgrammeType.MMR) {
+      return false
+    }
+
+    return (
+      Boolean(this.hasConsentForAlternativeVaccine) ||
+      this.decision === ReplyDecision.OnlyAlternativeInjection
+    )
   }
 
   /**
@@ -474,7 +556,7 @@ export class Reply extends BaseModel {
     if (this.programme?.type == MMR) {
       const allowedCriteria = [
         VaccineCriteria.AlternativeInjection,
-        ...(this.hasConsentForAlternativeVaccine
+        ...(this.hasConsentForGelatineFreeVaccineOnly
           ? []
           : [VaccineCriteria.Injection])
       ]
@@ -564,7 +646,7 @@ export class Reply extends BaseModel {
                   colour: 'grey',
                   html: `<s>${this.decision}</s>`
                 }),
-                'Invalid',
+                this.clinicAppointment_uuid ? 'Cancelled' : 'Invalid',
                 false
               )
             } else if (this.hasExpired) {
@@ -622,6 +704,10 @@ export class Reply extends BaseModel {
               return formatMarkdown(this.refusalReasonDetails)
             case 'note':
               return formatMarkdown(this.note)
+            case 'responseType':
+              return this.clinicAppointment_uuid
+                ? 'Clinic booking'
+                : 'Consent response'
             default:
               return undefined
           }
@@ -649,7 +735,9 @@ export class Reply extends BaseModel {
   }
 }
 
-Reply.relate('contact_uuid', () => Contact, 'contact')
+// Related by hand (see `get contact`), so responses from clinic bookings can
+// use the contact details given in the booking
+Reply.foreignKeys = { ...Reply.foreignKeys, contact_uuid: () => Contact }
 Reply.relate('patient_uuid', () => Patient, 'patient')
 Reply.relate('programme_id', () => Programme, 'programme')
 Reply.relate('session_id', () => Session, 'session')

@@ -6,7 +6,6 @@ import programmesData from '../datasets/programmes.js'
 import {
   Adjustment,
   AuditEventType,
-  ClinicAppointmentStatus,
   Impairment,
   NoticeType,
   NotifyEmailStatus,
@@ -232,6 +231,36 @@ export class Patient extends Child {
    * @returns {Array<Contact>} Contacts
    */
   get contacts() {
+    const contacts = this.contactsExcludingClinicBookings
+
+    // Add anyone who booked a clinic appointment who isn’t already a contact
+    // (and only once, as a booking gives a reply for each programme)
+    const clinicBookingContacts = this.replies
+      .filter(({ clinicAppointment_uuid }) => clinicAppointment_uuid)
+      .map(({ contact }) => contact)
+    for (const bookingContact of clinicBookingContacts) {
+      const isAlreadyAContact = contacts.some((contact) =>
+        contact.isSamePersonAs(bookingContact)
+      )
+      if (!isAlreadyAContact) {
+        contacts.push(bookingContact)
+      }
+    }
+
+    return contacts
+  }
+
+  /**
+   * Get contacts from the child’s record and from consent replies, but not
+   * from clinic bookings
+   *
+   * A clinic booking keeps its own copy of the contact details given when
+   * booking, so we use these to find whether the person who booked is one of
+   * these contacts
+   *
+   * @returns {Array<Contact>} Contacts
+   */
+  get contactsExcludingClinicBookings() {
     const contacts = new Map()
 
     this.contact_uuids.forEach((uuid) =>
@@ -239,25 +268,12 @@ export class Patient extends Child {
     )
 
     // Add any new contacts found in consent replies
-    Object.values(this.replies)
+    this.repliesExcludingClinicBookings
       .filter(({ hasSelfConsent }) => !hasSelfConsent)
       .filter(({ contact }) => contact)
       .forEach(({ contact }) => {
         contacts.set(contact.uuid, new Contact(contact, this.context))
       })
-
-    // Add any contacts found in clinic appointments
-    this.appointments
-      .filter(({ contact }) => contact)
-      .filter(({ status }) =>
-        [
-          ClinicAppointmentStatus.Booked,
-          ClinicAppointmentStatus.Cancelled
-        ].includes(status)
-      )
-      .forEach(({ contact }) =>
-        contacts.set(contact.uuid, new Contact(contact, this.context))
-      )
 
     return [...contacts.values()]
   }
@@ -443,11 +459,25 @@ export class Patient extends Child {
   }
 
   /**
-   * Get replies
+   * Get replies, including those given by booking clinic appointments
    *
    * @returns {Array<Reply>} Replies
    */
   get replies() {
+    const clinicBookingReplies = this.appointments.flatMap(
+      (appointment) => appointment.replies
+    )
+
+    return [...this.repliesExcludingClinicBookings, ...clinicBookingReplies]
+  }
+
+  /**
+   * Get replies stored with the child, so not those given by booking clinic
+   * appointments
+   *
+   * @returns {Array<Reply>} Replies
+   */
+  get repliesExcludingClinicBookings() {
     return this.reply_uuids
       .map((uuid) => Reply.findOne(uuid, this.context))
       .filter((reply) => reply?.patient_uuid === this.uuid)

@@ -32,11 +32,9 @@ export function getLatestReplyFromEachRespondent(replies) {
   const latestReplyByRespondent = new Map()
 
   for (const reply of replies ?? []) {
-    const respondent = reply.hasSelfConsent ? 'child' : reply.contact_uuid
-
     // Responses are newest first, so keep the first for each respondent
-    if (!latestReplyByRespondent.has(respondent)) {
-      latestReplyByRespondent.set(respondent, reply)
+    if (!latestReplyByRespondent.has(reply.respondent)) {
+      latestReplyByRespondent.set(reply.respondent, reply)
     }
   }
 
@@ -47,10 +45,10 @@ export function getLatestReplyFromEachRespondent(replies) {
  * Get confirmed consent status
  *
  * @param {Reply} reply - Reply
- * @param {Session} session - Session
+ * @param {Programme} programme - Programme the reply is for
  * @returns {ConsentStatus} Confirmed consent status
  */
-export function getConfirmedConsentStatus(reply, session) {
+export function getConfirmedConsentStatus(reply, programme) {
   if (!reply.isDelivered) {
     return ConsentStatus.NotDelivered
   }
@@ -69,14 +67,18 @@ export function getConfirmedConsentStatus(reply, session) {
 
   if (reply.hasGivenConsent) {
     if (
-      session?.canOfferAlternativeVaccine &&
+      programme?.hasIntranasalVaccine &&
       reply.decision === ReplyDecision.OnlyAlternativeInjection
     ) {
       return ConsentStatus.GivenForAlternativeInjection
     }
 
+    if (reply.hasConsentForGelatineFreeVaccineOnly) {
+      return ConsentStatus.GivenForAlternativeInjection
+    }
+
     if (
-      session?.canOfferIntranasalVaccine &&
+      programme?.hasIntranasalVaccine &&
       reply.decision !== ReplyDecision.OnlyAlternativeInjection &&
       !reply.hasConsentForAlternativeVaccine
     ) {
@@ -96,7 +98,7 @@ export function getConfirmedConsentStatus(reply, session) {
  * @returns {ConsentStatus} Consent status
  */
 export function getConsentStatus(patientProgramme) {
-  const session = patientProgramme.lastPatientSession?.session
+  const { programme } = patientProgramme
 
   // If patient is 16+, assume consent given
   if (patientProgramme.patient.isPost16) {
@@ -126,12 +128,12 @@ export function getConsentStatus(patientProgramme) {
   // If any reply is child self consenting, use child’s decision
   const childReply = replies.find((reply) => reply.hasSelfConsent)
   if (childReply) {
-    return getConfirmedConsentStatus(childReply, session)
+    return getConfirmedConsentStatus(childReply, programme)
   }
 
   // If only one reply, use that decision
   if (replies.length === 1) {
-    return getConfirmedConsentStatus(replies[0], session)
+    return getConfirmedConsentStatus(replies[0], programme)
   }
 
   // If many replies, determine if responses are consistent or inconsistent
@@ -159,13 +161,8 @@ export function getConsentStatus(patientProgramme) {
 
     // If consent given, determine which vaccine method has consent
     if (replies.every(({ hasGivenConsent }) => hasGivenConsent)) {
-      // For flu programme, determine if consent given for injection
-      if (session?.canOfferIntranasalVaccine) {
-        const allWantInjection = replies.every(
-          ({ vaccineCriteria }) =>
-            vaccineCriteria ===
-            ConsentVaccineCriteria.AlternativeFluInjectionOnly
-        )
+      // For flu programme, determine which methods every response allows
+      if (programme?.hasIntranasalVaccine) {
         const someWantInjectionOnly = replies.some(
           ({ vaccineCriteria }) =>
             vaccineCriteria ===
@@ -175,31 +172,31 @@ export function getConsentStatus(patientProgramme) {
           ({ vaccineCriteria }) =>
             vaccineCriteria === ConsentVaccineCriteria.IntranasalOnly
         )
-        const allAcceptAlternative = replies.every(
-          ({ hasConsentForAlternativeVaccine }) =>
-            hasConsentForAlternativeVaccine
-        )
 
         if (someWantInjectionOnly && someWantIntranasalOnly) {
           return ConsentStatus.Inconsistent
         }
 
-        if (
-          allWantInjection ||
-          (someWantInjectionOnly && allAcceptAlternative)
-        ) {
+        // Any other responses prefer the nasal spray but also accept the
+        // injection, so the injection is the only method everyone allows
+        if (someWantInjectionOnly) {
           return ConsentStatus.GivenForAlternativeInjection
         }
 
-        return ConsentStatus.GivenForIntranasal
+        if (someWantIntranasalOnly) {
+          return ConsentStatus.GivenForIntranasal
+        }
+
+        // Every response prefers the nasal spray but also accepts the injection
+        return ConsentStatus.Given
       }
 
       // For MMR programme, determine if any consent requested gelatine-free
-      if (session?.canOfferAlternativeVaccine) {
+      if (programme?.alternativeVaccine) {
         if (
           replies.some(
-            ({ hasConsentForAlternativeVaccine }) =>
-              hasConsentForAlternativeVaccine
+            ({ hasConsentForGelatineFreeVaccineOnly }) =>
+              hasConsentForGelatineFreeVaccineOnly
           )
         ) {
           return ConsentStatus.GivenForAlternativeInjection
@@ -251,44 +248,58 @@ function getExpiredConsentDescription(expiredReplies) {
 }
 
 /**
+ * Get a note about when a response’s health answers expire, if they expire
+ * before the session or soon
+ *
+ * @param {Reply} reply - Response with health answers
+ * @param {Session} [session] - Session the answers are being looked at for
+ * @returns {string} Expiry note, or an empty string if there’s nothing to note
+ */
+function getHealthAnswersExpiryNote(reply, session) {
+  const expiresBeforeSession =
+    reply.expiresAt && session?.date ? reply.expiresAt < session.date : false
+
+  // Expiring before the session matters more than expiring soon
+  if (expiresBeforeSession) {
+    return ' (expiring before the session)'
+  }
+
+  if (reply.isExpiringSoon) {
+    return ' (expiring soon)'
+  }
+
+  return ''
+}
+
+/**
  * Describe who gave answers to health questions, and when
  *
  * @param {Array<Reply>} replies - Responses that count towards consent
- * @param {Array<ClinicAppointment>} appointments - Clinic appointments
+ * @param {Session} [session] - Session the answers are being looked at for
  * @returns {string|undefined} Health answers description (Markdown), if any
  *   were given
  */
-export function getHealthAnswersDescription(replies, appointments) {
-  const answersFromReplies = (replies ?? [])
+export function getHealthAnswersDescription(replies, session) {
+  const answers = (replies ?? [])
     .filter((reply) => reply.healthAnswers)
     .map((reply) => ({
       respondent: reply.fullNameAndRelationship,
-      answeredAt: reply.createdAt
+      answeredAt: reply.createdAt,
+      expiryNotice: getHealthAnswersExpiryNote(reply, session)
     }))
-
-  // Answers given when booking a clinic appointment
-  const answersFromAppointments = (appointments ?? [])
-    .filter((appointment) => appointment.healthAnswers)
-    .map((appointment) => ({
-      respondent: appointment.contact.fullNameAndRelationship,
-      answeredAt: appointment.booking?.createdAt
-    }))
-
-  const answers = [...answersFromReplies, ...answersFromAppointments].sort(
-    (a, b) => getDateValueDifference(b.answeredAt, a.answeredAt)
-  )
+    .sort((a, b) => getDateValueDifference(b.answeredAt, a.answeredAt))
   if (!answers.length) {
     return undefined
   }
 
-  const answeredBy = answers.map(({ respondent, answeredAt }) => {
+  const answeredBy = answers.map(({ respondent, answeredAt, expiryNotice }) => {
     const answeredOn = formatDate(answeredAt, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     })
 
-    return `${respondent || 'parent or guardian'} on ${answeredOn}`
+    return `${respondent || 'parent or guardian'} on ${answeredOn}${expiryNotice}`
   })
 
   if (answeredBy.length === 1) {
@@ -362,6 +373,26 @@ export function getConsentStatusDescription(patientProgramme) {
 }
 
 /**
+ * Has consent been given without any answers to health questions?
+ *
+ * For example, in a clinic booking transferred from another system. Children
+ * aged 16 or over don’t count, as their consent is assumed without a response
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @returns {boolean} Consent given without any answers to health questions
+ */
+function hasConsentWithoutHealthAnswers(patientProgramme) {
+  const responsesGivingConsent =
+    patientProgramme.repliesCountingTowardsConsent.filter(
+      (reply) => reply.hasGivenConsent
+    )
+
+  return (
+    responsesGivingConsent.length > 0 && !patientProgramme.consentHealthAnswers
+  )
+}
+
+/**
  * Get screen status (what was the triage decision)
  *
  * @param {PatientProgramme} patientProgramme - Patient programme
@@ -409,11 +440,8 @@ export function getScreenStatus(patientProgramme) {
       return lastTriageNoteWithStatus.status
     }
 
-    // Clinic appointment without any answers to health questions
-    if (
-      !responses.length &&
-      patientProgramme.lastPatientSession?.clinicAppointment
-    ) {
+    // Consent given without any answers to health questions
+    if (hasConsentWithoutHealthAnswers(patientProgramme)) {
       return ScreenStatus.NeedsTriage
     }
 
@@ -450,7 +478,7 @@ export function getScreenStatusDescription(patientProgramme) {
 
   switch (patientProgramme.screen) {
     case ScreenStatus.NeedsTriage:
-      return patientProgramme.lastPatientSession?.clinicAppointment
+      return hasConsentWithoutHealthAnswers(patientProgramme)
         ? `You need to review the health questions with the ${person} to decide if it’s safe to vaccinate ${patientProgramme.patient.firstName}.`
         : `You need to decide if it’s safe to vaccinate ${patientProgramme.patient.firstName}.`
     case ScreenStatus.InvitedToClinic:
@@ -675,7 +703,7 @@ export function getPatientTriageStatus(patientProgramme) {
   if (patientProgramme.screen === ScreenStatus.NeedsTriage) {
     if (responsesToTriage.length > 0) {
       return PatientTriageStatus.Responses
-    } else if (patientProgramme.lastPatientSession?.clinicAppointment) {
+    } else if (hasConsentWithoutHealthAnswers(patientProgramme)) {
       return PatientTriageStatus.Consultation
     }
   }
@@ -768,5 +796,5 @@ export function getPatientVaccinatedStatus(patientProgramme) {
 }
 
 /**
- * @import { ClinicAppointment, PatientProgramme, Reply, Session } from '../models.js'
+ * @import { PatientProgramme, Programme, Reply, Session } from '../models.js'
  */

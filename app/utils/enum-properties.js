@@ -69,6 +69,10 @@ const SCHOOL_STATUS_COLOURS = {
 }
 
 const SCREEN_STATUS_COLOURS = {
+  [ScreenStatus.Vaccinate]: 'green',
+  [ScreenStatus.VaccinateAlternativeFluInjectionOnly]: 'green',
+  [ScreenStatus.VaccinateAlternativeMMRInjectionOnly]: 'green',
+  [ScreenStatus.VaccinateIntranasalOnly]: 'green',
   [ScreenStatus.NeedsTriage]: 'blue',
   [ScreenStatus.InvitedToClinic]: 'orange',
   [ScreenStatus.DelayVaccination]: 'orange',
@@ -224,9 +228,16 @@ export function getSchoolStatusProperties(status) {
 export function getScreenStatusProperties(status) {
   const hasStatus = String(status) in SCREEN_STATUS_COLOURS
 
+  // For the tag only, simplify the various 'Safe to vaccinate' statuses. This
+  // might be clinically ambiguous, but other parts of the UI give the precise
+  // safe-to-vaccinate reason.
+  const statusText = String(status).startsWith(ScreenStatus.Vaccinate)
+    ? ScreenStatus.Vaccinate
+    : status
+
   return {
     colour: hasStatus ? SCREEN_STATUS_COLOURS[status] : 'green',
-    text: hasStatus ? status : 'No triage needed'
+    text: hasStatus ? statusText : 'No triage needed'
   }
 }
 

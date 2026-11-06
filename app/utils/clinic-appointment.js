@@ -17,6 +17,8 @@ import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getAdditionalNeeds } from './feature-flags.js'
 import { getLocationSearchType } from './geolocation.js'
+import { getLatestReplyFromEachRespondent } from './patient-programme.js'
+import { getConsentHealthAnswers } from './reply.js'
 import { camelToKebabCase, stringToArray, stringToBoolean } from './string.js'
 
 /**
@@ -689,15 +691,20 @@ export const getPreviousSessionItems = (appointments, sessionContext) => {
  * Get health questions for an appointment that haven’t already been answered
  * in the child’s consent responses
  *
+ * The appointment’s own answers don’t count, so its questions are still asked
+ * when it’s changed
+ *
  * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes and vaccine choices for the appointment
- * @param {Patient} [patient] - Child the appointment’s for, if matched
+ * @param {Patient} patient - Child the appointment’s for, if matched
  * @param {object} context - the context in which we'll find programmes and vaccines
+ * @param {string} [appointment_uuid] - UUID of the appointment, if already booked
  * @returns {object} Health questions, keyed by question
  */
 export const getUnansweredHealthQuestions = (
   vaccinationChoices,
   patient,
-  context
+  context,
+  appointment_uuid
 ) => {
   const {
     selected_programme_ids,
@@ -752,7 +759,26 @@ export const getUnansweredHealthQuestions = (
   if (patient) {
     for (const programme of selectedProgrammes) {
       const patientProgramme = patient.programmes[programme.id]
-      const consentHealthAnswers = patientProgramme?.consentHealthAnswers ?? {}
+      const isFromThisAppointment = (reply) =>
+        appointment_uuid !== undefined &&
+        reply.clinicAppointment_uuid === appointment_uuid
+
+      // Work out which responses would count towards consent if this
+      // appointment hadn’t been booked. We can’t just leave it out of the
+      // responses that count now, as it may have replaced an earlier response
+      // from the same parent, whose answers we don’t want to ask for again
+      const responsesWithDecisionFromElsewhere = (
+        patientProgramme?.replies ?? []
+      ).filter(
+        (reply) =>
+          reply.decision !== ReplyDecision.NoResponse &&
+          !isFromThisAppointment(reply)
+      )
+      const responsesFromElsewhere = getLatestReplyFromEachRespondent(
+        responsesWithDecisionFromElsewhere
+      )
+      const consentHealthAnswers =
+        getConsentHealthAnswers(responsesFromElsewhere) ?? {}
 
       for (const [key, answers] of Object.entries(consentHealthAnswers)) {
         if (answers.length > 0) {

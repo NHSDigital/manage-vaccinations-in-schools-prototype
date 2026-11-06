@@ -12,7 +12,8 @@
     },
     variant: "warning" if patientProgramme.answersNeedingTriageCount
   }) %}
-    {{ patientProgramme.healthAnswersDescription | nhsukMarkdown if patientProgramme.healthAnswersDescription }}
+    {% set healthAnswersDescription = patientProgramme.getHealthAnswersDescriptionForSession(session) %}
+    {{ healthAnswersDescription | nhsukMarkdown if healthAnswersDescription }}
 
     {{ summaryList({
       classes: "app-summary-list--full-width",

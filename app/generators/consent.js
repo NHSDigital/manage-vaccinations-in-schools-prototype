@@ -25,8 +25,10 @@ import {
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
  * @param {object} [overrides] - Choices to make instead of leaving them to chance
  * @param {ReplyDecision} [overrides.decision] - Decision
- * @param {boolean} [overrides.hasConsentForAlternativeVaccine] - Also gives
- *   consent for the alternative (injected) vaccine, if the decision is to give consent
+ * @param {boolean} [overrides.hasConsentForAlternativeVaccine] - Gives consent
+ *   for the alternative vaccine, if the decision is to give consent: also
+ *   accepting the injection for flu, or wanting the gelatine-free vaccine only
+ *   for MMR
  * @param {boolean} [overrides.needsTriage] - Answers to health questions do (or
  *   do not) need triage
  * @returns {Consent|undefined} Consent
@@ -60,20 +62,23 @@ export function generateConsent(
       { value: ReplyDecision.Refused, weight: 8 },
       ...(ProgrammeType.Flu === programme.type
         ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 4 }]
-        : []),
-      ...(ProgrammeType.MMR === programme.type
-        ? [{ value: ReplyDecision.OnlyAlternativeInjection, weight: 8 }]
         : [])
     ])
 
   const isFluProgramme = programme.type === ProgrammeType.Flu
+  const isMMRProgramme = programme.type === ProgrammeType.MMR
 
-  // Has the contact given consent for alternative injected vaccine?
-  const hasConsentForAlternativeVaccine =
-    isFluProgramme && decision === ReplyDecision.Given
-      ? (overrides.hasConsentForAlternativeVaccine ??
-        faker.datatype.boolean(0.75))
-      : false
+  // Has the contact given consent for the alternative vaccine? For flu, that’s
+  // also accepting the injection. For MMR, it’s wanting the vaccine without
+  // gelatine only
+  let hasConsentForAlternativeVaccine = false
+  if (isFluProgramme && decision === ReplyDecision.Given) {
+    hasConsentForAlternativeVaccine =
+      overrides.hasConsentForAlternativeVaccine ?? faker.datatype.boolean(0.75)
+  } else if (isMMRProgramme && decision === ReplyDecision.Given) {
+    hasConsentForAlternativeVaccine =
+      overrides.hasConsentForAlternativeVaccine ?? faker.datatype.boolean(0.1)
+  }
 
   // Reply method
   const method = faker.helpers.weightedArrayElement([

@@ -6,11 +6,25 @@
     classes: "app-card--compact app-card--offset",
     heading: {
       text: reply.fullNameAndRelationship,
+      caption: {
+        text: 
+          ("Phone: " + reply.contact.tel) if reply.contact.tel else ("Email: " + reply.contact.email),
+        placement: "end"
+      },  
       level: 4
     },
-    href: reply.uri + "?referrer=" + referrer if reply.isDelivered,
+    href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered,
     actions: {
       items: [
+        {
+          text: __("patientSession.clinicAppointment.edit.label"),
+          href: reply.clinicAppointment.uri.edit + "?referrer=" + referrer
+        } if reply.clinicAppointment.status === ClinicAppointmentStatus.Booked,
+        {
+          text: __("patientSession.clinicAppointment.cancel.label"),
+          href: clinicAppointment.uri.cancel + "?referrer=" + referrer
+        } if reply.clinicAppointment.status === ClinicAppointmentStatus.Booked
+      ] if reply.clinicAppointment else [
         {
           text: __("reply.withdraw.label"),
           href: reply.uri + "/edit/withdraw?referrer=" + referrer
@@ -41,12 +55,6 @@
     {{ summaryList({
       lastRowBorder: false,
       rows: summaryRows(reply, {
-        email: {
-          value: appContactEmail(reply.contact, reply.hasGivenConsent)
-        } if reply.contact.email,
-        tel: {
-          value: appContactSms(reply.contact, reply.hasGivenConsent)
-        } if reply.contact.tel,
         communicationNeeds: {
           label: __("contact.communicationNeeds.label"),
           value: reply.contact.communicationNeeds
@@ -54,6 +62,7 @@
         createdAt: {},
         expiresAt: {} if not reply.isInvalidated else none,
         decisionStatus: {},
+        responseType: {},
         vaccineCriteria: {}
       })
     }) }}
