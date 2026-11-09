@@ -823,12 +823,20 @@ export class Patient extends Child {
     patientSession = PatientSession.findOne(patientSession.uuid, this.context)
 
     if (patientSession?.session) {
+      // Children are added to a school session when consent opens, but to a
+      // clinic when they're booked into it
+      const { session } = patientSession
+      const addedAt =
+        session.type === SessionType.Clinic
+          ? patientSession.createdAt
+          : session.consentOpenAt
+
       this.addEvent({
-        name: activity.session.added(patientSession.session),
+        name: activity.session.added(session),
         type: AuditEventType.ProgrammeNote,
-        createdAt: patientSession.session.consentOpenAt,
-        createdBy_uid: patientSession.session.createdBy_uid,
-        programme_ids: patientSession.session.programme_ids
+        createdAt: addedAt,
+        createdBy_uid: session.createdBy_uid,
+        programme_ids: [patientSession.programme_id]
       })
     }
   }
