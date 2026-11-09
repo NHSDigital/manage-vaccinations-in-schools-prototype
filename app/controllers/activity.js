@@ -312,6 +312,18 @@ export const activityController = {
         title: 'Session',
         items: [
           auditEvent({
+            name: activity.session.addedToSchoolSession(session),
+            programme_ids: ['flu']
+          }),
+          auditEvent({
+            name: activity.session.bookedIntoClinic(session),
+            programme_ids: ['flu']
+          }),
+          auditEvent({
+            name: activity.session.droppedIntoClinic(session),
+            programme_ids: ['flu']
+          }),
+          auditEvent({
             name: activity.session.added(session),
             programme_ids: ['flu']
           }),

@@ -6,6 +6,7 @@ import programmesData from '../datasets/programmes.js'
 import {
   Adjustment,
   AuditEventType,
+  ClinicAttendanceType,
   Impairment,
   NoticeType,
   NotifyEmailStatus,
@@ -832,12 +833,35 @@ export class Patient extends Child {
           : session.consentOpenAt
 
       this.addEvent({
-        name: activity.session.added(session),
+        name: this.#addedToSessionActivityName(patientSession),
         type: AuditEventType.ProgrammeNote,
         createdAt: addedAt,
         createdBy_uid: session.createdBy_uid,
         programme_ids: [patientSession.programme_id]
       })
+    }
+  }
+
+  /**
+   * Get the activity for being added to a session, which depends on the kind
+   * of session, and for clinics, whether the child was booked in or dropped in
+   *
+   * @param {PatientSession} patientSession - Patient session
+   * @returns {string} Activity name
+   */
+  #addedToSessionActivityName(patientSession) {
+    const { session } = patientSession
+
+    switch (session.type) {
+      case SessionType.School:
+        return activity.session.addedToSchoolSession(session)
+      case SessionType.Clinic:
+        return patientSession.clinicAttendanceType ===
+          ClinicAttendanceType.Appointment
+          ? activity.session.bookedIntoClinic(session)
+          : activity.session.droppedIntoClinic(session)
+      default:
+        return activity.session.added(session)
     }
   }
 
