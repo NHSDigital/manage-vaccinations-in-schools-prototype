@@ -107,6 +107,12 @@ export default {
   },
   session: {
     added: (session) => `Added to the session at ${session?.location.name}`,
+    addedToSchoolSession: (session) =>
+      `Added to the school session at ${session?.location.name}`,
+    bookedIntoClinic: (session) =>
+      `Booked into the clinic session at ${session?.location.name}`,
+    droppedIntoClinic: (session) =>
+      `Dropped into the clinic session at ${session?.location.name}`,
     removed: (session) =>
       `Removed from the session at ${session?.location.name}`,
     moved: (oldSession, newSession) =>

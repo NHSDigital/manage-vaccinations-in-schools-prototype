@@ -6,6 +6,7 @@ import programmesData from '../datasets/programmes.js'
 import {
   Adjustment,
   AuditEventType,
+  ClinicAttendanceType,
   Impairment,
   NoticeType,
   NotifyEmailStatus,
@@ -823,13 +824,44 @@ export class Patient extends Child {
     patientSession = PatientSession.findOne(patientSession.uuid, this.context)
 
     if (patientSession?.session) {
+      // Children are added to a school session when consent opens, but to a
+      // clinic when they're booked into it
+      const { session } = patientSession
+      const addedAt =
+        session.type === SessionType.Clinic
+          ? patientSession.createdAt
+          : session.consentOpenAt
+
       this.addEvent({
-        name: activity.session.added(patientSession.session),
+        name: this.#addedToSessionActivityName(patientSession),
         type: AuditEventType.ProgrammeNote,
-        createdAt: patientSession.session.consentOpenAt,
-        createdBy_uid: patientSession.session.createdBy_uid,
-        programme_ids: patientSession.session.programme_ids
+        createdAt: addedAt,
+        createdBy_uid: session.createdBy_uid,
+        programme_ids: [patientSession.programme_id]
       })
+    }
+  }
+
+  /**
+   * Get the activity for being added to a session, which depends on the kind
+   * of session, and for clinics, whether the child was booked in or dropped in
+   *
+   * @param {PatientSession} patientSession - Patient session
+   * @returns {string} Activity name
+   */
+  #addedToSessionActivityName(patientSession) {
+    const { session } = patientSession
+
+    switch (session.type) {
+      case SessionType.School:
+        return activity.session.addedToSchoolSession(session)
+      case SessionType.Clinic:
+        return patientSession.clinicAttendanceType ===
+          ClinicAttendanceType.Appointment
+          ? activity.session.bookedIntoClinic(session)
+          : activity.session.droppedIntoClinic(session)
+      default:
+        return activity.session.added(session)
     }
   }
 
@@ -863,8 +895,9 @@ export class Patient extends Child {
    * Invite contact to book a clinic appointment
    *
    * @param {Array<string>} programme_ids - The programmes for which the child's invited
+   * @param {Date} [createdAt] - When the invitation was sent, if not now
    */
-  inviteToClinic(programme_ids) {
+  inviteToClinic(programme_ids, createdAt) {
     this.clinicProgramme_ids = [
       ...new Set(this.clinicProgramme_ids.concat(programme_ids))
     ]
@@ -875,6 +908,7 @@ export class Patient extends Child {
         type: AuditEventType.ProgrammeNote,
         messageRecipient: contact,
         messageTemplate: 'invite-clinic',
+        createdAt,
         patient_uuid: this.uuid,
         programme_ids: programme_ids
       })
