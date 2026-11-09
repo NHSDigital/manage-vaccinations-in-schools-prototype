@@ -116,15 +116,16 @@
   {{ heading({
     text: __("patientSession.replies.label"),
     level: 3,
-    size: "s"
+    size: "s",
+    classes: "nhsuk-u-margin-bottom-2" if patientProgramme.replies.length === 0
   }) }}
 
-  {% if patientProgramme.replies | length %}
+  {% if patientProgramme.replies.length > 0 %}
     {% for reply in patientProgramme.replies %}
       {{ consentResponseCard(reply) }}
     {% endfor %}
   {% else %}
-    <p>{{ __("patientSession.replies.none") }}</p>
+    {{ __("patientSession.replies.none") | nhsukMarkdown }}
   {% endif %}
 
   {# Responses that no longer count towards consent #}
@@ -138,4 +139,51 @@
       {% endfor %}
     {% endcall %}
   {% endif %}
+
+  {# For school sessions, tell us when consent requests and reminders are going out, if there's no response #}
+  {% if session.type === SessionType.School %}
+    {% set contactRefusers = session.consentContacts === SessionConsentContacts.All %}
+    {% set patientStatus = patientProgramme.status %}
+    {% if patientStatus === PatientStatus.Consent or (patientStatus == PatientStatus.Refused and contactRefusers) %}
+      {{ heading({
+        text: "Consent requests for this session",
+        level: 3,
+        size: "s",
+        classes: "nhsuk-u-margin-bottom-2 "
+      }) }}
+
+      {# Work out who'll get the consent requests and reminders #}
+      {% set contactsToContact = [] %}
+      {% for contact in patientProgramme.patient.contacts %}
+        {% if contact.hasContactDetails %}
+          {% set contactsToContact = contactsToContact | push(contact.fullNameAndRelationship) %}
+        {% endif %}
+      {% endfor %}
+
+      {% if contactsToContact | length %}
+        <p class="nhsuk-body nhsuk-u-margin-bottom-2">
+          Consent {{ "was" if session.areConsentRequestsSent else "will be" }} requested on {{ session.formatted.consentOpenAt }} from:
+        </p>
+
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          {% for contactDetails in contactsToContact %}
+            <li>
+              {{contactDetails}}
+            </li>
+          {% endfor %}
+        </ul>
+
+        {% if session.areConsentRequestsSent %}
+          <p class="nhsuk-body">
+            A reminder {{ "was" if session.areConsentRemindersSent else "will be" }} sent on {{ session.formatted.nextReminderDate -}}.
+          </p>
+        {% endif %}
+      {% else %}
+        <p class="nhsuk-body">
+          Consent requests cannot be sent as the child has no contacts with contact details.
+        </p>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
 {% endcall %}
