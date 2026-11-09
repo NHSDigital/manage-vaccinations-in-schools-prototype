@@ -863,8 +863,9 @@ export class Patient extends Child {
    * Invite contact to book a clinic appointment
    *
    * @param {Array<string>} programme_ids - The programmes for which the child's invited
+   * @param {Date} [createdAt] - When the invitation was sent, if not now
    */
-  inviteToClinic(programme_ids) {
+  inviteToClinic(programme_ids, createdAt) {
     this.clinicProgramme_ids = [
       ...new Set(this.clinicProgramme_ids.concat(programme_ids))
     ]
@@ -875,6 +876,7 @@ export class Patient extends Child {
         type: AuditEventType.ProgrammeNote,
         messageRecipient: contact,
         messageTemplate: 'invite-clinic',
+        createdAt,
         patient_uuid: this.uuid,
         programme_ids: programme_ids
       })
