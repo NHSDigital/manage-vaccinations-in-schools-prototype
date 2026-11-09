@@ -4486,6 +4486,11 @@ export const en = {
     sideEffects: {
       label: 'Side effects'
     }
+  },
+  scenario: {
+    links: {
+      title: '{count, plural, one {1 more link} other {{count} more links}}'
+    }
   }
 }
 

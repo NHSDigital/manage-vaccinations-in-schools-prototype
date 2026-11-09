@@ -26,17 +26,18 @@
             <p>{{ scenario.description }}</p>
 
             {% if scenario.links.length %}
-              {{ heading({
-                text: "Links",
-                level: 3,
-                size: "xs",
-                classes: "nhsuk-u-margin-bottom-2"
+              {% set listTitle = __mf("scenario.links.title", { count: scenario.links.length }) %}
+              {% set linksHtml %}
+                <ul class="nhsuk-list nhsuk-list--bullet">
+                  {% for link in scenario.links %}
+                    <li><a href="{{ link.href }}">{{ link.label }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endset %}
+              {{ details({
+                summary: listTitle,
+                html: linksHtml
               }) }}
-              <ul class="nhsuk-list nhsuk-list--bullet">
-                {% for link in scenario.links %}
-                  <li><a href="{{ link.href }}">{{ link.label }}</a></li>
-                {% endfor %}
-              </ul>
             {% endif %}
           {% endcall %}
         {% endfor %}
