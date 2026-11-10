@@ -120,8 +120,12 @@
     classes: "nhsuk-u-margin-bottom-2" if patientProgramme.replies.length === 0
   }) }}
 
+  {% set repliesAreRecent = false %}
   {% if patientProgramme.replies.length > 0 %}
     {% for reply in patientProgramme.replies %}
+      {% if session.type === SessionType.School and reply.createdAt > session.consentOpenAt %}
+        {% set repliesAreRecent = true %}
+      {% endif %}
       {{ consentResponseCard(reply) }}
     {% endfor %}
   {% else %}
@@ -144,12 +148,12 @@
   {% if session.type === SessionType.School %}
     {% set contactRefusers = session.consentContacts === SessionConsentContacts.All %}
     {% set patientStatus = patientProgramme.status %}
-    {% if patientStatus === PatientStatus.Consent or (patientStatus == PatientStatus.Refused and contactRefusers) %}
+    {% if patientStatus === PatientStatus.Consent or (patientStatus == PatientStatus.Refused and contactRefusers and not repliesAreRecent) %}
       {{ heading({
         text: "Consent requests for this session",
         level: 3,
         size: "s",
-        classes: "nhsuk-u-margin-bottom-2 "
+        classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2"
       }) }}
 
       {# Work out who'll get the consent requests and reminders #}
