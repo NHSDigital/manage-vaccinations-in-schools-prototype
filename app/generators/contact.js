@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
+  ContactPointType,
   NotifyEmailStatus,
   NotifySmsStatus,
   RelationshipType,
@@ -98,21 +99,47 @@ export function generateContact(patient, isMum, overrides = {}) {
         { value: NotifyEmailStatus.Technical, weight: 1 }
       ])
 
+  const contactPoints = []
+  if (tel) {
+    contactPoints.push({
+      type: ContactPointType.Phone,
+      value: tel,
+      status: smsStatus
+    })
+  }
+  if (email) {
+    contactPoints.push({
+      type: ContactPointType.Email,
+      value: email,
+      status: emailStatus
+    })
+  }
+
+  // Sometimes keep an older phone number or email address that has since
+  // been archived, because messages to it couldn’t be delivered
+  if (faker.datatype.boolean(0.15)) {
+    const isPhone = faker.datatype.boolean(0.5)
+    const archivedAt = faker.date.past({ years: 2 })
+
+    contactPoints.unshift({
+      createdAt: faker.date.past({ years: 3, refDate: archivedAt }),
+      type: isPhone ? ContactPointType.Phone : ContactPointType.Email,
+      value: isPhone
+        ? generatePhoneNumber()
+        : generateEmailAddress(firstName, generateLastName()),
+      status: isPhone ? NotifySmsStatus.Permanent : NotifyEmailStatus.Permanent,
+      archivedAt
+    })
+  }
+
   return new Contact({
     fullName: `${firstName} ${lastName}`,
     relationship,
     ...(relationship === RelationshipType.Other && {
       relationshipOther: 'Grandparent'
     }),
-    ...(email && {
-      email,
-      ...(emailStatus && { emailStatus })
-    }),
-    ...(tel && {
-      tel,
-      canSms,
-      ...(smsStatus && { smsStatus })
-    }),
+    contactPoints,
+    ...(tel && { canSms }),
     patient_uuid: patient.uuid
   })
 }
@@ -158,7 +185,22 @@ export function generateCommunicationNeeds(contact) {
 export function generateContactVariation(contact) {
   const [firstName, ...otherNames] = contact.fullName.split(' ')
   let lastName = otherNames.join(' ')
-  let { email, emailStatus, tel, smsStatus } = contact
+  const { email, tel } = contact
+
+  // Copy the contact points the parent still uses
+  const contactPoints = contact.activeContactPoints.map(
+    ({ type, value, status }) => ({ type, value, status })
+  )
+  const replaceValue = (type, value) => {
+    const contactPoint = contactPoints.find((point) => point.type === type)
+    if (contactPoint) {
+      contactPoint.value = value
+      contactPoint.status =
+        type === ContactPointType.Email
+          ? NotifyEmailStatus.Delivered
+          : NotifySmsStatus.Delivered
+    }
+  }
 
   // Only vary details the contact already has, so they can still be reached
   const change = faker.helpers.weightedArrayElement([
@@ -175,19 +217,20 @@ export function generateContactVariation(contact) {
         : newLastName
 
       // Email addresses are based on names, so a new surname means a new address
-      if (email) {
-        email = generateEmailAddress(firstName, lastName)
-        emailStatus = NotifyEmailStatus.Delivered
-      }
+      replaceValue(
+        ContactPointType.Email,
+        generateEmailAddress(firstName, lastName)
+      )
       break
     }
     case 'tel':
-      tel = faker.helpers.replaceSymbols('077## 9#####')
-      smsStatus = NotifySmsStatus.Delivered
+      replaceValue(ContactPointType.Phone, generatePhoneNumber())
       break
     case 'email':
-      email = generateEmailAddress(firstName, lastName)
-      emailStatus = NotifyEmailStatus.Delivered
+      replaceValue(
+        ContactPointType.Email,
+        generateEmailAddress(firstName, lastName)
+      )
       break
   }
 
@@ -195,8 +238,8 @@ export function generateContactVariation(contact) {
     fullName: `${firstName} ${lastName}`,
     relationship: contact.relationship,
     relationshipOther: contact.relationshipOther,
-    ...(email && { email, emailStatus }),
-    ...(tel && { tel, canSms: contact.canSms, smsStatus }),
+    contactPoints,
+    ...(tel && { canSms: contact.canSms }),
     patient_uuid: contact.patient_uuid
   })
 }
