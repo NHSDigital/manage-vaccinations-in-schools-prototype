@@ -4489,7 +4489,8 @@ export const en = {
   },
   scenario: {
     links: {
-      title: '{count, plural, one {1 more link} other {{count} more links}}'
+      title: '{count, plural, one {1 link} other {{count} links}}',
+      groupTitle: '{name} ({count, plural, one {1 link} other {{count} links}})'
     }
   }
 }

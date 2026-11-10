@@ -13,6 +13,13 @@ import { BaseModel } from './base.js'
  * @typedef {object} ScenarioLink
  * @property {string} label - What this links to
  * @property {string} href - URL to link to
+ * @property {string} [group] - Name of the group of links this belongs to, if any
+ */
+
+/**
+ * @typedef {object} ScenarioLinkGroup
+ * @property {string} [name] - Name of the group, or none for links not in a group
+ * @property {Array<ScenarioLink>} links - Links in the group
  */
 
 /**
@@ -38,6 +45,34 @@ export class Scenario extends BaseModel {
     this.description = options?.description
     this.startUrl = options?.startUrl
     this.links = options?.links || []
+  }
+
+  /**
+   * Get links collected into their groups, in the order each group first
+   * appears. Links not in a group come first, in a group with no name
+   *
+   * @returns {Array<ScenarioLinkGroup>} Groups of links
+   */
+  get linkGroups() {
+    const ungroupedLinks = this.links.filter((link) => !link.group)
+
+    const groupedLinksByName = new Map()
+    for (const link of this.links.filter((link) => link.group)) {
+      if (!groupedLinksByName.has(link.group)) {
+        groupedLinksByName.set(link.group, [])
+      }
+      groupedLinksByName.get(link.group).push(link)
+    }
+
+    const groups = []
+    if (ungroupedLinks.length) {
+      groups.push({ links: ungroupedLinks })
+    }
+    for (const [name, links] of groupedLinksByName) {
+      groups.push({ name, links })
+    }
+
+    return groups
   }
 }
 

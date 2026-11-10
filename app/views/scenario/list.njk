@@ -25,20 +25,25 @@
           }) %}
             <p>{{ scenario.description }}</p>
 
-            {% if scenario.links.length %}
-              {% set listTitle = __mf("scenario.links.title", { count: scenario.links.length }) %}
+            {% for linkGroup in scenario.linkGroups %}
+              {% if linkGroup.name %}
+                {% set listTitle = __mf("scenario.links.groupTitle", { name: linkGroup.name, count: linkGroup.links.length }) %}
+              {% else %}
+                {% set listTitle = __mf("scenario.links.title", { count: linkGroup.links.length }) %}
+              {% endif %}
               {% set linksHtml %}
                 <ul class="nhsuk-list nhsuk-list--bullet">
-                  {% for link in scenario.links %}
+                  {% for link in linkGroup.links %}
                     <li><a href="{{ link.href }}">{{ link.label }}</a></li>
                   {% endfor %}
                 </ul>
               {% endset %}
               {{ details({
                 summary: listTitle,
-                html: linksHtml
+                html: linksHtml,
+                classes: "nhsuk-u-margin-bottom-3" if not loop.last
               }) }}
-            {% endif %}
+            {% endfor %}
           {% endcall %}
         {% endfor %}
       {% else %}
