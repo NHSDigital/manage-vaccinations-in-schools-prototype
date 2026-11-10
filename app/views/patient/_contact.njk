@@ -1,0 +1,96 @@
+{%- from "card/macro.njk" import card %}
+{%- from "heading/macro.njk" import heading %}
+{%- from "summary-list/macro.njk" import summaryList %}
+
+{#
+  A contact, with their contact details and contact points
+
+  @param {Contact} contact - Contact
+  @param {boolean} canChange - User can change contacts
+#}
+{% macro contactSection(contact, canChange) %}
+  {% set canChangeContact = canChange and contact.isSaved %}
+
+  {% call card({
+    heading: {
+      text: contact.fullNameAndRelationship,
+      level: 3,
+      size: "m"
+    },
+    actions: {
+      items: [
+        {
+          text: __("contactPoint.new.tel.label"),
+          href: contact.uri + "/contact-points/new/tel"
+        } if not contact.isSensitive,
+        {
+          text: __("contactPoint.new.email.label"),
+          href: contact.uri + "/contact-points/new/email"
+        } if not contact.isSensitive,
+        {
+          html: __("actions.edit") + "<span class=\"nhsuk-u-visually-hidden\"> " + contact.formatted.fullName + "</span>",
+          href: contact.uri + "/edit"
+        },
+        {
+          html: __("actions.delete") + "<span class=\"nhsuk-u-visually-hidden\"> " + contact.formatted.fullName + "</span>",
+          href: contact.uri + "/delete"
+        }
+      ]
+    } if canChangeContact
+  }) %}
+    {#
+      Preferences are only known once a parent has responded to a consent
+      request, so only show them if they’ve been given
+    #}
+    {% set preferenceRows = summaryRows(contact, {
+      canSms: {},
+      communicationNeeds: {}
+    }) %}
+
+    {{ summaryList({
+      classes: "nhsuk-u-margin-bottom-4",
+      lastRowBorder: false,
+      rows: preferenceRows
+    }) if preferenceRows | length }}
+
+    {% if not contact.isSensitive %}
+    <div class="nhsuk-grid-row nhsuk-card-group">
+      {% for contactPoint in contact.sortedContactPoints %}
+      <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        {{ summaryList({
+          card: {
+            classes: "app-card--compact app-card--offset",
+            heading: {
+              text: contactPoint.formatted.value | safe,
+              visuallyHiddenText: __("contactPoint.archived.label") if contactPoint.isArchived,
+              level: 4,
+              size: "s"
+            },
+            actions: {
+              items: [
+                {
+                  text: __("actions.restore"),
+                  href: contact.uri + "/contact-points/" + contactPoint.uuid + "/restore"
+                }
+              ] if contactPoint.isArchived else [
+                {
+                  text: __("actions.archive"),
+                  href: contact.uri + "/contact-points/" + contactPoint.uuid + "/archive"
+                }
+              ]
+            } if canChangeContact
+          },
+          lastRowBorder: false,
+          rows: summaryRows(contactPoint, {
+            createdAt: {} if not contactPoint.updatedAt else none,
+            updatedAt: {} if not contactPoint.isArchived else none,
+            archivedAt: {},
+            sources: {}
+          })
+        }) }}
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endcall %}
+{% endmacro %}

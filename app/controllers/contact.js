@@ -1,8 +1,21 @@
-import { RelationshipType } from '../enums.js'
+import { ContactPointSource, RelationshipType } from '../enums.js'
 import { Contact, Patient } from '../models.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactController = {
+  /**
+   * Only users in a SAIS team (not school users) can change contacts
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  checkCanChange(request, response, next) {
+    if (response.locals.account?.isSchoolUser) {
+      return response.sendStatus(403)
+    }
+
+    next()
+  },
+
   /**
    * @type {RequestParamHandler}
    */
@@ -40,12 +53,19 @@ export const contactController = {
     return (request, response) => {
       const { contact_uuid } = request.params
       const { data } = request.session
-      const { __, back } = response.locals
+      const { __, account, back } = response.locals
 
       // Update session data
       let contact
       if (type === 'new') {
-        contact = Contact.create(data.wizard.contacts[contact_uuid], data)
+        // Phone numbers and email addresses given were added manually
+        contact = new Contact(data.wizard.contacts[contact_uuid], data)
+        for (const contactPoint of contact.contactPoints) {
+          contactPoint.sources = [ContactPointSource.Manual]
+          contactPoint.createdBy_uid = account?.uid
+        }
+
+        contact = Contact.create(contact, data)
 
         // Add contact to patient contacts
         const patient = Patient.findOne(contact.patient_uuid, data)

@@ -1,0 +1,20 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("contactPoint.new." + field + ".title") %}
+{% set confirmButtonText = __("contactPoint.new.confirm") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      text: title,
+      caption: contact.fullNameAndRelationship,
+      size: "l",
+      isPageHeading: true
+    },
+    type: field,
+    autocomplete: "off",
+    spellcheck: false if field == "email",
+    classes: "nhsuk-input--width-20" if field == "tel",
+    decorate: "contactPoint." + field
+  }) }}
+{% endblock %}

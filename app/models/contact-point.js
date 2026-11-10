@@ -128,7 +128,7 @@ export class ContactPoint extends BaseModel {
         get: (_target, prop) => {
           switch (prop) {
             case 'value':
-              return this.value
+              return this.isArchived ? `<s>${this.value}</s>` : this.value
             case 'sources':
               return this.sources.length > 0
                 ? this.sources.join(', ')

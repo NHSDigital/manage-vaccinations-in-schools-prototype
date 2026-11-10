@@ -139,6 +139,24 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Has been saved (rather than being a copy kept by a reply or booking)
+   *
+   * @returns {boolean} Has been saved
+   */
+  get isSaved() {
+    return !!this.context?.contacts?.[this.uuid]
+  }
+
+  /**
+   * Get contact points, with those that haven’t been archived first
+   *
+   * @returns {Array<ContactPoint>} Contact points
+   */
+  get sortedContactPoints() {
+    return [...this.activeContactPoints, ...this.archivedContactPoints]
+  }
+
+  /**
    * Get contact points that haven’t been archived
    *
    * @returns {Array<ContactPoint>} Contact points
@@ -449,10 +467,6 @@ export class Contact extends BaseModel {
       {},
       {
         get: (_target, prop) => {
-          const isSensitive = this.patient?.isSensitive
-          const redactIfSensitive = (value) =>
-            isSensitive && value !== undefined ? 'Sensitive' : value
-
           // Phone numbers and email addresses are an empty string, rather
           // than undefined, if there are none (or they’re hidden), so summary
           // lists don’t show a contact’s unformatted values instead
