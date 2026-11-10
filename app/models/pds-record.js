@@ -74,9 +74,9 @@ export class PDSRecord extends Child {
    */
   get contacts() {
     if (!this.isSensitive) {
-      return this.contact_uuids.map((uuid) =>
-        Contact.findOne(uuid, this.context)
-      )
+      return this.contact_uuids
+        .map((uuid) => Contact.findOne(uuid, this.context))
+        .filter((contact) => contact)
     }
   }
 

@@ -141,6 +141,15 @@ export const contactController = {
     const { data } = request.session
     const { __, contact } = response.locals
 
+    // Remove contact from the child’s record, so it doesn’t point to nothing
+    const patient = Patient.findOne(contact.patient_uuid, data)
+    if (patient) {
+      const contact_uuids = patient.contact_uuids.filter(
+        (uuid) => uuid !== contact_uuid
+      )
+      Patient.update(patient.uuid, { contact_uuids }, data)
+    }
+
     Contact.delete(contact_uuid, data)
 
     request.flash('success', __(`contact.delete.success`))
