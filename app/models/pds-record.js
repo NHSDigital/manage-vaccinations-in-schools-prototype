@@ -70,14 +70,17 @@ export class PDSRecord extends Child {
   /**
    * Get contacts (from record and replies)
    *
-   * @returns {Array<Contact>|undefined} Contacts
+   * @returns {Array<Contact>} Contacts
    */
   get contacts() {
-    if (!this.isSensitive) {
-      return this.contact_uuids
-        .map((uuid) => Contact.findOne(uuid, this.context))
-        .filter((contact) => contact)
+    // Don’t show contact details for sensitive records
+    if (this.isSensitive) {
+      return []
     }
+
+    return this.contact_uuids
+      .map((uuid) => Contact.findOne(uuid, this.context))
+      .filter((contact) => contact)
   }
 
   /**
