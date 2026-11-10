@@ -264,9 +264,13 @@ export class Patient extends Child {
   get contactsExcludingClinicBookings() {
     const contacts = new Map()
 
-    this.contact_uuids.forEach((uuid) =>
-      contacts.set(uuid, Contact.findOne(uuid, this.context))
-    )
+    // Skip any contacts that no longer exist
+    for (const uuid of this.contact_uuids) {
+      const contact = Contact.findOne(uuid, this.context)
+      if (contact) {
+        contacts.set(uuid, contact)
+      }
+    }
 
     // Add any new contacts found in consent replies
     this.repliesExcludingClinicBookings
