@@ -185,11 +185,15 @@ export function generateCommunicationNeeds(contact) {
 export function generateContactVariation(contact) {
   const [firstName, ...otherNames] = contact.fullName.split(' ')
   let lastName = otherNames.join(' ')
-  const { email, tel } = contact
-
   // Copy the contact points the parent still uses
   const contactPoints = contact.activeContactPoints.map(
     ({ type, value, status }) => ({ type, value, status })
+  )
+  const hasPhone = contactPoints.some(
+    ({ type }) => type === ContactPointType.Phone
+  )
+  const hasEmail = contactPoints.some(
+    ({ type }) => type === ContactPointType.Email
   )
   const replaceValue = (type, value) => {
     const contactPoint = contactPoints.find((point) => point.type === type)
@@ -205,8 +209,8 @@ export function generateContactVariation(contact) {
   // Only vary details the contact already has, so they can still be reached
   const change = faker.helpers.weightedArrayElement([
     { value: 'surname', weight: 3 },
-    ...(tel ? [{ value: 'tel', weight: 1 }] : []),
-    ...(email ? [{ value: 'email', weight: 1 }] : [])
+    ...(hasPhone ? [{ value: 'tel', weight: 1 }] : []),
+    ...(hasEmail ? [{ value: 'email', weight: 1 }] : [])
   ])
 
   switch (change) {
@@ -239,7 +243,7 @@ export function generateContactVariation(contact) {
     relationship: contact.relationship,
     relationshipOther: contact.relationshipOther,
     contactPoints,
-    ...(tel && { canSms: contact.canSms }),
+    ...(hasPhone && { canSms: contact.canSms }),
     patient_uuid: contact.patient_uuid
   })
 }
