@@ -406,7 +406,14 @@ export default () => {
       data = contextlessData
     }
 
-    const json = JSON.stringify(data, null, 2)
+    // Also leave out the context of any nested records (like a clinic
+    // booking’s contact and their contact points)
+    const json = JSON.stringify(
+      data,
+      (key, value) =>
+        !requiresContext && key === 'context' ? undefined : value,
+      2
+    )
     return filters.safe(`<pre>${json}</pre>`)
   }
 
