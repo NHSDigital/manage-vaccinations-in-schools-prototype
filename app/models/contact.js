@@ -2,6 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ContactPointType, RelationshipType } from '../enums.js'
 import { ContactPoint, Patient } from '../models.js'
+import { tokenize } from '../utils/object.js'
 import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -339,6 +340,22 @@ export class Contact extends BaseModel {
         : true)
 
     return hasSameName && hasSameRelationship
+  }
+
+  /**
+   * Get tokenised values (to use in search queries)
+   *
+   * Includes archived contact points, so a child can be found using a phone
+   * number or email address a parent no longer uses
+   *
+   * @returns {string} Tokens
+   */
+  get tokenized() {
+    const contactPointTokens = this.contactPoints
+      .map(({ value }) => value?.toLowerCase())
+      .filter((value) => value !== undefined)
+
+    return [tokenize(this, ['fullName']), ...contactPointTokens].join(' ')
   }
 
   /**

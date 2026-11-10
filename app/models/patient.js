@@ -606,10 +606,7 @@ export class Patient extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const contactTokens = []
-    for (const contact of this.contacts) {
-      contactTokens.push(tokenize(contact, ['fullName', 'tel', 'email']))
-    }
+    const contactTokens = this.contacts.map((contact) => contact.tokenized)
 
     const childTokens = tokenize(this, [
       'nhsn',
