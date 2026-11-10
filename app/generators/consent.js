@@ -2,6 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { healthConditions } from '../datasets/health-conditions.js'
 import {
+  ContactPointSource,
   ProgrammeType,
   ReplyDecision,
   ReplyMethod,
@@ -17,7 +18,10 @@ import {
   generateTriageNote
 } from '../utils/reply.js'
 
-import { generateCommunicationNeeds } from './contact.js'
+import {
+  generateCommunicationNeeds,
+  generateRespondentDetails
+} from './contact.js'
 
 /**
  * Generate fake consent
@@ -133,13 +137,15 @@ export function generateConsent(
     return
   }
 
+  const createdAt =
+    lastConsentCreatedAt ||
+    faker.date.between({
+      from: session.consentOpenAt,
+      to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
+    })
+
   return new Consent({
-    createdAt:
-      lastConsentCreatedAt ||
-      faker.date.between({
-        from: session.consentOpenAt,
-        to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
-      }),
+    createdAt,
     child,
     decision,
     method,
@@ -181,6 +187,11 @@ export function generateConsent(
       hasRequestedConsultation
     }),
     contact_uuid: contact.uuid,
+    // Details the parent gave about themselves in their response
+    contact_: generateRespondentDetails(contact, {
+      createdAt,
+      source: ContactPointSource.ConsentResponse
+    }),
     // Communication needs given in the response
     ...generateCommunicationNeeds(contact),
     programme_id: programme.id,

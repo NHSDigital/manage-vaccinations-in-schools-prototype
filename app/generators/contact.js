@@ -1,6 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
+  AcademicYear,
+  ContactPointSource,
   ContactPointType,
   NotifyEmailStatus,
   NotifySmsStatus,
@@ -8,6 +10,7 @@ import {
   UploadType
 } from '../enums.js'
 import { Contact } from '../models.js'
+import { today } from '../utils/date.js'
 
 import { generateLastName, generateParentFirstName } from './name.js'
 
@@ -42,6 +45,11 @@ function generatePhoneNumber() {
  * @param {object} [overrides] - Choices to make instead of leaving them to chance
  * @param {boolean} [overrides.isEmailDelivered] - Contact has an email address
  *   that messages are delivered to
+ * @param {Array<ContactPointSource>} [overrides.sources] - Where the contact’s
+ *   phone number and email address came from (by default, the child’s cohort
+ *   or class list records)
+ * @param {Date} [overrides.createdAt] - When the phone number and email
+ *   address were given
  * @returns {Contact} Contact
  */
 export function generateContact(patient, isMum, overrides = {}) {
@@ -78,7 +86,6 @@ export function generateContact(patient, isMum, overrides = {}) {
   // Contact details
   const tel = faker.helpers.maybe(generatePhoneNumber, { probability: 0.6 })
 
-  const canSms = faker.datatype.boolean(0.5)
   const smsStatus = faker.helpers.weightedArrayElement([
     { value: NotifySmsStatus.Delivered, weight: 100 },
     { value: NotifySmsStatus.Permanent, weight: 10 },
@@ -99,36 +106,67 @@ export function generateContact(patient, isMum, overrides = {}) {
         { value: NotifyEmailStatus.Technical, weight: 1 }
       ])
 
+  // Where the contact details came from, and when
+  const sources =
+    overrides.sources ||
+    faker.helpers.weightedArrayElement([
+      { value: [ContactPointSource.Cohort], weight: 6 },
+      { value: [ContactPointSource.ClassList], weight: 3 },
+      {
+        value: [ContactPointSource.Cohort, ContactPointSource.ClassList],
+        weight: 1
+      }
+    ])
+  // Records were added to Mavis before the first academic year it has data for
+  const firstAcademicYearStartsAt = new Date(
+    Math.min(...Object.keys(AcademicYear).map(Number)),
+    8,
+    1
+  )
+  const createdAt =
+    overrides.createdAt ||
+    faker.date.past({ years: 2, refDate: firstAcademicYearStartsAt })
+  const updatedAt =
+    sources.length > 1
+      ? faker.date.between({ from: createdAt, to: firstAcademicYearStartsAt })
+      : undefined
+
   const contactPoints = []
   if (tel) {
     contactPoints.push({
+      createdAt,
+      updatedAt,
       type: ContactPointType.Phone,
       value: tel,
-      status: smsStatus
+      status: smsStatus,
+      sources
     })
   }
   if (email) {
     contactPoints.push({
+      createdAt,
+      updatedAt,
       type: ContactPointType.Email,
       value: email,
-      status: emailStatus
+      status: emailStatus,
+      sources
     })
   }
 
   // Sometimes keep an older phone number or email address that has since
   // been archived, because messages to it couldn’t be delivered
-  if (faker.datatype.boolean(0.15)) {
+  if (!overrides.sources && faker.datatype.boolean(0.15)) {
     const isPhone = faker.datatype.boolean(0.5)
-    const archivedAt = faker.date.past({ years: 2 })
 
     contactPoints.unshift({
-      createdAt: faker.date.past({ years: 3, refDate: archivedAt }),
+      createdAt: faker.date.past({ years: 3, refDate: createdAt }),
       type: isPhone ? ContactPointType.Phone : ContactPointType.Email,
       value: isPhone
         ? generatePhoneNumber()
         : generateEmailAddress(firstName, generateLastName()),
       status: isPhone ? NotifySmsStatus.Permanent : NotifyEmailStatus.Permanent,
-      archivedAt
+      sources: [faker.helpers.arrayElement(sources)],
+      archivedAt: faker.date.between({ from: createdAt, to: today() })
     })
   }
 
@@ -139,7 +177,6 @@ export function generateContact(patient, isMum, overrides = {}) {
       relationshipOther: 'Grandparent'
     }),
     contactPoints,
-    ...(tel && { canSms }),
     patient_uuid: patient.uuid
   })
 }
@@ -175,6 +212,75 @@ export function generateCommunicationNeeds(contact) {
 }
 
 /**
+ * Generate the contact preferences a parent gives in a consent response
+ *
+ * @param {Contact} contact - Contact
+ * @returns {object} Whether they can get text messages, and any communication
+ *   needs
+ */
+export function generateContactPreferences(contact) {
+  const hasPhone = !!contact.firstActiveContactPoint(ContactPointType.Phone)
+
+  // If telephone number provided, sometimes add a communication need
+  const hasCommunicationNeeds = faker.datatype.boolean(0.2)
+  let communicationNeeds
+  if (hasPhone && hasCommunicationNeeds) {
+    communicationNeeds =
+      'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
+  }
+
+  return {
+    ...(hasPhone && { canSms: faker.datatype.boolean(0.5) }),
+    hasCommunicationNeeds,
+    communicationNeeds
+  }
+}
+
+/**
+ * Generate the details a parent gives about themselves when responding to a
+ * request for consent, or booking a clinic appointment
+ *
+ * These are the contact’s current phone numbers and email addresses, and
+ * their contact preferences (the same as any they’ve given before)
+ *
+ * @param {Contact} contact - Contact responding
+ * @param {object} options - Options
+ * @param {Date} options.createdAt - When they responded
+ * @param {ContactPointSource} options.source - How they responded
+ * @returns {Contact} Details given in the response
+ */
+export function generateRespondentDetails(contact, { createdAt, source }) {
+  const hasPreferences =
+    contact.canSms !== undefined || contact.hasCommunicationNeeds !== undefined
+  const preferences = hasPreferences
+    ? {
+        canSms: contact.canSms,
+        hasCommunicationNeeds: contact.hasCommunicationNeeds,
+        communicationNeeds: contact.communicationNeeds
+      }
+    : generateContactPreferences(contact)
+
+  return new Contact({
+    uuid: contact.uuid,
+    fullName: contact.fullName,
+    relationship: contact.relationship,
+    relationshipOther: contact.relationshipOther,
+    hasParentalResponsibility: contact.hasParentalResponsibility,
+    contactPoints: contact.activeContactPoints.map(
+      ({ type, value, status }) => ({
+        createdAt,
+        type,
+        value,
+        status,
+        sources: [source]
+      })
+    ),
+    ...preferences,
+    patient_uuid: contact.patient_uuid
+  })
+}
+
+/**
  * Generate a variation of an existing contact, as if the same person has given
  * slightly different details, e.g. a mum who has remarried and changed her
  * surname, or has a new phone number
@@ -185,7 +291,9 @@ export function generateCommunicationNeeds(contact) {
 export function generateContactVariation(contact) {
   const [firstName, ...otherNames] = contact.fullName.split(' ')
   let lastName = otherNames.join(' ')
-  // Copy the contact points the parent still uses
+
+  // Copy the contact points the parent still uses. They’re given in a consent
+  // response, so `addConsentResponseDetails` adds their source
   const contactPoints = contact.activeContactPoints.map(
     ({ type, value, status }) => ({ type, value, status })
   )
@@ -243,7 +351,6 @@ export function generateContactVariation(contact) {
     relationship: contact.relationship,
     relationshipOther: contact.relationshipOther,
     contactPoints,
-    ...(hasPhone && { canSms: contact.canSms }),
     patient_uuid: contact.patient_uuid
   })
 }

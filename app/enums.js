@@ -413,6 +413,17 @@ export const ContactPointType = {
  * @readonly
  * @enum {string}
  */
+export const ContactPointSource = {
+  Cohort: 'Cohort record',
+  ClassList: 'Class list record',
+  ConsentResponse: 'Consent response',
+  ClinicBooking: 'Clinic booking'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const NotifyEmailStatus = {
   Delivered: 'Delivered',
   Permanent: 'Email address does not exist',
