@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
+  ContactPointType,
   SchoolUploadStatus,
   TeamUploadStatus,
   UploadStatus,
@@ -45,14 +46,46 @@ import { BaseModel } from './base.js'
  * @property {string} [rejectionReason] - Rejection reason
  * @property {object} [validations] - File validations, keyed by row number
  * @property {boolean} [hasFailed] - Records failed data integrity checks
- * @property {object} [contactChanges] - New parent contact details found in
- *   the file, keyed by contact UUID
+ * @property {Record<string, Array<ContactPointOptions>>} [contactChanges] -
+ *   New contact points for parents found in the file, keyed by contact UUID
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {object} [yearGroupChanges] - Year groups children were in before
  *   the file moved them up, keyed by patient UUID
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  * @property {Array<string>} [assignee_emails] - School emails request sent to
  */
+
+/**
+ * Normalise contact changes found in an upload
+ *
+ * Older data gave a single phone number and email address for each contact,
+ * rather than a list of contact points
+ *
+ * @param {object} [contactChanges] - Contact changes, keyed by contact UUID
+ * @returns {Record<string, Array<ContactPointOptions>>} Contact points, keyed
+ *   by contact UUID
+ */
+function normaliseContactChanges(contactChanges = {}) {
+  return Object.fromEntries(
+    Object.entries(contactChanges).map(([uuid, changes]) => {
+      if (Array.isArray(changes)) {
+        return [uuid, changes]
+      }
+
+      return [
+        uuid,
+        [
+          ...(changes?.tel
+            ? [{ type: ContactPointType.Phone, value: changes.tel }]
+            : []),
+          ...(changes?.email
+            ? [{ type: ContactPointType.Email, value: changes.email }]
+            : [])
+        ]
+      ]
+    })
+  )
+}
 
 /**
  * @class Upload
@@ -118,7 +151,7 @@ export class Upload extends BaseModel {
     this.rejectionReason = options?.rejectionReason
     this.validations = options?.validations || {}
     this.hasFailed = stringToBoolean(options?.hasFailed)
-    this.contactChanges = options?.contactChanges || {}
+    this.contactChanges = normaliseContactChanges(options?.contactChanges)
     this.yearGroupChanges = options?.yearGroupChanges || {}
     this.patient_uuids = stringToArray(options?.patient_uuids)
     this.assignee_emails = stringToArray(options?.assignee_emails)
@@ -349,18 +382,19 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Get parent contacts with new contact details that need review
-   * Each contact has the details found in the file as its pending changes
+   * Get parent contacts with new contact points that need review
+   * Each contact has the contact points found in the file as pending
    *
-   * @returns {Array<Contact>} Contacts with pending changes
+   * @returns {Array<Contact>} Contacts with pending contact points
    */
   get pendingContacts() {
     return Object.entries(this.contactChanges)
-      .map(([uuid, pendingChanges]) => {
+      .map(([uuid, pendingContactPoints]) => {
         const contact = Contact.findOne(uuid, this.context)
 
         return (
-          contact && new Contact({ ...contact, pendingChanges }, this.context)
+          contact &&
+          new Contact({ ...contact, pendingContactPoints }, this.context)
         )
       })
       .filter(Boolean)
@@ -683,4 +717,5 @@ Upload.relate('school_id', () => School, 'school')
  * @import { UploadFormat } from '../enums.js'
  * @import { Move } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ContactPointOptions } from './contact-point.js'
  */

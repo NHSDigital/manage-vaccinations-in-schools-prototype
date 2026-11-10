@@ -245,16 +245,17 @@ export function generateContactVariation(contact) {
 }
 
 /**
- * Generate new contact details for parents of children in an upload
+ * Generate new contact points for parents of children in an upload
  *
  * Picks 1–5 parents who are missing a phone number or email address, and
- * generates the details the file adds for them. Only files that passed
+ * generates the contact points the file adds for them. Only files that passed
  * validation and data checks are compared with records in Mavis, and
  * vaccination records don’t include parent details.
  *
  * @param {Upload} upload - Upload
  * @param {Array<Patient>} patients - All patients
- * @returns {object} New contact details, keyed by contact UUID
+ * @returns {Record<string, Array<object>>} New contact points, keyed by
+ *   contact UUID
  */
 export function generateUploadContactChanges(upload, patients) {
   if (!upload.hasPassedChecks || upload.type === UploadType.Report) {
@@ -269,7 +270,11 @@ export function generateUploadContactChanges(upload, patients) {
         patient.contact_uuids.includes(uuid)
       )
     )
-    .filter((contact) => !contact.tel || !contact.email)
+    .filter(
+      (contact) =>
+        !contact.firstActiveContactPoint(ContactPointType.Phone) ||
+        !contact.firstActiveContactPoint(ContactPointType.Email)
+    )
 
   const contactChanges = {}
   for (const contact of faker.helpers.arrayElements(contacts, {
@@ -278,10 +283,19 @@ export function generateUploadContactChanges(upload, patients) {
   })) {
     const [firstName, ...lastNames] = contact.fullName.split(' ')
 
-    contactChanges[contact.uuid] = {
-      ...(!contact.tel && { tel: generatePhoneNumber() }),
-      ...(!contact.email && {
-        email: generateEmailAddress(firstName, lastNames.join(' '))
+    contactChanges[contact.uuid] = []
+
+    if (!contact.firstActiveContactPoint(ContactPointType.Phone)) {
+      contactChanges[contact.uuid].push({
+        type: ContactPointType.Phone,
+        value: generatePhoneNumber()
+      })
+    }
+
+    if (!contact.firstActiveContactPoint(ContactPointType.Email)) {
+      contactChanges[contact.uuid].push({
+        type: ContactPointType.Email,
+        value: generateEmailAddress(firstName, lastNames.join(' '))
       })
     }
   }
