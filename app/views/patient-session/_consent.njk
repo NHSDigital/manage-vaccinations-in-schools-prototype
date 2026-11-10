@@ -1,16 +1,13 @@
-{% from "../_macros/contact-email.njk" import appContactEmail with context %}
-{% from "../_macros/contact-sms.njk" import appContactSms with context %}
-
 {% macro consentResponseCard(reply) %}
   {% call card({
     classes: "app-card--compact app-card--offset",
     heading: {
       text: reply.fullNameAndRelationship,
       caption: {
-        text: 
+        text:
           ("Phone: " + reply.contact.tel) if reply.contact.tel else ("Email: " + reply.contact.email),
         placement: "end"
-      },  
+      },
       level: 4
     },
     href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered and (not reply.clinicAppointment or reply.clinicAppointment.status === ClinicAppointmentStatus.Booked),
