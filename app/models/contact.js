@@ -53,10 +53,15 @@ export class Contact extends BaseModel {
       this?.relationship === RelationshipType.Other
         ? options?.relationshipOther
         : undefined
-    this.hasParentalResponsibility =
-      this.relationship === RelationshipType.Other || RelationshipType.Fosterer
-        ? stringToBoolean(options.hasParentalResponsibility)
-        : undefined
+    // Only ask about parental responsibility if it isn’t implied by the
+    // relationship (as it is for mums and dads)
+    this.hasParentalResponsibility = [
+      RelationshipType.Fosterer,
+      RelationshipType.Guardian,
+      RelationshipType.Other
+    ].includes(this.relationship)
+      ? stringToBoolean(options?.hasParentalResponsibility)
+      : undefined
     this.canNotify = stringToBoolean(options?.canNotify)
     this.tel = options?.tel
     this.email = options?.email
