@@ -343,6 +343,17 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Has an active contact point that messages are being delivered to
+   *
+   * @returns {boolean} Has a contact point that messages are delivered to
+   */
+  get hasDeliveredContactPoint() {
+    return this.activeContactPoints.some(
+      (contactPoint) => contactPoint.isDelivered
+    )
+  }
+
+  /**
    * Get tokenised values (to use in search queries)
    *
    * Includes archived contact points, so a child can be found using a phone
