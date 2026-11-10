@@ -390,23 +390,15 @@ export default () => {
   globals.inspect = function (data, requiresContext = false) {
     const { filters } = this.ctx.settings.nunjucksEnv
 
-    if (!requiresContext) {
-      const contextlessData = structuredClone(data)
+    // Leave out the context of records, including any nested inside them
+    // (like a clinic booking’s contact), unless asked for
+    const json = JSON.stringify(
+      data,
+      (key, value) =>
+        !requiresContext && key === 'context' ? undefined : value,
+      2
+    )
 
-      // Remove context whether data is a single record or a collection of records
-      if (contextlessData.context) {
-        delete contextlessData.context
-      } else {
-        for (const item of Object.values(contextlessData)) {
-          if (item.context) {
-            delete item.context
-          }
-        }
-      }
-      data = contextlessData
-    }
-
-    const json = JSON.stringify(data, null, 2)
     return filters.safe(`<pre>${json}</pre>`)
   }
 
