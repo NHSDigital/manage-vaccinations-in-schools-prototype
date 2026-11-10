@@ -197,6 +197,26 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Get formatted values of active contact points of a given type
+   *
+   * TODO: Hide, rather than redact, contact points on sensitive records
+   *
+   * @param {ContactPointType} type - Type of contact point
+   * @returns {Array<string>} Formatted values
+   */
+  formattedContactPointValues(type) {
+    const values = this.activeContactPoints
+      .filter((contactPoint) => contactPoint.type === type)
+      .map((contactPoint) => contactPoint.formatted.value)
+
+    if (values.length > 0 && this.patient?.isSensitive) {
+      return ['Sensitive']
+    }
+
+    return values
+  }
+
+  /**
    * Get first active contact point of a given type
    *
    * @param {ContactPointType} type - Type of contact point
@@ -430,9 +450,17 @@ export class Contact extends BaseModel {
             case 'relationship':
               return formatOther(this.relationshipOther, this.relationship)
             case 'email':
-              return redactIfSensitive(this.email)
+              return (
+                this.formattedContactPointValues(ContactPointType.Email).join(
+                  '<br>'
+                ) || undefined
+              )
             case 'tel':
-              return redactIfSensitive(this.tel)
+              return (
+                this.formattedContactPointValues(ContactPointType.Phone).join(
+                  '<br>'
+                ) || undefined
+              )
             default:
               return undefined
           }

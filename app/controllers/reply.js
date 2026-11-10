@@ -1,6 +1,7 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import {
+  ContactPointType,
   GillickCompetent,
   RelationshipType,
   ReplyDecision,
@@ -310,11 +311,20 @@ export const replyController = {
       }
 
       response.locals.respondentItems = patientProgramme.patient.contacts.map(
-        (contact) => ({
-          text: formatContact(contact, false),
-          hint: contact.tel && `Phone: ${contact.formatted.tel}`,
-          value: contact.uuid
-        })
+        (contact) => {
+          const phoneNumbers = contact.formattedContactPointValues(
+            ContactPointType.Phone
+          )
+
+          return {
+            text: formatContact(contact, false),
+            hint:
+              phoneNumbers.length > 0
+                ? `Phone: ${phoneNumbers.join(', ')}`
+                : undefined,
+            value: contact.uuid
+          }
+        }
       )
 
       // Child can self consent if assessed as Gillick competent
