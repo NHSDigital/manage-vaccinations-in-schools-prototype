@@ -1909,7 +1909,7 @@ export const en = {
       label: 'Phone number'
     },
     hasCommunicationNeeds: {
-      label: 'Do they have any communication or language needs?',
+      title: 'Do they have any communication or language needs?',
       yes: 'Yes',
       no: 'No'
     },
