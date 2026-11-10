@@ -27,6 +27,7 @@ import {
   User
 } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
+import { today } from '../utils/date.js'
 import {
   getLocationSearchType,
   getPostcodeSector
@@ -69,6 +70,7 @@ import {
  * @property {string} [additionalSupportNeedsDetails] - Details of the child's additional support needs
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {ClinicAppointmentStatus} [status] - Has this appointment been archived?
+ * @property {Date} [cancelledAt] - When the appointment was cancelled, if known
  * @property {string} [note] - Note about this clinic appointment
  * @property {Array<AppointmentAbandonmentReason>} [abandonmentReasons] - Reasons for abandoning this appointment
  * @property {string} [abandonmentReasonOther] - Details of the custom reason for abandonment
@@ -120,6 +122,9 @@ export class ClinicAppointment {
     this.healthAnswers = options?.healthAnswers
 
     this.status = options?.status ?? ClinicAppointmentStatus.Booked
+    this.cancelledAt = options?.cancelledAt
+      ? new Date(options.cancelledAt)
+      : undefined
     this.note = options?.note
 
     this.abandonmentReasons = stringToArray(options?.abandonmentReasons)
@@ -221,6 +226,7 @@ export class ClinicAppointment {
         healthAnswers: this.#getHealthAnswersForProgramme(programme),
         // Cancelled appointments no longer count, like invalid responses
         isInvalidated: this.status === ClinicAppointmentStatus.Cancelled,
+        invalidatedAt: this.cancelledAt,
         // Consent counts from when the appointment was first booked, even
         // if it’s since been changed
         createdAt: this.booking?.createdAt
@@ -378,6 +384,7 @@ export class ClinicAppointment {
 
     // Flag as cancelled
     this.status = ClinicAppointmentStatus.Cancelled
+    this.cancelledAt = today()
     if (!this.patient_uuid) return
 
     // Strip the relevant patient sessions from the patient record

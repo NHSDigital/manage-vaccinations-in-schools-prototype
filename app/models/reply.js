@@ -64,6 +64,8 @@ import { BaseModel } from './base.js'
  * @property {boolean} [hasGivenConsent] - Reply gives consent
  * @property {boolean} [hasRefusedConsent] - Reply refuses consent
  * @property {boolean} [isInvalidated] - Reply is invalid
+ * @property {Date} [invalidatedAt] - When the reply was marked as invalid, if
+ *   known
  * @property {ReplyMethod} [method] - Reply method
  * @property {object} [healthAnswers] - Answers to health questions
  * @property {object} [firstDose] - First dose
@@ -143,6 +145,10 @@ export class Reply extends BaseModel {
       this?.decision === ReplyDecision.NoResponse
         ? false // Don’t show non response as invalid
         : stringToBoolean(options?.isInvalidated) || false
+    this.invalidatedAt =
+      this.isInvalidated && options?.invalidatedAt
+        ? new Date(options.invalidatedAt)
+        : undefined
     this.method = options?.method
     this.hasSelfConsent = options?.hasSelfConsent || false
     this.clinicAppointment_uuid = options?.clinicAppointment_uuid

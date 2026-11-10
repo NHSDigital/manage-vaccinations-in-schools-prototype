@@ -4,6 +4,7 @@ import activity from '../datasets/activity.js'
 import {
   AuditEventType,
   ConsentStatus,
+  ConsentVaccineCriteria,
   InstructionStatus,
   PatientClinicStatus,
   PatientConsentStatus,
@@ -78,6 +79,24 @@ import {
 } from '../utils/triage.js'
 
 import { BaseModel } from './base.js'
+
+/**
+ * Why a triage stopped counting before it expired
+ *
+ * @readonly
+ * @enum {string}
+ */
+const TriageInvalidationReason = {
+  NewResponse: 'New response',
+  ResponseInvalidated: 'Response invalidated',
+  AppointmentCancelled: 'Appointment cancelled'
+}
+
+/**
+ * @typedef {object} TriageInvalidation
+ * @property {Date} invalidatedAt - When the triage was invalidated
+ * @property {TriageInvalidationReason} reason - Why it was invalidated
+ */
 
 /**
  * @typedef {BaseModelOptions & object} PatientProgrammeOptions
@@ -321,7 +340,7 @@ export class PatientProgramme extends BaseModel {
 
   /**
    * Get responses whose health answers were reviewed in a triage, i.e. those
-   * giving consent before the triage was recorded, and not since invalidated
+   * giving consent before the triage was recorded, that still counted at the time
    *
    * @param {AuditEvent} triageNote - Triage note
    * @returns {Array<Reply>} Responses
@@ -332,9 +351,28 @@ export class PatientProgramme extends BaseModel {
     return (this.#allDeliveredReplies ?? []).filter(
       (reply) =>
         reply.hasGivenConsent &&
-        !reply.isInvalidated &&
-        !isAfter(new Date(reply.createdAt), triagedAt)
+        !isAfter(new Date(reply.createdAt), triagedAt) &&
+        !this.#wasReplyInvalidatedBefore(reply, triagedAt)
     )
+  }
+
+  /**
+   * Had a response been invalidated (or its clinic booking cancelled) by a
+   * given date?
+   *
+   * If we don’t know when it was invalidated, assume it was before the date,
+   * as it was for responses before we recorded that
+   *
+   * @param {Reply} reply - Response
+   * @param {Date} date - Date
+   * @returns {boolean} Response had been invalidated by the date
+   */
+  #wasReplyInvalidatedBefore(reply, date) {
+    if (!reply.isInvalidated) {
+      return false
+    }
+
+    return !reply.invalidatedAt || !isAfter(reply.invalidatedAt, date)
   }
 
   /**
@@ -387,49 +425,250 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get the first response that invalidated a triage
+   * Get when and why a triage was invalidated, if it was
    *
-   * A triage deciding it was safe to vaccinate is invalidated by a later
-   * response giving consent, if that response’s health answers need triage,
-   * or it doesn’t include the vaccine method the triage approved
+   * There are two ways a triage can become invalidated:
+   *  - by the removal of health answers it addressed e.g. invalidating a consent
+   *  - by the addition of new health answers
+   *
+   * Note that health answers can end up being removed or outdated if a consent
+   * form response is invalidated, a clinic appointment is cancelled, or a
+   * parent's response is superseded by a newer response from the same parent.
+   *
+   * Re addition of answers, a new clinic booking made by the team for the same
+   * parent (which skips questions they’ve already answered) only invalidates a
+   * triage outcome if it adds answers that need triage, or changes the vaccine
+   * method. A booking made online by a parent asks every question again, so it
+   * replaces their earlier answers, like any other new response. And a
+   * consent response from a *new* contact *adds* answers rather than replacing any,
+   * so it only invalidates a "Safe to vaccinate" outcome if its answers need triage
+   * or it doesn’t include the vaccine method triage approved
    *
    * @param {AuditEvent} triageNote - Triage note
-   * @returns {Reply|undefined} Response that invalidated the triage
+   * @returns {TriageInvalidation|undefined} Invalidation, or undefined if the
+   *   triage hasn’t been invalidated
    */
-  getReplyInvalidatingTriage(triageNote) {
-    const safeToVaccinateStatuses = [
+  getTriageInvalidation(triageNote) {
+    const invalidations = [
+      ...this.#getTriageInvalidationsByRemovedAnswers(triageNote),
+      ...this.#getTriageInvalidationsByAddedAnswers(triageNote)
+    ]
+
+    // The first one is when the triage stopped counting
+    return invalidations.sort((a, b) =>
+      getDateValueDifference(a.invalidatedAt, b.invalidatedAt)
+    )[0]
+  }
+
+  /**
+   * Get ways a triage was invalidated by the health answers it was based on
+   * no longer counting
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Array<TriageInvalidation>} Invalidations
+   */
+  #getTriageInvalidationsByRemovedAnswers(triageNote) {
+    const triagedAt = new Date(triageNote.createdAt)
+    const reviewedReplies = this.#getRepliesReviewedInTriage(triageNote)
+    const invalidations = []
+
+    // Responses marked as invalid, or clinic bookings cancelled, since
+    for (const reply of reviewedReplies) {
+      if (reply.isInvalidated) {
+        invalidations.push({
+          invalidatedAt: reply.invalidatedAt,
+          reason: reply.clinicAppointment_uuid
+            ? TriageInvalidationReason.AppointmentCancelled
+            : TriageInvalidationReason.ResponseInvalidated
+        })
+      }
+    }
+
+    // Responses replaced by a newer one from the same person
+    const respondents = new Set(
+      reviewedReplies.map((reply) => reply.respondent)
+    )
+    for (const respondent of respondents) {
+      const reviewedRepliesFromRespondent = reviewedReplies.filter(
+        (reply) => reply.respondent === respondent
+      )
+
+      // Responses are newest first, so the first is their latest one
+      let replyInEffect = reviewedRepliesFromRespondent[0]
+
+      // Questions they’d answered, so we can tell if a booking asked them again
+      const answeredQuestions = new Set(
+        reviewedRepliesFromRespondent.flatMap((reply) =>
+          Object.keys(reply.healthAnswers ?? {})
+        )
+      )
+
+      const newerReplies = this.#getRepliesSinceTriage(triagedAt).filter(
+        (reply) => reply.respondent === respondent
+      )
+      for (const newerReply of newerReplies) {
+        if (
+          !this.#doesBookingKeepEarlierAnswers(
+            newerReply,
+            replyInEffect,
+            answeredQuestions,
+            triageNote.status
+          )
+        ) {
+          invalidations.push({
+            invalidatedAt: new Date(newerReply.createdAt),
+            reason: TriageInvalidationReason.NewResponse
+          })
+          break
+        }
+
+        replyInEffect = newerReply
+        for (const question of Object.keys(newerReply.healthAnswers ?? {})) {
+          answeredQuestions.add(question)
+        }
+      }
+    }
+
+    return invalidations
+  }
+
+  /**
+   * Get ways a triage was invalidated by someone else giving consent with
+   * new health answers
+   *
+   * @param {AuditEvent} triageNote - Triage note
+   * @returns {Array<TriageInvalidation>} Invalidations
+   */
+  #getTriageInvalidationsByAddedAnswers(triageNote) {
+    if (!this.#isSafeToVaccinateStatus(triageNote.status)) {
+      return []
+    }
+
+    const triagedAt = new Date(triageNote.createdAt)
+    const reviewedRespondents = new Set(
+      this.#getRepliesReviewedInTriage(triageNote).map(
+        (reply) => reply.respondent
+      )
+    )
+
+    return this.#getRepliesSinceTriage(triagedAt)
+      .filter(
+        (reply) =>
+          reply.hasGivenConsent &&
+          !reviewedRespondents.has(reply.respondent) &&
+          (countAnswersNeedingTriage(reply.healthAnswers) > 0 ||
+            !this.#doesReplyIncludeTriagedMethod(reply, triageNote.status))
+      )
+      .map((reply) => ({
+        invalidatedAt: new Date(reply.createdAt),
+        reason: TriageInvalidationReason.NewResponse
+      }))
+  }
+
+  /**
+   * Get responses given since a triage, oldest first
+   *
+   * Includes responses since marked as invalid (or bookings since cancelled),
+   * as the triage was already invalidated when they were given
+   *
+   * @param {Date} triagedAt - When the triage was recorded
+   * @returns {Array<Reply>} Responses
+   */
+  #getRepliesSinceTriage(triagedAt) {
+    return (this.#allDeliveredReplies ?? [])
+      .filter(
+        (reply) =>
+          reply.decision !== ReplyDecision.NoResponse &&
+          isAfter(new Date(reply.createdAt), triagedAt)
+      )
+      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
+  }
+
+  /**
+   * Does a response from the same person keep the earlier answers a triage was
+   * based on, so the triage still counts?
+   *
+   * Only a clinic booking made by the team does, as it doesn’t ask questions
+   * the person has already answered. (Parents booking online are always asked
+   * every question, as we don’t know who the child is yet, so their answers
+   * replace the earlier ones.) And only if the booking adds no answers needing
+   * triage, and either keeps the same vaccine method, or chooses one of the
+   * methods allowed before. It must also still include any vaccine method the
+   * triage decided was safe
+   *
+   * @param {Reply} newerReply - Newer response from the same person
+   * @param {Reply} earlierReply - Their earlier response in effect
+   * @param {Set<string>} answeredQuestions - Health questions they’d answered
+   * @param {ScreenStatus} triageStatus - Triage status
+   * @returns {boolean} Newer response keeps the earlier answers
+   */
+  #doesBookingKeepEarlierAnswers(
+    newerReply,
+    earlierReply,
+    answeredQuestions,
+    triageStatus
+  ) {
+    const isBookingFromKnownContact = Boolean(
+      newerReply.clinicAppointment_uuid && newerReply.contact_uuid
+    )
+    if (!isBookingFromKnownContact || !newerReply.hasGivenConsent) {
+      return false
+    }
+
+    const hasAskedAnsweredQuestionsAgain = Object.keys(
+      newerReply.healthAnswers ?? {}
+    ).some((question) => answeredQuestions.has(question))
+    if (hasAskedAnsweredQuestionsAgain) {
+      return false
+    }
+
+    if (countAnswersNeedingTriage(newerReply.healthAnswers) > 0) {
+      return false
+    }
+
+    const earlierCriteria = earlierReply.vaccineCriteria
+    const newerCriteria = newerReply.vaccineCriteria
+    const isSameMethod = newerCriteria === earlierCriteria
+    const hasChosenOneOfEarlierMethods =
+      earlierCriteria === ConsentVaccineCriteria.IntranasalPreferred &&
+      [
+        ConsentVaccineCriteria.IntranasalOnly,
+        ConsentVaccineCriteria.AlternativeFluInjectionOnly
+      ].includes(newerCriteria)
+    if (!isSameMethod && !hasChosenOneOfEarlierMethods) {
+      return false
+    }
+
+    if (this.#isSafeToVaccinateStatus(triageStatus)) {
+      return this.#doesReplyIncludeTriagedMethod(newerReply, triageStatus)
+    }
+
+    return true
+  }
+
+  /**
+   * Did a triage decide it was safe to vaccinate?
+   *
+   * @param {ScreenStatus} triageStatus - Triage status
+   * @returns {boolean} Triage decided it was safe to vaccinate
+   */
+  #isSafeToVaccinateStatus(triageStatus) {
+    return [
       ScreenStatus.Vaccinate,
       ScreenStatus.VaccinateAlternativeFluInjectionOnly,
       ScreenStatus.VaccinateAlternativeMMRInjectionOnly,
       ScreenStatus.VaccinateIntranasalOnly
-    ]
-    if (!safeToVaccinateStatuses.includes(triageNote.status)) {
-      return
-    }
-
-    const triagedAt = new Date(triageNote.createdAt)
-    const repliesGivenSinceTriage = (this.replies ?? [])
-      .filter(
-        (reply) =>
-          reply.hasGivenConsent && isAfter(new Date(reply.createdAt), triagedAt)
-      )
-      .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
-
-    return repliesGivenSinceTriage.find(
-      (reply) =>
-        countAnswersNeedingTriage(reply.healthAnswers) > 0 ||
-        !this.#doesReplyIncludeTriagedMethod(reply, triageNote.status)
-    )
+    ].includes(triageStatus)
   }
 
   /**
-   * Has a triage been invalidated by a newer response?
+   * Has a triage been invalidated?
    *
    * @param {AuditEvent} triageNote - Triage note
    * @returns {boolean} Triage has been invalidated
    */
   hasTriageBeenInvalidated(triageNote) {
-    return Boolean(this.getReplyInvalidatingTriage(triageNote))
+    return Boolean(this.getTriageInvalidation(triageNote))
   }
 
   /**
@@ -468,14 +707,21 @@ export class PatientProgramme extends BaseModel {
    * @returns {string|undefined} Validity description
    */
   getTriageValidityDescription(triageNote) {
-    const invalidatingReply = this.getReplyInvalidatingTriage(triageNote)
-    if (invalidatingReply) {
-      const formattedInvalidatedDate = formatDate(
-        new Date(invalidatingReply.createdAt),
-        { dateStyle: 'long' }
-      )
+    const invalidation = this.getTriageInvalidation(triageNote)
+    if (invalidation) {
+      const formattedInvalidatedDate = formatDate(invalidation.invalidatedAt, {
+        dateStyle: 'long'
+      })
 
-      return `Invalidated ${formattedInvalidatedDate} by a new response`
+      switch (invalidation.reason) {
+        case TriageInvalidationReason.ResponseInvalidated:
+          return `Invalidated ${formattedInvalidatedDate}, as a response it was based on was marked as invalid`
+        case TriageInvalidationReason.AppointmentCancelled:
+          return `Invalidated ${formattedInvalidatedDate}, as a clinic booking it was based on was cancelled`
+        case TriageInvalidationReason.NewResponse:
+        default:
+          return `Invalidated ${formattedInvalidatedDate} by a new response`
+      }
     }
 
     const expiryDate = this.getTriageExpiresAt(triageNote)
