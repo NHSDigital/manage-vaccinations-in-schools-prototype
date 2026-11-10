@@ -65,7 +65,7 @@ export class Contact extends BaseModel {
     this.canNotify = stringToBoolean(options?.canNotify)
     this.tel = options?.tel
     this.email = options?.email
-    this.canSms = stringToBoolean(options.canSms)
+    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
     this.emailStatus = this?.email && options?.emailStatus
     this.smsStatus = this?.tel && options?.smsStatus
     this.hasCommunicationNeeds = stringToBoolean(options?.hasCommunicationNeeds)
