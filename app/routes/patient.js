@@ -22,6 +22,7 @@ router.post('/:patient_uuid/archive', patient.archive)
 router.post('/:patient_uuid/check-for-updates', patient.checkForUpdates)
 router.post('/:patient_uuid/home-visit', patient.newSession)
 
+router.get('/:patient_uuid/contacts/archived', patient.showArchivedContacts)
 router.get('/:patient_uuid{/:view}', patient.show)
 
 export const patientRoutes = router

@@ -314,6 +314,20 @@ export const patientController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  showArchivedContacts(request, response) {
+    const { patient } = response.locals
+
+    // Only show this page if there are archived contacts
+    if (patient.archivedContacts.length === 0) {
+      return response.redirect(`${patient.uri}/contacts`)
+    }
+
+    response.render('patient/archived-contacts')
+  },
+
   show(request, response) {
     const view = request.params.view || 'show'
     const { data } = request.session

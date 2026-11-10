@@ -262,6 +262,29 @@ export class Patient extends Child {
    * @returns {Array<Contact>} Contacts
    */
   get contactsExcludingClinicBookings() {
+    return this.allContactsExcludingClinicBookings.filter(
+      (contact) => !contact.isArchived
+    )
+  }
+
+  /**
+   * Get contacts that have been archived
+   *
+   * @returns {Array<Contact>} Contacts
+   */
+  get archivedContacts() {
+    return this.allContactsExcludingClinicBookings.filter(
+      (contact) => contact.isArchived
+    )
+  }
+
+  /**
+   * Get contacts from the child’s record and from consent replies, including
+   * those that have been archived
+   *
+   * @returns {Array<Contact>} Contacts
+   */
+  get allContactsExcludingClinicBookings() {
     const contacts = new Map()
 
     // Skip any contacts that no longer exist
@@ -607,7 +630,9 @@ export class Patient extends Child {
    */
   get tokenized() {
     // Contact points of children with sensitive records can’t be searched for
-    const contactTokens = this.contacts.map((contact) =>
+    // Archived contacts can still be searched for
+    const contacts = [...this.contacts, ...this.archivedContacts]
+    const contactTokens = contacts.map((contact) =>
       this.isSensitive ? tokenize(contact, ['fullName']) : contact.tokenized
     )
 

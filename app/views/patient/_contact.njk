@@ -9,8 +9,13 @@
   @param {boolean} canChange - User can change contacts
 #}
 {% macro contactSection(contact, canChange) %}
-  {% set canChangeContact = canChange and contact.isSaved %}
+  {% set canChangeContact = canChange and contact.isSaved and not contact.isArchived %}
+  {% set canRestoreContact = canChange and contact.isSaved and contact.isArchived %}
 
+  {#
+    The card adds its heading to each action as hidden text, so actions don’t
+    need their own
+  #}
   {% call card({
     heading: {
       text: contact.fullNameAndRelationship,
@@ -28,15 +33,19 @@
           href: contact.uri + "/contact-points/new/email"
         } if not contact.isSensitive,
         {
-          html: __("actions.edit") + "<span class=\"nhsuk-u-visually-hidden\"> " + contact.formatted.fullName + "</span>",
+          text: __("actions.edit"),
           href: contact.uri + "/edit"
-        },
+        } if canChangeContact,
         {
-          html: __("actions.delete") + "<span class=\"nhsuk-u-visually-hidden\"> " + contact.formatted.fullName + "</span>",
-          href: contact.uri + "/delete"
-        }
+          text: __("actions.archive"),
+          href: contact.uri + "/archive"
+        } if canChangeContact,
+        {
+          text: __("actions.restore"),
+          href: contact.uri + "/restore"
+        } if canRestoreContact
       ]
-    } if canChangeContact
+    } if canChangeContact or canRestoreContact
   }) %}
     {#
       Preferences are only known once a parent has responded to a consent

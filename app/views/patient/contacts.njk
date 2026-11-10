@@ -41,6 +41,15 @@
     {{ contactSection(contact, not account.isSchoolUser) }}
   {% endfor %}
 
+  {% if patient.archivedContacts.length %}
+    <p class="nhsuk-body">
+      {{ link({
+        text: __("contact.archived.label"),
+        href: patient.uri + "/contacts/archived"
+      }) }}
+    </p>
+  {% endif %}
+
   {{ actionLink({
     text: __("contact.new.label"),
     href: "/contacts/new?patient_uuid=" + patient.uuid

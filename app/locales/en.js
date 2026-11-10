@@ -1881,13 +1881,22 @@ export const en = {
       confirm: 'Save changes',
       success: 'Contact updated'
     },
-    delete: {
-      success: 'Contact deleted'
+    archive: {
+      description:
+        'Archived contacts won’t be sent any messages about {{patient.firstName}}. You can restore them later.',
+      success: 'Archived {{contact.fullName}}'
+    },
+    restore: {
+      description:
+        '{{contact.fullName}} will be sent messages about {{patient.firstName}} again.',
+      success: 'Restored {{contact.fullName}}'
+    },
+    archived: {
+      label: 'View archived contacts',
+      title: 'Archived contacts'
     },
     action: {
       title: 'Are you sure you want to {{type}} {{contact.fullName}}?',
-      description:
-        'Deleting this contact will remove them from {{patient.firstName}}, but not from any other children.\n\nThis cannot be undone.',
       confirm: 'Yes, %s this contact',
       cancel: 'No, return to contacts'
     },

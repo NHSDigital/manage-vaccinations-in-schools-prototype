@@ -1,5 +1,6 @@
 import { ContactPointSource, RelationshipType } from '../enums.js'
 import { Contact, Patient } from '../models.js'
+import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactController = {
@@ -156,23 +157,39 @@ export const contactController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  delete(request, response) {
+  archive(request, response) {
+    const { contact_uuid } = request.params
+    const { data } = request.session
+    const { __, account, contact } = response.locals
+
+    Contact.update(
+      contact_uuid,
+      { archivedAt: today(), archivedBy_uid: account?.uid },
+      data
+    )
+
+    request.flash('success', __(`contact.archive.success`, { contact }))
+
+    return saveAndRedirect(
+      request,
+      response,
+      `/patients/${contact.patient_uuid}/contacts`
+    )
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  restore(request, response) {
     const { contact_uuid } = request.params
     const { data } = request.session
     const { __, contact } = response.locals
 
-    // Remove contact from the child’s record, so it doesn’t point to nothing
-    const patient = Patient.findOne(contact.patient_uuid, data)
-    if (patient) {
-      const contact_uuids = patient.contact_uuids.filter(
-        (uuid) => uuid !== contact_uuid
-      )
-      Patient.update(patient.uuid, { contact_uuids }, data)
-    }
+    // Contact model’s `update` merges values, so remove these directly
+    delete data.contacts[contact_uuid].archivedAt
+    delete data.contacts[contact_uuid].archivedBy_uid
 
-    Contact.delete(contact_uuid, data)
-
-    request.flash('success', __(`contact.delete.success`))
+    request.flash('success', __(`contact.restore.success`, { contact }))
 
     return saveAndRedirect(
       request,
