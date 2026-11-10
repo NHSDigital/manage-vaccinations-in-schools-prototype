@@ -197,23 +197,32 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Is a contact for a child whose record is sensitive
+   *
+   * The contact points of these contacts are hidden, and can’t be searched for
+   *
+   * @returns {boolean} Is a contact for a child with a sensitive record
+   */
+  get isSensitive() {
+    return !!this.patient?.isSensitive
+  }
+
+  /**
    * Get formatted values of active contact points of a given type
    *
-   * TODO: Hide, rather than redact, contact points on sensitive records
+   * Returns no values for contacts of children with sensitive records
    *
    * @param {ContactPointType} type - Type of contact point
    * @returns {Array<string>} Formatted values
    */
   formattedContactPointValues(type) {
-    const values = this.activeContactPoints
-      .filter((contactPoint) => contactPoint.type === type)
-      .map((contactPoint) => contactPoint.formatted.value)
-
-    if (values.length > 0 && this.patient?.isSensitive) {
-      return ['Sensitive']
+    if (this.isSensitive) {
+      return []
     }
 
-    return values
+    return this.activeContactPoints
+      .filter((contactPoint) => contactPoint.type === type)
+      .map((contactPoint) => contactPoint.formatted.value)
   }
 
   /**
@@ -407,12 +416,14 @@ export class Contact extends BaseModel {
    * Get tokenised values (to use in search queries)
    *
    * Includes archived contact points, so a child can be found using a phone
-   * number or email address a parent no longer uses
+   * number or email address a parent no longer uses. Contact points aren’t
+   * included for children with sensitive records.
    *
    * @returns {string} Tokens
    */
   get tokenized() {
-    const contactPointTokens = this.contactPoints
+    const contactPoints = this.isSensitive ? [] : this.contactPoints
+    const contactPointTokens = contactPoints
       .map(({ value }) => value?.toLowerCase())
       .filter((value) => value !== undefined)
 
@@ -442,6 +453,9 @@ export class Contact extends BaseModel {
           const redactIfSensitive = (value) =>
             isSensitive && value !== undefined ? 'Sensitive' : value
 
+          // Phone numbers and email addresses are an empty string, rather
+          // than undefined, if there are none (or they’re hidden), so summary
+          // lists don’t show a contact’s unformatted values instead
           switch (prop) {
             case 'communicationNeeds':
               return this.response?.formatted['communicationNeeds']
@@ -450,17 +464,13 @@ export class Contact extends BaseModel {
             case 'relationship':
               return formatOther(this.relationshipOther, this.relationship)
             case 'email':
-              return (
-                this.formattedContactPointValues(ContactPointType.Email).join(
-                  '<br>'
-                ) || undefined
-              )
+              return this.formattedContactPointValues(
+                ContactPointType.Email
+              ).join('<br>')
             case 'tel':
-              return (
-                this.formattedContactPointValues(ContactPointType.Phone).join(
-                  '<br>'
-                ) || undefined
-              )
+              return this.formattedContactPointValues(
+                ContactPointType.Phone
+              ).join('<br>')
             default:
               return undefined
           }
