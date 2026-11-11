@@ -1950,6 +1950,9 @@ export const en = {
       confirm: 'Add',
       success: 'Added {{contactPoint.value}}'
     },
+    update: {
+      success: 'Updated {{contactPoint.value}}'
+    },
     archive: {
       title: 'Archive {{contactPoint.value}}?',
       description:

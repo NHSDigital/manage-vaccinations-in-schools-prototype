@@ -1,3 +1,4 @@
+import activity from '../datasets/activity.js'
 import { ContactPointSource, ContactPointType } from '../enums.js'
 import { Contact } from '../models.js'
 import { today } from '../utils/date.js'
@@ -23,9 +24,21 @@ const getValue = (body, type) =>
  */
 const saveContactPoints = (request, response, type) => {
   const { data } = request.session
-  const { __, contact, contactPoint } = response.locals
+  const { __, account, contact, contactPoint } = response.locals
 
   Contact.update(contact.uuid, { contactPoints: contact.contactPoints }, data)
+
+  // Record the change in the child’s activity log
+  const events = {
+    new: activity.patient.contactPointAdded,
+    update: activity.patient.contactPointUpdated,
+    archive: activity.patient.contactPointArchived,
+    restore: activity.patient.contactPointRestored
+  }
+  contact.patient?.addContactEvent(
+    events[type](contact, contactPoint),
+    account?.uid
+  )
 
   // Clean up session data
   delete data.contactPoint

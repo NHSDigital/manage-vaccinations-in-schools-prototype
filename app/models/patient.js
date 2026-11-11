@@ -830,6 +830,17 @@ export class Patient extends Child {
   }
 
   /**
+   * Add a change to one of the child’s contacts to the activity log, and save
+   *
+   * @param {string} name - Activity
+   * @param {string} [createdBy_uid] - User who made the change
+   */
+  addContactEvent(name, createdBy_uid) {
+    this.addEvent({ name, type: AuditEventType.Record, createdBy_uid })
+    Patient.update(this.uuid, this, this.context)
+  }
+
+  /**
    * Add PSD instruction
    *
    * @param {Partial<Instruction>} instruction - PSD instruction
