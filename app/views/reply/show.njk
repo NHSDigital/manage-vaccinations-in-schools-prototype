@@ -61,6 +61,7 @@
           size: "m"
         }
       }) %}
+      {# Expiring soon? #}
       {{ appStatus({
         text: __("reply.expiringSoon.label"),
         icon: "warning",
@@ -68,6 +69,7 @@
         classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
       }) if reply.isExpiringSoon and not reply.isInvalidated }}
 
+      {# Consent details #}
       {{ summaryList({
         lastRowBorder: false,
         rows: summaryRows(reply, {
@@ -86,6 +88,7 @@
       }) }}
     {% endcall %}
 
+    {# Contact details #}
     {{ summaryList({
       card: {
         heading: {
@@ -113,6 +116,7 @@
       })
     }) if reply.contact }}
 
+    {# Child details #}
     {{ summaryList({
       card: {
         heading: {
@@ -132,6 +136,7 @@
       })
     }) if reply.child }}
 
+    {# Health answers #}
     {{ summaryList({
       classes: "app-summary-list--full-width",
       card: {
