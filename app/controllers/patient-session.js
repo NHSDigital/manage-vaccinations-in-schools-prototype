@@ -56,7 +56,7 @@ export const patientSessionController = {
       // Show outstanding vaccinations
       showOutstandingVaccinations: vaccinated && due.length > 1,
       // Send a request to give consent (if none sent yet, or it failed)
-      canInvite:
+      canRequest:
         patient.hasContactDetails &&
         session.consentWindow === ConsentWindow.Open &&
         !session.isActive &&
@@ -333,7 +333,7 @@ export const patientSessionController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  invite(request, response) {
+  request(request, response) {
     const { __, back, patient, patientSession } = response.locals
 
     patient.addToSession(patientSession)
@@ -341,7 +341,7 @@ export const patientSessionController = {
 
     request.flash(
       'success',
-      __('patientSession.invite.success', { contact: patient.contacts[0] })
+      __('patientSession.request.success', { contact: patient.contacts[0] })
     )
 
     return saveAndRedirect(request, response, back)

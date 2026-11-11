@@ -2433,7 +2433,7 @@ export const en = {
         label: 'Assessment notes'
       }
     },
-    invite: {
+    request: {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
     },
