@@ -3,6 +3,7 @@ import { addYears, isAfter, isBefore, max } from 'date-fns'
 import activity from '../datasets/activity.js'
 import {
   AuditEventType,
+  ConsentRequestReason,
   ConsentStatus,
   ConsentVaccineCriteria,
   InstructionStatus,
@@ -18,6 +19,7 @@ import {
   ReplyDecision,
   ScreenStatus,
   ScreenVaccineCriteria,
+  SessionConsentContacts,
   SessionStatus,
   SessionType,
   VaccinationOutcome
@@ -96,6 +98,12 @@ const TriageInvalidationReason = {
  * @typedef {object} TriageInvalidation
  * @property {Date} invalidatedAt - When the triage was invalidated
  * @property {TriageInvalidationReason} reason - Why it was invalidated
+ */
+
+/**
+ * @typedef {object} ConsentRequestDecision
+ * @property {boolean} shouldRequest - Whether consent should be requested
+ * @property {ConsentRequestReason} reason - Why it should (or shouldn’t) be
  */
 
 /**
@@ -255,6 +263,127 @@ export class PatientProgramme extends BaseModel {
    */
   get consentRequests() {
     return this.#messagesSent('invite')
+  }
+
+  /**
+   * Should consent be requested from the child’s parents for a school
+   * session, and why (or why not)?
+   *
+   * Requests go out when the session’s consent window opens, so this is
+   * decided on what was known then. Responses since, including replies to the
+   * request itself, don’t change it. Consent should be requested if:
+   * - no responses gave consent
+   * - every response giving consent expires before the session
+   * - there’s a refusal, and the session requests consent from children who
+   *   have one
+   *
+   * @param {Session} session - School session
+   * @returns {ConsentRequestDecision|undefined} Decision, or nothing if it’s
+   *   not a school session
+   */
+  getConsentRequestForSession(session) {
+    if (session?.type !== SessionType.School) {
+      return
+    }
+
+    const requestedAt = session.consentOpenAt
+
+    if (this.patient?.isPost16) {
+      return {
+        shouldRequest: false,
+        reason: ConsentRequestReason.SelfConsent
+      }
+    }
+
+    const wasVaccinatedBeforeRequest =
+      this.isVaccinated &&
+      this.vaccinationsGiven.some((vaccination) =>
+        isBefore(vaccination.createdAt, requestedAt)
+      )
+    const repliesBeforeRequest =
+      this.#getRepliesCountingTowardsConsentAt(requestedAt)
+    const wasReportedAsAlreadyVaccinated = repliesBeforeRequest.some(
+      ({ decision }) => decision === ReplyDecision.AlreadyVaccinated
+    )
+    if (wasVaccinatedBeforeRequest || wasReportedAsAlreadyVaccinated) {
+      return {
+        shouldRequest: false,
+        reason: ConsentRequestReason.AlreadyVaccinated
+      }
+    }
+
+    const hasRefusal = repliesBeforeRequest.some(
+      (reply) => reply.hasRefusedConsent || reply.hasDeclinedConsent
+    )
+    if (hasRefusal) {
+      return session.consentContacts === SessionConsentContacts.All
+        ? {
+            shouldRequest: true,
+            reason: ConsentRequestReason.SessionContactsRefusals
+          }
+        : { shouldRequest: false, reason: ConsentRequestReason.Refused }
+    }
+
+    const repliesGivingConsent = repliesBeforeRequest.filter(
+      (reply) => reply.hasGivenConsent
+    )
+    if (repliesGivingConsent.length === 0) {
+      return { shouldRequest: true, reason: ConsentRequestReason.NoConsent }
+    }
+
+    const doesConsentLastUntilSession =
+      session.date === undefined ||
+      repliesGivingConsent.some(
+        (reply) => !isBefore(reply.expiresAt, session.date)
+      )
+
+    return doesConsentLastUntilSession
+      ? {
+          shouldRequest: false,
+          reason: ConsentRequestReason.ConsentLastsUntilSession
+        }
+      : {
+          shouldRequest: true,
+          reason: ConsentRequestReason.ConsentExpiresBeforeSession
+        }
+  }
+
+  /**
+   * Get responses that counted towards consent at a given date: only the
+   * latest from each respondent before then, ignoring responses invalidated
+   * by then and any that say nothing about consent
+   *
+   * Responses that have expired since are included, as they may still have
+   * counted at that date
+   *
+   * @param {Date} date - Date
+   * @returns {Array<Reply>} Responses, newest first
+   */
+  #getRepliesCountingTowardsConsentAt(date) {
+    const repliesBeforeDate = (this.#allDeliveredReplies ?? []).filter(
+      (reply) =>
+        !this.#wasReplyInvalidatedBefore(reply, date) &&
+        reply.decision !== ReplyDecision.NoResponse &&
+        isBefore(reply.createdAt, date)
+    )
+
+    return getLatestReplyFromEachRespondent(repliesBeforeDate)
+  }
+
+  /**
+   * Was a response received between two dates?
+   *
+   * @param {Date} startDate - Start date
+   * @param {Date} [endDate] - End date, or none for up to now
+   * @returns {boolean} A response was received between the dates
+   */
+  hasReplyBetween(startDate, endDate) {
+    return (this.replies ?? []).some(
+      (reply) =>
+        reply.decision !== ReplyDecision.NoResponse &&
+        !isBefore(reply.createdAt, startDate) &&
+        (!endDate || isBefore(reply.createdAt, endDate))
+    )
   }
 
   /**

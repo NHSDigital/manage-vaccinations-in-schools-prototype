@@ -85,12 +85,8 @@
     classes: "nhsuk-u-margin-bottom-2" if patientProgramme.replies.length === 0
   }) }}
 
-  {% set repliesAreRecent = false %}
   {% if patientProgramme.replies.length > 0 %}
     {% for reply in patientProgramme.replies %}
-      {% if session.type === SessionType.School and reply.createdAt > session.consentOpenAt %}
-        {% set repliesAreRecent = true %}
-      {% endif %}
       {{ consentResponseCard(reply) }}
     {% endfor %}
   {% else %}
@@ -109,18 +105,34 @@
     {% endcall %}
   {% endif %}
 
-  {# For school sessions, tell us when consent requests and reminders are going out, if there's no response #}
-  {% if session.type === SessionType.School %}
-    {% set contactRefusers = session.consentContacts === SessionConsentContacts.All %}
-    {% set patientStatus = patientProgramme.status %}
-    {% if patientStatus === PatientStatus.Consent or (patientStatus == PatientStatus.Refused and contactRefusers and not repliesAreRecent) %}
-      {{ heading({
-        text: "Consent requests for this session",
-        level: 3,
-        size: "s",
-        classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2"
-      }) }}
+  {# For school sessions, tell us whether consent requests and reminders are going out #}
+  {% set consentRequest = patientProgramme.getConsentRequestForSession(session) %}
+  {% if consentRequest %}
+    {{ heading({
+      text: "Consent requests for this session",
+      level: 3,
+      size: "s",
+      classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2"
+    }) }}
 
+    {% if not consentRequest.shouldRequest %}
+      {% set hasOrHad = "had" if session.areConsentRequestsSent else "has" %}
+      {% set isOrWas = "was" if session.areConsentRequestsSent else "is" %}
+      {% set reasonText %}
+        {%- if consentRequest.reason === ConsentRequestReason.ConsentLastsUntilSession -%}
+          the child already {{ hasOrHad }} consent lasting until the session
+        {%- elif consentRequest.reason === ConsentRequestReason.Refused -%}
+          the child {{ hasOrHad }} a refusal, and this session only requests consent for children without one
+        {%- elif consentRequest.reason === ConsentRequestReason.AlreadyVaccinated -%}
+          the child {{ isOrWas }} already vaccinated
+        {%- elif consentRequest.reason === ConsentRequestReason.SelfConsent -%}
+          the child can give consent themselves
+        {%- endif -%}
+      {% endset %}
+      <p class="nhsuk-body">
+        Consent requests {{ "were not" if session.areConsentRequestsSent else "will not be" }} sent, as {{ reasonText }}.
+      </p>
+    {% else %}
       {# Work out who'll get the consent requests and reminders #}
       {% set contactsToContact = [] %}
       {% for contact in patientProgramme.patient.contacts %}
@@ -130,6 +142,12 @@
       {% endfor %}
 
       {% if contactsToContact | length %}
+        {% if consentRequest.reason === ConsentRequestReason.SessionContactsRefusals %}
+          <p class="nhsuk-body nhsuk-u-margin-bottom-2">
+            The child {{ "had" if session.areConsentRequestsSent else "has" }} a refusal, but this session requests consent for all children, including those with a refusal.
+          </p>
+        {% endif %}
+
         <p class="nhsuk-body nhsuk-u-margin-bottom-2">
           Consent {{ "was" if session.areConsentRequestsSent else "will be" }} requested on {{ session.formatted.consentOpenAt }} from:
         </p>
@@ -142,10 +160,17 @@
           {% endfor %}
         </ul>
 
+        {# Parents who respond to the request aren’t reminded #}
         {% if session.areConsentRequestsSent %}
-          <p class="nhsuk-body">
-            A reminder {{ "was" if session.areConsentRemindersSent else "will be" }} sent on {{ session.formatted.nextReminderDate -}}.
-          </p>
+          {% if patientProgramme.hasReplyBetween(session.consentOpenAt, session.nextReminderDate) %}
+            <p class="nhsuk-body">
+              A reminder {{ "was not" if session.areConsentRemindersSent else "will not be" }} sent, as a response was received.
+            </p>
+          {% else %}
+            <p class="nhsuk-body">
+              A reminder {{ "was" if session.areConsentRemindersSent else "will be" }} sent on {{ session.formatted.nextReminderDate -}}.
+            </p>
+          {% endif %}
         {% endif %}
       {% else %}
         <p class="nhsuk-body">
