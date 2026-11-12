@@ -969,7 +969,7 @@ export class Patient extends Child {
     // contacts about (for example, they’d already given consent lasting until
     // the session)
     const consentRequest =
-      patientProgramme.getConsentRequestForSession(session)
+      patientProgramme.getConsentRequestNeedsForSession(session)
     if (!consentRequest?.shouldRequest) {
       return
     }

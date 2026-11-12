@@ -3,7 +3,6 @@ import { addYears, isAfter, isBefore, max } from 'date-fns'
 import activity from '../datasets/activity.js'
 import {
   AuditEventType,
-  ConsentRequestReason,
   ConsentStatus,
   ConsentVaccineCriteria,
   InstructionStatus,
@@ -19,7 +18,6 @@ import {
   ReplyDecision,
   ScreenStatus,
   ScreenVaccineCriteria,
-  SessionConsentContacts,
   SessionStatus,
   SessionType,
   VaccinationOutcome
@@ -47,6 +45,8 @@ import {
 } from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
 import {
+  getConsentRequestDescription,
+  getConsentRequestNeeds,
   getConsentStatus,
   getConsentStatusDescription,
   getHealthAnswersDescription,
@@ -98,12 +98,6 @@ const TriageInvalidationReason = {
  * @typedef {object} TriageInvalidation
  * @property {Date} invalidatedAt - When the triage was invalidated
  * @property {TriageInvalidationReason} reason - Why it was invalidated
- */
-
-/**
- * @typedef {object} ConsentRequestDecision
- * @property {boolean} shouldRequest - Whether consent should be requested
- * @property {ConsentRequestReason} reason - Why it should (or shouldn’t) be
  */
 
 /**
@@ -269,83 +263,24 @@ export class PatientProgramme extends BaseModel {
    * Should consent be requested from the child’s parents for a school
    * session, and why (or why not)?
    *
-   * Requests go out when the session’s consent window opens, so this is
-   * decided on what was known then. Responses since, including replies to the
-   * request itself, don’t change it. Consent should be requested if:
-   * - no responses gave consent
-   * - every response giving consent expires before the session
-   * - there’s a refusal, and the session requests consent from children who
-   *   have one
-   *
    * @param {Session} session - School session
-   * @returns {ConsentRequestDecision|undefined} Decision, or nothing if it’s
+   * @returns {ConsentRequestNeeds|undefined} Decision, or nothing if it’s
    *   not a school session
    */
-  getConsentRequestForSession(session) {
-    if (session?.type !== SessionType.School) {
-      return
-    }
+  getConsentRequestNeedsForSession(session) {
+    return getConsentRequestNeeds(this, session)
+  }
 
-    const requestedAt = session.consentOpenAt
-
-    if (this.patient?.isPost16) {
-      return {
-        shouldRequest: false,
-        reason: ConsentRequestReason.SelfConsent
-      }
-    }
-
-    const wasVaccinatedBeforeRequest =
-      this.isVaccinated &&
-      this.vaccinationsGiven.some((vaccination) =>
-        isBefore(vaccination.createdAt, requestedAt)
-      )
-    const repliesBeforeRequest =
-      this.#getRepliesCountingTowardsConsentAt(requestedAt)
-    const wasReportedAsAlreadyVaccinated = repliesBeforeRequest.some(
-      ({ decision }) => decision === ReplyDecision.AlreadyVaccinated
-    )
-    if (wasVaccinatedBeforeRequest || wasReportedAsAlreadyVaccinated) {
-      return {
-        shouldRequest: false,
-        reason: ConsentRequestReason.AlreadyVaccinated
-      }
-    }
-
-    const hasRefusal = repliesBeforeRequest.some(
-      (reply) => reply.hasRefusedConsent || reply.hasDeclinedConsent
-    )
-    if (hasRefusal) {
-      return session.consentContacts === SessionConsentContacts.All
-        ? {
-            shouldRequest: true,
-            reason: ConsentRequestReason.SessionContactsRefusals
-          }
-        : { shouldRequest: false, reason: ConsentRequestReason.Refused }
-    }
-
-    const repliesGivingConsent = repliesBeforeRequest.filter(
-      (reply) => reply.hasGivenConsent
-    )
-    if (repliesGivingConsent.length === 0) {
-      return { shouldRequest: true, reason: ConsentRequestReason.NoConsent }
-    }
-
-    const doesConsentLastUntilSession =
-      session.date === undefined ||
-      repliesGivingConsent.some(
-        (reply) => !isBefore(reply.expiresAt, session.date)
-      )
-
-    return doesConsentLastUntilSession
-      ? {
-          shouldRequest: false,
-          reason: ConsentRequestReason.ConsentLastsUntilSession
-        }
-      : {
-          shouldRequest: true,
-          reason: ConsentRequestReason.ConsentExpiresBeforeSession
-        }
+  /**
+   * Describe whether consent requests and reminders for a school session will
+   * be (or were) sent, and to whom
+   *
+   * @param {Session} session - School session
+   * @returns {string|undefined} Description (Markdown), or nothing if it’s not
+   *   a school session
+   */
+  getConsentRequestDescriptionForSession(session) {
+    return getConsentRequestDescription(this, session)
   }
 
   /**
@@ -359,7 +294,7 @@ export class PatientProgramme extends BaseModel {
    * @param {Date} date - Date
    * @returns {Array<Reply>} Responses, newest first
    */
-  #getRepliesCountingTowardsConsentAt(date) {
+  getRepliesCountingTowardsConsentAt(date) {
     const repliesBeforeDate = (this.#allDeliveredReplies ?? []).filter(
       (reply) =>
         !this.#wasReplyInvalidatedBefore(reply, date) &&
@@ -2171,4 +2106,5 @@ PatientProgramme.relate('programme_id', () => Programme, 'programme')
  * @import { PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
  * @import { PatientSession, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ConsentRequestNeeds } from '../utils/patient-programme.js'
  */
