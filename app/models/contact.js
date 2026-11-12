@@ -89,9 +89,14 @@ export class Contact extends BaseModel {
       }
     }
 
-    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
-    this.emailStatus = this?.email && options?.emailStatus
-    this.smsStatus = this?.tel && options?.smsStatus
+    // Keep the text message preference while a contact has any phone number,
+    // including archived ones, so it isn’t lost if a phone number is archived
+    // and later restored
+    this.canSms = this.contactPoints.some(
+      (contactPoint) => contactPoint.isPhone
+    )
+      ? stringToBoolean(options?.canSms)
+      : undefined
 
     this.pendingContactPoints = (options?.pendingContactPoints || []).map(
       (contactPoint) => new ContactPoint(contactPoint, context)
@@ -435,6 +440,15 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Has an active phone number
+   *
+   * @returns {boolean} Has an active phone number
+   */
+  get hasPhoneNumber() {
+    return this.activeContactPoints.some((contactPoint) => contactPoint.isPhone)
+  }
+
+  /**
    * Get contact points that messages are sent to
    *
    * These are all active contact points, except phone numbers if the contact
@@ -500,6 +514,9 @@ export class Contact extends BaseModel {
           // than undefined, if there are none (or they’re hidden), so summary
           // lists don’t show a contact’s unformatted values instead
           switch (prop) {
+            case 'canSms':
+              // Only relevant if the contact has a phone number to text
+              return this.hasPhoneNumber ? undefined : ''
             case 'communicationNeeds':
               return this.response?.formatted['communicationNeeds']
             case 'fullName':

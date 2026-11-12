@@ -82,7 +82,6 @@
   {% endif %}
 
   {# Text messages can only be sent if the contact has a phone number #}
-  {% set hasPhoneNumber = contact.activeContactPoints | selectattr("isPhone") | length %}
   {{ radios({
     fieldset: {
       legend: __("contact.canSms.title", { contact: contact })
@@ -98,5 +97,5 @@
       }
     ],
     decorate: "contact.canSms"
-  }) if hasPhoneNumber and not isSensitive }}
+  }) if contact.hasPhoneNumber and not isSensitive }}
 {% endblock %}

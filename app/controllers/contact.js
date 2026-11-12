@@ -99,9 +99,11 @@ export const contactController = {
       const { contact_uuid } = request.params
       const { data } = request.session
 
-      // Setup wizard if not already setup
+      // Setup wizard if not already setup. When opening the form for editing
+      // a contact, start from the saved contact, so the form reflects any
+      // changes made since it was last opened (like archiving a phone number)
       let contact = Contact.findOne(contact_uuid, data.wizard)
-      if (!contact) {
+      if (!contact || (type === 'edit' && request.method === 'GET')) {
         contact = Contact.create(response.locals.contact, data.wizard)
       }
 
