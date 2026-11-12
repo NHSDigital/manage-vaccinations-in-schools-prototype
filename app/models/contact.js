@@ -31,6 +31,15 @@ export class Contact extends BaseModel {
   static ns = 'contact'
 
   /**
+   * Consent response or clinic booking the contact gave, if linked to one
+   *
+   * A private field, so it isn’t saved with the contact or copied with it
+   *
+   * @type {Reply|ClinicBooking|undefined}
+   */
+  #response
+
+  /**
    * @param {ContactOptions} options - Options
    * @param {object} [context] - Context
    */
@@ -81,14 +90,18 @@ export class Contact extends BaseModel {
    * @returns {Contact} Contact
    */
   setResponse(response) {
-    Object.defineProperty(this, 'response', {
-      value: response,
-      enumerable: false,
-      configurable: true,
-      writable: true
-    })
+    this.#response = response
 
     return this
+  }
+
+  /**
+   * Get the consent response or clinic booking the contact gave
+   *
+   * @returns {Reply|ClinicBooking|undefined} Response or booking
+   */
+  get response() {
+    return this.#response
   }
 
   /**
@@ -182,7 +195,7 @@ export class Contact extends BaseModel {
 
           switch (prop) {
             case 'communicationNeeds':
-              return this.response?.formatted.communicationNeeds
+              return this.response?.formatted['communicationNeeds']
             case 'fullName':
               return this.fullName || 'Name unknown'
             case 'relationship':
