@@ -435,6 +435,20 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Get contact points that messages are sent to
+   *
+   * These are all active contact points, except phone numbers if the contact
+   * has said they don’t want text messages
+   *
+   * @returns {Array<ContactPoint>} Contact points
+   */
+  get messageContactPoints() {
+    return this.activeContactPoints.filter(
+      (contactPoint) => !(contactPoint.isPhone && this.canSms === false)
+    )
+  }
+
+  /**
    * Has an active contact point that messages are being delivered to
    *
    * @returns {boolean} Has a contact point that messages are delivered to
