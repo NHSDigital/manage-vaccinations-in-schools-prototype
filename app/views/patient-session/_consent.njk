@@ -120,9 +120,9 @@
       {% set isOrWas = "was" if session.areConsentRequestsSent else "is" %}
       {% set reasonText %}
         {%- if consentRequest.reason === ConsentRequestReason.ConsentLastsUntilSession -%}
-          the child already {{ hasOrHad }} consent lasting until the session
+          the child already {{ hasOrHad }} consent lasting beyond the session
         {%- elif consentRequest.reason === ConsentRequestReason.Refused -%}
-          the child {{ hasOrHad }} a refusal, and this session only requests consent for children without one
+          the child {{ hasOrHad }} a refusal when the consent window opened
         {%- elif consentRequest.reason === ConsentRequestReason.AlreadyVaccinated -%}
           the child {{ isOrWas }} already vaccinated
         {%- elif consentRequest.reason === ConsentRequestReason.SelfConsent -%}
@@ -130,7 +130,7 @@
         {%- endif -%}
       {% endset %}
       <p class="nhsuk-body">
-        Consent requests {{ "were not" if session.areConsentRequestsSent else "will not be" }} sent, as {{ reasonText }}.
+        Consent {{ "was not" if session.areConsentRequestsSent else "will not be" }} requested, as {{ reasonText }}.
       </p>
     {% else %}
       {# Work out who'll get the consent requests and reminders #}
