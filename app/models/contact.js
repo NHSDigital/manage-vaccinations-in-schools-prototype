@@ -21,7 +21,8 @@ import { BaseModel } from './base.js'
  *   email addresses
  * @property {string} [tel] - Phone number (added as a contact point)
  * @property {string} [email] - Email address (added as a contact point)
- * @property {boolean} [canSms] - Get updates via SMS
+ * @property {boolean} [canSms] - Get updates via SMS (defaults to `false` if
+ *   the contact has a phone number)
  * @property {NotifyEmailStatus} [emailStatus] - Email status (of `email`)
  * @property {NotifySmsStatus} [smsStatus] - SMS status (of `tel`)
  * @property {Array<ContactPointOptions>} [pendingContactPoints] - Contact
@@ -91,11 +92,11 @@ export class Contact extends BaseModel {
 
     // Keep the text message preference while a contact has any phone number,
     // including archived ones, so it isn’t lost if a phone number is archived
-    // and later restored
+    // and later restored. If no preference has been given, it’s ‘No’
     this.canSms = this.contactPoints.some(
       (contactPoint) => contactPoint.isPhone
     )
-      ? stringToBoolean(options?.canSms)
+      ? (stringToBoolean(options?.canSms) ?? false)
       : undefined
 
     this.pendingContactPoints = (options?.pendingContactPoints || []).map(
