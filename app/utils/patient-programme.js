@@ -634,8 +634,15 @@ export function getPatientStatusDescription(patientProgramme) {
   switch (patientProgramme.status) {
     case PatientStatus.Ineligible:
       return patientProgramme?.ineligibilityDescription
-    case PatientStatus.Vaccinated:
-      return `${patientProgramme.patient?.firstName} was vaccinated by ${patientProgramme.lastVaccinationOutcome.createdBy.fullName} on ${patientProgramme.lastVaccinationOutcome.formatted.createdAt}.`
+    case PatientStatus.Vaccinated: {
+      const vaccination = patientProgramme.lastVaccinationOutcome
+
+      // Vaccinations from other sources (such as GP records or uploads)
+      // weren’t recorded by anyone using Mavis
+      return vaccination.createdBy
+        ? `${patientProgramme.patient?.firstName} was vaccinated by ${vaccination.createdBy.fullName} on ${vaccination.formatted.createdAt}.`
+        : `${patientProgramme.patient?.firstName} was vaccinated on ${vaccination.formatted.administeredAt_date}.`
+    }
     case PatientStatus.Due:
       return patientProgramme.vaccineCriteria
         ? `${patientProgramme.patient?.firstName} is ready to vaccinate (${patientProgramme.vaccineCriteria.toLowerCase()}).`
