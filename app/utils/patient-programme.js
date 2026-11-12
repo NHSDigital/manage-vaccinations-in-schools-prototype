@@ -467,6 +467,137 @@ export function getConsentRequestNeeds(patientProgramme, session) {
 }
 
 /**
+ * Can staff send consent requests or reminders for a session themselves?
+ *
+ * Only while the session’s consent window is open (before then, the requests
+ * are still to go out), and not on the day of the session
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @param {Session} session - Session
+ * @returns {boolean} Consent requests or reminders can be sent
+ */
+function canSendConsentMessages(patientProgramme, session) {
+  const { patient } = patientProgramme
+
+  return (
+    session.consentWindow === ConsentWindow.Open &&
+    !session.isActive &&
+    patient.hasContactDetails &&
+    !patient.isPost16 &&
+    !patientProgramme.isVaccinated
+  )
+}
+
+/**
+ * Can staff send a consent request for a session themselves?
+ *
+ * They can if no request has gone out for the session, and either:
+ * - consent should have been requested, but wasn’t (for example, the child’s
+ *   parents had no contact details when the consent window opened)
+ * - the only reason it wasn’t requested is a refusal, and staff want to ask
+ *   this child’s parents anyway
+ *
+ * A request can also be sent again if the last one failed
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @param {Session} session - Session
+ * @returns {boolean} A consent request can be sent
+ */
+export function canSendConsentRequest(patientProgramme, session) {
+  if (!canSendConsentMessages(patientProgramme, session)) {
+    return false
+  }
+
+  if (patientProgramme.consent === ConsentStatus.NotDelivered) {
+    return true
+  }
+
+  const hasBeenRequested =
+    patientProgramme.getConsentRequestsForSession(session).length > 0
+  if (hasBeenRequested) {
+    return false
+  }
+
+  const consentRequest = getConsentRequestNeeds(patientProgramme, session)
+  const wasOnlyStoppedByRefusal =
+    consentRequest?.reason === ConsentRequestReason.Refused
+
+  return consentRequest?.shouldRequest || wasOnlyStoppedByRefusal
+}
+
+/**
+ * Can staff send a consent reminder for a session themselves?
+ *
+ * They can if consent was requested for the session (automatically or by
+ * staff) and no-one has responded since the latest request. Teams can send as
+ * many extra reminders as they like, on top of the scheduled one
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @param {Session} session - Session
+ * @returns {boolean} A consent reminder can be sent
+ */
+export function canSendConsentReminder(patientProgramme, session) {
+  if (!canSendConsentMessages(patientProgramme, session)) {
+    return false
+  }
+
+  const latestRequest = patientProgramme
+    .getConsentRequestsForSession(session)
+    .at(-1)
+  if (!latestRequest) {
+    return false
+  }
+
+  const hasRespondedToRequest = patientProgramme.hasReplyBetween(
+    latestRequest.createdAt
+  )
+
+  return !hasRespondedToRequest
+}
+
+/**
+ * Describe the consent requests staff sent for a session themselves, one
+ * paragraph for the date of each request and another listing who it went to
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @param {Session} session - Session
+ * @returns {Array<string>} Paragraphs (Markdown), or none if staff haven’t
+ *   sent any requests
+ */
+function describeManualConsentRequests(patientProgramme, session) {
+  const { __ } = i18n
+
+  const manualRequests = patientProgramme
+    .getConsentRequestsForSession(session)
+    .filter(({ createdBy_uid }) => createdBy_uid)
+
+  // A request sent to several contacts at once has a message for each contact
+  const requestsBySentAt = Map.groupBy(manualRequests, ({ createdAt }) =>
+    createdAt.valueOf()
+  )
+
+  const contacts = patientProgramme.patient?.contacts ?? []
+
+  return [...requestsBySentAt.values()].flatMap((messages) => {
+    const [{ createdAt, createdBy }] = messages
+    const recipientNames = messages.map(({ messageRecipient }) => {
+      const contact = contacts.find(
+        ({ uuid }) => uuid === messageRecipient?.uuid
+      )
+      return contact?.fullNameAndRelationship ?? messageRecipient?.fullName
+    })
+
+    return [
+      __('patientSession.consentRequests.manuallyRequested', {
+        user: createdBy?.fullName,
+        date: formatDate(createdAt, { dateStyle: 'full' })
+      }),
+      recipientNames.map((name) => `- ${name}`).join('\n')
+    ]
+  })
+}
+
+/**
  * Get the key of a consent request reason, as used to look up its text
  *
  * @param {ConsentRequestReason} reason - Consent request reason
@@ -503,10 +634,26 @@ export function getConsentRequestDescription(patientProgramme, session) {
 
   if (!consentRequest.shouldRequest) {
     const reasonKey = getConsentRequestReasonKey(consentRequest.reason)
+    const paragraphs = [
+      __(
+        `patientSession.consentRequests.notRequested.${reasonKey}.${requestTense}`
+      )
+    ]
 
-    return __(
-      `patientSession.consentRequests.notRequested.${reasonKey}.${requestTense}`
+    // Staff can still request consent for a child with a refusal, but the
+    // scheduled reminder doesn’t go out, as it could follow soon after
+    const manualRequestParagraphs = describeManualConsentRequests(
+      patientProgramme,
+      session
     )
+    if (manualRequestParagraphs.length > 0) {
+      paragraphs.push(
+        ...manualRequestParagraphs,
+        __('patientSession.consentRequests.noScheduledReminder')
+      )
+    }
+
+    return paragraphs.join('\n\n')
   }
 
   const contactsToRequestFrom = (patientProgramme.patient?.contacts ?? [])
@@ -528,7 +675,8 @@ export function getConsentRequestDescription(patientProgramme, session) {
     __(`patientSession.consentRequests.requested.${requestTense}`, {
       date: session.formatted.consentOpenAtShort
     }),
-    contactsToRequestFrom.map((contact) => `- ${contact}`).join('\n')
+    contactsToRequestFrom.map((contact) => `- ${contact}`).join('\n'),
+    ...describeManualConsentRequests(patientProgramme, session)
   )
 
   // Reminders can’t have gone out before the request

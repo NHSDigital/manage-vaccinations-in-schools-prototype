@@ -116,28 +116,26 @@
   {% endif %}
 
   {# Actions #}
-  {% if not patientProgramme.isVaccinated and not patientProgramme.patient.isPost16 %}
-    {{ appButtonGroup({
-      buttons: [
-        {
-          text: __("patientSession.request.label"),
-          variant: "secondary",
-          attributes: {
-            formaction: patientSession.uri + "/new/request",
-            formmethod: "post"
-          }
-        } if options.canRequest,
-        {
-          text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
-          variant: "secondary",
-          attributes: {
-            formaction: patientSession.uri + "/new/remind",
-            formmethod: "post"
-          }
-        } if options.canRemind
-      ],
-      description: lastConsentReminderDate
-    }) }}
-  {% endif %}
+  {{ appButtonGroup({
+    buttons: [
+      {
+        text: __("patientSession.request.label"),
+        variant: "secondary",
+        attributes: {
+          formaction: patientSession.uri + "/new/request",
+          formmethod: "post"
+        }
+      } if options.canRequest,
+      {
+        text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
+        variant: "secondary",
+        attributes: {
+          formaction: patientSession.uri + "/new/remind",
+          formmethod: "post"
+        }
+      } if options.canRemind
+    ],
+    description: lastConsentReminderDate
+  }) }}
 
 {% endcall %}

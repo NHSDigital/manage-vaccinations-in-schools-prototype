@@ -2465,7 +2465,10 @@ export const en = {
       noReminder: {
         upcoming: 'Mavis has a consent response so will not send a reminder.',
         sent: 'Mavis has a consent response so did not send a reminder.'
-      }
+      },
+      manuallyRequested: '{{user}} requested consent on {{date}} from:',
+      noScheduledReminder:
+        'The scheduled reminder will not be sent for this request, but you can send reminders yourself.'
     },
     replies: {
       label: 'Consent responses',
