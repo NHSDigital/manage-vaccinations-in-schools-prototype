@@ -1,7 +1,8 @@
 import filters from '@x-govuk/govuk-prototype-filters'
-import { isSameDay } from 'date-fns'
+import { isBefore, isSameDay } from 'date-fns'
 
 import {
+  ConsentRequestReason,
   ConsentStatus,
   ConsentVaccineCriteria,
   ConsentWindow,
@@ -14,11 +15,14 @@ import {
   PatientVaccinatedStatus,
   ReplyDecision,
   ScreenStatus,
+  SessionConsentContacts,
+  SessionType,
   VaccinationOutcome,
   VaccineCriteria
 } from '../enums.js'
 
 import { formatDate, getDateValueDifference, today } from './date.js'
+import i18n from './i18n.js'
 import { getRepliesWithHealthAnswers } from './reply.js'
 
 /**
@@ -373,6 +377,180 @@ export function getConsentStatusDescription(patientProgramme) {
 }
 
 /**
+ * @typedef {object} ConsentRequestNeeds
+ * @property {boolean} shouldRequest - Whether consent should be requested
+ * @property {ConsentRequestReason} reason - Why it should (or shouldn’t) be
+ */
+
+/**
+ * Should consent be requested from the child’s parents for a school session,
+ * and why (or why not)?
+ *
+ * Requests go out when the session’s consent window opens, so this is decided
+ * on what was known then. Responses since, including replies to the request
+ * itself, don’t change it. Consent should be requested if:
+ * - no responses gave consent
+ * - every response giving consent expires before the session
+ * - there’s a refusal, and the session requests consent from children who
+ *   have one
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @param {Session} session - School session
+ * @returns {ConsentRequestNeeds|undefined} Decision, or nothing if it’s not
+ *   a school session
+ */
+export function getConsentRequestNeeds(patientProgramme, session) {
+  if (session?.type !== SessionType.School) {
+    return
+  }
+
+  const requestedAt = session.consentOpenAt
+
+  if (patientProgramme.patient?.isPost16) {
+    return {
+      shouldRequest: false,
+      reason: ConsentRequestReason.SelfConsent
+    }
+  }
+
+  const wasVaccinatedBeforeRequest =
+    patientProgramme.isVaccinated &&
+    patientProgramme.vaccinationsGiven.some((vaccination) =>
+      isBefore(vaccination.createdAt, requestedAt)
+    )
+  const repliesBeforeRequest =
+    patientProgramme.getRepliesCountingTowardsConsentAt(requestedAt)
+  const wasReportedAsAlreadyVaccinated = repliesBeforeRequest.some(
+    ({ decision }) => decision === ReplyDecision.AlreadyVaccinated
+  )
+  if (wasVaccinatedBeforeRequest || wasReportedAsAlreadyVaccinated) {
+    return {
+      shouldRequest: false,
+      reason: ConsentRequestReason.AlreadyVaccinated
+    }
+  }
+
+  const hasRefusal = repliesBeforeRequest.some(
+    (reply) => reply.hasRefusedConsent || reply.hasDeclinedConsent
+  )
+  if (hasRefusal) {
+    return session.consentContacts === SessionConsentContacts.All
+      ? {
+          shouldRequest: true,
+          reason: ConsentRequestReason.SessionContactsRefusals
+        }
+      : { shouldRequest: false, reason: ConsentRequestReason.Refused }
+  }
+
+  const repliesGivingConsent = repliesBeforeRequest.filter(
+    (reply) => reply.hasGivenConsent
+  )
+  if (repliesGivingConsent.length === 0) {
+    return { shouldRequest: true, reason: ConsentRequestReason.NoConsent }
+  }
+
+  const doesConsentLastUntilSession =
+    session.date === undefined ||
+    repliesGivingConsent.some(
+      (reply) => !isBefore(reply.expiresAt, session.date)
+    )
+
+  return doesConsentLastUntilSession
+    ? {
+        shouldRequest: false,
+        reason: ConsentRequestReason.ConsentLastsUntilSession
+      }
+    : {
+        shouldRequest: true,
+        reason: ConsentRequestReason.ConsentExpiresBeforeSession
+      }
+}
+
+/**
+ * Get the key of a consent request reason, as used to look up its text
+ *
+ * @param {ConsentRequestReason} reason - Consent request reason
+ * @returns {string} Key, for example `ConsentLastsUntilSession`
+ */
+function getConsentRequestReasonKey(reason) {
+  return Object.keys(ConsentRequestReason).find(
+    (key) => ConsentRequestReason[key] === reason
+  )
+}
+
+/**
+ * Describe whether consent requests and reminders for a school session will be
+ * (or were) sent, and to whom
+ *
+ * Reminders are only mentioned once requests have gone out, and contacts who
+ * respond to the request aren’t reminded
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @param {Session} session - School session
+ * @returns {string|undefined} Description (Markdown), or nothing if it’s not a
+ *   school session
+ */
+export function getConsentRequestDescription(patientProgramme, session) {
+  const { __ } = i18n
+
+  const consentRequest = getConsentRequestNeeds(patientProgramme, session)
+  if (!consentRequest) {
+    return
+  }
+
+  const requestTense = session.areConsentRequestsSent ? 'sent' : 'upcoming'
+  const reminderTense = session.areConsentRemindersSent ? 'sent' : 'upcoming'
+
+  if (!consentRequest.shouldRequest) {
+    const reasonKey = getConsentRequestReasonKey(consentRequest.reason)
+
+    return __(
+      `patientSession.consentRequests.notRequested.${reasonKey}.${requestTense}`
+    )
+  }
+
+  const contactsToRequestFrom = (patientProgramme.patient?.contacts ?? [])
+    .filter((contact) => contact.hasContactDetails)
+    .map((contact) => contact.fullNameAndRelationship)
+  if (contactsToRequestFrom.length === 0) {
+    return __('patientSession.consentRequests.noContacts')
+  }
+
+  const paragraphs = []
+
+  if (consentRequest.reason === ConsentRequestReason.SessionContactsRefusals) {
+    paragraphs.push(
+      __(`patientSession.consentRequests.refusalIncluded.${requestTense}`)
+    )
+  }
+
+  paragraphs.push(
+    __(`patientSession.consentRequests.requested.${requestTense}`, {
+      date: session.formatted.consentOpenAt
+    }),
+    contactsToRequestFrom.map((contact) => `- ${contact}`).join('\n')
+  )
+
+  // Reminders can’t have gone out before the request
+  if (session.areConsentRequestsSent) {
+    const hasRespondedToRequest = patientProgramme.hasReplyBetween(
+      session.consentOpenAt,
+      session.nextReminderDate
+    )
+
+    paragraphs.push(
+      hasRespondedToRequest
+        ? __(`patientSession.consentRequests.noReminder.${reminderTense}`)
+        : __(`patientSession.consentRequests.reminder.${reminderTense}`, {
+            date: session.formatted.nextReminderDate
+          })
+    )
+  }
+
+  return paragraphs.join('\n\n')
+}
+
+/**
  * Has consent been given without any answers to health questions?
  *
  * For example, in a clinic booking transferred from another system. Children
@@ -634,8 +812,15 @@ export function getPatientStatusDescription(patientProgramme) {
   switch (patientProgramme.status) {
     case PatientStatus.Ineligible:
       return patientProgramme?.ineligibilityDescription
-    case PatientStatus.Vaccinated:
-      return `${patientProgramme.patient?.firstName} was vaccinated by ${patientProgramme.lastVaccinationOutcome.createdBy.fullName} on ${patientProgramme.lastVaccinationOutcome.formatted.createdAt}.`
+    case PatientStatus.Vaccinated: {
+      const vaccination = patientProgramme.lastVaccinationOutcome
+
+      // Vaccinations from other sources (such as GP records or uploads)
+      // weren’t recorded by anyone using Mavis
+      return vaccination.createdBy
+        ? `${patientProgramme.patient?.firstName} was vaccinated by ${vaccination.createdBy.fullName} on ${vaccination.formatted.createdAt}.`
+        : `${patientProgramme.patient?.firstName} was vaccinated on ${vaccination.formatted.administeredAt_date}.`
+    }
     case PatientStatus.Due:
       return patientProgramme.vaccineCriteria
         ? `${patientProgramme.patient?.firstName} is ready to vaccinate (${patientProgramme.vaccineCriteria.toLowerCase()}).`

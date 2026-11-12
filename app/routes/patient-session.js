@@ -11,7 +11,7 @@ router.get('/:nhsn/:programme_id/new/:view', patientSession.showForm('new'))
 
 router.post('/:nhsn/:programme_id/new/gillick', patientSession.gillick('new'))
 router.post('/:nhsn/:programme_id/new/pre-screen', patientSession.preScreen)
-router.post('/:nhsn/:programme_id/new/invite', patientSession.invite)
+router.post('/:nhsn/:programme_id/new/request', patientSession.request)
 router.post('/:nhsn/:programme_id/new/remind', patientSession.remind)
 router.post('/:nhsn/:programme_id/new/note', patientSession.note)
 

@@ -37,17 +37,6 @@
       ]
     } if reply.isValid
   }) %}
-    {# Expiring soon? #}
-    {% if reply.expiresAt %}
-      {% set expiresAfterSession = reply.expiresAt > session.date %}
-      {{ appStatus({
-        text: __("reply.expiringSoon.label") if expiresAfterSession else __("reply.expiringBeforeSession.label"),
-        icon: "warning" if expiresAfterSession else "alert",
-        colour: "blue",
-        classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
-      }) if reply.isExpiringSoon and not reply.isInvalidated }}
-    {% endif %}
-
     {# Details of the response #}
     {{ summaryList({
       lastRowBorder: false,
@@ -77,54 +66,31 @@
     {{ patientProgramme.consentDescription | nhsukMarkdown }}
   {% endif %}
 
-  {# Actions #}
+  {# Record a new consent response #}
   {% if not patientProgramme.isVaccinated and not patientProgramme.patient.isPost16 %}
-    {% if not patientProgramme.isVaccinated %}
-      <div class="app-action-link-with-description">
-        {{ actionLink({
-          text: __("reply.new.title"),
-          href: patientProgramme.uri + "/replies/new?session_id=" + session.id + "&referrer=" + referrer
-        }) }}
-        {{ __("reply.new.description") | nhsukMarkdown }}
-      </div>
-    {% endif %}
-
-    {{ appButtonGroup({
-      buttons: [
-        {
-          text: __("patientSession.invite.label"),
-          variant: "secondary",
-          attributes: {
-            formaction: patientSession.uri + "/new/invite",
-            formmethod: "post"
-          }
-        } if options.canInvite,
-        {
-          text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
-          variant: "secondary",
-          attributes: {
-            formaction: patientSession.uri + "/new/remind",
-            formmethod: "post"
-          }
-        } if options.canRemind
-      ],
-      description: lastConsentReminderDate
-    }) }}
+    <div class="app-action-link-with-description">
+      {{ actionLink({
+        text: __("reply.new.title"),
+        href: patientProgramme.uri + "/replies/new?session_id=" + session.id + "&referrer=" + referrer
+      }) }}
+      {{ __("reply.new.description") | nhsukMarkdown }}
+    </div>
   {% endif %}
 
   {# Responses that count towards consent #}
   {{ heading({
     text: __("patientSession.replies.label"),
     level: 3,
-    size: "s"
+    size: "s",
+    classes: "nhsuk-u-margin-bottom-2" if patientProgramme.replies.length === 0
   }) }}
 
-  {% if patientProgramme.replies | length %}
+  {% if patientProgramme.replies.length > 0 %}
     {% for reply in patientProgramme.replies %}
       {{ consentResponseCard(reply) }}
     {% endfor %}
   {% else %}
-    <p>{{ __("patientSession.replies.none") }}</p>
+    {{ __("patientSession.replies.none") | nhsukMarkdown }}
   {% endif %}
 
   {# Responses that no longer count towards consent #}
@@ -138,4 +104,43 @@
       {% endfor %}
     {% endcall %}
   {% endif %}
+
+  {# For school sessions, tell us whether consent requests and reminders are going out #}
+  {% set consentRequestDescription = patientProgramme.getConsentRequestDescriptionForSession(session) %}
+  {% if consentRequestDescription %}
+    {{ heading({
+      text: __("patientSession.consentRequests.label"),
+      level: 3,
+      size: "s",
+      classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-2"
+    }) }}
+
+    {{ consentRequestDescription | nhsukMarkdown }}
+  {% endif %}
+
+  {# Actions #}
+  {% if not patientProgramme.isVaccinated and not patientProgramme.patient.isPost16 %}
+    {{ appButtonGroup({
+      buttons: [
+        {
+          text: __("patientSession.request.label"),
+          variant: "secondary",
+          attributes: {
+            formaction: patientSession.uri + "/new/request",
+            formmethod: "post"
+          }
+        } if options.canRequest,
+        {
+          text: __("remind.new.title", ((consentRemindersSent + 1) | ordinal) if consentRemindersSent else "a"),
+          variant: "secondary",
+          attributes: {
+            formaction: patientSession.uri + "/new/remind",
+            formmethod: "post"
+          }
+        } if options.canRemind
+      ],
+      description: lastConsentReminderDate
+    }) }}
+  {% endif %}
+
 {% endcall %}

@@ -328,6 +328,24 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Have consent requests already been sent out?
+   *
+   * @returns {boolean} true if sent, false otherwise
+   */
+  get areConsentRequestsSent() {
+    return this.consentOpenAt < today()
+  }
+
+  /**
+   * Have consent reminders already been sent out?
+   *
+   * @returns {boolean} true if sent, false otherwise
+   */
+  get areConsentRemindersSent() {
+    return this.nextReminderDate < today()
+  }
+
+  /**
    * Is unplanned session
    *
    * @returns {boolean} Is unplanned session

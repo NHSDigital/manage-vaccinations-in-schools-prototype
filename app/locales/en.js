@@ -2433,9 +2433,53 @@ export const en = {
         label: 'Assessment notes'
       }
     },
-    invite: {
+    request: {
       label: 'Send consent request',
       success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
+    },
+    consentRequests: {
+      label: 'Consent requests for this session',
+      notRequested: {
+        ConsentLastsUntilSession: {
+          upcoming:
+            'Consent will not be requested, as the child already has consent lasting beyond the session.',
+          sent: 'Consent was not requested, as the child already had consent lasting beyond the session.'
+        },
+        Refused: {
+          upcoming:
+            'Consent will not be requested, as the child has a refusal.',
+          sent: 'Consent was not requested, as the child had a refusal when the consent window opened.'
+        },
+        AlreadyVaccinated: {
+          upcoming:
+            'Consent will not be requested, as the child is already vaccinated.',
+          sent: 'Consent was not requested, as the child was already vaccinated.'
+        },
+        SelfConsent: {
+          upcoming:
+            'Consent will not be requested, as the child can give consent themselves.',
+          sent: 'Consent was not requested, as the child can give consent themselves.'
+        }
+      },
+      noContacts:
+        'Consent requests cannot be sent as there are no contact details for this child.',
+      refusalIncluded: {
+        upcoming:
+          'The child has a refusal, but this session requests consent for all children, including those with a refusal.',
+        sent: 'The child had a refusal, but this session requests consent for all children, including those with a refusal.'
+      },
+      requested: {
+        upcoming: 'Consent will be requested on {{date}} from:',
+        sent: 'Consent was requested on {{date}} from:'
+      },
+      reminder: {
+        upcoming: 'A reminder will be sent on {{date}}.',
+        sent: 'A reminder was sent on {{date}}.'
+      },
+      noReminder: {
+        upcoming: 'A reminder will not be sent, as a response was received.',
+        sent: 'A reminder was not sent, as a response was received.'
+      }
     },
     replies: {
       label: 'Consent responses',

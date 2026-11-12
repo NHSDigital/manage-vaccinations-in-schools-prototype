@@ -45,6 +45,8 @@ import {
 } from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
 import {
+  getConsentRequestDescription,
+  getConsentRequestNeeds,
   getConsentStatus,
   getConsentStatusDescription,
   getHealthAnswersDescription,
@@ -255,6 +257,68 @@ export class PatientProgramme extends BaseModel {
    */
   get consentRequests() {
     return this.#messagesSent('invite')
+  }
+
+  /**
+   * Should consent be requested from the child’s parents for a school
+   * session, and why (or why not)?
+   *
+   * @param {Session} session - School session
+   * @returns {ConsentRequestNeeds|undefined} Decision, or nothing if it’s
+   *   not a school session
+   */
+  getConsentRequestNeedsForSession(session) {
+    return getConsentRequestNeeds(this, session)
+  }
+
+  /**
+   * Describe whether consent requests and reminders for a school session will
+   * be (or were) sent, and to whom
+   *
+   * @param {Session} session - School session
+   * @returns {string|undefined} Description (Markdown), or nothing if it’s not
+   *   a school session
+   */
+  getConsentRequestDescriptionForSession(session) {
+    return getConsentRequestDescription(this, session)
+  }
+
+  /**
+   * Get responses that counted towards consent at a given date: only the
+   * latest from each respondent before then, ignoring responses invalidated
+   * by then and any that say nothing about consent
+   *
+   * Responses that have expired since are included, as they may still have
+   * counted at that date
+   *
+   * @param {Date} date - Date
+   * @returns {Array<Reply>} Responses, newest first
+   */
+  getRepliesCountingTowardsConsentAt(date) {
+    const repliesBeforeDate = (this.#allDeliveredReplies ?? []).filter(
+      (reply) =>
+        !this.#wasReplyInvalidatedBefore(reply, date) &&
+        reply.decision !== ReplyDecision.NoResponse &&
+        isBefore(reply.createdAt, date)
+    )
+
+    return getLatestReplyFromEachRespondent(repliesBeforeDate)
+  }
+
+  /**
+   * Was a response received between two dates?
+   *
+   * @param {Date} startDate - Start date
+   * @param {Date} [endDate] - End date, or none for up to now
+   * @returns {boolean} A response was received between the dates
+   */
+  hasReplyBetween(startDate, endDate) {
+    return (this.replies ?? []).some(
+      (reply) =>
+        reply.decision !== ReplyDecision.NoResponse &&
+        !isBefore(reply.createdAt, startDate) &&
+        (!endDate || isBefore(reply.createdAt, endDate))
+    )
   }
 
   /**
@@ -2042,4 +2106,5 @@ PatientProgramme.relate('programme_id', () => Programme, 'programme')
  * @import { PatientTriageStatus, PatientVaccinatedStatus } from '../enums.js'
  * @import { PatientSession, Vaccine } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ConsentRequestNeeds } from '../utils/patient-programme.js'
  */

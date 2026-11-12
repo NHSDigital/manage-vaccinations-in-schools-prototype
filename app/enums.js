@@ -636,6 +636,25 @@ export const SessionConsentContacts = {
 }
 
 /**
+ * Why consent should (or shouldn’t) be requested from a child’s parents for
+ * a school session
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const ConsentRequestReason = {
+  // Consent should be requested
+  NoConsent: 'No consent',
+  ConsentExpiresBeforeSession: 'Consent expires before the session',
+  SessionContactsRefusals: 'Session requests consent despite a refusal',
+  // Consent shouldn’t be requested
+  ConsentLastsUntilSession: 'Consent lasts until the session',
+  Refused: 'Refused',
+  AlreadyVaccinated: 'Already vaccinated',
+  SelfConsent: 'Child can consent for themselves'
+}
+
+/**
  * @readonly
  * @enum {string}
  */
