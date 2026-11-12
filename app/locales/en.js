@@ -1938,6 +1938,8 @@ export const en = {
   },
   contactPoint: {
     label: 'Phone number or email address',
+    count:
+      '{count, plural, =0 {No active contacts} one {1 active contact} other {# active contacts}}',
     new: {
       tel: {
         label: 'Add phone number',

@@ -1,6 +1,8 @@
 {%- from "card/macro.njk" import card %}
 {%- from "heading/macro.njk" import heading %}
 {%- from "summary-list/macro.njk" import summaryList %}
+{%- from "tables/macro.njk" import table %}
+{%- from "_macros/action-list.njk" import appActionList %}
 
 {#
   A contact, with their contact details and contact points
@@ -56,26 +58,28 @@
       communicationNeeds: {}
     }) %}
 
-    {{ summaryList({
-      classes: "nhsuk-u-margin-bottom-4",
-      lastRowBorder: false,
-      rows: preferenceRows
-    }) if preferenceRows | length }}
+    {{ summaryList({ rows: preferenceRows }) if preferenceRows | length }}
 
     {% if not contact.isSensitive %}
-    <div class="nhsuk-grid-row nhsuk-card-group">
+      {% set contactPointRows = [] %}
       {% for contactPoint in contact.sortedContactPoints %}
-      <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-        {{ summaryList({
-          card: {
-            classes: "app-card--compact app-card--offset",
-            heading: {
-              text: contactPoint.formatted.value | safe,
-              visuallyHiddenText: __("contactPoint.archived.label") if contactPoint.isArchived,
-              level: 4,
-              size: "s"
-            },
-            actions: {
+        {% set contactPointRows = contactPointRows | push([
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            width: "one-third",
+            html: contactPoint.formatted.value
+          },
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            text: contactPoint.formatted.archivedAt or contactPoint.formatted.updatedAt or contactPoint.formatted.createdAt
+          },
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            html: contactPoint.formatted.sources
+          },
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            html: appActionList({
               items: [
                 {
                   text: __("actions.restore"),
@@ -87,19 +91,34 @@
                   href: contact.uri + "/contact-points/" + contactPoint.uuid + "/archive"
                 }
               ]
-            } if canChangeContact
-          },
-          lastRowBorder: false,
-          rows: summaryRows(contactPoint, {
-            createdAt: {} if not contactPoint.updatedAt else none,
-            updatedAt: {} if not contactPoint.isArchived else none,
-            archivedAt: {},
-            sources: {}
-          })
-        }) }}
-        </div>
+            })
+          } if canChangeContact else none
+        ]) %}
       {% endfor %}
-    </div>
+
+      {{ table({
+        responsive: true,
+        caption: __mf("contactPoint.count", { count: contact.activeContactPoints.length }),
+        head: [
+          {
+            text: __("contactPoint.value.label"),
+            width: "one-third"
+          },
+          {
+            text: __("contactPoint.updatedAt.label"),
+            width: "one-quarter"
+          },
+          {
+            text: __("contactPoint.sources.label"),
+            width: "one-quarter"
+          },
+          {
+            text: __("actions.label")
+          } if canChangeContact else none
+        ],
+        lastRowBorder: false,
+        rows: contactPointRows
+      }) }}
     {% endif %}
   {% endcall %}
 {% endmacro %}
