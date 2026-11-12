@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ClinicAppointment, Contact } from '../models.js'
-import { formatCode } from '../utils/string.js'
+import { formatCode, stringToBoolean } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
@@ -34,8 +34,28 @@ export class ClinicBooking extends BaseModel {
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
 
-    this.contact =
-      (options?.contact && new Contact(options.contact)) ?? new Contact({})
+    this.contact = (
+      (options?.contact && new Contact(options.contact)) ??
+      new Contact({})
+    ).setResponse(this)
+
+    // Communication needs are given with each booking, rather than being kept
+    // with the contact
+    // A parent can’t say they have communication needs without saying what
+    // they are (the service would ask them to), so ‘Yes’ without any details
+    // is treated as ‘No’. If the question hasn’t been answered, it’s left
+    // unset, so no answer is selected in forms
+    const hasCommunicationNeeds = stringToBoolean(
+      options?.hasCommunicationNeeds
+    )
+    const communicationNeeds = hasCommunicationNeeds
+      ? options?.communicationNeeds?.trim()
+      : undefined
+    this.hasCommunicationNeeds =
+      hasCommunicationNeeds === undefined ? undefined : !!communicationNeeds
+    if (communicationNeeds) {
+      this.communicationNeeds = communicationNeeds
+    }
 
     this.appointments =
       options?.appointments?.map(
@@ -117,6 +137,8 @@ export class ClinicBooking extends BaseModel {
           switch (prop) {
             case 'bookingReference':
               return formatCode(this.bookingReference, true)
+            case 'communicationNeeds':
+              return this.communicationNeeds || 'None'
             default:
               return undefined
           }

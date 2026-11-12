@@ -19,8 +19,6 @@ import { BaseModel } from './base.js'
  * @property {boolean} [canSms] - Get updates via SMS
  * @property {NotifyEmailStatus} [emailStatus] - Email status
  * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {boolean} [hasCommunicationNeeds] - Has communication needs
- * @property {string} [communicationNeeds] - Communication or language needs
  * @property {Partial<Contact>} [pendingChanges] - Pending changes to contact details
  */
 
@@ -68,13 +66,47 @@ export class Contact extends BaseModel {
     this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
     this.emailStatus = this?.email && options?.emailStatus
     this.smsStatus = this?.tel && options?.smsStatus
-    this.hasCommunicationNeeds = stringToBoolean(options?.hasCommunicationNeeds)
-
-    if (this.hasCommunicationNeeds) {
-      this.communicationNeeds = options?.communicationNeeds
-    }
 
     this.pendingChanges = options?.pendingChanges || {}
+  }
+
+  /**
+   * Link the contact to the consent response or clinic booking they gave
+   *
+   * Communication needs are given with each response or booking, rather than
+   * kept with the contact, so a contact linked to one can show them. The link
+   * isn’t saved with the contact.
+   *
+   * @param {Reply|ClinicBooking} [response] - Response or booking
+   * @returns {Contact} Contact
+   */
+  setResponse(response) {
+    Object.defineProperty(this, 'response', {
+      value: response,
+      enumerable: false,
+      configurable: true,
+      writable: true
+    })
+
+    return this
+  }
+
+  /**
+   * Has communication needs (from the response or booking they gave)
+   *
+   * @returns {boolean|undefined} Has communication needs
+   */
+  get hasCommunicationNeeds() {
+    return this.response?.hasCommunicationNeeds
+  }
+
+  /**
+   * Get communication needs (from the response or booking they gave)
+   *
+   * @returns {string|undefined} Communication needs
+   */
+  get communicationNeeds() {
+    return this.response?.communicationNeeds
   }
 
   /**
@@ -150,9 +182,7 @@ export class Contact extends BaseModel {
 
           switch (prop) {
             case 'communicationNeeds':
-              return redactIfSensitive(
-                this.communicationNeeds || this.hasCommunicationNeeds
-              )
+              return this.response?.formatted.communicationNeeds
             case 'fullName':
               return this.fullName || 'Name unknown'
             case 'relationship':
@@ -183,5 +213,6 @@ Contact.relate('patient_uuid', () => Patient, 'patient')
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
+ * @import { ClinicBooking, Reply } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

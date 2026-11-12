@@ -1,7 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set audience = "parent" if isParentFacing else "team" %}
-{% set title = __("clinicBooking.contact.hasCommunicationNeeds.title." + audience) %}
+{% set title = __("clinicBooking.hasCommunicationNeeds.title." + audience) %}
 
 {% block form %}
   {{ radios({
@@ -12,23 +12,23 @@
         size: "l"
       }
     },
-    hint: __("clinicBooking.contact.hasCommunicationNeeds.hint." + audience),
+    hint: __("clinicBooking.hasCommunicationNeeds.hint." + audience),
     items: [
       {
-        label: __("clinicBooking.contact.hasCommunicationNeeds.yes"),
+        label: __("clinicBooking.hasCommunicationNeeds.yes"),
         value: true,
         conditional: {
           html: textarea({
-            label: __("clinicBooking.contact.communicationNeeds.title"),
-            decorate: "booking.contact.communicationNeeds"
+            label: __("clinicBooking.communicationNeeds.title"),
+            decorate: "booking.communicationNeeds"
           })
         }
       },
       {
-        label: __("clinicBooking.contact.hasCommunicationNeeds.no"),
+        label: __("clinicBooking.hasCommunicationNeeds.no"),
         value: false
       }
     ],
-    decorate: "booking.contact.hasCommunicationNeeds"
+    decorate: "booking.hasCommunicationNeeds"
   }) }}
 {% endblock %}
