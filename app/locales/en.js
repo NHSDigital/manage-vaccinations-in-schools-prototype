@@ -1570,7 +1570,7 @@ export const en = {
         [ReplyDecision.OnlyTdIPV]:
           'As you answered ‘yes’ to one or more of the health questions, we need to check the Td/IPV vaccination is suitable for {{consent.child.fullName}}. We’ll review your answers and get in touch again soon.'
       },
-      description: 'We’ve sent a confirmation to <{{consent.contact.email}}>.'
+      description: 'We’ve sent a confirmation to <{{consent.contact_.email}}>.'
     },
     actions: {
       label: 'Actions'
