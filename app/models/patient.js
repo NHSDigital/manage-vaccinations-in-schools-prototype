@@ -945,32 +945,43 @@ export class Patient extends Child {
   }
 
   /**
-   * Send automatic reminder to contacts to give consent, if they haven’t
-   * responded by the time the session’s reminder is due
+   * Send automatic reminder to contacts to give consent, if consent was
+   * requested for the session and they haven’t responded to that request by
+   * the time the session’s reminder is due
    *
    * @param {PatientSession} patientSession - Patient session
    */
   remindToGiveConsent(patientSession) {
-    const { programme_id, session } = patientSession
+    const { patientProgramme, session } = patientSession
+    const requestedAt = session.consentOpenAt
     const remindAt = session.nextReminderDate
 
     // Reminder not yet due, or would be due before consent was requested?
     if (
       !remindAt ||
       isAfter(remindAt, today()) ||
-      isBefore(remindAt, session.consentOpenAt)
+      isBefore(remindAt, requestedAt)
     ) {
       return
     }
 
-    // Already had a response before the reminder was due?
-    const hasRepliedBeforeReminder = this.replies.some(
-      (reply) =>
-        reply.programme_id === programme_id &&
-        reply.academicYear === session.academicYear &&
-        isBefore(reply.createdAt, remindAt)
+    // Consent wasn’t requested for this session, so there’s nothing to remind
+    // contacts about (for example, they’d already given consent lasting until
+    // the session)
+    const consentRequest =
+      patientProgramme.getConsentRequestForSession(session)
+    if (!consentRequest?.shouldRequest) {
+      return
+    }
+
+    // Already responded to the request before the reminder was due?
+    // Responses from before the request don’t count, as the request asked for
+    // a new response
+    const hasRespondedToRequest = patientProgramme.hasReplyBetween(
+      requestedAt,
+      remindAt
     )
-    if (hasRepliedBeforeReminder) {
+    if (hasRespondedToRequest) {
       return
     }
 
