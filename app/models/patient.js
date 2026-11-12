@@ -9,7 +9,6 @@ import {
   ClinicAttendanceType,
   Impairment,
   NoticeType,
-  NotifyEmailStatus,
   PatientClinicStatus,
   SessionStatus,
   SessionType,
@@ -262,6 +261,29 @@ export class Patient extends Child {
    * @returns {Array<Contact>} Contacts
    */
   get contactsExcludingClinicBookings() {
+    return this.allContactsExcludingClinicBookings.filter(
+      (contact) => !contact.isArchived
+    )
+  }
+
+  /**
+   * Get contacts that have been archived
+   *
+   * @returns {Array<Contact>} Contacts
+   */
+  get archivedContacts() {
+    return this.allContactsExcludingClinicBookings.filter(
+      (contact) => contact.isArchived
+    )
+  }
+
+  /**
+   * Get contacts from the child’s record and from consent replies, including
+   * those that have been archived
+   *
+   * @returns {Array<Contact>} Contacts
+   */
+  get allContactsExcludingClinicBookings() {
     const contacts = new Map()
 
     // Skip any contacts that no longer exist
@@ -606,10 +628,12 @@ export class Patient extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const contactTokens = []
-    for (const contact of this.contacts) {
-      contactTokens.push(tokenize(contact, ['fullName', 'tel', 'email']))
-    }
+    // Contact points of children with sensitive records can’t be searched for
+    // Archived contacts can still be searched for
+    const contacts = [...this.contacts, ...this.archivedContacts]
+    const contactTokens = contacts.map((contact) =>
+      this.isSensitive ? tokenize(contact, ['fullName']) : contact.tokenized
+    )
 
     const childTokens = tokenize(this, [
       'nhsn',
@@ -805,6 +829,17 @@ export class Patient extends Child {
   }
 
   /**
+   * Add a change to one of the child’s contacts to the activity log, and save
+   *
+   * @param {string} name - Activity
+   * @param {string} [createdBy_uid] - User who made the change
+   */
+  addContactEvent(name, createdBy_uid) {
+    this.addEvent({ name, type: AuditEventType.Record, createdBy_uid })
+    Patient.update(this.uuid, this, this.context)
+  }
+
+  /**
    * Add PSD instruction
    *
    * @param {Partial<Instruction>} instruction - PSD instruction
@@ -926,10 +961,8 @@ export class Patient extends Child {
    */
   requestConsent(patientSession) {
     for (const contact of this.contacts) {
-      if (
-        contact.email &&
-        contact.emailStatus === NotifyEmailStatus.Delivered
-      ) {
+      // Only contacts we know we can reach are sent requests and reminders
+      if (contact.hasDeliveredContactPoint) {
         this.addEvent({
           name: activity.notify.invite(contact),
           type: AuditEventType.ProgrammeNote,
@@ -986,10 +1019,8 @@ export class Patient extends Child {
     }
 
     for (const contact of this.contacts) {
-      if (
-        contact.email &&
-        contact.emailStatus === NotifyEmailStatus.Delivered
-      ) {
+      // Only contacts we know we can reach are sent requests and reminders
+      if (contact.hasDeliveredContactPoint) {
         patientSession.sendConsentReminder({ createdAt: remindAt }, contact)
       }
     }

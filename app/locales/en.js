@@ -29,7 +29,8 @@ export const en = {
     edit: 'Edit',
     review: 'Review',
     update: 'Update',
-    archive: 'Archive'
+    archive: 'Archive',
+    restore: 'Restore'
   },
   count: {
     updates:
@@ -1880,13 +1881,22 @@ export const en = {
       confirm: 'Save changes',
       success: 'Contact updated'
     },
-    delete: {
-      success: 'Contact deleted'
+    archive: {
+      description:
+        'Archived contacts won’t be sent any messages about {{patient.firstName}}. You can restore them later.',
+      success: 'Archived {{contact.fullName}}'
+    },
+    restore: {
+      description:
+        '{{contact.fullName}} will be sent messages about {{patient.firstName}} again.',
+      success: 'Restored {{contact.fullName}}'
+    },
+    archived: {
+      label: 'View archived contacts',
+      title: 'Archived contacts'
     },
     action: {
       title: 'Are you sure you want to {{type}} {{contact.fullName}}?',
-      description:
-        'Deleting this contact will remove them from {{patient.firstName}}, but not from any other children.\n\nThis cannot be undone.',
       confirm: 'Yes, %s this contact',
       cancel: 'No, return to contacts'
     },
@@ -1895,6 +1905,7 @@ export const en = {
     },
     canSms: {
       label: 'Get updates by text message',
+      title: 'Does {{contact.fullName}} want to get updates by text message?',
       true: 'Yes',
       false: 'No'
     },
@@ -1923,6 +1934,64 @@ export const en = {
       title:
         'Does the child want their parent or guardian to get confirmation of the vaccination?',
       label: 'Notify parent'
+    }
+  },
+  contactPoint: {
+    label: 'Phone number or email address',
+    count:
+      '{count, plural, =0 {No active contacts} one {1 active contact} other {# active contacts}}',
+    new: {
+      tel: {
+        label: 'Add phone number',
+        title: 'Add a phone number'
+      },
+      email: {
+        label: 'Add email address',
+        title: 'Add an email address'
+      },
+      confirm: 'Add',
+      success: 'Added {{contactPoint.value}}'
+    },
+    update: {
+      success: 'Updated {{contactPoint.value}}'
+    },
+    archive: {
+      title: 'Archive {{contactPoint.value}}?',
+      description:
+        'Messages won’t be sent to an archived {{type}}. You can restore it later.',
+      confirm: 'Archive',
+      success: 'Archived {{contactPoint.value}}'
+    },
+    restore: {
+      title: 'Restore {{contactPoint.value}}?',
+      description: 'Messages will be sent to this {{type}} again.',
+      confirm: 'Restore',
+      success: 'Restored {{contactPoint.value}}'
+    },
+    cancel: 'No, return to contacts',
+    archived: {
+      label: 'Archived'
+    },
+    value: {
+      label: 'Value'
+    },
+    email: {
+      label: 'Email address'
+    },
+    tel: {
+      label: 'Phone number'
+    },
+    createdAt: {
+      label: 'Created'
+    },
+    updatedAt: {
+      label: 'Updated'
+    },
+    archivedAt: {
+      label: 'Archived'
+    },
+    sources: {
+      label: 'Source'
     }
   },
   patient: {

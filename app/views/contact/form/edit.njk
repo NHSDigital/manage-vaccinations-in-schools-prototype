@@ -63,13 +63,39 @@
     decorate: "contact.relationship"
   }) }}
 
-  {{ input({
-    label: __("contact.email.label"),
-    decorate: "contact.email"
-  }) if not isSensitive }}
+  {# Phone numbers and email addresses are changed on the contacts tab, once
+     a contact has been added #}
+  {% if type == "new" %}
+    {{ input({
+      label: __("contact.email.label"),
+      type: "email",
+      spellcheck: false,
+      decorate: "contact.email"
+    }) if not isSensitive }}
 
-  {{ input({
-    label: __("contact.tel.label"),
-    decorate: "contact.tel"
-  }) if not isSensitive }}
+    {{ input({
+      label: __("contact.tel.label"),
+      type: "tel",
+      classes: "nhsuk-input--width-20",
+      decorate: "contact.tel"
+    }) if not isSensitive }}
+  {% endif %}
+
+  {# Text messages can only be sent if the contact has a phone number #}
+  {{ radios({
+    fieldset: {
+      legend: __("contact.canSms.title", { contact: contact })
+    },
+    items: [
+      {
+        label: __("contact.canSms.true"),
+        value: true
+      },
+      {
+        label: __("contact.canSms.false"),
+        value: false
+      }
+    ],
+    decorate: "contact.canSms"
+  }) if contact.hasPhoneNumber and not isSensitive }}
 {% endblock %}

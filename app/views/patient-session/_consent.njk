@@ -1,11 +1,13 @@
 {% macro consentResponseCard(reply) %}
+  {% set phoneNumbers = reply.contact.formattedContactPointValues(ContactPointType.Phone) if reply.contact else [] %}
+  {% set emailAddresses = reply.contact.formattedContactPointValues(ContactPointType.Email) if reply.contact else [] %}
   {% call card({
     classes: "app-card--compact app-card--offset",
     heading: {
       text: reply.fullNameAndRelationship,
       caption: {
         text:
-          ("Phone: " + reply.contact.tel) if reply.contact.tel else ("Email: " + reply.contact.email),
+          ("Phone: " + phoneNumbers | join(", ")) if phoneNumbers.length else ("Email: " + emailAddresses | join(", ")),
         placement: "end"
       },
       level: 4

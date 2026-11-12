@@ -1,0 +1,124 @@
+{%- from "card/macro.njk" import card %}
+{%- from "heading/macro.njk" import heading %}
+{%- from "summary-list/macro.njk" import summaryList %}
+{%- from "tables/macro.njk" import table %}
+{%- from "_macros/action-list.njk" import appActionList %}
+
+{#
+  A contact, with their contact details and contact points
+
+  @param {Contact} contact - Contact
+  @param {boolean} canChange - User can change contacts
+#}
+{% macro contactSection(contact, canChange) %}
+  {% set canChangeContact = canChange and contact.isSaved and not contact.isArchived %}
+  {% set canRestoreContact = canChange and contact.isSaved and contact.isArchived %}
+
+  {#
+    The card adds its heading to each action as hidden text, so actions don’t
+    need their own
+  #}
+  {% call card({
+    heading: {
+      text: contact.fullNameAndRelationship,
+      level: 3,
+      size: "m"
+    },
+    actions: {
+      items: [
+        {
+          text: __("contactPoint.new.tel.label"),
+          href: contact.uri + "/contact-points/new/tel"
+        } if not contact.isSensitive,
+        {
+          text: __("contactPoint.new.email.label"),
+          href: contact.uri + "/contact-points/new/email"
+        } if not contact.isSensitive,
+        {
+          text: __("actions.edit"),
+          href: contact.uri + "/edit"
+        } if canChangeContact,
+        {
+          text: __("actions.archive"),
+          href: contact.uri + "/archive"
+        } if canChangeContact,
+        {
+          text: __("actions.restore"),
+          href: contact.uri + "/restore"
+        } if canRestoreContact
+      ]
+    } if canChangeContact or canRestoreContact
+  }) %}
+    {#
+      Preferences are only known once a parent has responded to a consent
+      request, so only show them if they’ve been given
+    #}
+    {% set preferenceRows = summaryRows(contact, {
+      canSms: {},
+      communicationNeeds: {}
+    }) %}
+
+    {{ summaryList({ rows: preferenceRows }) if preferenceRows | length }}
+
+    {% if not contact.isSensitive %}
+      {% set contactPointRows = [] %}
+      {% for contactPoint in contact.sortedContactPoints %}
+        {% set contactPointRows = contactPointRows | push([
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            width: "one-third",
+            html: contactPoint.formatted.value
+          },
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            text: contactPoint.formatted.archivedAt or contactPoint.formatted.updatedAt or contactPoint.formatted.createdAt
+          },
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            html: contactPoint.formatted.sources
+          },
+          {
+            classes: "app-table__cell--muted" if contactPoint.isArchived,
+            html: appActionList({
+              items: [
+                {
+                  text: __("actions.restore"),
+                  href: contact.uri + "/contact-points/" + contactPoint.uuid + "/restore"
+                }
+              ] if contactPoint.isArchived else [
+                {
+                  text: __("actions.archive"),
+                  href: contact.uri + "/contact-points/" + contactPoint.uuid + "/archive"
+                }
+              ]
+            })
+          } if canChangeContact else none
+        ]) %}
+      {% endfor %}
+
+      {{ table({
+        responsive: true,
+        caption: __mf("contactPoint.count", { count: contact.activeContactPoints.length }),
+        head: [
+          {
+            text: __("contactPoint.value.label"),
+            width: "one-third"
+          },
+          {
+            text: __("contactPoint.updatedAt.label"),
+            width: "one-quarter"
+          },
+          {
+            text: __("contactPoint.sources.label"),
+            width: "one-quarter"
+          },
+          {
+            text: __("actions.label")
+          } if canChangeContact else none
+        ],
+        lastRowBorder: false,
+        rows: contactPointRows
+      }) }}
+    {% endif %}
+  {% endcall %}
+{% endmacro %}

@@ -1,8 +1,23 @@
-import { RelationshipType } from '../enums.js'
+import activity from '../datasets/activity.js'
+import { ContactPointSource, RelationshipType } from '../enums.js'
 import { Contact, Patient } from '../models.js'
+import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactController = {
+  /**
+   * Only users in a SAIS team (not school users) can change contacts
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  checkCanChange(request, response, next) {
+    if (response.locals.account?.isSchoolUser) {
+      return response.sendStatus(403)
+    }
+
+    next()
+  },
+
   /**
    * @type {RequestParamHandler}
    */
@@ -40,12 +55,19 @@ export const contactController = {
     return (request, response) => {
       const { contact_uuid } = request.params
       const { data } = request.session
-      const { __, back } = response.locals
+      const { __, account, back } = response.locals
 
       // Update session data
       let contact
       if (type === 'new') {
-        contact = Contact.create(data.wizard.contacts[contact_uuid], data)
+        // Phone numbers and email addresses given were added manually
+        contact = new Contact(data.wizard.contacts[contact_uuid], data)
+        for (const contactPoint of contact.contactPoints) {
+          contactPoint.sources = [ContactPointSource.Manual]
+          contactPoint.createdBy_uid = account?.uid
+        }
+
+        contact = Contact.create(contact, data)
 
         // Add contact to patient contacts
         const patient = Patient.findOne(contact.patient_uuid, data)
@@ -77,9 +99,11 @@ export const contactController = {
       const { contact_uuid } = request.params
       const { data } = request.session
 
-      // Setup wizard if not already setup
+      // Setup wizard if not already setup. When opening the form for editing
+      // a contact, start from the saved contact, so the form reflects any
+      // changes made since it was last opened (like archiving a phone number)
       let contact = Contact.findOne(contact_uuid, data.wizard)
-      if (!contact) {
+      if (!contact || (type === 'edit' && request.method === 'GET')) {
         contact = Contact.create(response.locals.contact, data.wizard)
       }
 
@@ -136,23 +160,49 @@ export const contactController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  delete(request, response) {
+  archive(request, response) {
     const { contact_uuid } = request.params
     const { data } = request.session
-    const { __, contact } = response.locals
+    const { __, account, contact } = response.locals
 
-    // Remove contact from the child’s record, so it doesn’t point to nothing
-    const patient = Patient.findOne(contact.patient_uuid, data)
-    if (patient) {
-      const contact_uuids = patient.contact_uuids.filter(
-        (uuid) => uuid !== contact_uuid
-      )
-      Patient.update(patient.uuid, { contact_uuids }, data)
-    }
+    Contact.update(
+      contact_uuid,
+      { archivedAt: today(), archivedBy_uid: account?.uid },
+      data
+    )
 
-    Contact.delete(contact_uuid, data)
+    contact.patient?.addContactEvent(
+      activity.patient.contactArchived(contact),
+      account?.uid
+    )
 
-    request.flash('success', __(`contact.delete.success`))
+    request.flash('success', __(`contact.archive.success`, { contact }))
+
+    return saveAndRedirect(
+      request,
+      response,
+      `/patients/${contact.patient_uuid}/contacts`
+    )
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  restore(request, response) {
+    const { contact_uuid } = request.params
+    const { data } = request.session
+    const { __, account, contact } = response.locals
+
+    // Contact model’s `update` merges values, so remove these directly
+    delete data.contacts[contact_uuid].archivedAt
+    delete data.contacts[contact_uuid].archivedBy_uid
+
+    contact.patient?.addContactEvent(
+      activity.patient.contactRestored(contact),
+      account?.uid
+    )
+
+    request.flash('success', __(`contact.restore.success`, { contact }))
 
     return saveAndRedirect(
       request,

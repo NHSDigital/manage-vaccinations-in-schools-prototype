@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { RelationshipType } from '../enums.js'
-import { Patient } from '../models.js'
+import { ContactPointType, RelationshipType } from '../enums.js'
+import { ContactPoint, Patient, User } from '../models.js'
+import { tokenize } from '../utils/object.js'
 import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -14,12 +15,18 @@ import { BaseModel } from './base.js'
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
  * @property {boolean} [canNotify] - Notify about consent and vaccinations
- * @property {string} [tel] - Phone number
- * @property {string} [email] - Email address
- * @property {boolean} [canSms] - Get updates via SMS
- * @property {NotifyEmailStatus} [emailStatus] - Email status
- * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {Partial<Contact>} [pendingChanges] - Pending changes to contact details
+ * @property {Date} [archivedAt] - Date archived
+ * @property {string} [archivedBy_uid] - User who archived contact
+ * @property {Array<ContactPointOptions>} [contactPoints] - Phone numbers and
+ *   email addresses
+ * @property {string} [tel] - Phone number (added as a contact point)
+ * @property {string} [email] - Email address (added as a contact point)
+ * @property {boolean} [canSms] - Get updates via SMS (defaults to `false` if
+ *   the contact has a phone number)
+ * @property {NotifyEmailStatus} [emailStatus] - Email status (of `email`)
+ * @property {NotifySmsStatus} [smsStatus] - SMS status (of `tel`)
+ * @property {Array<ContactPointOptions>} [pendingContactPoints] - Contact
+ *   points found in an upload that need review
  */
 
 /**
@@ -70,13 +77,31 @@ export class Contact extends BaseModel {
       ? stringToBoolean(options?.hasParentalResponsibility)
       : undefined
     this.canNotify = stringToBoolean(options?.canNotify)
-    this.tel = options?.tel
-    this.email = options?.email
-    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
-    this.emailStatus = this?.email && options?.emailStatus
-    this.smsStatus = this?.tel && options?.smsStatus
+    this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
+    this.contactPoints = (options?.contactPoints || []).map(
+      (contactPoint) => new ContactPoint(contactPoint, context)
+    )
 
-    this.pendingChanges = options?.pendingChanges || {}
+    // Forms (and older data) give a single phone number and email address,
+    // with their delivery statuses, so add these to the contact points
+    for (const key of ['tel', 'email', 'smsStatus', 'emailStatus']) {
+      if (options && key in options) {
+        this[key] = options[key]
+      }
+    }
+
+    // Keep the text message preference while a contact has any phone number,
+    // including archived ones, so it isn’t lost if a phone number is archived
+    // and later restored. If no preference has been given, it’s ‘No’
+    this.canSms = this.contactPoints.some(
+      (contactPoint) => contactPoint.isPhone
+    )
+      ? (stringToBoolean(options?.canSms) ?? false)
+      : undefined
+
+    this.pendingContactPoints = (options?.pendingContactPoints || []).map(
+      (contactPoint) => new ContactPoint(contactPoint, context)
+    )
   }
 
   /**
@@ -123,6 +148,251 @@ export class Contact extends BaseModel {
   }
 
   /**
+   * Has been archived
+   *
+   * Archived contacts aren’t sent messages, and aren’t one of the child’s
+   * contacts, but can be restored
+   *
+   * @returns {boolean} Has been archived
+   */
+  get isArchived() {
+    return !!this.archivedAt
+  }
+
+  /**
+   * Has been saved (rather than being a copy kept by a reply or booking)
+   *
+   * @returns {boolean} Has been saved
+   */
+  get isSaved() {
+    return !!this.context?.contacts?.[this.uuid]
+  }
+
+  /**
+   * Get contact points, with those that haven’t been archived first
+   *
+   * @returns {Array<ContactPoint>} Contact points
+   */
+  get sortedContactPoints() {
+    return [...this.activeContactPoints, ...this.archivedContactPoints]
+  }
+
+  /**
+   * Get contact points that haven’t been archived
+   *
+   * @returns {Array<ContactPoint>} Contact points
+   */
+  get activeContactPoints() {
+    return this.contactPoints.filter((contactPoint) => !contactPoint.isArchived)
+  }
+
+  /**
+   * Get contact points that have been archived
+   *
+   * @returns {Array<ContactPoint>} Contact points
+   */
+  get archivedContactPoints() {
+    return this.contactPoints.filter((contactPoint) => contactPoint.isArchived)
+  }
+
+  /**
+   * Add contact point
+   *
+   * If the contact already has an active contact point with the same value,
+   * add any new sources to that contact point instead, and mark it as updated
+   * if it was given more recently
+   *
+   * @param {ContactPointOptions} options - Contact point options
+   * @returns {ContactPoint} Contact point added or updated
+   */
+  addContactPoint(options) {
+    const contactPoint = new ContactPoint(options, this.context)
+
+    const existingContactPoint = this.activeContactPoints.find(
+      ({ type, normalisedValue }) =>
+        type === contactPoint.type &&
+        normalisedValue !== undefined &&
+        normalisedValue === contactPoint.normalisedValue
+    )
+
+    if (existingContactPoint) {
+      existingContactPoint.sources = [
+        ...new Set([...existingContactPoint.sources, ...contactPoint.sources])
+      ]
+
+      // Only mark as updated if given again later than last given
+      const lastGivenAt =
+        existingContactPoint.updatedAt || existingContactPoint.createdAt
+      if (contactPoint.createdAt > lastGivenAt) {
+        existingContactPoint.updatedAt = contactPoint.createdAt
+      }
+
+      return existingContactPoint
+    }
+
+    this.contactPoints.push(contactPoint)
+
+    return contactPoint
+  }
+
+  /**
+   * Is a contact for a child whose record is sensitive
+   *
+   * The contact points of these contacts are hidden, and can’t be searched for
+   *
+   * @returns {boolean} Is a contact for a child with a sensitive record
+   */
+  get isSensitive() {
+    return !!this.patient?.isSensitive
+  }
+
+  /**
+   * Get formatted values of active contact points of a given type
+   *
+   * Returns no values for contacts of children with sensitive records
+   *
+   * @param {ContactPointType} type - Type of contact point
+   * @returns {Array<string>} Formatted values
+   */
+  formattedContactPointValues(type) {
+    if (this.isSensitive) {
+      return []
+    }
+
+    return this.activeContactPoints
+      .filter((contactPoint) => contactPoint.type === type)
+      .map((contactPoint) => contactPoint.formatted.value)
+  }
+
+  /**
+   * Get first active contact point of a given type
+   *
+   * @param {ContactPointType} type - Type of contact point
+   * @returns {ContactPoint|undefined} Contact point
+   */
+  firstActiveContactPoint(type) {
+    return this.activeContactPoints.find(
+      (contactPoint) => contactPoint.type === type
+    )
+  }
+
+  /**
+   * Set the value of the first active contact point of a given type
+   *
+   * Adds a contact point if there isn’t one, and removes it if no value given.
+   *
+   * @param {ContactPointType} type - Type of contact point
+   * @param {string} [value] - Phone number or email address
+   */
+  setFirstActiveContactPoint(type, value) {
+    const contactPoint = this.firstActiveContactPoint(type)
+
+    if (!value) {
+      if (contactPoint) {
+        this.contactPoints.splice(this.contactPoints.indexOf(contactPoint), 1)
+      }
+    } else if (contactPoint) {
+      contactPoint.value = value
+    } else {
+      this.addContactPoint({ type, value })
+    }
+  }
+
+  /**
+   * Get phone number
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {string|undefined} Phone number
+   */
+  get tel() {
+    return this.firstActiveContactPoint(ContactPointType.Phone)?.value
+  }
+
+  /**
+   * Set phone number
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {string|undefined} value - Phone number
+   */
+  set tel(value) {
+    this.setFirstActiveContactPoint(ContactPointType.Phone, value)
+  }
+
+  /**
+   * Get email address
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {string|undefined} Email address
+   */
+  get email() {
+    return this.firstActiveContactPoint(ContactPointType.Email)?.value
+  }
+
+  /**
+   * Set email address
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {string|undefined} value - Email address
+   */
+  set email(value) {
+    this.setFirstActiveContactPoint(ContactPointType.Email, value)
+  }
+
+  /**
+   * Get SMS status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {NotifySmsStatus|undefined} SMS status
+   */
+  get smsStatus() {
+    return this.firstActiveContactPoint(ContactPointType.Phone)?.status
+  }
+
+  /**
+   * Set SMS status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {NotifySmsStatus|undefined} status - SMS status
+   */
+  set smsStatus(status) {
+    const contactPoint = this.firstActiveContactPoint(ContactPointType.Phone)
+    if (contactPoint) {
+      contactPoint.status = status
+    }
+  }
+
+  /**
+   * Get email status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {NotifyEmailStatus|undefined} Email status
+   */
+  get emailStatus() {
+    return this.firstActiveContactPoint(ContactPointType.Email)?.status
+  }
+
+  /**
+   * Set email status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {NotifyEmailStatus|undefined} status - Email status
+   */
+  set emailStatus(status) {
+    const contactPoint = this.firstActiveContactPoint(ContactPointType.Email)
+    if (contactPoint) {
+      contactPoint.status = status
+    }
+  }
+
+  /**
    * Get full name and relationship to child
    *
    * @returns {string} Full name and relationship
@@ -137,7 +407,7 @@ export class Contact extends BaseModel {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return !!this.email || !!this.tel
+    return this.activeContactPoints.length > 0
   }
 
   /**
@@ -171,12 +441,64 @@ export class Contact extends BaseModel {
   }
 
   /**
-   * Has pending changes
+   * Has an active phone number
    *
-   * @returns {boolean} Has pending changes
+   * @returns {boolean} Has an active phone number
    */
-  get hasPendingChanges() {
-    return Object.keys(this.pendingChanges).length > 0
+  get hasPhoneNumber() {
+    return this.activeContactPoints.some((contactPoint) => contactPoint.isPhone)
+  }
+
+  /**
+   * Get contact points that messages are sent to
+   *
+   * These are all active contact points, except phone numbers if the contact
+   * has said they don’t want text messages
+   *
+   * @returns {Array<ContactPoint>} Contact points
+   */
+  get messageContactPoints() {
+    return this.activeContactPoints.filter(
+      (contactPoint) => !(contactPoint.isPhone && this.canSms === false)
+    )
+  }
+
+  /**
+   * Has an active contact point that messages are being delivered to
+   *
+   * @returns {boolean} Has a contact point that messages are delivered to
+   */
+  get hasDeliveredContactPoint() {
+    return this.activeContactPoints.some(
+      (contactPoint) => contactPoint.isDelivered
+    )
+  }
+
+  /**
+   * Get tokenised values (to use in search queries)
+   *
+   * Includes archived contact points, so a child can be found using a phone
+   * number or email address a parent no longer uses. Contact points aren’t
+   * included for children with sensitive records.
+   *
+   * @returns {string} Tokens
+   */
+  get tokenized() {
+    const contactPoints = this.isSensitive ? [] : this.contactPoints
+    const contactPointTokens = contactPoints
+      .map(({ value }) => value?.toLowerCase())
+      .filter((value) => value !== undefined)
+
+    return [tokenize(this, ['fullName']), ...contactPointTokens].join(' ')
+  }
+
+  /**
+   * Has contact points found in an upload that need review
+   *
+   * @returns {boolean} Has pending contact points
+   */
+  get hasPendingContactPoints() {
+    return this.pendingContactPoints.length > 0
   }
 
   /**
@@ -189,11 +511,13 @@ export class Contact extends BaseModel {
       {},
       {
         get: (_target, prop) => {
-          const isSensitive = this.patient?.isSensitive
-          const redactIfSensitive = (value) =>
-            isSensitive && value !== undefined ? 'Sensitive' : value
-
+          // Phone numbers and email addresses are an empty string, rather
+          // than undefined, if there are none (or they’re hidden), so summary
+          // lists don’t show a contact’s unformatted values instead
           switch (prop) {
+            case 'canSms':
+              // Only relevant if the contact has a phone number to text
+              return this.hasPhoneNumber ? undefined : ''
             case 'communicationNeeds':
               return this.response?.formatted['communicationNeeds']
             case 'fullName':
@@ -201,9 +525,13 @@ export class Contact extends BaseModel {
             case 'relationship':
               return formatOther(this.relationshipOther, this.relationship)
             case 'email':
-              return redactIfSensitive(this.email)
+              return this.formattedContactPointValues(
+                ContactPointType.Email
+              ).join('<br>')
             case 'tel':
-              return redactIfSensitive(this.tel)
+              return this.formattedContactPointValues(
+                ContactPointType.Phone
+              ).join('<br>')
             default:
               return undefined
           }
@@ -223,9 +551,11 @@ export class Contact extends BaseModel {
 }
 
 Contact.relate('patient_uuid', () => Patient, 'patient')
+Contact.relate('archivedBy_uid', () => User, 'archivedBy')
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
  * @import { ClinicBooking, Reply } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ContactPointOptions } from './contact-point.js'
  */

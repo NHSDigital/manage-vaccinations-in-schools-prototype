@@ -5,6 +5,7 @@ import { healthConditions } from '../datasets/health-conditions.js'
 import {
   Adjustment,
   ClinicAppointmentStatus,
+  ContactPointSource,
   Impairment,
   RelationshipType,
   ReplyDecision
@@ -13,7 +14,11 @@ import { Child, ClinicAppointment } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
 import { generateHealthAnswersForQuestions } from '../utils/reply.js'
 
-import { generateCommunicationNeeds, generateContact } from './contact.js'
+import {
+  generateCommunicationNeeds,
+  generateContact,
+  generateRespondentDetails
+} from './contact.js'
 
 /**
  * Choose programmes and vaccine choices for a child's clinic appointment
@@ -62,7 +67,7 @@ export function decideClinicVaccinationChoices(invitedProgramme_ids) {
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
- * @param {ClinicVaccinationChoices} vaccinationChoices - Programmesm vaccine choices and support needs, from decideClinicVaccinationChoices
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes vaccine choices and support needs, from decideClinicVaccinationChoices
  * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
@@ -158,10 +163,12 @@ export function generateClinicAppointment(
     parentHasParentalResponsibility
   if (!booking.contact.fullName) {
     // First appointment, so set up the booking’s contact
-    booking.contact =
+    booking.contact = generateRespondentDetails(
       patient.contacts[0] ||
-      patient.contacts[1] ||
-      generateContact(child, faker.datatype.boolean(0.5))
+        patient.contacts[1] ||
+        generateContact(child, faker.datatype.boolean(0.5), { sources: [] }),
+      { createdAt: booking.createdAt, source: ContactPointSource.ClinicBooking }
+    )
     Object.assign(booking, generateCommunicationNeeds(booking.contact))
     // ...and their relationship to this child
     parentalRelationship = booking.contact.relationship

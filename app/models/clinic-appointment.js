@@ -27,6 +27,7 @@ import {
   User
 } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
+import { addReplyDetailsToContact } from '../utils/contact.js'
 import { today } from '../utils/date.js'
 import {
   getLocationSearchType,
@@ -353,6 +354,28 @@ export class ClinicAppointment {
     }
 
     Patient.update(patient.uuid, patient, patient.context)
+
+    this.addBookingDetailsToContact()
+  }
+
+  /**
+   * Add the details the parent gave when booking (their phone numbers, email
+   * addresses and contact preferences) to their contact on the child’s record,
+   * if they’re one of the child’s contacts, and save that contact
+   *
+   * Like linking a consent response with a child, this happens once the
+   * appointment has been matched with the child
+   */
+  addBookingDetailsToContact() {
+    // Each programme’s response has the same booking details
+    const [reply] = this.replies
+    const contact =
+      reply?.contact_uuid && Contact.findOne(reply.contact_uuid, this.context)
+
+    if (contact) {
+      addReplyDetailsToContact(contact, reply)
+      Contact.update(contact.uuid, contact, this.context)
+    }
   }
 
   /**

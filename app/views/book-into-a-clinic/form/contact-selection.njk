@@ -5,12 +5,12 @@
 {% set contactItems = [] %}
 {% for contact in patient.contacts %}
   {% set contactMethods = [] %}
-  {% if contact.email %}
-    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.email", contact.formatted.email)) %}
-  {% endif %}
-  {% if contact.tel %}
-    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.tel", contact.formatted.tel)) %}
-  {% endif %}
+  {% for emailAddress in contact.formattedContactPointValues(ContactPointType.Email) %}
+    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.email", emailAddress)) %}
+  {% endfor %}
+  {% for phoneNumber in contact.formattedContactPointValues(ContactPointType.Phone) %}
+    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.tel", phoneNumber)) %}
+  {% endfor %}
   {% set contactItems = contactItems | push({
     text: contact.fullNameAndRelationship,
     value: contact.uuid,

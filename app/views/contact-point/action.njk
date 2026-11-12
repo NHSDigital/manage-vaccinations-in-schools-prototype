@@ -1,0 +1,33 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("contactPoint." + actionType + ".title", { contactPoint: contactPoint }) %}
+
+{% block form %}
+  {{ heading({
+    caption: contact.fullNameAndRelationship,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ __("contactPoint." + actionType + ".description", { type: type }) | nhsukMarkdown }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [
+      {
+        text: __("contactPoint." + actionType + ".confirm"),
+        variant: "warning" if actionType == "archive",
+        attributes: {
+          formAction: contact.uri + "/contact-points/" + contactPoint.uuid + "/" + actionType
+        }
+      }
+    ],
+    links: [
+      {
+        text: __("contactPoint.cancel"),
+        href: back
+      }
+    ]
+  }) }}
+{% endblock %}
