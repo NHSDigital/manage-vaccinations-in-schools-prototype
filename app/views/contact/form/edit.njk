@@ -72,27 +72,4 @@
     label: __("contact.tel.label"),
     decorate: "contact.tel"
   }) if not isSensitive }}
-
-  {{ radios({
-    fieldset: {
-      legend: __("contact.hasCommunicationNeeds.title")
-    },
-    items: [
-      {
-        label: __("contact.hasCommunicationNeeds.yes"),
-        value: true,
-        conditional: {
-          html: textarea({
-            label: __("contact.communicationNeeds.label"),
-            decorate: "contact.communicationNeeds"
-          })
-        }
-      },
-      {
-        label: __("contact.hasCommunicationNeeds.no"),
-        value: false
-      }
-    ],
-    decorate: "contact.hasCommunicationNeeds"
-  }) if not isSensitive }}
 {% endblock %}

@@ -98,14 +98,6 @@ export function generateContact(patient, isMum, overrides = {}) {
         { value: NotifyEmailStatus.Technical, weight: 1 }
       ])
 
-  // If telephone number provided, sometimes add a communication need
-  const hasCommunicationNeeds = faker.datatype.boolean(0.2)
-  let communicationNeeds
-  if (tel && hasCommunicationNeeds) {
-    communicationNeeds =
-      'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.'
-  }
-
   return new Contact({
     fullName: `${firstName} ${lastName}`,
     relationship,
@@ -121,10 +113,38 @@ export function generateContact(patient, isMum, overrides = {}) {
       canSms,
       ...(smsStatus && { smsStatus })
     }),
-    hasCommunicationNeeds,
-    communicationNeeds,
     patient_uuid: patient.uuid
   })
+}
+
+/**
+ * Generate the communication needs a parent gives in a consent response or
+ * clinic booking
+ *
+ * @param {Contact} contact - Contact responding
+ * @returns {object} Whether they have communication needs, and what they are
+ */
+export function generateCommunicationNeeds(contact) {
+  const hasCommunicationNeeds = faker.datatype.boolean(0.2)
+  if (!hasCommunicationNeeds) {
+    return { hasCommunicationNeeds }
+  }
+
+  // Parents saying they have communication needs always say what they are
+  // (the service wouldn’t let them continue without doing so)
+  const communicationNeeds = faker.helpers.arrayElement([
+    ...(contact?.tel
+      ? [
+          'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.',
+          'I have dyslexia, so I find it easier to talk things through on the phone than read long emails.'
+        ]
+      : []),
+    'English is not my first language. I’d like to speak to someone with an interpreter who speaks Polish.',
+    'I’m partially sighted, so please send any letters in large print.',
+    'Please use plain English when writing to me, as I find medical terms hard to follow.'
+  ])
+
+  return { hasCommunicationNeeds, communicationNeeds }
 }
 
 /**
@@ -177,8 +197,6 @@ export function generateContactVariation(contact) {
     relationshipOther: contact.relationshipOther,
     ...(email && { email, emailStatus }),
     ...(tel && { tel, canSms: contact.canSms, smsStatus }),
-    hasCommunicationNeeds: contact.hasCommunicationNeeds,
-    communicationNeeds: contact.communicationNeeds,
     patient_uuid: contact.patient_uuid
   })
 }

@@ -79,24 +79,24 @@
 
   {{ radios({
     fieldset: {
-      legend: __("contact.hasCommunicationNeeds.title")
+      legend: __("reply.hasCommunicationNeeds.title")
     },
     items: [
       {
-        label: __("contact.hasCommunicationNeeds.yes"),
+        label: __("reply.hasCommunicationNeeds.yes"),
         value: true,
         conditional: {
           html: textarea({
-            label: __("contact.communicationNeeds.title"),
-            decorate: "reply.contact.communicationNeeds"
+            label: __("reply.communicationNeeds.title"),
+            decorate: "reply.communicationNeeds"
           })
         }
       },
       {
-        label: __("contact.hasCommunicationNeeds.no"),
+        label: __("reply.hasCommunicationNeeds.no"),
         value: false
       }
     ],
-    decorate: "reply.contact.hasCommunicationNeeds"
+    decorate: "reply.hasCommunicationNeeds"
   }) if showContactDetails }}
 {% endblock %}

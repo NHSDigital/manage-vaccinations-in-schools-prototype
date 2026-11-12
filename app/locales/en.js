@@ -885,6 +885,23 @@ export const en = {
       },
       new: 'Enter a new contact'
     },
+    communicationNeeds: {
+      label: 'Communication or language needs',
+      title: 'Give details'
+    },
+    hasCommunicationNeeds: {
+      title: {
+        parent: 'Do you have any communication or language needs?',
+        team: 'Does the parent or guardian have any communication or language needs?'
+      },
+      hint: {
+        parent:
+          'For example, if you have any hearing or sight needs, or if English is not your first language.',
+        team: 'For example, if they have any hearing or sight needs, or if English is not their first language.'
+      },
+      yes: 'Yes',
+      no: 'No'
+    },
     contact: {
       title: {
         parent: 'About you',
@@ -909,23 +926,6 @@ export const en = {
       },
       canSms: {
         label: 'Confirm if %s want appointment updates by text message'
-      },
-      hasCommunicationNeeds: {
-        title: {
-          parent: 'Do you have any communication or language needs?',
-          team: 'Does the parent or guardian have any communication or language needs?'
-        },
-        hint: {
-          parent:
-            'For example, if you have any hearing or sight needs, or if English is not your first language.',
-          team: 'For example, if they have any hearing or sight needs, or if English is not their first language.'
-        },
-        yes: 'Yes',
-        no: 'No'
-      },
-      communicationNeeds: {
-        label: 'Communication or language needs',
-        title: 'Give details'
       },
       relationshipOther: {
         label: 'Relationship to the child'
@@ -1292,6 +1292,16 @@ export const en = {
         label: 'No, skip the ethnicity questions'
       }
     },
+    communicationNeeds: {
+      label: 'Communication or language needs',
+      title: 'Give details'
+    },
+    hasCommunicationNeeds: {
+      title: 'Do you have any communication or language needs?',
+      hint: 'For example, if you have any hearing or sight needs, or if English is not your first language.',
+      yes: 'Yes',
+      no: 'No'
+    },
     contact: {
       summary: 'About you',
       title: 'About you',
@@ -1315,16 +1325,6 @@ export const en = {
       },
       canSms: {
         label: "Tick this box if you'd like to get updates by text message"
-      },
-      hasCommunicationNeeds: {
-        title: 'Do you have any communication or language needs?',
-        hint: 'For example, if you have any hearing or sight needs, or if English is not your first language.',
-        yes: 'Yes',
-        no: 'No'
-      },
-      communicationNeeds: {
-        label: 'Communication or language needs',
-        title: 'Give details'
       },
       relationshipOther: {
         label: 'Relationship to the child'
@@ -1912,14 +1912,9 @@ export const en = {
     tel: {
       label: 'Phone number'
     },
-    hasCommunicationNeeds: {
-      title: 'Do they have any communication or language needs?',
-      yes: 'Yes',
-      no: 'No'
-    },
+    // Shown from the consent response or clinic booking the contact gave
     communicationNeeds: {
-      label: 'Communication or language needs',
-      title: 'Give details'
+      label: 'Communication or language needs'
     },
     relationshipOther: {
       label: 'Give details'
@@ -2205,15 +2200,6 @@ export const en = {
       },
       relationshipOther: {
         label: 'Relationship to the child'
-      },
-      hasCommunicationNeeds: {
-        title: 'Do they have any communication or language needs?',
-        yes: 'Yes',
-        no: 'No'
-      },
-      communicationNeeds: {
-        label: 'Communication or language needs',
-        title: 'Give details'
       }
     },
     programmes: {
@@ -2817,6 +2803,15 @@ export const en = {
     },
     child: {
       label: 'Child'
+    },
+    communicationNeeds: {
+      label: 'Communication or language needs',
+      title: 'Give details'
+    },
+    hasCommunicationNeeds: {
+      title: 'Do they have any communication or language needs?',
+      yes: 'Yes',
+      no: 'No'
     },
     contact: {
       label: 'Parent',

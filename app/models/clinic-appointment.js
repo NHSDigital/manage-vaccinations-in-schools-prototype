@@ -216,6 +216,8 @@ export class ClinicAppointment {
         clinicAppointment_uuid: this.uuid,
         contact_: this.contact,
         contact_uuid: matchingContact?.uuid,
+        hasCommunicationNeeds: this.booking?.hasCommunicationNeeds,
+        communicationNeeds: this.booking?.communicationNeeds,
         patient_uuid: this.patient_uuid,
         programme_id: programme.id,
         session_id: this.session_id,
@@ -930,7 +932,9 @@ export class ClinicAppointment {
    */
   get contact() {
     // Take most details from the contact in the booking
-    const contact = new Contact(this.booking?.contact ?? {})
+    const contact = new Contact(this.booking?.contact ?? {}).setResponse(
+      this.booking
+    )
     if (contact) {
       contact.relationship = this.parentalRelationship
       contact.relationshipOther = this.parentalRelationshipOther

@@ -13,7 +13,7 @@ import { Child, ClinicAppointment } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
 import { generateHealthAnswersForQuestions } from '../utils/reply.js'
 
-import { generateContact } from './contact.js'
+import { generateCommunicationNeeds, generateContact } from './contact.js'
 
 /**
  * Choose programmes and vaccine choices for a child's clinic appointment
@@ -162,6 +162,7 @@ export function generateClinicAppointment(
       patient.contacts[0] ||
       patient.contacts[1] ||
       generateContact(child, faker.datatype.boolean(0.5))
+    Object.assign(booking, generateCommunicationNeeds(booking.contact))
     // ...and their relationship to this child
     parentalRelationship = booking.contact.relationship
     parentalRelationshipOther = booking.contact.relationshipOther

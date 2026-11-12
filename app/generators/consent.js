@@ -17,6 +17,8 @@ import {
   generateTriageNote
 } from '../utils/reply.js'
 
+import { generateCommunicationNeeds } from './contact.js'
+
 /**
  * Generate fake consent
  *
@@ -179,6 +181,8 @@ export function generateConsent(
       hasRequestedConsultation
     }),
     contact_uuid: contact.uuid,
+    // Communication needs given in the response
+    ...generateCommunicationNeeds(contact),
     programme_id: programme.id,
     session_id: session.id
   })

@@ -158,6 +158,25 @@ export class Reply extends BaseModel {
     // details in the parental consent journey.
     // TODO: Find out why contact() setter doesn’t work for this purpose
     this.contact_ = options?.contact_ && new Contact(options.contact_)
+    this.contact_?.setResponse(this)
+
+    // Communication needs are given with each response, rather than being
+    // kept with the contact
+    // A parent can’t say they have communication needs without saying what
+    // they are (the service would ask them to), so ‘Yes’ without any details
+    // is treated as ‘No’. If the question hasn’t been answered, it’s left
+    // unset, so no answer is selected in forms
+    const hasCommunicationNeeds = stringToBoolean(
+      options?.hasCommunicationNeeds
+    )
+    const communicationNeeds = hasCommunicationNeeds
+      ? options?.communicationNeeds?.trim()
+      : undefined
+    this.hasCommunicationNeeds =
+      hasCommunicationNeeds === undefined ? undefined : !!communicationNeeds
+    if (communicationNeeds) {
+      this.communicationNeeds = communicationNeeds
+    }
 
     // Given options
     if (this.hasGivenConsent) {
@@ -266,7 +285,8 @@ export class Reply extends BaseModel {
       return this.contact_
     }
 
-    return Contact.findOne(this.contact_uuid, this.context)
+    // Link the contact to this response, to show the details given in it
+    return Contact.findOne(this.contact_uuid, this.context)?.setResponse(this)
   }
 
   /**
@@ -696,6 +716,10 @@ export class Reply extends BaseModel {
                   : 'Consent refusals do not expire'
             case 'decisionStatus':
               return getDecisionStatus()
+            case 'communicationNeeds':
+              return this.patient?.isSensitive
+                ? 'Sensitive'
+                : this.communicationNeeds || 'None'
             case 'contact':
               return formatContact(this.contact, true)
             case 'tel':

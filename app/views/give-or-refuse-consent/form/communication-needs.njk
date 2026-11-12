@@ -1,32 +1,32 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.contact.hasCommunicationNeeds.title") %}
+{% set title = __("consent.hasCommunicationNeeds.title") %}
 
 {% block form %}
   {{ radios({
     fieldset: {
       legend: {
-        heading: __("consent.contact.hasCommunicationNeeds.title"),
+        heading: __("consent.hasCommunicationNeeds.title"),
         size: "l"
       }
     },
-    hint: __("consent.contact.hasCommunicationNeeds.hint"),
+    hint: __("consent.hasCommunicationNeeds.hint"),
     items: [
       {
-        label: __("consent.contact.hasCommunicationNeeds.yes"),
+        label: __("consent.hasCommunicationNeeds.yes"),
         value: true,
         conditional: {
           html: textarea({
-            label: __("consent.contact.communicationNeeds.title"),
-            decorate: "consent.contact_.communicationNeeds"
+            label: __("consent.communicationNeeds.title"),
+            decorate: "consent.communicationNeeds"
           })
         }
       },
       {
-        label: __("consent.contact.hasCommunicationNeeds.no"),
+        label: __("consent.hasCommunicationNeeds.no"),
         value: false
       }
     ],
-    decorate: "consent.contact_.hasCommunicationNeeds"
+    decorate: "consent.hasCommunicationNeeds"
   }) }}
 {% endblock %}
