@@ -2462,7 +2462,7 @@ export const en = {
         }
       },
       noContacts:
-        'Consent requests cannot be sent as the child has no contacts with contact details.',
+        'Consent requests cannot be sent as there are no contact details for this child.',
       refusalIncluded: {
         upcoming:
           'The child has a refusal, but this session requests consent for all children, including those with a refusal.',

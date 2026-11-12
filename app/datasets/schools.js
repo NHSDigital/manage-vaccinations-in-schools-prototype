@@ -83,6 +83,18 @@ export default [
     team_ids: ['001'],
     presetNames: [SessionPresetName.HPV, SessionPresetName.MMR]
   },
+  {
+    id: '777781',
+    urn: '777781',
+    name: 'Brookfield Vale School',
+    phase: SchoolPhase.Secondary,
+    yearGroups: [7, 8, 9, 10, 11],
+    addressLine1: 'Ashby Road',
+    addressLevel1: 'Hinckley',
+    postalCode: 'LE10 3DN',
+    team_ids: ['001'],
+    presetNames: [SessionPresetName.HPV, SessionPresetName.MMR]
+  },
   // End reserved schools ^^^
   {
     id: '135335',
