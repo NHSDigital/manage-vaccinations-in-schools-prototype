@@ -37,6 +37,16 @@
       ]
     } if reply.isValid
   }) %}
+    {# Expiring before the session? #}
+    {% if reply.expiresAt and reply.expiresAt < session.date and not reply.isInvalidated %}
+      {{ appStatus({
+        text: __("reply.expiringBeforeSession.label"),
+        icon: "warning",
+        colour: "blue",
+        classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-2"
+      }) }}
+    {% endif %}
+
     {# Details of the response #}
     {{ summaryList({
       lastRowBorder: false,
