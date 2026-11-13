@@ -45,6 +45,8 @@ import {
 } from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
 import {
+  canSendConsentReminder,
+  canSendConsentRequest,
   getConsentRequestDescription,
   getConsentRequestNeeds,
   getConsentStatus,
@@ -233,30 +235,36 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get messages sent for this patient programme using a given template
+   * Get messages sent for this patient programme about a session, using a
+   * given template
    *
    * @param {string} messageTemplate - Message template
+   * @param {Session} session - Session
    * @returns {Array<AuditEvent>} Messages sent, oldest first
    */
-  #messagesSent(messageTemplate) {
+  #messagesSentForSession(messageTemplate, session) {
     return this.patient.events
       .map((event) => new AuditEvent(event, this.context))
       .filter(
         (auditEvent) =>
           auditEvent.messageTemplate === messageTemplate &&
           auditEvent.programme_ids?.includes(this.programme_id) &&
-          auditEvent.session?.academicYear === this.academicYear
+          String(auditEvent.session_id) === String(session.id)
       )
       .sort((a, b) => getDateValueDifference(a.createdAt, b.createdAt))
   }
 
   /**
-   * Get consent requests sent for this patient programme
+   * Get consent requests sent for a session, both automatic and manual
+   * (manual requests have `createdBy_uid` set)
    *
+   * There’s one message for each contact a request went to
+   *
+   * @param {Session} session - Session
    * @returns {Array<AuditEvent>} Consent requests, oldest first
    */
-  get consentRequests() {
-    return this.#messagesSent('invite')
+  getConsentRequestsForSession(session) {
+    return this.#messagesSentForSession('invite', session)
   }
 
   /**
@@ -322,23 +330,29 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get consent reminders sent for this patient programme, both automatic and
-   * manual (manual reminders have `createdBy_uid` set)
+   * Get consent reminders sent for a session, both automatic and manual
+   * (manual reminders have `createdBy_uid` set)
    *
+   * There’s one message for each contact a reminder went to
+   *
+   * @param {Session} session - Session
    * @returns {Array<AuditEvent>} Consent reminders, oldest first
    */
-  get consentReminders() {
-    return this.#messagesSent('invite-reminder')
+  getConsentRemindersForSession(session) {
+    return this.#messagesSentForSession('invite-reminder', session)
   }
 
   /**
-   * Get summary details of the consent reminders sent out for this programme
+   * Get summary details of the consent reminders sent for a session
    *
+   * @param {Session} session - Session
    * @returns {{count: number, lastSentAt: Date|undefined}} Number of consent
    *   reminders sent, and date last reminder sent
    */
-  get consentRemindersSummary() {
-    const { consentReminders } = this
+  getConsentRemindersSummaryForSession(session) {
+    const consentReminders = this.getConsentRemindersForSession(session)
+
+    // Reminders sent to several contacts at once count as one reminder
     const sentAtTimes = consentReminders.map(({ createdAt }) =>
       createdAt.valueOf()
     )
@@ -347,6 +361,26 @@ export class PatientProgramme extends BaseModel {
       count: new Set(sentAtTimes).size,
       lastSentAt: consentReminders.at(-1)?.createdAt
     }
+  }
+
+  /**
+   * Can staff send a consent request for a session themselves?
+   *
+   * @param {Session} session - Session
+   * @returns {boolean} A consent request can be sent
+   */
+  canSendConsentRequestForSession(session) {
+    return canSendConsentRequest(this, session)
+  }
+
+  /**
+   * Can staff send a consent reminder for a session themselves?
+   *
+   * @param {Session} session - Session
+   * @returns {boolean} A consent reminder can be sent
+   */
+  canSendConsentReminderForSession(session) {
+    return canSendConsentReminder(this, session)
   }
 
   /**

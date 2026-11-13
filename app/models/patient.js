@@ -920,11 +920,20 @@ export class Patient extends Child {
   }
 
   /**
-   * Invite contact to give consent
+   * Invite contacts to give consent
+   *
+   * Automatic requests go out when the session’s consent window opens. Staff
+   * can also send a request themselves, which goes out straight away
    *
    * @param {PatientSession} patientSession - Patient session
+   * @param {string} [createdBy_uid] - User who sent the request, if not sent
+   *   automatically
    */
-  requestConsent(patientSession) {
+  requestConsent(patientSession, createdBy_uid) {
+    const createdAt = createdBy_uid
+      ? today()
+      : patientSession.session.consentOpenAt
+
     for (const contact of this.contacts) {
       if (
         contact.email &&
@@ -935,7 +944,8 @@ export class Patient extends Child {
           type: AuditEventType.ProgrammeNote,
           messageRecipient: contact,
           messageTemplate: 'invite',
-          createdAt: patientSession.session.consentOpenAt,
+          createdAt,
+          createdBy_uid,
           patient_uuid: this.uuid,
           programme_ids: patientSession.session.programme_ids,
           session_id: patientSession.session.id

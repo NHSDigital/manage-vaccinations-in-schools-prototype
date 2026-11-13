@@ -1,7 +1,5 @@
 import {
   AuditEventType,
-  ConsentStatus,
-  ConsentWindow,
   PatientStatus,
   PreScreenQuestion,
   RegistrationStatus,
@@ -55,21 +53,11 @@ export const patientSessionController = {
     response.locals.options = {
       // Show outstanding vaccinations
       showOutstandingVaccinations: vaccinated && due.length > 1,
-      // Send a request to give consent (if none sent yet, or it failed)
-      canRequest:
-        patient.hasContactDetails &&
-        session.consentWindow === ConsentWindow.Open &&
-        !session.isActive &&
-        (patientProgramme.consent === ConsentStatus.NotDelivered ||
-          (patientProgramme.consent === ConsentStatus.NoResponse &&
-            patientProgramme.consentRequests.length === 0)),
-      // Send a reminder to give consent (if request sent but no response yet)
-      canRemind:
-        patient.hasContactDetails &&
-        session.consentWindow === ConsentWindow.Open &&
-        !session.isActive &&
-        patientProgramme.consent === ConsentStatus.NoResponse &&
-        patientProgramme.consentRequests.length > 0,
+      // Send a request to give consent (if none sent for this session yet,
+      // including where a refusal stopped it, or the last one failed)
+      canRequest: patientProgramme.canSendConsentRequestForSession(session),
+      // Send a reminder to give consent (if no response since the request)
+      canRemind: patientProgramme.canSendConsentReminderForSession(session),
       // Perform Gillick assessment
       canGillick:
         account.isRegisteredNurse &&
@@ -97,7 +85,8 @@ export const patientSessionController = {
 
     // Extra info about the consent reminders sent so far
     if (response.locals.options.canRemind) {
-      const { count, lastSentAt } = patientProgramme.consentRemindersSummary
+      const { count, lastSentAt } =
+        patientProgramme.getConsentRemindersSummaryForSession(session)
       response.locals.consentRemindersSent = count
 
       if (count > 0) {
@@ -334,10 +323,9 @@ export const patientSessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   request(request, response) {
-    const { __, back, patient, patientSession } = response.locals
+    const { __, account, back, patient, patientSession } = response.locals
 
-    patient.addToSession(patientSession)
-    patient.requestConsent(patientSession)
+    patient.requestConsent(patientSession, account.uid)
 
     request.flash(
       'success',
