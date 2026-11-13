@@ -4598,6 +4598,11 @@ export const en = {
     }
   },
   scenario: {
+    title: 'Scenarios for research',
+    breadcrumb: {
+      scenarios: 'Scenarios',
+      sessions: 'Research sessions'
+    },
     links: {
       title: '{count, plural, one {1 link} other {{count} links}}',
       groupTitle: '{name} ({count, plural, one {1 link} other {{count} links}})'
