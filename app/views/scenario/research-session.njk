@@ -7,7 +7,11 @@
     <main class="nhsuk-main-wrapper" id="maincontent" role="main">
       {{ heading({
         text: title,
-        size: "l"
+        size: "l",
+        caption: {
+          text: "Research starting: " + researchSession.startDate | formatDate,
+          placement: "after"
+        }
       }) }}
 
       {{ researchSession.description | nhsukMarkdown }}
