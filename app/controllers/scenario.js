@@ -28,7 +28,8 @@ export const scenarioController = {
     response.locals.researchSession = researchSession
     response.locals.taskLinks = getResearchSessionLinks(
       Scenario.findAll(data),
-      tag
+      tag,
+      researchSession
     )
 
     return response.render('scenario/research-session')
@@ -37,16 +38,18 @@ export const scenarioController = {
 
 /**
  * Get the links tagged for a research session from across all scenarios,
- * using any link text set for that session, and sorted by that text.
+ * using any link text set for that session, plus the session’s own fixed
+ * links (if any), all sorted by their text.
  *
  * The sort is numeric-aware, so “Task 2” comes before “Task 10”
  *
  * @param {Array<Scenario>} scenarios - All scenarios
  * @param {string} tag - Research session tag
+ * @param {ResearchSession} researchSession - Research session
  * @returns {Array<{label: string, href: string}>} Links for the research session
  */
-function getResearchSessionLinks(scenarios, tag) {
-  const links = []
+function getResearchSessionLinks(scenarios, tag, researchSession) {
+  const links = [...(researchSession.fixedLinks || [])]
 
   for (const scenario of scenarios) {
     for (const link of scenario.links) {
@@ -69,4 +72,5 @@ function getResearchSessionLinks(scenarios, tag) {
 
 /**
  * @import { RequestHandler } from 'express'
+ * @import { ResearchSession } from '../../lib/scenarios/research-sessions.js'
  */
