@@ -2447,7 +2447,7 @@ export const en = {
         }
       },
       noContacts:
-        'Mavis cannot request consent. This child has no contact details.',
+        'Mavis cannot request consent. There are no contact details for this child.',
       refusalIncluded: {
         upcoming:
           'The child has a refusal, but this session requests consent for all children, including those with a refusal.',
