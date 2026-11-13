@@ -1,0 +1,29 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = researchSession.title %}
+
+{% block main %}
+  <div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+      {{ heading({
+        text: title,
+        size: "l"
+      }) }}
+
+      {{ researchSession.description | nhsukMarkdown }}
+
+      {% if taskLinks.length > 0 %}
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          {% for taskLink in taskLinks %}
+            <li>{{ link({
+              text: taskLink.label,
+              href: taskLink.href
+            }) }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        {{ "No links have been added to this research session yet." | nhsukMarkdown }}
+      {% endif %}
+    </main>
+  </div>
+{% endblock %}
