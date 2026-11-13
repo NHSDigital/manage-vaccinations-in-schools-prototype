@@ -2428,43 +2428,43 @@ export const en = {
       notRequested: {
         ConsentLastsUntilSession: {
           upcoming:
-            'Consent will not be requested, as the child already has consent lasting beyond the session.',
-          sent: 'Consent was not requested, as the child already had consent lasting beyond the session.'
+            'Mavis will not request consent. Existing consent covers this session.',
+          sent: 'Mavis did not request consent. Existing consent covers this session.'
         },
         Refused: {
-          upcoming:
-            'Consent will not be requested, as the child has a refusal.',
-          sent: 'Consent was not requested, as the child had a refusal when the consent window opened.'
+          upcoming: 'Mavis will not request consent. The child has a refusal.',
+          sent: 'Mavis did not request consent. The child has a refusal.'
         },
         AlreadyVaccinated: {
           upcoming:
-            'Consent will not be requested, as the child is already vaccinated.',
-          sent: 'Consent was not requested, as the child was already vaccinated.'
+            'Mavis will not request consent. The child is already vaccinated.',
+          sent: 'Mavis did not request consent. The child was already vaccinated.'
         },
         SelfConsent: {
           upcoming:
-            'Consent will not be requested, as the child can give consent themselves.',
-          sent: 'Consent was not requested, as the child can give consent themselves.'
+            'Mavis will not request consent. The young person can self-consent.',
+          sent: 'Mavis did not request consent. The young person can self-consent.'
         }
       },
       noContacts:
-        'Consent requests cannot be sent as there are no contact details for this child.',
+        'Mavis cannot request consent. This child has no contact details.',
       refusalIncluded: {
         upcoming:
           'The child has a refusal, but this session requests consent for all children, including those with a refusal.',
-        sent: 'The child had a refusal, but this session requests consent for all children, including those with a refusal.'
+        sent: 'The child has a refusal, but this session requests consent for all children, including those with a refusal.'
       },
       requested: {
-        upcoming: 'Consent will be requested on {{date}} from:',
-        sent: 'Consent was requested on {{date}} from:'
+        upcoming: 'Mavis will request consent on {{date}} from:',
+        sent: 'Mavis requested consent on {{date}} from:'
       },
       reminder: {
-        upcoming: 'A reminder will be sent on {{date}}.',
-        sent: 'A reminder was sent on {{date}}.'
+        upcoming:
+          'If there’s no response, Mavis will send a reminder on {{date}}.',
+        sent: 'Mavis sent a reminder on {{date}}.'
       },
       noReminder: {
-        upcoming: 'A reminder will not be sent, as a response was received.',
-        sent: 'A reminder was not sent, as a response was received.'
+        upcoming: 'Mavis has a consent response so will not send a reminder.',
+        sent: 'Mavis has a consent response so did not send a reminder.'
       }
     },
     replies: {
