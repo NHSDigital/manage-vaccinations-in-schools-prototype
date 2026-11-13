@@ -1,0 +1,49 @@
+{% extends "_layouts/default.njk" %}
+
+{% set title = "Research sessions" %}
+
+{% block main %}
+  <div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
+      {{ heading({
+        text: title,
+        size: "l"
+      }) }}
+
+      {% if researchSessions.length > 0 %}
+        <p class="nhsuk-body">
+          Each research session has a page of links for participants, collected from the <a href="/scenarios">scenarios</a>.
+        </p>
+
+        {% set researchSessionRows = [] %}
+        {% for researchSession in researchSessions %}
+          {% set researchSessionRows = researchSessionRows | push([
+            {
+              header: "Research session",
+              html: link({
+                text: researchSession.title,
+                href: "/scenarios/research/" + researchSession.tag
+              })
+            },
+            {
+              header: "Starting",
+              text: researchSession.startDate | formatDate
+            }
+          ]) %}
+        {% endfor %}
+
+        {{ table({
+          id: "research-sessions",
+          responsive: true,
+          head: [
+            { text: "Research session" },
+            { text: "Starting" }
+          ],
+          rows: researchSessionRows
+        }) }}
+      {% else %}
+        <p>No research sessions have been set up yet.</p>
+      {% endif %}
+    </main>
+  </div>
+{% endblock %}

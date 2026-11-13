@@ -16,6 +16,18 @@ export const scenarioController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  listResearchSessions(request, response) {
+    // Latest first. ISO dates (YYYY-MM-DD) sort correctly as text
+    response.locals.researchSessions = Object.entries(researchSessions)
+      .map(([tag, researchSession]) => ({ tag, ...researchSession }))
+      .sort((a, b) => b.startDate.localeCompare(a.startDate))
+
+    return response.render('scenario/research-sessions')
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   showResearchSession(request, response, next) {
     const { tag } = request.params
     const { data } = request.session
