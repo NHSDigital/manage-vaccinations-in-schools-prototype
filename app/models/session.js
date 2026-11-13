@@ -1490,10 +1490,14 @@ export class Session extends BaseModel {
               })
             case 'consentOpenAt':
               return formatDate(this.consentOpenAt, { dateStyle: 'full' })
+            case 'consentOpenAtShort':
+              return formatDate(this.consentOpenAt, { dateStyle: 'long' })
             case 'reminderDate':
               return formatDate(this.reminderDate, { dateStyle: 'full' })
             case 'nextReminderDate':
               return formatDate(this.nextReminderDate, { dateStyle: 'full' })
+            case 'nextReminderDateShort':
+              return formatDate(this.nextReminderDate, { dateStyle: 'long' })
             case 'reminderWeeks': {
               const nextReminder = formatDate(this.nextReminderDate, {
                 dateStyle: 'full'

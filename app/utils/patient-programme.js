@@ -526,7 +526,7 @@ export function getConsentRequestDescription(patientProgramme, session) {
 
   paragraphs.push(
     __(`patientSession.consentRequests.requested.${requestTense}`, {
-      date: session.formatted.consentOpenAt
+      date: session.formatted.consentOpenAtShort
     }),
     contactsToRequestFrom.map((contact) => `- ${contact}`).join('\n')
   )
@@ -542,7 +542,7 @@ export function getConsentRequestDescription(patientProgramme, session) {
       hasRespondedToRequest
         ? __(`patientSession.consentRequests.noReminder.${reminderTense}`)
         : __(`patientSession.consentRequests.reminder.${reminderTense}`, {
-            date: session.formatted.nextReminderDate
+            date: session.formatted.nextReminderDateShort
           })
     )
   }
