@@ -67,3 +67,42 @@ to match scenarios we want to use in research.
 ### How your scenario gets incorporated
 
 After creating all of the randomised data, `lib/create-data.js` calls `createScenarioData()`, which writes `.data/scenarios.json`. `app/data.js` loads that file, and `app/models/scenario.js`, `app/controllers/scenario.js` and `app/views/scenario/list.njk` render the page.
+
+### Research sessions
+
+A research session gathers scenario links into a single page that researchers can share with
+participants, at `/scenarios/research/<tag>`. All sessions are listed at `/scenarios/research`.
+
+1. Define the session in `lib/scenarios/research-sessions.js`, keyed by a URL-friendly tag:
+
+   ```js
+   'consent-expiry': {
+     title: 'Expiring consent in Mavis', // shown to participants
+     description: 'What the research is about.', // shown to participants; Markdown allowed
+     startDate: '2026-11-16', // sessions are listed latest first
+     fixedLinks: [{ label: 'Sessions', href: '/sessions' }] // optional, for pages no scenario creates
+   }
+   ```
+
+2. Tag scenario links for the session with `researchTags`. A link can be tagged for several
+   sessions, each with its own optional participant-facing `label`:
+
+   ```js
+   links: [
+     {
+       label: 'Consent given last year, expired 2 weeks ago',
+       href: patientSession.uri,
+       researchTags: [{ tag: 'consent-expiry', label: 'Scenario 2: checking a child’s consent' }]
+     }
+   ]
+   ```
+
+   Link text written for designers often describes what the participant is meant to work out, so
+   set a `label` before the research starts.
+
+3. Run `npm run create-data`. It fails if a link is tagged for a session that isn't defined.
+
+To group links under headings, start their text (the `label`, or the link's own text) with the
+heading in square brackets, e.g. `[Part 1: Warm-up scenarios] Scenario 1: checking a child’s consent`.
+Headings are sorted by name, then the links within each by their text, both with numbers in numeric
+order. Links without a heading come first.
