@@ -4,7 +4,8 @@
     "./app.js",
     "./app/**/*.js",
     "./node_modules/nhsuk-prototype-kit/**/*.js",
-    "./typings/**/*.d.ts"
+    "./typings/**/*.d.ts",
+    "lib/scenarios/research-sessions.js"
   ],
   "exclude": ["./app/assets/javascripts"]
 }

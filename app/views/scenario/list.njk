@@ -1,56 +1,76 @@
 {% extends "_layouts/default.njk" %}
 
-{% set title = "Scenarios for research" %}
+{% set title = __("scenario.title") %}
 
-{% block main %}
-  <div class="nhsuk-width-container">
-    <main class="nhsuk-main-wrapper" id="maincontent" role="main">
-      {{ heading({
-        text: title,
-        size: "l"
-      }) }}
+{% block beforeContent %}
+  {{ breadcrumb({
+    items: [
+      {
+        text: __("home.show.title"),
+        href: "/"
+      }
+    ]
+  }) }}
+{% endblock %}
 
-      <p>The following scenarios are available for use in user research:</p>
+{% block content %}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
 
-      {% if scenarios.length > 0 %}
-        {% for scenario in scenarios %}
-          {% call card({
-            href: scenario.startUrl,
-            heading: {
-              text: scenario.name,
-              level: 2,
-              size: "s"
-            },
-            classes: "nhsuk-u-margin-bottom-4"
-          }) %}
-            <p>{{ scenario.description }}</p>
+  <p class="nhsuk-body">
+    To find the links for a planned user research session, see the
+    <a href="/scenarios/research">research sessions</a> page.
+  </p>
 
-            {% for linkGroup in scenario.linkGroups %}
-              {% if linkGroup.name %}
-                {% set listTitle = __mf("scenario.links.groupTitle", { name: linkGroup.name, count: linkGroup.links.length }) %}
-              {% else %}
-                {% set listTitle = __mf("scenario.links.title", { count: linkGroup.links.length }) %}
-              {% endif %}
-              {% set linksHtml %}
-                <ul class="nhsuk-list nhsuk-list--bullet">
-                  {% for link in linkGroup.links %}
-                    <li><a href="{{ link.href }}">{{ link.label }}</a></li>
+  {% if scenarios.length > 0 %}
+    {% for scenario in scenarios %}
+      {% call card({
+        href: scenario.startUrl,
+        heading: {
+          text: scenario.name,
+          level: 2,
+          size: "s"
+        },
+        classes: "nhsuk-u-margin-bottom-4"
+      }) %}
+        <p>{{ scenario.description }}</p>
+
+        {% for linkGroup in scenario.linkGroups %}
+          {% if linkGroup.name %}
+            {% set listTitle = __mf("scenario.links.groupTitle", { name: linkGroup.name, count: linkGroup.links.length }) %}
+          {% else %}
+            {% set listTitle = __mf("scenario.links.title", { count: linkGroup.links.length }) %}
+          {% endif %}
+          {% set linksHtml %}
+            <ul class="nhsuk-list nhsuk-list--bullet">
+              {% for link in linkGroup.links %}
+                <li>
+                  <a href="{{ link.href }}">{{ link.label }}</a>
+                  {% for researchTag in link.researchTags %}
+                    <a href="/scenarios/research/{{ researchTag.tag }}" class="nhsuk-u-margin-left-1">
+                      {{- tag({
+                        text: researchTag.tag,
+                        classes: "nhsuk-tag--blue"
+                      }) -}}
+                    </a>
                   {% endfor %}
-                </ul>
-              {% endset %}
-              {{ details({
-                summary: listTitle,
-                html: linksHtml,
-                classes: "nhsuk-u-margin-bottom-3" if not loop.last
-              }) }}
-            {% endfor %}
-          {% endcall %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endset %}
+          {{ details({
+            summary: listTitle,
+            html: linksHtml,
+            classes: "nhsuk-u-margin-bottom-3" if not loop.last
+          }) }}
         {% endfor %}
-      {% else %}
-        <p>No scenarios found.</p>
-      {% endif %}
+      {% endcall %}
+    {% endfor %}
+  {% else %}
+    <p>No scenarios found.</p>
+  {% endif %}
 
-      {# TODO: add search/filter panel, and maybe have categories for the scenarios (matching the "Component" field in Jira?) #}
-    </main>
-  </div>
+  {# TODO: add search/filter panel, and maybe have categories for the scenarios (matching the "Component" field in Jira?) #}
 {% endblock %}

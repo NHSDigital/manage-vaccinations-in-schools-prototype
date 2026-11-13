@@ -14,6 +14,8 @@ import { BaseModel } from './base.js'
  * @property {string} label - What this links to
  * @property {string} href - URL to link to
  * @property {string} [group] - Name of the group of links this belongs to, if any
+ * @property {Array<{tag: string, label?: string}>} [researchTags] - Research sessions to include
+ *   this link in, each with optional link text to use in that session
  */
 
 /**
