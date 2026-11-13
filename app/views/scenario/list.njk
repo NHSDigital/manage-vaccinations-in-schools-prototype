@@ -40,10 +40,12 @@
                     <li>
                       <a href="{{ link.href }}">{{ link.label }}</a>
                       {% for researchTag in link.researchTags %}
-                        {{ tag({
-                          text: researchTag.tag,
-                          classes: "nhsuk-tag--blue nhsuk-u-margin-left-1"
-                        }) }}
+                        <a href="/scenarios/research/{{ researchTag.tag }}" class="nhsuk-u-margin-left-1">
+                          {{- tag({
+                            text: researchTag.tag,
+                            classes: "nhsuk-tag--blue"
+                          }) -}}
+                        </a>
                       {% endfor %}
                     </li>
                   {% endfor %}
