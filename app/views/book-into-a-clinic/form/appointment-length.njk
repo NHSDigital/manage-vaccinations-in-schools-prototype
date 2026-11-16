@@ -5,11 +5,11 @@
 {% block form %}
   {% set slotCountHtml %}
     {{ input({
-      classes: "nhsuk-input--width-2",
       label: __("clinicBooking.appointmentLength.slots.label"),
       hint: __("clinicBooking.appointmentLength.slots.hint", slotLengthInMinutes),
       suffix: __("clinicBooking.appointmentLength.slots.suffix"),
       value: appointment.slotCount,
+      width: "2",
       decorate: "appointment.editedSlotCount"
     }) }}
   {% endset %}
