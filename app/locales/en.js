@@ -2218,13 +2218,6 @@ export const en = {
           '{name} was reported as vaccinated by a parent via CHIS. We do not hold the dates of any doses.'
       }
     },
-    encounters: {
-      count:
-        '{count, plural, =0 {No encounters recorded} one {Encounters} other {# encounters}}',
-      date: {
-        label: 'Encounter date'
-      }
-    },
     consent: {
       label: 'Consent status'
     },

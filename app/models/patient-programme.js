@@ -587,22 +587,6 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
-   * Get encounters
-   *
-   * Every vaccination outcome that is not Vaccinated, including part
-   * vaccinated and already vaccinated, oldest first.
-   *
-   * @returns {Array<Vaccination>} Vaccinations
-   */
-  get encounters() {
-    return this.vaccinationOutcomes
-      .filter(({ outcome }) => outcome !== VaccinationOutcome.Vaccinated)
-      .sort((a, b) =>
-        getDateValueDifference(a.administeredAt, b.administeredAt)
-      )
-  }
-
-  /**
    * Get tetanus vaccinations given
    *
    * @returns {Array<Vaccination>|undefined} Vaccinations
