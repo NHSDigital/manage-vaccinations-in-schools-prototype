@@ -507,7 +507,7 @@ export class Vaccination extends BaseModel {
             case 'batch':
               return this.batch?.summary
             case 'batch_id':
-              return formatCode(this.batch.id)
+              return this.batch && formatCode(this.batch.id)
             case 'dose':
               return formatMillilitres(this.dose)
             case 'sequence':
