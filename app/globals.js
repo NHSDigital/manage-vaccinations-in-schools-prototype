@@ -4,6 +4,7 @@ import { decorate } from 'nhsuk-decorated-components'
 import { healthQuestions } from './datasets/health-questions.js'
 import {
   AuditEventType,
+  ContactType,
   InstructionStatus,
   PatientConsentStatus,
   PatientRefusedStatus
@@ -142,44 +143,48 @@ export default () => {
         auditEvent.messageRecipient &&
         new ContactRelationship(auditEvent.messageRecipient, this.ctx.data)
 
-      // Show email message content if recipient given with email address
-      if (contactRelationship?.email) {
-        const subject = nunjucksEnv.renderString(
-          en.emails.consent[auditEvent.messageTemplate].name,
-          auditEvent.messageData
-        )
+      // Show the message sent to each of the recipient’s phone numbers and
+      // email addresses (older events only recorded the recipient)
+      const contacts =
+        auditEvent.messageContacts || contactRelationship?.messageContacts || []
+      for (const contact of contacts) {
+        const isEmail = contact.type === ContactType.Email
+        const recipient = contactRelationship?.isSensitive
+          ? ''
+          : ` to ${contact.value}`
 
-        const body = nunjucksEnv
-          .render(
-            `emails/consent/${auditEvent.messageTemplate}.njk`,
+        if (isEmail) {
+          const subject = nunjucksEnv.renderString(
+            en.emails.consent[auditEvent.messageTemplate].name,
             auditEvent.messageData
           )
-          .replaceAll('## ', '#### ')
-          .replaceAll('### ', '##### ')
 
-        details.push({
-          classes: 'app-details--notify-message',
-          summary: `Email sent to ${contactRelationship?.formatted.email}`,
-          html: formatMarkdown(`### ${subject}\n\n${body}`)
-        })
-      }
-
-      // Show email message content if recipient given with telephone number
-      // and text message content provided
-      if (
-        contactRelationship?.tel &&
-        en.texts.consent[auditEvent.messageTemplate]?.text
-      ) {
-        details.push({
-          classes: 'app-details--notify-message',
-          summary: `Message sent to ${contactRelationship?.formatted.tel}`,
-          html: formatMarkdown(
-            nunjucksEnv.renderString(
-              `${en.texts.consent[auditEvent.messageTemplate].text}`,
+          const body = nunjucksEnv
+            .render(
+              `emails/consent/${auditEvent.messageTemplate}.njk`,
               auditEvent.messageData
             )
-          )
-        })
+            .replaceAll('## ', '#### ')
+            .replaceAll('### ', '##### ')
+
+          details.push({
+            classes: 'app-details--notify-message',
+            summary: `Email sent${recipient}`,
+            html: formatMarkdown(`### ${subject}\n\n${body}`)
+          })
+        } else if (en.texts.consent[auditEvent.messageTemplate]?.text) {
+          // Only show text messages if there’s text message content
+          details.push({
+            classes: 'app-details--notify-message',
+            summary: `Message sent${recipient}`,
+            html: formatMarkdown(
+              nunjucksEnv.renderString(
+                `${en.texts.consent[auditEvent.messageTemplate].text}`,
+                auditEvent.messageData
+              )
+            )
+          })
+        }
       }
 
       timelineItems.push({
