@@ -2,6 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ContactType, NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
 import { User } from '../models.js'
+import { formatDate } from '../utils/date.js'
 import { stringToArray } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -107,6 +108,39 @@ export class Contact extends BaseModel {
     return this.isEmail
       ? this.status === NotifyEmailStatus.Delivered
       : this.status === NotifySmsStatus.Delivered
+  }
+
+  /**
+   * Get formatted values
+   *
+   * @returns {object} Formatted values
+   */
+  get formatted() {
+    const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' }
+
+    return new Proxy(
+      {},
+      {
+        get: (_target, prop) => {
+          switch (prop) {
+            case 'value':
+              return this.value
+            case 'sources':
+              return this.sources.length > 0
+                ? this.sources.join(', ')
+                : undefined
+            case 'createdAt':
+              return formatDate(this.createdAt, dateOptions)
+            case 'updatedAt':
+              return this.updatedAt && formatDate(this.updatedAt, dateOptions)
+            case 'archivedAt':
+              return this.archivedAt && formatDate(this.archivedAt, dateOptions)
+            default:
+              return undefined
+          }
+        }
+      }
+    )
   }
 }
 
