@@ -6,7 +6,7 @@ import {
   RelationshipType,
   UploadType
 } from '../enums.js'
-import { Contact } from '../models.js'
+import { ContactRelationship } from '../models.js'
 
 import { generateLastName, generateParentFirstName } from './name.js'
 
@@ -41,9 +41,9 @@ function generatePhoneNumber() {
  * @param {object} [overrides] - Choices to make instead of leaving them to chance
  * @param {boolean} [overrides.isEmailDelivered] - Contact has an email address
  *   that messages are delivered to
- * @returns {Contact} Contact
+ * @returns {ContactRelationship} Contact
  */
-export function generateContact(patient, isMum, overrides = {}) {
+export function generateContactRelationship(patient, isMum, overrides = {}) {
   // Relationship
   const relationship = isMum
     ? RelationshipType.Mum
@@ -98,7 +98,7 @@ export function generateContact(patient, isMum, overrides = {}) {
         { value: NotifyEmailStatus.Technical, weight: 1 }
       ])
 
-  return new Contact({
+  return new ContactRelationship({
     fullName: `${firstName} ${lastName}`,
     relationship,
     ...(relationship === RelationshipType.Other && {
@@ -121,10 +121,10 @@ export function generateContact(patient, isMum, overrides = {}) {
  * Generate the communication needs a parent gives in a consent response or
  * clinic booking
  *
- * @param {Contact} contact - Contact responding
+ * @param {ContactRelationship} contactRelationship - Contact responding
  * @returns {object} Whether they have communication needs, and what they are
  */
-export function generateCommunicationNeeds(contact) {
+export function generateCommunicationNeeds(contactRelationship) {
   const hasCommunicationNeeds = faker.datatype.boolean(0.2)
   if (!hasCommunicationNeeds) {
     return { hasCommunicationNeeds }
@@ -133,7 +133,7 @@ export function generateCommunicationNeeds(contact) {
   // Parents saying they have communication needs always say what they are
   // (the service wouldn’t let them continue without doing so)
   const communicationNeeds = faker.helpers.arrayElement([
-    ...(contact?.tel
+    ...(contactRelationship?.tel
       ? [
           'I sometimes have difficulty hearing phone calls, so it’s best to send me a text message.',
           'I have dyslexia, so I find it easier to talk things through on the phone than read long emails.'
@@ -152,13 +152,13 @@ export function generateCommunicationNeeds(contact) {
  * slightly different details, e.g. a mum who has remarried and changed her
  * surname, or has a new phone number
  *
- * @param {Contact} contact - Contact on the child’s record
- * @returns {Contact} Contact with some details changed
+ * @param {ContactRelationship} contactRelationship - Contact on the child’s record
+ * @returns {ContactRelationship} Contact with some details changed
  */
-export function generateContactVariation(contact) {
-  const [firstName, ...otherNames] = contact.fullName.split(' ')
+export function generateContactRelationshipVariation(contactRelationship) {
+  const [firstName, ...otherNames] = contactRelationship.fullName.split(' ')
   let lastName = otherNames.join(' ')
-  let { email, emailStatus, tel, smsStatus } = contact
+  let { email, emailStatus, tel, smsStatus } = contactRelationship
 
   // Only vary details the contact already has, so they can still be reached
   const change = faker.helpers.weightedArrayElement([
@@ -191,13 +191,13 @@ export function generateContactVariation(contact) {
       break
   }
 
-  return new Contact({
+  return new ContactRelationship({
     fullName: `${firstName} ${lastName}`,
-    relationship: contact.relationship,
-    relationshipOther: contact.relationshipOther,
+    relationship: contactRelationship.relationship,
+    relationshipOther: contactRelationship.relationshipOther,
     ...(email && { email, emailStatus }),
-    ...(tel && { tel, canSms: contact.canSms, smsStatus }),
-    patient_uuid: contact.patient_uuid
+    ...(tel && { tel, canSms: contactRelationship.canSms, smsStatus }),
+    patient_uuid: contactRelationship.patient_uuid
   })
 }
 
@@ -219,25 +219,31 @@ export function generateUploadContactChanges(upload, patients) {
   }
 
   const inUpload = new Set(upload.patient_uuids)
-  const contacts = patients
+  const contactRelationships = patients
     .filter((patient) => inUpload.has(patient.uuid) && !patient.isSensitive)
     .flatMap((patient) =>
-      patient.contacts.filter(({ uuid }) =>
-        patient.contact_uuids.includes(uuid)
+      patient.contactRelationships.filter(({ uuid }) =>
+        patient.contactRelationship_uuids.includes(uuid)
       )
     )
-    .filter((contact) => !contact.tel || !contact.email)
+    .filter(
+      (contactRelationship) =>
+        !contactRelationship.tel || !contactRelationship.email
+    )
 
   const contactChanges = {}
-  for (const contact of faker.helpers.arrayElements(contacts, {
-    min: 1,
-    max: 5
-  })) {
-    const [firstName, ...lastNames] = contact.fullName.split(' ')
+  for (const contactRelationship of faker.helpers.arrayElements(
+    contactRelationships,
+    {
+      min: 1,
+      max: 5
+    }
+  )) {
+    const [firstName, ...lastNames] = contactRelationship.fullName.split(' ')
 
-    contactChanges[contact.uuid] = {
-      ...(!contact.tel && { tel: generatePhoneNumber() }),
-      ...(!contact.email && {
+    contactChanges[contactRelationship.uuid] = {
+      ...(!contactRelationship.tel && { tel: generatePhoneNumber() }),
+      ...(!contactRelationship.email && {
         email: generateEmailAddress(firstName, lastNames.join(' '))
       })
     }

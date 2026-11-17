@@ -454,12 +454,12 @@ export class PatientSession extends BaseModel {
    * Send consent reminder
    *
    * @param {Partial<AuditEvent>} event - Event
-   * @param {Contact} contact - Contact
+   * @param {ContactRelationship} contactRelationship - Contact
    */
-  sendConsentReminder(event, contact) {
+  sendConsentReminder(event, contactRelationship) {
     this.patient?.addEvent({
-      name: activity.notify['invite-reminder'](contact),
-      messageRecipient: contact,
+      name: activity.notify['invite-reminder'](contactRelationship),
+      messageRecipient: contactRelationship,
       messageTemplate: 'invite-reminder',
       type: AuditEventType.Reminder,
       createdAt: event.createdAt,
@@ -476,6 +476,6 @@ PatientSession.relate('programme_id', () => Programme, 'programme')
 PatientSession.relate('session_id', () => Session, 'session')
 
 /**
- * @import { Contact, PatientProgramme } from '../models.js'
+ * @import { ContactRelationship, PatientProgramme } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

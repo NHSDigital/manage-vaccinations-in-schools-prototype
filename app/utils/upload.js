@@ -1,5 +1,5 @@
 import { UploadFormat, UploadOutcome, UploadType } from '../enums.js'
-import { generateUploadContactChanges } from '../generators/contact.js'
+import { generateUploadContactChanges } from '../generators/contact-relationship.js'
 import { generateUploadYearGroupChanges } from '../generators/patient.js'
 import { Patient } from '../models.js'
 

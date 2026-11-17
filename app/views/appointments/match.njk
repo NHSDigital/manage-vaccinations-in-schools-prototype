@@ -34,8 +34,8 @@
             dob: {},
             postalCode: {},
             schoolName: {},
-            contact: {
-              label: __("appointments.match.contact.label"),
+            contactRelationship: {
+              label: __("appointments.match.contactRelationship.label"),
               value: appointment.formatted.contactDetails
             }
           })
@@ -108,8 +108,8 @@
               schoolName: {
                 value: patient.school.name | highlightQuery(data.q)
               },
-              contacts: {
-                value: patient.formatted.contacts | highlightQuery(data.q)
+              contactRelationships: {
+                value: patient.formatted.contactRelationships | highlightQuery(data.q)
               }
             })
           }) }}

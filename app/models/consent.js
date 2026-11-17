@@ -27,7 +27,7 @@ export class Consent extends Reply {
     return {
       summary: formatLinkWithSecondaryText(
         this.uri,
-        this.contact.fullNameAndRelationship,
+        this.contactRelationship.fullNameAndRelationship,
         `for ${this.child.fullName}`
       )
     }

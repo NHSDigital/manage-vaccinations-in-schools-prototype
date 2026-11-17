@@ -356,7 +356,9 @@ export const patientSessionController = {
 
     request.flash(
       'success',
-      __('patientSession.request.success', { contact: patient.contacts[0] })
+      __('patientSession.request.success', {
+        contactRelationship: patient.contactRelationships[0]
+      })
     )
 
     return saveAndRedirect(request, response, back)
@@ -372,7 +374,7 @@ export const patientSessionController = {
       {
         createdBy_uid: account.uid
       },
-      patient.contacts[0]
+      patient.contactRelationships[0]
     )
 
     return saveAndRedirect(request, response, back)

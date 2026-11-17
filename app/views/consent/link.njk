@@ -9,7 +9,7 @@
   {{ super() }}
 
   {{ heading({
-    caption: __("consent.link.caption", { contact: consent.contact } ),
+    caption: __("consent.link.caption", { contactRelationship: consent.contactRelationship } ),
     text: title,
     size: "l"
   }) }}
@@ -41,8 +41,8 @@
           gpSurgery: {
             value: consent.child.formatted.gpSurgery | highlightDifference(patient.formatted.gpSurgery)
           },
-          contact: {
-            value: consent.contact.fullNameAndRelationship
+          contactRelationship: {
+            value: consent.contactRelationship.fullNameAndRelationship
           }
         })
       }) }}
@@ -63,7 +63,7 @@
           address: {},
           schoolName: {},
           gpSurgery: {},
-          contacts: {}
+          contactRelationships: {}
         })
       }) }}
     </div>

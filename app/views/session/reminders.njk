@@ -52,7 +52,7 @@
   {% call insetText() %}
     {{ heading({
       text: __("session.reminders.activity", {
-        contacts: session.tally(session.programmes[0].id, PatientStatus.Consent),
+        contactRelationships: session.tally(session.programmes[0].id, PatientStatus.Consent),
         patients: session.tally(session.programmes[0].id)
       }),
       level: 3,

@@ -5,7 +5,7 @@
       text: reply.fullNameAndRelationship,
       caption: {
         text:
-          ("Phone: " + reply.contact.tel) if reply.contact.tel else ("Email: " + reply.contact.email),
+          ("Phone: " + reply.contactRelationship.tel) if reply.contactRelationship.tel else ("Email: " + reply.contactRelationship.email),
         placement: "end"
       },
       level: 4

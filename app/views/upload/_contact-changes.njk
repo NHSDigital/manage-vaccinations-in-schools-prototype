@@ -1,25 +1,25 @@
 {%- from "_macros/change.njk" import appChange with context -%}
 
 {% set contactRows = [] %}
-{% for contact in upload.pendingContacts %}
+{% for contactRelationship in upload.pendingContactRelationships %}
   {% set newContacts %}
     <ul>
-    {% if contact.pendingChanges.tel %}
-      <li>{{ contact.pendingChanges.tel | highlight | safe }}</li>
+    {% if contactRelationship.pendingChanges.tel %}
+      <li>{{ contactRelationship.pendingChanges.tel | highlight | safe }}</li>
     {% endif %}
 
-    {% if contact.pendingChanges.email %}
-      <li>{{ contact.pendingChanges.email | highlight | safe }}</li>
+    {% if contactRelationship.pendingChanges.email %}
+      <li>{{ contactRelationship.pendingChanges.email | highlight | safe }}</li>
     {% endif %}
     </ul>
   {% endset %}
 
   {% set contactRows = contactRows | push([
     {
-      html: contact.patient.formatted.fullNameAndNhsn
+      html: contactRelationship.patient.formatted.fullNameAndNhsn
     },
     {
-      text: contact.fullNameAndRelationship
+      text: contactRelationship.fullNameAndRelationship
     },
     {
       classes: "app-table__cell--summary-list",
@@ -46,7 +46,7 @@
     responsive: true,
     head: [
       { text: __("patient.fullNameAndNhsn.label") },
-      { text: __("contact.label") },
+      { text: __("contactRelationship.label") },
       { text: __("upload.show.contacts.uploaded") }
     ],
     rows: contactRows
