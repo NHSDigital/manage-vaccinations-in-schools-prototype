@@ -127,7 +127,7 @@ export class Contact extends BaseModel {
               return this.isArchived ? `<s>${this.value}</s>` : this.value
             case 'sources':
               return this.sources.length > 0
-                ? this.sources.join(', ')
+                ? this.sources.join('<br>')
                 : undefined
             case 'createdAt':
               return formatDate(this.createdAt, dateOptions)

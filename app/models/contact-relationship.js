@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ContactType, RelationshipType } from '../enums.js'
-import { Contact, Patient, User } from '../models.js'
+import { Contact, Patient } from '../models.js'
+import { today } from '../utils/date.js'
 import { tokenize } from '../utils/object.js'
 import {
   formatOther,
@@ -19,13 +20,12 @@ import { BaseModel } from './base.js'
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
  * @property {boolean} [canNotify] - Notify about consent and vaccinations
- * @property {Date} [archivedAt] - Date archived
- * @property {string} [archivedBy_uid] - User who archived contact
  * @property {Array<ContactOptions>} [contactPoints] - Phone numbers and
  *   email addresses
  * @property {string} [tel] - Phone number (added as a contact point)
  * @property {string} [email] - Email address (added as a contact point)
- * @property {boolean} [canSms] - Get updates via SMS
+ * @property {boolean} [canSms] - Get updates via SMS (defaults to `false` if
+ *   the contact has a phone number)
  * @property {NotifyEmailStatus} [emailStatus] - Email status (of `email`)
  * @property {NotifySmsStatus} [smsStatus] - SMS status (of `tel`)
  * @property {Array<ContactOptions>} [pendingContactPoints] - Contact
@@ -80,7 +80,6 @@ export class ContactRelationship extends BaseModel {
       ? stringToBoolean(options?.hasParentalResponsibility)
       : undefined
     this.canNotify = stringToBoolean(options?.canNotify)
-    this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
     this.contacts = (options?.contacts || []).map(
       (contact) => new Contact(contact, context)
     )
@@ -93,7 +92,12 @@ export class ContactRelationship extends BaseModel {
       }
     }
 
-    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
+    // Keep the text message preference while a contact has any phone number,
+    // including archived ones, so it isn’t lost if a phone number is archived
+    // and later restored. If no preference has been given, it’s ‘No’
+    this.canSms = this.contacts.some((contact) => contact.isPhone)
+      ? (stringToBoolean(options?.canSms) ?? false)
+      : undefined
 
     this.pendingContacts = (options?.pendingContacts || []).map(
       (contact) => new Contact(contact, context)
@@ -146,13 +150,28 @@ export class ContactRelationship extends BaseModel {
   /**
    * Has been archived
    *
-   * Archived contacts aren’t sent messages, and aren’t one of the child’s
-   * contacts, but can be restored
+   * A contact is archived once all of their contact points are archived.
+   * A contact who has never had any contact points isn’t archived.
    *
    * @returns {boolean} Has been archived
    */
   get isArchived() {
-    return !!this.archivedAt
+    return this.contacts.length > 0 && this.activeContacts.length === 0
+  }
+
+  /**
+   * Archive all of the contact’s active contact points (which archives the
+   * contact)
+   *
+   * @param {object} [options] - Options
+   * @param {Date} [options.archivedAt] - Date archived
+   * @param {string} [options.archivedBy_uid] - User who archived them
+   */
+  archiveContacts({ archivedAt = today(), archivedBy_uid } = {}) {
+    for (const contact of this.activeContacts) {
+      contact.archivedAt = archivedAt
+      contact.archivedBy_uid = archivedBy_uid
+    }
   }
 
   /**
@@ -435,6 +454,15 @@ export class ContactRelationship extends BaseModel {
   }
 
   /**
+   * Has an active phone number
+   *
+   * @returns {boolean} Has an active phone number
+   */
+  get hasPhoneNumber() {
+    return this.activeContacts.some((contact) => contact.isPhone)
+  }
+
+  /**
    * Get contact points that messages are sent to
    *
    * These are all active contact points, except phone numbers if the contact
@@ -498,6 +526,9 @@ export class ContactRelationship extends BaseModel {
           // than undefined, if there are none (or they’re hidden), so summary
           // lists don’t show a contact’s unformatted values instead
           switch (prop) {
+            case 'canSms':
+              // Only relevant if the contact has a phone number to text
+              return this.hasPhoneNumber ? undefined : ''
             case 'communicationNeeds':
               return this.response?.formatted['communicationNeeds']
             case 'fullName':
@@ -527,7 +558,6 @@ export class ContactRelationship extends BaseModel {
 }
 
 ContactRelationship.relate('patient_uuid', () => Patient, 'patient')
-ContactRelationship.relate('archivedBy_uid', () => User, 'archivedBy')
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'

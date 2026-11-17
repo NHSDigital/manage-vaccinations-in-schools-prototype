@@ -59,12 +59,6 @@ router.get(
 )
 router.post('/:contactRelationship_uuid/archive', contactRelationship.archive)
 
-router.get(
-  '/:contactRelationship_uuid/restore',
-  contactRelationship.action('restore')
-)
-router.post('/:contactRelationship_uuid/restore', contactRelationship.restore)
-
 router.all(
   '/:contactRelationship_uuid/new',
   contactRelationship.readForm('new')

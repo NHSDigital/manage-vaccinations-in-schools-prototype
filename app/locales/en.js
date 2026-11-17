@@ -1887,13 +1887,8 @@ export const en = {
     },
     archive: {
       description:
-        'Archived contacts won’t be sent any messages about {{patient.firstName}}. You can restore them later.',
+        'All of their phone numbers and email addresses will be archived, and they won’t be sent any messages about {{patient.firstName}}. You can restore their phone numbers and email addresses later.',
       success: 'Archived {{contactRelationship.fullName}}'
-    },
-    restore: {
-      description:
-        '{{contactRelationship.fullName}} will be sent messages about {{patient.firstName}} again.',
-      success: 'Restored {{contactRelationship.fullName}}'
     },
     archived: {
       label: 'View archived contacts',
@@ -1944,6 +1939,8 @@ export const en = {
   },
   contact: {
     label: 'Phone number or email address',
+    count:
+      '{count, plural, =0 {No active contacts} one {1 active contact} other {# active contacts}}',
     new: {
       tel: {
         label: 'Add phone number',
