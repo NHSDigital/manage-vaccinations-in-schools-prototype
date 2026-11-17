@@ -440,7 +440,11 @@ export const replyController = {
         reply.contactRelationship_uuid,
         data.wizard
       )
-      contactRelationship.addContact({
+      const isNew = !contactRelationship.findContact(
+        ContactType.Phone,
+        phoneNumber
+      )
+      const contact = contactRelationship.addContact({
         createdBy_uid: account?.uid,
         type: ContactType.Phone,
         value: phoneNumber.trim(),
@@ -453,6 +457,14 @@ export const replyController = {
           canSms: stringToBoolean(canSms) ?? false
         },
         data.wizard
+      )
+
+      // Record the change in the child’s activity log
+      Patient.findOne(reply.patient_uuid, data)?.addContactEvent(
+        isNew ? 'new' : 'confirm',
+        contactRelationship,
+        contact,
+        account?.uid
       )
     }
 

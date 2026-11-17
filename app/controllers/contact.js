@@ -1,4 +1,3 @@
-import activity from '../datasets/activity.js'
 import { ContactSource, ContactType } from '../enums.js'
 import { ContactRelationship } from '../models.js'
 import { today } from '../utils/date.js'
@@ -33,14 +32,10 @@ const saveContacts = (request, response, type) => {
   )
 
   // Record the change in the child’s activity log
-  const events = {
-    new: activity.patient.contactAdded,
-    update: activity.patient.contactUpdated,
-    archive: activity.patient.contactArchived,
-    restore: activity.patient.contactRestored
-  }
-  contactRelationship.patient?.addContactRelationshipEvent(
-    events[type](contactRelationship, contact),
+  contactRelationship.patient?.addContactEvent(
+    type,
+    contactRelationship,
+    contact,
     account?.uid
   )
 
@@ -109,7 +104,8 @@ export const contactController = {
       }
 
       // Adds a source to a contact point with the same value, if there is one
-      const contactPointCount = contactRelationship.contacts.length
+      // (restoring it if archived)
+      const isNew = !contactRelationship.findContact(type, value)
       response.locals.contact = contactRelationship.addContact({
         createdAt: today(),
         createdBy_uid: account?.uid,
@@ -118,9 +114,7 @@ export const contactController = {
         sources: [ContactSource.Manual]
       })
 
-      const wasAdded = contactRelationship.contacts.length > contactPointCount
-
-      return saveContacts(request, response, wasAdded ? 'new' : 'update')
+      return saveContacts(request, response, isNew ? 'new' : 'confirm')
     }
   },
 
@@ -140,8 +134,7 @@ export const contactController = {
   archive(request, response) {
     const { account, contact } = response.locals
 
-    contact.archivedAt = today()
-    contact.archivedBy_uid = account?.uid
+    contact.archive({ archivedBy_uid: account?.uid })
 
     return saveContacts(request, response, 'archive')
   },
@@ -152,8 +145,7 @@ export const contactController = {
   restore(request, response) {
     const { contact } = response.locals
 
-    contact.archivedAt = undefined
-    contact.archivedBy_uid = undefined
+    contact.restore()
 
     return saveContacts(request, response, 'restore')
   }

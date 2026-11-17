@@ -27,7 +27,7 @@ import {
   User
 } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
-import { addReplyDetailsToContactRelationship } from '../utils/contact-relationship.js'
+import { addRespondentToPatient } from '../utils/contact-relationship.js'
 import { today } from '../utils/date.js'
 import {
   getLocationSearchType,
@@ -187,7 +187,7 @@ export class ClinicAppointment {
     // If the person who booked is already one of the child’s contacts, their
     // booking replaces any earlier response they gave (and the other way round)
     const matchingContactRelationship =
-      this.patient?.contactRelationshipsExcludingClinicBookings.find(
+      this.patient?.allContactRelationshipsExcludingClinicBookings.find(
         (contactRelationship) =>
           contactRelationship.isSamePersonAs(this.contactRelationship)
       )
@@ -363,7 +363,8 @@ export class ClinicAppointment {
   /**
    * Add the details the parent gave when booking (their phone numbers, email
    * addresses and contact preferences) to their contact on the child’s record,
-   * if they’re one of the child’s contacts, and save that contact
+   * and save that contact. If they aren’t one of the child’s contacts, they’re
+   * added as a new contact
    *
    * Like linking a consent response with a child, this happens once the
    * appointment has been matched with the child
@@ -371,17 +372,11 @@ export class ClinicAppointment {
   addBookingDetailsToContactRelationship() {
     // Each programme’s response has the same booking details
     const [reply] = this.replies
-    const contactRelationship =
-      reply?.contactRelationship_uuid &&
-      ContactRelationship.findOne(reply.contactRelationship_uuid, this.context)
+    const patient =
+      this.patient_uuid && Patient.findOne(this.patient_uuid, this.context)
 
-    if (contactRelationship) {
-      addReplyDetailsToContactRelationship(contactRelationship, reply)
-      ContactRelationship.update(
-        contactRelationship.uuid,
-        contactRelationship,
-        this.context
-      )
+    if (reply && patient) {
+      addRespondentToPatient(patient, reply, this.context)
     }
   }
 

@@ -1,8 +1,14 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { formatPhoneNumber } from 'nhsuk-prototype-kit/nunjucks-filters'
 
-import { ContactType, NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
+import {
+  ContactSource,
+  ContactType,
+  NotifyEmailStatus,
+  NotifySmsStatus
+} from '../enums.js'
 import { User } from '../models.js'
-import { formatDate } from '../utils/date.js'
+import { formatDate, today } from '../utils/date.js'
 import { stringToArray } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -46,7 +52,7 @@ export class Contact extends BaseModel {
 
     this.uuid = options?.uuid || faker.string.uuid()
     this.type = options?.type
-    this.value = options?.value
+    this.value = Contact.normaliseValue(options?.type, options?.value)
     this.status = options?.status
     this.sources = stringToArray(options?.sources)
     this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
@@ -71,23 +77,51 @@ export class Contact extends BaseModel {
   }
 
   /**
-   * Get value in a form that can be compared with other values
+   * Normalise a phone number or email address
    *
-   * Ignores case and spaces in email addresses, and spaces, punctuation and
-   * the UK country code in phone numbers
+   * Values are saved normalised, so they can be compared with each other.
+   * Email addresses ignore case and spaces. Phone numbers keep only their
+   * digits, with the UK country code replaced by a leading zero (they’re
+   * formatted with spaces when shown, using `displayValue`)
    *
+   * @param {ContactType} type - Type of contact point
+   * @param {string} [value] - Phone number or email address
    * @returns {string|undefined} Normalised value
    */
-  get normalisedValue() {
-    if (!this.value) {
-      return
+  static normaliseValue(type, value) {
+    if (typeof value !== 'string') {
+      return value
     }
 
-    if (this.isPhone) {
-      return this.value.replace(/\D/g, '').replace(/^44/, '0')
+    if (type === ContactType.Phone) {
+      // Replace the UK country code (with or without 00 before it, and any 0
+      // after it, as in +44 (0)7700 900123) with a leading 0
+      return value.replace(/\D/g, '').replace(/^(?:00)?440?/, '0')
     }
 
-    return this.value.replace(/\s/g, '').toLowerCase()
+    return value.replace(/\s/g, '').toLowerCase()
+  }
+
+  /**
+   * Get value to show (phone numbers are formatted with spaces)
+   *
+   * @returns {string|undefined} Value to show
+   */
+  get displayValue() {
+    return this.isPhone ? String(formatPhoneNumber(this.value)) : this.value
+  }
+
+  /**
+   * Was given in a consent response or clinic booking
+   *
+   * @returns {boolean} Was given in a consent response or clinic booking
+   */
+  get isFromResponse() {
+    return this.sources.some((source) =>
+      [ContactSource.ConsentResponse, ContactSource.ClinicBooking].includes(
+        source
+      )
+    )
   }
 
   /**
@@ -97,6 +131,26 @@ export class Contact extends BaseModel {
    */
   get isArchived() {
     return !!this.archivedAt
+  }
+
+  /**
+   * Archive
+   *
+   * @param {object} [options] - Options
+   * @param {Date} [options.archivedAt] - Date archived
+   * @param {string} [options.archivedBy_uid] - User who archived it
+   */
+  archive({ archivedAt = today(), archivedBy_uid } = {}) {
+    this.archivedAt = archivedAt
+    this.archivedBy_uid = archivedBy_uid
+  }
+
+  /**
+   * Restore
+   */
+  restore() {
+    this.archivedAt = undefined
+    this.archivedBy_uid = undefined
   }
 
   /**
@@ -124,7 +178,9 @@ export class Contact extends BaseModel {
         get: (_target, prop) => {
           switch (prop) {
             case 'value':
-              return this.isArchived ? `<s>${this.value}</s>` : this.value
+              return this.isArchived
+                ? `<s>${this.displayValue}</s>`
+                : this.displayValue
             case 'sources':
               return this.sources.length > 0
                 ? this.sources.join('<br>')
@@ -147,6 +203,5 @@ export class Contact extends BaseModel {
 Contact.relate('archivedBy_uid', () => User, 'archivedBy')
 
 /**
- * @import { ContactSource } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

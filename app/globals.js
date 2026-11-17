@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { decorate } from 'nhsuk-decorated-components'
+import { formatPhoneNumber } from 'nhsuk-prototype-kit/nunjucks-filters'
 
 import { healthQuestions } from './datasets/health-questions.js'
 import {
@@ -151,7 +152,7 @@ export default () => {
         const isEmail = contact.type === ContactType.Email
         const recipient = contactRelationship?.isSensitive
           ? ''
-          : ` to ${contact.value}`
+          : ` to ${isEmail ? contact.value : formatPhoneNumber(contact.value)}`
 
         if (isEmail) {
           const subject = nunjucksEnv.renderString(

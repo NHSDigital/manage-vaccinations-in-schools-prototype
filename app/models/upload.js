@@ -1,7 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
-  ContactType,
   SchoolUploadStatus,
   TeamUploadStatus,
   UploadStatus,
@@ -54,38 +53,6 @@ import { BaseModel } from './base.js'
  * @property {Array<string>} [patient_uuids] - Patient record UUIDs
  * @property {Array<string>} [assignee_emails] - School emails request sent to
  */
-
-/**
- * Normalise contact changes found in an upload
- *
- * Older data gave a single phone number and email address for each contact,
- * rather than a list of contact points
- *
- * @param {object} [contactChanges] - Contact changes, keyed by contact UUID
- * @returns {Record<string, Array<ContactOptions>>} Contact points, keyed
- *   by contact UUID
- */
-function normaliseContactChanges(contactChanges = {}) {
-  return Object.fromEntries(
-    Object.entries(contactChanges).map(([uuid, changes]) => {
-      if (Array.isArray(changes)) {
-        return [uuid, changes]
-      }
-
-      return [
-        uuid,
-        [
-          ...(changes?.tel
-            ? [{ type: ContactType.Phone, value: changes.tel }]
-            : []),
-          ...(changes?.email
-            ? [{ type: ContactType.Email, value: changes.email }]
-            : [])
-        ]
-      ]
-    })
-  )
-}
 
 /**
  * @class Upload
@@ -151,7 +118,7 @@ export class Upload extends BaseModel {
     this.rejectionReason = options?.rejectionReason
     this.validations = options?.validations || {}
     this.hasFailed = stringToBoolean(options?.hasFailed)
-    this.contactChanges = normaliseContactChanges(options?.contactChanges)
+    this.contactChanges = options?.contactChanges || {}
     this.yearGroupChanges = options?.yearGroupChanges || {}
     this.patient_uuids = stringToArray(options?.patient_uuids)
     this.assignee_emails = stringToArray(options?.assignee_emails)

@@ -106,8 +106,9 @@ export default {
     // becomes sensitive
     contactAdded: (contactRelationship, contact) =>
       `${contact.type} added for ${contactRelationship.fullNameAndRelationship}`,
-    contactUpdated: (contactRelationship, contact) =>
-      `${contact.type} updated for ${contactRelationship.fullNameAndRelationship}`,
+    // When a phone number or email address the contact already has is given
+    contactConfirmed: (contactRelationship, contact) =>
+      `${contact.type} confirmed for ${contactRelationship.fullNameAndRelationship}`,
     contactArchived: (contactRelationship, contact) =>
       `${contact.type} archived for ${contactRelationship.fullNameAndRelationship}`,
     contactRestored: (contactRelationship, contact) =>

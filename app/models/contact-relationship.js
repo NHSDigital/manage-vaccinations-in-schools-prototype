@@ -26,8 +26,6 @@ import { BaseModel } from './base.js'
  * @property {string} [email] - Email address (added as a contact point)
  * @property {boolean} [canSms] - Get updates via SMS (defaults to `false` if
  *   the contact has a phone number)
- * @property {NotifyEmailStatus} [emailStatus] - Email status (of `email`)
- * @property {NotifySmsStatus} [smsStatus] - SMS status (of `tel`)
  * @property {Array<ContactOptions>} [pendingContactPoints] - Contact
  *   points found in an upload that need review
  */
@@ -84,9 +82,9 @@ export class ContactRelationship extends BaseModel {
       (contact) => new Contact(contact, context)
     )
 
-    // Forms (and older data) give a single phone number and email address,
-    // with their delivery statuses, so add these to the contact points
-    for (const key of ['tel', 'email', 'smsStatus', 'emailStatus']) {
+    // Forms ask for a single phone number and email address, which set the
+    // contact’s first active contact point of each type
+    for (const key of ['tel', 'email']) {
       if (options && key in options) {
         this[key] = options[key]
       }
@@ -169,8 +167,7 @@ export class ContactRelationship extends BaseModel {
    */
   archiveContacts({ archivedAt = today(), archivedBy_uid } = {}) {
     for (const contact of this.activeContacts) {
-      contact.archivedAt = archivedAt
-      contact.archivedBy_uid = archivedBy_uid
+      contact.archive({ archivedAt, archivedBy_uid })
     }
   }
 
@@ -211,11 +208,29 @@ export class ContactRelationship extends BaseModel {
   }
 
   /**
+   * Find a contact point with the same type and value, active or archived
+   *
+   * @param {ContactType} type - Type of contact point
+   * @param {string} [value] - Phone number or email address
+   * @returns {Contact|undefined} Contact point
+   */
+  findContact(type, value) {
+    const normalisedValue = Contact.normaliseValue(type, value)
+    if (!normalisedValue) {
+      return
+    }
+
+    return this.contacts.find(
+      (contact) => contact.type === type && contact.value === normalisedValue
+    )
+  }
+
+  /**
    * Add contact point
    *
-   * If the contact already has an active contact point with the same value,
-   * add any new sources to that contact point instead, and mark it as updated
-   * if it was given more recently
+   * If the contact already has a contact point with the same value, add any
+   * new sources to that contact point instead (restoring it if archived), and
+   * mark it as updated if it was given more recently
    *
    * @param {ContactOptions} options - Contact point options
    * @returns {Contact} Contact point added or updated
@@ -223,14 +238,11 @@ export class ContactRelationship extends BaseModel {
   addContact(options) {
     const contact = new Contact(options, this.context)
 
-    const existingContact = this.activeContacts.find(
-      ({ type, normalisedValue }) =>
-        type === contact.type &&
-        normalisedValue !== undefined &&
-        normalisedValue === contact.normalisedValue
-    )
+    const existingContact = this.findContact(contact.type, contact.value)
 
     if (existingContact) {
+      existingContact.restore()
+
       existingContact.sources = [
         ...new Set([...existingContact.sources, ...contact.sources])
       ]
@@ -273,9 +285,32 @@ export class ContactRelationship extends BaseModel {
       return []
     }
 
-    return this.activeContacts
-      .filter((contact) => contact.type === type)
-      .map((contact) => contact.formatted.value)
+    return this.activeContactsOfType(type).map(
+      (contact) => contact.formatted.value
+    )
+  }
+
+  /**
+   * Get formatted phone numbers, then email addresses, that aren’t archived
+   *
+   * Returns none for contacts of children with sensitive records
+   *
+   * @returns {Array<{type: ContactType, value: string}>} Formatted values
+   */
+  get formattedContacts() {
+    return [ContactType.Phone, ContactType.Email].flatMap((type) =>
+      this.formattedContactValues(type).map((value) => ({ type, value }))
+    )
+  }
+
+  /**
+   * Get active contact points of a given type
+   *
+   * @param {ContactType} type - Type of contact point
+   * @returns {Array<Contact>} Contact points
+   */
+  activeContactsOfType(type) {
+    return this.activeContacts.filter((contact) => contact.type === type)
   }
 
   /**
@@ -285,13 +320,18 @@ export class ContactRelationship extends BaseModel {
    * @returns {Contact|undefined} Contact point
    */
   firstActiveContact(type) {
-    return this.activeContacts.find((contact) => contact.type === type)
+    return this.activeContactsOfType(type)[0]
   }
 
   /**
    * Set the value of the first active contact point of a given type
    *
    * Adds a contact point if there isn’t one, and removes it if no value given.
+   *
+   * Only for forms that ask for a single phone number and email address,
+   * which set these on a new contact or a copy of a contact (kept by a
+   * response or booking). Contact points on a child’s record are never
+   * removed, only archived, so this mustn’t be used to change them.
    *
    * @param {ContactType} type - Type of contact point
    * @param {string} [value] - Phone number or email address
@@ -304,7 +344,7 @@ export class ContactRelationship extends BaseModel {
         this.contacts.splice(this.contacts.indexOf(contact), 1)
       }
     } else if (contact) {
-      contact.value = value
+      contact.value = Contact.normaliseValue(type, value)
     } else {
       this.addContact({ type, value })
     }
@@ -313,7 +353,8 @@ export class ContactRelationship extends BaseModel {
   /**
    * Get phone number
    *
-   * TODO: Remove once callers use contact points
+   * Reads the contact’s first active phone number, for forms that ask
+   * for a single phone number
    *
    * @returns {string|undefined} Phone number
    */
@@ -324,7 +365,8 @@ export class ContactRelationship extends BaseModel {
   /**
    * Set phone number
    *
-   * TODO: Remove once callers use contact points
+   * Sets the contact’s first active phone number, for forms that ask
+   * for a single phone number
    *
    * @param {string|undefined} value - Phone number
    */
@@ -335,7 +377,8 @@ export class ContactRelationship extends BaseModel {
   /**
    * Get email address
    *
-   * TODO: Remove once callers use contact points
+   * Reads the contact’s first active email address, for forms that ask
+   * for a single email address
    *
    * @returns {string|undefined} Email address
    */
@@ -346,62 +389,13 @@ export class ContactRelationship extends BaseModel {
   /**
    * Set email address
    *
-   * TODO: Remove once callers use contact points
+   * Sets the contact’s first active email address, for forms that ask
+   * for a single email address
    *
    * @param {string|undefined} value - Email address
    */
   set email(value) {
     this.setFirstActiveContact(ContactType.Email, value)
-  }
-
-  /**
-   * Get SMS status
-   *
-   * TODO: Remove once callers use contact points
-   *
-   * @returns {NotifySmsStatus|undefined} SMS status
-   */
-  get smsStatus() {
-    return this.firstActiveContact(ContactType.Phone)?.status
-  }
-
-  /**
-   * Set SMS status
-   *
-   * TODO: Remove once callers use contact points
-   *
-   * @param {NotifySmsStatus|undefined} status - SMS status
-   */
-  set smsStatus(status) {
-    const contact = this.firstActiveContact(ContactType.Phone)
-    if (contact) {
-      contact.status = status
-    }
-  }
-
-  /**
-   * Get email status
-   *
-   * TODO: Remove once callers use contact points
-   *
-   * @returns {NotifyEmailStatus|undefined} Email status
-   */
-  get emailStatus() {
-    return this.firstActiveContact(ContactType.Email)?.status
-  }
-
-  /**
-   * Set email status
-   *
-   * TODO: Remove once callers use contact points
-   *
-   * @param {NotifyEmailStatus|undefined} status - Email status
-   */
-  set emailStatus(status) {
-    const contact = this.firstActiveContact(ContactType.Email)
-    if (contact) {
-      contact.status = status
-    }
   }
 
   /**
@@ -425,7 +419,7 @@ export class ContactRelationship extends BaseModel {
   /**
    * Are these the contact details of the same person as another contact?
    *
-   * They need to have the same and the same relationship to the child
+   * They need to have the same name and the same relationship to the child
    * (ignoring parental responsibility settings)
    *
    * @param {ContactRelationship} [contactRelationship] - Other contact
@@ -459,7 +453,7 @@ export class ContactRelationship extends BaseModel {
    * @returns {boolean} Has an active phone number
    */
   get hasPhoneNumber() {
-    return this.activeContacts.some((contact) => contact.isPhone)
+    return this.activeContactsOfType(ContactType.Phone).length > 0
   }
 
   /**
@@ -496,9 +490,12 @@ export class ContactRelationship extends BaseModel {
    */
   get tokenized() {
     const contacts = this.isSensitive ? [] : this.contacts
+    // Include phone numbers as formatted, so they can be searched for with
+    // or without spaces
     const contactTokens = contacts
-      .map(({ value }) => value?.toLowerCase())
+      .flatMap(({ displayValue, value }) => [value, displayValue])
       .filter((value) => value !== undefined)
+      .map((value) => value.toLowerCase())
 
     return [tokenize(this, ['fullName']), ...contactTokens].join(' ')
   }
@@ -560,7 +557,6 @@ export class ContactRelationship extends BaseModel {
 ContactRelationship.relate('patient_uuid', () => Patient, 'patient')
 
 /**
- * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
  * @import { ClinicBooking, Reply } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  * @import { ContactOptions } from './contact.js'
