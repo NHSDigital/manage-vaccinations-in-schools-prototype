@@ -373,15 +373,7 @@ export const uploadController = {
       )
 
       if (upload.school) {
-        const users = [
-          {
-            email: upload.school.email,
-            firstNameAndLastName: 'School email address'
-          },
-          ...upload.school.users
-        ]
-
-        response.locals.assigneeItems = users.map((user) => ({
+        response.locals.assigneeItems = upload.school.users.map((user) => ({
           text: user.email,
           hint: user.firstNameAndLastName,
           value: user.email
