@@ -1,0 +1,29 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("reply.phoneNumber.title", { contactRelationship: reply.contactRelationship }) %}
+
+{% block form %}
+  {{ input({
+    label: {
+      text: title,
+      caption: reply.patient.fullName,
+      size: "l",
+      isPageHeading: true
+    },
+    hint: {
+      text: __("reply.phoneNumber.hint")
+    },
+    type: "tel",
+    width: "20",
+    autocomplete: "off",
+    decorate: "phoneNumber"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: __("contactRelationship.canSms.title", { contactRelationship: reply.contactRelationship })
+    },
+    items: getBooleanItems(),
+    decorate: "canSms"
+  }) }}
+{% endblock %}

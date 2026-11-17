@@ -68,13 +68,24 @@
   }) }}
 
   {{ input({
-    label: __("contactRelationship.email.label"),
+    label: __("contactRelationship.email.label") + " (optional)",
     decorate: "reply.contactRelationship.email"
   }) if showContactDetails }}
 
   {{ input({
-    label: __("contactRelationship.tel.label") + " (optional)",
+    label: __("contactRelationship.tel.label"),
+    type: "tel",
+    width: "20",
     decorate: "reply.contactRelationship.tel"
+  }) if showContactDetails }}
+
+  {# Only kept if a phone number is given #}
+  {{ radios({
+    fieldset: {
+      legend: __("contactRelationship.canSms.title")
+    },
+    items: getBooleanItems(),
+    decorate: "reply.contactRelationship.canSms"
   }) if showContactDetails }}
 
   {{ radios({
