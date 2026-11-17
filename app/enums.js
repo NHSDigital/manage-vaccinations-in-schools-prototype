@@ -418,7 +418,8 @@ export const ContactSource = {
   Cohort: 'Cohort record',
   ClassList: 'Class list record',
   ConsentResponse: 'Consent response',
-  ClinicBooking: 'Clinic booking'
+  ClinicBooking: 'Clinic booking',
+  Manual: 'Added manually'
 }
 
 /**

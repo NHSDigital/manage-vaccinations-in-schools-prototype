@@ -268,6 +268,40 @@ export class Patient extends Child {
    * @returns {Array<ContactRelationship>} Contacts
    */
   get contactRelationshipsExcludingClinicBookings() {
+    return this.allContactRelationshipsExcludingClinicBookings.filter(
+      (contactRelationship) => !contactRelationship.isArchived
+    )
+  }
+
+  /**
+   * Get contacts that have not been archived
+   *
+   * @returns {Array<ContactRelationship>} Contacts
+   */
+  get activeContactRelationships() {
+    return this.allContactRelationshipsExcludingClinicBookings.filter(
+      (contactRelationship) => !contactRelationship.isArchived
+    )
+  }
+
+  /**
+   * Get contacts that have been archived
+   *
+   * @returns {Array<ContactRelationship>} Contacts
+   */
+  get archivedContactRelationships() {
+    return this.allContactRelationshipsExcludingClinicBookings.filter(
+      (contactRelationship) => contactRelationship.isArchived
+    )
+  }
+
+  /**
+   * Get contacts from the child’s record and from consent replies, including
+   * those that have been archived
+   *
+   * @returns {Array<ContactRelationship>} Contacts
+   */
+  get allContactRelationshipsExcludingClinicBookings() {
     const contactRelationships = new Map()
 
     // Skip any contacts that no longer exist
@@ -619,7 +653,12 @@ export class Patient extends Child {
    */
   get tokenized() {
     // Contact points of children with sensitive records can’t be searched for
-    const contactRelationshipTokens = this.contactRelationships.map(
+    // Archived contacts can still be searched for
+    const contactRelationships = [
+      ...this.contactRelationships,
+      ...this.archivedContactRelationships
+    ]
+    const contactRelationshipTokens = contactRelationships.map(
       (contactRelationship) =>
         this.isSensitive
           ? tokenize(contactRelationship, ['fullName'])
@@ -820,6 +859,17 @@ export class Patient extends Child {
    */
   addEvent(event) {
     this.events.push(new AuditEvent(event))
+  }
+
+  /**
+   * Add a change to one of the child’s contacts to the activity log, and save
+   *
+   * @param {string} name - Activity
+   * @param {string} [createdBy_uid] - User who made the change
+   */
+  addContactRelationshipEvent(name, createdBy_uid) {
+    this.addEvent({ name, type: AuditEventType.Record, createdBy_uid })
+    Patient.update(this.uuid, this, this.context)
   }
 
   /**
