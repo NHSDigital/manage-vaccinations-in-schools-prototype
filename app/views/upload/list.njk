@@ -112,17 +112,26 @@
         {{ summaryList({
           card: {
             classes: "app-card--compact",
-            heading: {
-              text: upload.nameFor(account),
+            heading: heading({
+              classes: "nhsuk-card__heading",
+              text: upload.typeFor(account),
+              html: link({
+                text: upload.typeFor(account),
+                href: upload.uri,
+                visuallyHiddenText: upload.visuallyHiddenTextFor(account)
+              }),
               size: "s",
               level: 3
-            },
-            href: upload.uri,
+            }),
             clickable: true
           },
           lastRowBorder: false,
           rows: summaryRows(upload, {
             fileName: {},
+            requested: {},
+            uploaded: {},
+            approved: {},
+            rejected: {},
             school: {} if not account.isSchoolUser else none,
             yearGroups: {},
             schoolStatus: {} if account.isSchoolUser else none,
