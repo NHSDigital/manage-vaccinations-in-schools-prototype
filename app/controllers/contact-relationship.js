@@ -1,8 +1,23 @@
-import { RelationshipType } from '../enums.js'
+import activity from '../datasets/activity.js'
+import { ContactSource, RelationshipType } from '../enums.js'
 import { ContactRelationship, Patient } from '../models.js'
+import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactRelationshipController = {
+  /**
+   * Only users in a SAIS team (not school users) can change contacts
+   *
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  checkCanChange(request, response, next) {
+    if (response.locals.account?.isSchoolUser) {
+      return response.sendStatus(403)
+    }
+
+    next()
+  },
+
   /**
    * @type {RequestParamHandler}
    */
@@ -40,13 +55,23 @@ export const contactRelationshipController = {
     return (request, response) => {
       const { contactRelationship_uuid } = request.params
       const { data } = request.session
-      const { __, back } = response.locals
+      const { __, account, back } = response.locals
 
       // Update session data
       let contactRelationship
       if (type === 'new') {
-        contactRelationship = ContactRelationship.create(
+        // Phone numbers and email addresses given were added manually
+        contactRelationship = new ContactRelationship(
           data.wizard.contactRelationships[contactRelationship_uuid],
+          data
+        )
+        for (const contact of contactRelationship.contacts) {
+          contact.sources = [ContactSource.Manual]
+          contact.createdBy_uid = account?.uid
+        }
+
+        contactRelationship = ContactRelationship.create(
+          contactRelationship,
           data
         )
 
@@ -155,24 +180,55 @@ export const contactRelationshipController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  delete(request, response) {
+  archive(request, response) {
     const { contactRelationship_uuid } = request.params
     const { data } = request.session
-    const { __, contactRelationship } = response.locals
+    const { __, account, contactRelationship } = response.locals
 
-    // Remove contact from the child’s record, so it doesn’t point to nothing
-    const patient = Patient.findOne(contactRelationship.patient_uuid, data)
-    if (patient) {
-      const contactRelationship_uuids =
-        patient.contactRelationship_uuids.filter(
-          (uuid) => uuid !== contactRelationship_uuid
-        )
-      Patient.update(patient.uuid, { contactRelationship_uuids }, data)
-    }
+    ContactRelationship.update(
+      contactRelationship_uuid,
+      { archivedAt: today(), archivedBy_uid: account?.uid },
+      data
+    )
 
-    ContactRelationship.delete(contactRelationship_uuid, data)
+    contactRelationship.patient?.addContactRelationshipEvent(
+      activity.patient.contactRelationshipArchived(contactRelationship),
+      account?.uid
+    )
 
-    request.flash('success', __(`contactRelationship.delete.success`))
+    request.flash(
+      'success',
+      __(`contactRelationship.archive.success`, { contactRelationship })
+    )
+
+    return saveAndRedirect(
+      request,
+      response,
+      `/patients/${contactRelationship.patient_uuid}/contacts`
+    )
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  restore(request, response) {
+    const { contactRelationship_uuid } = request.params
+    const { data } = request.session
+    const { __, account, contactRelationship } = response.locals
+
+    // Contact model’s `update` merges values, so remove these directly
+    delete data.contactRelationships[contactRelationship_uuid].archivedAt
+    delete data.contactRelationships[contactRelationship_uuid].archivedBy_uid
+
+    contactRelationship.patient?.addContactRelationshipEvent(
+      activity.patient.contactRelationshipRestored(contactRelationship),
+      account?.uid
+    )
+
+    request.flash(
+      'success',
+      __(`contactRelationship.restore.success`, { contactRelationship })
+    )
 
     return saveAndRedirect(
       request,

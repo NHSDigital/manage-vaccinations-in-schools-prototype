@@ -1,4 +1,5 @@
 {% from "patient/_navigation.njk" import patientNavigation with context %}
+{% from "patient/_contact-relationship.njk" import contactRelationshipSection with context %}
 
 {% extends "_layouts/form.njk" %}
 
@@ -32,7 +33,7 @@
   {{ actionLink({
     text: __("contactRelationship.new.label"),
     href: "/contact-relationships/new?patient_uuid=" + patient.uuid
-  }) }}
+  }) if not account.isSchoolUser }}
 
   {# Note: this isn't guaranteed to work if the patient has multiple notices but should be fine for canned data #}
   {{ appStatus({
@@ -41,32 +42,16 @@
     colour: "blue"
   }) if patient.isSensitive }}
 
-  {% for contactRelationship in patient.contactRelationships %}
-    {{ summaryList({
-      card: {
-        heading: {
-          text: contactRelationship.fullNameAndRelationship,
-          level: 4,
-          size: "m"
-        },
-        actions: {
-          items: [
-            {
-              text: __("actions.edit"),
-              href: contactRelationship.uri + "/edit"
-            },
-            {
-              text: __("actions.delete"),
-              href: contactRelationship.uri + "/delete"
-            }
-          ]
-        }
-      },
-      lastRowBorder: false,
-      rows: summaryRows(contactRelationship, {
-        email: {},
-        tel: {}
-      })
-    }) }}
+  {% for contactRelationship in patient.activeContactRelationships %}
+    {{ contactRelationshipSection(contactRelationship, not account.isSchoolUser) }}
   {% endfor %}
+
+  {% if patient.archivedContactRelationships.length %}
+    <p class="nhsuk-body">
+      {{ link({
+        text: __("contactRelationship.archived.label"),
+        href: patient.uri + "/contact-relationships/archived"
+      }) }}
+    </p>
+  {% endif %}
 {% endblock %}
