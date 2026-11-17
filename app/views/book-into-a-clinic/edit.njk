@@ -65,12 +65,12 @@
   {{ summaryList({
     card: {
       heading: {
-        text: __("clinicBooking.edit.summary.contact"),
+        text: __("clinicBooking.edit.summary.contactRelationship"),
         size: "m"
       }
     },
     lastRowBorder: false,
-    rows: summaryRows(booking.contact, {
+    rows: summaryRows(booking.contactRelationship, {
       fullName: {},
       relationship: {
         value: appointment.formatted.parentalRelationship

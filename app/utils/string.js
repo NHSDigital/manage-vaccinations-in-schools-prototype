@@ -361,28 +361,34 @@ export function formatNhsNumber(string, isInvalid) {
 /**
  * Format contact name with optional display of contact details
  *
- * @param {Contact} contact - Contact
+ * @param {ContactRelationship} contactRelationship - Contact
  * @param {boolean} [shouldIncludeContactDetails] - Include contact details
  * @returns {string|undefined} Formatted contact HTML
  */
-export function formatContact(contact, shouldIncludeContactDetails = true) {
-  if (!contact) return
+export function formatContactRelationship(
+  contactRelationship,
+  shouldIncludeContactDetails = true
+) {
+  if (!contactRelationship) return
 
-  let string = contact.fullName || 'Parent or guardian'
+  let string = contactRelationship.fullName || 'Parent or guardian'
 
   // Add relationship, if provided
-  if (contact.fullName !== undefined && contact.relationship) {
-    string += ` (${lowerCaseFirst(contact.relationship)})`
+  if (
+    contactRelationship.fullName !== undefined &&
+    contactRelationship.relationship
+  ) {
+    string += ` (${lowerCaseFirst(contactRelationship.relationship)})`
   }
 
   // Add telephone number, if provided
-  if (shouldIncludeContactDetails && contact.tel) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.formatted.tel}</span>`
+  if (shouldIncludeContactDetails && contactRelationship.tel) {
+    string += `<br><span class="nhsuk-u-secondary-text-colour">${contactRelationship.formatted.tel}</span>`
   }
 
   // Add email address, if provided
-  if (shouldIncludeContactDetails && contact.email) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${contact.formatted.email}</span>`
+  if (shouldIncludeContactDetails && contactRelationship.email) {
+    string += `<br><span class="nhsuk-u-secondary-text-colour">${contactRelationship.formatted.email}</span>`
   }
 
   return string
@@ -434,13 +440,17 @@ export function formatIdentifier(identifiedBy) {
 /**
  * Format parental relationship, falling back to name else unknown
  *
- * @param {Contact} contact - Contact
+ * @param {ContactRelationship} contactRelationship - Contact
  * @returns {string|undefined} Formatted parental relationship HTML
  */
-export function formatParentalRelationship(contact) {
-  if (!contact) return
+export function formatParentalRelationship(contactRelationship) {
+  if (!contactRelationship) return
 
-  return contact.relationship || contact.fullName || 'Name unknown'
+  return (
+    contactRelationship.relationship ||
+    contactRelationship.fullName ||
+    'Name unknown'
+  )
 }
 
 /**
@@ -658,5 +668,5 @@ export function formatTime(
 }
 
 /**
- * @import { Contact } from '../models.js'
+ * @import { ContactRelationship } from '../models.js'
  */

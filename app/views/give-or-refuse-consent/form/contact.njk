@@ -1,6 +1,6 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __("consent.contact.title") %}
+{% set title = __("consent.contactRelationship.title") %}
 {% set showContactDetails = true if not consent.patient.isSensitive else false %}
 
 {% block form %}
@@ -10,38 +10,38 @@
   }) }}
 
   {{ input({
-    label: __("consent.contact.fullName.label"),
-    decorate: "consent.contact_.fullName"
+    label: __("consent.contactRelationship.fullName.label"),
+    decorate: "consent.contactRelationship_.fullName"
   }) }}
 
   {%- set fosterCarerHtml = radios({
     fieldset: {
-      legend: __("consent.contact.hasParentalResponsibility.delegatedLabel")
+      legend: __("consent.contactRelationship.hasParentalResponsibility.delegatedLabel")
     },
-    hint: __("consent.contact.hasParentalResponsibility.hint"),
+    hint: __("consent.contactRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
-    decorate: "consent.contact_.hasParentalResponsibility"
+    decorate: "consent.contactRelationship_.hasParentalResponsibility"
   }) %}
 
   {%- set guardianHtml = radios({
     fieldset: {
-      legend: __("consent.contact.hasParentalResponsibility.label")
+      legend: __("consent.contactRelationship.hasParentalResponsibility.label")
     },
-    hint: __("consent.contact.hasParentalResponsibility.hint"),
+    hint: __("consent.contactRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
-    decorate: "consent.contact_.hasParentalResponsibility"
+    decorate: "consent.contactRelationship_.hasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
-    label: __("consent.contact.relationshipOther.label"),
-    decorate: "consent.contact_.relationshipOther"
+    label: __("consent.contactRelationship.relationshipOther.label"),
+    decorate: "consent.contactRelationship_.relationshipOther"
   }) + radios({
     fieldset: {
-      legend: __("consent.contact.hasParentalResponsibility.label")
+      legend: __("consent.contactRelationship.hasParentalResponsibility.label")
     },
-    hint: __("consent.contact.hasParentalResponsibility.hint"),
+    hint: __("consent.contactRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
-    decorate: "consent.contact_.hasParentalResponsibility"
+    decorate: "consent.contactRelationship_.hasParentalResponsibility"
   }) %}
 
   {# Add conditional html for ‘Foster carer’ option #}
@@ -55,31 +55,31 @@
 
   {{ radios({
     fieldset: {
-      legend: __("consent.contact.relationship.label")
+      legend: __("consent.contactRelationship.relationship.label")
     },
     items: items,
-    decorate: "consent.contact_.relationship"
+    decorate: "consent.contactRelationship_.relationship"
   }) }}
 
   {{ input({
-    label: __("consent.contact.email.label"),
-    hint: __("consent.contact.email.hint"),
-    decorate: "consent.contact_.email"
+    label: __("consent.contactRelationship.email.label"),
+    hint: __("consent.contactRelationship.email.hint"),
+    decorate: "consent.contactRelationship_.email"
   }) if showContactDetails }}
 
   {{ input({
-    label: __("consent.contact.tel.label") + " (optional)",
-    hint: __("consent.contact.tel.hint"),
-    decorate: "consent.contact_.tel"
+    label: __("consent.contactRelationship.tel.label") + " (optional)",
+    hint: __("consent.contactRelationship.tel.hint"),
+    decorate: "consent.contactRelationship_.tel"
   }) if showContactDetails }}
 
   {{ checkboxes({
     items: [
       {
-        label: __("consent.contact.canSms.label"),
+        label: __("consent.contactRelationship.canSms.label"),
         value: true
       }
     ],
-    decorate: "consent.contact_.canSms"
+    decorate: "consent.contactRelationship_.canSms"
   }) if showContactDetails }}
 {% endblock %}

@@ -9,7 +9,7 @@
   {{ super() }}
 
   {{ heading({
-    caption: __("appointments.link.caption", { contact: appointment.contact } ),
+    caption: __("appointments.link.caption", { contactRelationship: appointment.contactRelationship } ),
     text: title,
     size: "l"
   }) }}
@@ -41,8 +41,8 @@
           gpSurgery: {
             value: appointment.child.formatted.gpSurgery | highlightDifference(patient.formatted.gpSurgery)
           },
-          contact: {
-            value: appointment.contact.fullNameAndRelationship
+          contactRelationship: {
+            value: appointment.contactRelationship.fullNameAndRelationship
           }
         })
       }) }}
@@ -63,7 +63,7 @@
           address: {},
           schoolName: {},
           gpSurgery: {},
-          contacts: {}
+          contactRelationships: {}
         })
       }) if patient }}
     </div>

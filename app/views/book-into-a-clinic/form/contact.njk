@@ -1,12 +1,12 @@
 {% extends "_layouts/form.njk" %}
 
 {% if isParentFacing %}
-  {% set title = __("clinicBooking.contact.title.parent") %}
+  {% set title = __("clinicBooking.contactRelationship.title.parent") %}
 {% else %}
-  {% if patient.contacts.length === 0 or booking.contact.uuid === 'new' %}
-    {% set title = __("clinicBooking.contact.title.team.new") %}
+  {% if patient.contactRelationships.length === 0 or booking.contactRelationship.uuid === 'new' %}
+    {% set title = __("clinicBooking.contactRelationship.title.team.new") %}
   {% else %}
-    {% set title = __("clinicBooking.contact.title.team.existing") %}
+    {% set title = __("clinicBooking.contactRelationship.title.team.existing") %}
   {% endif %}
 {% endif %}
 {% set showContactDetails = true if not patient.isSensitive else false %}
@@ -21,32 +21,32 @@
   }) %}
 
     {{ input({
-      label: __("clinicBooking.contact.fullName.label"),
-      decorate: "booking.contact.fullName"
+      label: __("clinicBooking.contactRelationship.fullName.label"),
+      decorate: "booking.contactRelationship.fullName"
     }) }}
 
     {% include "book-into-a-clinic/form/_parental-relationship.njk" %}
 
     {{ input({
-      label: __("clinicBooking.contact.email.label") + ("" if isParentFacing else " (optional)"),
-      hint: __("clinicBooking.contact.email.hint") if isParentFacing,
-      decorate: "booking.contact.email"
+      label: __("clinicBooking.contactRelationship.email.label") + ("" if isParentFacing else " (optional)"),
+      hint: __("clinicBooking.contactRelationship.email.hint") if isParentFacing,
+      decorate: "booking.contactRelationship.email"
     }) if showContactDetails }}
 
     {{ input({
-      label: __("clinicBooking.contact.tel.label") + " (optional)",
-      hint: __("clinicBooking.contact.tel.hint") if isParentFacing,
-      decorate: "booking.contact.tel"
+      label: __("clinicBooking.contactRelationship.tel.label") + " (optional)",
+      hint: __("clinicBooking.contactRelationship.tel.hint") if isParentFacing,
+      decorate: "booking.contactRelationship.tel"
     }) if showContactDetails }}
 
     {{ checkboxes({
       items: [
         {
-          label: __("clinicBooking.contact.canSms.label", "you" if isParentFacing else "they"),
+          label: __("clinicBooking.contactRelationship.canSms.label", "you" if isParentFacing else "they"),
           value: true
         }
       ],
-      decorate: "booking.contact.canSms"
+      decorate: "booking.contactRelationship.canSms"
     }) if showContactDetails }}
 
   {% endcall %}

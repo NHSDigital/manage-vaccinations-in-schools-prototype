@@ -1,6 +1,6 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { ClinicAppointment, Contact } from '../models.js'
+import { ClinicAppointment, ContactRelationship } from '../models.js'
 import { formatCode, stringToBoolean } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
@@ -9,7 +9,7 @@ import { BaseModel } from './base.js'
  * @typedef {BaseModelOptions & object} ClinicBookingOptions
  * @property {string} [uuid] - Clinic booking UUID
  * @property {string} [bookingReference] - Booking reference number
- * @property {Contact} [contact] - Contact details for the booking; see appointments for parental relationship details
+ * @property {ContactRelationship} [contact] - Contact details for the booking; see appointments for parental relationship details
  * @property {Array<ClinicAppointment>} [appointments] - Appointments in this booking (one per child)
  */
 
@@ -34,9 +34,10 @@ export class ClinicBooking extends BaseModel {
     this.bookingReference =
       options?.bookingReference || ClinicBooking.generateReference()
 
-    this.contact = (
-      (options?.contact && new Contact(options.contact)) ??
-      new Contact({})
+    this.contactRelationship = (
+      (options?.contactRelationship &&
+        new ContactRelationship(options.contactRelationship)) ??
+      new ContactRelationship({})
     ).setResponse(this)
 
     // Communication needs are given with each booking, rather than being kept
