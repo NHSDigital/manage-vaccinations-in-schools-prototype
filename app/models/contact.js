@@ -2,6 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ContactType, NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
 import { User } from '../models.js'
+import { stringToArray } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
@@ -11,6 +12,8 @@ import { BaseModel } from './base.js'
  * @property {ContactType} [type] - Type of contact point
  * @property {string} [value] - Phone number or email address
  * @property {NotifyEmailStatus|NotifySmsStatus} [status] - Delivery status
+ * @property {Array<ContactSource>} [sources] - Where the phone number or
+ *   email address came from
  * @property {Date} [archivedAt] - Date archived
  * @property {string} [archivedBy_uid] - User who archived contact point
  */
@@ -44,6 +47,7 @@ export class Contact extends BaseModel {
     this.type = options?.type
     this.value = options?.value
     this.status = options?.status
+    this.sources = stringToArray(options?.sources)
     this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
   }
 
@@ -63,6 +67,26 @@ export class Contact extends BaseModel {
    */
   get isPhone() {
     return this.type === ContactType.Phone
+  }
+
+  /**
+   * Get value in a form that can be compared with other values
+   *
+   * Ignores case and spaces in email addresses, and spaces, punctuation and
+   * the UK country code in phone numbers
+   *
+   * @returns {string|undefined} Normalised value
+   */
+  get normalisedValue() {
+    if (!this.value) {
+      return
+    }
+
+    if (this.isPhone) {
+      return this.value.replace(/\D/g, '').replace(/^44/, '0')
+    }
+
+    return this.value.replace(/\s/g, '').toLowerCase()
   }
 
   /**
@@ -89,5 +113,6 @@ export class Contact extends BaseModel {
 Contact.relate('archivedBy_uid', () => User, 'archivedBy')
 
 /**
+ * @import { ContactSource } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  */

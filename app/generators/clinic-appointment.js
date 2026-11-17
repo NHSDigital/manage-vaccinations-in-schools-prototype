@@ -5,6 +5,7 @@ import { healthConditions } from '../datasets/health-conditions.js'
 import {
   Adjustment,
   ClinicAppointmentStatus,
+  ContactSource,
   Impairment,
   RelationshipType,
   ReplyDecision
@@ -15,7 +16,8 @@ import { generateHealthAnswersForQuestions } from '../utils/reply.js'
 
 import {
   generateCommunicationNeeds,
-  generateContactRelationship
+  generateContactRelationship,
+  generateRespondentDetails
 } from './contact-relationship.js'
 
 /**
@@ -65,7 +67,7 @@ export function decideClinicVaccinationChoices(invitedProgramme_ids) {
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
- * @param {ClinicVaccinationChoices} vaccinationChoices - Programmesm vaccine choices and support needs, from decideClinicVaccinationChoices
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes vaccine choices and support needs, from decideClinicVaccinationChoices
  * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
@@ -161,10 +163,14 @@ export function generateClinicAppointment(
     parentHasParentalResponsibility
   if (!booking.contactRelationship.fullName) {
     // First appointment, so set up the booking’s contact
-    booking.contactRelationship =
+    booking.contactRelationship = generateRespondentDetails(
       patient.contactRelationships[0] ||
-      patient.contactRelationships[1] ||
-      generateContactRelationship(child, faker.datatype.boolean(0.5))
+        patient.contactRelationships[1] ||
+        generateContactRelationship(child, faker.datatype.boolean(0.5), {
+          sources: []
+        }),
+      { createdAt: booking.createdAt, source: ContactSource.ClinicBooking }
+    )
     Object.assign(
       booking,
       generateCommunicationNeeds(booking.contactRelationship)

@@ -161,11 +161,37 @@ export class ContactRelationship extends BaseModel {
   /**
    * Add contact point
    *
+   * If the contact already has an active contact point with the same value,
+   * add any new sources to that contact point instead, and mark it as updated
+   * if it was given more recently
+   *
    * @param {ContactOptions} options - Contact point options
-   * @returns {Contact} Contact point
+   * @returns {Contact} Contact point added or updated
    */
   addContact(options) {
     const contact = new Contact(options, this.context)
+
+    const existingContact = this.activeContacts.find(
+      ({ type, normalisedValue }) =>
+        type === contact.type &&
+        normalisedValue !== undefined &&
+        normalisedValue === contact.normalisedValue
+    )
+
+    if (existingContact) {
+      existingContact.sources = [
+        ...new Set([...existingContact.sources, ...contact.sources])
+      ]
+
+      // Only mark as updated if given again later than last given
+      const lastGivenAt = existingContact.updatedAt || existingContact.createdAt
+      if (contact.createdAt > lastGivenAt) {
+        existingContact.updatedAt = contact.createdAt
+      }
+
+      return existingContact
+    }
+
     this.contacts.push(contact)
 
     return contact
