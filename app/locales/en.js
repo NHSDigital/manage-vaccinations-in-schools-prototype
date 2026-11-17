@@ -3100,7 +3100,8 @@ export const en = {
   search: {
     label: 'Search',
     hint: {
-      patient: 'Search by name, NHS number or postcode',
+      patient:
+        'Search by child’s name, NHS number or postcode, or parent’s email address or phone number',
       session: 'Search by location name or postcode'
     },
     sort: {
