@@ -102,8 +102,6 @@ export default {
       `${contactRelationship.fullName} added to record`,
     contactRelationshipArchived: (contactRelationship) =>
       `${contactRelationship.fullName} archived`,
-    contactRelationshipRestored: (contactRelationship) =>
-      `${contactRelationship.fullName} restored`,
     // Phone numbers and email addresses aren’t included, in case the record
     // becomes sensitive
     contactAdded: (contactRelationship, contact) =>
