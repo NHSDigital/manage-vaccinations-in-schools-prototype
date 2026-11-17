@@ -1,7 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { ContactType, RelationshipType } from '../enums.js'
-import { Contact, Patient } from '../models.js'
+import { Contact, Patient, User } from '../models.js'
 import { tokenize } from '../utils/object.js'
 import {
   formatOther,
@@ -19,6 +19,8 @@ import { BaseModel } from './base.js'
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
  * @property {boolean} [canNotify] - Notify about consent and vaccinations
+ * @property {Date} [archivedAt] - Date archived
+ * @property {string} [archivedBy_uid] - User who archived contact
  * @property {Array<ContactOptions>} [contactPoints] - Phone numbers and
  *   email addresses
  * @property {string} [tel] - Phone number (added as a contact point)
@@ -78,6 +80,7 @@ export class ContactRelationship extends BaseModel {
       ? stringToBoolean(options?.hasParentalResponsibility)
       : undefined
     this.canNotify = stringToBoolean(options?.canNotify)
+    this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
     this.contacts = (options?.contacts || []).map(
       (contact) => new Contact(contact, context)
     )
@@ -138,6 +141,36 @@ export class ContactRelationship extends BaseModel {
    */
   get communicationNeeds() {
     return this.response?.communicationNeeds
+  }
+
+  /**
+   * Has been archived
+   *
+   * Archived contacts aren’t sent messages, and aren’t one of the child’s
+   * contacts, but can be restored
+   *
+   * @returns {boolean} Has been archived
+   */
+  get isArchived() {
+    return !!this.archivedAt
+  }
+
+  /**
+   * Has been saved (rather than being a copy kept by a reply or booking)
+   *
+   * @returns {boolean} Has been saved
+   */
+  get isSaved() {
+    return !!this.context?.contactRelationships?.[this.uuid]
+  }
+
+  /**
+   * Get contact points, with those that haven’t been archived first
+   *
+   * @returns {Array<Contact>} Contact points
+   */
+  get sortedContacts() {
+    return [...this.activeContacts, ...this.archivedContacts]
   }
 
   /**
@@ -480,6 +513,7 @@ export class ContactRelationship extends BaseModel {
 }
 
 ContactRelationship.relate('patient_uuid', () => Patient, 'patient')
+ContactRelationship.relate('archivedBy_uid', () => User, 'archivedBy')
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'

@@ -100,6 +100,20 @@ export default {
       `The record for ${mergedPatient.fullName} (date of birth ${mergedPatient.formatted.dob}) was merged with the record for ${patient.fullName} (date of birth ${patient.formatted.dob}) because they have the same NHS number (${mergedPatient.formatted.nhsn}).`,
     contactRelationship: (contactRelationship) =>
       `${contactRelationship.fullName} added to record`,
+    contactRelationshipArchived: (contactRelationship) =>
+      `${contactRelationship.fullName} archived`,
+    contactRelationshipRestored: (contactRelationship) =>
+      `${contactRelationship.fullName} restored`,
+    // Phone numbers and email addresses aren’t included, in case the record
+    // becomes sensitive
+    contactAdded: (contactRelationship, contact) =>
+      `${contact.type} added for ${contactRelationship.fullNameAndRelationship}`,
+    contactUpdated: (contactRelationship, contact) =>
+      `${contact.type} updated for ${contactRelationship.fullNameAndRelationship}`,
+    contactArchived: (contactRelationship, contact) =>
+      `${contact.type} archived for ${contactRelationship.fullNameAndRelationship}`,
+    contactRestored: (contactRelationship, contact) =>
+      `${contact.type} restored for ${contactRelationship.fullNameAndRelationship}`,
     updated: (source) =>
       source
         ? `Record updated automatically after new details were imported in a ${source} upload`

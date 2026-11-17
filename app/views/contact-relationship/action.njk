@@ -10,7 +10,8 @@
     size: "l"
   }) }}
 
-  {{ __("contactRelationship.action.description", {
+  {{ __("contactRelationship." + type + ".description", {
+    contactRelationship: contactRelationship,
     patient: contactRelationship.patient
   }) | nhsukMarkdown }}
 {% endblock %}
@@ -20,7 +21,7 @@
     buttons: [
       {
         text: __("contactRelationship.action.confirm", type),
-        variant: "warning",
+        variant: "warning" if type == "archive",
         attributes: {
           formAction: contactRelationship.uri + "/" + type
         }

@@ -1,0 +1,105 @@
+{%- from "card/macro.njk" import card %}
+{%- from "heading/macro.njk" import heading %}
+{%- from "summary-list/macro.njk" import summaryList %}
+
+{#
+  A contact, with their contact details and contact points
+
+  @param {Contact} contact - Contact
+  @param {boolean} canChange - User can change contacts
+#}
+{% macro contactRelationshipSection(contactRelationship, canChange) %}
+  {% set canChangeContactRelationship = canChange and contactRelationship.isSaved and not contactRelationship.isArchived %}
+  {% set canRestoreContactRelationship = canChange and contactRelationship.isSaved and contactRelationship.isArchived %}
+
+  {#
+    The card adds its heading to each action as hidden text, so actions don’t
+    need their own
+  #}
+  {% call card({
+    heading: {
+      text: contactRelationship.fullNameAndRelationship,
+      level: 3,
+      size: "m"
+    },
+    actions: {
+      items: [
+        {
+          text: __("contact.new.tel.label"),
+          href: contactRelationship.uri + "/contacts/new/tel"
+        } if canChangeContactRelationship and not contactRelationship.isSensitive,
+        {
+          text: __("contact.new.email.label"),
+          href: contactRelationship.uri + "/contacts/new/email"
+        } if canChangeContactRelationship and not contactRelationship.isSensitive,
+        {
+          text: __("actions.edit"),
+          href: contactRelationship.uri + "/edit"
+        } if canChangeContactRelationship,
+        {
+          text: __("actions.archive"),
+          href: contactRelationship.uri + "/archive"
+        } if canChangeContactRelationship,
+        {
+          text: __("actions.restore"),
+          href: contactRelationship.uri + "/restore"
+        } if canRestoreContactRelationship
+      ]
+    } if canChangeContactRelationship or canRestoreContactRelationship
+  }) %}
+    {#
+      Preferences are only known once a parent has responded to a consent
+      request, so only show them if they’ve been given. Communication needs
+      are given with each response or booking, so aren’t shown here
+    #}
+    {% set preferenceRows = summaryRows(contactRelationship, {
+      canSms: {}
+    }) %}
+
+    {{ summaryList({
+      classes: "nhsuk-u-margin-bottom-4",
+      lastRowBorder: false,
+      rows: preferenceRows
+    }) if preferenceRows | length }}
+
+    {% if not contactRelationship.isSensitive %}
+    <div class="nhsuk-grid-row nhsuk-card-group">
+      {% for contact in contactRelationship.sortedContacts %}
+      <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        {{ summaryList({
+          card: {
+            classes: "app-card--compact app-card--offset",
+            heading: {
+              text: contact.formatted.value | safe,
+              visuallyHiddenText: __("contact.archived.label") if contact.isArchived,
+              level: 4,
+              size: "s"
+            },
+            actions: {
+              items: [
+                {
+                  text: __("actions.restore"),
+                  href: contactRelationship.uri + "/contacts/" + contact.uuid + "/restore"
+                }
+              ] if contact.isArchived else [
+                {
+                  text: __("actions.archive"),
+                  href: contactRelationship.uri + "/contacts/" + contact.uuid + "/archive"
+                }
+              ]
+            } if canChangeContactRelationship
+          },
+          lastRowBorder: false,
+          rows: summaryRows(contact, {
+            createdAt: {} if not contact.updatedAt else none,
+            updatedAt: {} if not contact.isArchived else none,
+            archivedAt: {},
+            sources: {}
+          })
+        }) }}
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endcall %}
+{% endmacro %}

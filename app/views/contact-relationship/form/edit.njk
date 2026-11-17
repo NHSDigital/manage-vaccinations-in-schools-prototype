@@ -63,13 +63,40 @@
     decorate: "contactRelationship.relationship"
   }) }}
 
-  {{ input({
-    label: __("contactRelationship.email.label"),
-    decorate: "contactRelationship.email"
-  }) if not isSensitive }}
+  {# Phone numbers and email addresses are changed on the contacts tab, once
+     a contact has been added #}
+  {% if type == "new" %}
+    {{ input({
+      label: __("contactRelationship.email.label"),
+      type: "email",
+      spellcheck: false,
+      decorate: "contactRelationship.email"
+    }) if not isSensitive }}
 
-  {{ input({
-    label: __("contactRelationship.tel.label"),
-    decorate: "contactRelationship.tel"
-  }) if not isSensitive }}
+    {{ input({
+      label: __("contactRelationship.tel.label"),
+      type: "tel",
+      width: "20",
+      decorate: "contactRelationship.tel"
+    }) if not isSensitive }}
+  {% endif %}
+
+  {# Text messages can only be sent if the contact has a phone number #}
+  {% set hasPhoneNumber = contactRelationship.activeContacts | selectattr("isPhone") | length %}
+  {{ radios({
+    fieldset: {
+      legend: __("contactRelationship.canSms.title", { contactRelationship: contactRelationship })
+    },
+    items: [
+      {
+        label: __("contactRelationship.canSms.true"),
+        value: true
+      },
+      {
+        label: __("contactRelationship.canSms.false"),
+        value: false
+      }
+    ],
+    decorate: "contactRelationship.canSms"
+  }) if hasPhoneNumber and not isSensitive }}
 {% endblock %}
