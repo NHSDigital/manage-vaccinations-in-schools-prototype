@@ -38,7 +38,7 @@
     } if reply.isValid
   }) %}
     {# Expiring before the session? #}
-    {% if reply.expiresAt and reply.expiresAt < session.date and not reply.isInvalidated %}
+    {% if reply.expiresAt and reply.expiresAt < session.date and reply.isValid %}
       {{ appStatus({
         text: __("reply.expiringBeforeSession.label"),
         icon: "warning",
