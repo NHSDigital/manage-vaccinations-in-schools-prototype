@@ -4,13 +4,9 @@
 {% for contactRelationship in upload.pendingContactRelationships %}
   {% set newContacts %}
     <ul>
-    {% if contactRelationship.pendingChanges.tel %}
-      <li>{{ contactRelationship.pendingChanges.tel | highlight | safe }}</li>
-    {% endif %}
-
-    {% if contactRelationship.pendingChanges.email %}
-      <li>{{ contactRelationship.pendingChanges.email | highlight | safe }}</li>
-    {% endif %}
+    {% for contact in contactRelationship.pendingContacts %}
+      <li>{{ contact.value | highlight | safe }}</li>
+    {% endfor %}
     </ul>
   {% endset %}
 

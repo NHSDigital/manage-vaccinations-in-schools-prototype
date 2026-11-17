@@ -1,6 +1,7 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import {
+  ContactType,
   NotifyEmailStatus,
   NotifySmsStatus,
   RelationshipType,
@@ -98,21 +99,47 @@ export function generateContactRelationship(patient, isMum, overrides = {}) {
         { value: NotifyEmailStatus.Technical, weight: 1 }
       ])
 
+  const contacts = []
+  if (tel) {
+    contacts.push({
+      type: ContactType.Phone,
+      value: tel,
+      status: smsStatus
+    })
+  }
+  if (email) {
+    contacts.push({
+      type: ContactType.Email,
+      value: email,
+      status: emailStatus
+    })
+  }
+
+  // Sometimes keep an older phone number or email address that has since
+  // been archived, because messages to it couldn’t be delivered
+  if (faker.datatype.boolean(0.15)) {
+    const isPhone = faker.datatype.boolean(0.5)
+    const archivedAt = faker.date.past({ years: 2 })
+
+    contacts.unshift({
+      createdAt: faker.date.past({ years: 3, refDate: archivedAt }),
+      type: isPhone ? ContactType.Phone : ContactType.Email,
+      value: isPhone
+        ? generatePhoneNumber()
+        : generateEmailAddress(firstName, generateLastName()),
+      status: isPhone ? NotifySmsStatus.Permanent : NotifyEmailStatus.Permanent,
+      archivedAt
+    })
+  }
+
   return new ContactRelationship({
     fullName: `${firstName} ${lastName}`,
     relationship,
     ...(relationship === RelationshipType.Other && {
       relationshipOther: 'Grandparent'
     }),
-    ...(email && {
-      email,
-      ...(emailStatus && { emailStatus })
-    }),
-    ...(tel && {
-      tel,
-      canSms,
-      ...(smsStatus && { smsStatus })
-    }),
+    contacts,
+    ...(tel && { canSms }),
     patient_uuid: patient.uuid
   })
 }
@@ -158,13 +185,28 @@ export function generateCommunicationNeeds(contactRelationship) {
 export function generateContactRelationshipVariation(contactRelationship) {
   const [firstName, ...otherNames] = contactRelationship.fullName.split(' ')
   let lastName = otherNames.join(' ')
-  let { email, emailStatus, tel, smsStatus } = contactRelationship
+  // Copy the contact points the parent still uses
+  const contacts = contactRelationship.activeContacts.map(
+    ({ type, value, status }) => ({ type, value, status })
+  )
+  const hasPhone = contacts.some(({ type }) => type === ContactType.Phone)
+  const hasEmail = contacts.some(({ type }) => type === ContactType.Email)
+  const replaceValue = (type, value) => {
+    const contact = contacts.find((point) => point.type === type)
+    if (contact) {
+      contact.value = value
+      contact.status =
+        type === ContactType.Email
+          ? NotifyEmailStatus.Delivered
+          : NotifySmsStatus.Delivered
+    }
+  }
 
   // Only vary details the contact already has, so they can still be reached
   const change = faker.helpers.weightedArrayElement([
     { value: 'surname', weight: 3 },
-    ...(tel ? [{ value: 'tel', weight: 1 }] : []),
-    ...(email ? [{ value: 'email', weight: 1 }] : [])
+    ...(hasPhone ? [{ value: 'tel', weight: 1 }] : []),
+    ...(hasEmail ? [{ value: 'email', weight: 1 }] : [])
   ])
 
   switch (change) {
@@ -175,19 +217,14 @@ export function generateContactRelationshipVariation(contactRelationship) {
         : newLastName
 
       // Email addresses are based on names, so a new surname means a new address
-      if (email) {
-        email = generateEmailAddress(firstName, lastName)
-        emailStatus = NotifyEmailStatus.Delivered
-      }
+      replaceValue(ContactType.Email, generateEmailAddress(firstName, lastName))
       break
     }
     case 'tel':
-      tel = faker.helpers.replaceSymbols('077## 9#####')
-      smsStatus = NotifySmsStatus.Delivered
+      replaceValue(ContactType.Phone, generatePhoneNumber())
       break
     case 'email':
-      email = generateEmailAddress(firstName, lastName)
-      emailStatus = NotifyEmailStatus.Delivered
+      replaceValue(ContactType.Email, generateEmailAddress(firstName, lastName))
       break
   }
 
@@ -195,23 +232,24 @@ export function generateContactRelationshipVariation(contactRelationship) {
     fullName: `${firstName} ${lastName}`,
     relationship: contactRelationship.relationship,
     relationshipOther: contactRelationship.relationshipOther,
-    ...(email && { email, emailStatus }),
-    ...(tel && { tel, canSms: contactRelationship.canSms, smsStatus }),
+    contacts,
+    ...(hasPhone && { canSms: contactRelationship.canSms }),
     patient_uuid: contactRelationship.patient_uuid
   })
 }
 
 /**
- * Generate new contact details for parents of children in an upload
+ * Generate new contact points for parents of children in an upload
  *
  * Picks 1–5 parents who are missing a phone number or email address, and
- * generates the details the file adds for them. Only files that passed
+ * generates the contact points the file adds for them. Only files that passed
  * validation and data checks are compared with records in Mavis, and
  * vaccination records don’t include parent details.
  *
  * @param {Upload} upload - Upload
  * @param {Array<Patient>} patients - All patients
- * @returns {object} New contact details, keyed by contact UUID
+ * @returns {Record<string, Array<object>>} New contact points, keyed by
+ *   contact UUID
  */
 export function generateUploadContactChanges(upload, patients) {
   if (!upload.hasPassedChecks || upload.type === UploadType.Report) {
@@ -228,7 +266,8 @@ export function generateUploadContactChanges(upload, patients) {
     )
     .filter(
       (contactRelationship) =>
-        !contactRelationship.tel || !contactRelationship.email
+        !contactRelationship.firstActiveContact(ContactType.Phone) ||
+        !contactRelationship.firstActiveContact(ContactType.Email)
     )
 
   const contactChanges = {}
@@ -241,10 +280,19 @@ export function generateUploadContactChanges(upload, patients) {
   )) {
     const [firstName, ...lastNames] = contactRelationship.fullName.split(' ')
 
-    contactChanges[contactRelationship.uuid] = {
-      ...(!contactRelationship.tel && { tel: generatePhoneNumber() }),
-      ...(!contactRelationship.email && {
-        email: generateEmailAddress(firstName, lastNames.join(' '))
+    contactChanges[contactRelationship.uuid] = []
+
+    if (!contactRelationship.firstActiveContact(ContactType.Phone)) {
+      contactChanges[contactRelationship.uuid].push({
+        type: ContactType.Phone,
+        value: generatePhoneNumber()
+      })
+    }
+
+    if (!contactRelationship.firstActiveContact(ContactType.Email)) {
+      contactChanges[contactRelationship.uuid].push({
+        type: ContactType.Email,
+        value: generateEmailAddress(firstName, lastNames.join(' '))
       })
     }
   }

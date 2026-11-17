@@ -404,6 +404,15 @@ export const NoticeType = {
  * @readonly
  * @enum {string}
  */
+export const ContactType = {
+  Email: 'Email address',
+  Phone: 'Phone number'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const NotifyEmailStatus = {
   Delivered: 'Delivered',
   Permanent: 'Email address does not exist',

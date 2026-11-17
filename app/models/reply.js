@@ -5,8 +5,6 @@ import vaccinesData from '../datasets/vaccines.js'
 import {
   ConsentStatus,
   ConsentVaccineCriteria,
-  NotifyEmailStatus,
-  NotifySmsStatus,
   ProgrammeType,
   ReplyDecision,
   ReplyMethod,
@@ -352,14 +350,7 @@ export class Reply extends BaseModel {
       return true
     }
 
-    const hasEmailGotEmail =
-      this.contactRelationship?.email &&
-      this.contactRelationship?.emailStatus === NotifyEmailStatus.Delivered
-    const hasTelSmsGotSms =
-      this.contactRelationship?.tel &&
-      this.contactRelationship?.smsStatus === NotifySmsStatus.Delivered
-
-    return hasEmailGotEmail || hasTelSmsGotSms
+    return !!this.contactRelationship?.hasDeliveredContact
   }
 
   /**

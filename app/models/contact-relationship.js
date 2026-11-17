@@ -1,7 +1,8 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { RelationshipType } from '../enums.js'
-import { Patient } from '../models.js'
+import { ContactType, RelationshipType } from '../enums.js'
+import { Contact, Patient } from '../models.js'
+import { tokenize } from '../utils/object.js'
 import {
   formatOther,
   formatContactRelationship,
@@ -18,12 +19,15 @@ import { BaseModel } from './base.js'
  * @property {string} [relationshipOther] - Other relationship to child
  * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
  * @property {boolean} [canNotify] - Notify about consent and vaccinations
- * @property {string} [tel] - Phone number
- * @property {string} [email] - Email address
+ * @property {Array<ContactOptions>} [contactPoints] - Phone numbers and
+ *   email addresses
+ * @property {string} [tel] - Phone number (added as a contact point)
+ * @property {string} [email] - Email address (added as a contact point)
  * @property {boolean} [canSms] - Get updates via SMS
- * @property {NotifyEmailStatus} [emailStatus] - Email status
- * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {Partial<ContactRelationship>} [pendingChanges] - Pending changes to contact details
+ * @property {NotifyEmailStatus} [emailStatus] - Email status (of `email`)
+ * @property {NotifySmsStatus} [smsStatus] - SMS status (of `tel`)
+ * @property {Array<ContactOptions>} [pendingContactPoints] - Contact
+ *   points found in an upload that need review
  */
 
 /**
@@ -74,13 +78,23 @@ export class ContactRelationship extends BaseModel {
       ? stringToBoolean(options?.hasParentalResponsibility)
       : undefined
     this.canNotify = stringToBoolean(options?.canNotify)
-    this.tel = options?.tel
-    this.email = options?.email
-    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
-    this.emailStatus = this?.email && options?.emailStatus
-    this.smsStatus = this?.tel && options?.smsStatus
+    this.contacts = (options?.contacts || []).map(
+      (contact) => new Contact(contact, context)
+    )
 
-    this.pendingChanges = options?.pendingChanges || {}
+    // Forms (and older data) give a single phone number and email address,
+    // with their delivery statuses, so add these to the contact points
+    for (const key of ['tel', 'email', 'smsStatus', 'emailStatus']) {
+      if (options && key in options) {
+        this[key] = options[key]
+      }
+    }
+
+    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
+
+    this.pendingContacts = (options?.pendingContacts || []).map(
+      (contact) => new Contact(contact, context)
+    )
   }
 
   /**
@@ -127,6 +141,163 @@ export class ContactRelationship extends BaseModel {
   }
 
   /**
+   * Get contact points that haven’t been archived
+   *
+   * @returns {Array<Contact>} Contact points
+   */
+  get activeContacts() {
+    return this.contacts.filter((contact) => !contact.isArchived)
+  }
+
+  /**
+   * Get contact points that have been archived
+   *
+   * @returns {Array<Contact>} Contact points
+   */
+  get archivedContacts() {
+    return this.contacts.filter((contact) => contact.isArchived)
+  }
+
+  /**
+   * Add contact point
+   *
+   * @param {ContactOptions} options - Contact point options
+   * @returns {Contact} Contact point
+   */
+  addContact(options) {
+    const contact = new Contact(options, this.context)
+    this.contacts.push(contact)
+
+    return contact
+  }
+
+  /**
+   * Get first active contact point of a given type
+   *
+   * @param {ContactType} type - Type of contact point
+   * @returns {Contact|undefined} Contact point
+   */
+  firstActiveContact(type) {
+    return this.activeContacts.find((contact) => contact.type === type)
+  }
+
+  /**
+   * Set the value of the first active contact point of a given type
+   *
+   * Adds a contact point if there isn’t one, and removes it if no value given.
+   *
+   * @param {ContactType} type - Type of contact point
+   * @param {string} [value] - Phone number or email address
+   */
+  setFirstActiveContact(type, value) {
+    const contact = this.firstActiveContact(type)
+
+    if (!value) {
+      if (contact) {
+        this.contacts.splice(this.contacts.indexOf(contact), 1)
+      }
+    } else if (contact) {
+      contact.value = value
+    } else {
+      this.addContact({ type, value })
+    }
+  }
+
+  /**
+   * Get phone number
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {string|undefined} Phone number
+   */
+  get tel() {
+    return this.firstActiveContact(ContactType.Phone)?.value
+  }
+
+  /**
+   * Set phone number
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {string|undefined} value - Phone number
+   */
+  set tel(value) {
+    this.setFirstActiveContact(ContactType.Phone, value)
+  }
+
+  /**
+   * Get email address
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {string|undefined} Email address
+   */
+  get email() {
+    return this.firstActiveContact(ContactType.Email)?.value
+  }
+
+  /**
+   * Set email address
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {string|undefined} value - Email address
+   */
+  set email(value) {
+    this.setFirstActiveContact(ContactType.Email, value)
+  }
+
+  /**
+   * Get SMS status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {NotifySmsStatus|undefined} SMS status
+   */
+  get smsStatus() {
+    return this.firstActiveContact(ContactType.Phone)?.status
+  }
+
+  /**
+   * Set SMS status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {NotifySmsStatus|undefined} status - SMS status
+   */
+  set smsStatus(status) {
+    const contact = this.firstActiveContact(ContactType.Phone)
+    if (contact) {
+      contact.status = status
+    }
+  }
+
+  /**
+   * Get email status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @returns {NotifyEmailStatus|undefined} Email status
+   */
+  get emailStatus() {
+    return this.firstActiveContact(ContactType.Email)?.status
+  }
+
+  /**
+   * Set email status
+   *
+   * TODO: Remove once callers use contact points
+   *
+   * @param {NotifyEmailStatus|undefined} status - Email status
+   */
+  set emailStatus(status) {
+    const contact = this.firstActiveContact(ContactType.Email)
+    if (contact) {
+      contact.status = status
+    }
+  }
+
+  /**
    * Get full name and relationship to child
    *
    * @returns {string} Full name and relationship
@@ -141,7 +312,7 @@ export class ContactRelationship extends BaseModel {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return !!this.email || !!this.tel
+    return this.activeContacts.length > 0
   }
 
   /**
@@ -176,12 +347,37 @@ export class ContactRelationship extends BaseModel {
   }
 
   /**
-   * Has pending changes
+   * Has an active contact point that messages are being delivered to
    *
-   * @returns {boolean} Has pending changes
+   * @returns {boolean} Has a contact point that messages are delivered to
    */
-  get hasPendingChanges() {
-    return Object.keys(this.pendingChanges).length > 0
+  get hasDeliveredContact() {
+    return this.activeContacts.some((contact) => contact.isDelivered)
+  }
+
+  /**
+   * Get tokenised values (to use in search queries)
+   *
+   * Includes archived contact points, so a child can be found using a phone
+   * number or email address a parent no longer uses
+   *
+   * @returns {string} Tokens
+   */
+  get tokenized() {
+    const contactTokens = this.contacts
+      .map(({ value }) => value?.toLowerCase())
+      .filter((value) => value !== undefined)
+
+    return [tokenize(this, ['fullName']), ...contactTokens].join(' ')
+  }
+
+  /**
+   * Has contact points found in an upload that need review
+   *
+   * @returns {boolean} Has pending contact points
+   */
+  get hasPendingContacts() {
+    return this.pendingContacts.length > 0
   }
 
   /**
@@ -233,4 +429,5 @@ ContactRelationship.relate('patient_uuid', () => Patient, 'patient')
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
  * @import { ClinicBooking, Reply } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ContactOptions } from './contact.js'
  */
