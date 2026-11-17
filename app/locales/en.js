@@ -1905,10 +1905,7 @@ export const en = {
     },
     canSms: {
       label: 'Get updates by text message',
-      title:
-        'Does {{contactRelationship.fullName}} want to get updates by text message?',
-      true: 'Yes',
-      false: 'No'
+      title: 'Do they want to get updates by text message?'
     },
     relationship: {
       label: 'Relationship'
@@ -2867,8 +2864,8 @@ export const en = {
     },
     respondent: {
       title: 'Who are you trying to get consent from?',
-      label: 'Parent or guardian',
-      new: 'Add a new parental contact'
+      label: 'Contact',
+      new: 'A new contact'
     },
     child: {
       label: 'Child'
@@ -2882,16 +2879,21 @@ export const en = {
       yes: 'Yes',
       no: 'No'
     },
+    phoneNumber: {
+      title:
+        'Add a phone number for {{contactRelationship.fullNameAndRelationship}}',
+      hint: 'A phone number is needed to record consent given by phone'
+    },
     contactRelationship: {
-      label: 'Parent',
+      label: 'Contact',
       title: {
-        new: 'Details for parent or guardian',
+        new: 'Add a new contact',
         edit: 'Details for {{contactRelationship.fullNameAndRelationship}}'
       },
       canNotify: {
         title:
           'Do you want to send {{contactRelationship.formatted.fullName}} an email and text message confirming their decision?',
-        label: 'Notify parent'
+        label: 'Notify contacts'
       }
     },
     programme: {
