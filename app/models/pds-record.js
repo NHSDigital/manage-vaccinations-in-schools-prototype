@@ -91,12 +91,9 @@ export class PDSRecord extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const contactRelationshipTokens = []
-    for (const contactRelationship of this.contactRelationships) {
-      contactRelationshipTokens.push(
-        tokenize(contactRelationship, ['fullName', 'tel', 'email'])
-      )
-    }
+    const contactRelationshipTokens = this.contactRelationships.map(
+      (contactRelationship) => contactRelationship.tokenized
+    )
 
     const childTokens = tokenize(this, ['nhsn', 'fullName', 'postalCode'])
 
