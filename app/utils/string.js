@@ -1,6 +1,7 @@
 import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 
 import { healthQuestions } from '../datasets/health-questions.js'
+import { ContactType } from '../enums.js'
 
 import i18n from './i18n.js'
 import { ordinal } from './number.js'
@@ -381,14 +382,16 @@ export function formatContactRelationship(
     string += ` (${lowerCaseFirst(contactRelationship.relationship)})`
   }
 
-  // Add telephone number, if provided
-  if (shouldIncludeContactDetails && contactRelationship.tel) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${contactRelationship.formatted.tel}</span>`
-  }
-
-  // Add email address, if provided
-  if (shouldIncludeContactDetails && contactRelationship.email) {
-    string += `<br><span class="nhsuk-u-secondary-text-colour">${contactRelationship.formatted.email}</span>`
+  // Add phone numbers, then email addresses, if provided
+  if (
+    shouldIncludeContactDetails &&
+    contactRelationship.formattedContactValues
+  ) {
+    for (const type of [ContactType.Phone, ContactType.Email]) {
+      for (const value of contactRelationship.formattedContactValues(type)) {
+        string += `<br><span class="nhsuk-u-secondary-text-colour">${value}</span>`
+      }
+    }
   }
 
   return string

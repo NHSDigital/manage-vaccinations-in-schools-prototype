@@ -618,8 +618,12 @@ export class Patient extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
+    // Contact points of children with sensitive records can’t be searched for
     const contactRelationshipTokens = this.contactRelationships.map(
-      (contactRelationship) => contactRelationship.tokenized
+      (contactRelationship) =>
+        this.isSensitive
+          ? tokenize(contactRelationship, ['fullName'])
+          : contactRelationship.tokenized
     )
 
     const childTokens = tokenize(this, [

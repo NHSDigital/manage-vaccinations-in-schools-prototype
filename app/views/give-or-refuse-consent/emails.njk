@@ -18,7 +18,7 @@
   },
   to: {
     name: consent.contactRelationship.fullName,
-    email: consent.contactRelationship.email or "example@example.com"
+    email: ((consent.contactRelationship.activeContacts or []) | selectattr("isEmail") | first).value or "example@example.com"
   },
   child: consent.child,
   session: session,
