@@ -243,10 +243,18 @@ export function generateRespondentDetails(
   contactRelationship,
   { createdAt, source }
 ) {
-  const preferences =
-    contactRelationship.canSms !== undefined
-      ? { canSms: contactRelationship.canSms }
-      : generateContactRelationshipPreferences(contactRelationship)
+  // The text message preference defaults to ‘No’, so use whether the contact
+  // has responded before to tell if they’ve given one
+  const hasResponded = contactRelationship.contacts.some(({ sources }) =>
+    sources.some((source) =>
+      [ContactSource.ConsentResponse, ContactSource.ClinicBooking].includes(
+        source
+      )
+    )
+  )
+  const preferences = hasResponded
+    ? { canSms: contactRelationship.canSms }
+    : generateContactRelationshipPreferences(contactRelationship)
 
   return new ContactRelationship({
     uuid: contactRelationship.uuid,

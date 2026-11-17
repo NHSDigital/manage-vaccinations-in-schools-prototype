@@ -1,6 +1,8 @@
 {%- from "card/macro.njk" import card %}
 {%- from "heading/macro.njk" import heading %}
 {%- from "summary-list/macro.njk" import summaryList %}
+{%- from "tables/macro.njk" import table %}
+{%- from "_macros/action-list.njk" import appActionList %}
 
 {#
   A contact, with their contact details and contact points
@@ -9,14 +11,19 @@
   @param {boolean} canChange - User can change contacts
 #}
 {% macro contactRelationshipSection(contactRelationship, canChange) %}
-  {% set canChangeContactRelationship = canChange and contactRelationship.isSaved and not contactRelationship.isArchived %}
-  {% set canRestoreContactRelationship = canChange and contactRelationship.isSaved and contactRelationship.isArchived %}
+  {#
+    Contact points can be archived or restored on any contact the user can
+    change, including archived contacts (restoring one restores the contact)
+  #}
+  {% set canChangeContacts = canChange and contactRelationship.isSaved %}
+  {% set canChangeContactRelationship = canChangeContacts and not contactRelationship.isArchived %}
 
   {#
     The card adds its heading to each action as hidden text, so actions don’t
     need their own
   #}
   {% call card({
+    classes: "nhsuk-u-margin-top-0",
     heading: {
       text: contactRelationship.fullNameAndRelationship,
       level: 3,
@@ -39,13 +46,9 @@
         {
           text: __("actions.archive"),
           href: contactRelationship.uri + "/archive"
-        } if canChangeContactRelationship,
-        {
-          text: __("actions.restore"),
-          href: contactRelationship.uri + "/restore"
-        } if canRestoreContactRelationship
+        } if canChangeContactRelationship
       ]
-    } if canChangeContactRelationship or canRestoreContactRelationship
+    } if canChangeContactRelationship
   }) %}
     {#
       Preferences are only known once a parent has responded to a consent
@@ -57,25 +60,30 @@
     }) %}
 
     {{ summaryList({
-      classes: "nhsuk-u-margin-bottom-4",
       lastRowBorder: false,
       rows: preferenceRows
     }) if preferenceRows | length }}
 
     {% if not contactRelationship.isSensitive %}
-    <div class="nhsuk-grid-row nhsuk-card-group">
+      {% set contactRows = [] %}
       {% for contact in contactRelationship.sortedContacts %}
-      <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-        {{ summaryList({
-          card: {
-            classes: "app-card--compact app-card--offset",
-            heading: {
-              text: contact.formatted.value | safe,
-              visuallyHiddenText: __("contact.archived.label") if contact.isArchived,
-              level: 4,
-              size: "s"
-            },
-            actions: {
+        {% set contactRows = contactRows | push([
+          {
+            classes: "app-table__cell--muted" if contact.isArchived,
+            width: "one-third",
+            html: contact.formatted.value
+          },
+          {
+            classes: "app-table__cell--muted" if contact.isArchived,
+            text: contact.formatted.archivedAt or contact.formatted.updatedAt or contact.formatted.createdAt
+          },
+          {
+            classes: "app-table__cell--muted" if contact.isArchived,
+            html: contact.formatted.sources
+          },
+          {
+            classes: "app-table__cell--muted" if contact.isArchived,
+            html: appActionList({
               items: [
                 {
                   text: __("actions.restore"),
@@ -87,19 +95,34 @@
                   href: contactRelationship.uri + "/contacts/" + contact.uuid + "/archive"
                 }
               ]
-            } if canChangeContactRelationship
-          },
-          lastRowBorder: false,
-          rows: summaryRows(contact, {
-            createdAt: {} if not contact.updatedAt else none,
-            updatedAt: {} if not contact.isArchived else none,
-            archivedAt: {},
-            sources: {}
-          })
-        }) }}
-        </div>
+            })
+          } if canChangeContacts else none
+        ]) %}
       {% endfor %}
-    </div>
+
+      {{ table({
+        responsive: true,
+        caption: __mf("contact.count", { count: contactRelationship.activeContacts.length }),
+        head: [
+          {
+            text: __("contact.value.label"),
+            width: "one-third"
+          },
+          {
+            text: __("contact.updatedAt.label"),
+            width: "one-quarter"
+          },
+          {
+            text: __("contact.sources.label"),
+            width: "one-quarter"
+          },
+          {
+            text: __("actions.label")
+          } if canChangeContacts else none
+        ],
+        lastRowBorder: false,
+        rows: contactRows
+      }) }}
     {% endif %}
   {% endcall %}
 {% endmacro %}

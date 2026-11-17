@@ -1,7 +1,6 @@
 import activity from '../datasets/activity.js'
 import { ContactSource, RelationshipType } from '../enums.js'
 import { ContactRelationship, Patient } from '../models.js'
-import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 
 export const contactRelationshipController = {
@@ -108,12 +107,17 @@ export const contactRelationshipController = {
       const { contactRelationship_uuid } = request.params
       const { data } = request.session
 
-      // Setup wizard if not already setup
+      // Setup wizard if not already setup. When opening the form for editing
+      // a contact, start from the saved contact, so the form reflects any
+      // changes made since it was last opened (like archiving a phone number)
       let contactRelationship = ContactRelationship.findOne(
         contactRelationship_uuid,
         data.wizard
       )
-      if (!contactRelationship) {
+      if (
+        !contactRelationship ||
+        (type === 'edit' && request.method === 'GET')
+      ) {
         contactRelationship = ContactRelationship.create(
           response.locals.contactRelationship,
           data.wizard
@@ -185,9 +189,11 @@ export const contactRelationshipController = {
     const { data } = request.session
     const { __, account, contactRelationship } = response.locals
 
+    // Archiving a contact archives all of their contact points
+    contactRelationship.archiveContacts({ archivedBy_uid: account?.uid })
     ContactRelationship.update(
       contactRelationship_uuid,
-      { archivedAt: today(), archivedBy_uid: account?.uid },
+      { contacts: contactRelationship.contacts },
       data
     )
 
@@ -199,35 +205,6 @@ export const contactRelationshipController = {
     request.flash(
       'success',
       __(`contactRelationship.archive.success`, { contactRelationship })
-    )
-
-    return saveAndRedirect(
-      request,
-      response,
-      `/patients/${contactRelationship.patient_uuid}/contacts`
-    )
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  restore(request, response) {
-    const { contactRelationship_uuid } = request.params
-    const { data } = request.session
-    const { __, account, contactRelationship } = response.locals
-
-    // Contact model’s `update` merges values, so remove these directly
-    delete data.contactRelationships[contactRelationship_uuid].archivedAt
-    delete data.contactRelationships[contactRelationship_uuid].archivedBy_uid
-
-    contactRelationship.patient?.addContactRelationshipEvent(
-      activity.patient.contactRelationshipRestored(contactRelationship),
-      account?.uid
-    )
-
-    request.flash(
-      'success',
-      __(`contactRelationship.restore.success`, { contactRelationship })
     )
 
     return saveAndRedirect(
