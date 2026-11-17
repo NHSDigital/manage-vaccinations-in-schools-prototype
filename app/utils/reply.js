@@ -91,7 +91,7 @@ export function getConsentHealthAnswers(replies) {
       // Don’t modify original health answer
       const thisHealthAnswer = { ...healthAnswer }
       thisHealthAnswer.relationship = formatParentalRelationship(
-        response.contact
+        response.contactRelationship
       )
 
       if (hasSingleResponse) {

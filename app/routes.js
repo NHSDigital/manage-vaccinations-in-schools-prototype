@@ -24,7 +24,7 @@ import {
 } from './routes/clinic-invitation.js'
 import { clinicRoutes } from './routes/clinic.js'
 import { consentRoutes } from './routes/consent.js'
-import { contactRoutes } from './routes/contact.js'
+import { contactRelationshipRoutes } from './routes/contact-relationship.js'
 import { defaultBatchRoutes } from './routes/default-batch.js'
 import { downloadRoutes } from './routes/download.js'
 import { giveOrRefuseConsentRoutes } from './routes/give-or-refuse-consent.js'
@@ -84,7 +84,7 @@ router.use('/notices', noticeRoutes)
 router.use('/teams', teamRoutes)
 router.use('/teams/:team_id/clinics', clinicRoutes)
 router.use('/teams/:team_id/subteams', subteamRoutes)
-router.use('/contacts', contactRoutes)
+router.use('/contact-relationships', contactRelationshipRoutes)
 router.use('/patients/invite-to-clinic', clinicInvitationRoutes)
 router.use(
   '/patients/:patient_uuid/invite-to-clinic',

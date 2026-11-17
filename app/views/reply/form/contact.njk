@@ -1,9 +1,9 @@
 {% extends "_layouts/form.njk" %}
 
-{% if reply.contact.fullName %}
-  {% set title = __("reply.contact.title.edit", { contact: reply.contact }) %}
+{% if reply.contactRelationship.fullName %}
+  {% set title = __("reply.contactRelationship.title.edit", { contactRelationship: reply.contactRelationship }) %}
 {% else %}
-  {% set title = __("reply.contact.title.new") %}
+  {% set title = __("reply.contactRelationship.title.new") %}
 {% endif %}
 {% set showContactDetails = true if not patientProgramme.patient.isSensitive else false %}
 
@@ -16,32 +16,32 @@
 
   {%- set fosterCarerHtml = radios({
     fieldset: {
-      legend: __("contact.hasParentalResponsibility.delegatedLabel")
+      legend: __("contactRelationship.hasParentalResponsibility.delegatedLabel")
     },
-    hint: __("contact.hasParentalResponsibility.hint"),
+    hint: __("contactRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
-    decorate: "reply.contact.hasParentalResponsibility"
+    decorate: "reply.contactRelationship.hasParentalResponsibility"
   }) %}
 
   {%- set guardianHtml = radios({
     fieldset: {
-      legend: __("contact.hasParentalResponsibility.label")
+      legend: __("contactRelationship.hasParentalResponsibility.label")
     },
-    hint: __("contact.hasParentalResponsibility.hint"),
+    hint: __("contactRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
-    decorate: "reply.contact.hasParentalResponsibility"
+    decorate: "reply.contactRelationship.hasParentalResponsibility"
   }) %}
 
   {%- set otherHtml = input({
-    label: __("contact.relationshipOther.label"),
-    decorate: "reply.contact.relationshipOther"
+    label: __("contactRelationship.relationshipOther.label"),
+    decorate: "reply.contactRelationship.relationshipOther"
   }) + radios({
     fieldset: {
-      legend: __("contact.hasParentalResponsibility.label")
+      legend: __("contactRelationship.hasParentalResponsibility.label")
     },
-    hint: __("contact.hasParentalResponsibility.hint"),
+    hint: __("contactRelationship.hasParentalResponsibility.hint"),
     items: getBooleanItems(),
-    decorate: "reply.contact.hasParentalResponsibility"
+    decorate: "reply.contactRelationship.hasParentalResponsibility"
   }) %}
 
   {# Add conditional html for ‘Foster carer’ option #}
@@ -54,27 +54,27 @@
   {% set items = injectConditionalHtml(items, RelationshipType.Other, otherHtml) %}
 
   {{ input({
-    label: __("contact.fullName.label"),
-    decorate: "reply.contact.fullName"
+    label: __("contactRelationship.fullName.label"),
+    decorate: "reply.contactRelationship.fullName"
   }) }}
 
   {# `pop` removes `Other` and `Unknown` from RelationshipType array #}
   {{ radios({
     fieldset: {
-      legend: __("contact.relationship.label")
+      legend: __("contactRelationship.relationship.label")
     },
     items: items,
-    decorate: "reply.contact.relationship"
+    decorate: "reply.contactRelationship.relationship"
   }) }}
 
   {{ input({
-    label: __("contact.email.label"),
-    decorate: "reply.contact.email"
+    label: __("contactRelationship.email.label"),
+    decorate: "reply.contactRelationship.email"
   }) if showContactDetails }}
 
   {{ input({
-    label: __("contact.tel.label") + " (optional)",
-    decorate: "reply.contact.tel"
+    label: __("contactRelationship.tel.label") + " (optional)",
+    decorate: "reply.contactRelationship.tel"
   }) if showContactDetails }}
 
   {{ radios({

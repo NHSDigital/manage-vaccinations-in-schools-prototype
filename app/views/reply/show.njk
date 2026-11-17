@@ -92,12 +92,12 @@
     {{ summaryList({
       card: {
         heading: {
-          text: __("contact.label"),
+          text: __("contactRelationship.label"),
           size: "m"
         }
       },
       lastRowBorder: false,
-      rows: summaryRows(reply.contact, {
+      rows: summaryRows(reply.contactRelationship, {
         fullName: {
           href: reply.uri + "/edit/contact"
         },
@@ -114,7 +114,7 @@
         canSms: {},
         communicationNeeds: {}
       })
-    }) if reply.contact }}
+    }) if reply.contactRelationship }}
 
     {# Child details #}
     {{ summaryList({

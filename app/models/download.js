@@ -252,7 +252,7 @@ export class Download extends BaseModel {
           firstName: vaccination.patient?.firstName,
           dob: vaccination.patient?.dob,
           address_line1: vaccination.patient?.address?.addressLine1,
-          contact: vaccination.patient?.contacts[0]?.fullName,
+          contact: vaccination.patient?.contactRelationships[0]?.fullName,
           ethnicity: '',
           date: vaccination.createdAt,
           time: vaccination.createdAt,

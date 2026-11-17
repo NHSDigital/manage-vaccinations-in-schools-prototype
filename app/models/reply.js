@@ -17,7 +17,7 @@ import {
 import {
   Child,
   ClinicAppointment,
-  Contact,
+  ContactRelationship,
   Patient,
   PatientSession,
   Programme,
@@ -38,7 +38,7 @@ import {
 import {
   formatMarkdown,
   formatOther,
-  formatContact,
+  formatContactRelationship,
   formatTag,
   formatWithSecondaryText,
   stringToBoolean
@@ -54,7 +54,7 @@ import { BaseModel } from './base.js'
  * @typedef {BaseModelOptions & object} ReplyOptions
  * @property {string} [uuid] - Reply UUID
  * @property {Child} [child] - Child
- * @property {Contact} [contact_] - Parent or guardian
+ * @property {ContactRelationship} [contact_] - Parent or guardian
  * @property {ReplyDecision} [decision] - Consent decision
  * @property {boolean} [hasConsentForAlternativeVaccine] - Consent for alternative vaccine
  * @property {boolean} [hasConfirmedRefusal] - Refusal confirmed
@@ -95,7 +95,7 @@ export class Reply extends BaseModel {
     super(options, context)
 
     /** @type {string|undefined} */
-    this.contact_uuid
+    this.contactRelationship_uuid
 
     /** @type {string|undefined} */
     this.patient_uuid
@@ -154,11 +154,13 @@ export class Reply extends BaseModel {
     this.clinicAppointment_uuid = options?.clinicAppointment_uuid
     this.note = options?.note || ''
 
-    // For reasons of simplicity, we use `contact_` this to store contact
+    // For reasons of simplicity, we use `contactRelationship_` this to store contact
     // details in the parental consent journey.
     // TODO: Find out why contact() setter doesn’t work for this purpose
-    this.contact_ = options?.contact_ && new Contact(options.contact_)
-    this.contact_?.setResponse(this)
+    this.contactRelationship_ =
+      options?.contactRelationship_ &&
+      new ContactRelationship(options.contactRelationship_)
+    this.contactRelationship_?.setResponse(this)
 
     // Communication needs are given with each response, rather than being
     // kept with the contact
@@ -242,8 +244,8 @@ export class Reply extends BaseModel {
    * @returns {string|undefined} Full name
    */
   get fullName() {
-    if (this.contact) {
-      return this.contact.fullName
+    if (this.contactRelationship) {
+      return this.contactRelationship.fullName
     } else if (this.child) {
       return this.child.fullName
     }
@@ -257,8 +259,8 @@ export class Reply extends BaseModel {
   get relationship() {
     if (this.hasSelfConsent) {
       return `${this.child.fullName} (child)`
-    } else if (this.contact) {
-      return this.contact.relationship
+    } else if (this.contactRelationship) {
+      return this.contactRelationship.relationship
     }
   }
 
@@ -270,23 +272,26 @@ export class Reply extends BaseModel {
   get fullNameAndRelationship() {
     return this.hasSelfConsent
       ? this.relationship
-      : formatContact(this.contact, false)
+      : formatContactRelationship(this.contactRelationship, false)
   }
 
   /**
    * Get parent or guardian who responded
    *
-   * @returns {Contact|undefined} Contact
+   * @returns {ContactRelationship|undefined} Contact
    */
-  get contact() {
+  get contactRelationship() {
     // A clinic booking keeps its own contact details, rather than storing
     // them with the other contacts
     if (this.clinicAppointment_uuid) {
-      return this.contact_
+      return this.contactRelationship_
     }
 
     // Link the contact to this response, to show the details given in it
-    return Contact.findOne(this.contact_uuid, this.context)?.setResponse(this)
+    return ContactRelationship.findOne(
+      this.contactRelationship_uuid,
+      this.context
+    )?.setResponse(this)
   }
 
   /**
@@ -294,8 +299,12 @@ export class Reply extends BaseModel {
    *
    * @param {object} updates - Updates
    */
-  set contact(updates) {
-    Contact.update(this.contact_uuid, updates, this.context)
+  set contactRelationship(updates) {
+    ContactRelationship.update(
+      this.contactRelationship_uuid,
+      updates,
+      this.context
+    )
   }
 
   /**
@@ -325,11 +334,11 @@ export class Reply extends BaseModel {
 
     // Someone who booked a clinic appointment, but isn’t one of the child’s
     // contacts, counts as a different respondent for each appointment
-    if (this.clinicAppointment_uuid && !this.contact_uuid) {
+    if (this.clinicAppointment_uuid && !this.contactRelationship_uuid) {
       return `clinic-appointment-${this.clinicAppointment_uuid}`
     }
 
-    return this.contact_uuid
+    return this.contactRelationship_uuid
   }
 
   /**
@@ -344,10 +353,11 @@ export class Reply extends BaseModel {
     }
 
     const hasEmailGotEmail =
-      this.contact?.email &&
-      this.contact?.emailStatus === NotifyEmailStatus.Delivered
+      this.contactRelationship?.email &&
+      this.contactRelationship?.emailStatus === NotifyEmailStatus.Delivered
     const hasTelSmsGotSms =
-      this.contact?.tel && this.contact?.smsStatus === NotifySmsStatus.Delivered
+      this.contactRelationship?.tel &&
+      this.contactRelationship?.smsStatus === NotifySmsStatus.Delivered
 
     return hasEmailGotEmail || hasTelSmsGotSms
   }
@@ -720,12 +730,18 @@ export class Reply extends BaseModel {
               return this.patient?.isSensitive
                 ? 'Sensitive'
                 : this.communicationNeeds || 'None'
-            case 'contact':
-              return formatContact(this.contact, true)
+            case 'contactRelationship':
+              return formatContactRelationship(this.contactRelationship, true)
             case 'tel':
-              return this.contact && this.contact.formatted.tel
+              return (
+                this.contactRelationship &&
+                this.contactRelationship.formatted.tel
+              )
             case 'email':
-              return this.contact && this.contact.formatted.email
+              return (
+                this.contactRelationship &&
+                this.contactRelationship.formatted.email
+              )
             case 'programme':
               return this.programme?.nameTag
             case 'refusalReason':
@@ -765,9 +781,12 @@ export class Reply extends BaseModel {
   }
 }
 
-// Related by hand (see `get contact`), so responses from clinic bookings can
+// Related by hand (see `get contactRelationship`), so responses from clinic bookings can
 // use the contact details given in the booking
-Reply.foreignKeys = { ...Reply.foreignKeys, contact_uuid: () => Contact }
+Reply.foreignKeys = {
+  ...Reply.foreignKeys,
+  contactRelationship_uuid: () => ContactRelationship
+}
 Reply.relate('patient_uuid', () => Patient, 'patient')
 Reply.relate('programme_id', () => Programme, 'programme')
 Reply.relate('session_id', () => Session, 'session')

@@ -1,0 +1,36 @@
+{% extends "_layouts/form.njk" %}
+
+{% block form %}
+  {{ heading({
+    caption: contactRelationship.patient.fullName,
+    text: __("contactRelationship.action.title", {
+      contactRelationship: contactRelationship,
+      type: type
+    }),
+    size: "l"
+  }) }}
+
+  {{ __("contactRelationship.action.description", {
+    patient: contactRelationship.patient
+  }) | nhsukMarkdown }}
+{% endblock %}
+
+{% block afterForm %}
+  {{ appButtonGroup({
+    buttons: [
+      {
+        text: __("contactRelationship.action.confirm", type),
+        variant: "warning",
+        attributes: {
+          formAction: contactRelationship.uri + "/" + type
+        }
+      }
+    ],
+    links: [
+      {
+        text: __("contactRelationship.action.cancel"),
+        href: back
+      }
+    ]
+  }) }}
+{% endblock %}

@@ -5,7 +5,7 @@ import {
   ReplyDecision,
   ScreenStatus
 } from '../enums.js'
-import { generateContact } from '../generators/contact.js'
+import { generateContactRelationship } from '../generators/contact-relationship.js'
 import {
   AuditEvent,
   Gillick,
@@ -49,11 +49,14 @@ export const activityController = {
         uuid !== patient?.uuid && !hasMissingNhsNumber && !isInvalid
     )
     const reply = Reply.findAll(data).find(
-      (reply) => !reply.hasSelfConsent && reply.hasGivenConsent && reply.contact
+      (reply) =>
+        !reply.hasSelfConsent &&
+        reply.hasGivenConsent &&
+        reply.contactRelationship
     )
     const replyRefusal = {
       ...reply,
-      contact: reply.contact,
+      contactRelationship: reply.contactRelationship,
       decision: ReplyDecision.Refused,
       hasConfirmedRefusal: true
     }
@@ -72,11 +75,11 @@ export const activityController = {
     )
 
     // Contact for use in Notify activities; force having both email and phone
-    const contact = generateContact(patient)
-    contact.email =
-      contact.email ||
-      `${contact.fullName.replace(' ', '.').toLowerCase()}@example.com`
-    contact.tel = contact.tel || '07700 900000'
+    const contactRelationship = generateContactRelationship(patient)
+    contactRelationship.email =
+      contactRelationship.email ||
+      `${contactRelationship.fullName.replace(' ', '.').toLowerCase()}@example.com`
+    contactRelationship.tel = contactRelationship.tel || '07700 900000'
 
     const activityLog = [
       {
@@ -204,8 +207,8 @@ export const activityController = {
           'vaccination-deleted'
         ].map((name) =>
           auditEvent({
-            name: activity.notify[name](contact),
-            messageRecipient: contact,
+            name: activity.notify[name](contactRelationship),
+            messageRecipient: contactRelationship,
             messageTemplate: name,
             patient_uuid: patient?.uuid,
             programme_ids: session?.programme_ids,

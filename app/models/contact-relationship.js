@@ -2,12 +2,16 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { RelationshipType } from '../enums.js'
 import { Patient } from '../models.js'
-import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
+import {
+  formatOther,
+  formatContactRelationship,
+  stringToBoolean
+} from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
 /**
- * @typedef {BaseModelOptions & object} ContactOptions
+ * @typedef {BaseModelOptions & object} ContactRelationshipOptions
  * @property {string} [uuid] - Contact UUID
  * @property {string} [fullName] - Full name
  * @property {RelationshipType} [relationship] - Type of relationship to child
@@ -19,16 +23,16 @@ import { BaseModel } from './base.js'
  * @property {boolean} [canSms] - Get updates via SMS
  * @property {NotifyEmailStatus} [emailStatus] - Email status
  * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {Partial<Contact>} [pendingChanges] - Pending changes to contact details
+ * @property {Partial<ContactRelationship>} [pendingChanges] - Pending changes to contact details
  */
 
 /**
  * @class Contact
  */
-export class Contact extends BaseModel {
-  static contextKey = 'contacts'
+export class ContactRelationship extends BaseModel {
+  static contextKey = 'contactRelationships'
   static identifierKey = 'uuid'
-  static ns = 'contact'
+  static ns = 'contactRelationship'
 
   /**
    * Consent response or clinic booking the contact gave, if linked to one
@@ -40,7 +44,7 @@ export class Contact extends BaseModel {
   #response
 
   /**
-   * @param {ContactOptions} options - Options
+   * @param {ContactRelationshipOptions} options - Options
    * @param {object} [context] - Context
    */
   constructor(options, context) {
@@ -87,7 +91,7 @@ export class Contact extends BaseModel {
    * isn’t saved with the contact.
    *
    * @param {Reply|ClinicBooking} [response] - Response or booking
-   * @returns {Contact} Contact
+   * @returns {ContactRelationship} Contact
    */
   setResponse(response) {
     this.#response = response
@@ -128,7 +132,7 @@ export class Contact extends BaseModel {
    * @returns {string} Full name and relationship
    */
   get fullNameAndRelationship() {
-    return formatContact(this, false)
+    return formatContactRelationship(this, false)
   }
 
   /**
@@ -146,11 +150,11 @@ export class Contact extends BaseModel {
    * They need to have the same and the same relationship to the child
    * (ignoring parental responsibility settings)
    *
-   * @param {Contact} [contact] - Other contact
+   * @param {ContactRelationship} [contactRelationship] - Other contact
    * @returns {boolean} Contact details are for the same person
    */
-  isSamePersonAs(contact) {
-    if (!contact) {
+  isSamePersonAs(contactRelationship) {
+    if (!contactRelationship) {
       return false
     }
 
@@ -159,12 +163,13 @@ export class Contact extends BaseModel {
 
     const hasSameName =
       normaliseText(this.fullName) !== undefined &&
-      normaliseText(this.fullName) === normaliseText(contact.fullName)
+      normaliseText(this.fullName) ===
+        normaliseText(contactRelationship.fullName)
     const hasSameRelationship =
-      this.relationship === contact.relationship &&
+      this.relationship === contactRelationship.relationship &&
       (this.relationship === RelationshipType.Other
         ? normaliseText(this.relationshipOther) ===
-          normaliseText(contact.relationshipOther)
+          normaliseText(contactRelationship.relationshipOther)
         : true)
 
     return hasSameName && hasSameRelationship
@@ -218,11 +223,11 @@ export class Contact extends BaseModel {
    * @returns {string} URI
    */
   get uri() {
-    return `/contacts/${this.uuid}`
+    return `/contact-relationships/${this.uuid}`
   }
 }
 
-Contact.relate('patient_uuid', () => Patient, 'patient')
+ContactRelationship.relate('patient_uuid', () => Patient, 'patient')
 
 /**
  * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'

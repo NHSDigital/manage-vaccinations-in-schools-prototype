@@ -352,7 +352,7 @@ export const getAllAppointmentPaths = (
                   return false
                 }
 
-                return appointment.patient.contacts?.length > 0
+                return appointment.patient.contactRelationships?.length > 0
               },
               [appointmentPath('contact')]: () => {
                 if (
@@ -361,7 +361,7 @@ export const getAllAppointmentPaths = (
                   return false
                 }
 
-                return appointment.patient.contacts?.length === 0
+                return appointment.patient.contactRelationships?.length === 0
               }
             }
           }),

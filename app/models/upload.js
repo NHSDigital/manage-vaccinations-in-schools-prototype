@@ -6,7 +6,7 @@ import {
   UploadStatus,
   UploadType
 } from '../enums.js'
-import { Contact, Patient, School, User } from '../models.js'
+import { ContactRelationship, Patient, School, User } from '../models.js'
 import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
 import {
@@ -352,15 +352,22 @@ export class Upload extends BaseModel {
    * Get parent contacts with new contact details that need review
    * Each contact has the details found in the file as its pending changes
    *
-   * @returns {Array<Contact>} Contacts with pending changes
+   * @returns {Array<ContactRelationship>} Contacts with pending changes
    */
-  get pendingContacts() {
+  get pendingContactRelationships() {
     return Object.entries(this.contactChanges)
       .map(([uuid, pendingChanges]) => {
-        const contact = Contact.findOne(uuid, this.context)
+        const contactRelationship = ContactRelationship.findOne(
+          uuid,
+          this.context
+        )
 
         return (
-          contact && new Contact({ ...contact, pendingChanges }, this.context)
+          contactRelationship &&
+          new ContactRelationship(
+            { ...contactRelationship, pendingChanges },
+            this.context
+          )
         )
       })
       .filter(Boolean)

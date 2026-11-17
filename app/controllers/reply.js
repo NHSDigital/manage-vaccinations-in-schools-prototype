@@ -9,7 +9,7 @@ import {
   VaccinationOutcome
 } from '../enums.js'
 import {
-  Contact,
+  ContactRelationship,
   Patient,
   PatientSession,
   Programme,
@@ -19,7 +19,7 @@ import {
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
-import { formatContact } from '../utils/string.js'
+import { formatContactRelationship } from '../utils/string.js'
 
 export const replyController = {
   /**
@@ -129,7 +129,7 @@ export const replyController = {
 
         // Remove any contact details in reply if self consent
         if (reply.hasSelfConsent) {
-          delete reply.contact_uuid
+          delete reply.contactRelationship_uuid
         }
 
         if (triage?.psd) {
@@ -309,13 +309,16 @@ export const replyController = {
         ...(referrer && { back: referrer })
       }
 
-      response.locals.respondentItems = patientProgramme.patient.contacts.map(
-        (contact) => ({
-          text: formatContact(contact, false),
-          hint: contact.tel && `Phone: ${contact.formatted.tel}`,
-          value: contact.uuid
-        })
-      )
+      response.locals.respondentItems =
+        patientProgramme.patient.contactRelationships.map(
+          (contactRelationship) => ({
+            text: formatContactRelationship(contactRelationship, false),
+            hint:
+              contactRelationship.tel &&
+              `Phone: ${contactRelationship.formatted.tel}`,
+            value: contactRelationship.uuid
+          })
+        )
 
       // Child can self consent if assessed as Gillick competent
       if (reply?.patientSession?.gillick?.competent === GillickCompetent.True) {
@@ -365,7 +368,7 @@ export const replyController = {
     let { paths, triage, vaccination } = response.locals
 
     // Add contacts from global context to wizard
-    data.wizard.contacts = data.contacts
+    data.wizard.contactRelationships = data.contactRelationships
 
     const reply = Reply.update(reply_uuid, request.body.reply, data.wizard)
 
@@ -374,7 +377,7 @@ export const replyController = {
       switch (respondent) {
         case 'new': // Consent response is from a new contact
           reply.method = ReplyMethod.Phone
-          reply.contact_uuid = Contact.create(
+          reply.contactRelationship_uuid = ContactRelationship.create(
             {
               patient_uuid: reply.patient_uuid
             },
@@ -387,7 +390,7 @@ export const replyController = {
           break
         default: // Consent response is an existing respondent
           reply.method = ReplyMethod.Phone
-          reply.contact_uuid = respondent
+          reply.contactRelationship_uuid = respondent
 
           // Store reply that needs marked as invalid
           // We only want to do this when submitting replacement reply
@@ -438,7 +441,7 @@ export const replyController = {
     const newReply = Reply.create(
       {
         child: patientProgramme.patient,
-        contact_uuid: reply.contact_uuid,
+        contactRelationship_uuid: reply.contactRelationship_uuid,
         patient_uuid: patientProgramme.patient_uuid,
         programme_id: patientProgramme.programme_id,
         method: ReplyMethod.Phone
