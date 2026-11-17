@@ -5,7 +5,7 @@
   {% set newContacts %}
     <ul>
     {% for contact in contactRelationship.pendingContacts %}
-      <li>{{ contact.value | highlight | safe }}</li>
+      <li>{{ contact.displayValue | highlight | safe }}</li>
     {% endfor %}
     </ul>
   {% endset %}

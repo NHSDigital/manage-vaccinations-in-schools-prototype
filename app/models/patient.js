@@ -838,17 +838,18 @@ export class Patient extends Child {
   }
 
   /**
-   * Add contact to patient
+   * Add contact to patient, recording it in the activity log, and save
    *
    * @param {ContactRelationship} contactRelationship - Contact
+   * @param {string} [createdBy_uid] - User who added the contact
    */
-  addContactRelationship(contactRelationship) {
+  addContactRelationship(contactRelationship, createdBy_uid) {
     this.contactRelationship_uuids.push(contactRelationship.uuid)
 
-    this.addEvent({
-      name: activity.patient.contactRelationship(contactRelationship),
-      type: AuditEventType.Record
-    })
+    this.addContactRelationshipEvent(
+      activity.patient.contactRelationship(contactRelationship),
+      createdBy_uid
+    )
   }
 
   /**
@@ -869,6 +870,29 @@ export class Patient extends Child {
   addContactRelationshipEvent(name, createdBy_uid) {
     this.addEvent({ name, type: AuditEventType.Record, createdBy_uid })
     Patient.update(this.uuid, this, this.context)
+  }
+
+  /**
+   * Add a change to a contact’s phone number or email address to the activity
+   * log, and save
+   *
+   * @param {string} action - Change made (new, confirm, archive or restore)
+   * @param {ContactRelationship} contactRelationship - Contact
+   * @param {Contact} contact - Contact point changed
+   * @param {string} [createdBy_uid] - User who made the change
+   */
+  addContactEvent(action, contactRelationship, contact, createdBy_uid) {
+    const activities = {
+      new: activity.patient.contactAdded,
+      confirm: activity.patient.contactConfirmed,
+      archive: activity.patient.contactArchived,
+      restore: activity.patient.contactRestored
+    }
+
+    this.addContactRelationshipEvent(
+      activities[action](contactRelationship, contact),
+      createdBy_uid
+    )
   }
 
   /**
@@ -1227,6 +1251,6 @@ export class Patient extends Child {
 
 /**
  * @import { ArchiveRecordReason } from '../enums.js'
- * @import { Notice } from '../models.js'
+ * @import { Contact, Notice } from '../models.js'
  * @import { ChildOptions } from './child.js'
  */

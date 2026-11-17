@@ -218,7 +218,7 @@ export function generateCommunicationNeeds(contactRelationship) {
  * @returns {object} Whether they can get text messages
  */
 export function generateContactRelationshipPreferences(contactRelationship) {
-  const hasPhone = !!contactRelationship.firstActiveContact(ContactType.Phone)
+  const hasPhone = contactRelationship.hasPhoneNumber
 
   return {
     ...(hasPhone && { canSms: faker.datatype.boolean(0.5) })
@@ -245,12 +245,8 @@ export function generateRespondentDetails(
 ) {
   // The text message preference defaults to ‘No’, so use whether the contact
   // has responded before to tell if they’ve given one
-  const hasResponded = contactRelationship.contacts.some(({ sources }) =>
-    sources.some((source) =>
-      [ContactSource.ConsentResponse, ContactSource.ClinicBooking].includes(
-        source
-      )
-    )
+  const hasResponded = contactRelationship.contacts.some(
+    (contact) => contact.isFromResponse
   )
   const preferences = hasResponded
     ? { canSms: contactRelationship.canSms }
@@ -289,12 +285,12 @@ export function generateContactRelationshipVariation(contactRelationship) {
   let lastName = otherNames.join(' ')
 
   // Copy the contact points the parent still uses. They’re given in a consent
-  // response, so `addConsentResponseDetails` adds their source
+  // response, so `addReplyDetailsToContactRelationship` adds their source
   const contacts = contactRelationship.activeContacts.map(
     ({ type, value, status }) => ({ type, value, status })
   )
-  const hasPhone = contacts.some(({ type }) => type === ContactType.Phone)
-  const hasEmail = contacts.some(({ type }) => type === ContactType.Email)
+  const hasPhone = contactRelationship.hasPhoneNumber
+  const hasEmail = !!contactRelationship.firstActiveContact(ContactType.Email)
   const replaceValue = (type, value) => {
     const contact = contacts.find((point) => point.type === type)
     if (contact) {

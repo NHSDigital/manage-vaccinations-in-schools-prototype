@@ -76,7 +76,7 @@ export const contactRelationshipController = {
 
         // Add contact to patient contacts
         const patient = Patient.findOne(contactRelationship.patient_uuid, data)
-        patient.addContactRelationship(contactRelationship)
+        patient.addContactRelationship(contactRelationship, account?.uid)
       } else {
         contactRelationship = ContactRelationship.update(
           contactRelationship_uuid,
