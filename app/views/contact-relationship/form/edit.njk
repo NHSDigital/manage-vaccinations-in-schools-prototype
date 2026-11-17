@@ -81,21 +81,13 @@
     }) if not isSensitive }}
   {% endif %}
 
-  {# Text messages can only be sent if the contact has a phone number #}
+  {# Text messages can only be sent if the contact has a phone number (when
+     adding a contact, this only applies if they’re given one) #}
   {{ radios({
     fieldset: {
-      legend: __("contactRelationship.canSms.title", { contactRelationship: contactRelationship })
+      legend: __("contactRelationship.canSms.title")
     },
-    items: [
-      {
-        label: __("contactRelationship.canSms.true"),
-        value: true
-      },
-      {
-        label: __("contactRelationship.canSms.false"),
-        value: false
-      }
-    ],
+    items: getBooleanItems(),
     decorate: "contactRelationship.canSms"
-  }) if contactRelationship.hasPhoneNumber and not isSensitive }}
+  }) if (type == "new" or contactRelationship.hasPhoneNumber) and not isSensitive }}
 {% endblock %}

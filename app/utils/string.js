@@ -398,6 +398,29 @@ export function formatContactRelationship(
 }
 
 /**
+ * Format contact points
+ *
+ * @param {ContactRelationship} contactRelationship - Contact
+ * @returns {string|undefined} Formatted contact points HTML
+ */
+export function formatContacts(contactRelationship) {
+  if (!contactRelationship) return
+
+  let string = ''
+
+  // Add phone numbers, then email addresses, if provided
+  if (contactRelationship.formattedContactValues) {
+    for (const type of [ContactType.Phone, ContactType.Email]) {
+      for (const value of contactRelationship.formattedContactValues(type)) {
+        string += `${type}: ${value}<br>`
+      }
+    }
+  }
+
+  return string
+}
+
+/**
  * Format progress
  *
  * @param {number} number - Progress
