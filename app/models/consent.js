@@ -1,5 +1,5 @@
-import { ContactRelationship, Reply } from '../models.js'
-import { addReplyDetailsToContactRelationship } from '../utils/contact-relationship.js'
+import { Reply } from '../models.js'
+import { addRespondentToPatient } from '../utils/contact-relationship.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatLinkWithSecondaryText } from '../utils/string.js'
 
@@ -48,26 +48,25 @@ export class Consent extends Reply {
    *
    * Also adds the details the parent gave in their response (their phone
    * numbers, email addresses and contact preferences) to their contact on the
-   * child’s record, and saves that contact
+   * child’s record, and saves that contact. If the parent isn’t one of the
+   * child’s contacts, they’re added as one
    *
    * @param {Patient} patient - Patient
    */
   linkToPatient(patient) {
     this.patient_uuid = patient.uuid
-    patient.addReply(this)
 
-    const contactRelationship = ContactRelationship.findOne(
-      this.contactRelationship_uuid,
+    // Add the parent who responded to the child’s contacts, with the details
+    // they gave
+    const contactRelationship = addRespondentToPatient(
+      patient,
+      this,
       this.context
     )
-    if (contactRelationship && this.contactRelationship_) {
-      addReplyDetailsToContactRelationship(contactRelationship, this)
-      ContactRelationship.update(
-        contactRelationship.uuid,
-        contactRelationship,
-        this.context
-      )
-    }
+    this.contactRelationship_uuid =
+      contactRelationship?.uuid ?? this.contactRelationship_uuid
+
+    patient.addReply(this)
   }
 }
 

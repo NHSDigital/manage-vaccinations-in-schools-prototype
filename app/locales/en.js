@@ -1948,23 +1948,23 @@ export const en = {
         title: 'Add an email address'
       },
       confirm: 'Add',
-      success: 'Added {{contact.value}}'
+      success: 'Added {{contact.displayValue}}'
     },
-    update: {
-      success: 'Updated {{contact.value}}'
+    confirm: {
+      success: 'Confirmed {{contact.displayValue}}'
     },
     archive: {
-      title: 'Archive {{contact.value}}?',
+      title: 'Archive {{contact.displayValue}}?',
       description:
         'Messages won’t be sent to an archived {{type}}. You can restore it later.',
       confirm: 'Archive',
-      success: 'Archived {{contact.value}}'
+      success: 'Archived {{contact.displayValue}}'
     },
     restore: {
-      title: 'Restore {{contact.value}}?',
+      title: 'Restore {{contact.displayValue}}?',
       description: 'Messages will be sent to this {{type}} again.',
       confirm: 'Restore',
-      success: 'Restored {{contact.value}}'
+      success: 'Restored {{contact.displayValue}}'
     },
     cancel: 'No, return to contacts',
     archived: {
