@@ -2,6 +2,7 @@ import activity from '../datasets/activity.js'
 import {
   ArchiveRecordReason,
   AuditEventType,
+  ContactType,
   ReplyDecision,
   ScreenStatus
 } from '../enums.js'
@@ -76,10 +77,18 @@ export const activityController = {
 
     // Contact for use in Notify activities; force having both email and phone
     const contactRelationship = generateContactRelationship(patient)
-    contactRelationship.email =
-      contactRelationship.email ||
-      `${contactRelationship.fullName.replace(' ', '.').toLowerCase()}@example.com`
-    contactRelationship.tel = contactRelationship.tel || '07700 900000'
+    if (!contactRelationship.firstActiveContact(ContactType.Email)) {
+      contactRelationship.addContact({
+        type: ContactType.Email,
+        value: `${contactRelationship.fullName.replace(' ', '.').toLowerCase()}@example.com`
+      })
+    }
+    if (!contactRelationship.firstActiveContact(ContactType.Phone)) {
+      contactRelationship.addContact({
+        type: ContactType.Phone,
+        value: '07700 900000'
+      })
+    }
 
     const activityLog = [
       {
