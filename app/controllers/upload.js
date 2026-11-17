@@ -27,13 +27,19 @@ export const uploadController = {
     const { data } = request.session
     const { account } = response.locals
 
-    const uploads = Upload.findAll(data).filter((upload) =>
-      upload.isVisibleTo(account)
-    )
+    const uploads = Upload.findAll(data)
+      .filter((upload) => upload.isVisibleTo(account))
+      // Don’t show uploads with requested status
+      .filter((upload) => upload.status !== UploadStatus.Requested)
 
     if (account.isSchoolUser && uploads.length === 0) {
       return response.redirect('/uploads/guides')
     }
+
+    // Don’t show requested status filter
+    response.locals.TeamUploadStatus = Object.values(
+      response.app.locals.TeamUploadStatus
+    ).filter((status) => status !== UploadStatus.Requested)
 
     response.locals.uploads = uploads
 
