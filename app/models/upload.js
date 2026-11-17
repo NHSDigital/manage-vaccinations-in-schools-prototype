@@ -578,6 +578,29 @@ export class Upload extends BaseModel {
   }
 
   /**
+   * Get visually hidden text, as announced to user in summary cards
+   *
+   * @param {User} user - User
+   * @returns {string} Name
+   */
+  visuallyHiddenTextFor(user) {
+    if (user.isSchoolUser && this.isSubmitted) {
+      return `(sent for approval on ${this.formatted.submittedAt})`
+    }
+
+    switch (this.status) {
+      case UploadStatus.Requested:
+        return `(requested on ${this.formatted.requestedAt})`
+      case UploadStatus.Approved:
+        return `(approved on ${this.formatted.approvedAt})`
+      case UploadStatus.Rejected:
+        return `(rejected on ${this.formatted.rejectedAt})`
+      default:
+        return `(uploaded on ${this.formatted.uploadedAt})`
+    }
+  }
+
+  /**
    * Get title, as shown to user
    *
    * @param {User} user - User
