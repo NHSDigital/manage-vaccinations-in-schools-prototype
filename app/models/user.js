@@ -143,7 +143,7 @@ export class User extends BaseModel {
       case this.role === UserRole.DataConsumer:
         return ['report']
       case this.role === UserRole.SchoolSecretary:
-        return ['upload', 'patient', 'session']
+        return ['upload', 'session']
       default:
         return [
           'patient',

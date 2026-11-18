@@ -4,7 +4,7 @@
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set title = __("patient.listSchoolUser.title") if account.isSchoolUser else __("patient.list.title") %}
+{% set title = __("patient.list.title") %}
 
 {% block form %}
   {{ super() }}
@@ -15,9 +15,6 @@
   }) }}
 
   {{ actionLink({
-    text: "Download spreadsheet",
-    href: "#"
-  } if account.isSchoolUser else {
     text: __("pdsRecord.start.label"),
     href: "/pds/new/start"
   }) }}
@@ -25,9 +22,7 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-third">
       {{ appPatientSearch({
-        clear: "/patients",
-        hideClinicStatuses: account.isSchoolUser,
-        hideProgrammeStatuses: account.isSchoolUser
+        clear: "/patients"
       }) }}
     </div>
 
@@ -95,20 +90,6 @@
             {% endif %}
           {%- endset %}
 
-          {% set consentGivenDateHtml -%}
-            {%- if data.programme_id %}
-              {%- for id, patientProgramme in patient.activeProgrammes -%}
-                {%- if data.programme_id | includes(id) -%}
-                  {{ patientProgramme.formatted.consentGivenDate | nhsukMarkdown }}
-                {%- endif -%}
-              {%- endfor %}
-            {% else %}
-              {%- for id, patientProgramme in patient.activeProgrammes -%}
-                {{ patientProgramme.formatted.consentGivenDate | nhsukMarkdown }}
-              {%- endfor %}
-            {% endif %}
-          {%- endset %}
-
           {{ summaryList({
             card: {
               classes: "app-card--compact",
@@ -117,21 +98,11 @@
                 size: "s",
                 level: 3
               },
-              href: patient.uri if not account.isSchoolUser,
-              clickable: true if not account.isSchoolUser
+              href: patient.uri,
+              clickable: true
             },
             lastRowBorder: false,
             rows: summaryRows(patient, {
-              dob: {},
-              school: {
-                value: patient.school.name | highlightQuery(data.q)
-              },
-              yearGroup: {},
-              status: {
-                label: __("patientSession.consentGivenDate.label"),
-                value: consentGivenDateHtml
-              }
-            }) if account.isSchoolUser else summaryRows(patient, {
               nhsn: {
                 value: patient.formatted.nhsn | highlightQuery(data.q)
               },
