@@ -10,7 +10,6 @@
       },
       level: 4
     },
-    href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered and (not reply.clinicAppointment or reply.clinicAppointment.status === ClinicAppointmentStatus.Booked),
     actions: {
       items: [
         {
@@ -57,8 +56,17 @@
         decisionStatus: {},
         responseType: {},
         vaccineCriteria: {}
-      })
+      }),
+      classes: "nhsuk-u-margin-bottom-2"
     }) }}
+
+    <p class="nhsuk-body nhsuk-u-text-align-right">
+      {{ link({
+        href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered and (not reply.clinicAppointment or reply.clinicAppointment.status === ClinicAppointmentStatus.Booked),
+        text: "View full response",
+        visuallyHiddenText: " from " + reply.fullNameAndRelationship + " on " + reply.formatted.createdAt
+      }) }}
+    </p>
   {% endcall %}
 {% endmacro %}
 
