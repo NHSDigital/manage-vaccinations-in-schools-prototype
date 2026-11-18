@@ -95,6 +95,15 @@
         hasRegistration: {
           href: session.uri + "/edit/registration"
         } if session.clinicType !== ClinicType.DropIn else none,
+        protocolNurse: {
+          href: session.uri + "/edit/protocol"
+        },
+        protocolHCA: {
+          href: session.uri + "/edit/protocol"
+        },
+        hasPsdProtocol: {
+          href: session.uri + "/edit/protocol"
+        },
         vaccinationPeriods: {
           href: session.uri + "/edit/vaccination-periods"
         },
