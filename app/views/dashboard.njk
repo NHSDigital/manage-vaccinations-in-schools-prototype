@@ -10,190 +10,221 @@
     size: "l"
   }) }}
 
-  {{ warningCallout({
-    heading: __("notice.list.title"),
-    text: link({
-      classes: "nhsuk-link--no-visited-state",
-      text: __mf("notice.warning", { count: notices.length }),
-      href: "/notices"
-    })
-  }) if notices.length }}
+  {% if account.isSchoolUser %}
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <ul class="nhsuk-grid-row nhsuk-card-group">
+          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+            {{ card({
+              classes: "app-card--compact",
+              clickable: true,
+              heading: {
+                text: __("upload.listSchoolUser.label"),
+                size: "s"
+              },
+              href: "/uploads",
+              description: __("upload.listSchoolUser.description")
+            }) }}
+          </li>
+          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+            {{ card({
+              classes: "app-card--compact",
+              clickable: true,
+              heading: {
+                text: __("session.listSchoolUser.title"),
+                size: "s"
+              },
+              href: "/sessions",
+              description: __("session.listSchoolUser.description")
+            }) }}
+          </li>
+        </ul>
+      </div>
+      <div class="nhsuk-grid-column-one-third">
+        {{ heading({
+          classes: "nhsuk-u-margin-0",
+          text: "Your local vaccination team",
+          size: "s",
+          level: 2
+        }) }}
 
-  <ul class="nhsuk-grid-row nhsuk-card-group">
-    {% if account.role == UserRole.DataConsumer %}
-    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("report.list.title"),
-          size: "xs"
-        },
-        href: "/reports",
-        description: __("report.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("manual.show.title"),
-          size: "xs"
-        },
-        href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
-        description: __("manual.show.description")
-      }) }}
-    </li>
-    {% elif account.role == UserRole.SchoolSecretary %}
-    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("upload.listSchoolUser.label"),
-          size: "s"
-        },
-        href: "/uploads",
-        description: __("upload.listSchoolUser.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("session.listSchoolUser.title"),
-          size: "s"
-        },
-        href: "/sessions",
-        description: __("session.listSchoolUser.description")
-      }) }}
-    </li>
-    {% else %}
-    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("school.list.title"),
-          size: "s"
-        },
-        href: "/schools",
-        description: __("school.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("patient.list.title"),
-          size: "s"
-        },
-        href: "/patients",
-        description: __("patient.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("session.list.title"),
-          size: "s"
-        },
-        href: "/sessions",
-        description: __("session.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
-      {{ card({
-        classes: "app-card--compact",
-        clickable: true,
-        heading: {
-          text: __("review.list.title"),
-          size: "s"
-        },
-        href: "/reviews",
-        description: __("review.list.description")
-      }) }}
-    </li>
-  </ul>
+        {{ summaryList({
+          classes: "app-summary-list--full-width",
+          lastRowBorder: false,
+          rows: [{
+            key: "Name",
+            value: account.team.saisTeam.name
+          }, {
+            key: "Phone",
+            value: account.team.saisTeam.tel
+          }, {
+            key: "Email",
+            value: account.team.saisTeam.email | urlize | safe
+          }]
+        }) }}
+      </div>
+    </div>
+  {% else %}
+    {{ warningCallout({
+      heading: __("notice.list.title"),
+      text: link({
+        classes: "nhsuk-link--no-visited-state",
+        text: __mf("notice.warning", { count: notices.length }),
+        href: "/notices"
+      })
+    }) if notices.length }}
 
-  <ul class="nhsuk-grid-row nhsuk-card-group">
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: {
-          text: __("report.list.title"),
-          size: "xs"
-        },
-        href: "/reports",
-        description: __("report.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: {
-          text: __("upload.list.title"),
-          size: "xs"
-        },
-        href: "/uploads",
-        description: __("upload.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: {
-          text: __("download.list.title"),
-          size: "xs"
-        },
-        href: "/downloads",
-        description: __("download.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: {
-          text: __("vaccine.list.title"),
-          size: "xs"
-        },
-        href: "/vaccines",
-        description: __("vaccine.list.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: {
-          text: __("team.show.title"),
-          size: "xs"
-        },
-        href: team.uri,
-        description: __("team.show.description")
-      }) }}
-    </li>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      {{ card({
-        clickable: true,
-        secondary: true,
-        heading: {
-          text: __("manual.show.title"),
-          size: "xs"
-        },
-        href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
-        description: __("manual.show.description")
-      }) }}
-    </li>
-    {% endif %}
-  </ul>
+    <ul class="nhsuk-grid-row nhsuk-card-group">
+      {% if account.role == UserRole.DataConsumer %}
+        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+          {{ card({
+            classes: "app-card--compact",
+            clickable: true,
+            heading: {
+              text: __("report.list.title"),
+              size: "xs"
+            },
+            href: "/reports",
+            description: __("report.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+          {{ card({
+            classes: "app-card--compact",
+            clickable: true,
+            heading: {
+              text: __("manual.show.title"),
+              size: "xs"
+            },
+            href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
+            description: __("manual.show.description")
+          }) }}
+        </li>
+      {% else %}
+        <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+          {{ card({
+            classes: "app-card--compact",
+            clickable: true,
+            heading: {
+              text: __("school.list.title"),
+              size: "s"
+            },
+            href: "/schools",
+            description: __("school.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+          {{ card({
+            classes: "app-card--compact",
+            clickable: true,
+            heading: {
+              text: __("patient.list.title"),
+              size: "s"
+            },
+            href: "/patients",
+            description: __("patient.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+          {{ card({
+            classes: "app-card--compact",
+            clickable: true,
+            heading: {
+              text: __("session.list.title"),
+              size: "s"
+            },
+            href: "/sessions",
+            description: __("session.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+          {{ card({
+            classes: "app-card--compact",
+            clickable: true,
+            heading: {
+              text: __("review.list.title"),
+              size: "s"
+            },
+            href: "/reviews",
+            description: __("review.list.description")
+          }) }}
+        </li>
+      </ul>
+
+      <ul class="nhsuk-grid-row nhsuk-card-group">
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          {{ card({
+            clickable: true,
+            secondary: true,
+            heading: {
+              text: __("report.list.title"),
+              size: "xs"
+            },
+            href: "/reports",
+            description: __("report.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          {{ card({
+            clickable: true,
+            secondary: true,
+            heading: {
+              text: __("upload.list.title"),
+              size: "xs"
+            },
+            href: "/uploads",
+            description: __("upload.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          {{ card({
+            clickable: true,
+            secondary: true,
+            heading: {
+              text: __("download.list.title"),
+              size: "xs"
+            },
+            href: "/downloads",
+            description: __("download.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          {{ card({
+            clickable: true,
+            secondary: true,
+            heading: {
+              text: __("vaccine.list.title"),
+              size: "xs"
+            },
+            href: "/vaccines",
+            description: __("vaccine.list.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          {{ card({
+            clickable: true,
+            secondary: true,
+            heading: {
+              text: __("team.show.title"),
+              size: "xs"
+            },
+            href: team.uri,
+            description: __("team.show.description")
+          }) }}
+        </li>
+        <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+          {{ card({
+            clickable: true,
+            secondary: true,
+            heading: {
+              text: __("manual.show.title"),
+              size: "xs"
+            },
+            href: "https://guide.manage-vaccinations-in-schools.nhs.uk",
+            description: __("manual.show.description")
+          }) }}
+        </li>
+      {% endif %}
+    </ul>
+  {% endif %}
 {% endblock %}
