@@ -33,7 +33,7 @@
           href: params.clear or "/patients",
           small: true,
           variant: "secondary"
-        } if data.q or data.programme or data.yearGroup or data.dob or data.status or data.hasMissingNhsNumber or data.clinicStatus
+        } if data.q or data.programme or data.yearGroup or data.dob or data.status or data.hasMissingNhsNumber or data.clinicStatus or data.schoolStatus
       ]
     }) }}
   {% endset %}
@@ -69,6 +69,18 @@
       items: sortItems,
       decorate: "sort"
     }) if sortItems }}
+
+    {{ radios({
+      small: true,
+      fieldset: {
+        legend: {
+          text: __("patientSession.schoolStatus.label"),
+          size: "s"
+        }
+      },
+      items: radioFilterItems(PatientSchoolStatus, data.schoolStatus, false),
+      decorate: "schoolStatus"
+    }) if params.showSchoolStatuses }}
 
     {{ checkboxes({
       fieldset: {

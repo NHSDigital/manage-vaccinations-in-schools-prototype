@@ -29,6 +29,7 @@
           hideClinicStatuses: true,
           hidePatientIneligibleStatus: true,
           hideProgrammeStatuses: account.isSchoolUser,
+          showSchoolStatuses: account.isSchoolUser,
           showAdditionalProgrammes: session.type === SessionType.Clinic and (session.isPlanned or session.isActive) and view === 'patients',
           view: view
         }) }}
@@ -52,6 +53,8 @@
 
         {% if data.status and data.status != "none" %}
           {% set title = __("session." + view + ".label") + ": " + data.status %}
+        {% elif data.schoolStatus and data.schoolStatus != "none" %}
+          {% set title = __("session.patientsSchoolUser.label") + ": " + data.schoolStatus %}
         {% else %}
           {% set title = __("session." + view + ".title") %}
         {% endif %}
@@ -117,10 +120,10 @@
             {% endfor %}
           {% endset %}
 
-          {% set consentGivenDateHtml -%}
+          {% set schoolStatusHtml -%}
             {% for patientSession in patientSession.siblingPatientSessions %}
               {% if ids | includes(patientSession.programme_id) %}
-                {{ patientSession.patientProgramme.formatted.consentGivenDate | nhsukMarkdown }}
+                {{ patientSession.patientProgramme.formatted.schoolStatus | nhsukMarkdown }}
               {%- endif -%}
             {%- endfor %}
           {%- endset %}
@@ -163,8 +166,8 @@
                   href: (patientSession.uri + "/edit/registration?referrer=" + session.uri + "/" + view) if view == "patients" and patientSession.register != RegistrationStatus.Pending
                 } if showRegistration,
                 status: {
-                  label: __("patientSession.consentGivenDate.label") if account.isSchoolUser else __("patientSession.status.label"),
-                  value: consentGivenDateHtml if account.isSchoolUser else statusHtml
+                  label: __("patientSession.schoolStatus.label") if account.isSchoolUser else __("patientSession.status.label"),
+                  value: schoolStatusHtml if account.isSchoolUser else statusHtml
                 } if view != "instructions",
                 additionalProgrammes: {
                   label: __("patientSession.additionalProgrammes.label"),

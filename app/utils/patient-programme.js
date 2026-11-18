@@ -10,6 +10,7 @@ import {
   PatientConsentStatus,
   PatientDeferredStatus,
   PatientRefusedStatus,
+  PatientSchoolStatus,
   PatientStatus,
   PatientTriageStatus,
   PatientVaccinatedStatus,
@@ -981,6 +982,24 @@ export function getPatientStatusDescription(patientProgramme) {
     case PatientStatus.Consent:
       // Don’t show full consent description as it’s shown directly below
       return `${patientProgramme.patientConsent}.`
+  }
+}
+
+/**
+ * Get patient status for school user
+ *
+ * @param {PatientProgramme} patientProgramme - Patient programme
+ * @returns {PatientSchoolStatus|undefined} Patient status for school user
+ */
+export function getPatientSchoolStatus(patientProgramme) {
+  switch (patientProgramme.status) {
+    case PatientStatus.Due:
+    case PatientStatus.Triage:
+      return PatientSchoolStatus.Ready
+    case PatientStatus.Consent:
+      return PatientSchoolStatus.NoResponse
+    default:
+      return PatientSchoolStatus.NoAction
   }
 }
 

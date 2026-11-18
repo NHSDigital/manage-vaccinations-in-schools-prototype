@@ -372,6 +372,8 @@ export const sessionController = {
       patientRefused: request.query.patientRefused || 'none',
       patientTriage: request.query.patientTriage || 'none',
       patientVaccinated: request.query.patientVaccinated || 'none',
+      schoolStatus:
+        (account.isSchoolUser && request.query.schoolStatus) || 'none',
       vaccineCriteria: request.query.vaccineCriteria || 'none'
     }
 
@@ -543,6 +545,7 @@ export const sessionController = {
     delete data.programme_id
     delete data.q
     delete data.register
+    delete data.schoolStatus
     delete data.status
     delete data.vaccineCriteria
     delete data.yearGroup
@@ -558,7 +561,14 @@ export const sessionController = {
 
     const params = getFilterParams(
       request,
-      ['clinicStatus', 'instructionStatus', 'q', 'register', 'status'],
+      [
+        'clinicStatus',
+        'instructionStatus',
+        'q',
+        'register',
+        'schoolStatus',
+        'status'
+      ],
       [
         'canBeOfferedCatchUps',
         'option',

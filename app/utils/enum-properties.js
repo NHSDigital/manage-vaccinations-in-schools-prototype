@@ -3,6 +3,7 @@ import {
   DownloadStatus,
   InstructionStatus,
   PatientClinicStatus,
+  PatientSchoolStatus,
   PatientStatus,
   RegistrationStatus,
   ReplyDecision,
@@ -36,6 +37,12 @@ const PATIENT_CLINIC_STATUS_COLOURS = {
   [PatientClinicStatus.Ready]: 'green',
   [PatientClinicStatus.Invited]: 'orange',
   [PatientClinicStatus.Booked]: 'blue'
+}
+
+const PATIENT_SCHOOL_STATUS_COLOURS = {
+  [PatientSchoolStatus.Ready]: 'green',
+  [PatientSchoolStatus.NoResponse]: 'orange',
+  [PatientSchoolStatus.NoAction]: 'grey'
 }
 
 const PATIENT_STATUS_COLOURS = {
@@ -116,12 +123,25 @@ const VACCINATION_OUTCOME_COLOURS = {
 /**
  * Get clinic status properties
  *
- * @param {PatientClinicStatus|false} status - clinic status
+ * @param {PatientClinicStatus|false} status - Clinic status
  * @returns {object} Status properties
  */
 export function getPatientClinicStatusProperties(status) {
   return {
     colour: PATIENT_CLINIC_STATUS_COLOURS[status] ?? 'white',
+    text: status
+  }
+}
+
+/**
+ * Get patient status properties for school user
+ *
+ * @param {PatientSchoolStatus|false} status - Patient status for school user
+ * @returns {object} Status properties
+ */
+export function getPatientSchoolStatusProperties(status) {
+  return {
+    colour: PATIENT_SCHOOL_STATUS_COLOURS[status] ?? 'white',
     text: status
   }
 }

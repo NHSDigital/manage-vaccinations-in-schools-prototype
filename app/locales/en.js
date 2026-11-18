@@ -2312,9 +2312,6 @@ export const en = {
       label: 'Consent status',
       title: 'Consent for %s vaccination'
     },
-    consentGivenDate: {
-      label: 'Consent given'
-    },
     screen: {
       label: 'Triage status',
       title: 'Triage for %s vaccination'
@@ -2332,6 +2329,9 @@ export const en = {
     },
     status: {
       label: 'Programme status'
+    },
+    schoolStatus: {
+      label: 'Status'
     },
     information: {
       label: 'Notes'
