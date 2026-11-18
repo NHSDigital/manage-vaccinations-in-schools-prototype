@@ -142,6 +142,19 @@ export class Team extends BaseModel {
   }
 
   /**
+   * Get SAIS team that works with a school team
+   *
+   * Includes schools assigned to any of this team’s subteams
+   *
+   * @returns {Team|undefined} Team
+   */
+  get saisTeam() {
+    if (!this.isSAIS) {
+      return this.schools[0].team
+    }
+  }
+
+  /**
    * Get formatted values
    *
    * @returns {object} Formatted values
