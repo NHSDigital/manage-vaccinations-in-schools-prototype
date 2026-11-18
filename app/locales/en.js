@@ -783,7 +783,7 @@ export const en = {
       flu: {
         heading: 'Flu vaccination',
         description:
-          'You may be able to book a free NHS flu vaccination at a pharmacy. You will be taken to the Vaccinations National Booking Service to continue.',
+          'You may be able to book a free NHS flu vaccination at a pharmacy. You will need to enter your details in the Vaccinations National Booking Service to continue.',
         action: 'Book a pharmacy vaccination for flu'
       },
       others: {
@@ -843,7 +843,7 @@ export const en = {
         'You can continue to use the link in your invitation to check for suitable clinics at a later date.\n\nAlternatively, contact your local vaccination team, who may be able to arrange an appointment at another clinic, by phoning {{ team.tel }} or emailing {{ team.email }}.',
       pharmacy: {
         description:
-          'You may also be able to book a free NHS flu vaccination for your child at a pharmacy.',
+          'You may also be able to book a free NHS flu vaccination for your child at a pharmacy. You will need to enter your details in the Vaccinations National Booking Service to continue.',
         action: 'Book a pharmacy vaccination for flu'
       }
     },
