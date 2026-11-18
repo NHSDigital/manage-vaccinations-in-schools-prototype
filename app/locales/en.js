@@ -3215,11 +3215,12 @@ export const en = {
     },
     protocol: {
       label: 'Protocol',
-      title: 'Vaccination protocol'
+      title: 'Delegation'
     },
     protocolNurse: {
       label: 'Protocol',
-      title: 'Which protocol will registered nurses use to vaccinate children?',
+      title:
+        'What protocol will registered nurses and health professionals vaccinate under?',
       pgd: {
         label: 'A patient group direction (PGD)'
       },
@@ -3241,13 +3242,14 @@ export const en = {
     hasPsdProtocol: {
       label: 'Can use PSDs',
       title:
-        'Can the flu nasal spray vaccine be given under a patient specific direction (PSD)?',
-      hint: 'If a PSD is added to a child, they will be vaccinated under a PSD instead of a PGD or VGD',
+        'Can healthcare assistants administer the flu nasal spray vaccine using a patient specific direction (PSD)?',
       no: {
-        label: 'No'
+        label: 'No',
+        hint: 'Healthcare assistants can only administer a nasal spray when supplied by a nurse'
       },
       yes: {
-        label: 'Yes'
+        label: 'Yes',
+        hint: 'Healthcare assistants can administer the nasal spray vaccine to children who are covered by a PSD'
       }
     },
     'upload-class-list': {
