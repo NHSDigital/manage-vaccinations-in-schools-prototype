@@ -83,6 +83,17 @@
           {% endcall %}
         {% endif %}
 
+        {% if account.isSchoolUser %}
+          <div class="app-action-link-with-description">
+            {{ actionLink({
+              classes: "nhsuk-u-margin-0",
+              text: __("session.patientsSchoolUser.download.label"),
+              href: "#"
+            }) }}
+            {{ __("session.patientsSchoolUser.download.hint") | nhsukMarkdown }}
+          </div>
+        {% endif %}
+
         {% if view === "patients" and session.type === SessionType.Clinic and session.clinicType !== ClinicType.DropIn and (session.isPlanned or session.isActive) %}
           {{ actionLink({
             href: session.uri + "/book-into-a-clinic/",

@@ -1,0 +1,44 @@
+{%- from "nhsuk/components/card/macro.njk" import card -%}
+{%- from "nhsuk/components/summary-list/macro.njk" import summaryList -%}
+{%- from "_macros/button-group.njk" import appButtonGroup -%}
+
+{% macro appSessionCard(session) %}
+  {% set canViewSession = session.isActive or (session.isPlanned and session.consentWindow == ConsentWindow.Open) %}
+  {% call card({
+    classes: "app-card--compact",
+    heading: {
+      text: session.formatted.date,
+      size: "s",
+      level: 4
+    },
+    href: session.uri if canViewSession
+  }) %}
+    {{ summaryList({
+      classes: "app-summary-list--full-width",
+      lastRowBorder: false,
+      rows: summaryRows(session, {
+        patients: {} if not account.isSchoolUser else none,
+        programmes: {},
+        yearGroups: {},
+        consentWindow: {}
+      })
+    }) }}
+
+    {{ appButtonGroup({
+      buttons: [
+        {
+          text: __("session.edit.title"),
+          href: session.uri + "/edit",
+          small: true,
+          variant: "secondary"
+        },
+        {
+          classes: "app-button--secondary-warning",
+          text: "Delete",
+          href: session.uri + "/delete",
+          small: true
+        } if session.consentWindow != ConsentWindow.Open
+      ]
+    }) if not session.isCompleted and not account.isSchoolUser }}
+  {% endcall %}
+{% endmacro %}

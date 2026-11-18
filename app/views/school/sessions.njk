@@ -1,4 +1,5 @@
 {% from "school/_navigation.njk" import schoolNavigation with context %}
+{% from "_macros/session-card.njk" import appSessionCard with context %}
 
 {% extends "_layouts/form.njk" %}
 
@@ -9,46 +10,6 @@
 {% set activeSession = sessions | selectattr("isActive") | first %}
 {% set completedSessions = sessions | selectattr("isCompleted") %}
 {% set plannedSessions = sessions | selectattr("isPlanned") %}
-
-{% macro sessionCard(session) %}
-  {% call card({
-    classes: "app-card--compact",
-    heading: {
-      text: session.formatted.date,
-      size: "s",
-      level: 4
-    },
-    href: session.uri
-  }) %}
-    {{ summaryList({
-      classes: "app-summary-list--full-width",
-      lastRowBorder: false,
-      rows: summaryRows(session, {
-        patients: {},
-        programmes: {},
-        yearGroups: {},
-        consentWindow: {}
-      })
-    }) }}
-
-    {{ appButtonGroup({
-      buttons: [
-        {
-          text: __("session.edit.title"),
-          href: session.uri + "/edit",
-          small: true,
-          variant: "secondary"
-        },
-        {
-          classes: "app-button--secondary-warning",
-          text: "Delete",
-          href: session.uri + "/delete",
-          small: true
-        } if session.consentWindow != ConsentWindow.Open
-      ]
-    }) if not session.isCompleted }}
-  {% endcall %}
-{% endmacro %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -91,7 +52,7 @@
 
     <div class="nhsuk-grid-row nhsuk-card-group">
       <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-        {{ sessionCard(activeSession) if activeSession }}
+        {{ appSessionCard(activeSession) if activeSession }}
       </div>
     </div>
   {% endif %}
@@ -106,7 +67,7 @@
     <div class="nhsuk-grid-row nhsuk-card-group">
       {% for session in plannedSessions %}
         <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-          {{ sessionCard(session) }}
+          {{ appSessionCard(session) }}
         </div>
       {% endfor %}
     </div>
@@ -121,9 +82,9 @@
 
     <div class="nhsuk-grid-row nhsuk-card-group">
       {% for session in completedSessions %}
-        <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-          {{ sessionCard(session) }}
-        </div>
+      <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+        {{ appSessionCard(session) }}
+      </div>
       {% endfor %}
     </div>
   {% endif %}

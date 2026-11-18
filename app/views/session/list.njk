@@ -1,10 +1,11 @@
+{% from "_macros/session-card.njk" import appSessionCard with context %}
 {% from "_macros/session-search.njk" import appSessionSearch with context %}
 
 {% extends "_layouts/form.njk" %}
 
 {% set gridColumns = "full" %}
 {% set hideConfirmButton = true %}
-{% set title = __("session.list.title") %}
+{% set title = __("session.listSchoolUser.title") if account.isSchoolUser else __("session.list.title") %}
 {% set showDates = view == "planned" or view == "completed" %}
 
 {% block form %}
@@ -26,44 +27,52 @@
       href: "/sessions/advertise",
       classes: "nhsuk-u-margin-left-5"
     }) if clinicsAreScheduled }}
-  {% endif %}
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-third">
-      {{ appSessionSearch({
-        clear: "/sessions"
-      }) }}
-    </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-third">
+        {{ appSessionSearch({
+          clear: "/sessions"
+        }) }}
+      </div>
 
-    <div class="nhsuk-grid-column-two-thirds">
-      {% if data.type and data.type != "none" %}
-        {% set title = data.type + "s" %}
-        {% if data.clinicType and data.clinicType !== 'none' %}
-          {% set title = title + ((": " + data.clinicType + " clinics") | lower) %}
+      <div class="nhsuk-grid-column-two-thirds">
+        {% if data.type and data.type != "none" %}
+          {% set title = data.type + "s" %}
+          {% if data.clinicType and data.clinicType !== 'none' %}
+            {% set title = title + ((": " + data.clinicType + " clinics") | lower) %}
+          {% endif %}
+        {% else %}
+          {% set title = "All sessions" %}
         {% endif %}
-      {% else %}
-        {% set title = "All sessions" %}
-      {% endif %}
 
-      {{ heading({
-        caption: {
-          html: __mf("session.results", {
-            from: results.from,
-            to: results.to,
-            count: results.count
-          }),
-          placement: "after"
-        },
-        text: title,
-        level: 2,
-        size: "m"
-      }) }}
+        {{ heading({
+          caption: {
+            html: __mf("session.results", {
+              from: results.from,
+              to: results.to,
+              count: results.count
+            }),
+            placement: "after"
+          },
+          text: title,
+          level: 2,
+          size: "m"
+        }) }}
 
-      {% for session in results.page %}
-        {% include "session/_session-card.njk" %}
-      {% endfor %}
+        {% for session in results.page %}
+          {% include "session/_session-card.njk" %}
+        {% endfor %}
 
-      {{ pagination(pages) }}
+        {{ pagination(pages) }}
+      </div>
     </div>
-  </div>
+  {% else %}
+    <div class="nhsuk-grid-row nhsuk-card-group">
+    {% for session in results.page %}
+      <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+        {{ appSessionCard(session) }}
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
 {% endblock %}
