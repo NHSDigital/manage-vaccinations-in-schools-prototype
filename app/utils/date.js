@@ -154,6 +154,23 @@ export function formatDate(date, options) {
 }
 
 /**
+ * Format a data range
+ *
+ * @param {Date} date1 - First date string
+ * @param {Date} date2 - Second date string
+ * @param {object} [options] - DateTimeFormat options
+ * @returns {string|undefined} Formatted date
+ */
+export function formatDateRange(date1, date2, options) {
+  if (!date1 || isNaN(date1.valueOf())) return
+  if (!date2 || isNaN(date2.valueOf())) return
+
+  return new Intl.DateTimeFormat('en-GB', options)
+    .formatRange(date1, date2)
+    .replace('–', 'until')
+}
+
+/**
  * Get age from date
  *
  * @param {Date} date - Date

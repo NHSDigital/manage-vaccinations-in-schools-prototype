@@ -41,6 +41,7 @@ import {
   convertIsoDateToObject,
   convertObjectToIsoDate,
   formatDate,
+  formatDateRange,
   getCurrentAcademicYear,
   setMidday,
   today
@@ -1396,7 +1397,11 @@ export class Session extends BaseModel {
       {
         get: (_target, prop) => {
           // Shared configuration
-          const consentDateStyle = { day: 'numeric', month: 'long' }
+          const consentDateStyle = {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          }
 
           // Lazily format consent window values
           const getConsentWindowData = () => {
@@ -1413,8 +1418,8 @@ export class Session extends BaseModel {
                 consentWindowSentence = `Consent window closed on ${formatDate(this.consentCloseAt, consentDateStyle)}.`
                 break
               case ConsentWindow.Open:
-                consentWindow = `Open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}`
-                consentWindowSentence = `Consent window is open from ${formatDate(this.consentOpenAt, consentDateStyle)} until ${formatDate(this.consentCloseAt, consentDateStyle)}.`
+                consentWindow = `Open from ${formatDateRange(this.consentOpenAt, this.consentCloseAt, consentDateStyle)}`
+                consentWindowSentence = `Consent window is open from ${formatDateRange(this.consentOpenAt, this.consentCloseAt, consentDateStyle)}.`
                 break
             }
             return { consentWindow, consentWindowSentence }

@@ -53,11 +53,20 @@ export const sessionController = {
     const session = Session.findOne(session_id, data)
     response.locals.session = session
 
-    response.locals.defaultBatches = DefaultBatch.findAll(data).filter(
-      (defaultBatch) => defaultBatch.session_id === session_id
-    )
+    // School users can only see the children in a session
+    if (
+      session &&
+      account.isSchoolUser &&
+      request.path !== `/${session_id}/patients`
+    ) {
+      return response.redirect(`${session.uri}/patients`)
+    }
 
     if (session && !session.isUnplanned && !account.isSchoolUser) {
+      response.locals.defaultBatches = DefaultBatch.findAll(data).filter(
+        (defaultBatch) => defaultBatch.session_id === session_id
+      )
+
       response.locals.navigationItems = [
         {
           text: __('session.show.label'),
@@ -318,7 +327,7 @@ export const sessionController = {
       session.hasRegistration && session.isActive && view === 'patients'
 
     response.locals.showRegistration = showRegistration
-    response.locals.view = view
+    response.locals.view = account.isSchoolUser ? 'patientsSchoolUser' : view
 
     let results = session.patientSessions
 

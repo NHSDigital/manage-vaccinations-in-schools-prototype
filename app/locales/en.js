@@ -3264,6 +3264,12 @@ export const en = {
       description:
         'Review consent responses, triage health questions and record vaccinations'
     },
+    listSchoolUser: {
+      label: 'View vaccination sessions',
+      title: 'Vaccination sessions',
+      description:
+        'See which children are due to attend vaccination sessions and which have no response yet'
+    },
     giveInstructions: {
       label: 'Add new PSDs',
       title:
@@ -3326,6 +3332,15 @@ export const en = {
       title: 'Children in session',
       count:
         '{count, plural, =0 {No children} one {# child} other {# children}}'
+    },
+    patientsSchoolUser: {
+      label: 'Pupil list',
+      title: 'Pupil list',
+      count: '{count, plural, =0 {No pupils} one {# pupil} other {# pupils}}',
+      download: {
+        label: 'Download pupil list',
+        hint: 'The download will only include children matching any applied filters'
+      }
     },
     eligible: {
       label: 'Eligible for vaccination',
