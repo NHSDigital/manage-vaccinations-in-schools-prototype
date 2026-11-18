@@ -24,6 +24,10 @@
     padding-bottom: 0;
   }
 
+  &.nhsuk-summary-list--no-last-row-border .nhsuk-summary-list__row:last-child .nhsuk-summary-list__key {
+    padding-bottom: 0;
+  }
+
   .nhsuk-summary-list__value {
     padding-top: nhsuk-spacing(1);
   }
