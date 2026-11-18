@@ -476,6 +476,16 @@ export const PatientClinicStatus = {
  * @readonly
  * @enum {string}
  */
+export const PatientSchoolStatus = {
+  Ready: 'Bring to session',
+  NoResponse: 'No response',
+  NoAction: 'No action needed'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const PatientConsentStatus = {
   SelfConsent: 'Can self-consent (16+)',
   NotScheduled: 'No request scheduled',

@@ -12,6 +12,7 @@ import {
   PatientDueStatus,
   PatientIneligibleStatus,
   PatientRefusedStatus,
+  PatientSchoolStatus,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -41,6 +42,7 @@ import {
 } from '../utils/date.js'
 import {
   getPatientClinicStatusProperties,
+  getPatientSchoolStatusProperties,
   getPatientStatusProperties
 } from '../utils/enum-properties.js'
 import { ordinal } from '../utils/number.js'
@@ -61,6 +63,7 @@ import {
   getPatientDeferredDescription,
   getPatientTriageStatus,
   getPatientRefusedStatus,
+  getPatientSchoolStatus,
   getPatientStatus,
   getPatientStatusDescription,
   getPatientVaccinatedStatus,
@@ -875,7 +878,7 @@ export class PatientProgramme extends BaseModel {
   /**
    * Get the patient's clinic status for this programme
    *
-   * @returns {PatientClinicStatus|false} - the patient's clinic status for this programme, or false if clinic not applicable
+   * @returns {PatientClinicStatus|false} - Patient’s clinic status for this programme, or false if clinic not applicable
    */
   get clinicStatus() {
     // Work backwards from the most complete status
@@ -904,6 +907,15 @@ export class PatientProgramme extends BaseModel {
     }
 
     return false
+  }
+
+  /**
+   * Get the patient's status for this programme for a school user
+   *
+   * @returns {PatientSchoolStatus} - Patient’s status for school user
+   */
+  get schoolStatus() {
+    return getPatientSchoolStatus(this)
   }
 
   /**
@@ -2052,6 +2064,15 @@ export class PatientProgramme extends BaseModel {
                   this.programme,
                   getPatientClinicStatusProperties(this.clinicStatus)
                 )
+              )
+            case 'schoolStatus':
+              return formatProgrammeStatus(
+                this.programme,
+                getPatientSchoolStatusProperties(this.schoolStatus),
+                this.schoolStatus === PatientSchoolStatus.Ready &&
+                  this.consentGivenDate
+                  ? `Consent given ${formatDate(this.consentGivenDate, { dateStyle: 'long' })}`
+                  : undefined
               )
             default:
               return undefined
