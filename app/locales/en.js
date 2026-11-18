@@ -3292,7 +3292,7 @@ export const en = {
       label: 'Children to contact',
       title: 'Which children do you want to send consent requests for?',
       nonRefusers: {
-        hint: '{count, plural, =0 {No children} one {# child} other {# children}} have a previous refusal'
+        hint: '{count, plural, =0 {No children have} one {# child has} other {# children have}} a previous refusal'
       }
     },
     consentForms: {
