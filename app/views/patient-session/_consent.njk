@@ -63,7 +63,7 @@
     <p class="nhsuk-body nhsuk-u-text-align-right">
       {{ link({
         href: ((reply.clinicAppointment.uri.matched + "?referrer=" + referrer) if reply.clinicAppointment else (reply.uri + "?referrer=" + referrer)) if reply.isDelivered and (not reply.clinicAppointment or reply.clinicAppointment.status === ClinicAppointmentStatus.Booked),
-        text: "View full response",
+        text: "View appointment" if reply.clinicAppointment else "View full response",
         visuallyHiddenText: " from " + reply.fullNameAndRelationship + " on " + reply.formatted.createdAt
       }) }}
     </p>
