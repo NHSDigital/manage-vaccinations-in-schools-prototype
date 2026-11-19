@@ -19,7 +19,9 @@ export function getAccountVaccineMethods(account, patientSession) {
 
     // HCAs can only record nasal vaccines for children with a PSD
     if (
-      patientSession.session.hasPsdProtocol &&
+      patientSession.session.hasPsdProtocolFor(
+        patientSession.patientProgramme
+      ) &&
       patientSession.patientProgramme.hasInstruction
     ) {
       vaccineMethods = [VaccineMethod.Intranasal]

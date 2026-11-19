@@ -3213,43 +3213,46 @@ export const en = {
       count:
         '{count, plural, =0 {no children for {programme}} one {# child for {programme}} other {# children for {programme}}}'
     },
-    protocol: {
-      label: 'Protocol',
-      title: 'Delegation'
-    },
-    protocolNurse: {
-      label: 'Protocol',
-      title:
-        'What protocol will registered nurses and health professionals vaccinate under?',
-      pgd: {
-        label: 'A patient group direction (PGD)'
+    protocolVGD: {
+      title: 'Do you want to use a vaccine group direction (VGD)?',
+      nurse: {
+        label: 'Protocol',
+        title:
+          'What protocol will registered nurses and health professionals vaccinate under?',
+        pgd: {
+          label: 'A patient group direction (PGD)'
+        },
+        vgd: {
+          label: 'A vaccine group direction (VGD)'
+        }
       },
-      vgd: {
-        label: 'A vaccine group direction (VGD)'
+      hca: {
+        label: 'Protocol for healthcare assistants',
+        title:
+          'Will healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
+        no: {
+          label: 'No'
+        },
+        yes: {
+          label: 'Yes'
+        }
       }
     },
-    protocolHCA: {
-      label: 'Protocol for healthcare assistants',
-      title:
-        'Will healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
-      no: {
-        label: 'No'
-      },
-      yes: {
-        label: 'Yes'
-      }
-    },
-    hasPsdProtocol: {
+    protocolPSD: {
       label: 'Can use PSDs',
       title:
-        'Can healthcare assistants administer the flu nasal spray vaccine using a patient specific direction (PSD)?',
-      no: {
+        'Can healthcare assistants give vaccinations under a patient specific direction (PSD)?',
+      none: {
         label: 'No',
-        hint: 'Healthcare assistants can only administer a nasal spray when supplied by a nurse'
+        hint: 'Healthcare assistants cannot vaccinate under a PSD'
       },
-      yes: {
-        label: 'Yes',
-        hint: 'Healthcare assistants can administer the nasal spray vaccine to children who are covered by a PSD'
+      nasalFlu: {
+        label: 'Yes, flu nasal spray only',
+        hint: 'Healthcare assistants can give the nasal spray vaccine to children who are covered by a PSD'
+      },
+      all: {
+        label: 'Yes, all programmes and vaccine methods',
+        hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the relevant programme'
       }
     },
     'upload-class-list': {

@@ -13,6 +13,7 @@ import {
   LocationType,
   PatientStatus,
   ProgrammeType,
+  PsdUsage,
   RecordVaccineCriteria,
   ReplyDecision,
   SessionPresets,
@@ -30,6 +31,7 @@ import {
   ClinicBooking,
   ClinicVaccinationPeriod,
   Consent,
+  PatientProgramme,
   PatientSession,
   Programme,
   School,
@@ -78,6 +80,9 @@ import { BaseModel } from './base.js'
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  * @property {string} [presetOverrideProgramme_ids] - Programme IDs (no preset)
  * @property {boolean} [hasRegistration] - Session has registration?
+ * @property {VaccinationProtocol} [protocolNurse] - Default protocol for nurse
+ * @property {VaccinationProtocol} [protocolHCA] - Default protocol for HCA
+ * @property {PsdUsage} [psdUsage] - Which programmes/methods use PSDs
  *
  *   Clinics only
  * @property {ClinicType} [clinicType] - open or drop-in?
@@ -98,8 +103,6 @@ import { BaseModel } from './base.js'
  * @property {Date} [cancelledAt] - Date session cancelled
  * @property {number} [reminderWeeks] - Weeks before session to send reminders
  * @property {object} [register] - Patient register
- * @property {VaccinationProtocol} [protocolNurse] - Default protocol for nurse
- * @property {VaccinationProtocol} [protocolHCA] - Default protocol for HCA
  */
 
 /**
@@ -153,6 +156,9 @@ export class Session extends BaseModel {
     this.cancelledAt = options?.cancelledAt && new Date(options.cancelledAt)
     this.hasRegistration = stringToBoolean(options?.hasRegistration)
     this.register = options?.register || {}
+    this.protocolNurse = options?.protocolNurse || VaccinationProtocol.PGD
+    this.protocolHCA = options?.protocolHCA || ''
+    this.psdUsage = options?.psdUsage || PsdUsage.None
 
     if (this.type === SessionType.Clinic) {
       this.clinicType = options?.clinicType
@@ -189,13 +195,6 @@ export class Session extends BaseModel {
       this.mmrConsent = this.presetNames?.includes(SessionPresetName.MMR)
         ? options?.mmrConsent
         : undefined
-    }
-
-    // Sessions administering the flu programme can use PGD or VGD protocol
-    if (this.programme_ids.includes('flu')) {
-      this.protocolNurse = options?.protocolNurse || VaccinationProtocol.PGD
-      this.protocolHCA = options?.protocolHCA || ''
-      this.hasPsdProtocol = stringToBoolean(options?.hasPsdProtocol) || false
     }
   }
 
@@ -401,6 +400,19 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Is this session scheduled in a flu season?
+   *
+   * @returns {boolean} True if during a flu season, or false otherwise
+   */
+  get isInFluSeason() {
+    const month = this.date.getMonth()
+    const march = 2
+    const september = 8
+
+    return month <= march || month >= september
+  }
+
+  /**
    * Does session occur in the current academic year?
    *
    * @returns {boolean} Session occurs in current academic year
@@ -419,6 +431,45 @@ export class Session extends BaseModel {
       this.protocolNurse === VaccinationProtocol.VGD ||
       this.protocolHCA === VaccinationProtocol.VGD
     )
+  }
+
+  /**
+   * Can PSDs be used for the given patient and programme in this session?
+   *
+   * @param {PatientProgramme} [patientProgramme] - the vaccine type to administer
+   * @returns {boolean} - True if PSDs can be used, or false otherwise
+   */
+  hasPsdProtocolFor(patientProgramme) {
+    // Are PSDs ruled out entirely?
+    if (this.psdUsage === PsdUsage.None) {
+      return false
+    }
+
+    // Is the given programme not even part of this session?
+    const programme_id = patientProgramme.programme_id
+    if (
+      !this.programme_ids.includes(programme_id) &&
+      !this.canVaccinateForOtherProgrammes
+    ) {
+      return false
+    }
+
+    // If asking about flu and we’re restricted to the nasal spray, make sure that’s
+    // an option for the child’s vaccination
+    const vaccineCriteria = patientProgramme.vaccineCriteria
+    const fluVaccineCriteriaForPsds = [
+      RecordVaccineCriteria.IntranasalOnly,
+      RecordVaccineCriteria.IntranasalPreferred
+    ]
+    if (
+      programme_id === 'flu' &&
+      this.psdUsage === PsdUsage.NasalFluOnly &&
+      !fluVaccineCriteriaForPsds.includes(vaccineCriteria)
+    ) {
+      return false
+    }
+
+    return this.psdUsage === PsdUsage.All
   }
 
   /**

@@ -1,0 +1,45 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.protocolPSD.title") %}
+
+{# Figure out which options make sense for the session's programmes #}
+{% if session.type === SessionType.Clinic and session.canVaccinateForOtherProgrammes %}
+  {% set canVaccinateAgainstFlu = true %}
+  {% set canVaccinateAgainstMoreThanFlu = true %}
+{% else %}
+  {% set canVaccinateAgainstFlu = session.programme_ids | includes("flu") %}
+  {% set canVaccinateAgainstMoreThanFlu = true if ((session.programme_ids | length > 1) or (session.programme_ids[0] !== "flu")) else false %}
+{% endif %}
+{% set canVaccinateAgainstFlu = canVaccinateAgainstFlu and session.isInFluSeason %}
+
+{% block form %}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: heading({
+          caption: session.location.name,
+          text: title,
+          size: "l"
+        })
+      }
+    },
+    items: [
+      {
+        text: __("session.protocolPSD.none.label"),
+        hint: __("session.protocolPSD.none.hint"),
+        value: PsdUsage.None
+      },
+      {
+        text: __("session.protocolPSD.nasalFlu.label"),
+        hint: __("session.protocolPSD.nasalFlu.hint"),
+        value: PsdUsage.NasalFluOnly
+      } if canVaccinateAgainstFlu else none,
+      {
+        text: __("session.protocolPSD.all.label"),
+        hint: __("session.protocolPSD.all.hint"),
+        value: PsdUsage.All 
+      } if canVaccinateAgainstMoreThanFlu else none
+    ],
+    decorate: "session.psdUsage"
+  }) }}
+{% endblock %}

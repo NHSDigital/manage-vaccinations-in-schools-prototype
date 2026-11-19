@@ -133,7 +133,8 @@ export const vaccinationController = {
     // Flu programme can use PGD, PSD or VGD protocol
     let protocol
     switch (true) {
-      case patientProgramme.hasInstruction && session.hasPsdProtocol:
+      case patientProgramme.hasInstruction &&
+        session.hasPsdProtocolFor(patientProgramme):
         protocol = VaccinationProtocol.PSD
         break
       case account.isHCA && session.hasVgdProtocol:
