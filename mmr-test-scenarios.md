@@ -1,8 +1,8 @@
 # MMR catch-up — test scenarios
 
-Seven patient cases used to test schedule-aware classification of MMR
-vaccination records, plus two design variants of case 7 (7A and 7B) and
-case 8, seeded only as two research forms (8A and 8B). Each case lists the inputs (date of birth and full vaccination
+Eight patient cases used to test schedule-aware classification of MMR
+vaccination records, plus three design variants of case 7 (7A, 7B and 7C). Each
+case lists the inputs (date of birth and full vaccination
 history) and the expected classifier output (which doses are valid, which
 are out of schedule and why, the resulting programme status, and the
 eligible-from date for the next slot).
@@ -28,8 +28,9 @@ years to the current academic year, so no age changes.
 - Maximum schedule length: **2 doses**. Any additional given dose is
   classified as `Additional dose`
 - Only `Vaccinated` records are classified. Every other outcome,
-  including Partially vaccinated and Already had the vaccine, goes to
-  the encounters table and never counts as a dose
+  including Partially vaccinated and Already had the vaccine, never
+  counts as a dose. These records appear in the activity log instead,
+  except Already had the vaccine, which has no entry (see case 7)
 - Status is Fully vaccinated only when no doses remain. While doses
   remain, status falls through to triage and consent as usual
 - Known gap (case 7): an Already had the vaccine record is not
@@ -136,6 +137,13 @@ consultant advice. Bilal still needs a second MMR dose.
 - **Programme status:** Needs triage (1 dose remaining; consent given for the catch-up session with a Yes health answer (immune system))
 - **Eligible from:** date of birth + 15 months (later than dose 1 + 28 days; long past, so eligible now)
 - **Doses remaining:** 1
+
+### Activity log
+
+Records 2 to 4 each have an entry dated on the record:
+
+- Records 2 and 3: Unable to vaccinate: child absent
+- Record 4: Unable to vaccinate: consent refused, with the note
 
 ### Other programme records
 
@@ -320,8 +328,9 @@ from CHIS, dated on the import date. It fills no dose slot.
 - **Doses complete:** 0 of 2 doses complete
 - **Dose rows:** Dose 1 shows Eligible from date of birth + 12 months
   (long past); Dose 2 shows dashes
-- **Encounters card:** shown, with one row: the import date, Already had
-  the vaccine, Child health information service
+- **Activity log:** no entry for the Already had the vaccine record. The
+  shared vaccination event wording would read Vaccinated, so no event is
+  seeded
 - **Doses remaining:** 2
 - **Consent:** given for the catch-up session, like the other cohort
   patients
@@ -353,7 +362,7 @@ programme status, status note and doses remaining are as case 7.
 | Dose 1 | Unknown          | Unknown | Parent or guardian report |
 | Dose 2 | Unknown          | Unknown | Parent or guardian report |
 
-- **Encounters card:** as case 7
+- **Activity log:** as case 7
 
 ---
 
@@ -376,25 +385,68 @@ programme status, status note and doses remaining are as case 7.
 - **Status note:** as case 7
 - **Doses complete and vaccinations table:** not shown. In their place,
   inset text using the name from the patient record: "Gita Gill B was
-  reported as vaccinated by a parent via CHIS. We do not hold the dates
-  of any doses."
-- **Encounters card:** as case 7
+  reported as vaccinated by a parent. We do not have a record of any doses."
+- **Activity log:** as case 7
 
 ---
 
-## Case 8 — Harry Hughes (research forms 8A and 8B)
+## Case 7C — Gita Gill C (design variant of case 7)
 
-> **Research forms.** Case 8 exists only as two twins, Harry Hughes A
-> (form A) and Harry Hughes B (form B), with identical records. They test
-> whether the encounters card is needed when the sessions card shows a
-> session outcome. Each patient record carries `designVariant: "8A"` or
-> `"8B"`, which is prototype-only scaffolding.
+> **Design variant.** This case demonstrates a design option for case 7,
+> not expected behaviour. It is prototype-only scaffolding: the patient
+> record carries `designVariant: "C"`, which chooses how the MMR page
+> shows the Vaccination record card.
+
+Unlike 7A and 7B, the record differs from case 7. Gita has a valid dose 1
+from the GP and no record of dose 2, plus the same Already had the
+vaccine record from CHIS. This tests the already had gap when only some
+doses are on record.
+
+- **NHS number:** 9990000123
+- **Date of birth:** 20 January, Year 10 in the current academic year
+
+### Vaccination history
+
+| #   | Date                                                                 | Vaccine     | Source                                                       | Outcome                 |
+| --- | -------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ | ----------------------- |
+| 1   | 12m 14d                                                              | M-M-RvaxPro | NHS Immunisations API: SystmOne (used by GPs and NHS trusts) | Vaccinated              |
+| 2   | 10 June in the previous academic year (import date, not a dose date) | –           | CHIS                                                         | Already had the vaccine |
+
+### Expected classification
+
+| #   | Status      | Slot   | Reason                                           |
+| --- | ----------- | ------ | ------------------------------------------------ |
+| 1   | Valid       | Dose 1 | –                                                |
+| 2   | Not counted | –      | Outcome `Already had the vaccine`, no dose given |
+
+- **Programme status:** Fully vaccinated (set by the Already had the
+  vaccine record, whatever the dose count)
+- **Doses remaining:** 1
+- **Consent:** given for the catch-up session, like the other cohort
+  patients
+
+### Page (variant C: inset text above the doses)
+
+- **Status note:** Vaccinated on the dose 1 date (the last valid dose)
+- **Inset text:** above the doses complete line, using the name from the
+  patient record: "Gita Gill C was reported as vaccinated by a parent. We
+  do not have a record of all doses."
+- **Doses complete:** 1 of 2 doses complete, the true count of valid
+  doses. Whether it should read 2 of 2 is open for team discussion
+- **Dose rows:** Dose 1 as recorded; Dose 2 shows dashes, with no
+  Eligible from
+- **Activity log:** no entries. Dose 1 is a seeded Vaccinated record and
+  the Already had the vaccine record has no event (see case 7)
+
+---
+
+## Case 8 — Harry Hughes
 
 One valid dose 1 from the GP, two refused or unwell school sessions, then
 a clinic where he refused in the morning and was vaccinated in the
 afternoon. The afternoon vaccination is dose 2.
 
-- **NHS numbers:** 9990000107 (8A), 9990000115 (8B)
+- **NHS number:** 9990000107
 - **Date of birth:** 14 May, Year 10 in the current academic year
 
 ### Vaccination history
@@ -431,9 +483,9 @@ clinic, not to the session itself.
 
 > **Faked rows.** The prototype does not derive a session outcome:
 > `PatientSession` has no outcome, so the card shows No outcome for every
-> session, and it lists only the current academic year’s sessions. For
-> this research the seed writes the rows onto the case 8 patients
-> (`sessionsCardRows`, scaffolding) to show what production Mavis shows:
+> session, and it lists only the current academic year’s sessions. The
+> seed writes the rows onto the case 8 patient (`sessionsCardRows`,
+> scaffolding) to show what production Mavis shows:
 > the latest outcome recorded in each session, across every academic
 > year for a non-seasonal programme. The location and date come from the
 > seeded sessions, so they move with the cohort.
@@ -445,18 +497,20 @@ clinic, not to the session itself.
 | Spring Hill Medical Centre | Y9 summer clinic         | Vaccinated (green)      |
 | Grace Academy Coventry     | Current catch-up session | No outcome (plain text) |
 
-### Encounters card
+### Activity log
 
-- **8A:** shown, with three rows: the two refusals and the unwell record
-- **8B:** not shown at all
+Records 2 to 5 each have an entry from `patient.recordVaccination`:
+
+- Records 2 and 4: Unable to vaccinate: child refused
+- Record 3: Unable to vaccinate: child unwell
+- Record 5: Vaccinated with M-M-RvaxPro
 
 ---
 
 ## Cohort session
 
-All seven patients, the two case 7 design variants and the two case 8
-research forms are tied to a single co-located session for the catch-up
-scenario:
+All eight patients and the three case 7 design variants are tied to a
+single co-located session for the catch-up scenario:
 
 - **Session id:** `mmr-catchup-y9y10-current`
 - **School:** Grace Academy Coventry (id `135335`)
