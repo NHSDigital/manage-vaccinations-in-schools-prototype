@@ -687,6 +687,12 @@ export const bookIntoClinicController = {
       response.locals.appointment =
         appointment_uuid && booking.findAppointment(appointment_uuid)
 
+      // Keep the step asking for a phone number in the journey once shown, so
+      // it isn’t skipped when the number given there is submitted
+      if (view === 'phone-number' && data.journeyData?.[booking_uuid]) {
+        data.journeyData[booking_uuid].askedForPhoneNumber = true
+      }
+
       // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
       // that postcode is pushed to the appointment
       if (
