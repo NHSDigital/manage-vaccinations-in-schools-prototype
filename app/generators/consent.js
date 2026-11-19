@@ -2,6 +2,7 @@ import { fakerEN_GB as faker } from '@faker-js/faker'
 
 import { healthConditions } from '../datasets/health-conditions.js'
 import {
+  ContactSource,
   ProgrammeType,
   ReplyDecision,
   ReplyMethod,
@@ -17,13 +18,16 @@ import {
   generateTriageNote
 } from '../utils/reply.js'
 
-import { generateCommunicationNeeds } from './contact.js'
+import {
+  generateCommunicationNeeds,
+  generateRespondentDetails
+} from './contact-relationship.js'
 
 /**
  * Generate fake consent
  *
  * @param {PatientSession} patientSession - Patient session
- * @param {Contact} contact - Contact
+ * @param {ContactRelationship} contactRelationship - Contact
  * @param {Date} [lastConsentCreatedAt] - Date previous consent response created
  * @param {object} [overrides] - Choices to make instead of leaving them to chance
  * @param {ReplyDecision} [overrides.decision] - Decision
@@ -37,7 +41,7 @@ import { generateCommunicationNeeds } from './contact.js'
  */
 export function generateConsent(
   patientSession,
-  contact,
+  contactRelationship,
   lastConsentCreatedAt,
   overrides = {}
 ) {
@@ -46,12 +50,12 @@ export function generateConsent(
   const session = patientSession.session
 
   // Can’t create a consent response if no contact associated with child
-  if (!contact) {
+  if (!contactRelationship) {
     return
   }
 
   // Can’t create a consent response if no contact details
-  if (!contact.hasContactDetails) {
+  if (!contactRelationship.hasContactDetails) {
     return
   }
 
@@ -133,13 +137,15 @@ export function generateConsent(
     return
   }
 
+  const createdAt =
+    lastConsentCreatedAt ||
+    faker.date.between({
+      from: session.consentOpenAt,
+      to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
+    })
+
   return new Consent({
-    createdAt:
-      lastConsentCreatedAt ||
-      faker.date.between({
-        from: session.consentOpenAt,
-        to: sessionClosedBeforeToday ? session.consentCloseAt : nowAt
-      }),
+    createdAt,
     child,
     decision,
     method,
@@ -180,14 +186,19 @@ export function generateConsent(
       }),
       hasRequestedConsultation
     }),
-    contact_uuid: contact.uuid,
+    contactRelationship_uuid: contactRelationship.uuid,
+    // Details the parent gave about themselves in their response
+    contactRelationship_: generateRespondentDetails(contactRelationship, {
+      createdAt,
+      source: ContactSource.ConsentResponse
+    }),
     // Communication needs given in the response
-    ...generateCommunicationNeeds(contact),
+    ...generateCommunicationNeeds(contactRelationship),
     programme_id: programme.id,
     session_id: session.id
   })
 }
 
 /**
- * @import { Contact, PatientSession } from '../models.js'
+ * @import { ContactRelationship, PatientSession } from '../models.js'
  */

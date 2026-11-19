@@ -6,7 +6,7 @@ import {
   UploadStatus,
   UploadType
 } from '../enums.js'
-import { Contact, Patient, School, User } from '../models.js'
+import { ContactRelationship, Patient, School, User } from '../models.js'
 import { formatDate, today } from '../utils/date.js'
 import { getUploadStatusProperties } from '../utils/enum-properties.js'
 import {
@@ -45,8 +45,8 @@ import { BaseModel } from './base.js'
  * @property {string} [rejectionReason] - Rejection reason
  * @property {object} [validations] - File validations, keyed by row number
  * @property {boolean} [hasFailed] - Records failed data integrity checks
- * @property {object} [contactChanges] - New parent contact details found in
- *   the file, keyed by contact UUID
+ * @property {Record<string, Array<ContactOptions>>} [contactChanges] -
+ *   New contact points for parents found in the file, keyed by contact UUID
  * @property {Array<number>} [yearGroups] - Year groups
  * @property {object} [yearGroupChanges] - Year groups children were in before
  *   the file moved them up, keyed by patient UUID
@@ -349,18 +349,25 @@ export class Upload extends BaseModel {
   }
 
   /**
-   * Get parent contacts with new contact details that need review
-   * Each contact has the details found in the file as its pending changes
+   * Get parent contacts with new contact points that need review
+   * Each contact has the contact points found in the file as pending
    *
-   * @returns {Array<Contact>} Contacts with pending changes
+   * @returns {Array<ContactRelationship>} Contacts with pending contact points
    */
-  get pendingContacts() {
+  get pendingContactRelationships() {
     return Object.entries(this.contactChanges)
-      .map(([uuid, pendingChanges]) => {
-        const contact = Contact.findOne(uuid, this.context)
+      .map(([uuid, pendingContacts]) => {
+        const contactRelationship = ContactRelationship.findOne(
+          uuid,
+          this.context
+        )
 
         return (
-          contact && new Contact({ ...contact, pendingChanges }, this.context)
+          contactRelationship &&
+          new ContactRelationship(
+            { ...contactRelationship, pendingContacts },
+            this.context
+          )
         )
       })
       .filter(Boolean)
@@ -706,4 +713,5 @@ Upload.relate('school_id', () => School, 'school')
  * @import { UploadFormat } from '../enums.js'
  * @import { Move } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ContactOptions } from './contact.js'
  */

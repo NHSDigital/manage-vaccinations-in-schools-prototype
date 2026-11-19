@@ -12,7 +12,14 @@ import {
   VaccineCriteria,
   VaccineMethod
 } from '../enums.js'
-import { ClinicAppointment, Patient, Programme, Session } from '../models.js'
+import {
+  ClinicAppointment,
+  ClinicBooking,
+  ContactRelationship,
+  Patient,
+  Programme,
+  Session
+} from '../models.js'
 
 import { getBookableClinicSessions } from './clinic-booking.js'
 import { getAdditionalNeeds } from './feature-flags.js'
@@ -152,6 +159,24 @@ export const getAllAppointmentPaths = (
   const isParentJourney = journeyType === ClinicBookingJourneyType.ParentOnline
   const isDataMigrationJourney =
     journeyType === ClinicBookingJourneyType.DataMigration
+
+  // When a team member books, they choose one of the child’s relationships
+  // (which can’t be edited) or add a new one. Either needs a phone number, so
+  // ask for one if they don’t have one (or didn’t give one when added)
+  const booking = ClinicBooking.findOne(booking_uuid, sessionData.wizard)
+  const contactRelationship_uuid =
+    sessionData.booking?.contactRelationship?.uuid ??
+    booking?.contactRelationship?.uuid
+  const existingContactRelationship =
+    contactRelationship_uuid &&
+    contactRelationship_uuid !== 'new' &&
+    ContactRelationship.findOne(contactRelationship_uuid, sessionData)
+  const needsPhoneNumber =
+    !isParentJourney &&
+    (sessionData.journeyData[booking_uuid]?.askedForPhoneNumber ||
+      (!(existingContactRelationship || booking?.contactRelationship)
+        ?.hasPhoneNumber &&
+        !sessionData.booking?.contactRelationship?.tel))
 
   const pathsPerAppointment = appointments.map((appointment) => {
     const appointment_uuid = appointment.uuid
@@ -352,7 +377,7 @@ export const getAllAppointmentPaths = (
                   return false
                 }
 
-                return appointment.patient.contacts?.length > 0
+                return appointment.patient.contactRelationships?.length > 0
               },
               [appointmentPath('contact')]: () => {
                 if (
@@ -361,7 +386,7 @@ export const getAllAppointmentPaths = (
                   return false
                 }
 
-                return appointment.patient.contacts?.length === 0
+                return appointment.patient.contactRelationships?.length === 0
               }
             }
           }),
@@ -377,12 +402,21 @@ export const getAllAppointmentPaths = (
             [appointmentPath('contact-selection')]: {}
           }
         : {}),
-      [appointmentPath('contact')]: {
-        [appointmentPath('parental-responsibility')]: {
-          data: 'appointment.parentHasParentalResponsibility',
-          value: 'false'
-        }
-      },
+      ...(isParentJourney || !existingContactRelationship
+        ? {
+            [appointmentPath('contact')]: {
+              [appointmentPath('parental-responsibility')]: {
+                data: 'appointment.parentHasParentalResponsibility',
+                value: 'false'
+              }
+            }
+          }
+        : {}),
+      ...(needsPhoneNumber
+        ? {
+            [appointmentPath('phone-number')]: {}
+          }
+        : {}),
       [appointmentPath('communication-needs')]: {},
 
       // Check and confirm

@@ -16,7 +16,7 @@ import {
   Clinic,
   ClinicAppointment,
   ClinicBooking,
-  Contact,
+  ContactRelationship,
   Patient,
   Programme,
   Session
@@ -687,6 +687,12 @@ export const bookIntoClinicController = {
       response.locals.appointment =
         appointment_uuid && booking.findAppointment(appointment_uuid)
 
+      // Keep the step asking for a phone number in the journey once shown, so
+      // it isn’t skipped when the number given there is submitted
+      if (view === 'phone-number' && data.journeyData?.[booking_uuid]) {
+        data.journeyData[booking_uuid].askedForPhoneNumber = true
+      }
+
       // If we took a shortcut to the clinic location page by the user entering a preferred postcode, make sure
       // that postcode is pushed to the appointment
       if (
@@ -1270,25 +1276,29 @@ export const bookIntoClinicController = {
         }
       } else if (view === 'contact-selection') {
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-        if (booking.contact.uuid !== 'new') {
+        if (booking.contactRelationship.uuid !== 'new') {
           // Just selected an existing parent, so load it into the booking and appointment
-          booking.contact = Contact.findOne(booking.contact.uuid, data)
+          booking.contactRelationship = ContactRelationship.findOne(
+            booking.contactRelationship.uuid,
+            data
+          )
           const appointment = booking.findAppointment(appointment_uuid)
-          appointment.parentalRelationship = booking.contact.relationship
+          appointment.parentalRelationship =
+            booking.contactRelationship.relationship
           appointment.parentalRelationshipOther =
-            booking.contact.relationshipOther
+            booking.contactRelationship.relationshipOther
           appointment.parentHasParentalResponsibility =
-            booking.contact.hasParentalResponsibility
+            booking.contactRelationship.hasParentalResponsibility
         } else {
           // Reset the contact ready for new details
-          booking.contact = new Contact({ uuid: 'new' })
+          booking.contactRelationship = new ContactRelationship({ uuid: 'new' })
         }
         ClinicBooking.update(booking_uuid, booking, data.wizard)
       } else if (view === 'contact') {
         // If we've just recorded a new contact for an existing patient, give it a proper UUID
         const booking = ClinicBooking.findOne(booking_uuid, data.wizard)
-        if (booking.contact?.uuid === 'new') {
-          booking.contact.uuid = faker.string.uuid()
+        if (booking.contactRelationship?.uuid === 'new') {
+          booking.contactRelationship.uuid = faker.string.uuid()
           ClinicBooking.update(booking_uuid, booking, data.wizard)
         }
       } else if (view === 'delete-appointment') {

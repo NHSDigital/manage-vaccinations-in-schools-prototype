@@ -5,6 +5,7 @@ import { healthConditions } from '../datasets/health-conditions.js'
 import {
   Adjustment,
   ClinicAppointmentStatus,
+  ContactSource,
   Impairment,
   RelationshipType,
   ReplyDecision
@@ -13,7 +14,11 @@ import { Child, ClinicAppointment } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
 import { generateHealthAnswersForQuestions } from '../utils/reply.js'
 
-import { generateCommunicationNeeds, generateContact } from './contact.js'
+import {
+  generateCommunicationNeeds,
+  generateContactRelationship,
+  generateRespondentDetails
+} from './contact-relationship.js'
 
 /**
  * Choose programmes and vaccine choices for a child's clinic appointment
@@ -62,7 +67,7 @@ export function decideClinicVaccinationChoices(invitedProgramme_ids) {
  * @param {Patient} patient - The patient for whom the appointment is being created
  * @param {Session} session - The clinic session into which we're booking the patient
  * @param {ClinicBooking} booking - The booking this appointment will belong to
- * @param {ClinicVaccinationChoices} vaccinationChoices - Programmesm vaccine choices and support needs, from decideClinicVaccinationChoices
+ * @param {ClinicVaccinationChoices} vaccinationChoices - Programmes vaccine choices and support needs, from decideClinicVaccinationChoices
  * @param {Date} startAt - The bookable start time chosen for this appointment
  * @returns {ClinicAppointment} A new, fake clinic appointment
  */
@@ -156,29 +161,38 @@ export function generateClinicAppointment(
   let parentalRelationship,
     parentalRelationshipOther,
     parentHasParentalResponsibility
-  if (!booking.contact.fullName) {
+  if (!booking.contactRelationship.fullName) {
     // First appointment, so set up the booking’s contact
-    booking.contact =
-      patient.contacts[0] ||
-      patient.contacts[1] ||
-      generateContact(child, faker.datatype.boolean(0.5))
-    Object.assign(booking, generateCommunicationNeeds(booking.contact))
+    booking.contactRelationship = generateRespondentDetails(
+      patient.contactRelationships[0] ||
+        patient.contactRelationships[1] ||
+        generateContactRelationship(child, faker.datatype.boolean(0.5), {
+          sources: []
+        }),
+      { createdAt: booking.createdAt, source: ContactSource.ClinicBooking }
+    )
+    Object.assign(
+      booking,
+      generateCommunicationNeeds(booking.contactRelationship)
+    )
     // ...and their relationship to this child
-    parentalRelationship = booking.contact.relationship
-    parentalRelationshipOther = booking.contact.relationshipOther
-    parentHasParentalResponsibility = booking.contact.hasParentalResponsibility
+    parentalRelationship = booking.contactRelationship.relationship
+    parentalRelationshipOther = booking.contactRelationship.relationshipOther
+    parentHasParentalResponsibility =
+      booking.contactRelationship.hasParentalResponsibility
   } else {
     // This isn’t the first appointment, so set up contact details similar to the first one
-    const contact = booking.contact
+    const contactRelationship = booking.contactRelationship
     const mumOrDad = [RelationshipType.Mum, RelationshipType.Dad].includes(
-      contact.relationship
+      contactRelationship.relationship
     )
     if (mumOrDad) {
       // Mum or Dad initially, and most likely to stay that way
       if (faker.datatype.boolean(0.9)) {
-        parentalRelationship = contact.relationship
-        parentalRelationshipOther = contact.relationshipOther
-        parentHasParentalResponsibility = contact.hasParentalResponsibility
+        parentalRelationship = contactRelationship.relationship
+        parentalRelationshipOther = contactRelationship.relationshipOther
+        parentHasParentalResponsibility =
+          contactRelationship.hasParentalResponsibility
       } else {
         parentalRelationship = faker.helpers.arrayElement([
           RelationshipType.Fosterer,
@@ -193,9 +207,10 @@ export function generateClinicAppointment(
       }
     } else {
       // Fosterer, Guardian or Other - for these, we'll keep the relationship exactly the same
-      parentalRelationship = contact.relationship
-      parentalRelationshipOther = contact.relationshipOther
-      parentHasParentalResponsibility = contact.hasParentalResponsibility
+      parentalRelationship = contactRelationship.relationship
+      parentalRelationshipOther = contactRelationship.relationshipOther
+      parentHasParentalResponsibility =
+        contactRelationship.hasParentalResponsibility
     }
   }
 

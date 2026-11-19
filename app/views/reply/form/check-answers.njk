@@ -33,8 +33,8 @@
         href: reply.uri + "/new/decision"
       },
       canNotify: {
-        label: __("reply.contact.canNotify.label"),
-        value: reply.contact.canNotify,
+        label: __("reply.contactRelationship.canNotify.label"),
+        value: reply.contactRelationship.canNotify,
         href: reply.uri + "/new/can-notify"
       } if reply.hasSelfConsent,
       refusalReason: {
@@ -71,12 +71,12 @@
   {{ summaryList({
     card: {
       heading: {
-        text: __("contact.label"),
+        text: __("contactRelationship.label"),
         size: "m"
       }
     },
     lastRowBorder: false,
-    rows: summaryRows(reply.contact, {
+    rows: summaryRows(reply.contactRelationship, {
       fullName: {
         href: reply.uri + "/new/contact"
       },

@@ -1,6 +1,6 @@
 {% extends "_layouts/default.njk" %}
 
-{% set title = __("appointments.show.title", appointment.contact.formatted.fullName) %}
+{% set title = __("appointments.show.title", appointment.contactRelationship.formatted.fullName) %}
 
 {% block content %}
   <div class="nhsuk-u-width-three-quarters">
@@ -49,12 +49,12 @@
     {{ summaryList({
       card: {
         heading: {
-          text: __("contact.label"),
+          text: __("contactRelationship.label"),
           size: "m"
         }
       },
       lastRowBorder: false,
-      rows: summaryRows(appointment.contact, {
+      rows: summaryRows(appointment.contactRelationship, {
         fullName: {},
         relationship: {},
         hasParentalResponsibility: {},
@@ -63,7 +63,7 @@
         communicationNeeds: {},
         canSms: {}
       })
-    }) if appointment.contact }}
+    }) if appointment.contactRelationship }}
 
     {{ summaryList({
       card: {

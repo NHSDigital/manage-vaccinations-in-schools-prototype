@@ -1,0 +1,29 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("clinicBooking.phoneNumber.title", { contactRelationship: booking.contactRelationship }) %}
+
+{% block form %}
+  {{ input({
+    label: {
+      text: title,
+      caption: patient.fullName,
+      size: "l",
+      isPageHeading: true
+    },
+    hint: {
+      text: __("clinicBooking.phoneNumber.hint")
+    },
+    type: "tel",
+    width: "20",
+    autocomplete: "off",
+    decorate: "booking.contactRelationship.tel"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: __("contactRelationship.canSms.title", { contactRelationship: booking.contactRelationship })
+    },
+    items: getBooleanItems(),
+    decorate: "booking.contactRelationship.canSms"
+  }) }}
+{% endblock %}

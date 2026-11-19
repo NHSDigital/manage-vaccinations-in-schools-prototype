@@ -1,0 +1,93 @@
+{% extends "_layouts/form.njk" %}
+
+{% set confirmButtonText = __("contactRelationship." + type + ".confirm") %}
+{% set title = __("contactRelationship." + type + ".title") %}
+{% set isSensitive = contactRelationship.patient.isSensitive %}
+
+{% block form %}
+  {{ heading({
+    caption: contactRelationship.patient.fullName,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ input({
+    label: __("contactRelationship.fullName.label"),
+    decorate: "contactRelationship.fullName"
+  }) }}
+
+  {%- set fosterCarerHtml = radios({
+    fieldset: {
+      legend: __("contactRelationship.hasParentalResponsibility.delegatedLabel")
+    },
+    hint: __("contactRelationship.hasParentalResponsibility.hint"),
+    items: getBooleanItems(),
+    decorate: "contactRelationship.hasParentalResponsibility"
+  }) %}
+
+  {%- set guardianHtml = radios({
+    fieldset: {
+      legend: __("contactRelationship.hasParentalResponsibility.label")
+    },
+    hint: __("contactRelationship.hasParentalResponsibility.hint"),
+    items: getBooleanItems(),
+    decorate: "contactRelationship.hasParentalResponsibility"
+  }) %}
+
+  {%- set otherHtml = input({
+    label: __("contactRelationship.relationshipOther.label"),
+    decorate: "contactRelationship.relationshipOther"
+  }) + radios({
+    fieldset: {
+      legend: __("contactRelationship.hasParentalResponsibility.label")
+    },
+    hint: __("contactRelationship.hasParentalResponsibility.hint"),
+    items: getBooleanItems(),
+    decorate: "contactRelationship.hasParentalResponsibility"
+  }) %}
+
+  {# Add conditional html for ‘Foster carer’ option #}
+  {% set items = injectConditionalHtml(parentalRelationshipItems, RelationshipType.Fosterer, fosterCarerHtml) %}
+
+  {# Add conditional html for ‘Guardian’ option #}
+  {% set items = injectConditionalHtml(items, RelationshipType.Guardian, guardianHtml) %}
+
+  {# Add conditional html for ‘Other’ option #}
+  {% set items = injectConditionalHtml(items, RelationshipType.Other, otherHtml) %}
+
+  {{ radios({
+    fieldset: {
+      legend: __("contactRelationship.relationship.label")
+    },
+    items: items,
+    decorate: "contactRelationship.relationship"
+  }) }}
+
+  {# Phone numbers and email addresses are changed on the contacts tab, once
+     a contact has been added #}
+  {% if type == "new" %}
+    {{ input({
+      label: __("contactRelationship.email.label"),
+      type: "email",
+      spellcheck: false,
+      decorate: "contactRelationship.email"
+    }) if not isSensitive }}
+
+    {{ input({
+      label: __("contactRelationship.tel.label"),
+      type: "tel",
+      width: "20",
+      decorate: "contactRelationship.tel"
+    }) if not isSensitive }}
+  {% endif %}
+
+  {# Text messages can only be sent if the contact has a phone number (when
+     adding a contact, this only applies if they’re given one) #}
+  {{ radios({
+    fieldset: {
+      legend: __("contactRelationship.canSms.title")
+    },
+    items: getBooleanItems(),
+    decorate: "contactRelationship.canSms"
+  }) if (type == "new" or contactRelationship.hasPhoneNumber) and not isSensitive }}
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "_layouts/default.njk" %}
 
-{% set title = __("consent.show.title", consent.contact.formatted.fullName) %}
+{% set title = __("consent.show.title", consent.contactRelationship.formatted.fullName) %}
 
 {% block content %}
   <div class="nhsuk-u-width-three-quarters">
@@ -48,12 +48,12 @@
     {{ summaryList({
       card: {
         heading: {
-          text: __("contact.label"),
+          text: __("contactRelationship.label"),
           size: "m"
         }
       },
       lastRowBorder: false,
-      rows: summaryRows(consent.contact, {
+      rows: summaryRows(consent.contactRelationship, {
         fullName: {},
         relationship: {},
         hasParentalResponsibility: {},
@@ -62,7 +62,7 @@
         communicationNeeds: {},
         canSms: {}
       })
-    }) if consent.contact }}
+    }) if consent.contactRelationship }}
 
     {{ summaryList({
       card: {

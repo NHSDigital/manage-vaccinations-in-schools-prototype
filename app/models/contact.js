@@ -1,43 +1,41 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
+import { formatPhoneNumber } from 'nhsuk-prototype-kit/nunjucks-filters'
 
-import { RelationshipType } from '../enums.js'
-import { Patient } from '../models.js'
-import { formatOther, formatContact, stringToBoolean } from '../utils/string.js'
+import {
+  ContactSource,
+  ContactType,
+  NotifyEmailStatus,
+  NotifySmsStatus
+} from '../enums.js'
+import { User } from '../models.js'
+import { formatDate, today } from '../utils/date.js'
+import { stringToArray } from '../utils/string.js'
 
 import { BaseModel } from './base.js'
 
 /**
  * @typedef {BaseModelOptions & object} ContactOptions
- * @property {string} [uuid] - Contact UUID
- * @property {string} [fullName] - Full name
- * @property {RelationshipType} [relationship] - Type of relationship to child
- * @property {string} [relationshipOther] - Other relationship to child
- * @property {boolean} [hasParentalResponsibility] - Has parental responsibility
- * @property {boolean} [canNotify] - Notify about consent and vaccinations
- * @property {string} [tel] - Phone number
- * @property {string} [email] - Email address
- * @property {boolean} [canSms] - Get updates via SMS
- * @property {NotifyEmailStatus} [emailStatus] - Email status
- * @property {NotifySmsStatus} [smsStatus] - SMS status
- * @property {Partial<Contact>} [pendingChanges] - Pending changes to contact details
+ * @property {string} [uuid] - Contact point UUID
+ * @property {ContactType} [type] - Type of contact point
+ * @property {string} [value] - Phone number or email address
+ * @property {NotifyEmailStatus|NotifySmsStatus} [status] - Delivery status
+ * @property {Array<ContactSource>} [sources] - Where the phone number or
+ *   email address came from
+ * @property {Date} [archivedAt] - Date archived
+ * @property {string} [archivedBy_uid] - User who archived contact point
  */
 
 /**
- * @class Contact
+ * A phone number or email address for a contact
+ *
+ * Contact points are stored with their contact, rather than in a collection of
+ * their own, so that copies of a contact (like those kept by replies, clinic
+ * bookings and audit events) include the contact points they had at the time.
+ *
+ * @class ContactPoint
  */
 export class Contact extends BaseModel {
-  static contextKey = 'contacts'
-  static identifierKey = 'uuid'
   static ns = 'contact'
-
-  /**
-   * Consent response or clinic booking the contact gave, if linked to one
-   *
-   * A private field, so it isn’t saved with the contact or copied with it
-   *
-   * @type {Reply|ClinicBooking|undefined}
-   */
-  #response
 
   /**
    * @param {ContactOptions} options - Options
@@ -47,136 +45,123 @@ export class Contact extends BaseModel {
     super(options, context)
 
     /** @type {string|undefined} */
-    this.patient_uuid
+    this.archivedBy_uid
 
-    /** @type {Patient|undefined} */
-    this.patient
+    /** @type {User|undefined} */
+    this.archivedBy
 
-    this.context = context
     this.uuid = options?.uuid || faker.string.uuid()
-    this.fullName = options?.fullName || ''
-    this.relationship = options?.relationship || RelationshipType.Unknown
-    this.relationshipOther =
-      this?.relationship === RelationshipType.Other
-        ? options?.relationshipOther
-        : undefined
-    // Only ask about parental responsibility if it isn’t implied by the
-    // relationship (as it is for mums and dads)
-    this.hasParentalResponsibility = [
-      RelationshipType.Fosterer,
-      RelationshipType.Guardian,
-      RelationshipType.Other
-    ].includes(this.relationship)
-      ? stringToBoolean(options?.hasParentalResponsibility)
-      : undefined
-    this.canNotify = stringToBoolean(options?.canNotify)
-    this.tel = options?.tel
-    this.email = options?.email
-    this.canSms = this.tel ? stringToBoolean(options?.canSms) : undefined
-    this.emailStatus = this?.email && options?.emailStatus
-    this.smsStatus = this?.tel && options?.smsStatus
-
-    this.pendingChanges = options?.pendingChanges || {}
+    this.type = options?.type
+    this.value = Contact.normaliseValue(options?.type, options?.value)
+    this.status = options?.status
+    this.sources = stringToArray(options?.sources)
+    this.archivedAt = options?.archivedAt && new Date(options.archivedAt)
   }
 
   /**
-   * Link the contact to the consent response or clinic booking they gave
+   * Is an email address
    *
-   * Communication needs are given with each response or booking, rather than
-   * kept with the contact, so a contact linked to one can show them. The link
-   * isn’t saved with the contact.
-   *
-   * @param {Reply|ClinicBooking} [response] - Response or booking
-   * @returns {Contact} Contact
+   * @returns {boolean} Is an email address
    */
-  setResponse(response) {
-    this.#response = response
-
-    return this
+  get isEmail() {
+    return this.type === ContactType.Email
   }
 
   /**
-   * Get the consent response or clinic booking the contact gave
+   * Is a phone number
    *
-   * @returns {Reply|ClinicBooking|undefined} Response or booking
+   * @returns {boolean} Is a phone number
    */
-  get response() {
-    return this.#response
+  get isPhone() {
+    return this.type === ContactType.Phone
   }
 
   /**
-   * Has communication needs (from the response or booking they gave)
+   * Normalise a phone number or email address
    *
-   * @returns {boolean|undefined} Has communication needs
+   * Values are saved normalised, so they can be compared with each other.
+   * Email addresses ignore case and spaces. Phone numbers keep only their
+   * digits, with the UK country code replaced by a leading zero (they’re
+   * formatted with spaces when shown, using `displayValue`)
+   *
+   * @param {ContactType} type - Type of contact point
+   * @param {string} [value] - Phone number or email address
+   * @returns {string|undefined} Normalised value
    */
-  get hasCommunicationNeeds() {
-    return this.response?.hasCommunicationNeeds
-  }
-
-  /**
-   * Get communication needs (from the response or booking they gave)
-   *
-   * @returns {string|undefined} Communication needs
-   */
-  get communicationNeeds() {
-    return this.response?.communicationNeeds
-  }
-
-  /**
-   * Get full name and relationship to child
-   *
-   * @returns {string} Full name and relationship
-   */
-  get fullNameAndRelationship() {
-    return formatContact(this, false)
-  }
-
-  /**
-   * Has contact details
-   *
-   * @returns {boolean} Has contact details
-   */
-  get hasContactDetails() {
-    return !!this.email || !!this.tel
-  }
-
-  /**
-   * Are these the contact details of the same person as another contact?
-   *
-   * They need to have the same and the same relationship to the child
-   * (ignoring parental responsibility settings)
-   *
-   * @param {Contact} [contact] - Other contact
-   * @returns {boolean} Contact details are for the same person
-   */
-  isSamePersonAs(contact) {
-    if (!contact) {
-      return false
+  static normaliseValue(type, value) {
+    if (typeof value !== 'string') {
+      return value
     }
 
-    const normaliseText = (text) =>
-      text?.trim().replace(/\s+/g, ' ').toLowerCase() || undefined
+    if (type === ContactType.Phone) {
+      // Replace the UK country code (with or without 00 before it, and any 0
+      // after it, as in +44 (0)7700 900123) with a leading 0
+      return value.replace(/\D/g, '').replace(/^(?:00)?440?/, '0')
+    }
 
-    const hasSameName =
-      normaliseText(this.fullName) !== undefined &&
-      normaliseText(this.fullName) === normaliseText(contact.fullName)
-    const hasSameRelationship =
-      this.relationship === contact.relationship &&
-      (this.relationship === RelationshipType.Other
-        ? normaliseText(this.relationshipOther) ===
-          normaliseText(contact.relationshipOther)
-        : true)
-
-    return hasSameName && hasSameRelationship
+    return value.replace(/\s/g, '').toLowerCase()
   }
 
   /**
-   * Has pending changes
+   * Get value to show (phone numbers are formatted with spaces)
    *
-   * @returns {boolean} Has pending changes
+   * @returns {string|undefined} Value to show
    */
-  get hasPendingChanges() {
-    return Object.keys(this.pendingChanges).length > 0
+  get displayValue() {
+    return this.isPhone ? String(formatPhoneNumber(this.value)) : this.value
+  }
+
+  /**
+   * Was given in a consent response or clinic booking
+   *
+   * @returns {boolean} Was given in a consent response or clinic booking
+   */
+  get isFromResponse() {
+    return this.sources.some((source) =>
+      [ContactSource.ConsentResponse, ContactSource.ClinicBooking].includes(
+        source
+      )
+    )
+  }
+
+  /**
+   * Has been archived
+   *
+   * @returns {boolean} Has been archived
+   */
+  get isArchived() {
+    return !!this.archivedAt
+  }
+
+  /**
+   * Archive
+   *
+   * @param {object} [options] - Options
+   * @param {Date} [options.archivedAt] - Date archived
+   * @param {string} [options.archivedBy_uid] - User who archived it
+   */
+  archive({ archivedAt = today(), archivedBy_uid } = {}) {
+    this.archivedAt = archivedAt
+    this.archivedBy_uid = archivedBy_uid
+  }
+
+  /**
+   * Restore
+   */
+  restore() {
+    this.archivedAt = undefined
+    this.archivedBy_uid = undefined
+  }
+
+  /**
+   * Messages sent to this contact point are being delivered
+   *
+   * @returns {boolean} Messages are being delivered
+   */
+  get isDelivered() {
+    return this.isEmail
+      ? this.status === NotifyEmailStatus.Delivered
+      : this.status === NotifySmsStatus.Delivered
   }
 
   /**
@@ -185,25 +170,27 @@ export class Contact extends BaseModel {
    * @returns {object} Formatted values
    */
   get formatted() {
+    const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' }
+
     return new Proxy(
       {},
       {
         get: (_target, prop) => {
-          const isSensitive = this.patient?.isSensitive
-          const redactIfSensitive = (value) =>
-            isSensitive && value !== undefined ? 'Sensitive' : value
-
           switch (prop) {
-            case 'communicationNeeds':
-              return this.response?.formatted['communicationNeeds']
-            case 'fullName':
-              return this.fullName || 'Name unknown'
-            case 'relationship':
-              return formatOther(this.relationshipOther, this.relationship)
-            case 'email':
-              return redactIfSensitive(this.email)
-            case 'tel':
-              return redactIfSensitive(this.tel)
+            case 'value':
+              return this.isArchived
+                ? `<s>${this.displayValue}</s>`
+                : this.displayValue
+            case 'sources':
+              return this.sources.length > 0
+                ? this.sources.join('<br>')
+                : undefined
+            case 'createdAt':
+              return formatDate(this.createdAt, dateOptions)
+            case 'updatedAt':
+              return this.updatedAt && formatDate(this.updatedAt, dateOptions)
+            case 'archivedAt':
+              return this.archivedAt && formatDate(this.archivedAt, dateOptions)
             default:
               return undefined
           }
@@ -211,21 +198,10 @@ export class Contact extends BaseModel {
       }
     )
   }
-
-  /**
-   * Get URI
-   *
-   * @returns {string} URI
-   */
-  get uri() {
-    return `/contacts/${this.uuid}`
-  }
 }
 
-Contact.relate('patient_uuid', () => Patient, 'patient')
+Contact.relate('archivedBy_uid', () => User, 'archivedBy')
 
 /**
- * @import { NotifyEmailStatus, NotifySmsStatus } from '../enums.js'
- * @import { ClinicBooking, Reply } from '../models.js'
  * @import { BaseModelOptions } from './base.js'
  */

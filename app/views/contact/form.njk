@@ -1,0 +1,20 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("contact.new." + field + ".title") %}
+{% set confirmButtonText = __("contact.new.confirm") %}
+
+{% block form %}
+  {{ input({
+    label: {
+      text: title,
+      caption: contactRelationship.fullNameAndRelationship,
+      size: "l",
+      isPageHeading: true
+    },
+    type: field,
+    autocomplete: "off",
+    spellcheck: false if field == "email",
+    width: "20" if field == "tel",
+    decorate: "contact." + field
+  }) }}
+{% endblock %}

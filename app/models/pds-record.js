@@ -1,11 +1,11 @@
 import { fakerEN_GB as faker } from '@faker-js/faker'
 
-import { Child, Contact } from '../models.js'
+import { Child, ContactRelationship } from '../models.js'
 import { tokenize } from '../utils/object.js'
 import {
   formatList,
   formatNhsNumber,
-  formatContact,
+  formatContactRelationship,
   formatWithSecondaryText,
   stringToBoolean
 } from '../utils/string.js'
@@ -46,7 +46,7 @@ export class PDSRecord extends Child {
     this.address =
       !isSensitive && options?.address ? options.address : undefined
     this.school_id = null
-    this.contact_uuids = options?.contact_uuids || []
+    this.contactRelationship_uuids = options?.contactRelationship_uuids || []
   }
 
   /**
@@ -55,7 +55,9 @@ export class PDSRecord extends Child {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return this.contacts.some((contact) => contact.hasContactDetails)
+    return this.contactRelationships.some(
+      (contactRelationship) => contactRelationship.hasContactDetails
+    )
   }
 
   /**
@@ -70,17 +72,17 @@ export class PDSRecord extends Child {
   /**
    * Get contacts (from record and replies)
    *
-   * @returns {Array<Contact>} Contacts
+   * @returns {Array<ContactRelationship>} Contacts
    */
-  get contacts() {
+  get contactRelationships() {
     // Don’t show contact details for sensitive records
     if (this.isSensitive) {
       return []
     }
 
-    return this.contact_uuids
-      .map((uuid) => Contact.findOne(uuid, this.context))
-      .filter((contact) => contact)
+    return this.contactRelationship_uuids
+      .map((uuid) => ContactRelationship.findOne(uuid, this.context))
+      .filter((contactRelationship) => contactRelationship)
   }
 
   /**
@@ -89,14 +91,13 @@ export class PDSRecord extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const contactTokens = []
-    for (const contact of this.contacts) {
-      contactTokens.push(tokenize(contact, ['fullName', 'tel', 'email']))
-    }
+    const contactRelationshipTokens = this.contactRelationships.map(
+      (contactRelationship) => contactRelationship.tokenized
+    )
 
     const childTokens = tokenize(this, ['nhsn', 'fullName', 'postalCode'])
 
-    return [childTokens, contactTokens].join(' ')
+    return [childTokens, contactRelationshipTokens].join(' ')
   }
 
   /**
@@ -117,11 +118,12 @@ export class PDSRecord extends Child {
               return formatWithSecondaryText(this.fullName, getFormattedNhsn())
             case 'nhsn':
               return getFormattedNhsn()
-            case 'contacts': {
-              const formattedContacts = this.contacts.map((contact) =>
-                formatContact(contact)
-              )
-              return formatList(formattedContacts)
+            case 'contactRelationships': {
+              const formattedContactRelationships =
+                this.contactRelationships.map((contactRelationship) =>
+                  formatContactRelationship(contactRelationship)
+                )
+              return formatList(formattedContactRelationships)
             }
             default:
               return super.formatted?.[prop]

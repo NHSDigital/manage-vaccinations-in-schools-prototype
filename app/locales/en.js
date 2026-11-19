@@ -29,7 +29,8 @@ export const en = {
     edit: 'Edit',
     review: 'Review',
     update: 'Update',
-    archive: 'Archive'
+    archive: 'Archive',
+    restore: 'Restore'
   },
   count: {
     updates:
@@ -296,7 +297,7 @@ export const en = {
     gpSurgery: {
       label: 'GP surgery'
     },
-    contact: {
+    contactRelationship: {
       label: 'Parent'
     }
   },
@@ -320,10 +321,10 @@ export const en = {
     add: {
       label: 'Create new record',
       title: 'Create a new child record from this clinic appointment?',
-      caption: 'Clinic appointment made by {{contact.fullName}}',
+      caption: 'Clinic appointment made by {{contactRelationship.fullName}}',
       confirm: 'Create a new child record',
       success:
-        '[{{patient.fullName}}]({{patient.uri}})’s record created from a clinic appointment made by {{appointment.contact.fullName}}'
+        '[{{patient.fullName}}]({{patient.uri}})’s record created from a clinic appointment made by {{appointment.contactRelationship.fullName}}'
     },
     results:
       '{count, plural, =0 {No unmatched appointments matching your search criteria were found} one {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointment} other {Showing <b>{from}</b> to <b>{to}</b> of <b>{count}</b> unmatched appointments}}',
@@ -344,22 +345,23 @@ export const en = {
     },
     link: {
       title: 'Link clinic appointment with child record?',
-      caption: 'Clinic appointment made by {{contact.fullName}}',
+      caption: 'Clinic appointment made by {{contactRelationship.fullName}}',
       summary: 'Compare child details',
       confirm: 'Link appointment with record',
       success:
-        'Clinic appointment made by {{appointment.contact.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
+        'Clinic appointment made by {{appointment.contactRelationship.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
     },
     match: {
       label: 'Match',
       title: 'Search for a child record to match with {{child.fullName}}',
-      caption: 'Consent response from {{contact.formatted.fullName}}',
+      caption:
+        'Consent response from {{contactRelationship.formatted.fullName}}',
       child: {
         fullAndPreferredNames: {
           label: 'Child’s name'
         }
       },
-      contact: {
+      contactRelationship: {
         label: 'Parent'
       }
     },
@@ -368,13 +370,14 @@ export const en = {
     },
     archive: {
       label: 'Archive',
-      caption: 'Clinic appointment made by {{appointment.contact.fullName}}',
+      caption:
+        'Clinic appointment made by {{appointment.contactRelationship.fullName}}',
       title: 'Archive response',
       description:
         'The unmatched clinic appointment will be hidden. This cannot be undone.',
       confirm: 'Archive this appointment',
       success:
-        'Clinic appointment made by {{appointment.contact.fullName}} archived'
+        'Clinic appointment made by {{appointment.contactRelationship.fullName}} archived'
     }
   },
   clinicInvitation: {
@@ -852,7 +855,7 @@ export const en = {
       summary: {
         child: 'Child details',
         appointment: 'Appointment details',
-        contact: 'Contact details',
+        contactRelationship: 'Contact details',
         healthAnswers: 'Answers to health questions'
       },
       confirm: {
@@ -902,7 +905,12 @@ export const en = {
       yes: 'Yes',
       no: 'No'
     },
-    contact: {
+    phoneNumber: {
+      title:
+        'Add a phone number for {{contactRelationship.fullNameAndRelationship}}',
+      hint: 'A phone number is needed to book a clinic appointment'
+    },
+    contactRelationship: {
       title: {
         parent: 'About you',
         team: {
@@ -1002,7 +1010,7 @@ export const en = {
           label: 'Cancel appointment'
         }
       },
-      contact: {
+      contactRelationship: {
         title: 'Your details',
         change: {
           label: 'Change my details'
@@ -1015,7 +1023,7 @@ export const en = {
       summary: {
         child: 'Child details',
         appointment: 'Appointment details',
-        contact: 'Contact details'
+        contactRelationship: 'Contact details'
       },
       success: {
         updated: 'Updated {{fullName}} in the {{sessionName}}',
@@ -1078,23 +1086,24 @@ export const en = {
     match: {
       label: 'Match',
       title: 'Search for a child record to match with {{child.fullName}}',
-      caption: 'Consent response from {{contact.formatted.fullName}}'
+      caption:
+        'Consent response from {{contactRelationship.formatted.fullName}}'
     },
     link: {
       title: 'Link consent response with child record?',
-      caption: 'Consent response from {{contact.fullName}}',
+      caption: 'Consent response from {{contactRelationship.fullName}}',
       summary: 'Compare child details',
       confirm: 'Link response with record',
       success:
-        'Consent response from {{consent.contact.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
+        'Consent response from {{consent.contactRelationship.fullName}} linked to [{{patient.fullName}}]({{patient.uri}})’s record'
     },
     add: {
       label: 'Create new record',
       title: 'Create a new child record from this consent response?',
-      caption: 'Consent response from {{contact.fullName}}',
+      caption: 'Consent response from {{contactRelationship.fullName}}',
       confirm: 'Create a new record from response',
       success:
-        '[{{patient.fullName}}]({{patient.uri}})’s record created from a consent response from {{consent.contact.fullName}}'
+        '[{{patient.fullName}}]({{patient.uri}})’s record created from a consent response from {{consent.contactRelationship.fullName}}'
     },
     invalidate: {
       label: 'Archive',
@@ -1302,7 +1311,7 @@ export const en = {
       yes: 'Yes',
       no: 'No'
     },
-    contact: {
+    contactRelationship: {
       summary: 'About you',
       title: 'About you',
       label: 'Parent',
@@ -1570,7 +1579,8 @@ export const en = {
         [ReplyDecision.OnlyTdIPV]:
           'As you answered ‘yes’ to one or more of the health questions, we need to check the Td/IPV vaccination is suitable for {{consent.child.fullName}}. We’ll review your answers and get in touch again soon.'
       },
-      description: 'We’ve sent a confirmation to <{{consent.contact_.email}}>.'
+      description:
+        'We’ve sent a confirmation to <{{consent.contactRelationship_.email}}>.'
     },
     actions: {
       label: 'Actions'
@@ -1867,7 +1877,7 @@ export const en = {
       cancel: 'No, return to notices'
     }
   },
-  contact: {
+  contactRelationship: {
     label: 'Parent or guardian',
     new: {
       label: 'Add a new contact',
@@ -1880,26 +1890,33 @@ export const en = {
       confirm: 'Save changes',
       success: 'Contact updated'
     },
-    delete: {
-      success: 'Contact deleted'
+    archive: {
+      description:
+        'All of their phone numbers and email addresses will be archived, and they won’t be sent any messages about {{patient.firstName}}. You can restore their phone numbers and email addresses later.',
+      success: 'Archived {{contactRelationship.fullName}}'
+    },
+    archived: {
+      label: 'View archived contacts',
+      title: 'Archived contacts'
     },
     action: {
-      title: 'Are you sure you want to {{type}} {{contact.fullName}}?',
-      description:
-        'Deleting this contact will remove them from {{patient.firstName}}, but not from any other children.\n\nThis cannot be undone.',
+      title:
+        'Are you sure you want to {{type}} {{contactRelationship.fullName}}?',
       confirm: 'Yes, %s this contact',
       cancel: 'No, return to contacts'
     },
     fullName: {
       label: 'Name'
     },
-    canSms: {
-      label: 'Get updates by text message',
-      true: 'Yes',
-      false: 'No'
-    },
     relationship: {
       label: 'Relationship'
+    },
+    contactDetails: {
+      label: 'Contact details'
+    },
+    canSms: {
+      label: 'Get updates by text message',
+      title: 'Do they want to get updates by text message?'
     },
     hasParentalResponsibility: {
       label: 'Has parental responsibility?',
@@ -1923,6 +1940,64 @@ export const en = {
       title:
         'Does the child want their parent or guardian to get confirmation of the vaccination?',
       label: 'Notify parent'
+    }
+  },
+  contact: {
+    label: 'Phone number or email address',
+    count:
+      '{count, plural, =0 {No active contacts} one {1 active contact} other {# active contacts}}',
+    new: {
+      tel: {
+        label: 'Add phone number',
+        title: 'Add a phone number'
+      },
+      email: {
+        label: 'Add email address',
+        title: 'Add an email address'
+      },
+      confirm: 'Add',
+      success: 'Added {{contact.displayValue}}'
+    },
+    confirm: {
+      success: 'Confirmed {{contact.displayValue}}'
+    },
+    archive: {
+      title: 'Archive {{contact.displayValue}}?',
+      description:
+        'Messages won’t be sent to an archived {{type}}. You can restore it later.',
+      confirm: 'Archive',
+      success: 'Archived {{contact.displayValue}}'
+    },
+    restore: {
+      title: 'Restore {{contact.displayValue}}?',
+      description: 'Messages will be sent to this {{type}} again.',
+      confirm: 'Restore',
+      success: 'Restored {{contact.displayValue}}'
+    },
+    cancel: 'No, return to contacts',
+    archived: {
+      label: 'Archived'
+    },
+    value: {
+      label: 'Value'
+    },
+    email: {
+      label: 'Email address'
+    },
+    tel: {
+      label: 'Phone number'
+    },
+    createdAt: {
+      label: 'Created'
+    },
+    updatedAt: {
+      label: 'Updated'
+    },
+    archivedAt: {
+      label: 'Archived'
+    },
+    sources: {
+      label: 'Source'
     }
   },
   patient: {
@@ -2176,7 +2251,7 @@ export const en = {
     vaccinations: {
       label: 'Vaccinations'
     },
-    contact: {
+    contactRelationship: {
       label: 'Parent or guardian',
       fullName: {
         label: 'Name'
@@ -2416,7 +2491,8 @@ export const en = {
     },
     request: {
       label: 'Send consent request',
-      success: 'Consent request sent to {{contact.fullNameAndRelationship}}'
+      success:
+        'Consent request sent to {{contactRelationship.fullNameAndRelationship}}'
     },
     consentRequests: {
       label: 'Consent requests for this session',
@@ -2599,7 +2675,7 @@ export const en = {
       label: 'GP surgery',
       title: 'Who is the child’s GP?'
     },
-    contacts: {
+    contactRelationships: {
       label: 'Parents or guardians'
     },
     add: {
@@ -2796,8 +2872,8 @@ export const en = {
     },
     respondent: {
       title: 'Who are you trying to get consent from?',
-      label: 'Parent or guardian',
-      new: 'Add a new parental contact'
+      label: 'Contact',
+      new: 'A new contact'
     },
     child: {
       label: 'Child'
@@ -2811,23 +2887,28 @@ export const en = {
       yes: 'Yes',
       no: 'No'
     },
-    contact: {
-      label: 'Parent',
+    phoneNumber: {
+      title:
+        'Add a phone number for {{contactRelationship.fullNameAndRelationship}}',
+      hint: 'A phone number is needed to record consent given by phone'
+    },
+    contactRelationship: {
+      label: 'Contact',
       title: {
-        new: 'Details for parent or guardian',
-        edit: 'Details for {{contact.fullNameAndRelationship}}'
+        new: 'Add a new contact',
+        edit: 'Details for {{contactRelationship.fullNameAndRelationship}}'
       },
       canNotify: {
         title:
-          'Do you want to send {{contact.formatted.fullName}} an email and text message confirming their decision?',
-        label: 'Notify parent'
+          'Do you want to send {{contactRelationship.formatted.fullName}} an email and text message confirming their decision?',
+        label: 'Notify contacts'
       }
     },
     programme: {
       label: 'Programme',
       title: {
         Child: 'Which vaccination is the child giving consent for?',
-        Contact: 'Which vaccination are they giving consent for?'
+        ContactRelationship: 'Which vaccination are they giving consent for?'
       }
     },
     method: {
@@ -2839,7 +2920,7 @@ export const en = {
       title: {
         Child:
           'Does the child agree to having the {{programme.vaccineName.sentenceCase}}?',
-        Contact:
+        ContactRelationship:
           'Do they agree to {{patient.firstName}} having the {{programme.vaccineName.sentenceCase}}?'
       },
       yes: {
@@ -3280,7 +3361,7 @@ export const en = {
       description:
         'Mavis automatically sends email and text reminders to parents who have not responded to the initial consent request.\n\nAutomatic reminders are sent 14, 7 and 3 days before a session.\n\nYou can also send reminders manually. Mavis will then skip the next automatic reminder if it’s due to be sent within 3 days.',
       activity:
-        '{{contacts}} parents out of {{patients}} have not responded yet',
+        '{{contactRelationships}} parents out of {{patients}} have not responded yet',
       preConfirm:
         'Mavis will skip the next automatic reminder if it’s scheduled to be sent within 3 days.',
       confirm: 'Send manual consent reminders',

@@ -577,15 +577,19 @@ function describeManualConsentRequests(patientProgramme, session) {
     createdAt.valueOf()
   )
 
-  const contacts = patientProgramme.patient?.contacts ?? []
+  const contactRelationships =
+    patientProgramme.patient?.contactRelationships ?? []
 
   return [...requestsBySentAt.values()].flatMap((messages) => {
     const [{ createdAt, createdBy }] = messages
     const recipientNames = messages.map(({ messageRecipient }) => {
-      const contact = contacts.find(
+      const contactRelationship = contactRelationships.find(
         ({ uuid }) => uuid === messageRecipient?.uuid
       )
-      return contact?.fullNameAndRelationship ?? messageRecipient?.fullName
+      return (
+        contactRelationship?.fullNameAndRelationship ??
+        messageRecipient?.fullName
+      )
     })
 
     return [
@@ -657,9 +661,11 @@ export function getConsentRequestDescription(patientProgramme, session) {
     return paragraphs.join('\n\n')
   }
 
-  const contactsToRequestFrom = (patientProgramme.patient?.contacts ?? [])
-    .filter((contact) => contact.hasContactDetails)
-    .map((contact) => contact.fullNameAndRelationship)
+  const contactsToRequestFrom = (
+    patientProgramme.patient?.contactRelationships ?? []
+  )
+    .filter((contactRelationship) => contactRelationship.hasContactDetails)
+    .map((contactRelationship) => contactRelationship.fullNameAndRelationship)
   if (contactsToRequestFrom.length === 0) {
     return __('patientSession.consentRequests.noContacts')
   }
@@ -676,7 +682,9 @@ export function getConsentRequestDescription(patientProgramme, session) {
     __(`patientSession.consentRequests.requested.${requestTense}`, {
       date: session.formatted.consentOpenAtShort
     }),
-    contactsToRequestFrom.map((contact) => `- ${contact}`).join('\n'),
+    contactsToRequestFrom
+      .map((contactRelationship) => `- ${contactRelationship}`)
+      .join('\n'),
     ...describeManualConsentRequests(patientProgramme, session)
   )
 

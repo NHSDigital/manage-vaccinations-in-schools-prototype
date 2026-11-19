@@ -18,7 +18,7 @@ import {
 import {
   Child,
   ClinicBooking,
-  Contact,
+  ContactRelationship,
   Patient,
   PatientSession,
   Programme,
@@ -27,6 +27,7 @@ import {
   User
 } from '../models.js'
 import { getUnansweredHealthQuestions } from '../utils/clinic-appointment.js'
+import { addRespondentToPatient } from '../utils/contact-relationship.js'
 import { today } from '../utils/date.js'
 import {
   getLocationSearchType,
@@ -37,7 +38,7 @@ import {
   programmeNamesListForSentence
 } from '../utils/programme.js'
 import {
-  formatContact,
+  formatContactRelationship,
   formatFullName,
   formatLink,
   formatLinkWithSecondaryText,
@@ -185,9 +186,11 @@ export class ClinicAppointment {
 
     // If the person who booked is already one of the child’s contacts, their
     // booking replaces any earlier response they gave (and the other way round)
-    const matchingContact = this.patient?.contactsExcludingClinicBookings.find(
-      (contact) => contact.isSamePersonAs(this.contact)
-    )
+    const matchingContactRelationship =
+      this.patient?.allContactRelationshipsExcludingClinicBookings.find(
+        (contactRelationship) =>
+          contactRelationship.isSamePersonAs(this.contactRelationship)
+      )
 
     return this.#getSelectedProgrammes(this.context).map((programme) => {
       let decision, hasConsentForAlternativeVaccine
@@ -214,8 +217,8 @@ export class ClinicAppointment {
         // response is made afresh each time
         uuid: `${this.uuid}-${programme.id}`,
         clinicAppointment_uuid: this.uuid,
-        contact_: this.contact,
-        contact_uuid: matchingContact?.uuid,
+        contactRelationship_: this.contactRelationship,
+        contactRelationship_uuid: matchingContactRelationship?.uuid,
         hasCommunicationNeeds: this.booking?.hasCommunicationNeeds,
         communicationNeeds: this.booking?.communicationNeeds,
         patient_uuid: this.patient_uuid,
@@ -353,6 +356,28 @@ export class ClinicAppointment {
     }
 
     Patient.update(patient.uuid, patient, patient.context)
+
+    this.addBookingDetailsToContactRelationship()
+  }
+
+  /**
+   * Add the details the parent gave when booking (their phone numbers, email
+   * addresses and contact preferences) to their contact on the child’s record,
+   * and save that contact. If they aren’t one of the child’s contacts, they’re
+   * added as a new contact
+   *
+   * Like linking a consent response with a child, this happens once the
+   * appointment has been matched with the child
+   */
+  addBookingDetailsToContactRelationship() {
+    // Each programme’s response has the same booking details
+    const [reply] = this.replies
+    const patient =
+      this.patient_uuid && Patient.findOne(this.patient_uuid, this.context)
+
+    if (reply && patient) {
+      addRespondentToPatient(patient, reply, this.context)
+    }
   }
 
   /**
@@ -749,7 +774,7 @@ export class ClinicAppointment {
                 : this.parentalRelationship
 
             case 'contactDetails':
-              return formatContact(this.contact, true)
+              return formatContactRelationship(this.contactRelationship, true)
 
             case 'fluVaccineType':
               switch (this.fluDecision) {
@@ -928,20 +953,21 @@ export class ClinicAppointment {
   /**
    * Get the contact for this appointment’s child
    *
-   * @returns {Contact} Contact with the correct relationship to this appointment’s child
+   * @returns {ContactRelationship} Contact with the correct relationship to this appointment’s child
    */
-  get contact() {
+  get contactRelationship() {
     // Take most details from the contact in the booking
-    const contact = new Contact(this.booking?.contact ?? {}).setResponse(
-      this.booking
-    )
-    if (contact) {
-      contact.relationship = this.parentalRelationship
-      contact.relationshipOther = this.parentalRelationshipOther
-      contact.hasParentalResponsibility = this.parentHasParentalResponsibility
+    const contactRelationship = new ContactRelationship(
+      this.booking?.contactRelationship ?? {}
+    ).setResponse(this.booking)
+    if (contactRelationship) {
+      contactRelationship.relationship = this.parentalRelationship
+      contactRelationship.relationshipOther = this.parentalRelationshipOther
+      contactRelationship.hasParentalResponsibility =
+        this.parentHasParentalResponsibility
     }
 
-    return contact
+    return contactRelationship
   }
 
   /**
@@ -955,7 +981,7 @@ export class ClinicAppointment {
         withParent: formatLinkWithSecondaryText(
           this.uri.unmatched,
           this.child.fullName,
-          `by ${this.contact.fullNameAndRelationship}`
+          `by ${this.contactRelationship.fullNameAndRelationship}`
         ),
         withoutParent: formatLink(this.uri.unmatched, this.child.fullName)
       },

@@ -3,17 +3,17 @@
 {% set title = __("clinicBooking.contactSelection.title", firstName) %}
 
 {% set contactItems = [] %}
-{% for contact in patient.contacts %}
+{% for contactRelationship in patient.contactRelationships %}
   {% set contactMethods = [] %}
-  {% if contact.email %}
-    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.email", contact.formatted.email)) %}
-  {% endif %}
-  {% if contact.tel %}
-    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.tel", contact.formatted.tel)) %}
-  {% endif %}
+  {% for emailAddress in contactRelationship.formattedContactValues(ContactType.Email) %}
+    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.email", emailAddress)) %}
+  {% endfor %}
+  {% for phoneNumber in contactRelationship.formattedContactValues(ContactType.Phone) %}
+    {% set contactMethods = contactMethods | push(__("clinicBooking.contactSelection.itemHint.tel", phoneNumber)) %}
+  {% endfor %}
   {% set contactItems = contactItems | push({
-    text: contact.fullNameAndRelationship,
-    value: contact.uuid,
+    text: contactRelationship.fullNameAndRelationship,
+    value: contactRelationship.uuid,
     hint: {
       html: contactMethods | join('<br>') | safe
     }
@@ -38,6 +38,6 @@
     },
     hint: __("clinicBooking.contactSelection.hint"),
     items: contactItems,
-    decorate: "booking.contact.uuid"
+    decorate: "booking.contactRelationship.uuid"
   }) }}
 {% endblock %}

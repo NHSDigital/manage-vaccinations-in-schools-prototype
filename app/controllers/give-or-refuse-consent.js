@@ -70,7 +70,7 @@ export const giveOrRefuseConsentController = {
       response.locals.consent = new Consent(
         {
           child: patient,
-          contact_uuid: patient.contact_uuids[0],
+          contactRelationship_uuid: patient.contactRelationship_uuids[0],
           session_id: session.id
         },
         data
@@ -165,7 +165,7 @@ export const giveOrRefuseConsentController = {
       // Contact journey
       [`/${session_id}/${consent_uuid}/new/contact`]: {
         [`/${session_id}/parental-responsibility`]: {
-          data: 'consent.contact_.hasParentalResponsibility',
+          data: 'consent.contactRelationship_.hasParentalResponsibility',
           value: 'false'
         }
       },

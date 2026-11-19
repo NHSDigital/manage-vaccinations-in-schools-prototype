@@ -14,16 +14,16 @@
     html: summaryList({
       lastRowBorder: false,
       rows: summaryRows(reply, {
-        contact: {
-          value: reply.contact.fullNameAndRelationship
+        contactRelationship: {
+          value: reply.contactRelationship.fullNameAndRelationship
         },
         email: {
-          label: __("contact.email.label"),
-          value: reply.contact.email
+          label: __("contactRelationship.email.label"),
+          value: reply.contactRelationship.formatted.email
         },
         tel: {
-          label: __("contact.tel.label"),
-          value: reply.contact.tel
+          label: __("contactRelationship.tel.label"),
+          value: reply.contactRelationship.formatted.tel
         },
         communicationNeeds: {},
         refusalReason: {},

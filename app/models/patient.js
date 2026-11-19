@@ -9,7 +9,6 @@ import {
   ClinicAttendanceType,
   Impairment,
   NoticeType,
-  NotifyEmailStatus,
   PatientClinicStatus,
   SessionStatus,
   SessionType,
@@ -20,7 +19,7 @@ import {
   AuditEvent,
   Child,
   ClinicAppointment,
-  Contact,
+  ContactRelationship,
   Instruction,
   Move,
   PatientProgramme,
@@ -113,7 +112,9 @@ export class Patient extends Child {
     this.events = options?.events || []
     this.instructions = options?.instructions || []
     this.clinicProgramme_ids = stringToArray(options?.clinicProgramme_ids)
-    this.contact_uuids = stringToArray(options?.contact_uuids)
+    this.contactRelationship_uuids = stringToArray(
+      options?.contactRelationship_uuids
+    )
     this.patientSession_uuids = stringToArray(options?.patientSession_uuids)
     this.reply_uuids = stringToArray(options?.reply_uuids)
     this.vaccination_uuids = stringToArray(options?.vaccination_uuids)
@@ -151,7 +152,9 @@ export class Patient extends Child {
    * @returns {boolean} Has contact details
    */
   get hasContactDetails() {
-    return this.contacts.some((contact) => contact.hasContactDetails)
+    return this.contactRelationships.some(
+      (contactRelationship) => contactRelationship.hasContactDetails
+    )
   }
 
   /**
@@ -194,7 +197,7 @@ export class Patient extends Child {
    * @returns {boolean} Is a new patient record
    */
   get isNewUpload() {
-    return this.contacts[1] !== undefined && !this.hasPendingChanges
+    return this.contactRelationships[1] !== undefined && !this.hasPendingChanges
   }
 
   /**
@@ -205,7 +208,7 @@ export class Patient extends Child {
    * @returns {boolean} Is a new patient record
    */
   get hasMatchingUpload() {
-    return !this.contacts[1] && !this.hasPendingChanges
+    return !this.contactRelationships[1] && !this.hasPendingChanges
   }
 
   /**
@@ -229,26 +232,28 @@ export class Patient extends Child {
   /**
    * Get contacts (from record and replies)
    *
-   * @returns {Array<Contact>} Contacts
+   * @returns {Array<ContactRelationship>} Contacts
    */
-  get contacts() {
-    const contacts = this.contactsExcludingClinicBookings
+  get contactRelationships() {
+    const contactRelationships =
+      this.contactRelationshipsExcludingClinicBookings
 
     // Add anyone who booked a clinic appointment who isn’t already a contact
     // (and only once, as a booking gives a reply for each programme)
-    const clinicBookingContacts = this.replies
+    const clinicBookingContactRelationships = this.replies
       .filter(({ clinicAppointment_uuid }) => clinicAppointment_uuid)
-      .map(({ contact }) => contact)
-    for (const bookingContact of clinicBookingContacts) {
-      const isAlreadyAContact = contacts.some((contact) =>
-        contact.isSamePersonAs(bookingContact)
+      .map(({ contactRelationship }) => contactRelationship)
+    for (const bookingContactRelationship of clinicBookingContactRelationships) {
+      const isAlreadyAContact = contactRelationships.some(
+        (contactRelationship) =>
+          contactRelationship.isSamePersonAs(bookingContactRelationship)
       )
       if (!isAlreadyAContact) {
-        contacts.push(bookingContact)
+        contactRelationships.push(bookingContactRelationship)
       }
     }
 
-    return contacts
+    return contactRelationships
   }
 
   /**
@@ -259,28 +264,68 @@ export class Patient extends Child {
    * booking, so we use these to find whether the person who booked is one of
    * these contacts
    *
-   * @returns {Array<Contact>} Contacts
+   * @returns {Array<ContactRelationship>} Contacts
    */
-  get contactsExcludingClinicBookings() {
-    const contacts = new Map()
+  get contactRelationshipsExcludingClinicBookings() {
+    return this.allContactRelationshipsExcludingClinicBookings.filter(
+      (contactRelationship) => !contactRelationship.isArchived
+    )
+  }
+
+  /**
+   * Get contacts that have not been archived
+   *
+   * @returns {Array<ContactRelationship>} Contacts
+   */
+  get activeContactRelationships() {
+    return this.allContactRelationshipsExcludingClinicBookings.filter(
+      (contactRelationship) => !contactRelationship.isArchived
+    )
+  }
+
+  /**
+   * Get contacts that have been archived
+   *
+   * @returns {Array<ContactRelationship>} Contacts
+   */
+  get archivedContactRelationships() {
+    return this.allContactRelationshipsExcludingClinicBookings.filter(
+      (contactRelationship) => contactRelationship.isArchived
+    )
+  }
+
+  /**
+   * Get contacts from the child’s record and from consent replies, including
+   * those that have been archived
+   *
+   * @returns {Array<ContactRelationship>} Contacts
+   */
+  get allContactRelationshipsExcludingClinicBookings() {
+    const contactRelationships = new Map()
 
     // Skip any contacts that no longer exist
-    for (const uuid of this.contact_uuids) {
-      const contact = Contact.findOne(uuid, this.context)
-      if (contact) {
-        contacts.set(uuid, contact)
+    for (const uuid of this.contactRelationship_uuids) {
+      const contactRelationship = ContactRelationship.findOne(
+        uuid,
+        this.context
+      )
+      if (contactRelationship) {
+        contactRelationships.set(uuid, contactRelationship)
       }
     }
 
     // Add any new contacts found in consent replies
     this.repliesExcludingClinicBookings
       .filter(({ hasSelfConsent }) => !hasSelfConsent)
-      .filter(({ contact }) => contact)
-      .forEach(({ contact }) => {
-        contacts.set(contact.uuid, new Contact(contact, this.context))
+      .filter(({ contactRelationship }) => contactRelationship)
+      .forEach(({ contactRelationship }) => {
+        contactRelationships.set(
+          contactRelationship.uuid,
+          new ContactRelationship(contactRelationship, this.context)
+        )
       })
 
-    return [...contacts.values()]
+    return [...contactRelationships.values()]
   }
 
   /**
@@ -606,10 +651,18 @@ export class Patient extends Child {
    * @returns {string} Tokens
    */
   get tokenized() {
-    const contactTokens = []
-    for (const contact of this.contacts) {
-      contactTokens.push(tokenize(contact, ['fullName', 'tel', 'email']))
-    }
+    // Contact points of children with sensitive records can’t be searched for
+    // Archived contacts can still be searched for
+    const contactRelationships = [
+      ...this.contactRelationships,
+      ...this.archivedContactRelationships
+    ]
+    const contactRelationshipTokens = contactRelationships.map(
+      (contactRelationship) =>
+        this.isSensitive
+          ? tokenize(contactRelationship, ['fullName'])
+          : contactRelationship.tokenized
+    )
 
     const childTokens = tokenize(this, [
       'nhsn',
@@ -618,7 +671,7 @@ export class Patient extends Child {
       'school.name'
     ])
 
-    return [childTokens, contactTokens].join(' ')
+    return [childTokens, contactRelationshipTokens].join(' ')
   }
 
   /**
@@ -659,9 +712,12 @@ export class Patient extends Child {
               return this.clinicProgramme_ids
                 .map((id) => this.programmes[id].programme.nameTag)
                 .join(' ')
-            case 'contacts':
+            case 'contactRelationships':
               return formatList(
-                this.contacts.map((contact) => contact.fullNameAndRelationship)
+                this.contactRelationships.map(
+                  (contactRelationship) =>
+                    contactRelationship.fullNameAndRelationship
+                )
               )
             case 'upcomingAppointments': {
               const appointmentDetails = this.appointments
@@ -782,17 +838,18 @@ export class Patient extends Child {
   }
 
   /**
-   * Add contact to patient
+   * Add contact to patient, recording it in the activity log, and save
    *
-   * @param {Contact} contact - Contact
+   * @param {ContactRelationship} contactRelationship - Contact
+   * @param {string} [createdBy_uid] - User who added the contact
    */
-  addContact(contact) {
-    this.contact_uuids.push(contact.uuid)
+  addContactRelationship(contactRelationship, createdBy_uid) {
+    this.contactRelationship_uuids.push(contactRelationship.uuid)
 
-    this.addEvent({
-      name: activity.patient.contact(contact),
-      type: AuditEventType.Record
-    })
+    this.addContactRelationshipEvent(
+      activity.patient.contactRelationship(contactRelationship),
+      createdBy_uid
+    )
   }
 
   /**
@@ -802,6 +859,40 @@ export class Patient extends Child {
    */
   addEvent(event) {
     this.events.push(new AuditEvent(event))
+  }
+
+  /**
+   * Add a change to one of the child’s contacts to the activity log, and save
+   *
+   * @param {string} name - Activity
+   * @param {string} [createdBy_uid] - User who made the change
+   */
+  addContactRelationshipEvent(name, createdBy_uid) {
+    this.addEvent({ name, type: AuditEventType.Record, createdBy_uid })
+    Patient.update(this.uuid, this, this.context)
+  }
+
+  /**
+   * Add a change to a contact’s phone number or email address to the activity
+   * log, and save
+   *
+   * @param {string} action - Change made (new, confirm, archive or restore)
+   * @param {ContactRelationship} contactRelationship - Contact
+   * @param {Contact} contact - Contact point changed
+   * @param {string} [createdBy_uid] - User who made the change
+   */
+  addContactEvent(action, contactRelationship, contact, createdBy_uid) {
+    const activities = {
+      new: activity.patient.contactAdded,
+      confirm: activity.patient.contactConfirmed,
+      archive: activity.patient.contactArchived,
+      restore: activity.patient.contactRestored
+    }
+
+    this.addContactRelationshipEvent(
+      activities[action](contactRelationship, contact),
+      createdBy_uid
+    )
   }
 
   /**
@@ -906,11 +997,11 @@ export class Patient extends Child {
       ...new Set(this.clinicProgramme_ids.concat(programme_ids))
     ]
 
-    for (const contact of this.contacts) {
+    for (const contactRelationship of this.contactRelationships) {
       this.addEvent({
-        name: activity.notify['invite-clinic'](contact),
+        name: activity.notify['invite-clinic'](contactRelationship),
         type: AuditEventType.ProgrammeNote,
-        messageRecipient: contact,
+        messageRecipient: contactRelationship,
         messageTemplate: 'invite-clinic',
         createdAt,
         patient_uuid: this.uuid,
@@ -934,15 +1025,13 @@ export class Patient extends Child {
       ? today()
       : patientSession.session.consentOpenAt
 
-    for (const contact of this.contacts) {
-      if (
-        contact.email &&
-        contact.emailStatus === NotifyEmailStatus.Delivered
-      ) {
+    for (const contactRelationship of this.contactRelationships) {
+      // Only contacts we know we can reach are sent requests and reminders
+      if (contactRelationship.hasDeliveredContact) {
         this.addEvent({
-          name: activity.notify.invite(contact),
+          name: activity.notify.invite(contactRelationship),
           type: AuditEventType.ProgrammeNote,
-          messageRecipient: contact,
+          messageRecipient: contactRelationship,
           messageTemplate: 'invite',
           createdAt,
           createdBy_uid,
@@ -995,12 +1084,13 @@ export class Patient extends Child {
       return
     }
 
-    for (const contact of this.contacts) {
-      if (
-        contact.email &&
-        contact.emailStatus === NotifyEmailStatus.Delivered
-      ) {
-        patientSession.sendConsentReminder({ createdAt: remindAt }, contact)
+    for (const contactRelationship of this.contactRelationships) {
+      // Only contacts we know we can reach are sent requests and reminders
+      if (contactRelationship.hasDeliveredContact) {
+        patientSession.sendConsentReminder(
+          { createdAt: remindAt },
+          contactRelationship
+        )
       }
     }
   }
@@ -1079,11 +1169,11 @@ export class Patient extends Child {
         messageTemplate = 'vaccination-deleted'
     }
 
-    for (const contact of this.contacts) {
+    for (const contactRelationship of this.contactRelationships) {
       if (vaccination.outcome !== VaccinationOutcome.AlreadyVaccinated) {
         this.addEvent({
-          name: activity.notify['vaccination-reminder'](contact),
-          messageRecipient: contact,
+          name: activity.notify['vaccination-reminder'](contactRelationship),
+          messageRecipient: contactRelationship,
           messageTemplate: 'vaccination-reminder',
           createdAt: removeDays(vaccination.createdAt, 7),
           patient_uuid: this.uuid,
@@ -1093,8 +1183,8 @@ export class Patient extends Child {
       }
 
       this.addEvent({
-        name: activity.notify[messageTemplate](contact),
-        messageRecipient: contact,
+        name: activity.notify[messageTemplate](contactRelationship),
+        messageRecipient: contactRelationship,
         messageTemplate,
         createdAt: vaccination.updatedAt || vaccination.createdAt,
         patient_uuid: this.uuid,
@@ -1132,9 +1222,10 @@ export class Patient extends Child {
         this.dod = removeDays(today(), 5)
         name = `Record updated with child’s date of death`
         break
-      case notice.type === NoticeType.NoNotify && this.contacts[0]?.canNotify:
+      case notice.type === NoticeType.NoNotify &&
+        this.contactRelationships[0]?.canNotify:
         // Notify request to not share vaccination with GP
-        this.contacts[0].canNotify = false
+        this.contactRelationships[0].canNotify = false
         name = `Child gave consent for HPV and flu vaccinations under Gillick competence and does not want their parents to be notified.\n\nThese records are not automatically synced with GP records.\n\nYour team must let the child’s GP know they were vaccinated.`
         break
       case notice.type === NoticeType.Invalid:
@@ -1160,6 +1251,6 @@ export class Patient extends Child {
 
 /**
  * @import { ArchiveRecordReason } from '../enums.js'
- * @import { Notice } from '../models.js'
+ * @import { Contact, Notice } from '../models.js'
  * @import { ChildOptions } from './child.js'
  */

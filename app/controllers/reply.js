@@ -1,6 +1,8 @@
 import wizard from '@x-govuk/govuk-prototype-wizard'
 
 import {
+  ContactSource,
+  ContactType,
   GillickCompetent,
   RelationshipType,
   ReplyDecision,
@@ -9,7 +11,7 @@ import {
   VaccinationOutcome
 } from '../enums.js'
 import {
-  Contact,
+  ContactRelationship,
   Patient,
   PatientSession,
   Programme,
@@ -19,7 +21,11 @@ import {
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
-import { formatContact } from '../utils/string.js'
+import {
+  formatContactRelationship,
+  formatContacts,
+  stringToBoolean
+} from '../utils/string.js'
 
 export const replyController = {
   /**
@@ -129,7 +135,7 @@ export const replyController = {
 
         // Remove any contact details in reply if self consent
         if (reply.hasSelfConsent) {
-          delete reply.contact_uuid
+          delete reply.contactRelationship_uuid
         }
 
         if (triage?.psd) {
@@ -194,6 +200,7 @@ export const replyController = {
       delete data.reply
       delete data.triage
       delete data.vaccination
+      delete data.wizard?.respondent
 
       request.flash('success', __(`reply.${type}.success`, { reply }))
 
@@ -244,13 +251,33 @@ export const replyController = {
         ...data?.wizard?.vaccination // Wizard values
       }
 
+      // Who is responding: chosen on this request, or earlier in the journey
+      const respondent = data.respondent || data.wizard?.respondent
+      const isFromContactRelationship =
+        respondent !== 'self' && !reply?.hasSelfConsent
+      const isNewContactRelationship = respondent === 'new'
+
+      // A contact responding by phone needs a phone number, so ask for one if
+      // they don’t have one (or didn’t give one when added as a new contact)
+      const respondentContactRelationship = isNewContactRelationship
+        ? reply?.contactRelationship
+        : ContactRelationship.findOne(respondent, data)
+      const needsPhoneNumber =
+        isFromContactRelationship &&
+        !respondentContactRelationship?.hasPhoneNumber &&
+        !data.reply?.contactRelationship?.tel
+
       const journey = {
         [`/`]: {},
         [`/${reply_uuid}/${type}/respondent`]: {},
-        ...(data.respondent !== 'self' &&
-          !reply.hasSelfConsent && {
+        // Details are only asked for when adding a new contact
+        ...(isFromContactRelationship &&
+          isNewContactRelationship && {
             [`/${reply_uuid}/${type}/contact`]: {}
           }),
+        ...(needsPhoneNumber && {
+          [`/${reply_uuid}/${type}/phone-number`]: {}
+        }),
         ...(isMultiProgrammeSession && {
           [`/${reply_uuid}/${type}/programme`]: {}
         }),
@@ -309,13 +336,18 @@ export const replyController = {
         ...(referrer && { back: referrer })
       }
 
-      response.locals.respondentItems = patientProgramme.patient.contacts.map(
-        (contact) => ({
-          text: formatContact(contact, false),
-          hint: contact.tel && `Phone: ${contact.formatted.tel}`,
-          value: contact.uuid
-        })
-      )
+      response.locals.respondentItems =
+        patientProgramme.patient.contactRelationships.map(
+          (contactRelationship) => {
+            return {
+              text: formatContactRelationship(contactRelationship, false),
+              hint: {
+                html: formatContacts(contactRelationship)
+              },
+              value: contactRelationship.uuid
+            }
+          }
+        )
 
       // Child can self consent if assessed as Gillick competent
       if (reply?.patientSession?.gillick?.competent === GillickCompetent.True) {
@@ -359,13 +391,14 @@ export const replyController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   updateForm(request, response) {
-    const { respondent } = request.body
+    const { canSms, phoneNumber, respondent } = request.body
     const { reply_uuid } = request.params
     const { data } = request.session
+    const { account } = response.locals
     let { paths, triage, vaccination } = response.locals
 
     // Add contacts from global context to wizard
-    data.wizard.contacts = data.contacts
+    data.wizard.contactRelationships = data.contactRelationships
 
     const reply = Reply.update(reply_uuid, request.body.reply, data.wizard)
 
@@ -374,7 +407,7 @@ export const replyController = {
       switch (respondent) {
         case 'new': // Consent response is from a new contact
           reply.method = ReplyMethod.Phone
-          reply.contact_uuid = Contact.create(
+          reply.contactRelationship_uuid = ContactRelationship.create(
             {
               patient_uuid: reply.patient_uuid
             },
@@ -387,7 +420,7 @@ export const replyController = {
           break
         default: // Consent response is an existing respondent
           reply.method = ReplyMethod.Phone
-          reply.contact_uuid = respondent
+          reply.contactRelationship_uuid = respondent
 
           // Store reply that needs marked as invalid
           // We only want to do this when submitting replacement reply
@@ -395,11 +428,53 @@ export const replyController = {
       }
     }
 
+    // Remember who is responding for the rest of the journey
+    if (respondent) {
+      data.wizard.respondent = respondent
+    }
+
+    // Add phone number (and text message preference) given for a contact who
+    // didn’t have one
+    if (phoneNumber?.trim() && reply.contactRelationship_uuid) {
+      const contactRelationship = ContactRelationship.findOne(
+        reply.contactRelationship_uuid,
+        data.wizard
+      )
+      const isNew = !contactRelationship.findContact(
+        ContactType.Phone,
+        phoneNumber
+      )
+      const contact = contactRelationship.addContact({
+        createdBy_uid: account?.uid,
+        type: ContactType.Phone,
+        value: phoneNumber.trim(),
+        sources: [ContactSource.Manual]
+      })
+      ContactRelationship.update(
+        contactRelationship.uuid,
+        {
+          contacts: contactRelationship.contacts,
+          canSms: stringToBoolean(canSms) ?? false
+        },
+        data.wizard
+      )
+
+      // Record the change in the child’s activity log
+      Patient.findOne(reply.patient_uuid, data)?.addContactEvent(
+        isNew ? 'new' : 'confirm',
+        contactRelationship,
+        contact,
+        account?.uid
+      )
+    }
+
     // Update wizard data
     Reply.update(reply_uuid, reply, data.wizard)
 
     // Clean up session data
     delete data.healthAnswers
+    delete data.canSms
+    delete data.phoneNumber
     delete data.respondent
 
     data.wizard.triage = {
@@ -438,7 +513,7 @@ export const replyController = {
     const newReply = Reply.create(
       {
         child: patientProgramme.patient,
-        contact_uuid: reply.contact_uuid,
+        contactRelationship_uuid: reply.contactRelationship_uuid,
         patient_uuid: patientProgramme.patient_uuid,
         programme_id: patientProgramme.programme_id,
         method: ReplyMethod.Phone

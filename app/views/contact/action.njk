@@ -1,34 +1,31 @@
 {% extends "_layouts/form.njk" %}
 
+{% set title = __("contact." + actionType + ".title", { contact: contact }) %}
+
 {% block form %}
   {{ heading({
-    caption: contact.patient.fullName,
-    text: __("contact.action.title", {
-      contact: contact,
-      type: type
-    }),
+    caption: contactRelationship.fullNameAndRelationship,
+    text: title,
     size: "l"
   }) }}
 
-  {{ __("contact.action.description", {
-    patient: contact.patient
-  }) | nhsukMarkdown }}
+  {{ __("contact." + actionType + ".description", { type: type }) | nhsukMarkdown }}
 {% endblock %}
 
 {% block afterForm %}
   {{ appButtonGroup({
     buttons: [
       {
-        text: __("contact.action.confirm", type),
-        variant: "warning",
+        text: __("contact." + actionType + ".confirm"),
+        variant: "warning" if actionType == "archive",
         attributes: {
-          formAction: contact.uri + "/" + type
+          formAction: contactRelationship.uri + "/contacts/" + contact.uuid + "/" + actionType
         }
       }
     ],
     links: [
       {
-        text: __("contact.action.cancel"),
+        text: __("contact.cancel"),
         href: back
       }
     ]

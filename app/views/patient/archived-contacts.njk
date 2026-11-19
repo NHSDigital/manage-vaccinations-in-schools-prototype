@@ -1,0 +1,26 @@
+{% from "patient/_contact-relationship.njk" import contactRelationshipSection with context %}
+
+{% extends "_layouts/default.njk" %}
+
+{% set title = __("contactRelationship.archived.title") + " – " + patient.initials %}
+
+{% block beforeContent %}
+  {{ backLink({
+    href: patient.uri + "/contact-relationships"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+
+  {{ heading({
+    caption: patient.fullName,
+    text: __("contactRelationship.archived.title"),
+    level: 1,
+    size: "l"
+  }) }}
+
+  {% for contactRelationship in patient.archivedContactRelationships %}
+    {{ contactRelationshipSection(contactRelationship, not account.isSchoolUser) }}
+  {% endfor %}
+{% endblock %}

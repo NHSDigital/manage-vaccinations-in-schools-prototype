@@ -710,7 +710,7 @@ export class PatientProgramme extends BaseModel {
     triageStatus
   ) {
     const isBookingFromKnownContact = Boolean(
-      newerReply.clinicAppointment_uuid && newerReply.contact_uuid
+      newerReply.clinicAppointment_uuid && newerReply.contactRelationship_uuid
     )
     if (!isBookingFromKnownContact || !newerReply.hasGivenConsent) {
       return false
@@ -1491,7 +1491,7 @@ export class PatientProgramme extends BaseModel {
     const replies = [...this.repliesCountingTowardsConsent]
 
     const bookingRepliesFromKnownContacts = replies.filter(
-      (reply) => reply.clinicAppointment_uuid && reply.contact_uuid
+      (reply) => reply.clinicAppointment_uuid && reply.contactRelationship_uuid
     )
     for (const bookingReply of bookingRepliesFromKnownContacts) {
       const replacedReply = this.#getReplyReplacedByBooking(bookingReply)
@@ -1578,7 +1578,7 @@ export class PatientProgramme extends BaseModel {
     if (this.replies) {
       return this.repliesCountingTowardsConsent
         .filter((reply) => reply.hasDeclinedConsent)
-        .flatMap((reply) => reply.contact.fullNameAndRelationship)
+        .flatMap((reply) => reply.contactRelationship.fullNameAndRelationship)
     }
   }
 
@@ -2139,11 +2139,11 @@ export class PatientProgramme extends BaseModel {
         messageTemplate = 'triage-vaccinate'
     }
 
-    if (this.patient?.contacts) {
-      for (const contact of this.patient.contacts) {
+    if (this.patient?.contactRelationships) {
+      for (const contactRelationship of this.patient.contactRelationships) {
         this.patient?.addEvent({
-          name: activity.notify[messageTemplate](contact),
-          messageRecipient: contact,
+          name: activity.notify[messageTemplate](contactRelationship),
+          messageRecipient: contactRelationship,
           messageTemplate,
           createdAt: event.createdAt,
           patient_uuid: this.patient.uuid,

@@ -1,16 +1,68 @@
-import { RelationshipType } from '../enums.js'
-import { Contact, Patient } from '../models.js'
+import { ContactSource, ContactType } from '../enums.js'
+import { ContactRelationship } from '../models.js'
+import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
+
+/**
+ * Get the value given in a contact point form
+ *
+ * @param {object} [body] - Contact point form data
+ * @param {ContactType} type - Type of contact point
+ * @returns {string|undefined} Phone number or email address
+ */
+const getValue = (body, type) =>
+  (type === ContactType.Email ? body?.email : body?.tel)?.trim()
+
+/**
+ * Save a contact’s contact points, and return to the child’s contacts
+ *
+ * @param {import('express').Request} request - Request
+ * @param {import('express').Response} response - Response
+ * @param {string} type - Form or action type
+ * @returns {void}
+ */
+const saveContacts = (request, response, type) => {
+  const { data } = request.session
+  const { __, account, contactRelationship, contact } = response.locals
+
+  ContactRelationship.update(
+    contactRelationship.uuid,
+    { contacts: contactRelationship.contacts },
+    data
+  )
+
+  // Record the change in the child’s activity log
+  contactRelationship.patient?.addContactEvent(
+    type,
+    contactRelationship,
+    contact,
+    account?.uid
+  )
+
+  // Clean up session data
+  delete data.contact
+
+  request.flash('success', __(`contact.${type}.success`, { contact }))
+
+  return saveAndRedirect(request, response, response.locals.back)
+}
 
 export const contactController = {
   /**
    * @type {RequestParamHandler}
    */
   read(request, response, next, contact_uuid) {
-    response.locals.contact = Contact.findOne(
-      contact_uuid,
-      request.session.data
+    const { contactRelationship } = response.locals
+
+    const contact = contactRelationship?.contacts.find(
+      ({ uuid }) => uuid === contact_uuid
     )
+    if (!contact) {
+      return response.sendStatus(404)
+    }
+
+    response.locals.contact = contact
+    response.locals.type = contact.type.toLowerCase()
 
     next()
   },
@@ -18,147 +70,84 @@ export const contactController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  new(request, response) {
-    const { patient_uuid } = request.query
-    const { data } = request.session
+  setBack(request, response, next) {
+    const { contactRelationship } = response.locals
 
-    const contact = Contact.create(
-      {
-        patient_uuid
-      },
-      data.wizard
-    )
+    response.locals.back = `/patients/${contactRelationship.patient_uuid}/contacts`
 
-    return saveAndRedirect(request, response, `${contact.uri}/new`)
+    next()
   },
 
   /**
-   * @param {string} [type] - Form type
+   * @param {ContactType} type - Type of contact point to add
    * @returns {RequestHandler<Record<string, string>>} Request handler
    */
-  update(type) {
+  showForm(type) {
     return (request, response) => {
-      const { contact_uuid } = request.params
-      const { data } = request.session
-      const { __, back } = response.locals
-
-      // Update session data
-      let contact
-      if (type === 'new') {
-        contact = Contact.create(data.wizard.contacts[contact_uuid], data)
-
-        // Add contact to patient contacts
-        const patient = Patient.findOne(contact.patient_uuid, data)
-        patient.addContact(contact)
-      } else {
-        contact = Contact.update(
-          contact_uuid,
-          data.wizard.contacts[contact_uuid],
-          data
-        )
-      }
-
-      // Clean up session data
-      delete data.contact
-      delete data.wizard
-
-      request.flash('success', __(`contact.${type}.success`, { contact }))
-
-      return saveAndRedirect(request, response, back)
-    }
-  },
-
-  /**
-   * @param {string} type - Form type
-   * @returns {RequestHandler<Record<string, string>>} Request handler
-   */
-  readForm(type) {
-    return (request, response, next) => {
-      const { contact_uuid } = request.params
-      const { data } = request.session
-
-      // Setup wizard if not already setup
-      let contact = Contact.findOne(contact_uuid, data.wizard)
-      if (!contact) {
-        contact = Contact.create(response.locals.contact, data.wizard)
-      }
-
-      response.locals.contact = new Contact(contact, data)
-      response.locals.back = `/patients/${contact.patient_uuid}/contacts`
-      response.locals.type = type
-
-      next()
-    }
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  showForm(request, response) {
-    // Prepare the radio options for the parental relationship
-    response.locals.parentalRelationshipItems = Object.values(RelationshipType)
-      .filter((relationship) => relationship !== RelationshipType.Unknown)
-      .map((relationship) => ({
-        text: relationship,
-        value: relationship
-      }))
-
-    return response.render(`contact/form/edit`)
-  },
-
-  /**
-   * @type {RequestHandler<Record<string, string>>}
-   */
-  updateForm(request, response, next) {
-    const { contact_uuid } = request.params
-    const { data } = request.session
-
-    Contact.update(contact_uuid, request.body.contact, data.wizard)
-
-    return next()
-  },
-
-  /**
-   * @param {string} type - Form type
-   * @returns {RequestHandler<Record<string, string>>} Request handler
-   */
-  action(type) {
-    return (request, response) => {
-      const { contact } = response.locals
-
-      response.render('contact/action', {
-        back: `/patients/${contact.patient_uuid}/contacts`,
-        type
+      response.render('contact/form', {
+        field: type === ContactType.Email ? 'email' : 'tel'
       })
     }
   },
 
   /**
+   * @param {ContactType} type - Type of contact point to add
+   * @returns {RequestHandler<Record<string, string>>} Request handler
+   */
+  create(type) {
+    return (request, response) => {
+      const { account, contactRelationship } = response.locals
+      const value = getValue(request.body.contact, type)
+
+      if (!value) {
+        return response.redirect(request.originalUrl)
+      }
+
+      // Adds a source to a contact point with the same value, if there is one
+      // (restoring it if archived)
+      const isNew = !contactRelationship.findContact(type, value)
+      response.locals.contact = contactRelationship.addContact({
+        createdAt: today(),
+        createdBy_uid: account?.uid,
+        type,
+        value,
+        sources: [ContactSource.Manual]
+      })
+
+      return saveContacts(request, response, isNew ? 'new' : 'confirm')
+    }
+  },
+
+  /**
+   * @param {string} type - Action type (archive or restore)
+   * @returns {RequestHandler<Record<string, string>>} Request handler
+   */
+  showAction(type) {
+    return (request, response) => {
+      response.render('contact/action', { actionType: type })
+    }
+  },
+
+  /**
    * @type {RequestHandler<Record<string, string>>}
    */
-  delete(request, response) {
-    const { contact_uuid } = request.params
-    const { data } = request.session
-    const { __, contact } = response.locals
+  archive(request, response) {
+    const { account, contact } = response.locals
 
-    // Remove contact from the child’s record, so it doesn’t point to nothing
-    const patient = Patient.findOne(contact.patient_uuid, data)
-    if (patient) {
-      const contact_uuids = patient.contact_uuids.filter(
-        (uuid) => uuid !== contact_uuid
-      )
-      Patient.update(patient.uuid, { contact_uuids }, data)
-    }
+    contact.archive({ archivedBy_uid: account?.uid })
 
-    Contact.delete(contact_uuid, data)
+    return saveContacts(request, response, 'archive')
+  },
 
-    request.flash('success', __(`contact.delete.success`))
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
+  restore(request, response) {
+    const { contact } = response.locals
 
-    return saveAndRedirect(
-      request,
-      response,
-      `/patients/${contact.patient_uuid}/contacts`
-    )
+    contact.restore()
+
+    return saveContacts(request, response, 'restore')
   }
 }
 
