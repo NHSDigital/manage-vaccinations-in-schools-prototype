@@ -293,6 +293,21 @@ export function getEasterSunday(year) {
 }
 
 /**
+ * Get the next weekday on or after a date (school sessions don’t happen at
+ * weekends)
+ *
+ * @param {Date} date - Date
+ * @returns {Date} Weekday
+ */
+export function getNextWeekday(date) {
+  let weekday = date
+  while ([0, 6].includes(weekday.getDay())) {
+    weekday = addDays(weekday, 1)
+  }
+  return weekday
+}
+
+/**
  *
  * @param {number} year - Year academic year commences
  * @param {SchoolTerm} term - School term
