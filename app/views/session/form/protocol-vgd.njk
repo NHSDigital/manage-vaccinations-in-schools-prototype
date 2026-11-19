@@ -1,0 +1,51 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.protocolVGD.title") %}
+
+{% block form %}
+  {{ heading({
+    caption: session.location.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("session.protocolVGD.nurse.title"),
+        size: "m"
+      }
+    },
+    items: [
+      {
+        label: __("session.protocolVGD.nurse.pgd.label"),
+        value: VaccinationProtocol.PGD
+      },
+      {
+        label: __("session.protocolVGD.nurse.vgd.label"),
+        value: VaccinationProtocol.VGD
+      }
+    ],
+    decorate: "session.protocolNurse"
+  }) }}
+
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("session.protocolVGD.hca.title"),
+        size: "m"
+      }
+    },
+    items: [
+      {
+        label: __("session.protocolVGD.hca.no.label"),
+        value: ""
+      },
+      {
+        label: __("session.protocolVGD.hca.yes.label"),
+        value: VaccinationProtocol.VGD
+      }
+    ],
+    decorate: "session.protocolHCA"
+  }) }}
+{% endblock %}

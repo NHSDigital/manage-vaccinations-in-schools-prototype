@@ -8,6 +8,7 @@ import {
   PatientSchoolStatus,
   PatientStatus,
   ProgrammeType,
+  PsdUsage,
   RecordVaccineCriteria,
   RegistrationStatus,
   SchoolPhase,
@@ -100,7 +101,7 @@ export const sessionController = {
               }
             ]
           : []),
-        ...(session.hasPsdProtocol
+        ...(session.psdUsage !== PsdUsage.None
           ? [
               {
                 text: __('session.instructions.label'),
@@ -548,7 +549,8 @@ export const sessionController = {
     const radioFilters = {
       patients: {
         register: showRegistration && RegistrationStatus,
-        instructionStatus: session.hasPsdProtocol && InstructionStatus
+        instructionStatus:
+          session.psdUsage !== PsdUsage.None && InstructionStatus
       },
       instructions: {
         instructionStatus: InstructionStatus

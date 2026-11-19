@@ -51,9 +51,15 @@
       consentForms: {},
       mmrConsent: {},
       hasRegistration: {},
-      protocolNurse: {},
-      protocolHCA: {},
-      hasPsdProtocol: {}
+      protocolNurse: {
+        label: __("session.protocolVGD.nurse.label")
+      },
+      protocolHCA: {
+        label: __("session.protocolVGD.hca.label")
+      },
+      psdUsage: {
+        label: __("session.protocolPSD.label")
+      }
     } %}
     {% if session.type === SessionType.Clinic %}
       {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
@@ -65,6 +71,15 @@
           location: {},
           date: {},
           hasRegistration: {} if session.clinicType !== ClinicType.DropIn else none,
+          protocolNurse: {
+            label: __("session.protocolVGD.nurse.label")
+          },
+          protocolHCA: {
+            label: __("session.protocolVGD.hca.label")
+          },
+          psdUsage: {
+            label: __("session.protocolPSD.label")
+          },
           vaccinationPeriods: {},
           vaccinators: {},
           appointmentLengths: {

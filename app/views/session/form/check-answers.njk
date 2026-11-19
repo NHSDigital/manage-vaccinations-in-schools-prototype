@@ -50,13 +50,16 @@
           href: session.uri + "/new/registration"
         },
         protocolNurse: {
-          href: session.uri + "/new/protocol"
+          label: __("session.protocolVGD.nurse.label"),
+          href: session.uri + "/new/protocol-vgd"
         },
         protocolHCA: {
-          href: session.uri + "/new/protocol"
+          label: __("session.protocolVGD.hca.label"),
+          href: session.uri + "/new/protocol-vgd"
         },
-        hasPsdProtocol: {
-          href: session.uri + "/new/protocol"
+        psdUsage: {
+          label: __("session.protocolPSD.label"),
+          href: session.uri + "/new/protocol-psd"
         }
       })
     }) }}
@@ -94,13 +97,16 @@
           href: session.uri + "/new/registration"
         } if session.clinicType !== ClinicType.DropIn else none,
         protocolNurse: {
-          href: session.uri + "/new/protocol"
+          label: __("session.protocolVGD.nurse.label"),
+          href: session.uri + "/new/protocol-vgd"
         },
         protocolHCA: {
-          href: session.uri + "/new/protocol"
+          label: __("session.protocolVGD.hca.label"),
+          href: session.uri + "/new/protocol-vgd"
         },
-        hasPsdProtocol: {
-          href: session.uri + "/new/protocol"
+        psdUsage: {
+          label: __("session.protocolPSD.label"),
+          href: session.uri + "/new/protocol-psd"
         },
         vaccinationPeriods: {
           href: session.uri + "/new/vaccination-periods"

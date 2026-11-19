@@ -594,6 +594,16 @@ export const ProgrammeType = {
  * @readonly
  * @enum {string}
  */
+export const PsdUsage = {
+  None: 'No',
+  NasalFluOnly: 'Yes, flu nasal spray only',
+  All: 'Yes, all programmes and vaccine methods'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const SchoolTerm = {
   Autumn: 'Autumn',
   Spring: 'Spring',

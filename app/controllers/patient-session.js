@@ -70,7 +70,9 @@ export const patientSessionController = {
       needsTriage: patientProgramme.status === PatientStatus.Triage,
       // Patient already triaged
       hasTriage: patientProgramme.triageNotes.length > 0,
-      hasInstruction: session.hasPsdProtocol && patientProgramme.hasInstruction,
+      hasInstruction:
+        session.hasPsdProtocolFor(patientProgramme) &&
+        patientProgramme.hasInstruction,
       canAssess:
         account.isRegisteredNurse ||
         (account.isHCA && patientProgramme.hasInstruction),
