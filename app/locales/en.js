@@ -905,6 +905,11 @@ export const en = {
       yes: 'Yes',
       no: 'No'
     },
+    phoneNumber: {
+      title:
+        'Add a phone number for {{contactRelationship.fullNameAndRelationship}}',
+      hint: 'A phone number is needed to book a clinic appointment'
+    },
     contactRelationship: {
       title: {
         parent: 'About you',
@@ -1903,12 +1908,15 @@ export const en = {
     fullName: {
       label: 'Name'
     },
+    relationship: {
+      label: 'Relationship'
+    },
+    contactDetails: {
+      label: 'Contact details'
+    },
     canSms: {
       label: 'Get updates by text message',
       title: 'Do they want to get updates by text message?'
-    },
-    relationship: {
-      label: 'Relationship'
     },
     hasParentalResponsibility: {
       label: 'Has parental responsibility?',

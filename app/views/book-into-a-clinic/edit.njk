@@ -65,21 +65,13 @@
   {{ summaryList({
     card: {
       heading: {
-        text: __("clinicBooking.edit.summary.contactRelationship"),
+        text: __("contactRelationship.label"),
         size: "m"
       }
     },
     lastRowBorder: false,
     rows: summaryRows(booking.contactRelationship, {
-      fullName: {},
-      relationship: {
-        value: appointment.formatted.parentalRelationship
-      },
-      hasParentalResponsibility: {
-        value: appointment.parentHasParentalResponsibility
-      },
-      email: {},
-      tel: {},
+      contactDetails: {},
       canSms: {},
       communicationNeeds: {}
     })

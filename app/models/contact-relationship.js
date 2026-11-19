@@ -528,6 +528,8 @@ export class ContactRelationship extends BaseModel {
               return this.hasPhoneNumber ? undefined : ''
             case 'communicationNeeds':
               return this.response?.formatted['communicationNeeds']
+            case 'contactDetails':
+              return formatContactRelationship(this, true)
             case 'fullName':
               return this.fullName || 'Name unknown'
             case 'relationship':
