@@ -5,6 +5,11 @@
 {% set title = __("clinicBooking.check-answers.title", firstName) %}
 {% set structuredNeeds = (additionalNeedsFeatureFlag === AdditionalNeeds.Structured) %}
 {% set canEditContactDetails = true if isParentFacing or not patient.isSensitive else false %}
+{# A team member can choose a different relationship, but not edit one on the
+   child’s record #}
+{% set isExistingContactRelationship = not isParentFacing and booking.contactRelationship.uuid in patient.contactRelationship_uuids %}
+{% set contactRelationshipHref = "contact-selection" if isExistingContactRelationship else "contact" %}
+{% set canEditContactDetails = canEditContactDetails and not isExistingContactRelationship %}
 
 {% block form %}
   {{ heading({
@@ -85,34 +90,20 @@
   {{ summaryList({
     card: {
       heading: {
-        text: __("clinicBooking.check-answers.summary.contact"),
+        text: __("contactRelationship.label"),
         size: "m"
       }
     },
     lastRowBorder: false,
     rows: summaryRows(booking.contactRelationship, {
-      fullName: {
-        href: "contact"
-      },
-      relationship: {
-        href: "contact",
-        value: appointment.formatted.parentalRelationship
-      },
-      hasParentalResponsibility: {
-        href: "contact",
-        value: appointment.parentHasParentalResponsibility
-      },
-      email: {
-        href: "contact" if canEditContactDetails
-      },
-      tel: {
-        href: "contact" if canEditContactDetails
+      contactDetails: {
+        href: contactRelationshipHref
       },
       canSms: {
         href: "contact" if canEditContactDetails
       },
       communicationNeeds: {
-        href: "communication-needs" if canEditContactDetails
+        href: "communication-needs" if isParentFacing or not patient.isSensitive
       }
     })
   }) }}
