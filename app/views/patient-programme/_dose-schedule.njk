@@ -17,6 +17,12 @@
       })
     }) }}
   {% else %}
+    {{ insetText({
+      text: __mf("patientProgramme.vaccinationRecord.designVariant.alreadyHadPartial", {
+        name: patient.fullFriendlyName
+      })
+    }) if designVariant == "C" }}
+
     <p class="nhsuk-body">
       {{ __mf("patientProgramme.vaccinationRecord.dosesComplete", {
         complete: patientProgramme.dosesNeeded if designVariant == "A" else summary.validDoses.length,
@@ -90,7 +96,7 @@
           {
             text: __mf("patientProgramme.vaccinationRecord.eligibleFrom", {
               date: patientProgramme.formatted.nextEligibleFrom
-            }) if sequence == nextSequence and patientProgramme.formatted.nextEligibleFrom else "—"
+            }) if sequence == nextSequence and patientProgramme.formatted.nextEligibleFrom and designVariant != "C" else "—"
           },
           {
             text: "—"

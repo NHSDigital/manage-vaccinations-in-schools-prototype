@@ -151,7 +151,7 @@
     }) %}
       {% set patientSessionRows = [] %}
       {% if patient.sessionsCardRows %}
-        {# Scaffolding: faked session outcome rows for case 8 research, seeded
+        {# Scaffolding: faked session outcome rows for case 8, seeded
            on the patient; the prototype does not derive session outcomes #}
         {% for row in patient.sessionsCardRows %}
           {% set patientSessionRows = patientSessionRows | push([

@@ -2215,7 +2215,9 @@ export const en = {
         unknown: 'Unknown',
         source: 'Parent or guardian report',
         alreadyHad:
-          '{name} was reported as vaccinated by a parent via CHIS. We do not hold the dates of any doses.'
+          '{name} was reported as vaccinated by a parent. We do not have a record of any doses.',
+        alreadyHadPartial:
+          '{name} was reported as vaccinated by a parent. We do not have a record of all doses.'
       }
     },
     consent: {
