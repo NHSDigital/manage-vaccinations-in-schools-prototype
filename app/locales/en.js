@@ -3199,7 +3199,7 @@ export const en = {
       label: 'PSDs',
       title: 'Review PSDs',
       count:
-        '{count, plural, =0 {There are no children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.} one {There is # child with consent for the nasal flu vaccine who does not require triage and does not yet have a PSD in place.} other {There are # children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.}}'
+        '{count, plural, =0 {There are no children with consent to be vaccinated who do not require triage and do not yet have a PSD in place.} one {There is # child with consent to be vaccinated who does not require triage and does not yet have a PSD in place.} other {There are # children with consent to be vaccinated who do not require triage and do not yet have a PSD in place.}}'
     },
     register: {
       label: 'Register attendance',
@@ -3274,11 +3274,25 @@ export const en = {
     },
     'give-instructions': {
       label: 'Add new PSDs',
-      title:
-        'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}}?',
-      description: 'This cannot be undone.',
-      confirm: 'Yes, add PSDs',
-      cancel: 'No, return to session',
+      singleProgramme: {
+        title:
+          'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}} for { programmeName }?',
+        confirm: 'Yes, add PSDs',
+        cancel: 'No, return to session'
+      },
+      multipleProgrammes: {
+        title: 'Select the programmes to add PSDs',
+        allProgrammes: {
+          label: 'All programmes',
+          hint: '{count, plural, one {1 child} other {# children}} can be given a PSD for one or more programmes'
+        },
+        oneProgramme: {
+          hint: '{count, plural, one {1 child} other {# children}} can be given a PSD for { programmeName }'
+        },
+        confirm: 'Add PSDs',
+        cancel: 'Cancel and return to session'
+      },
+      warning: 'This cannot be undone.',
       success: 'PSDs added'
     },
     reminders: {

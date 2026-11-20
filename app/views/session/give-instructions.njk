@@ -1,8 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
-{% set title = __mf("session.give-instructions.title", {
-  count: session.activity.giveInstructions
-}) %}
+{% set singleProgramme = true if patientsByProgramme.length === 1 else false %}
+{% set programmeCountKey = "singleProgramme" if singleProgramme else "multipleProgrammes" %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -24,24 +23,71 @@
 {% endblock %}
 
 {% block form %}
-  {{ heading({
-    text: title,
-    size: "l"
-  }) }}
+  {% if singleProgramme %}
+    {{ heading({
+      text: __mf("session.give-instructions.singleProgramme.title", {
+        count: totalPatients,
+        programmeName: patientsByProgramme[0].programmeNameInSentence
+      }),
+      size: "l"
+    }) }}
 
-  {{ __("session.give-instructions.description", session.activity.giveInstructions) | nhsukMarkdown }}
+    {{ input({
+      type: "hidden",
+      value: patientsByProgramme[0].programme_id,
+      decorate: "psdProgramme_ids"
+    }) }}
+  {% else %}
+    {% set checkboxItems = [
+      {
+        value: "all",
+        text: __("session.give-instructions.multipleProgrammes.allProgrammes.label"),
+        hint: __mf("session.give-instructions.multipleProgrammes.allProgrammes.hint", { count: totalPatients }),
+        behaviour: "inclusive"
+      },
+      {
+        divider: "or",
+        behaviour: "inclusive"
+      }
+      ] %}
+    {% for programmeItem in patientsByProgramme %}
+      {% set checkboxItems = checkboxItems | push({
+        value: programmeItem.programme_id,
+        text: programmeItem.programmeName,
+        hint: __mf("session.give-instructions.multipleProgrammes.oneProgramme.hint", {
+          count: programmeItem.patientCount,
+          programmeName: programmeItem.programmeNameInSentence
+        })
+      }) %}
+    {% endfor %}
+
+    {{ checkboxes({
+      fieldset: {
+        legend: {
+          heading: __("session.give-instructions.multipleProgrammes.title"),
+          size: "l"
+        }
+      },
+      items: checkboxItems,
+      decorate: "psdProgramme_ids"
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block afterForm %}
+  {{ insetText({
+    html: __("session.give-instructions.warning") | nhsukMarkdown
+  }) }}
+
   {{ appButtonGroup({
     buttons: [
       {
-        text: __("session.give-instructions.confirm")
+        text: __("session.give-instructions." + programmeCountKey + ".confirm")
       }
     ],
     links: [
       {
-        text: __("session.give-instructions.cancel"),
+        text: __("session.give-instructions." + programmeCountKey + ".cancel"),
         href: session.uri + "/instructions"
       }
     ]

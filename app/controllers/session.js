@@ -40,6 +40,7 @@ import { getSessionYearGroups } from '../utils/session.js'
 import {
   formatTime,
   formatYearGroup,
+  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
@@ -1097,12 +1098,60 @@ export const sessionController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  confirmInstructions(request, response) {
+    const { session } = response.locals
+    const { data } = request.session
+
+    const patientSessions = session.patientSessions.filter(
+      ({ patientProgramme }) => patientProgramme.canBulkInstruct
+    )
+    const programmeNameLookup = Object.fromEntries(
+      Programme.findAll(data)
+        .filter(({ isHidden }) => !isHidden)
+        .map(({ id, name }) => [id, name])
+    )
+    const patientSessionsByProgramme = Object.groupBy(
+      patientSessions,
+      ({ programme_id }) => programme_id
+    )
+
+    // Break down the number of patients ready for a PSD by each programme
+    response.locals.patientsByProgramme = Object.entries(
+      patientSessionsByProgramme
+    )
+      .map(([programme_id, sessions]) => ({
+        programme_id,
+        programmeName: programmeNameLookup[programme_id],
+        programmeNameInSentence: programmeNameLookup[programme_id].replace(
+          'Flu',
+          'flu'
+        ),
+        patientCount: sessions.length
+      }))
+      .sort((a, b) => a.programmeName.localeCompare(b.programmeName))
+
+    // And report the total number of patients ready for any PSD
+    response.locals.totalPatients = _.uniqBy(
+      patientSessions,
+      'patient.nhsn'
+    ).length
+
+    return response.render(`session/give-instructions`)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   giveInstructions(request, response) {
     const { data } = request.session
     const { __, account, session } = response.locals
 
+    const programme_ids = stringToArray(request.body.psdProgramme_ids)
+
     const patientsToInstruct = session.patientSessions.filter(
-      ({ patientProgramme }) => patientProgramme.canBulkInstruct
+      ({ patientProgramme }) =>
+        patientProgramme.canBulkInstruct &&
+        programme_ids.includes(patientProgramme.programme_id)
     )
 
     for (const patientSession of patientsToInstruct) {
@@ -1115,6 +1164,9 @@ export const sessionController = {
     }
 
     request.flash('success', __(`session.give-instructions.success`))
+
+    // Tidy up
+    delete data.psdProgramme_ids
 
     return saveAndRedirect(request, response, `${session.uri}/instructions`)
   },
