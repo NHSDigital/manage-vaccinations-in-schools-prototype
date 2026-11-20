@@ -41,6 +41,7 @@ import {
   today
 } from '../utils/date.js'
 import {
+  getInstructionStatusProperties,
   getPatientClinicStatusProperties,
   getPatientSchoolStatusProperties,
   getPatientStatusProperties
@@ -2074,6 +2075,14 @@ export class PatientProgramme extends BaseModel {
                   ? `Consent given ${formatDate(this.consentGivenDate, { dateStyle: 'long' })}`
                   : undefined
               )
+            case 'instructionStatus': {
+              const status = this.instructionStatus
+              return formatProgrammeStatus(
+                this.programme,
+                getInstructionStatusProperties(status),
+                status === InstructionStatus.Needed ? this.status : undefined
+              )
+            }
             default:
               return undefined
           }
