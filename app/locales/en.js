@@ -3282,7 +3282,7 @@ export const en = {
       description:
         'See which children are due to attend vaccination sessions and which have no response yet'
     },
-    giveInstructions: {
+    'give-instructions': {
       label: 'Add new PSDs',
       title:
         'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}}?',
