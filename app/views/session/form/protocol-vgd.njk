@@ -9,6 +9,12 @@
     size: "l"
   }) }}
 
+  {% if vgdRestrictionDescription %}
+    {{ insetText({
+      html: vgdRestrictionDescription | nhsukMarkdown
+    }) }}
+  {% endif %}
+
   {{ radios({
     fieldset: {
       legend: {
