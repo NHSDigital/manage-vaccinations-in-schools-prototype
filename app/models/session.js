@@ -565,6 +565,20 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Do any of the programmes we can vaccinate for in this session support a
+   * vaccine general direction (VGD)?
+   *
+   * @returns {boolean} - true if VGD is possible, or false otherwise
+   */
+  get canSupportVGD() {
+    const sessionProgrammes = this.canVaccinateForOtherProgrammes
+      ? Programme.findAll(this.context).filter(({ isHidden }) => !isHidden)
+      : this.programmes
+
+    return sessionProgrammes.some(({ supportsVGD }) => supportsVGD)
+  }
+
+  /**
    * Can this session's targeted programmes result in conditions for longer appointments?
    *
    * @returns {boolean} - true if we can differentiate short and long appointments, or false otherwise

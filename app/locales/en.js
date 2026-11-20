@@ -3225,6 +3225,8 @@ export const en = {
     },
     protocolVGD: {
       title: 'Do you want to use a vaccine group direction (VGD)?',
+      restriction:
+        'These settings will only apply to vaccinations given for the {programmeNames} {count, plural, one {programme} other {programmes}}.',
       nurse: {
         label: 'Protocol',
         title:

@@ -1,3 +1,4 @@
+import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
@@ -22,6 +23,7 @@ import {
   ClinicBooking,
   DefaultBatch,
   PatientSession,
+  Programme,
   School,
   Session,
   Team
@@ -982,7 +984,39 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
-    const { view } = request.params
+    const { session_id, view } = request.params
+    const { data } = request.session
+    const { __mf } = response.locals
+
+    if (view === 'protocol-vgd') {
+      // Are there any programmes selected that don't support VGD? If so, we need to make it clear
+      // which programmes will get the VGD decision.
+      const session = new Session(
+        Session.findOne(session_id, data.wizard),
+        data
+      )
+      const sessionProgrammes = session.canVaccinateForOtherProgrammes
+        ? Programme.findAll(data).filter(({ isHidden }) => !isHidden)
+        : session.programmes
+
+      const programmesByVGDStatus = Object.groupBy(
+        sessionProgrammes,
+        ({ supportsVGD }) => (supportsVGD ? 'supported' : 'notSupported')
+      )
+      if (programmesByVGDStatus['notSupported']) {
+        const vgdProgrammes = programmesByVGDStatus['supported']
+        if (vgdProgrammes) {
+          const programmeNames = vgdProgrammes.map(({ name }) => `**${name}**`)
+          response.locals.vgdRestrictionDescription = __mf(
+            'session.protocolVGD.restriction',
+            {
+              count: programmeNames.length,
+              programmeNames: prototypeFilters.formatList(programmeNames)
+            }
+          )
+        }
+      }
+    }
 
     return response.render(`session/form/${view}`)
   },
