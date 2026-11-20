@@ -111,6 +111,14 @@
           {% set ids = session.programme_ids %}
         {% endif %}
 
+        {% set sessionPSDProgramme_ids = session.psdProgramme_ids %}
+        {% set filteredPSDProgramme_ids = [] %}
+        {% for programme_id in sessionPSDProgramme_ids %}
+          {% if ids | includes(programme_id) %}
+            {% set filteredPSDProgramme_ids = filteredPSDProgramme_ids | push(programme_id) %}
+          {% endif %}
+        {% endfor %}
+
         {% for patientSession in results.page %}
           {% set statusHtml %}
             {% for patientSession in patientSession.siblingPatientSessions %}
@@ -127,6 +135,14 @@
               {%- endif -%}
             {%- endfor %}
           {%- endset %}
+
+          {% set instructionStatusHtml %}
+            {% for patientSession in patientSession.siblingPatientSessions %}
+              {% if ids | includes(patientSession.programme_id) and filteredPSDProgramme_ids | includes(patientSession.programme_id) and patientSession.patientProgramme.instructionStatus %}
+                {{ patientSession.patientProgramme.formatted.instructionStatus | nhsukMarkdown }}
+              {% endif %}
+            {% endfor %}
+          {% endset %}
 
           {% set patientSessionUri = patientSession.uri %}
           {% if session.type === SessionType.Clinic %}
@@ -158,8 +174,8 @@
                 } if session.canOfferAlternativeVaccine and not account.isSchoolUser,
                 instructionStatus: {
                   label: __("patientSession.instructionStatus.label"),
-                  value: patientSession.formatted.instructionStatus
-                } if view == "instructions" and patientSession.instructionStatus and not account.isSchoolUser,
+                  value: instructionStatusHtml
+                } if view == "instructions" and not account.isSchoolUser,
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,

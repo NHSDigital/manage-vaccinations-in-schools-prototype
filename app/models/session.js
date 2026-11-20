@@ -434,6 +434,29 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Get the IDs of programmes for which HCAs can given vaccinations under PSDs
+   *
+   * @returns {Array<string>} - the programme IDs that PSDs can be used for
+   */
+  get psdProgramme_ids() {
+    if (this.psdUsage === PsdUsage.None) {
+      return []
+    }
+
+    if (this.psdUsage === PsdUsage.NasalFluOnly) {
+      return ['flu']
+    }
+
+    if (this.canVaccinateForOtherProgrammes) {
+      return Programme.findAll(this.context)
+        .filter(({ isHidden }) => !isHidden)
+        .map(({ id }) => id)
+    }
+
+    return this.programme_ids
+  }
+
+  /**
    * Can PSDs be used for the given patient and programme in this session?
    *
    * @param {PatientProgramme} [patientProgramme] - the vaccine type to administer

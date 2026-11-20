@@ -840,13 +840,9 @@ export function getInstructionStatus(patientProgramme) {
     return
   }
 
-  if (patientProgramme.vaccine.criteria === VaccineCriteria.Intranasal) {
-    return patientProgramme.instruction
-      ? InstructionStatus.Given
-      : InstructionStatus.Needed
-  }
-
-  return
+  return patientProgramme.instruction
+    ? InstructionStatus.Given
+    : InstructionStatus.Needed
 }
 
 /**
