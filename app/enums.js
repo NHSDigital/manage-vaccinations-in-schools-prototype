@@ -478,7 +478,7 @@ export const PatientClinicStatus = {
  */
 export const PatientSchoolStatus = {
   Ready: 'Bring to session',
-  NoResponse: 'No response',
+  NoResponse: 'No consent response',
   NoAction: 'No action needed'
 }
 
