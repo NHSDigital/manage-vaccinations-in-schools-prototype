@@ -147,8 +147,8 @@
               lastRowBorder: false,
               rows: summaryRows(patientSession.patient, {
                 dob: {},
-                impairments: {},
-                adjustments: {},
+                impairments: {} if not account.isSchoolUser else none,
+                adjustments: {} if not account.isSchoolUser else none,
                 yearGroup: {
                   value: patientSession.formatted.yearGroup
                 },
