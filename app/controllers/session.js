@@ -5,6 +5,7 @@ import {
   AcademicYear,
   ClinicType,
   InstructionStatus,
+  PatientSchoolStatus,
   PatientStatus,
   ProgrammeType,
   RecordVaccineCriteria,
@@ -318,7 +319,7 @@ export const sessionController = {
    */
   readPatientSessions(request, response, next) {
     const { view } = request.params
-    const { canBeOfferedCatchUps, option, q, programme_id, yearGroup } =
+    const { canBeOfferedCatchUps, option, q, programme_id, sort, yearGroup } =
       request.query
     const { data } = request.session
     const { account, session } = response.locals
@@ -472,6 +473,35 @@ export const sessionController = {
     // Show only one patient session per patient
     results = _.uniqBy(results, 'patient.nhsn')
 
+    // School users viewing ‘Bring to session’ can sort by date consent given
+    const canSortByConsentDate =
+      account.isSchoolUser && filters.schoolStatus === PatientSchoolStatus.Ready
+
+    if (canSortByConsentDate && sort === 'date') {
+      // Most recent consent given date across selected programmes
+      const ids =
+        programme_ids || session.programmes.map((programme) => programme.id)
+
+      const latestConsentGivenDate = (patientSession) =>
+        patientSession.siblingPatientSessions
+          .filter(({ programme_id }) => ids.includes(programme_id))
+          .map(({ patientProgramme }) => patientProgramme?.consentGivenDate)
+          .filter(Boolean)
+          .sort((a, b) => getDateValueDifference(b, a))[0]
+
+      // Sort is stable, so ties stay ordered by last name
+      results.sort((a, b) => {
+        const dateA = latestConsentGivenDate(a)
+        const dateB = latestConsentGivenDate(b)
+
+        // Children without a consent date go last
+        if (!dateA) return dateB ? 1 : 0
+        if (!dateB) return -1
+
+        return getDateValueDifference(dateB, dateA)
+      })
+    }
+
     // Results
     response.locals.results = getResults(results, request.query)
     response.locals.pages = getPagination(results, request.query)
@@ -522,6 +552,22 @@ export const sessionController = {
       }
     }
 
+    // Sort options (only when filtering by ‘Bring to session’)
+    if (canSortByConsentDate) {
+      response.locals.sortItems = [
+        {
+          text: 'Last name',
+          value: 'name',
+          checked: !sort || sort === 'name'
+        },
+        {
+          text: 'Date consent given',
+          value: 'date',
+          checked: sort === 'date'
+        }
+      ]
+    }
+
     response.locals.checkboxFilters = checkboxFilters[view]
     response.locals.radioFilters = radioFilters[view]
 
@@ -546,6 +592,7 @@ export const sessionController = {
     delete data.q
     delete data.register
     delete data.schoolStatus
+    delete data.sort
     delete data.status
     delete data.vaccineCriteria
     delete data.yearGroup
@@ -567,6 +614,7 @@ export const sessionController = {
         'q',
         'register',
         'schoolStatus',
+        'sort',
         'status'
       ],
       [
