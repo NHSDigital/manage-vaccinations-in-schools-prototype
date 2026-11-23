@@ -18,8 +18,7 @@ import {
   ScreenStatus,
   SessionConsentContacts,
   SessionType,
-  VaccinationOutcome,
-  VaccineCriteria
+  VaccinationOutcome
 } from '../enums.js'
 
 import { formatDate, getDateValueDifference, today } from './date.js'
