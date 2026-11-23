@@ -325,7 +325,10 @@ export const sessionController = {
     const { account, session } = response.locals
 
     const showRegistration =
-      session.hasRegistration && session.isActive && view === 'patients'
+      session.hasRegistration &&
+      session.isActive &&
+      view === 'patients' &&
+      !account.isSchoolUser
 
     response.locals.showRegistration = showRegistration
     response.locals.view = account.isSchoolUser ? 'patientsSchoolUser' : view
