@@ -137,10 +137,12 @@ export const vaccinationController = {
         session.hasPsdProtocolFor(patientProgramme):
         protocol = VaccinationProtocol.PSD
         break
-      case account.isHCA && session.hasVgdProtocol:
+      case account.isHCA &&
+        session.getHCAProtocolFor(programme.id) === VaccinationProtocol.VGD:
         protocol = VaccinationProtocol.VGD
         break
-      case account.isRegisteredNurse && session.hasVgdProtocol:
+      case account.isRegisteredNurse &&
+        session.getNurseProtocolFor(programme.id) === VaccinationProtocol.VGD:
         protocol = VaccinationProtocol.VGD
         break
       default:
@@ -161,7 +163,7 @@ export const vaccinationController = {
         createdBy_uid: account.uid,
         administeredAt: today(),
         administeredBy_uid,
-        ...(session.hasVgdProtocol && {
+        ...(session.hasVgdProtocolFor(programme.id) && {
           assessedBy_uid
         }),
         ...(session.clinic_id && {

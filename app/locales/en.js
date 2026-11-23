@@ -3251,7 +3251,7 @@ export const en = {
       }
     },
     protocolPSD: {
-      label: 'Can use PSDs',
+      label: 'Healthcare assistants can use PSDs',
       title:
         'Can healthcare assistants give vaccinations under a patient specific direction (PSD)?',
       none: {

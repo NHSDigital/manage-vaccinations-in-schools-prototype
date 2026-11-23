@@ -93,7 +93,7 @@
     decorate: "preScreen.note"
   }) }}
 
-  {% if session.hasVgdProtocol %}
+  {% if session.hasVgdProtocolFor(patientProgramme.programme_id) %}
     {{ select({
       label: __("preScreen.assessedBy.title"),
       items: userItems(registeredNurseUsers, preScreen.assessedBy),
@@ -140,9 +140,9 @@
     }
   }) %}
 
-  {% if session.hasVgdProtocol and account.isRegisteredNurse and options.canRecordInjectionSite %}
+  {% if session.hasVgdProtocolFor(patientProgramme.programme_id) and account.isRegisteredNurse and options.canRecordInjectionSite %}
     {% set preScreenReadyHtml = administeredByHtml + vaccinationSiteHtml %}
-  {% elif session.hasVgdProtocol and account.isRegisteredNurse %}
+  {% elif session.hasVgdProtocolFor(patientProgramme.programme_id) and account.isRegisteredNurse %}
     {% set preScreenReadyHtml = administeredByHtml %}
   {% elif options.canRecordInjectionSite %}
     {% set preScreenReadyHtml = vaccinationSiteHtml %}

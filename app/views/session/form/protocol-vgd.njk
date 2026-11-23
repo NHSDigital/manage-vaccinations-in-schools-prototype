@@ -2,6 +2,46 @@
 
 {% set title = __("session.protocolVGD.title") %}
 
+{#
+  There are two versions of this page: one using radio buttons when only a single programme
+  is capable of supporting VGD; and one using a checkbox per programme when the session can
+  vaccinate for multiple programmes that support VGD
+#}
+
+{# Build the per-programme checkbox items #}
+{% macro insertCheckboxesForRole(params) %}
+  {# Build the checkbox items #}
+  {% set checkboxItems = [] %}
+  {% for programme in programmesSupportingVGD %}
+    {% set checkboxItems = checkboxItems | push({
+      label: programme.name,
+      value: programme.id
+    }) %}
+  {% endfor %}
+  {% set checkboxItems = checkboxItems | push({
+    divider: "or"
+  }) %}
+  {% set checkboxItems = checkboxItems | push({
+    label: "None, use a patient group direction (PGD)" if params.usePGDFallback else "None",
+    value: "",
+    behaviour: "exclusive"
+  }) %}
+
+  {# Show the checkboxes #}
+  {{ checkboxes({
+    fieldset: {
+      legend: {
+        heading: params.question,
+        size: "m"
+      }
+    },
+    hint: "Any programmes not selected will be given under a patient group direction (PGD)" if params.usePGDFallback,
+    items: checkboxItems,
+    decorate: params.decorate
+  }) }}
+{% endmacro %}
+
+
 {% block form %}
   {{ heading({
     caption: session.location.name,
@@ -9,49 +49,70 @@
     size: "l"
   }) }}
 
-  {% if vgdRestrictionDescription %}
-    {{ insetText({
-      html: vgdRestrictionDescription | nhsukMarkdown
+  {% if programmesSupportingVGD.length === 1 %}
+    {# Single-programme question variant #}
+    {% if vgdRestrictionDescription %}
+      {{ insetText({
+        html: vgdRestrictionDescription | nhsukMarkdown
+      }) }}
+    {% endif %}
+
+    {# Nurses and health professionals #}
+    {{ radios({
+      fieldset: {
+        legend: {
+          text: __("session.protocolVGD.nurse.title"),
+          size: "m"
+        }
+      },
+      items: [
+        {
+          label: __("session.protocolVGD.nurse.pgd.label"),
+          value: ""
+        },
+        {
+          label: __("session.protocolVGD.nurse.vgd.label"),
+          value: programmesSupportingVGD[0].id
+        }
+      ],
+      decorate: "session.vgdProgramme_idsForNurses"
+    }) }}
+
+    {# Health care assistants #}
+    {{ radios({
+      fieldset: {
+        legend: {
+          text: __("session.protocolVGD.hca.title"),
+          size: "m"
+        }
+      },
+      items: [
+        {
+          label: __("session.protocolVGD.hca.no.label"),
+          value: ""
+        },
+        {
+          label: __("session.protocolVGD.hca.yes.label"),
+          value: programmesSupportingVGD[0].id
+        }
+      ],
+      decorate: "session.vgdProgramme_idsForHCAs"
+    }) }}
+  {% else %}
+    {# Multiple-programme question variant #}
+
+    {# Nurses and health professionals can use VGD or PGD #}
+    {{ insertCheckboxesForRole({
+      question: "Registered nurses and healthcare professionals: which vaccinations will they give under a VGD?",
+      usePGDFallback: true,
+      decorate: "session.vgdProgramme_idsForNurses"
+    }) }}
+
+    {# Healthcare assistants can only use VGD #}
+    {{ insertCheckboxesForRole({
+      question: "Healthcare assistants: which vaccinations can they give under a VGD?",
+      usePGDFallback: false,
+      decorate: "session.vgdProgramme_idsForHCAs"
     }) }}
   {% endif %}
-
-  {{ radios({
-    fieldset: {
-      legend: {
-        text: __("session.protocolVGD.nurse.title"),
-        size: "m"
-      }
-    },
-    items: [
-      {
-        label: __("session.protocolVGD.nurse.pgd.label"),
-        value: VaccinationProtocol.PGD
-      },
-      {
-        label: __("session.protocolVGD.nurse.vgd.label"),
-        value: VaccinationProtocol.VGD
-      }
-    ],
-    decorate: "session.protocolNurse"
-  }) }}
-
-  {{ radios({
-    fieldset: {
-      legend: {
-        text: __("session.protocolVGD.hca.title"),
-        size: "m"
-      }
-    },
-    items: [
-      {
-        label: __("session.protocolVGD.hca.no.label"),
-        value: ""
-      },
-      {
-        label: __("session.protocolVGD.hca.yes.label"),
-        value: VaccinationProtocol.VGD
-      }
-    ],
-    decorate: "session.protocolHCA"
-  }) }}
 {% endblock %}

@@ -51,12 +51,12 @@
         },
         protocolNurse: {
           label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
-        },
+          href: session.uri + "/new/protocol-vgd"
+        } if session.canSupportVGD else none,
         protocolHCA: {
           label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
-        },
+          href: session.uri + "/new/protocol-vgd"
+        } if session.canSupportVGD else none,
         psdUsage: {
           label: __("session.protocolPSD.label"),
           href: session.uri + "/new/protocol-psd"
@@ -98,12 +98,12 @@
         } if session.clinicType !== ClinicType.DropIn else none,
         protocolNurse: {
           label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
-        },
+          href: session.uri + "/new/protocol-vgd"
+        } if session.canSupportVGD else none,
         protocolHCA: {
           label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
-        },
+          href: session.uri + "/new/protocol-vgd"
+        } if session.canSupportVGD else none,
         psdUsage: {
           label: __("session.protocolPSD.label"),
           href: session.uri + "/new/protocol-psd"

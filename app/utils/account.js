@@ -13,7 +13,10 @@ export function getAccountVaccineMethods(account, patientSession) {
     vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
   } else if (account.isHCA) {
     // HCAs can record all vaccines under VGD
-    if (patientSession.session.protocolHCA === VaccinationProtocol.VGD) {
+    if (
+      patientSession.session.getHCAProtocolFor(patientSession.programme_id) ===
+      VaccinationProtocol.VGD
+    ) {
       vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
     }
 

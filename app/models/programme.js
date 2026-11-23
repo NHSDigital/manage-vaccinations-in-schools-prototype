@@ -13,6 +13,12 @@ import {
 import { BaseModel } from './base.js'
 
 /**
+ * The IDs of the programmes in `app/datasets/programmes.js`
+ *
+ * @typedef {'other' | '4in1' | '5in1' | '6in1' | 'flu' | 'hpv' | 'menacwy' | 'mmr' | 'td-ipv'} ProgrammeId
+ */
+
+/**
  * @typedef {BaseModelOptions & object} ProgrammeOptions
  * @property {string} [id] - Programme ID
  * @property {ProgrammeType} [type] - Programme type

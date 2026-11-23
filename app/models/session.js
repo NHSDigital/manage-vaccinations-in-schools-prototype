@@ -80,8 +80,8 @@ import { BaseModel } from './base.js'
  * @property {Array<SessionPresetName>} [presetNames] - Session preset names
  * @property {string} [presetOverrideProgramme_ids] - Programme IDs (no preset)
  * @property {boolean} [hasRegistration] - Session has registration?
- * @property {VaccinationProtocol} [protocolNurse] - Default protocol for nurse
- * @property {VaccinationProtocol} [protocolHCA] - Default protocol for HCA
+ * @property {ProtocolByProgramme} [protocolNurse] - Protocol for nurses, by programme
+ * @property {ProtocolByProgramme} [protocolHCA] - Protocol for HCAs, by programme
  * @property {PsdUsage} [psdUsage] - Which programmes/methods use PSDs
  *
  *   Clinics only
@@ -106,6 +106,13 @@ import { BaseModel } from './base.js'
  */
 
 /**
+ * The protocol to use for each programme. Hidden programmes are never included, and a
+ * `null` value means there’s no protocol (e.g. HCAs can’t vaccinate unless there’s a PSD).
+ *
+ * @typedef {Partial<Record<ProgrammeId, VaccinationProtocol|null>>} ProtocolByProgramme
+ */
+
+/**
  * The minimal shape of appointment data needed to work out how long an appointment will take,
  * and so which slots it could be booked into.
  *
@@ -117,6 +124,35 @@ import { BaseModel } from './base.js'
  *
  * @typedef {AppointmentLengthFactors & {fluAlternative: (boolean|undefined), mmrAlternative: (boolean|undefined)}} ClinicVaccinationChoices
  */
+
+/**
+ * Get a protocol for every programme within the scope of Mavis (i.e. not hidden)
+ *
+ * @param {(programme: ProgrammeOptions) => VaccinationProtocol|null} protocolFor - Protocol for a programme
+ * @returns {ProtocolByProgramme} Protocol for each programme
+ */
+function getProtocolsForProgrammes(protocolFor) {
+  const programmes = Object.values(programmesData).filter(
+    ({ isHidden }) => !isHidden
+  )
+
+  return Object.fromEntries(
+    programmes.map((programme) => [programme.id, protocolFor(programme)])
+  )
+}
+
+/**
+ * Format programme names to start a line, e.g. ‘Flu and Td/IPV’
+ *
+ * @param {Array<Programme>} programmes - Programmes
+ * @returns {string} Programme names, with the first letter capitalised
+ */
+function formatProgrammeNamesAsPrefix(programmes) {
+  const programmeNames = programmes.map(({ name }) =>
+    sentenceCaseProgrammeName(name)
+  )
+  return _.upperFirst(filters.formatList(programmeNames))
+}
 
 /**
  * @class Session
@@ -156,8 +192,14 @@ export class Session extends BaseModel {
     this.cancelledAt = options?.cancelledAt && new Date(options.cancelledAt)
     this.hasRegistration = stringToBoolean(options?.hasRegistration)
     this.register = options?.register || {}
-    this.protocolNurse = options?.protocolNurse || VaccinationProtocol.PGD
-    this.protocolHCA = options?.protocolHCA || ''
+
+    // By default, nurses use PGDs and HCAs don’t use VGDs, for every programme
+    this.protocolNurse = _.isEmpty(options?.protocolNurse)
+      ? getProtocolsForProgrammes(() => VaccinationProtocol.PGD)
+      : options.protocolNurse
+    this.protocolHCA = _.isEmpty(options?.protocolHCA)
+      ? getProtocolsForProgrammes(() => null)
+      : options.protocolHCA
     this.psdUsage = options?.psdUsage || PsdUsage.None
 
     if (this.type === SessionType.Clinic) {
@@ -422,15 +464,146 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Does session need to support the VGD protocol?
+   * Get the protocol nurses will use to give vaccinations for a programme
    *
-   * @returns {boolean} Session need to support the VGD protocol?
+   * @param {ProgrammeId} programme_id - Programme ID
+   * @returns {VaccinationProtocol} Protocol (PGD, unless a VGD has been chosen)
    */
-  get hasVgdProtocol() {
+  getNurseProtocolFor(programme_id) {
+    return this.protocolNurse[programme_id] || VaccinationProtocol.PGD
+  }
+
+  /**
+   * Get the protocol HCAs will use to give vaccinations for a programme
+   *
+   * @param {ProgrammeId} programme_id - Programme ID
+   * @returns {VaccinationProtocol|null} Protocol, or null if HCAs have no protocol for the programme
+   */
+  getHCAProtocolFor(programme_id) {
+    return this.protocolHCA[programme_id] || null
+  }
+
+  /**
+   * Does session need to support the VGD protocol for a programme?
+   *
+   * @param {ProgrammeId} programme_id - Programme ID
+   * @returns {boolean} Session needs to support the VGD protocol for the programme?
+   */
+  hasVgdProtocolFor(programme_id) {
     return (
-      this.protocolNurse === VaccinationProtocol.VGD ||
-      this.protocolHCA === VaccinationProtocol.VGD
+      this.getNurseProtocolFor(programme_id) === VaccinationProtocol.VGD ||
+      this.getHCAProtocolFor(programme_id) === VaccinationProtocol.VGD
     )
+  }
+
+  /**
+   * Get the IDs of the programmes for which nurses will give vaccinations under a VGD
+   *
+   * Used by the checkboxes and radios on the VGD question page. If no programmes use a VGD,
+   * the exclusive ‘None’ option (an empty string) is returned, so that it shows as selected.
+   *
+   * @returns {Array<string>} Programme IDs
+   */
+  get vgdProgramme_idsForNurses() {
+    return this.#vgdProgramme_idsForAnswer(this.protocolNurse)
+  }
+
+  /**
+   * Get the IDs of the programmes for which HCAs can give vaccinations under a VGD
+   *
+   * @see vgdProgramme_idsForNurses
+   * @returns {Array<string>} Programme IDs
+   */
+  get vgdProgramme_idsForHCAs() {
+    return this.#vgdProgramme_idsForAnswer(this.protocolHCA)
+  }
+
+  /**
+   * @param {ProtocolByProgramme} protocolByProgramme - Stored protocols
+   * @returns {Array<string>} Programme IDs (or the ‘None’ answer)
+   */
+  #vgdProgramme_idsForAnswer(protocolByProgramme) {
+    const vgdProgramme_ids = this.programmesSupportingVGD
+      .map(({ id }) => id)
+      .filter(
+        (programme_id) =>
+          protocolByProgramme[programme_id] === VaccinationProtocol.VGD
+      )
+
+    const noneAnswer = ''
+    return vgdProgramme_ids.length > 0 ? vgdProgramme_ids : [noneAnswer]
+  }
+
+  /**
+   * Format the protocols a role will vaccinate under, naming the programmes each one
+   * applies to when the session covers programmes under different protocols
+   *
+   * For example:
+   * - ‘Vaccine group direction (VGD)’, if every programme is under a VGD
+   * - ‘Flu: Vaccine group direction (VGD)’ and ‘Other programmes: Patient group
+   *   direction (PGD)’, as a bulleted list, if only some are
+   * - ‘Patient group direction (PGD)’, if no programmes are under a VGD
+   *
+   * @param {(programme_id: ProgrammeId) => VaccinationProtocol|null} protocolFor - Protocol look-up
+   * @param {VaccinationProtocol|null} protocolForOtherProgrammes - Protocol for programmes
+   *   not under a VGD, or null if they shouldn’t be mentioned
+   * @returns {string} Formatted protocols, or an empty string if there’s nothing to show
+   */
+  #formatProtocols(protocolFor, protocolForOtherProgrammes) {
+    const vgdProgrammes = this.programmesSupportingVGD.filter(
+      ({ id }) => protocolFor(id) === VaccinationProtocol.VGD
+    )
+    const vgdProgramme_ids = vgdProgrammes.map(({ id }) => id)
+    const otherProgrammes = this.programmesThatCanBeAdministered.filter(
+      ({ id }) => !vgdProgramme_ids.includes(id)
+    )
+
+    if (vgdProgrammes.length === 0) {
+      return protocolForOtherProgrammes || ''
+    }
+
+    if (otherProgrammes.length === 0) {
+      return VaccinationProtocol.VGD
+    }
+
+    const protocolSummaries = [
+      `${formatProgrammeNamesAsPrefix(vgdProgrammes)}: ${VaccinationProtocol.VGD}`
+    ]
+
+    if (protocolForOtherProgrammes) {
+      const otherProgrammesPrefix =
+        otherProgrammes.length === 1
+          ? formatProgrammeNamesAsPrefix(otherProgrammes)
+          : 'Other programmes'
+      protocolSummaries.push(
+        `${otherProgrammesPrefix}: ${protocolForOtherProgrammes}`
+      )
+    }
+
+    return formatList(protocolSummaries)
+  }
+
+  /**
+   * Record which programmes nurses and HCAs will give vaccinations for under a VGD
+   *
+   * A protocol is stored for every programme within the scope of Mavis (i.e. not hidden).
+   * Programmes not given under a VGD use a PGD for nurses, and have no protocol for HCAs.
+   *
+   * @param {Array<string>} nurseVgdProgramme_ids - Programmes nurses give under a VGD
+   * @param {Array<string>} hcaVgdProgramme_ids - Programmes HCAs give under a VGD
+   */
+  setVgdProgrammes(nurseVgdProgramme_ids, hcaVgdProgramme_ids) {
+    this.protocolNurse = getProtocolsForProgrammes((programme) => {
+      const nurseUsesVgd =
+        programme.supportsVGD && nurseVgdProgramme_ids.includes(programme.id)
+      return nurseUsesVgd ? VaccinationProtocol.VGD : VaccinationProtocol.PGD
+    })
+
+    this.protocolHCA = getProtocolsForProgrammes((programme) => {
+      const hcaUsesVgd =
+        programme.supportsVGD && hcaVgdProgramme_ids.includes(programme.id)
+      return hcaUsesVgd ? VaccinationProtocol.VGD : null
+    })
   }
 
   /**
@@ -594,11 +767,31 @@ export class Session extends BaseModel {
    * @returns {boolean} - true if VGD is possible, or false otherwise
    */
   get canSupportVGD() {
-    const sessionProgrammes = this.canVaccinateForOtherProgrammes
+    return this.programmesSupportingVGD.length > 0
+  }
+
+  /**
+   * Get the programmes we can vaccinate for in this session that support a vaccine group
+   * direction (VGD)
+   *
+   * @returns {Array<Programme>} - Programmes that support VGD
+   */
+  get programmesSupportingVGD() {
+    return this.programmesThatCanBeAdministered.filter(
+      ({ supportsVGD }) => supportsVGD
+    )
+  }
+
+  /**
+   * Get the programmes we can vaccinate for in this session: either the session’s own
+   * programmes, or every programme in Mavis if it can vaccinate for other programmes
+   *
+   * @returns {Array<Programme>} - Programmes in scope for this session
+   */
+  get programmesThatCanBeAdministered() {
+    return this.canVaccinateForOtherProgrammes
       ? Programme.findAll(this.context).filter(({ isHidden }) => !isHidden)
       : this.programmes
-
-    return sessionProgrammes.some(({ supportsVGD }) => supportsVGD)
   }
 
   /**
@@ -1620,6 +1813,17 @@ export class Session extends BaseModel {
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
             case 'catchUps':
               return this.canVaccinateForOtherProgrammes
+            case 'protocolNurse':
+              return this.#formatProtocols(
+                (programme_id) => this.getNurseProtocolFor(programme_id),
+                VaccinationProtocol.PGD
+              )
+            case 'protocolHCA':
+              // HCAs can’t vaccinate under a PGD, so only mention their VGD programmes
+              return this.#formatProtocols(
+                (programme_id) => this.getHCAProtocolFor(programme_id),
+                null
+              )
             case 'consentUrl':
               return (
                 this.consentUrl &&
@@ -1712,6 +1916,7 @@ Session.relate('clinic_id', () => Clinic, 'clinic')
 Session.relate('school_id', () => School, 'school')
 
 /**
- * @import { RegistrationStatus, SessionConsentContacts, SessionMMRConsent, SessionPreset } from '../enums.js'
+ * @import { RegistrationStatus, SessionPreset } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
+ * @import { ProgrammeId, ProgrammeOptions } from './programme.js'
  */

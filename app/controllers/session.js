@@ -1017,6 +1017,9 @@ export const sessionController = {
           )
         }
       }
+
+      response.locals.programmesSupportingVGD =
+        programmesByVGDStatus['supported']
     }
 
     return response.render(`session/form/${view}`)
@@ -1048,6 +1051,19 @@ export const sessionController = {
         request.body.session.clinicType === ClinicType.DropIn
           ? false
           : team.hasClinicSessionRegistration
+    } else if (view === 'protocol-vgd') {
+      // The VGD answers are lists of programmes, which need converting into a protocol for
+      // each programme
+      const { vgdProgramme_idsForNurses, vgdProgramme_idsForHCAs } =
+        request.body.session
+      delete request.body.session.vgdProgramme_idsForNurses
+      delete request.body.session.vgdProgramme_idsForHCAs
+
+      session.setVgdProgrammes(
+        stringToArray(vgdProgramme_idsForNurses),
+        stringToArray(vgdProgramme_idsForHCAs)
+      )
+      session = Session.update(session_id, session, data.wizard)
     }
 
     // Update values in the session model
