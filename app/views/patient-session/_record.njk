@@ -93,7 +93,7 @@
     decorate: "preScreen.note"
   }) }}
 
-  {% if session.hasVgdProtocolFor(patientProgramme.programme_id) %}
+  {% if options.mustRecordAssessingNurse %}
     {{ select({
       label: __("preScreen.assessedBy.title"),
       items: userItems(registeredNurseUsers, preScreen.assessedBy),
@@ -101,7 +101,9 @@
       attributes: {
         "data-module": "app-autocomplete"
       }
-    }) if not account.isRegisteredNurse else input({
+    }) }}
+  {% elif options.canDelegateUnderVgd %}
+    {{ input({
       type: "hidden",
       value: account.uid,
       decorate: "preScreen.assessedBy_uid"
@@ -133,16 +135,16 @@
 
   {% set administeredByHtml = select({
     label: __("preScreen.administeredBy.title"),
-    items: userItems(allVaccinatingUsers, preScreen.assessedBy),
+    items: userItems(delegateUsers, preScreen.assessedBy),
     decorate: "preScreen.administeredBy_uid",
     attributes: {
       "data-module": "app-autocomplete"
     }
   }) %}
 
-  {% if session.hasVgdProtocolFor(patientProgramme.programme_id) and account.isRegisteredNurse and options.canRecordInjectionSite %}
+  {% if options.canDelegateUnderVgd and options.canRecordInjectionSite %}
     {% set preScreenReadyHtml = administeredByHtml + vaccinationSiteHtml %}
-  {% elif session.hasVgdProtocolFor(patientProgramme.programme_id) and account.isRegisteredNurse %}
+  {% elif options.canDelegateUnderVgd %}
     {% set preScreenReadyHtml = administeredByHtml %}
   {% elif options.canRecordInjectionSite %}
     {% set preScreenReadyHtml = vaccinationSiteHtml %}

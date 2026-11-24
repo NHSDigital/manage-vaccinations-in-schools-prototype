@@ -5,6 +5,7 @@ import {
   RegistrationStatus,
   SessionType,
   VaccinationOutcome,
+  VaccinationProtocol,
   VaccineCriteria
 } from '../enums.js'
 import { PatientSession, Programme, User, Vaccination } from '../models.js'
@@ -33,10 +34,6 @@ export const patientSessionController = {
       (user) => user.isRegisteredNurse
     )
 
-    const allVaccinatingUsers = User.findAll(data).filter(
-      (user) => user.canVaccinate
-    )
-
     const { clinicAppointment, patient, patientProgramme, programme, session } =
       patientSession
 
@@ -49,6 +46,17 @@ export const patientSessionController = {
     )
 
     const vaccineMethods = getAccountVaccineMethods(account, patientSession)
+
+    // Which roles give this programme under a VGD in this session
+    const nursesUseVgd =
+      session.getNurseProtocolFor(programme.id) === VaccinationProtocol.VGD
+    const hcasUseVgd =
+      session.getHCAProtocolFor(programme.id) === VaccinationProtocol.VGD
+
+    // A PSD takes priority over a VGD
+    const canUsePsd =
+      session.hasPsdProtocolFor(patientProgramme) &&
+      patientProgramme.hasInstruction
 
     response.locals.options = {
       // Show outstanding vaccinations
@@ -84,8 +92,20 @@ export const patientSessionController = {
         patientSession.canRecordSessionOutcome &&
         session.isActive,
       canRecordInjectionSite:
-        patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal
+        patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal,
+      mustRecordAssessingNurse: account.isHCA && hcasUseVgd && !canUsePsd,
+      canDelegateUnderVgd:
+        account.isRegisteredNurse && (nursesUseVgd || hcasUseVgd)
     }
+
+    // People a nurse can hand over to: themselves, plus anyone whose role gives this
+    // programme under a VGD
+    response.locals.delegateUsers = User.findAll(data).filter(
+      (user) =>
+        user.uid === account.uid ||
+        (user.isRegisteredNurse && nursesUseVgd) ||
+        (user.isHCA && hcasUseVgd)
+    )
 
     // Extra info about the consent reminders sent so far
     if (response.locals.options.canRemind) {
@@ -148,7 +168,6 @@ export const patientSessionController = {
     response.locals.session = session
     response.locals.clinicAppointment = clinicAppointment
     response.locals.registeredNurseUsers = registeredNurseUsers
-    response.locals.allVaccinatingUsers = allVaccinatingUsers
 
     // Use different values for pre-screening questions
     // `IsWell` and `IsPregnant` should persist per patient
