@@ -53,6 +53,7 @@ import { getSessionTypeProperties } from '../utils/enum-properties.js'
 import { tokenize } from '../utils/object.js'
 import {
   getConsentWindow,
+  getPsdUsageText,
   getSessionActivityCount,
   removeSlots
 } from '../utils/session.js'
@@ -808,6 +809,26 @@ export class Session extends BaseModel {
     return this.canVaccinateForOtherProgrammes
       ? Programme.findAll(this.context).filter(({ isHidden }) => !isHidden)
       : this.programmes
+  }
+
+  /**
+   * Get the PSD usage settings that make sense for this session’s programmes
+   *
+   * Using PSDs for the flu nasal spray only is only possible if the session can
+   * vaccinate for flu
+   *
+   * @returns {Array<PsdUsage>} PSD usage settings
+   */
+  get availablePsdUsages() {
+    const canVaccinateAgainstFlu = this.programmesThatCanBeAdministered.some(
+      ({ id }) => id === 'flu'
+    )
+
+    return [
+      PsdUsage.None,
+      canVaccinateAgainstFlu ? PsdUsage.NasalFluOnly : null,
+      PsdUsage.All
+    ].filter(Boolean)
   }
 
   /**
@@ -1829,6 +1850,8 @@ export class Session extends BaseModel {
               return this.programmes.flatMap(({ nameTag }) => nameTag).join(' ')
             case 'catchUps':
               return this.canVaccinateForOtherProgrammes
+            case 'psdUsage':
+              return getPsdUsageText(this, this.psdUsage).text
             case 'protocolNurse':
               return this.#formatProtocols(
                 (programme_id) => this.getNurseProtocolFor(programme_id),

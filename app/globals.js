@@ -10,7 +10,7 @@ import {
 } from './enums.js'
 import { en } from './locales/en.js'
 import { Contact, Location, User } from './models.js'
-import { getSessionActivityCount } from './utils/session.js'
+import { getPsdUsageText, getSessionActivityCount } from './utils/session.js'
 import {
   camelToKebabCase,
   formatHealthAnswer,
@@ -245,6 +245,19 @@ export default () => {
             value
           }
     )
+  }
+
+  /**
+   * Get PSD usage form field items, worded to suit a session’s programmes
+   *
+   * @param {import('./models.js').Session} session - Session
+   * @returns {Array<object>} Form field items
+   */
+  globals.psdUsageItems = function (session) {
+    return session.availablePsdUsages.map((psdUsage) => ({
+      ...getPsdUsageText(session, psdUsage),
+      value: psdUsage
+    }))
   }
 
   /**

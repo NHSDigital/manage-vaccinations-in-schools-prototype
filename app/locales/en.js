@@ -3259,12 +3259,25 @@ export const en = {
         hint: 'Healthcare assistants cannot vaccinate under a PSD'
       },
       nasalFlu: {
-        label: 'Yes, flu nasal spray only',
+        label: {
+          fluOnly: 'Yes, nasal spray only',
+          fluPlus: 'Yes, flu nasal spray only'
+        },
         hint: 'Healthcare assistants can give the nasal spray vaccine to children who are covered by a PSD'
       },
       all: {
-        label: 'Yes, all programmes and vaccine methods',
+        label: {
+          noNasalSpray: 'Yes, all programmes',
+          withNasalSpray: 'Yes, all programmes and vaccine methods'
+        },
         hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the relevant programme'
+      },
+      allForOneProgramme: {
+        label: {
+          fluOnly: 'Yes, nasal spray or injection',
+          other: 'Yes'
+        },
+        hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the {{programme.nameSentenceCase}} programme'
       }
     },
     'upload-class-list': {
