@@ -20,6 +20,25 @@ import {
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { formatSequence, stringToArray } from '../utils/string.js'
+import {
+  getVaccinationProtocol,
+  getPossibleVaccinators
+} from '../utils/vaccination.js'
+
+/**
+ * Get radio items for choosing a user, sorted by name
+ *
+ * @param {Array<User>} users - Users
+ * @returns {Array<{text: string, value: string}>} Radio items
+ */
+function getUserItems(users) {
+  return users
+    .map((user) => ({
+      text: user.fullName,
+      value: user.uid
+    }))
+    .sort((a, b) => a.text.localeCompare(b.text))
+}
 
 export const vaccinationController = {
   /**
@@ -132,24 +151,11 @@ export const vaccinationController = {
 
     // The protocol depends on the role of whoever gives the vaccine, which may not be
     // the person recording it if a nurse handed over to someone else
-    const administeredBy = User.findOne(administeredBy_uid, data)
-    let protocol
-    switch (true) {
-      case patientProgramme.hasInstruction &&
-        session.hasPsdProtocolFor(patientProgramme):
-        protocol = VaccinationProtocol.PSD
-        break
-      case administeredBy?.isHCA &&
-        session.getHCAProtocolFor(programme.id) === VaccinationProtocol.VGD:
-        protocol = VaccinationProtocol.VGD
-        break
-      case administeredBy?.isRegisteredNurse &&
-        session.getNurseProtocolFor(programme.id) === VaccinationProtocol.VGD:
-        protocol = VaccinationProtocol.VGD
-        break
-      default:
-        protocol = VaccinationProtocol.PGD
-    }
+    const protocol = getVaccinationProtocol(
+      session,
+      patientProgramme,
+      User.findOne(administeredBy_uid, data)
+    )
 
     const vaccination = Vaccination.create(
       {
@@ -280,6 +286,7 @@ export const vaccinationController = {
     return (request, response, next) => {
       const { vaccination_uuid } = request.params
       const { data, referrer } = request.session
+      const { account } = response.locals
 
       let vaccination
       if (type === 'edit') {
@@ -406,13 +413,22 @@ export const vaccinationController = {
           }
         })
 
-      response.locals.userItems = User.findAll(data)
-        .filter((user) => user.canVaccinate)
-        .map((user) => ({
-          text: user.fullName,
-          value: user.uid
-        }))
-        .sort((a, b) => a.text.localeCompare(b.text))
+      // Only people who can give the vaccine in the session can be chosen. Vaccinations
+      // given outside a session have no protocol settings to follow
+      const sessionPatientSession = patientSession || vaccination.patientSession
+      const vaccinators = sessionPatientSession
+        ? getPossibleVaccinators(
+            sessionPatientSession.session,
+            sessionPatientSession.patientProgramme,
+            account
+          )
+        : User.findAll(data).filter((user) => user.canVaccinate)
+      response.locals.administeredByItems = getUserItems(vaccinators)
+
+      // Only nurses can assess a child
+      response.locals.assessedByItems = getUserItems(
+        User.findAll(data).filter((user) => user.isRegisteredNurse)
+      )
 
       response.locals.vaccineItems = Vaccine.findAll(data)
         .filter((vaccine) => vaccination.programme?.type.includes(vaccine.type))
@@ -445,6 +461,7 @@ export const vaccinationController = {
   updateForm(request, response) {
     const { data } = request.session
     const { vaccination_uuid } = request.params
+    const { account } = response.locals
     let { paths, patientSession, vaccination } = response.locals
 
     // Add dose amount and vaccination outcome based on dosage answer
@@ -458,6 +475,26 @@ export const vaccinationController = {
         dosage === 'half'
           ? VaccinationOutcome.PartVaccinated
           : VaccinationOutcome.Vaccinated
+    }
+
+    // Changing who gave the vaccine can change the protocol it was given under
+    const administeredBy_uid = request.body?.vaccination?.administeredBy_uid
+    const sessionPatientSession = patientSession || vaccination.patientSession
+    if (administeredBy_uid && vaccination.wasGiven && sessionPatientSession) {
+      const protocol = getVaccinationProtocol(
+        sessionPatientSession.session,
+        sessionPatientSession.patientProgramme,
+        User.findOne(administeredBy_uid, data)
+      )
+      request.body.vaccination.protocol = protocol
+
+      // Who assessed the child is only recorded under a VGD. If there’s no one yet, it
+      // was the nurse who did the pre-vaccination checks and handed over
+      if (protocol !== VaccinationProtocol.VGD) {
+        request.body.vaccination.assessedBy_uid = ''
+      } else if (!vaccination.assessedBy_uid && account.isRegisteredNurse) {
+        request.body.vaccination.assessedBy_uid = account.uid
+      }
     }
 
     vaccination = Vaccination.update(

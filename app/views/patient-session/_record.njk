@@ -102,7 +102,7 @@
         "data-module": "app-autocomplete"
       }
     }) }}
-  {% elif options.canDelegateUnderVgd %}
+  {% elif options.canHandOver %}
     {{ input({
       type: "hidden",
       value: account.uid,
@@ -135,16 +135,16 @@
 
   {% set administeredByHtml = select({
     label: __("preScreen.administeredBy.title"),
-    items: userItems(delegateUsers, preScreen.assessedBy),
+    items: userItems(vaccinatorPool, preScreen.assessedBy),
     decorate: "preScreen.administeredBy_uid",
     attributes: {
       "data-module": "app-autocomplete"
     }
   }) %}
 
-  {% if options.canDelegateUnderVgd and options.canRecordInjectionSite %}
+  {% if options.canHandOver and options.canRecordInjectionSite %}
     {% set preScreenReadyHtml = administeredByHtml + vaccinationSiteHtml %}
-  {% elif options.canDelegateUnderVgd %}
+  {% elif options.canHandOver %}
     {% set preScreenReadyHtml = administeredByHtml %}
   {% elif options.canRecordInjectionSite %}
     {% set preScreenReadyHtml = vaccinationSiteHtml %}

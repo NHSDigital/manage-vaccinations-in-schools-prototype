@@ -13,6 +13,7 @@ import { getAccountVaccineMethods } from '../utils/account.js'
 import { formatDate, today } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { saveAndRedirect } from '../utils/redirect.js'
+import { getPossibleVaccinators } from '../utils/vaccination.js'
 
 export const patientSessionController = {
   /**
@@ -47,11 +48,16 @@ export const patientSessionController = {
 
     const vaccineMethods = getAccountVaccineMethods(account, patientSession)
 
-    // Which roles give this programme under a VGD in this session
-    const nursesUseVgd =
-      session.getNurseProtocolFor(programme.id) === VaccinationProtocol.VGD
+    // Do HCAs give this programme under a VGD in this session?
     const hcasUseVgd =
       session.getHCAProtocolFor(programme.id) === VaccinationProtocol.VGD
+
+    // People who can give the vaccine, if the person recording it hands over
+    const vaccinatorPool = getPossibleVaccinators(
+      session,
+      patientProgramme,
+      account
+    )
 
     // A PSD takes priority over a VGD
     const canUsePsd =
@@ -94,18 +100,14 @@ export const patientSessionController = {
       canRecordInjectionSite:
         patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal,
       mustRecordAssessingNurse: account.isHCA && hcasUseVgd && !canUsePsd,
-      canDelegateUnderVgd:
-        account.isRegisteredNurse && (nursesUseVgd || hcasUseVgd)
+      // Nurse can assess the child, then hand over to someone else who can give the
+      // vaccine under a VGD or PSD
+      canHandOver:
+        account.isRegisteredNurse &&
+        vaccinatorPool.some(({ uid }) => uid !== account.uid)
     }
 
-    // People a nurse can hand over to: themselves, plus anyone whose role gives this
-    // programme under a VGD
-    response.locals.delegateUsers = User.findAll(data).filter(
-      (user) =>
-        user.uid === account.uid ||
-        (user.isRegisteredNurse && nursesUseVgd) ||
-        (user.isHCA && hcasUseVgd)
-    )
+    response.locals.vaccinatorPool = vaccinatorPool
 
     // Extra info about the consent reminders sent so far
     if (response.locals.options.canRemind) {
