@@ -1696,8 +1696,7 @@ export class PatientProgramme extends BaseModel {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
     const alternativeVaccine = this.programme?.alternativeVaccine
 
-    // Need consent response before we can determine the chosen method.
-    // We only want to instruct patients being vaccinated using nasal spray
+    // Need consent response before we can determine the chosen method
     if (!this.consentGiven) {
       return
     }

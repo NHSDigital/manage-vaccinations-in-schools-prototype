@@ -394,6 +394,13 @@ export const sessionController = {
       }
     }
 
+    // A PSD status only applies to children the session’s PSD settings cover
+    if (filters.instructionStatus !== 'none') {
+      results = results.filter(({ patientProgramme }) =>
+        session.hasPsdProtocolFor(patientProgramme)
+      )
+    }
+
     // Filter by sub-status(es)
     for (const [programmeStatus, status] of Object.entries({
       [PatientStatus.Consent]: 'patientConsent',
@@ -462,7 +469,7 @@ export const sessionController = {
       results = results.filter(
         (patientSession) =>
           patientSession.canRecordSessionOutcome &&
-          getAccountVaccineMethods(account, patientSession)
+          getAccountVaccineMethods(account, patientSession).length > 0
       )
     }
 
@@ -1170,7 +1177,7 @@ export const sessionController = {
     const { data } = request.session
 
     const patientSessions = session.patientSessions.filter(
-      ({ patientProgramme }) => patientProgramme.canBulkInstruct
+      ({ patientProgramme }) => session.canBulkInstructFor(patientProgramme)
     )
     const programmeNameLookup = Object.fromEntries(
       Programme.findAll(data)
@@ -1217,7 +1224,7 @@ export const sessionController = {
 
     const patientsToInstruct = session.patientSessions.filter(
       ({ patientProgramme }) =>
-        patientProgramme.canBulkInstruct &&
+        session.canBulkInstructFor(patientProgramme) &&
         programme_ids.includes(patientProgramme.programme_id)
     )
 

@@ -75,10 +75,12 @@ export const patientSessionController = {
         patientProgramme.hasInstruction,
       canAssess:
         account.isRegisteredNurse ||
-        (account.isHCA && patientProgramme.hasInstruction),
+        (account.isHCA &&
+          session.hasPsdProtocolFor(patientProgramme) &&
+          patientProgramme.hasInstruction),
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
-        vaccineMethods?.includes(patientProgramme.vaccine?.method) &&
+        vaccineMethods.includes(patientProgramme.vaccine?.method) &&
         patientSession.canRecordSessionOutcome &&
         session.isActive,
       canRecordInjectionSite:
@@ -102,7 +104,7 @@ export const patientSessionController = {
     // Vaccinator has permission to record using the alternative vaccine
     // and patient has consent to vaccinate using the alternative vaccine
     response.locals.canRecordAlternativeVaccine =
-      vaccineMethods?.includes(programme.alternativeVaccine?.method) &&
+      vaccineMethods.includes(programme.alternativeVaccine?.method) &&
       patientProgramme.canRecordAlternativeVaccine
 
     const view = request.path.split('/').at(-1)

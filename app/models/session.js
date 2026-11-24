@@ -9,7 +9,6 @@ import {
   ClinicType,
   ConsentStatus,
   ConsentWindow,
-  InstructionStatus,
   LocationType,
   PatientStatus,
   ProgrammeType,
@@ -655,6 +654,22 @@ export class Session extends BaseModel {
     }
 
     return this.psdProgramme_ids.includes(programme_id)
+  }
+
+  /**
+   * Can a PSD be added in bulk for the given child and programme in this session?
+   *
+   * The child must be due a vaccination they don’t yet have a PSD for, and the
+   * session’s PSD settings must cover it
+   *
+   * @param {PatientProgramme} patientProgramme - Patient programme
+   * @returns {boolean} - True if a PSD can be added, or false otherwise
+   */
+  canBulkInstructFor(patientProgramme) {
+    return (
+      patientProgramme.canBulkInstruct &&
+      this.hasPsdProtocolFor(patientProgramme)
+    )
   }
 
   /**
@@ -1435,13 +1450,15 @@ export class Session extends BaseModel {
                   consent: ConsentStatus.NoResponse
                 }
               ])
-            case 'giveInstructions':
-              return getSessionActivityCount(this, [
-                {
-                  status: PatientStatus.Due,
-                  instructionStatus: InstructionStatus.Needed
-                }
-              ])
+            case 'giveInstructions': {
+              // Only count children the session’s PSD settings cover
+              const patientSessionsNeedingInstruction =
+                this.patientSessions.filter(({ patientProgramme }) =>
+                  this.canBulkInstructFor(patientProgramme)
+                )
+              return _.uniqBy(patientSessionsNeedingInstruction, 'patient.nhsn')
+                .length
+            }
             default:
               return undefined
           }

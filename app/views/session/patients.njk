@@ -111,14 +111,6 @@
           {% set ids = session.programme_ids %}
         {% endif %}
 
-        {% set sessionPSDProgramme_ids = session.psdProgramme_ids %}
-        {% set filteredPSDProgramme_ids = [] %}
-        {% for programme_id in sessionPSDProgramme_ids %}
-          {% if ids | includes(programme_id) %}
-            {% set filteredPSDProgramme_ids = filteredPSDProgramme_ids | push(programme_id) %}
-          {% endif %}
-        {% endfor %}
-
         {% for patientSession in results.page %}
           {% set statusHtml %}
             {% for patientSession in patientSession.siblingPatientSessions %}
@@ -138,7 +130,8 @@
 
           {% set instructionStatusHtml %}
             {% for patientSession in patientSession.siblingPatientSessions %}
-              {% if ids | includes(patientSession.programme_id) and filteredPSDProgramme_ids | includes(patientSession.programme_id) and patientSession.patientProgramme.instructionStatus %}
+              {# Only show a PSD status for children the session’s PSD settings cover #}
+              {% if ids | includes(patientSession.programme_id) and session.hasPsdProtocolFor(patientSession.patientProgramme) and patientSession.patientProgramme.instructionStatus %}
                 {{ patientSession.patientProgramme.formatted.instructionStatus | nhsukMarkdown }}
               {% endif %}
             {% endfor %}
