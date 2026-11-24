@@ -8,18 +8,10 @@
       - patient
       - programme
       - screenStatusesForConsentMethod
+    - session (the session the child is being triaged for, if any)
     - size
 #}
 {% macro appTriageForm(params) %}
-  {% set psdRadiosHtml = radios({
-    fieldset: {
-      legend: __("triage.psd.label")
-    },
-    inline: true,
-    items: getBooleanItems(),
-    decorate: "triage.psd"
-  }) if account.canPrescribe %}
-
   {% set delayVaccinationHtml = dateInput({
     fieldset: {
       legend: __("triage.statusInvalidAt.title", {
@@ -31,8 +23,24 @@
   }) %}
 
   {% set statusItems = triageStatusItems(params.context.screenStatusesForConsentMethod) %}
-  {% if params.context.programme.alternativeVaccine %}
-    {% set statusItems = injectConditionalHtml(statusItems, ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) %}
+
+  {# Ask about a PSD for each outcome the session can use one for. Each outcome has its
+     own answer, so only the answer for the chosen outcome is used #}
+  {% if account.canPrescribe %}
+    {% set psdScreenStatuses = params.context.getPsdScreenStatusesForSession(params.session) %}
+    {% for screenStatusKey, screenStatus in ScreenStatus %}
+      {% if screenStatus in psdScreenStatuses %}
+        {% set psdRadiosHtml = radios({
+          fieldset: {
+            legend: __("triage.psd.label")
+          },
+          inline: true,
+          items: getBooleanItems(),
+          decorate: "triage.psd." + screenStatusKey
+        }) %}
+        {% set statusItems = injectConditionalHtml(statusItems, screenStatus, psdRadiosHtml) %}
+      {% endif %}
+    {% endfor %}
   {% endif %}
 
   {{ radios({

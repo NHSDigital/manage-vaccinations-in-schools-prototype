@@ -83,6 +83,7 @@ import {
 } from '../utils/string.js'
 import {
   getScreenStatusesForConsentMethod,
+  getScreenStatusesForPsd,
   getScreenVaccineCriteria
 } from '../utils/triage.js'
 
@@ -1653,6 +1654,21 @@ export class PatientProgramme extends BaseModel {
     return getScreenStatusesForConsentMethod(
       this.programme,
       this.repliesCountingTowardsConsent
+    )
+  }
+
+  /**
+   * Get the screen statuses that a PSD can be given with in a session, based on the
+   * session’s PSD settings
+   *
+   * @param {Session} [session] - Session the child is being triaged for
+   * @returns {Array<ScreenStatus>} Screen statuses a PSD can be given with
+   */
+  getPsdScreenStatusesForSession(session) {
+    return getScreenStatusesForPsd(
+      this.screenStatusesForConsentMethod,
+      this.programme_id,
+      session
     )
   }
 

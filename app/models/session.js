@@ -16,6 +16,7 @@ import {
   PsdUsage,
   RecordVaccineCriteria,
   ReplyDecision,
+  ScreenStatus,
   SessionPresets,
   SessionPresetName,
   SessionStatus,
@@ -652,7 +653,35 @@ export class Session extends BaseModel {
       return false
     }
 
-    return this.psdUsage === PsdUsage.All
+    return this.psdProgramme_ids.includes(programme_id)
+  }
+
+  /**
+   * Can a PSD be used in this session for the given programme, if a child is triaged
+   * with the given outcome?
+   *
+   * @param {string} programme_id - Programme ID
+   * @param {ScreenStatus} screenStatus - Triage outcome
+   * @returns {boolean} - True if PSDs can be used, or false otherwise
+   */
+  canUsePsdForScreenStatus(programme_id, screenStatus) {
+    if (!this.psdProgramme_ids.includes(programme_id)) {
+      return false
+    }
+
+    // Only the nasal spray can be given under a PSD
+    if (this.psdUsage === PsdUsage.NasalFluOnly) {
+      return screenStatus === ScreenStatus.VaccinateIntranasalOnly
+    }
+
+    // Any vaccine can be given under a PSD, provided it’s safe to vaccinate
+    const safeToVaccinateStatuses = [
+      ScreenStatus.Vaccinate,
+      ScreenStatus.VaccinateAlternativeFluInjectionOnly,
+      ScreenStatus.VaccinateAlternativeMMRInjectionOnly,
+      ScreenStatus.VaccinateIntranasalOnly
+    ]
+    return safeToVaccinateStatuses.includes(screenStatus)
   }
 
   /**
@@ -1903,7 +1932,7 @@ Session.relate('clinic_id', () => Clinic, 'clinic')
 Session.relate('school_id', () => School, 'school')
 
 /**
- * @import { RegistrationStatus, SessionPreset } from '../enums.js'
+ * @import { RegistrationStatus, SessionConsentContacts, SessionMMRConsent, SessionPreset } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
  * @import { ProgrammeId, ProgrammeOptions } from './programme.js'
  */
