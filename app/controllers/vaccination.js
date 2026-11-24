@@ -130,18 +130,20 @@ export const vaccinationController = {
     }
     data.patientSession_uuid = String(patientSession_uuid)
 
-    // Flu programme can use PGD, PSD or VGD protocol
+    // The protocol depends on the role of whoever gives the vaccine, which may not be
+    // the person recording it if a nurse handed over to someone else
+    const administeredBy = User.findOne(administeredBy_uid, data)
     let protocol
     switch (true) {
       case patientProgramme.hasInstruction &&
         session.hasPsdProtocolFor(patientProgramme):
         protocol = VaccinationProtocol.PSD
         break
-      case account.isHCA &&
+      case administeredBy?.isHCA &&
         session.getHCAProtocolFor(programme.id) === VaccinationProtocol.VGD:
         protocol = VaccinationProtocol.VGD
         break
-      case account.isRegisteredNurse &&
+      case administeredBy?.isRegisteredNurse &&
         session.getNurseProtocolFor(programme.id) === VaccinationProtocol.VGD:
         protocol = VaccinationProtocol.VGD
         break
@@ -163,7 +165,7 @@ export const vaccinationController = {
         createdBy_uid: account.uid,
         administeredAt: today(),
         administeredBy_uid,
-        ...(session.hasVgdProtocolFor(programme.id) && {
+        ...(protocol === VaccinationProtocol.VGD && {
           assessedBy_uid
         }),
         ...(session.clinic_id && {

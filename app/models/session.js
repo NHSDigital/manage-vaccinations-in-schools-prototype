@@ -472,19 +472,6 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Does session need to support the VGD protocol for a programme?
-   *
-   * @param {ProgrammeId} programme_id - Programme ID
-   * @returns {boolean} Session needs to support the VGD protocol for the programme?
-   */
-  hasVgdProtocolFor(programme_id) {
-    return (
-      this.getNurseProtocolFor(programme_id) === VaccinationProtocol.VGD ||
-      this.getHCAProtocolFor(programme_id) === VaccinationProtocol.VGD
-    )
-  }
-
-  /**
    * Get the IDs of the programmes for which nurses will give vaccinations under a VGD
    *
    * Used by the checkboxes and radios on the VGD question page. If no programmes use a VGD,
