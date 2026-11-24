@@ -110,7 +110,7 @@ import { BaseModel } from './base.js'
  * The protocol to use for each programme. Hidden programmes are never included, and a
  * `null` value means there’s no protocol (e.g. HCAs can’t vaccinate unless there’s a PSD).
  *
- * @typedef {Partial<Record<ProgrammeId, VaccinationProtocol|null>>} ProtocolByProgramme
+ * @typedef {Record<string, VaccinationProtocol|null>} ProtocolByProgramme
  */
 
 /**
@@ -454,7 +454,7 @@ export class Session extends BaseModel {
   /**
    * Get the protocol nurses will use to give vaccinations for a programme
    *
-   * @param {ProgrammeId} programme_id - Programme ID
+   * @param {string} programme_id - Programme ID
    * @returns {VaccinationProtocol} Protocol (PGD, unless a VGD has been chosen)
    */
   getNurseProtocolFor(programme_id) {
@@ -464,7 +464,7 @@ export class Session extends BaseModel {
   /**
    * Get the protocol HCAs will use to give vaccinations for a programme
    *
-   * @param {ProgrammeId} programme_id - Programme ID
+   * @param {string} programme_id - Programme ID
    * @returns {VaccinationProtocol|null} Protocol, or null if HCAs have no protocol for the programme
    */
   getHCAProtocolFor(programme_id) {
@@ -519,7 +519,7 @@ export class Session extends BaseModel {
    *   direction (PGD)’, as a bulleted list, if only some are
    * - ‘Patient group direction (PGD)’, if no programmes are under a VGD
    *
-   * @param {(programme_id: ProgrammeId) => VaccinationProtocol|null} protocolFor - Protocol look-up
+   * @param {(programme_id: string) => VaccinationProtocol|null} protocolFor - Protocol look-up
    * @param {VaccinationProtocol|null} protocolForOtherProgrammes - Protocol for programmes
    *   not under a VGD, or null if they shouldn’t be mentioned
    * @returns {string} Formatted protocols, or an empty string if there’s nothing to show
@@ -1961,5 +1961,5 @@ Session.relate('school_id', () => School, 'school')
 /**
  * @import { RegistrationStatus, SessionConsentContacts, SessionMMRConsent, SessionPreset } from '../enums.js'
  * @import { BaseModelOptions } from './base.js'
- * @import { ProgrammeId, ProgrammeOptions } from './programme.js'
+ * @import { ProgrammeOptions } from './programme.js'
  */
