@@ -442,19 +442,6 @@ export class Session extends BaseModel {
   }
 
   /**
-   * Is this session scheduled in a flu season?
-   *
-   * @returns {boolean} True if during a flu season, or false otherwise
-   */
-  get isInFluSeason() {
-    const month = this.date.getMonth()
-    const march = 2
-    const september = 8
-
-    return month <= march || month >= september
-  }
-
-  /**
    * Does session occur in the current academic year?
    *
    * @returns {boolean} Session occurs in current academic year

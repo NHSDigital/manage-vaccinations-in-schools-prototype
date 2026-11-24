@@ -10,7 +10,7 @@
   {% set canVaccinateAgainstFlu = session.programme_ids | includes("flu") %}
   {% set canVaccinateAgainstMoreThanFlu = true if ((session.programme_ids | length > 1) or (session.programme_ids[0] !== "flu")) else false %}
 {% endif %}
-{% set canVaccinateAgainstFlu = canVaccinateAgainstFlu and session.isInFluSeason %}
+{% set canVaccinateAgainstFlu = canVaccinateAgainstFlu %}
 
 {% block form %}
   {{ radios({
