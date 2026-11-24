@@ -2,6 +2,14 @@
 {%- from "x-nhsuk/decorated/radios/macro.njk" import radios with context %}
 {%- from "x-nhsuk/decorated/textarea/macro.njk" import textarea with context %}
 
+{#
+  params:
+    - context
+      - patient
+      - programme
+      - screenStatusesForConsentMethod
+    - size
+#}
 {% macro appTriageForm(params) %}
   {% set psdRadiosHtml = radios({
     fieldset: {
@@ -22,7 +30,10 @@
     decorate: "triage.statusInvalidAt_"
   }) %}
 
-  {% set statusItems = injectConditionalHtml(triageStatusItems(params.context.screenStatusesForConsentMethod), ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) if params.context.programme.alternativeVaccine else triageStatusItems(params.context.screenStatusesForConsentMethod) %}
+  {% set statusItems = triageStatusItems(params.context.screenStatusesForConsentMethod) %}
+  {% if params.context.programme.alternativeVaccine %}
+    {% set statusItems = injectConditionalHtml(statusItems, ScreenStatus.VaccinateIntranasalOnly, psdRadiosHtml) %}
+  {% endif %}
 
   {{ radios({
     fieldset: {
