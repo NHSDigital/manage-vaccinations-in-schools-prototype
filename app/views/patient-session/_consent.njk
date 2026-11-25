@@ -55,7 +55,7 @@
         expiresAt: {} if not reply.isInvalidated else none,
         decisionStatus: {},
         responseType: {},
-        vaccineCriteria: {}
+        vaccineCriteria: {} if reply.vaccineCriteria !== ConsentVaccineCriteria.NoMMRPreference else none
       }),
       classes: "nhsuk-u-margin-bottom-2"
     }) }}

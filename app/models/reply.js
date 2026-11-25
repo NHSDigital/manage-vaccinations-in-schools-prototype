@@ -460,6 +460,10 @@ export class Reply extends BaseModel {
     if (this.hasConsentForGelatineFreeVaccineOnly) {
       return ConsentVaccineCriteria.AlternativeMMRInjectionOnly
     }
+
+    if (this.hasGivenConsent && this.programme?.type === ProgrammeType.MMR) {
+      return ConsentVaccineCriteria.NoMMRPreference
+    }
   }
 
   /**

@@ -173,7 +173,8 @@ export const ConsentVaccineCriteria = {
   AlternativeFluInjectionOnly: 'Injection only',
   AlternativeMMRInjectionOnly: 'Gelatine-free injection only',
   IntranasalOnly: 'Nasal spray only',
-  IntranasalPreferred: 'Nasal spray preferred'
+  IntranasalPreferred: 'Nasal spray preferred',
+  NoMMRPreference: 'No preference'
 }
 
 /**
