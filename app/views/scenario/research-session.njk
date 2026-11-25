@@ -1,6 +1,7 @@
 {% extends "_layouts/default.njk" %}
 
 {% set title = researchSession.title %}
+{% set captionPrefix = "Walkthrough: " if researchSession.purpose == ResearchSessionPurpose.Walkthrough else "Research starting: " %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -26,7 +27,7 @@
     text: title,
     size: "l",
     caption: {
-      text: "Research starting: " + researchSession.startDate | formatDate,
+      text: captionPrefix + researchSession.startDate | formatDate,
       placement: "after"
     }
   }) }}

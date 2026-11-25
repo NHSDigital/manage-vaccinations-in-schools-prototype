@@ -827,6 +827,17 @@ export const ReplyRefusal = {
 }
 
 /**
+ * What a research session is for
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const ResearchSessionPurpose = {
+  UserResearch: 'User research',
+  Walkthrough: 'Walkthrough'
+}
+
+/**
  * @readonly
  * @enum {string}
  */
