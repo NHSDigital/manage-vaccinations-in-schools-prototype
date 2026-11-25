@@ -25,6 +25,13 @@ export const getScreenStatusesForConsentMethod = (programme, replies) => {
     ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
   )
 
+  // If anyone gave consent for the gelatine-free vaccine only, the vaccine
+  // containing gelatine can’t be given, even if others are happy with either
+  const hasConsentForGelatineFreeVaccineOnly = replies?.some(
+    ({ hasConsentForGelatineFreeVaccineOnly }) =>
+      hasConsentForGelatineFreeVaccineOnly
+  )
+
   return [
     ...(!programme?.alternativeVaccine ? [ScreenStatus.Vaccinate] : []),
     ...(programme?.alternativeVaccine &&
@@ -37,8 +44,15 @@ export const getScreenStatusesForConsentMethod = (programme, replies) => {
     hasConsentForInjection
       ? [ScreenStatus.VaccinateAlternativeFluInjectionOnly]
       : []),
-    ...(programme?.alternativeVaccine && programme.type === ProgrammeType.MMR
-      ? [ScreenStatus.VaccinateAlternativeFluInjectionOnly]
+    ...(programme?.alternativeVaccine &&
+    programme.type === ProgrammeType.MMR &&
+    !hasConsentForGelatineFreeVaccineOnly
+      ? [ScreenStatus.Vaccinate]
+      : []),
+    ...(programme?.alternativeVaccine &&
+    programme.type === ProgrammeType.MMR &&
+    hasConsentForGelatineFreeVaccineOnly
+      ? [ScreenStatus.VaccinateAlternativeMMRInjectionOnly]
       : []),
     'or',
     ScreenStatus.NeedsTriage,

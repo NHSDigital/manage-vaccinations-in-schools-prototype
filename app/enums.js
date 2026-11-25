@@ -877,7 +877,7 @@ export const ScreenVaccineCriteria = {
   AlternativeFluInjectionOnly:
     'The parent has consented to the injected vaccine only',
   AlternativeMMRInjectionOnly:
-    'The parent has consented to the injected vaccine only',
+    'The parent has consented to the gelatine-free vaccine only',
   IntranasalOnly: 'The parent has consented to the nasal spray only',
   IntranasalPreferred:
     'The parent has consented to the injected vaccine being offered if the nasal spray is not suitable'
