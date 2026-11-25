@@ -2788,9 +2788,6 @@ export const en = {
     expiringSoon: {
       label: 'This response will expire soon'
     },
-    expiringBeforeSession: {
-      label: 'This response will expire before the session'
-    },
     responseType: {
       label: 'Response type'
     },
