@@ -1880,9 +1880,9 @@ export const en = {
   contactRelationship: {
     label: 'Parent or guardian',
     new: {
-      label: 'Add a new contact',
-      title: 'Add a new contact',
-      confirm: 'Add contact',
+      label: 'Add a parent or guardian',
+      title: 'Add a parent or guardian',
+      confirm: 'Add parent or guardian',
       success: 'Contact added'
     },
     edit: {
@@ -1944,8 +1944,7 @@ export const en = {
   },
   contact: {
     label: 'Phone number or email address',
-    count:
-      '{count, plural, =0 {No active contacts} one {1 active contact} other {# active contacts}}',
+    caption: 'Contact details for {{contact.nameAndRelationship}}',
     new: {
       tel: {
         label: 'Add phone number',
@@ -1979,7 +1978,7 @@ export const en = {
       label: 'Archived'
     },
     value: {
-      label: 'Value'
+      label: 'Phone number or email address'
     },
     email: {
       label: 'Email address'
@@ -1991,7 +1990,7 @@ export const en = {
       label: 'Created'
     },
     updatedAt: {
-      label: 'Updated'
+      label: 'Last updated'
     },
     archivedAt: {
       label: 'Archived'
@@ -2870,7 +2869,7 @@ export const en = {
     respondent: {
       title: 'Who are you trying to get consent from?',
       label: 'Contact',
-      new: 'A new contact'
+      new: 'A new parent or guardian'
     },
     child: {
       label: 'Child'
@@ -2892,7 +2891,7 @@ export const en = {
     contactRelationship: {
       label: 'Contact',
       title: {
-        new: 'Add a new contact',
+        new: 'Add a new parent or guardian',
         edit: 'Details for {{contactRelationship.fullNameAndRelationship}}'
       },
       canNotify: {
