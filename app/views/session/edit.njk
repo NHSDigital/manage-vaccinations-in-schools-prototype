@@ -53,7 +53,19 @@
         },
         hasRegistration: {
           href: session.uri + "/edit/registration"
-        },
+        }
+      })
+    }) }}
+
+    {{ summaryList({
+      card: {
+        heading: {
+          text: __("session.protocols"),
+          size: "m"
+        }
+      },
+      lastRowBorder: false,
+      rows: summaryRows(session, {
         protocolNurse: {
           label: __("session.protocolVGD.nurse.label"),
           href: session.uri + "/edit/protocol-vgd"
@@ -98,18 +110,6 @@
         hasRegistration: {
           href: session.uri + "/edit/registration"
         } if session.clinicType !== ClinicType.DropIn else none,
-        protocolNurse: {
-          label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/edit/protocol-vgd"
-        } if session.canSupportVGD else none,
-        protocolHCA: {
-          label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/edit/protocol-vgd"
-        } if session.canSupportVGD else none,
-        psdUsage: {
-          label: __("session.protocolPSD.label"),
-          href: session.uri + "/edit/protocol-psd"
-        },
         vaccinationPeriods: {
           href: session.uri + "/edit/vaccination-periods"
         },
@@ -122,6 +122,30 @@
         },
         totalSlots: {
           label: __("session.totalSlots.label." + appointmentLengthKey)
+        }
+      })
+    }) }}
+
+    {{ summaryList({
+      card: {
+        heading: {
+          text: __("session.protocols"),
+          size: "m"
+        }
+      },
+      lastRowBorder: false,
+      rows: summaryRows(session, {
+        protocolNurse: {
+          label: __("session.protocolVGD.nurse.label"),
+          href: session.uri + "/edit/protocol-vgd"
+        } if session.canSupportVGD else none,
+        protocolHCA: {
+          label: __("session.protocolVGD.hca.label"),
+          href: session.uri + "/edit/protocol-vgd"
+        } if session.canSupportVGD else none,
+        psdUsage: {
+          label: __("session.protocolPSD.label"),
+          href: session.uri + "/edit/protocol-psd"
         }
       })
     }) }}

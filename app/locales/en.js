@@ -3129,6 +3129,7 @@ export const en = {
     count:
       '{count, plural, =0 {No sessions} one {1 session} other {# sessions}}',
     summary: 'Session details',
+    protocols: 'Vaccination protocols',
     action: {
       cancel: 'Cancel session'
     },
