@@ -53,7 +53,7 @@
       hasRegistration: {},
       protocolNurse: {
         label: __("session.protocolVGD.nurse.label")
-      } if session.canSupportVGD else none,
+      },
       protocolHCA: {
         label: __("session.protocolVGD.hca.label")
       } if session.canSupportVGD else none,
@@ -73,7 +73,7 @@
           hasRegistration: {} if session.clinicType !== ClinicType.DropIn else none,
           protocolNurse: {
             label: __("session.protocolVGD.nurse.label")
-          } if session.canSupportVGD else none,
+          },
           protocolHCA: {
             label: __("session.protocolVGD.hca.label")
           } if session.canSupportVGD else none,

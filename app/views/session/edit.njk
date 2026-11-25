@@ -68,8 +68,8 @@
       rows: summaryRows(session, {
         protocolNurse: {
           label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/edit/protocol-vgd"
-        } if session.canSupportVGD else none,
+          href: session.uri + "/edit/protocol-vgd" if session.canSupportVGD
+        },
         protocolHCA: {
           label: __("session.protocolVGD.hca.label"),
           href: session.uri + "/edit/protocol-vgd"
@@ -137,8 +137,8 @@
       rows: summaryRows(session, {
         protocolNurse: {
           label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/edit/protocol-vgd"
-        } if session.canSupportVGD else none,
+          href: session.uri + "/edit/protocol-vgd" if session.canSupportVGD
+        },
         protocolHCA: {
           label: __("session.protocolVGD.hca.label"),
           href: session.uri + "/edit/protocol-vgd"
