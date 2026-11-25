@@ -12,6 +12,10 @@
 {% endif %}
 
 {% block form %}
+  {# Flu asks about the nasal spray and injection, MMR about the vaccine without gelatine #}
+  {% set hasFluChoice = programme.hasIntranasalVaccine %}
+  {% set hasGelatineChoice = programme.alternativeVaccine and not programme.hasIntranasalVaccine %}
+
   {{ radios({
     fieldset: {
       legend: {
@@ -22,22 +26,45 @@
     },
     items: [
       {
-        label: __('reply.decision.nasal.label') if programme.alternativeVaccine else __('reply.decision.yes.label'),
+        label: __("reply.decision.nasal.label"),
         value: ReplyDecision.Given,
         conditional: {
           html: radios({
             fieldset: {
-              legend: __("reply.hasConsentForAlternativeVaccine.title")
+              legend: __("reply.hasConsentForAlternativeVaccine.flu.title")
             },
             items: getBooleanItems(),
             decorate: "reply.hasConsentForAlternativeVaccine"
           })
-        } if programme.alternativeVaccine
-      },
+        }
+      } if hasFluChoice,
       {
-        label: __('reply.decision.injection.label'),
+        label: __("reply.decision.injection.label"),
         value: ReplyDecision.OnlyAlternativeInjection
-      } if programme.alternativeVaccine,
+      } if hasFluChoice,
+      {
+        label: __("reply.decision.yes.label"),
+        value: ReplyDecision.Given,
+        conditional: {
+          html: radios({
+            fieldset: {
+              legend: __("reply.hasConsentForAlternativeVaccine.mmr.title")
+            },
+            hint: __("reply.hasConsentForAlternativeVaccine.mmr.hint"),
+            items: [
+              {
+                label: __("reply.hasConsentForAlternativeVaccine.mmr.yes.label"),
+                value: true
+              },
+              {
+                label: __("reply.hasConsentForAlternativeVaccine.mmr.no.label"),
+                value: false
+              }
+            ],
+            decorate: "reply.hasConsentForAlternativeVaccine"
+          })
+        } if hasGelatineChoice
+      } if not hasFluChoice,
       {
         label: __('reply.decision.no.label'),
         value: ReplyDecision.Refused

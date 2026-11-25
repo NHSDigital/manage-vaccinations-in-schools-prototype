@@ -2871,9 +2871,22 @@ export const en = {
       label: 'Phone number'
     },
     hasConsentForAlternativeVaccine: {
-      label: 'Consent also given for injected vaccine?',
-      title:
-        'Do they also agree to the injected vaccine if the nasal spray is not suitable?'
+      flu: {
+        label: 'Consent also given for injected vaccine?',
+        title:
+          'Do they also agree to the injected vaccine if the nasal spray is not suitable?'
+      },
+      mmr: {
+        label: 'Consent given for gelatine-free vaccine only?',
+        title: 'Which type of MMR vaccine can the child have?',
+        hint: 'One type of MMR vaccine contains gelatine from pigs. An alternative MMR vaccine is available that does not contain gelatine.',
+        yes: {
+          label: 'Use only the vaccine that does not contain gelatine'
+        },
+        no: {
+          label: 'Either type of vaccine can be given'
+        }
+      }
     },
     isInvalidated: {
       label: 'Invalid response'

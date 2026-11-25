@@ -30,8 +30,9 @@
         href: reply.uri + "/new/decision"
       },
       hasConsentForAlternativeVaccine: {
+        label: __("reply.hasConsentForAlternativeVaccine." + ("flu" if reply.programme.hasIntranasalVaccine else "mmr") + ".label"),
         href: reply.uri + "/new/decision"
-      },
+      } if reply.programme.alternativeVaccine,
       canNotify: {
         label: __("reply.contact.canNotify.label"),
         value: reply.contact.canNotify,
