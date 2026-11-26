@@ -2428,7 +2428,7 @@ export const en = {
         },
         Refused: {
           upcoming: 'Mavis will not request consent. The child has a refusal.',
-          sent: 'Mavis did not request consent. The child has a refusal.'
+          sent: 'Mavis did not request consent. The child had a refusal.'
         },
         AlreadyVaccinated: {
           upcoming:
@@ -2446,7 +2446,7 @@ export const en = {
       refusalIncluded: {
         upcoming:
           'The child has a refusal, but this session requests consent for all children, including those with a refusal.',
-        sent: 'The child has a refusal, but this session requests consent for all children, including those with a refusal.'
+        sent: 'The child had a refusal, but this session requests consent for all children, including those with a refusal.'
       },
       requested: {
         upcoming: 'Mavis will request consent on {{date}} from:',
