@@ -3309,7 +3309,7 @@ export const en = {
       vgdRestriction:
         'Vaccine group direction settings will only apply to vaccinations given for the {programmeNames} {count, plural, one {programme} other {programmes}}.',
       nurse: {
-        label: 'Protocol',
+        label: 'Protocol for nurses',
         pgdOnly:
           'Registered nurses and health professionals will vaccinate under a patient general direction (PGD) in this session.',
         title:
