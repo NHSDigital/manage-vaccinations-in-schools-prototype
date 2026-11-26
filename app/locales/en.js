@@ -2470,7 +2470,7 @@ export const en = {
       none: 'There are no active consent responses.'
     },
     previousReplies: {
-      label: 'Expired and invalid responses'
+      label: 'Inactive consent responses'
     },
     previousTriageNotes: {
       label: 'Expired and invalid triage outcomes'
