@@ -11,8 +11,8 @@
     {% if item != "" %}
       {% set navigationItems = navigationItems | push({
         text: __("emails." + dir + "." + item + ".label"),
-        href: "?template=" + item,
-        current: template === item,
+        href: "?template=" + item if template != item,
+        current: template == item,
         theme: theme
       }) %}
     {% endif %}
@@ -40,7 +40,7 @@
         }) }}
         {{ appSectionNavigation({
           small: true,
-          vertical: true,
+          direction: "vertical",
           items: items
         }) }}
       {% endfor %}

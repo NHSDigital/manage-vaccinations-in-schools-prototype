@@ -37,19 +37,21 @@ export const patientController = {
     response.locals.sectionNavigationItems = [
       {
         text: recordTitle,
-        href: patient.uri,
+        href: currentPath !== patient.uri && patient.uri,
         current: currentPath === patient.uri
       },
       {
         text: __('patient.contacts.label'),
-        href: `${patient.uri}/contacts`,
+        href:
+          currentPath !== `${patient.uri}/contacts` &&
+          `${patient.uri}/contacts`,
         current: currentPath === `${patient.uri}/contacts`
       },
       ...Object.values(patient.activeProgrammes).map((patientProgramme) => {
         if (!account.isSchoolUser) {
           return {
             text: patientProgramme.programme.name,
-            href: patientProgramme.uri,
+            href: currentPath !== patientProgramme.uri && patientProgramme.uri,
             current: currentPath === patientProgramme.uri
           }
         }

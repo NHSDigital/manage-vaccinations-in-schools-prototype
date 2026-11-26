@@ -130,12 +130,16 @@ export const patientSessionController = {
       patientProgramme.canRecordAlternativeVaccine
 
     const view = request.path.split('/').at(-1)
+    const isCurrent = (view) =>
+      !['appointment', 'events'].includes(view) &&
+      patientSession.programme_id === programme_id
     response.locals.navigationItems = [
       ...(session.type === SessionType.Clinic
         ? [
             {
               text: __('patientSession.appointment.title'),
-              href: `${patientSession.uri}/appointment`,
+              href:
+                view !== 'appointment' && `${patientSession.uri}/appointment`,
               current: view === 'appointment'
             }
           ]
@@ -143,14 +147,12 @@ export const patientSessionController = {
       ...patientSession.siblingPatientSessions.map((patientSession) => ({
         ...(patientSession.patientProgramme.isVaccinated && { icon: 'tick' }),
         text: patientSession.programme.name,
-        href: patientSession.uri,
-        current:
-          !['appointment', 'events'].includes(view) &&
-          patientSession.programme_id === programme_id
+        href: !isCurrent(view) && patientSession.uri,
+        current: isCurrent(view)
       })),
       {
         text: __('patientSession.events.title'),
-        href: `${patientSession.uri}/events`,
+        href: view !== 'events' && `${patientSession.uri}/events`,
         current: view === 'events'
       }
     ]

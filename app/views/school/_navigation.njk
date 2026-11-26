@@ -23,17 +23,17 @@
       items: [
         {
           text: __("school.show.label"),
-          href: params.school.uri,
+          href: params.school.uri if params.view != "show",
           current: params.view == "show"
         },
         {
           text: __("school.sessions.label"),
-          href: params.school.uri + "/sessions",
+          href: params.school.uri + "/sessions" if params.view != "sessions",
           current: params.view == "sessions"
         },
         {
           text: __("school.uploads.label"),
-          href: params.school.uri + "/uploads",
+          href: params.school.uri + "/uploads" if params.view != "uploads",
           current: params.view == "uploads"
         }
       ]
