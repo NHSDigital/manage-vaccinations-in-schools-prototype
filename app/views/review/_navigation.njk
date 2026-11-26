@@ -12,25 +12,25 @@
       {
         text: __("notice.list.label"),
         badge: { text: data.counts.notices },
-        href: "/notices",
+        href: "/notices" if params.view != "notice",
         current: params.view == "notice"
       },
       {
         text: __("consent.list.label"),
         badge: { text: data.counts.consents },
-        href: "/consents",
+        href: "/consents" if params.view != "consent",
         current: params.view == "consent"
       },
       {
         text: __("appointments.list.label"),
         badge: { text: data.counts.appointments },
-        href: "/unmatched-appointments",
+        href: "/unmatched-appointments" if params.view != "appointments",
         current: params.view == "appointments"
       },
       {
         text: __("move.list.label"),
         badge: { text: data.counts.moves },
-        href: "/moves",
+        href: "/moves" if params.view != "move",
         current: params.view == "move"
       }
     ]

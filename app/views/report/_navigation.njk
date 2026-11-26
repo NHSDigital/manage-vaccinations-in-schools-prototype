@@ -15,22 +15,22 @@
     items: [
       {
         text: __("report.vaccinations.label"),
-        href: "/reports/vaccinations",
+        href: "/reports/vaccinations" if params.view != "vaccinations",
         current: params.view == "vaccinations"
       },
       {
         text: __("report.consent.label"),
-        href: "/reports/consent",
+        href: "/reports/consent" if params.view != "consent",
         current: params.view == "consent"
       },
       {
         text: __("report.schools.label"),
-        href: "/reports/schools",
+        href: "/reports/schools" if params.view != "schools",
         current: params.view == "schools"
       },
       {
         text: __("report.local-authorities.label"),
-        href: "/reports/local-authorities",
+        href: "/reports/local-authorities" if params.view != "local-authorities",
         current: params.view == "local-authorities"
       }
     ]

@@ -20,7 +20,7 @@ export const teamController = {
       'sessions'
     ].map((item) => ({
       text: __(`team.${item}.title`),
-      href: `${team.uri}/${item}`,
+      href: !view?.includes(item) && `${team.uri}/${item}`,
       current: view?.includes(item)
     }))
 

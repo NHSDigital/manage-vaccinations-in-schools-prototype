@@ -75,7 +75,7 @@ export const sessionController = {
       response.locals.navigationItems = [
         {
           text: __('session.show.label'),
-          href: session.uri,
+          href: view !== undefined && session.uri,
           ...(session.unmatchedConsents.length && { icon: 'alert' }),
           current: view === undefined
         },
@@ -84,7 +84,7 @@ export const sessionController = {
           ? [
               {
                 text: __('session.appointments.label'),
-                href: `${session.uri}/appointments`,
+                href: view !== 'appointments' && `${session.uri}/appointments`,
                 current: view === 'appointments'
               }
             ]
@@ -99,7 +99,7 @@ export const sessionController = {
           ? [
               {
                 text: __('session.patients.label'),
-                href: `${session.uri}/patients`,
+                href: view !== 'patients' && `${session.uri}/patients`,
                 current: view === 'patients'
               }
             ]
@@ -108,7 +108,7 @@ export const sessionController = {
           ? [
               {
                 text: __('session.instructions.label'),
-                href: `${session.uri}/instructions`,
+                href: view !== 'instructions' && `${session.uri}/instructions`,
                 current: view === 'instructions'
               }
             ]
@@ -117,7 +117,7 @@ export const sessionController = {
           ? [
               {
                 text: __('session.record.label'),
-                href: `${session.uri}/record`,
+                href: view !== 'record' && `${session.uri}/record`,
                 current: view === 'record'
               }
             ]
