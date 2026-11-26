@@ -3209,7 +3209,6 @@ export const en = {
     count:
       '{count, plural, =0 {No sessions} one {1 session} other {# sessions}}',
     summary: 'Session details',
-    protocols: 'Vaccination protocols',
     action: {
       cancel: 'Cancel session'
     },
@@ -3303,6 +3302,66 @@ export const en = {
       information: 'You can record vaccinations when a session is in progress.',
       count:
         '{count, plural, =0 {no children for {programme}} one {# child for {programme}} other {# children for {programme}}}'
+    },
+    protocols: {
+      summary: 'Vaccination protocols',
+      title: 'What protocols will this session use?',
+      vgdRestriction:
+        'Vaccine group direction settings will only apply to vaccinations given for the {programmeNames} {count, plural, one {programme} other {programmes}}.',
+      nurse: {
+        label: 'Protocol',
+        pgdOnly:
+          'Registered nurses and health professionals will vaccinate under a patient general direction (PGD) in this session.',
+        title:
+          'What protocol will registered nurses and health professionals vaccinate under?',
+        pgd: {
+          label: 'A patient group direction (PGD)'
+        },
+        vgd: {
+          label: 'A vaccine group direction (VGD)'
+        }
+      },
+      hca: {
+        label: 'Protocol for healthcare assistants',
+        title: 'What protocol will healthcare assistants vaccinate under?',
+        none: {
+          label: 'None, healthcare assistants will not be vaccinating',
+          summary: 'None'
+        },
+        vgd: {
+          label: 'A vaccine group direction (VGD)'
+        },
+        psd: {
+          label: 'A patient specific direction (PSD)',
+          scope: {
+            label: 'Which vaccinations can healthcare assistants give?',
+            nasalFlu: {
+              label: {
+                fluOnly: 'Nasal spray only',
+                fluPlus: 'Flu nasal spray only'
+              },
+              hint: 'Healthcare assistants can give the nasal spray vaccine to children who are covered by a PSD'
+            },
+            all: {
+              label: {
+                noNasalSpray: 'All programmes',
+                withNasalSpray: 'All programmes and vaccine methods'
+              },
+              hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the relevant programme'
+            },
+            allForOneProgramme: {
+              label: {
+                fluOnly: 'Nasal spray or injection',
+                other: 'All vaccine methods'
+              },
+              hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the {{programme.nameSentenceCase}} programme'
+            }
+          }
+        }
+      },
+      psdUsage: {
+        label: 'Vaccinations using PSD'
+      }
     },
     protocolVGD: {
       title: 'Do you want to use a vaccine group direction (VGD)?',

@@ -8,10 +8,13 @@ import {
   ContactType,
   InstructionStatus,
   PatientConsentStatus,
-  PatientRefusedStatus
+  PatientRefusedStatus,
+  PsdUsage,
+  VaccinationProtocol
 } from './enums.js'
 import { en } from './locales/en.js'
 import { ContactRelationship, Location, User } from './models.js'
+import i18n from './utils/i18n.js'
 import { getPsdUsageText, getSessionActivityCount } from './utils/session.js'
 import {
   camelToKebabCase,
@@ -260,13 +263,52 @@ export default () => {
    * Get PSD usage form field items, worded to suit a session’s programmes
    *
    * @param {import('./models.js').Session} session - Session
+   * @param {string} view - the page on which this will be rendered
+   * @param {boolean} [showNone] - should we include the None option?
    * @returns {Array<object>} Form field items
    */
-  globals.psdUsageItems = function (session) {
-    return session.availablePsdUsages.map((psdUsage) => ({
-      ...getPsdUsageText(session, psdUsage),
-      value: psdUsage
-    }))
+  globals.psdUsageItems = function (session, view, showNone = true) {
+    // Without the None option, there's no point asking if there's only one possible option
+    if (!showNone && !session.hasPsdUsageChoice) {
+      return []
+    }
+
+    // Note: the None option may be covered by other form inputs
+    return session.availablePsdUsages
+      .filter((psdUsage) => showNone || psdUsage !== PsdUsage.None)
+      .map((psdUsage) => ({
+        ...getPsdUsageText(session, psdUsage, view),
+        value: psdUsage
+      }))
+  }
+
+  /**
+   * Get HCA protocol form field items, with options to suit a session's programmes
+   *
+   * @param {import('./models.js').Session} session - Session
+   * @returns {Array<object>} Form field items
+   */
+  globals.hcaProtocolItems = function (session) {
+    const items = []
+    if (session.canSupportVGD) {
+      items.push({
+        label: i18n.__('session.protocols.hca.vgd.label'),
+        value: VaccinationProtocol.VGD
+      })
+    }
+    items.push({
+      label: i18n.__('session.protocols.hca.psd.label'),
+      value: VaccinationProtocol.PSD
+    })
+    items.push({
+      divider: 'or'
+    })
+    items.push({
+      label: i18n.__('session.protocols.hca.none.label'),
+      value: ''
+    })
+
+    return items
   }
 
   /**

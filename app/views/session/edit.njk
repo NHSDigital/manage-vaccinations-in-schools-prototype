@@ -14,6 +14,7 @@
   }) }}
 
   {% if session.type === SessionType.School %}
+    {# School session summary #}
     {{ summaryList({
       card: {
         heading: {
@@ -56,31 +57,8 @@
         }
       })
     }) }}
-
-    {{ summaryList({
-      card: {
-        heading: {
-          text: __("session.protocols"),
-          size: "m"
-        }
-      },
-      lastRowBorder: false,
-      rows: summaryRows(session, {
-        protocolNurse: {
-          label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/edit/protocol-vgd" if session.canSupportVGD
-        },
-        protocolHCA: {
-          label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/edit/protocol-vgd"
-        } if session.canSupportVGD else none,
-        psdUsage: {
-          label: __("session.protocolPSD.label"),
-          href: session.uri + "/edit/protocol-psd"
-        }
-      })
-    }) }}
   {% else %}
+    {# Clinic session summary #}
     {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
     {{ summaryList({
       card: {
@@ -125,51 +103,53 @@
         }
       })
     }) }}
+  {% endif %}
 
-    {{ summaryList({
-      card: {
-        heading: {
-          text: __("session.protocols"),
-          size: "m"
-        }
+  {# Protocols used in the session #}
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("session.protocols.summary"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(session, {
+      protocolNurse: {
+        label: __("session.protocols.nurse.label"),
+        href: session.uri + "/edit/protocols" if session.canSupportVGD
       },
-      lastRowBorder: false,
-      rows: summaryRows(session, {
-        protocolNurse: {
-          label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/edit/protocol-vgd" if session.canSupportVGD
-        },
-        protocolHCA: {
-          label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/edit/protocol-vgd"
-        } if session.canSupportVGD else none,
-        psdUsage: {
-          label: __("session.protocolPSD.label"),
-          href: session.uri + "/edit/protocol-psd"
-        }
-      })
-    }) }}
+      protocolHCA: {
+        label: __("session.protocols.hca.label"),
+        value: __("session.protocols.hca.none.summary") if not session.protocolForHCAs,
+        href: session.uri + "/edit/protocols"
+      },
+      psdUsage: {
+        label: __("session.protocols.psdUsage.label"),
+        href: session.uri + "/edit/protocols"
+      } if session.protocolForHCAs == VaccinationProtocol.PSD and session.hasPsdUsageChoice else none
+    })
+  }) }}
 
-    {% if appointmentsToCancel.length > 0 %}
-      {% set calloutHtml %}
-        {{ __mf("session.edit.appointments.cancellation.description", { count: appointmentsToCancel.length }) | nhsukMarkdown }}
+  {% if session.type === SessionType.Clinic and appointmentsToCancel.length > 0 %}
+    {% set calloutHtml %}
+      {{ __mf("session.edit.appointments.cancellation.description", { count: appointmentsToCancel.length }) | nhsukMarkdown }}
 
-        {% set appointmentLinks = [] %}
-        {% for appointment in appointmentsToCancel %}
-          {% set appointmentLinks = appointmentLinks | push(appointment.link.summary) %}
-        {% endfor %}
+      {% set appointmentLinks = [] %}
+      {% for appointment in appointmentsToCancel %}
+        {% set appointmentLinks = appointmentLinks | push(appointment.link.summary) %}
+      {% endfor %}
 
-        {{ details({
-          summary: __("session.edit.appointments.cancellation.detailsTitle"),
-          html: appointmentLinks | nhsukList
-        }) }}
-      {% endset %}
-
-      {{ warningCallout({
-        heading: __("session.edit.appointments.cancellation.title"),
-        html: calloutHtml
+      {{ details({
+        summary: __("session.edit.appointments.cancellation.detailsTitle"),
+        html: appointmentLinks | nhsukList
       }) }}
-    {% endif %}
+    {% endset %}
+
+    {{ warningCallout({
+      heading: __("session.edit.appointments.cancellation.title"),
+      html: calloutHtml
+    }) }}
   {% endif %}
 {% endblock %}
 

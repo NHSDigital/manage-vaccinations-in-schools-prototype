@@ -10,6 +10,7 @@
   }) }}
 
   {% if session.type === SessionType.School %}
+    {# School session summary #}
     {{ summaryList({
       card: {
         heading: {
@@ -51,32 +52,8 @@
         }
       })
     }) }}
-
-    {{ summaryList({
-      card: {
-        heading: {
-          text: __("session.protocols"),
-          size: "m"
-        }
-      },
-      lastRowBorder: false,
-      rows: summaryRows(session, {
-        protocolNurse: {
-          label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
-        },
-        protocolHCA: {
-          label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/new/protocol-vgd"
-        } if session.canSupportVGD else none,
-        psdUsage: {
-          label: __("session.protocolPSD.label"),
-          href: session.uri + "/new/protocol-psd"
-        }
-      })
-    }) }}
-
   {% else %}
+    {# Clinic session summary #}
     {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
     {{ summaryList({
       card: {
@@ -124,29 +101,31 @@
         }
       })
     }) }}
-
-    {{ summaryList({
-      card: {
-        heading: {
-          text: __("session.protocols"),
-          size: "m"
-        }
-      },
-      lastRowBorder: false,
-      rows: summaryRows(session, {
-        protocolNurse: {
-          label: __("session.protocolVGD.nurse.label"),
-          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
-        },
-        protocolHCA: {
-          label: __("session.protocolVGD.hca.label"),
-          href: session.uri + "/new/protocol-vgd"
-        } if session.canSupportVGD else none,
-        psdUsage: {
-          label: __("session.protocolPSD.label"),
-          href: session.uri + "/new/protocol-psd"
-        }
-      })
-    }) }}
   {% endif %}
+
+  {# Protocols used in the session #}
+  {{ summaryList({
+    card: {
+      heading: {
+        text: __("session.protocols.summary"),
+        size: "m"
+      }
+    },
+    lastRowBorder: false,
+    rows: summaryRows(session, {
+      protocolNurse: {
+        label: __("session.protocols.nurse.label"),
+        href: session.uri + "/new/protocols" if session.canSupportVGD
+      },
+      protocolHCA: {
+        label: __("session.protocols.hca.label"),
+        value: __("session.protocols.hca.none.summary") if not session.protocolForHCAs,
+        href: session.uri + "/new/protocols"
+      },
+      psdUsage: {
+        label: __("session.protocols.psdUsage.label"),
+        href: session.uri + "/new/protocols"
+      } if session.protocolForHCAs == VaccinationProtocol.PSD and session.hasPsdUsageChoice else none
+    })
+  }) }}
 {% endblock %}

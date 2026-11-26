@@ -52,14 +52,15 @@
       mmrConsent: {},
       hasRegistration: {},
       protocolNurse: {
-        label: __("session.protocolVGD.nurse.label")
+        label: __("session.protocols.nurse.label")
       },
       protocolHCA: {
-        label: __("session.protocolVGD.hca.label")
-      } if session.canSupportVGD else none,
+        label: __("session.protocols.hca.label"),
+        value: __("session.protocols.hca.none.summary") if not session.protocolForHCAs
+      },
       psdUsage: {
-        label: __("session.protocolPSD.label")
-      }
+        label: __("session.protocols.psdUsage.label")
+      } if session.protocolForHCAs == VaccinationProtocol.PSD and session.hasPsdUsageChoice else none
     } %}
     {% if session.type === SessionType.Clinic %}
       {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
@@ -72,14 +73,15 @@
           date: {},
           hasRegistration: {} if session.clinicType !== ClinicType.DropIn else none,
           protocolNurse: {
-            label: __("session.protocolVGD.nurse.label")
+            label: __("session.protocols.nurse.label")
           },
           protocolHCA: {
-            label: __("session.protocolVGD.hca.label")
-          } if session.canSupportVGD else none,
-          psdUsage: {
-            label: __("session.protocolPSD.label")
+            label: __("session.protocols.hca.label"),
+            value: __("session.protocols.hca.none.summary") if not session.protocolForHCAs
           },
+          psdUsage: {
+            label: __("session.protocols.psdUsage.label")
+          } if session.protocolForHCAs == VaccinationProtocol.PSD and session.hasPsdUsageChoice else none,
           vaccinationPeriods: {},
           vaccinators: {},
           appointmentLengths: {
