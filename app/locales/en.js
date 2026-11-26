@@ -3437,24 +3437,10 @@ export const en = {
     },
     'give-instructions': {
       label: 'Add new PSDs',
-      singleProgramme: {
-        title:
-          'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}} for { programmeName }?',
-        confirm: 'Yes, add PSDs',
-        cancel: 'No, return to session'
-      },
-      multipleProgrammes: {
-        title: 'Select the programmes to add PSDs',
-        allProgrammes: {
-          label: 'All programmes',
-          hint: '{count, plural, one {1 child} other {# children}} can be given a PSD for one or more programmes'
-        },
-        oneProgramme: {
-          hint: '{count, plural, one {1 child} other {# children}} can be given a PSD for { programmeName }'
-        },
-        confirm: 'Add PSDs',
-        cancel: 'Cancel and return to session'
-      },
+      title:
+        'Are you sure you want to add {count, plural, one {a new PSD} other {# new PSDs}} for {programmeNames}?',
+      confirm: 'Yes, add PSDs',
+      cancel: 'No, return to session',
       warning: 'This cannot be undone.',
       success: 'PSDs added'
     },
