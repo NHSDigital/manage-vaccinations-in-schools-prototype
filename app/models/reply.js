@@ -419,6 +419,18 @@ export class Reply extends BaseModel {
   }
 
   /**
+   * Has this response been superseded by a newer response from the same
+   * respondent?
+   *
+   * @returns {boolean} Response has been superseded
+   */
+  get isSuperseded() {
+    const supersededReplies = this.patientProgramme?.supersededReplies ?? []
+
+    return supersededReplies.some(({ uuid }) => uuid === this.uuid)
+  }
+
+  /**
    * Is consent response expiring soon i.e. within 30 days?
    *
    * @returns {boolean} True if consent response expires soon, false otherwise
@@ -690,6 +702,15 @@ export class Reply extends BaseModel {
                   html: `<s>${this.decision}</s>`
                 }),
                 'Expired',
+                false
+              )
+            } else if (this.isSuperseded) {
+              decisionStatus = formatWithSecondaryText(
+                formatTag({
+                  colour: 'grey',
+                  html: `<s>${this.decision}</s>`
+                }),
+                'Replaced by a newer response',
                 false
               )
             } else if (this.hasConfirmedRefusal) {

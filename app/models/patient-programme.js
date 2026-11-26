@@ -1413,14 +1413,55 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get responses that have been superseded by a newer response from the same
+   * respondent, newest first
+   *
+   * They’re still valid, but no longer count towards consent, as only each
+   * respondent’s latest response counts. Non-responses never count, so they
+   * aren’t superseded
+   *
+   * @returns {Array<Reply>} Superseded responses
+   */
+  get supersededReplies() {
+    const countingUuids = this.repliesCountingTowardsConsent.map(
+      ({ uuid }) => uuid
+    )
+
+    return (this.replies ?? []).filter(
+      (reply) =>
+        reply.decision !== ReplyDecision.NoResponse &&
+        !countingUuids.includes(reply.uuid)
+    )
+  }
+
+  /**
+   * Get current responses, newest first: valid ones, other than those that
+   * have been superseded
+   *
+   * @returns {Array<Reply>} Current responses
+   */
+  get currentReplies() {
+    const supersededUuids = this.supersededReplies.map(({ uuid }) => uuid)
+
+    return (this.replies ?? []).filter(
+      (reply) => !supersededUuids.includes(reply.uuid)
+    )
+  }
+
+  /**
    * Get previous responses that no longer count towards consent, because they
-   * were invalidated or have expired, newest first
+   * were invalidated, have expired or have been superseded, newest first
    *
    * @returns {Array<Reply>} Previous responses
    */
   get previousReplies() {
+    const supersededUuids = this.supersededReplies.map(({ uuid }) => uuid)
+
     return (this.#allDeliveredReplies ?? []).filter(
-      (reply) => reply.isInvalidated || reply.hasExpired
+      (reply) =>
+        reply.isInvalidated ||
+        reply.hasExpired ||
+        supersededUuids.includes(reply.uuid)
     )
   }
 

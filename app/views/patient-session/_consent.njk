@@ -87,11 +87,11 @@
     text: __("patientSession.replies.label"),
     level: 3,
     size: "s",
-    classes: "nhsuk-u-margin-bottom-2" if patientProgramme.replies.length === 0
+    classes: "nhsuk-u-margin-bottom-2" if patientProgramme.currentReplies.length === 0
   }) }}
 
-  {% if patientProgramme.replies.length > 0 %}
-    {% for reply in patientProgramme.replies %}
+  {% if patientProgramme.currentReplies.length > 0 %}
+    {% for reply in patientProgramme.currentReplies %}
       {{ consentResponseCard(reply) }}
     {% endfor %}
   {% else %}
