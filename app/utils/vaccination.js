@@ -22,10 +22,10 @@ function canUsePsd(session, patientProgramme) {
  * under a VGD or PSD, as only the person who assessed the child can give it under a PGD:
  * - other nurses, if nurses use a VGD for the programme, or the child has a PSD that
  *   the session allows
- * - HCAs, if HCAs use a VGD for the programme, or the child has a PSD that the
- *   session allows
+ * - HCAs, if HCAs use a VGD for the programme
  *
- * A PSD lets any trained staff give the vaccine on the prescriber’s authority
+ * HCAs giving a vaccine under a PSD assess the child themselves, so they record it
+ * themselves too, rather than a nurse recording it for them
  *
  * @param {Session} session - Session
  * @param {PatientProgramme} patientProgramme - Patient programme
@@ -44,7 +44,7 @@ export function getPossibleVaccinators(session, patientProgramme, recordedBy) {
     (user) =>
       user.uid === recordedBy.uid ||
       (user.isRegisteredNurse && (nursesUseVgd || childHasPsd)) ||
-      (user.isHCA && (hcasUseVgd || childHasPsd))
+      (user.isHCA && hcasUseVgd)
   )
 }
 
