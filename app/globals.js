@@ -10,7 +10,7 @@ import {
 } from './enums.js'
 import { en } from './locales/en.js'
 import { Contact, Location, User } from './models.js'
-import { getSessionActivityCount } from './utils/session.js'
+import { getPsdUsageText, getSessionActivityCount } from './utils/session.js'
 import {
   camelToKebabCase,
   formatHealthAnswer,
@@ -248,6 +248,19 @@ export default () => {
   }
 
   /**
+   * Get PSD usage form field items, worded to suit a session’s programmes
+   *
+   * @param {import('./models.js').Session} session - Session
+   * @returns {Array<object>} Form field items
+   */
+  globals.psdUsageItems = function (session) {
+    return session.availablePsdUsages.map((psdUsage) => ({
+      ...getPsdUsageText(session, psdUsage),
+      value: psdUsage
+    }))
+  }
+
+  /**
    * Inject Nunjucks generated HTML into an object requiring conditional HTML
    *
    * @param {object} object
@@ -437,7 +450,7 @@ export default () => {
         view: 'instructions',
         key: 'instructionStatus',
         value: InstructionStatus.Needed,
-        ...(account.canPrescribe && { action: 'giveInstructions' })
+        ...(account.canPrescribe && { action: 'give-instructions' })
       },
       record: {
         view: 'record',

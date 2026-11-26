@@ -5,6 +5,7 @@ import {
   RegistrationStatus,
   SessionType,
   VaccinationOutcome,
+  VaccinationProtocol,
   VaccineCriteria
 } from '../enums.js'
 import { PatientSession, Programme, User, Vaccination } from '../models.js'
@@ -12,6 +13,7 @@ import { getAccountVaccineMethods } from '../utils/account.js'
 import { formatDate, today } from '../utils/date.js'
 import { getAdditionalNeeds } from '../utils/feature-flags.js'
 import { saveAndRedirect } from '../utils/redirect.js'
+import { getPossibleVaccinators } from '../utils/vaccination.js'
 
 export const patientSessionController = {
   /**
@@ -33,10 +35,6 @@ export const patientSessionController = {
       (user) => user.isRegisteredNurse
     )
 
-    const allVaccinatingUsers = User.findAll(data).filter(
-      (user) => user.canVaccinate
-    )
-
     const { clinicAppointment, patient, patientProgramme, programme, session } =
       patientSession
 
@@ -49,6 +47,22 @@ export const patientSessionController = {
     )
 
     const vaccineMethods = getAccountVaccineMethods(account, patientSession)
+
+    // Do HCAs give this programme under a VGD in this session?
+    const hcasUseVgd =
+      session.getHCAProtocolFor(programme.id) === VaccinationProtocol.VGD
+
+    // People who can give the vaccine, if the person recording it hands over
+    const vaccinatorPool = getPossibleVaccinators(
+      session,
+      patientProgramme,
+      account
+    )
+
+    // A PSD takes priority over a VGD
+    const canUsePsd =
+      session.hasPsdProtocolFor(patientProgramme) &&
+      patientProgramme.hasInstruction
 
     response.locals.options = {
       // Show outstanding vaccinations
@@ -70,18 +84,30 @@ export const patientSessionController = {
       needsTriage: patientProgramme.status === PatientStatus.Triage,
       // Patient already triaged
       hasTriage: patientProgramme.triageNotes.length > 0,
-      hasInstruction: session.hasPsdProtocol && patientProgramme.hasInstruction,
+      hasInstruction:
+        session.hasPsdProtocolFor(patientProgramme) &&
+        patientProgramme.hasInstruction,
       canAssess:
         account.isRegisteredNurse ||
-        (account.isHCA && patientProgramme.hasInstruction),
+        (account.isHCA &&
+          session.hasPsdProtocolFor(patientProgramme) &&
+          patientProgramme.hasInstruction),
       canRegister: session.hasRegistration && session.isActive,
       canRecord:
-        vaccineMethods?.includes(patientProgramme.vaccine?.method) &&
+        vaccineMethods.includes(patientProgramme.vaccine?.method) &&
         patientSession.canRecordSessionOutcome &&
         session.isActive,
       canRecordInjectionSite:
-        patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal
+        patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal,
+      mustRecordAssessingNurse: account.isHCA && hcasUseVgd && !canUsePsd,
+      // Nurse can assess the child, then hand over to someone else who can give the
+      // vaccine under a VGD or PSD
+      canHandOver:
+        account.isRegisteredNurse &&
+        vaccinatorPool.some(({ uid }) => uid !== account.uid)
     }
+
+    response.locals.vaccinatorPool = vaccinatorPool
 
     // Extra info about the consent reminders sent so far
     if (response.locals.options.canRemind) {
@@ -100,7 +126,7 @@ export const patientSessionController = {
     // Vaccinator has permission to record using the alternative vaccine
     // and patient has consent to vaccinate using the alternative vaccine
     response.locals.canRecordAlternativeVaccine =
-      vaccineMethods?.includes(programme.alternativeVaccine?.method) &&
+      vaccineMethods.includes(programme.alternativeVaccine?.method) &&
       patientProgramme.canRecordAlternativeVaccine
 
     const view = request.path.split('/').at(-1)
@@ -144,7 +170,6 @@ export const patientSessionController = {
     response.locals.session = session
     response.locals.clinicAppointment = clinicAppointment
     response.locals.registeredNurseUsers = registeredNurseUsers
-    response.locals.allVaccinatingUsers = allVaccinatingUsers
 
     // Use different values for pre-screening questions
     // `IsWell` and `IsPregnant` should persist per patient

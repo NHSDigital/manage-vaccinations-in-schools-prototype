@@ -66,6 +66,7 @@ export default {
     immunocompromisedSequence: ['1P', '2P'],
     sequenceDefault: '1P',
     yearGroups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    supportsVGD: true,
     vaccine_snomeds: ['43208811000001106', '40085011000001101'],
     isNhseSyncable: true
   },
@@ -173,6 +174,7 @@ export default {
     sequenceDefault: '2B',
     yearGroups: [9, 10, 11],
     targetYearGroup: 9,
+    supportsVGD: true,
     vaccine_snomeds: ['7374311000001101'],
     isNhseSyncable: false,
     isTetanusVaccine: true

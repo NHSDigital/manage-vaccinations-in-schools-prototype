@@ -41,6 +41,7 @@ import {
   today
 } from '../utils/date.js'
 import {
+  getInstructionStatusProperties,
   getPatientClinicStatusProperties,
   getPatientSchoolStatusProperties,
   getPatientStatusProperties
@@ -82,6 +83,7 @@ import {
 } from '../utils/string.js'
 import {
   getScreenStatusesForConsentMethod,
+  getScreenStatusesForPsd,
   getScreenVaccineCriteria
 } from '../utils/triage.js'
 
@@ -1656,6 +1658,21 @@ export class PatientProgramme extends BaseModel {
   }
 
   /**
+   * Get the screen statuses that a PSD can be given with in a session, based on the
+   * session’s PSD settings
+   *
+   * @param {Session} [session] - Session the child is being triaged for
+   * @returns {Array<ScreenStatus>} Screen statuses a PSD can be given with
+   */
+  getPsdScreenStatusesForSession(session) {
+    return getScreenStatusesForPsd(
+      this.screenStatusesForConsentMethod,
+      this.programme_id,
+      session
+    )
+  }
+
+  /**
    * Get vaccination criteria consented to use if safe to vaccinate
    *
    * @returns {ScreenVaccineCriteria|boolean} Criteria
@@ -1679,8 +1696,7 @@ export class PatientProgramme extends BaseModel {
     const standardVaccine = this.programme?.vaccines.find((vaccine) => vaccine)
     const alternativeVaccine = this.programme?.alternativeVaccine
 
-    // Need consent response before we can determine the chosen method.
-    // We only want to instruct patients being vaccinated using nasal spray
+    // Need consent response before we can determine the chosen method
     if (!this.consentGiven) {
       return
     }
@@ -2074,6 +2090,14 @@ export class PatientProgramme extends BaseModel {
                   ? `Consent given ${formatDate(this.consentGivenDate, { dateStyle: 'long' })}`
                   : undefined
               )
+            case 'instructionStatus': {
+              const status = this.instructionStatus
+              return formatProgrammeStatus(
+                this.programme,
+                getInstructionStatusProperties(status),
+                status === InstructionStatus.Needed ? this.status : undefined
+              )
+            }
             default:
               return undefined
           }

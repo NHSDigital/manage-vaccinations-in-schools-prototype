@@ -67,7 +67,7 @@
 {% endif %}
 
 {# PSD review needed #}
-{% if session.hasPsdProtocol %}
+{% if session.psdUsage !== PsdUsage.None %}
   {% set psdReviewRow = sessionActivityRow("giveInstructions") %}
   {% if psdReviewRow %}
     {% set sessionActivityRows = sessionActivityRows | push(psdReviewRow) %}

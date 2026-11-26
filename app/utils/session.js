@@ -5,12 +5,15 @@ import programmesData from '../datasets/programmes.js'
 import schoolsData from '../datasets/schools.js'
 import {
   ConsentWindow,
+  PsdUsage,
   SessionPresetName,
   SessionStatus,
-  SessionType
+  SessionType,
+  VaccineMethod
 } from '../enums.js'
 
 import { today } from './date.js'
+import i18n from './i18n.js'
 
 /**
  * Get consent window (is it open, opening or closed)
@@ -154,6 +157,67 @@ export function removeSlots(allSlots, slotsToRemove) {
     // ...and filter this one out of the original array
     return false
   })
+}
+
+/**
+ * Get the wording for a PSD usage setting, to suit a session’s programmes
+ *
+ * The settings are stored the same way for every session, but how they’re worded
+ * depends on which programmes the session can vaccinate for. For example, there’s
+ * no need to mention ‘all programmes’ if there’s only one
+ *
+ * @param {Session} session - Session
+ * @param {PsdUsage} psdUsage - PSD usage
+ * @returns {{text: string, hint: string}} Text and hint
+ */
+export const getPsdUsageText = (session, psdUsage) => {
+  const { __ } = i18n
+  const programmes = session.programmesThatCanBeAdministered
+  const onlyProgramme = programmes.length === 1 ? programmes[0] : null
+  const isFluOnly = onlyProgramme?.id === 'flu'
+
+  switch (psdUsage) {
+    case PsdUsage.None:
+      return {
+        text: __('session.protocolPSD.none.label'),
+        hint: __('session.protocolPSD.none.hint')
+      }
+
+    case PsdUsage.NasalFluOnly:
+      return {
+        text: isFluOnly
+          ? __('session.protocolPSD.nasalFlu.label.fluOnly')
+          : __('session.protocolPSD.nasalFlu.label.fluPlus'),
+        hint: __('session.protocolPSD.nasalFlu.hint')
+      }
+
+    case PsdUsage.All: {
+      if (onlyProgramme) {
+        return {
+          text: isFluOnly
+            ? __('session.protocolPSD.allForOneProgramme.label.fluOnly')
+            : __('session.protocolPSD.allForOneProgramme.label.other'),
+          hint: __('session.protocolPSD.allForOneProgramme.hint', {
+            programme: onlyProgramme
+          })
+        }
+      }
+
+      const hasNasalSprayVaccine = programmes.some(({ vaccines }) =>
+        vaccines.some(({ method }) => method === VaccineMethod.Intranasal)
+      )
+
+      return {
+        text: hasNasalSprayVaccine
+          ? __('session.protocolPSD.all.label.withNasalSpray')
+          : __('session.protocolPSD.all.label.noNasalSpray'),
+        hint: __('session.protocolPSD.all.hint')
+      }
+    }
+
+    default:
+      return { text: psdUsage || '', hint: '' }
+  }
 }
 
 /**

@@ -8,6 +8,7 @@ import {
 } from '../models.js'
 import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
+import { isPsdRequestedInTriage } from '../utils/triage.js'
 
 export const patientProgrammeController = {
   /**
@@ -53,11 +54,17 @@ export const patientProgrammeController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   readForm(request, response, next) {
-    const { referrer } = request.session
+    const { session_id } = request.query
+    const { data, referrer } = request.session
     const { patientProgramme } = response.locals
 
     // Show back link to referring page, else patient programme page
     response.locals.back = referrer || patientProgramme.uri
+
+    // Session the form is being completed for, if any, such as for triage
+    if (session_id) {
+      response.locals.session = Session.findOne(String(session_id), data)
+    }
 
     return next()
   },
@@ -168,7 +175,7 @@ export const patientProgrammeController = {
     const { data, referrer } = request.session
     const { __, account, patientProgramme } = response.locals
 
-    if (triage.psd) {
+    if (isPsdRequestedInTriage(triage)) {
       patientProgramme.giveInstruction({
         createdBy_uid: account.uid,
         programme_id: patientProgramme.programme.id

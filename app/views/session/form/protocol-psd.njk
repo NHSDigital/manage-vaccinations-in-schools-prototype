@@ -1,0 +1,20 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.protocolPSD.title") %}
+
+{% block form %}
+  {# The options offered, and their wording, depend on the session’s programmes #}
+  {{ radios({
+    fieldset: {
+      legend: {
+        html: heading({
+          caption: session.location.name,
+          text: title,
+          size: "l"
+        })
+      }
+    },
+    items: psdUsageItems(session),
+    decorate: "session.psdUsage"
+  }) }}
+{% endblock %}

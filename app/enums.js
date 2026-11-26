@@ -594,6 +594,16 @@ export const ProgrammeType = {
  * @readonly
  * @enum {string}
  */
+export const PsdUsage = {
+  None: 'No',
+  NasalFluOnly: 'Yes, flu nasal spray only',
+  All: 'Yes, all programmes and vaccine methods'
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const SchoolTerm = {
   Autumn: 'Autumn',
   Spring: 'Spring',
@@ -817,6 +827,17 @@ export const ReplyRefusal = {
 }
 
 /**
+ * What a research session is for
+ *
+ * @readonly
+ * @enum {string}
+ */
+export const ResearchSessionPurpose = {
+  UserResearch: 'User research',
+  Walkthrough: 'Walkthrough'
+}
+
+/**
  * @readonly
  * @enum {string}
  */
@@ -856,7 +877,7 @@ export const ScreenVaccineCriteria = {
   AlternativeFluInjectionOnly:
     'The parent has consented to the injected vaccine only',
   AlternativeMMRInjectionOnly:
-    'The parent has consented to the injected vaccine only',
+    'The parent has consented to the gelatine-free vaccine only',
   IntranasalOnly: 'The parent has consented to the nasal spray only',
   IntranasalPreferred:
     'The parent has consented to the injected vaccine being offered if the nasal spray is not suitable'

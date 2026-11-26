@@ -1,3 +1,4 @@
+import prototypeFilters from '@x-govuk/govuk-prototype-filters'
 import wizard from '@x-govuk/govuk-prototype-wizard'
 import _ from 'lodash'
 
@@ -8,6 +9,7 @@ import {
   PatientSchoolStatus,
   PatientStatus,
   ProgrammeType,
+  PsdUsage,
   RecordVaccineCriteria,
   RegistrationStatus,
   SchoolPhase,
@@ -21,6 +23,7 @@ import {
   ClinicBooking,
   DefaultBatch,
   PatientSession,
+  Programme,
   School,
   Session,
   Team
@@ -38,6 +41,7 @@ import { getSessionYearGroups } from '../utils/session.js'
 import {
   formatTime,
   formatYearGroup,
+  stringToArray,
   stringToBoolean
 } from '../utils/string.js'
 import { getFilterParams } from '../utils/url.js'
@@ -100,7 +104,7 @@ export const sessionController = {
               }
             ]
           : []),
-        ...(session.hasPsdProtocol
+        ...(session.psdUsage !== PsdUsage.None
           ? [
               {
                 text: __('session.instructions.label'),
@@ -390,6 +394,13 @@ export const sessionController = {
       }
     }
 
+    // A PSD status only applies to children the session’s PSD settings cover
+    if (filters.instructionStatus !== 'none') {
+      results = results.filter(({ patientProgramme }) =>
+        session.hasPsdProtocolFor(patientProgramme)
+      )
+    }
+
     // Filter by sub-status(es)
     for (const [programmeStatus, status] of Object.entries({
       [PatientStatus.Consent]: 'patientConsent',
@@ -458,7 +469,7 @@ export const sessionController = {
       results = results.filter(
         (patientSession) =>
           patientSession.canRecordSessionOutcome &&
-          getAccountVaccineMethods(account, patientSession)
+          getAccountVaccineMethods(account, patientSession).length > 0
       )
     }
 
@@ -548,7 +559,8 @@ export const sessionController = {
     const radioFilters = {
       patients: {
         register: showRegistration && RegistrationStatus,
-        instructionStatus: session.hasPsdProtocol && InstructionStatus
+        instructionStatus:
+          session.psdUsage !== PsdUsage.None && InstructionStatus
       },
       instructions: {
         instructionStatus: InstructionStatus
@@ -980,7 +992,42 @@ export const sessionController = {
    * @type {RequestHandler<Record<string, string>>}
    */
   showForm(request, response) {
-    const { view } = request.params
+    const { session_id, view } = request.params
+    const { data } = request.session
+    const { __mf } = response.locals
+
+    if (view === 'protocol-vgd') {
+      // Are there any programmes selected that don't support VGD? If so, we need to make it clear
+      // which programmes will get the VGD decision.
+      const session = new Session(
+        Session.findOne(session_id, data.wizard),
+        data
+      )
+      const sessionProgrammes = session.canVaccinateForOtherProgrammes
+        ? Programme.findAll(data).filter(({ isHidden }) => !isHidden)
+        : session.programmes
+
+      const programmesByVGDStatus = Object.groupBy(
+        sessionProgrammes,
+        ({ supportsVGD }) => (supportsVGD ? 'supported' : 'notSupported')
+      )
+      if (programmesByVGDStatus['notSupported']) {
+        const vgdProgrammes = programmesByVGDStatus['supported']
+        if (vgdProgrammes) {
+          const programmeNames = vgdProgrammes.map(({ name }) => `**${name}**`)
+          response.locals.vgdRestrictionDescription = __mf(
+            'session.protocolVGD.restriction',
+            {
+              count: programmeNames.length,
+              programmeNames: prototypeFilters.formatList(programmeNames)
+            }
+          )
+        }
+      }
+
+      response.locals.programmesSupportingVGD =
+        programmesByVGDStatus['supported']
+    }
 
     return response.render(`session/form/${view}`)
   },
@@ -1011,6 +1058,19 @@ export const sessionController = {
         request.body.session.clinicType === ClinicType.DropIn
           ? false
           : team.hasClinicSessionRegistration
+    } else if (view === 'protocol-vgd') {
+      // The VGD answers are lists of programmes, which need converting into a protocol for
+      // each programme
+      const { vgdProgramme_idsForNurses, vgdProgramme_idsForHCAs } =
+        request.body.session
+      delete request.body.session.vgdProgramme_idsForNurses
+      delete request.body.session.vgdProgramme_idsForHCAs
+
+      session.setVgdProgrammes(
+        stringToArray(vgdProgramme_idsForNurses),
+        stringToArray(vgdProgramme_idsForHCAs)
+      )
+      session = Session.update(session_id, session, data.wizard)
     }
 
     // Update values in the session model
@@ -1112,12 +1172,60 @@ export const sessionController = {
   /**
    * @type {RequestHandler<Record<string, string>>}
    */
+  confirmInstructions(request, response) {
+    const { session } = response.locals
+    const { data } = request.session
+
+    const patientSessions = session.patientSessions.filter(
+      ({ patientProgramme }) => session.canBulkInstructFor(patientProgramme)
+    )
+    const programmeNameLookup = Object.fromEntries(
+      Programme.findAll(data)
+        .filter(({ isHidden }) => !isHidden)
+        .map(({ id, name }) => [id, name])
+    )
+    const patientSessionsByProgramme = Object.groupBy(
+      patientSessions,
+      ({ programme_id }) => programme_id
+    )
+
+    // Break down the number of patients ready for a PSD by each programme
+    response.locals.patientsByProgramme = Object.entries(
+      patientSessionsByProgramme
+    )
+      .map(([programme_id, sessions]) => ({
+        programme_id,
+        programmeName: programmeNameLookup[programme_id],
+        programmeNameInSentence: programmeNameLookup[programme_id].replace(
+          'Flu',
+          'flu'
+        ),
+        patientCount: sessions.length
+      }))
+      .sort((a, b) => a.programmeName.localeCompare(b.programmeName))
+
+    // And report the total number of patients ready for any PSD
+    response.locals.totalPatients = _.uniqBy(
+      patientSessions,
+      'patient.nhsn'
+    ).length
+
+    return response.render(`session/give-instructions`)
+  },
+
+  /**
+   * @type {RequestHandler<Record<string, string>>}
+   */
   giveInstructions(request, response) {
     const { data } = request.session
     const { __, account, session } = response.locals
 
+    const programme_ids = stringToArray(request.body.psdProgramme_ids)
+
     const patientsToInstruct = session.patientSessions.filter(
-      ({ patientProgramme }) => patientProgramme.canBulkInstruct
+      ({ patientProgramme }) =>
+        session.canBulkInstructFor(patientProgramme) &&
+        programme_ids.includes(patientProgramme.programme_id)
     )
 
     for (const patientSession of patientsToInstruct) {
@@ -1129,7 +1237,10 @@ export const sessionController = {
       PatientSession.update(patientSession.uuid, patientSession, data)
     }
 
-    request.flash('success', __(`session.giveInstructions.success`))
+    request.flash('success', __(`session.give-instructions.success`))
+
+    // Tidy up
+    delete data.psdProgramme_ids
 
     return saveAndRedirect(request, response, `${session.uri}/instructions`)
   },

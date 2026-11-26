@@ -5,6 +5,8 @@ import {
   ScreenVaccineCriteria
 } from '../enums.js'
 
+import { stringToBoolean } from './string.js'
+
 /**
  * Get screening statuses for vaccination method(s) consented to
  *
@@ -23,6 +25,13 @@ export const getScreenStatusesForConsentMethod = (programme, replies) => {
     ({ decision }) => decision === ReplyDecision.OnlyAlternativeInjection
   )
 
+  // If anyone gave consent for the gelatine-free vaccine only, the vaccine
+  // containing gelatine can’t be given, even if others are happy with either
+  const hasConsentForGelatineFreeVaccineOnly = replies?.some(
+    ({ hasConsentForGelatineFreeVaccineOnly }) =>
+      hasConsentForGelatineFreeVaccineOnly
+  )
+
   return [
     ...(!programme?.alternativeVaccine ? [ScreenStatus.Vaccinate] : []),
     ...(programme?.alternativeVaccine &&
@@ -35,8 +44,15 @@ export const getScreenStatusesForConsentMethod = (programme, replies) => {
     hasConsentForInjection
       ? [ScreenStatus.VaccinateAlternativeFluInjectionOnly]
       : []),
-    ...(programme?.alternativeVaccine && programme.type === ProgrammeType.MMR
-      ? [ScreenStatus.VaccinateAlternativeFluInjectionOnly]
+    ...(programme?.alternativeVaccine &&
+    programme.type === ProgrammeType.MMR &&
+    !hasConsentForGelatineFreeVaccineOnly
+      ? [ScreenStatus.Vaccinate]
+      : []),
+    ...(programme?.alternativeVaccine &&
+    programme.type === ProgrammeType.MMR &&
+    hasConsentForGelatineFreeVaccineOnly
+      ? [ScreenStatus.VaccinateAlternativeMMRInjectionOnly]
       : []),
     'or',
     ScreenStatus.NeedsTriage,
@@ -92,5 +108,48 @@ export const getScreenVaccineCriteria = (programme, replies) => {
 }
 
 /**
- * @import { Programme, Reply } from '../models.js'
+ * Get the triage outcomes that a PSD can be given with in a session, based on the
+ * session’s PSD settings
+ *
+ * @param {Array<ScreenStatus|string>} screenStatuses - Triage outcomes offered
+ * @param {string} programme_id - Programme ID
+ * @param {Session} [session] - Session the child is being triaged for
+ * @returns {Array<ScreenStatus>} Triage outcomes a PSD can be given with
+ */
+export const getScreenStatusesForPsd = (
+  screenStatuses,
+  programme_id,
+  session
+) => {
+  // Without a session, there are no PSD settings to follow
+  if (!session) {
+    return []
+  }
+
+  return screenStatuses.filter((screenStatus) =>
+    session.canUsePsdForScreenStatus(programme_id, screenStatus)
+  )
+}
+
+/**
+ * Has the person triaging asked to give a PSD with the chosen triage outcome?
+ *
+ * The PSD question is asked separately for each triage outcome it applies to, so only
+ * the answer for the chosen outcome counts
+ *
+ * @param {object} triage - Triage form answers
+ * @param {ScreenStatus} triage.status - Chosen triage outcome
+ * @param {object} [triage.psd] - PSD answers, keyed by `ScreenStatus` key
+ * @returns {boolean} PSD should be given
+ */
+export const isPsdRequestedInTriage = (triage) => {
+  const screenStatusKey = Object.keys(ScreenStatus).find(
+    (key) => ScreenStatus[key] === triage?.status
+  )
+
+  return stringToBoolean(triage?.psd?.[screenStatusKey]) === true
+}
+
+/**
+ * @import { Programme, Reply, Session } from '../models.js'
  */

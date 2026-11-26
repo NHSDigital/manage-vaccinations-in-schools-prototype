@@ -48,18 +48,34 @@
         },
         hasRegistration: {
           href: session.uri + "/new/registration"
-        },
-        protocolNurse: {
-          href: session.uri + "/new/protocol"
-        },
-        protocolHCA: {
-          href: session.uri + "/new/protocol"
-        },
-        hasPsdProtocol: {
-          href: session.uri + "/new/protocol"
         }
       })
     }) }}
+
+    {{ summaryList({
+      card: {
+        heading: {
+          text: __("session.protocols"),
+          size: "m"
+        }
+      },
+      lastRowBorder: false,
+      rows: summaryRows(session, {
+        protocolNurse: {
+          label: __("session.protocolVGD.nurse.label"),
+          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
+        },
+        protocolHCA: {
+          label: __("session.protocolVGD.hca.label"),
+          href: session.uri + "/new/protocol-vgd"
+        } if session.canSupportVGD else none,
+        psdUsage: {
+          label: __("session.protocolPSD.label"),
+          href: session.uri + "/new/protocol-psd"
+        }
+      })
+    }) }}
+
   {% else %}
     {% set appointmentLengthKey = "dropIn" if session.clinicType === ClinicType.DropIn else "booking" %}
     {{ summaryList({
@@ -105,6 +121,30 @@
         },
         totalSlots: {
           label: __("session.totalSlots.label." + appointmentLengthKey)
+        }
+      })
+    }) }}
+
+    {{ summaryList({
+      card: {
+        heading: {
+          text: __("session.protocols"),
+          size: "m"
+        }
+      },
+      lastRowBorder: false,
+      rows: summaryRows(session, {
+        protocolNurse: {
+          label: __("session.protocolVGD.nurse.label"),
+          href: session.uri + "/new/protocol-vgd" if session.canSupportVGD
+        },
+        protocolHCA: {
+          label: __("session.protocolVGD.hca.label"),
+          href: session.uri + "/new/protocol-vgd"
+        } if session.canSupportVGD else none,
+        psdUsage: {
+          label: __("session.protocolPSD.label"),
+          href: session.uri + "/new/protocol-psd"
         }
       })
     }) }}

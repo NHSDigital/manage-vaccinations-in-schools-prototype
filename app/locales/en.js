@@ -3129,6 +3129,7 @@ export const en = {
     count:
       '{count, plural, =0 {No sessions} one {1 session} other {# sessions}}',
     summary: 'Session details',
+    protocols: 'Vaccination protocols',
     action: {
       cancel: 'Cancel session'
     },
@@ -3209,7 +3210,7 @@ export const en = {
       label: 'PSDs',
       title: 'Review PSDs',
       count:
-        '{count, plural, =0 {There are no children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.} one {There is # child with consent for the nasal flu vaccine who does not require triage and does not yet have a PSD in place.} other {There are # children with consent for the nasal flu vaccine who do not require triage and do not yet have a PSD in place.}}'
+        '{count, plural, =0 {There are no children with consent to be vaccinated who do not require triage and do not yet have a PSD in place.} one {There is # child with consent to be vaccinated who does not require triage and does not yet have a PSD in place.} other {There are # children with consent to be vaccinated who do not require triage and do not yet have a PSD in place.}}'
     },
     register: {
       label: 'Register attendance',
@@ -3223,41 +3224,61 @@ export const en = {
       count:
         '{count, plural, =0 {no children for {programme}} one {# child for {programme}} other {# children for {programme}}}'
     },
-    protocol: {
-      label: 'Protocol',
-      title: 'Vaccination protocol'
-    },
-    protocolNurse: {
-      label: 'Protocol',
-      title: 'Which protocol will registered nurses use to vaccinate children?',
-      pgd: {
-        label: 'A patient group direction (PGD)'
+    protocolVGD: {
+      title: 'Do you want to use a vaccine group direction (VGD)?',
+      restriction:
+        'These settings will only apply to vaccinations given for the {programmeNames} {count, plural, one {programme} other {programmes}}.',
+      nurse: {
+        label: 'Protocol',
+        title:
+          'What protocol will registered nurses and health professionals vaccinate under?',
+        pgd: {
+          label: 'A patient group direction (PGD)'
+        },
+        vgd: {
+          label: 'A vaccine group direction (VGD)'
+        }
       },
-      vgd: {
-        label: 'A vaccine group direction (VGD)'
+      hca: {
+        label: 'Protocol for healthcare assistants',
+        title:
+          'Will healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
+        no: {
+          label: 'No'
+        },
+        yes: {
+          label: 'Yes'
+        }
       }
     },
-    protocolHCA: {
-      label: 'Protocol for healthcare assistants',
+    protocolPSD: {
+      label: 'Healthcare assistants can use PSDs',
       title:
-        'Will healthcare assistants give vaccinations under a vaccine group direction (VGD)?',
-      no: {
-        label: 'No'
+        'Can healthcare assistants give vaccinations under a patient specific direction (PSD)?',
+      none: {
+        label: 'No',
+        hint: 'Healthcare assistants cannot vaccinate under a PSD'
       },
-      yes: {
-        label: 'Yes'
-      }
-    },
-    hasPsdProtocol: {
-      label: 'Can use PSDs',
-      title:
-        'Can the flu nasal spray vaccine be given under a patient specific direction (PSD)?',
-      hint: 'If a PSD is added to a child, they will be vaccinated under a PSD instead of a PGD or VGD',
-      no: {
-        label: 'No'
+      nasalFlu: {
+        label: {
+          fluOnly: 'Yes, nasal spray only',
+          fluPlus: 'Yes, flu nasal spray only'
+        },
+        hint: 'Healthcare assistants can give the nasal spray vaccine to children who are covered by a PSD'
       },
-      yes: {
-        label: 'Yes'
+      all: {
+        label: {
+          noNasalSpray: 'Yes, all programmes',
+          withNasalSpray: 'Yes, all programmes and vaccine methods'
+        },
+        hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the relevant programme'
+      },
+      allForOneProgramme: {
+        label: {
+          fluOnly: 'Yes, nasal spray or injection',
+          other: 'Yes'
+        },
+        hint: 'Healthcare assistants can vaccinate any children who are covered by a PSD for the {{programme.nameSentenceCase}} programme'
       }
     },
     'upload-class-list': {
@@ -3275,13 +3296,27 @@ export const en = {
       description:
         'See which children are due to attend vaccination sessions and which have no response yet'
     },
-    giveInstructions: {
+    'give-instructions': {
       label: 'Add new PSDs',
-      title:
-        'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}}?',
-      description: 'This cannot be undone.',
-      confirm: 'Yes, add PSDs',
-      cancel: 'No, return to session',
+      singleProgramme: {
+        title:
+          'Are you sure you want to add {count, plural, =0 {no new PSDs} one {a new PSD} other {# new PSDs}} for { programmeName }?',
+        confirm: 'Yes, add PSDs',
+        cancel: 'No, return to session'
+      },
+      multipleProgrammes: {
+        title: 'Select the programmes to add PSDs',
+        allProgrammes: {
+          label: 'All programmes',
+          hint: '{count, plural, one {1 child} other {# children}} can be given a PSD for one or more programmes'
+        },
+        oneProgramme: {
+          hint: '{count, plural, one {1 child} other {# children}} can be given a PSD for { programmeName }'
+        },
+        confirm: 'Add PSDs',
+        cancel: 'Cancel and return to session'
+      },
+      warning: 'This cannot be undone.',
       success: 'PSDs added'
     },
     reminders: {

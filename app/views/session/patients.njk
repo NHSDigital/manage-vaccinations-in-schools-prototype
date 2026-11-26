@@ -80,7 +80,7 @@
             }) | nhsukMarkdown }}
 
             {{ actionLink({
-              text: __("session.giveInstructions.label"),
+              text: __("session.give-instructions.label"),
               href: session.uri + "/give-instructions"
             }) }}
           {% endcall %}
@@ -128,6 +128,15 @@
             {%- endfor %}
           {%- endset %}
 
+          {% set instructionStatusHtml %}
+            {% for patientSession in patientSession.siblingPatientSessions %}
+              {# Only show a PSD status for children the session’s PSD settings cover #}
+              {% if ids | includes(patientSession.programme_id) and session.hasPsdProtocolFor(patientSession.patientProgramme) and patientSession.patientProgramme.instructionStatus %}
+                {{ patientSession.patientProgramme.formatted.instructionStatus | nhsukMarkdown }}
+              {% endif %}
+            {% endfor %}
+          {% endset %}
+
           {% set patientSessionUri = patientSession.uri %}
           {% if session.type === SessionType.Clinic %}
             {% set patientSessionUri = patientSession.clinicAppointment.uri.matched if patientSession.clinicAppointment else (patientSessionUri + "/appointment") %}
@@ -158,8 +167,8 @@
                 } if session.canOfferAlternativeVaccine and not account.isSchoolUser,
                 instructionStatus: {
                   label: __("patientSession.instructionStatus.label"),
-                  value: patientSession.formatted.instructionStatus
-                } if view == "instructions" and patientSession.instructionStatus and not account.isSchoolUser,
+                  value: instructionStatusHtml
+                } if view == "instructions" and not account.isSchoolUser,
                 register: {
                   label: __("patientSession.register.label"),
                   value: patientSession.formatted.register,

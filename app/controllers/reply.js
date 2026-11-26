@@ -20,6 +20,7 @@ import { today } from '../utils/date.js'
 import { saveAndRedirect } from '../utils/redirect.js'
 import { countAnswersNeedingTriage } from '../utils/reply.js'
 import { formatContact } from '../utils/string.js'
+import { isPsdRequestedInTriage } from '../utils/triage.js'
 
 export const replyController = {
   /**
@@ -132,7 +133,7 @@ export const replyController = {
           delete reply.contact_uuid
         }
 
-        if (triage?.psd) {
+        if (isPsdRequestedInTriage(triage)) {
           patientProgramme.giveInstruction({
             createdBy_uid: account.uid,
             programme_id: patientProgramme.programme_id

@@ -7,26 +7,33 @@ import { VaccineMethod, VaccinationProtocol } from '../enums.js'
  * @returns {Array<VaccineMethod>} Authorised vaccine methods
  */
 export function getAccountVaccineMethods(account, patientSession) {
-  let vaccineMethods
+  // Nurses can record all vaccines under any protocol
   if (account.isRegisteredNurse) {
-    // Nurses can record all vaccines under any protocol
-    vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
-  } else if (account.isHCA) {
+    return [VaccineMethod.Injection, VaccineMethod.Intranasal]
+  }
+
+  // HCAs may be able to record under VGD or PSD
+  if (account.isHCA) {
     // HCAs can record all vaccines under VGD
-    if (patientSession.session.protocolHCA === VaccinationProtocol.VGD) {
-      vaccineMethods = [VaccineMethod.Injection, VaccineMethod.Intranasal]
+    if (
+      patientSession.session.getHCAProtocolFor(patientSession.programme_id) ===
+      VaccinationProtocol.VGD
+    ) {
+      return [VaccineMethod.Injection, VaccineMethod.Intranasal]
     }
 
-    // HCAs can only record nasal vaccines for children with a PSD
-    if (
-      patientSession.session.hasPsdProtocol &&
-      patientSession.patientProgramme.hasInstruction
-    ) {
-      vaccineMethods = [VaccineMethod.Intranasal]
+    // HCAs can also record the vaccine a child’s PSD is for
+    const psdVaccineMethod = patientSession.patientProgramme.vaccine?.method
+    const canUsePsd =
+      patientSession.session.hasPsdProtocolFor(
+        patientSession.patientProgramme
+      ) && patientSession.patientProgramme.hasInstruction
+    if (canUsePsd && psdVaccineMethod) {
+      return [psdVaccineMethod]
     }
   }
 
-  return vaccineMethods
+  return []
 }
 
 /**
