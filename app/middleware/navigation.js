@@ -41,7 +41,13 @@ export const navigation = (request, response, next) => {
 
     primary.push({
       href,
-      text: view === 'team' ? __(`team.show.label`) : label,
+      ...(view === 'review' && {
+        classes: 'app-header__navigation-item--with-badge',
+        html: `Review<strong class="app-badge app-badge--reverse app-badge--small">${data.counts.review}</strong>`
+      }),
+      ...(view !== 'review' && {
+        text: view === 'team' ? __(`team.show.label`) : label
+      }),
       active: activeSection === href.split('/')[1]
     })
   }

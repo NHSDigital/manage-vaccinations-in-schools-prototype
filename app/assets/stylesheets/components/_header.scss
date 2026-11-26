@@ -3,13 +3,9 @@
 
 .app-header__navigation-item--with-badge {
   .app-badge {
-    min-width: nhsuk-spacing(4);
-    margin-left: nhsuk-spacing(1);
-    padding-top: 5px;
-    padding-bottom: 3px;
-
-    color: nhsuk-colour("white");
-    background-color: color.scale(color.scale(nhsuk-colour("blue"), $lightness: -50%), $alpha: -60%);
+    margin-left: nhsuk-spacing(2);
+    padding-top: nhsuk-spacing(1);
+    padding-bottom: nhsuk-spacing(1);
 
     @include nhsuk-font(14, $line-height: 1);
   }

@@ -1,16 +1,45 @@
 {%- from "nhsuk/macros/attributes.njk" import nhsukAttributes -%}
-
-{%- set classNames = "app-badge" -%}
+{%- from "nhsuk/macros/content.njk" import nhsukContent -%}
 
 {% macro appBadge(params) %}
-{%- if params.classes %}
-  {%- set classNames = classNames ~ " " ~ params.classes -%}
-{%- endif -%}
+{#- Set variant for this component #}
+{%- set variant = params.variant %}
 
-<strong class="{{ classNames }}" {%- if params.id %} id="{{ params.id }}"{% endif %}
-  {{- nhsukAttributes(params.attributes) }}>{%- if params.visuallyHiddenText -%}
-    <span class="nhsuk-u-visually-hidden">{{ params.visuallyHiddenText }} </span>
-  {%- endif -%}
-  {{- params.html | safe | trim if params.html else params.text -}}
+{#- Set classes for this component #}
+{%- set classNames = "app-badge" %}
+
+{%- if variant == "reverse" and (not params.classes or not "app-badge--reverse" in params.classes) %}
+  {%- set classNames = classNames ~ " app-badge--" ~ variant %}
+{%- endif %}
+
+{%- if params.small and (not params.classes or not "app-badge--small" in params.classes) %}
+  {%- set classNames = classNames ~ " app-badge--small" %}
+{%- endif %}
+
+{%- if params.classes %}
+  {%- set classNames = classNames ~ " " ~ params.classes %}
+{%- endif %}
+
+{%- set attributesHtml %}
+  {{- nhsukAttributes({
+    class: {
+      value: classNames if classNames else false,
+      optional: true
+    },
+    id: {
+      value: params.id,
+      optional: true
+    }
+  }) -}}
+
+  {{- nhsukAttributes(params.attributes) -}}
+{% endset -%}
+
+<strong {{- attributesHtml | safe }}>
+  {{ nhsukContent({
+    text: params.text,
+    html: caller() if caller else params.html,
+    slots: params.slots
+  }) | trim | indent(2) }}
 </strong>
 {% endmacro %}
