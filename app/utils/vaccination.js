@@ -19,13 +19,12 @@ function canUsePsd(session, patientProgramme) {
  * Get the people who can give a child their vaccine in a session
  *
  * The person recording the vaccination can always give it. Others can only give it
- * under a VGD or PSD, as only the person who assessed the child can give it under a PGD:
- * - other nurses, if nurses use a VGD for the programme, or the child has a PSD that
- *   the session allows
- * - HCAs, if HCAs use a VGD for the programme, or the child has a PSD that the
- *   session allows
+ * under a VGD, as only the person who assessed the child can give it under a PGD:
+ * - other nurses, if nurses use a VGD for the programme
+ * - HCAs, if HCAs use a VGD for the programme
  *
- * A PSD lets any trained staff give the vaccine on the prescriber’s authority
+ * HCAs giving a vaccine under a PSD assess the child themselves, so they record it
+ * themselves too, rather than a nurse recording it for them
  *
  * @param {Session} session - Session
  * @param {PatientProgramme} patientProgramme - Patient programme
@@ -38,21 +37,21 @@ export function getPossibleVaccinators(session, patientProgramme, recordedBy) {
     session.getNurseProtocolFor(programme_id) === VaccinationProtocol.VGD
   const hcasUseVgd =
     session.getHCAProtocolFor(programme_id) === VaccinationProtocol.VGD
-  const childHasPsd = canUsePsd(session, patientProgramme)
 
   return User.findAll(session.context).filter(
     (user) =>
       user.uid === recordedBy.uid ||
-      (user.isRegisteredNurse && (nursesUseVgd || childHasPsd)) ||
-      (user.isHCA && (hcasUseVgd || childHasPsd))
+      (user.isRegisteredNurse && nursesUseVgd) ||
+      (user.isHCA && hcasUseVgd)
   )
 }
 
 /**
  * Get the protocol a child’s vaccine is given under, which depends on who gives it
  *
- * A PSD takes priority. Otherwise, it’s a VGD if the role of the person giving the
- * vaccine uses one for the programme, or else a PGD
+ * Nurses give it under a VGD if nurses use one for the programme, or else a PGD.
+ * HCAs give it under a VGD if HCAs use one for the programme, or else a PSD if the
+ * child has one the session allows
  *
  * @param {Session} session - Session
  * @param {PatientProgramme} patientProgramme - Patient programme
@@ -66,15 +65,14 @@ export function getVaccinationProtocol(
 ) {
   const { programme_id } = patientProgramme
 
-  if (canUsePsd(session, patientProgramme)) {
-    return VaccinationProtocol.PSD
-  }
+  if (administeredBy?.isHCA) {
+    if (session.getHCAProtocolFor(programme_id) === VaccinationProtocol.VGD) {
+      return VaccinationProtocol.VGD
+    }
 
-  if (
-    administeredBy?.isHCA &&
-    session.getHCAProtocolFor(programme_id) === VaccinationProtocol.VGD
-  ) {
-    return VaccinationProtocol.VGD
+    if (canUsePsd(session, patientProgramme)) {
+      return VaccinationProtocol.PSD
+    }
   }
 
   if (

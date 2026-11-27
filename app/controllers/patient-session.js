@@ -59,11 +59,6 @@ export const patientSessionController = {
       account
     )
 
-    // A PSD takes priority over a VGD
-    const canUsePsd =
-      session.hasPsdProtocolFor(patientProgramme) &&
-      patientProgramme.hasInstruction
-
     response.locals.options = {
       // Show outstanding vaccinations
       showOutstandingVaccinations: vaccinated && due.length > 1,
@@ -99,9 +94,9 @@ export const patientSessionController = {
         session.isActive,
       canRecordInjectionSite:
         patientProgramme.vaccine?.criteria !== VaccineCriteria.Intranasal,
-      mustRecordAssessingNurse: account.isHCA && hcasUseVgd && !canUsePsd,
+      mustRecordAssessingNurse: account.isHCA && hcasUseVgd,
       // Nurse can assess the child, then hand over to someone else who can give the
-      // vaccine under a VGD or PSD
+      // vaccine under a VGD
       canHandOver:
         account.isRegisteredNurse &&
         vaccinatorPool.some(({ uid }) => uid !== account.uid)

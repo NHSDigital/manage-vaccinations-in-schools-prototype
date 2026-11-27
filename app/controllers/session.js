@@ -16,7 +16,8 @@ import {
   SessionPresetName,
   SessionPresets,
   SessionStatus,
-  SessionType
+  SessionType,
+  VaccinationProtocol
 } from '../enums.js'
 import {
   Clinic,
@@ -996,7 +997,36 @@ export const sessionController = {
     const { data } = request.session
     const { __mf } = response.locals
 
-    if (view === 'protocol-vgd') {
+    if (view === 'protocols') {
+      // Are there any programmes selected that don't support VGD? If so, we need to make it clear
+      // which programmes will get the VGD decision.
+      const session = new Session(
+        Session.findOne(session_id, data.wizard),
+        data
+      )
+      const sessionProgrammes = session.programmesThatCanBeAdministered
+
+      const programmesByVGDStatus = Object.groupBy(
+        sessionProgrammes,
+        ({ supportsVGD }) => (supportsVGD ? 'supported' : 'notSupported')
+      )
+      if (programmesByVGDStatus['notSupported']) {
+        const vgdProgrammes = programmesByVGDStatus['supported']
+        if (vgdProgrammes) {
+          const programmeNames = vgdProgrammes.map(({ name }) => `**${name}**`)
+          response.locals.vgdRestrictionDescription = __mf(
+            'session.protocols.vgdRestriction',
+            {
+              count: programmeNames.length,
+              programmeNames: prototypeFilters.formatList(programmeNames)
+            }
+          )
+        }
+      }
+
+      response.locals.programmesSupportingVGD =
+        programmesByVGDStatus['supported']
+    } else if (view === 'protocol-vgd') {
       // Are there any programmes selected that don't support VGD? If so, we need to make it clear
       // which programmes will get the VGD decision.
       const session = new Session(
@@ -1058,6 +1088,51 @@ export const sessionController = {
         request.body.session.clinicType === ClinicType.DropIn
           ? false
           : team.hasClinicSessionRegistration
+    } else if (view === 'protocols') {
+      // To support more flexibility in the future, the VGD answer for nurses is a list of
+      // programmes that needs converting into a protocol for each programme. We'll use the
+      // same mechanism to convert the protocol choice for healthcare assistants, even though
+      // that's not passed from the form as a list of programmes.
+      const { vgdProgramme_idsForNurses, protocolForHCAs } =
+        request.body.session
+      delete request.body.session.vgdProgramme_idsForNurses
+      delete request.body.session.protocolForHCAs
+
+      // Convert the choice of protocol for healthcare assistants into a list of programmes
+      // for which they'll vaccinate under VGD
+      const sessionWithProgrammes = new Session(session, data)
+      let vgdProgramme_idsForHCAs = []
+      if (protocolForHCAs === VaccinationProtocol.VGD) {
+        vgdProgramme_idsForHCAs =
+          sessionWithProgrammes.programmesSupportingVGD.map(({ id }) => id)
+      }
+
+      // Set the programmes for which nurses and HCAs can vaccinate under VGD
+      session.setVgdProgrammes(
+        stringToArray(vgdProgramme_idsForNurses),
+        stringToArray(vgdProgramme_idsForHCAs)
+      )
+
+      // If we've not selected PSDs for healthcare assistants, make sure the None value
+      // is recorded for the session
+      if (protocolForHCAs !== VaccinationProtocol.PSD) {
+        request.body.session.psdUsage = PsdUsage.None
+      }
+
+      // If the session’s programmes only allow one way of using PSDs, the form doesn’t
+      // ask which one, so record it for the session
+      if (
+        protocolForHCAs === VaccinationProtocol.PSD &&
+        !request.body.session.psdUsage &&
+        !sessionWithProgrammes.hasPsdUsageChoice
+      ) {
+        request.body.session.psdUsage =
+          sessionWithProgrammes.availablePsdUsages.find(
+            (psdUsage) => psdUsage !== PsdUsage.None
+          )
+      }
+
+      session = Session.update(session_id, session, data.wizard)
     } else if (view === 'protocol-vgd') {
       // The VGD answers are lists of programmes, which need converting into a protocol for
       // each programme
@@ -1174,41 +1249,29 @@ export const sessionController = {
    */
   confirmInstructions(request, response) {
     const { session } = response.locals
-    const { data } = request.session
 
     const patientSessions = session.patientSessions.filter(
       ({ patientProgramme }) => session.canBulkInstructFor(patientProgramme)
     )
-    const programmeNameLookup = Object.fromEntries(
-      Programme.findAll(data)
-        .filter(({ isHidden }) => !isHidden)
-        .map(({ id, name }) => [id, name])
-    )
-    const patientSessionsByProgramme = Object.groupBy(
-      patientSessions,
-      ({ programme_id }) => programme_id
-    )
+    const programmes = _.uniqBy(
+      patientSessions.map(({ programme }) => programme),
+      'id'
+    ).sort((a, b) => a.name.localeCompare(b.name))
 
     // Break down the number of patients ready for a PSD by each programme
-    response.locals.patientsByProgramme = Object.entries(
-      patientSessionsByProgramme
-    )
-      .map(([programme_id, sessions]) => ({
-        programme_id,
-        programmeName: programmeNameLookup[programme_id],
-        programmeNameInSentence: programmeNameLookup[programme_id].replace(
-          'Flu',
-          'flu'
-        ),
-        patientCount: sessions.length
-      }))
-      .sort((a, b) => a.programmeName.localeCompare(b.programmeName))
+    response.locals.patientsByProgramme = programmes.map((programme) => ({
+      programmeName: programme.nameSentenceCase,
+      count: patientSessions.filter(
+        ({ programme_id }) => programme_id === programme.id
+      ).length
+    }))
 
-    // And report the total number of patients ready for any PSD
+    // And report the totals we'll need
     response.locals.totalPatients = _.uniqBy(
       patientSessions,
       'patient.nhsn'
     ).length
+    response.locals.totalPsds = patientSessions.length
 
     return response.render(`session/give-instructions`)
   },
@@ -1220,12 +1283,8 @@ export const sessionController = {
     const { data } = request.session
     const { __, account, session } = response.locals
 
-    const programme_ids = stringToArray(request.body.psdProgramme_ids)
-
     const patientsToInstruct = session.patientSessions.filter(
-      ({ patientProgramme }) =>
-        session.canBulkInstructFor(patientProgramme) &&
-        programme_ids.includes(patientProgramme.programme_id)
+      ({ patientProgramme }) => session.canBulkInstructFor(patientProgramme)
     )
 
     for (const patientSession of patientsToInstruct) {
@@ -1238,9 +1297,6 @@ export const sessionController = {
     }
 
     request.flash('success', __(`session.give-instructions.success`))
-
-    // Tidy up
-    delete data.psdProgramme_ids
 
     return saveAndRedirect(request, response, `${session.uri}/instructions`)
   },

@@ -168,36 +168,41 @@ export function removeSlots(allSlots, slotsToRemove) {
  *
  * @param {Session} session - Session
  * @param {PsdUsage} psdUsage - PSD usage
+ * @param {string} view - the page on which this will appear
  * @returns {{text: string, hint: string}} Text and hint
  */
-export const getPsdUsageText = (session, psdUsage) => {
+export const getPsdUsageText = (session, psdUsage, view) => {
   const { __ } = i18n
   const programmes = session.programmesThatCanBeAdministered
   const onlyProgramme = programmes.length === 1 ? programmes[0] : null
-  const isFluOnly = onlyProgramme?.id === 'flu'
+  const isFluOnly = onlyProgramme?.id === `flu`
+  const parentKey =
+    view === `protocols`
+      ? `session.protocols.hca.psd.scope`
+      : `session.protocolPSD`
 
   switch (psdUsage) {
     case PsdUsage.None:
       return {
-        text: __('session.protocolPSD.none.label'),
-        hint: __('session.protocolPSD.none.hint')
+        text: __(`${parentKey}.none.label`),
+        hint: __(`${parentKey}.none.hint`)
       }
 
     case PsdUsage.NasalFluOnly:
       return {
         text: isFluOnly
-          ? __('session.protocolPSD.nasalFlu.label.fluOnly')
-          : __('session.protocolPSD.nasalFlu.label.fluPlus'),
-        hint: __('session.protocolPSD.nasalFlu.hint')
+          ? __(`${parentKey}.nasalFlu.label.fluOnly`)
+          : __(`${parentKey}.nasalFlu.label.fluPlus`),
+        hint: __(`${parentKey}.nasalFlu.hint`)
       }
 
     case PsdUsage.All: {
       if (onlyProgramme) {
         return {
           text: isFluOnly
-            ? __('session.protocolPSD.allForOneProgramme.label.fluOnly')
-            : __('session.protocolPSD.allForOneProgramme.label.other'),
-          hint: __('session.protocolPSD.allForOneProgramme.hint', {
+            ? __(`${parentKey}.allForOneProgramme.label.fluOnly`)
+            : __(`${parentKey}.allForOneProgramme.label.other`),
+          hint: __(`${parentKey}.allForOneProgramme.hint`, {
             programme: onlyProgramme
           })
         }
@@ -209,14 +214,14 @@ export const getPsdUsageText = (session, psdUsage) => {
 
       return {
         text: hasNasalSprayVaccine
-          ? __('session.protocolPSD.all.label.withNasalSpray')
-          : __('session.protocolPSD.all.label.noNasalSpray'),
-        hint: __('session.protocolPSD.all.hint')
+          ? __(`${parentKey}.all.label.withNasalSpray`)
+          : __(`${parentKey}.all.label.noNasalSpray`),
+        hint: __(`${parentKey}.all.hint`)
       }
     }
 
     default:
-      return { text: psdUsage || '', hint: '' }
+      return { text: psdUsage || ``, hint: `` }
   }
 }
 

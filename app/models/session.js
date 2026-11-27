@@ -494,6 +494,27 @@ export class Session extends BaseModel {
   }
 
   /**
+   * Get the protocol healthcare assistants will vaccinate under in this session
+   *
+   * @returns {VaccinationProtocol|string} Protocol (or the ‘None’ answer)
+   */
+  get protocolForHCAs() {
+    if (this.psdUsage !== PsdUsage.None) {
+      return VaccinationProtocol.PSD
+    }
+
+    const hcasUseVgd = this.programmesSupportingVGD.some(
+      ({ id }) => this.getHCAProtocolFor(id) === VaccinationProtocol.VGD
+    )
+    if (hcasUseVgd) {
+      return VaccinationProtocol.VGD
+    }
+
+    const noneAnswer = ''
+    return noneAnswer
+  }
+
+  /**
    * @param {ProtocolByProgramme} protocolByProgramme - Stored protocols
    * @returns {Array<string>} Programme IDs (or the ‘None’ answer)
    */
@@ -781,7 +802,7 @@ export class Session extends BaseModel {
 
   /**
    * Do any of the programmes we can vaccinate for in this session support a
-   * vaccine general direction (VGD)?
+   * vaccine group direction (VGD)?
    *
    * @returns {boolean} - true if VGD is possible, or false otherwise
    */
@@ -831,6 +852,18 @@ export class Session extends BaseModel {
       canVaccinateAgainstFlu ? PsdUsage.NasalFluOnly : null,
       PsdUsage.All
     ].filter(Boolean)
+  }
+
+  /**
+   * Is there more than one way HCAs could use PSDs in this session?
+   *
+   * @returns {boolean} More than one PSD option is available
+   */
+  get hasPsdUsageChoice() {
+    const psdUsagesOtherThanNone = this.availablePsdUsages.filter(
+      (psdUsage) => psdUsage !== PsdUsage.None
+    )
+    return psdUsagesOtherThanNone.length > 1
   }
 
   /**
@@ -1855,13 +1888,19 @@ export class Session extends BaseModel {
             case 'catchUps':
               return this.canVaccinateForOtherProgrammes
             case 'psdUsage':
-              return getPsdUsageText(this, this.psdUsage).text
+              return this.psdUsage === PsdUsage.None
+                ? ''
+                : getPsdUsageText(this, this.psdUsage, 'protocols').text
             case 'protocolNurse':
               return this.#formatProtocols(
                 (programme_id) => this.getNurseProtocolFor(programme_id),
                 VaccinationProtocol.PGD
               )
             case 'protocolHCA':
+              if (this.protocolForHCAs === VaccinationProtocol.PSD) {
+                return VaccinationProtocol.PSD
+              }
+
               // HCAs can’t vaccinate under a PGD, so only mention their VGD programmes
               return this.#formatProtocols(
                 (programme_id) => this.getHCAProtocolFor(programme_id),

@@ -1,7 +1,8 @@
 {% extends "_layouts/form.njk" %}
 
-{% set singleProgramme = true if patientsByProgramme.length === 1 else false %}
-{% set programmeCountKey = "singleProgramme" if singleProgramme else "multipleProgrammes" %}
+{% set title = __mf("session.give-instructions.title", {
+  count: totalPsds
+}) %}
 
 {% block beforeContent %}
   {{ breadcrumb({
@@ -23,54 +24,21 @@
 {% endblock %}
 
 {% block form %}
-  {% if singleProgramme %}
-    {{ heading({
-      text: __mf("session.give-instructions.singleProgramme.title", {
-        count: totalPatients,
-        programmeName: patientsByProgramme[0].programmeNameInSentence
-      }),
-      size: "l"
-    }) }}
+  {{ heading({
+    text: title,
+    size: "l"
+  }) }}
 
-    {{ input({
-      type: "hidden",
-      value: patientsByProgramme[0].programme_id,
-      decorate: "psdProgramme_ids"
-    }) }}
+  {% if patientsByProgramme | length == 1 %}
+    <p>{{ __mf("session.give-instructions.programme", patientsByProgramme[0]) }}.</p>
   {% else %}
-    {% set checkboxItems = [
-      {
-        value: "all",
-        text: __("session.give-instructions.multipleProgrammes.allProgrammes.label"),
-        hint: __mf("session.give-instructions.multipleProgrammes.allProgrammes.hint", { count: totalPatients }),
-        behaviour: "inclusive"
-      },
-      {
-        divider: "or",
-        behaviour: "inclusive"
-      }
-      ] %}
-    {% for programmeItem in patientsByProgramme %}
-      {% set checkboxItems = checkboxItems | push({
-        value: programmeItem.programme_id,
-        text: programmeItem.programmeName,
-        hint: __mf("session.give-instructions.multipleProgrammes.oneProgramme.hint", {
-          count: programmeItem.patientCount,
-          programmeName: programmeItem.programmeNameInSentence
-        })
-      }) %}
-    {% endfor %}
+    <p>{{ __mf("session.give-instructions.programmes", { count: totalPatients }) }}</p>
 
-    {{ checkboxes({
-      fieldset: {
-        legend: {
-          heading: __("session.give-instructions.multipleProgrammes.title"),
-          size: "l"
-        }
-      },
-      items: checkboxItems,
-      decorate: "psdProgramme_ids"
-    }) }}
+    {% set programmeItems = [] %}
+    {% for programmePatients in patientsByProgramme %}
+      {% set programmeItems = programmeItems | push(__mf("session.give-instructions.programme", programmePatients)) %}
+    {% endfor %}
+    {{ programmeItems | nhsukList }}
   {% endif %}
 {% endblock %}
 
@@ -82,12 +50,12 @@
   {{ appButtonGroup({
     buttons: [
       {
-        text: __("session.give-instructions." + programmeCountKey + ".confirm")
+        text: __mf("session.give-instructions.confirm", { count: totalPsds })
       }
     ],
     links: [
       {
-        text: __("session.give-instructions." + programmeCountKey + ".cancel"),
+        text: __("session.give-instructions.cancel"),
         href: session.uri + "/instructions"
       }
     ]

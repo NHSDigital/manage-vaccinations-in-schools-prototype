@@ -1,0 +1,70 @@
+{% extends "_layouts/form.njk" %}
+
+{% set title = __("session.protocols.title") %}
+
+{% block form %}
+  {{ heading({
+    caption: session.location.name,
+    text: title,
+    size: "l"
+  }) }}
+
+  {# NOTE: this version of the protocol questions only supports a single VGD programme #}
+  {% if vgdRestrictionDescription %}
+    {{ insetText({
+      html: vgdRestrictionDescription | nhsukMarkdown
+    }) }}
+  {% endif %}
+
+  {# Nurses and health professionals #}
+  {% if session.canSupportVGD %}
+    {{ radios({
+      fieldset: {
+        legend: {
+          text: __("session.protocols.nurse.title"),
+          size: "m"
+        }
+      },
+      items: [
+        {
+          label: __("session.protocols.nurse.pgd.label"),
+          value: ""
+        },
+        {
+          label: __("session.protocols.nurse.vgd.label"),
+          value: programmesSupportingVGD[0].id
+        }
+      ],
+      decorate: "session.vgdProgramme_idsForNurses"
+    }) }}
+  {% else %}
+    {{ __("session.protocols.nurse.pgdOnly") | nhsukMarkdown }}  
+  {% endif %}
+
+  {# Health care assistants #}
+  {% set psdProgrammeOptions = psdUsageItems(session, 'protocols', false) %}
+  {% set hcaProtocolOptions = hcaProtocolItems(session) %}
+
+  {% if session.hasPsdUsageChoice %}
+    {% set psdRadiosHtml = radios({
+      fieldset: {
+        legend: __("session.protocols.hca.psd.scope.label")
+      },
+      items: psdProgrammeOptions,
+      decorate: "session.psdUsage"
+    }) %}
+    {% set hcaProtocolOptions = injectConditionalHtml(hcaProtocolOptions, VaccinationProtocol.PSD, psdRadiosHtml) %}
+  {% endif %}
+  {# The options and sub-options offered, and their wording, depend on the session’s programmes #}
+  {{ radios({
+    fieldset: {
+      legend: {
+        text: __("session.protocols.hca.title"),
+        size: "m"
+      }
+    },
+    items: hcaProtocolOptions,
+    decorate: "session.protocolForHCAs"
+  }) }}
+
+{% endblock %}

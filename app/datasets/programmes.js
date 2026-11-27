@@ -174,7 +174,7 @@ export default {
     sequenceDefault: '2B',
     yearGroups: [9, 10, 11],
     targetYearGroup: 9,
-    supportsVGD: true,
+    supportsVGD: false, // can be enabled from 6 Dec 2026
     vaccine_snomeds: ['7374311000001101'],
     isNhseSyncable: false,
     isTetanusVaccine: true
