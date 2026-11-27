@@ -1,8 +1,7 @@
 {% extends "_layouts/form.njk" %}
 
 {% set title = __mf("session.give-instructions.title", {
-  count: psdCount,
-  programmeNames: programmeNames
+  count: totalPsds
 }) %}
 
 {% block beforeContent %}
@@ -29,6 +28,18 @@
     text: title,
     size: "l"
   }) }}
+
+  {% if patientsByProgramme | length == 1 %}
+    <p>{{ __mf("session.give-instructions.programme", patientsByProgramme[0]) }}.</p>
+  {% else %}
+    <p>{{ __mf("session.give-instructions.programmes", { count: totalPatients }) }}</p>
+
+    {% set programmeItems = [] %}
+    {% for programmePatients in patientsByProgramme %}
+      {% set programmeItems = programmeItems | push(__mf("session.give-instructions.programme", programmePatients)) %}
+    {% endfor %}
+    {{ programmeItems | nhsukList }}
+  {% endif %}
 {% endblock %}
 
 {% block afterForm %}
@@ -39,7 +50,7 @@
   {{ appButtonGroup({
     buttons: [
       {
-        text: __("session.give-instructions.confirm")
+        text: __mf("session.give-instructions.confirm", { count: totalPsds })
       }
     ],
     links: [

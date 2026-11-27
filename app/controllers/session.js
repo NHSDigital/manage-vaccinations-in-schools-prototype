@@ -1253,15 +1253,25 @@ export const sessionController = {
     const patientSessions = session.patientSessions.filter(
       ({ patientProgramme }) => session.canBulkInstructFor(patientProgramme)
     )
-    const programmeNames = _.uniqBy(
+    const programmes = _.uniqBy(
       patientSessions.map(({ programme }) => programme),
       'id'
-    )
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(({ nameSentenceCase }) => nameSentenceCase)
+    ).sort((a, b) => a.name.localeCompare(b.name))
 
-    response.locals.psdCount = patientSessions.length
-    response.locals.programmeNames = prototypeFilters.formatList(programmeNames)
+    // Break down the number of patients ready for a PSD by each programme
+    response.locals.patientsByProgramme = programmes.map((programme) => ({
+      programmeName: programme.nameSentenceCase,
+      count: patientSessions.filter(
+        ({ programme_id }) => programme_id === programme.id
+      ).length
+    }))
+
+    // And report the totals we'll need
+    response.locals.totalPatients = _.uniqBy(
+      patientSessions,
+      'patient.nhsn'
+    ).length
+    response.locals.totalPsds = patientSessions.length
 
     return response.render(`session/give-instructions`)
   },

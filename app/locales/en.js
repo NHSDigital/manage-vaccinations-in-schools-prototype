@@ -3311,7 +3311,7 @@ export const en = {
       nurse: {
         label: 'Protocol for nurses',
         pgdOnly:
-          'Registered nurses and health professionals will vaccinate under a patient general direction (PGD) in this session.',
+          'Registered nurses and health professionals will vaccinate under a patient group direction (PGD) in this session.',
         title:
           'What protocol will registered nurses and health professionals vaccinate under?',
         pgd: {
@@ -3438,8 +3438,12 @@ export const en = {
     'give-instructions': {
       label: 'Add new PSDs',
       title:
-        'Are you sure you want to add {count, plural, one {a new PSD} other {# new PSDs}} for {programmeNames}?',
-      confirm: 'Yes, add PSDs',
+        'Are you sure you want to add {count, plural, one {a new PSD} other {new PSDs}}?',
+      programme:
+        '{count, plural, one {# child} other {# children}} will get a PSD for {programmeName}',
+      programmes:
+        '{count, plural, one {# child} other {# children}} will get a PSD for one or more programmes:',
+      confirm: '{count, plural, one {Yes, add the PSD} other {Yes, add PSDs}}',
       cancel: 'No, return to session',
       warning: 'This cannot be undone.',
       success: 'PSDs added'

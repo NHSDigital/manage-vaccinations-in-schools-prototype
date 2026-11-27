@@ -802,7 +802,7 @@ export class Session extends BaseModel {
 
   /**
    * Do any of the programmes we can vaccinate for in this session support a
-   * vaccine general direction (VGD)?
+   * vaccine group direction (VGD)?
    *
    * @returns {boolean} - true if VGD is possible, or false otherwise
    */
